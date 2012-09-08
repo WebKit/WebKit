@@ -1332,7 +1332,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& ident
 {
     JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
     if (!stringInMap)
-        stringInMap = jsOwnedString(globalData(), identifier.ustring());
+        stringInMap = jsOwnedString(globalData(), identifier.string());
     return emitLoad(dst, JSValue(stringInMap));
 }
 
@@ -1874,7 +1874,7 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
 {
     JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
     if (!stringInMap) {
-        stringInMap = jsString(globalData(), identifier.ustring());
+        stringInMap = jsString(globalData(), identifier.string());
         addConstantValue(stringInMap);
     }
     return stringInMap;

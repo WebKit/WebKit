@@ -1,3 +1,15 @@
+2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Rename the ustring() accessor to string()
+        https://bugs.webkit.org/show_bug.cgi?id=95919
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::sendWebIntentResponse):
+        (DumpRenderTreeSupportEfl::deliverWebIntent):
+        Aslo update the code from the UString->String conversion through StringImpl.
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use same default minimum logical font size in DRT and WTR

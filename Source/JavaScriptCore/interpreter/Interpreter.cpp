@@ -2810,7 +2810,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSObject* baseObject = asObject(baseVal);
         PropertySlot slot(baseVal);
         if (!baseObject->getPropertySlot(callFrame, ident, slot)) {
-            exceptionValue = createErrorForInvalidGlobalAssignment(callFrame, ident.ustring());
+            exceptionValue = createErrorForInvalidGlobalAssignment(callFrame, ident.string());
             goto vm_throw;
         }
 

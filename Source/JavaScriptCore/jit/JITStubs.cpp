@@ -2632,7 +2632,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_ensure_property_exists)
     PropertySlot slot(object);
     ASSERT(stackFrame.callFrame->codeBlock()->isStrictMode());
     if (!object->getPropertySlot(stackFrame.callFrame, stackFrame.args[1].identifier(), slot)) {
-        stackFrame.globalData->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[1].identifier().ustring());
+        stackFrame.globalData->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[1].identifier().string());
         VM_THROW_EXCEPTION();
     }
 

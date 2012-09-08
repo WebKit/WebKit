@@ -125,7 +125,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.globalData(), m_pattern.ustring(), regExpFlags(m_flags.ustring())));
+    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.globalData(), m_pattern.string(), regExpFlags(m_flags.string())));
 }
 
 // ------------------------------ ThisNode -------------------------------------
@@ -1831,7 +1831,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
                 typeForTable = SwitchNeither;
                 break;
             }
-            const String& value = static_cast<StringNode*>(clauseExpression)->value().ustring();
+            const String& value = static_cast<StringNode*>(clauseExpression)->value().string();
             if (singleCharacterSwitch &= value.length() == 1) {
                 int32_t intVal = value[0];
                 if (intVal < min_num)

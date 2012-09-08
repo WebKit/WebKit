@@ -92,7 +92,7 @@ RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* st
 
 void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, "RegExp").ustring());
+    Base::finishCreation(exec->globalData(), Identifier(exec, "RegExp").string());
     ASSERT(inherits(&s_info));
 
     // ECMA 15.10.5.1 RegExp.prototype

@@ -232,13 +232,13 @@ protected:
     void addFunction(JSGlobalData& globalData, const char* name, NativeFunction function, unsigned arguments)
     {
         Identifier identifier(globalExec(), name);
-        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier.ustring(), function));
+        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier.string(), function));
     }
     
     void addConstructableFunction(JSGlobalData& globalData, const char* name, NativeFunction function, unsigned arguments)
     {
         Identifier identifier(globalExec(), name);
-        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier.ustring(), function, NoIntrinsic, function));
+        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier.string(), function, NoIntrinsic, function));
     }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);

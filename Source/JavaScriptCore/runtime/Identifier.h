@@ -52,8 +52,7 @@ namespace JSC {
         Identifier(JSGlobalData* globalData, StringImpl* rep) : m_string(add(globalData, rep)) { } 
         Identifier(JSGlobalData* globalData, const String& s) : m_string(add(globalData, s.impl())) { }
 
-        // FIXME: fix this name.
-        const String& ustring() const { return m_string; }
+        const String& string() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
         
         const UChar* characters() const { return m_string.characters(); }

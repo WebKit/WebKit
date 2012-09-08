@@ -456,7 +456,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         NPIdentifier* identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));
         
         for (unsigned i = 0; i < size; ++i)
-            identifiers[i] = _NPN_GetStringIdentifier(propertyNames[i].ustring().utf8().data());
+            identifiers[i] = _NPN_GetStringIdentifier(propertyNames[i].string().utf8().data());
 
         *identifier = identifiers;
         *count = size;

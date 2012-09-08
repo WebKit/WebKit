@@ -664,9 +664,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         LiteralParserToken<CharType> stringToken = m_lexer.currentToken();
                         m_lexer.next();
                         if (stringToken.stringIs8Bit)
-                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken8, stringToken.stringLength).ustring());
+                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken8, stringToken.stringLength).string());
                         else
-                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken16, stringToken.stringLength).ustring());
+                            lastValue = jsString(m_exec, makeIdentifier(stringToken.stringToken16, stringToken.stringLength).string());
                         break;
                     }
                     case TokNumber: {

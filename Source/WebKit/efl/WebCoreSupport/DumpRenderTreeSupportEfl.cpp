@@ -557,7 +557,7 @@ void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)
 void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request, JSStringRef response)
 {
 #if ENABLE(WEB_INTENTS)
-    String responseString = response->ustring();
+    String responseString = response->string();
     if (responseString.isNull())
         ewk_intent_request_failure_post(request, WebCore::SerializedScriptValue::create(String::fromUTF8("ERROR")));
     else
@@ -578,10 +578,10 @@ WebCore::MessagePortChannelArray* DumpRenderTreeSupportEfl::intentMessagePorts(c
 void DumpRenderTreeSupportEfl::deliverWebIntent(Evas_Object* ewkFrame, JSStringRef action, JSStringRef type, JSStringRef data)
 {
 #if ENABLE(WEB_INTENTS)
-    RefPtr<WebCore::SerializedScriptValue> serializedData = WebCore::SerializedScriptValue::create(String(data->ustring().impl()));
+    RefPtr<WebCore::SerializedScriptValue> serializedData = WebCore::SerializedScriptValue::create(data->string());
     WebCore::ExceptionCode ec = 0;
     WebCore::MessagePortArray ports;
-    RefPtr<WebCore::Intent> coreIntent = WebCore::Intent::create(String(action->ustring().impl()), String(type->ustring().impl()), serializedData.get(), ports, ec);
+    RefPtr<WebCore::Intent> coreIntent = WebCore::Intent::create(action->string(), type->string(), serializedData.get(), ports, ec);
     if (ec)
         return;
     Ewk_Intent* ewkIntent = ewk_intent_new(coreIntent.get());

@@ -210,14 +210,14 @@ struct Scope {
 
     void declareCallee(const Identifier* ident)
     {
-        m_declaredVariables.add(ident->ustring().impl());
+        m_declaredVariables.add(ident->string().impl());
     }
 
     bool declareVariable(const Identifier* ident)
     {
         bool isValidStrictMode = m_globalData->propertyNames->eval != *ident && m_globalData->propertyNames->arguments != *ident;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        m_declaredVariables.add(ident->ustring().impl());
+        m_declaredVariables.add(ident->string().impl());
         return isValidStrictMode;
     }
 
@@ -233,7 +233,7 @@ struct Scope {
     bool declareParameter(const Identifier* ident)
     {
         bool isArguments = m_globalData->propertyNames->arguments == *ident;
-        bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).isNewEntry && m_globalData->propertyNames->eval != *ident && !isArguments;
+        bool isValidStrictMode = m_declaredVariables.add(ident->string().impl()).isNewEntry && m_globalData->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         if (isArguments)
             m_shadowsArguments = true;
@@ -243,7 +243,7 @@ struct Scope {
     void useVariable(const Identifier* ident, bool isEval)
     {
         m_usesEval |= isEval;
-        m_usedVariables.add(ident->ustring().impl());
+        m_usedVariables.add(ident->string().impl());
     }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }

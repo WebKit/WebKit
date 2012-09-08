@@ -106,7 +106,7 @@ JSObject* createStackOverflowError(JSGlobalObject* globalObject)
 
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
-    String message(makeString("Can't find variable: ", ident.ustring()));
+    String message(makeString("Can't find variable: ", ident.string()));
     return createReferenceError(exec, message);
 }
     

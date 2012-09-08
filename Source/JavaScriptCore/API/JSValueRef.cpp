@@ -227,14 +227,14 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    return toRef(exec, jsString(exec, string->ustring()));
+    return toRef(exec, jsString(exec, string->string()));
 }
 
 JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    String str = string->ustring();
+    String str = string->string();
     if (str.is8Bit()) {
         LiteralParser<LChar> parser(exec, str.characters8(), str.length(), StrictJSON);
         return toRef(exec, parser.tryLiteralParse());

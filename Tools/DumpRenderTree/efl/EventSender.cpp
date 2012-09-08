@@ -409,7 +409,7 @@ static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, unsigned modif
     if (equals(character, "delete"))
         return new KeyEventInfo("KP_Delete", modifiers);
 
-    return new KeyEventInfo(character->ustring().utf8(), modifiers, character->ustring().utf8());
+    return new KeyEventInfo(character->string().utf8(), modifiers, character->string().utf8());
 }
 
 static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifiers)
@@ -490,7 +490,7 @@ static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifier
     if ((character->length() == 1) && (charCode >= 'A' && charCode <= 'Z'))
         modifiers |= EvasKeyModifierShift;
 
-    return new KeyEventInfo(character->ustring().utf8(), modifiers, character->ustring().utf8());
+    return new KeyEventInfo(character->string().utf8(), modifiers, character->string().utf8());
 }
 
 static KeyEventInfo* createKeyEventInfo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

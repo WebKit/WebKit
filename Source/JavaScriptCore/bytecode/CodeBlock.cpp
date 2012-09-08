@@ -90,7 +90,7 @@ static CString constantName(ExecState* exec, int k, JSValue value)
 
 static CString idName(int id0, const Identifier& ident)
 {
-    return makeString(ident.ustring(), "(@id", String::number(id0), ")").utf8();
+    return makeString(ident.string(), "(@id", String::number(id0), ")").utf8();
 }
 
 void CodeBlock::dumpBytecodeCommentAndNewLine(int location)
@@ -548,7 +548,7 @@ void CodeBlock::dump(ExecState* exec)
         dataLog("\nIdentifiers:\n");
         size_t i = 0;
         do {
-            dataLog("  id%u = %s\n", static_cast<unsigned>(i), m_identifiers[i].ustring().utf8().data());
+            dataLog("  id%u = %s\n", static_cast<unsigned>(i), m_identifiers[i].string().utf8().data());
             ++i;
         } while (i != m_identifiers.size());
     }

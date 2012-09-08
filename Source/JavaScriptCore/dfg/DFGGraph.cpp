@@ -241,7 +241,7 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         hasPrinted = true;
     }
     if (node.hasIdentifier()) {
-        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), m_codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
+        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), m_codeBlock->identifier(node.identifierNumber()).string().utf8().data());
         hasPrinted = true;
     }
     if (node.hasStructureSet()) {
@@ -260,7 +260,7 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
     }
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
-        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, m_codeBlock->identifier(storageAccessData.identifierNumber).ustring().utf8().data());
+        dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, m_codeBlock->identifier(storageAccessData.identifierNumber).string().utf8().data());
         
         dataLog(", %lu", static_cast<unsigned long>(storageAccessData.offset));
         hasPrinted = true;

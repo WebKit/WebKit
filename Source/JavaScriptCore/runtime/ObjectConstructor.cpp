@@ -84,7 +84,7 @@ ObjectConstructor::ObjectConstructor(JSGlobalObject* globalObject, Structure* st
 
 void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, "Object").ustring());
+    Base::finishCreation(exec->globalData(), Identifier(exec, "Object").string());
     // ECMA 15.2.3.1
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
     // no. of arguments for constructor
@@ -185,7 +185,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
     JSArray* names = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
-        names->push(exec, jsOwnedString(exec, properties[i].ustring()));
+        names->push(exec, jsOwnedString(exec, properties[i].string()));
     return JSValue::encode(names);
 }
 
@@ -199,7 +199,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     JSArray* keys = constructEmptyArray(exec);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
-        keys->push(exec, jsOwnedString(exec, properties[i].ustring()));
+        keys->push(exec, jsOwnedString(exec, properties[i].string()));
     return JSValue::encode(keys);
 }
 

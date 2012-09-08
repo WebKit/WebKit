@@ -1,3 +1,93 @@
+2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Rename the ustring() accessor to string()
+        https://bugs.webkit.org/show_bug.cgi?id=95919
+
+        Reviewed by Geoffrey Garen.
+
+        Rename ustring() to string() to make the accessor name more logical after
+        r127191.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeFunction):
+        (JSObjectCopyPropertyNames):
+        * API/JSProfilerPrivate.cpp:
+        (JSStartProfiling):
+        (JSEndProfiling):
+        * API/JSValueRef.cpp:
+        (JSValueMakeString):
+        (JSValueMakeFromJSONString):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::string):
+        * API/OpaqueJSString.h:
+        (OpaqueJSString):
+        * bytecode/CodeBlock.cpp:
+        (JSC::idName):
+        (JSC::CodeBlock::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::addStringConstant):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::processClauseList):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::addFunction):
+        (GlobalObject::addConstructableFunction):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createRegExp):
+        * parser/Parser.cpp:
+        (JSC::::parsePrimaryExpression):
+        * parser/Parser.h:
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::useVariable):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createRegExp):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::paramString):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/Identifier.h:
+        (JSC::Identifier::string):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::calculatedDisplayName):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSONObject.cpp:
+        (JSC::PropertyNameForFunctionCall::value):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::finishCreation):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolveBase):
+        * runtime/JSString.h:
+        (JSC::inlineJSValueNotStringtoString):
+        * runtime/LiteralParser.cpp:
+        (JSC::::parse):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+
 2012-09-07  Gavin Barraclough  <barraclough@apple.com>
 
         CALLFRAME_OFFSET and EXCEPTION_OFFSET are same in ctiTrampoline on ARM Thumb2

@@ -193,7 +193,7 @@ JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
 {
     if (!m_value) {
         if (m_identifier)
-            m_value = jsString(exec, m_identifier->ustring());
+            m_value = jsString(exec, m_identifier->string());
         else
             m_value = jsNumber(m_number);
     }
@@ -557,7 +557,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifier.startNewLine(builder);
 
         // Append the property name.
-        appendQuotedString(builder, propertyName.ustring());
+        appendQuotedString(builder, propertyName.string());
         builder.append(':');
         if (stringifier.willIndent())
             builder.append(' ');
@@ -769,7 +769,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSObject* object = objectStack.peek();
                 Identifier prop = propertyStack.last()[indexStack.last()];
                 PutPropertySlot slot;
-                JSValue filteredValue = callReviver(object, jsString(m_exec, prop.ustring()), outValue);
+                JSValue filteredValue = callReviver(object, jsString(m_exec, prop.string()), outValue);
                 if (filteredValue.isUndefined())
                     object->methodTable()->deleteProperty(object, m_exec, prop);
                 else

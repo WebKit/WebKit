@@ -50,7 +50,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
     // evaluate sets "this" to the global object if it is NULL
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
-    SourceCode source = makeSource(script->ustring(), sourceURL->ustring(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
+    SourceCode source = makeSource(script->string(), sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
 
     JSValue evaluationException;
     JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, &evaluationException);
@@ -73,7 +73,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    SourceCode source = makeSource(script->ustring(), sourceURL->ustring(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
+    SourceCode source = makeSource(script->string(), sourceURL->string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
     
     JSValue syntaxException;
     bool isValidSyntax = checkSyntax(exec->dynamicGlobalObject()->globalExec(), source, &syntaxException);

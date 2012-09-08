@@ -792,7 +792,7 @@ private:
 
     void write(const Identifier& ident)
     {
-        const String& str = ident.ustring();
+        const String& str = ident.string();
         StringConstantPool::AddResult addResult = m_constantPool.add(str.impl(), m_constantPool.size());
         if (!addResult.isNewEntry) {
             write(StringPoolTag);
@@ -1080,8 +1080,7 @@ private:
                 m_jsString = JSC::jsString(exec, m_string);
             return m_jsString;
         }
-        // FIXME: rename to string().
-        const String& ustring() { return m_string; }
+        const String& string() { return m_string; }
 
     private:
         String m_string;
@@ -1335,7 +1334,7 @@ private:
         if (!readStringData(type))
             return 0;
         if (m_isDOMGlobalObject)
-            file = File::create(String(path->ustring().impl()), KURL(KURL(), String(url->ustring().impl())), String(type->ustring().impl()));
+            file = File::create(path->string(), KURL(KURL(), url->string()), type->string());
         return true;
     }
 
@@ -1529,7 +1528,7 @@ private:
                 return JSValue();
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(Blob::create(KURL(KURL(), url->ustring().impl()), String(type->ustring().impl()), size).get());
+            return getJSValue(Blob::create(KURL(KURL(), url->string()), type->string(), size).get());
         }
         case StringTag: {
             CachedStringRef cachedString;
@@ -1559,9 +1558,9 @@ private:
             CachedStringRef flags;
             if (!readStringData(flags))
                 return JSValue();
-            RegExpFlags reFlags = regExpFlags(flags->ustring());
+            RegExpFlags reFlags = regExpFlags(flags->string());
             ASSERT(reFlags != InvalidFlags);
-            RegExp* regExp = RegExp::create(m_exec->globalData(), pattern->ustring(), reFlags);
+            RegExp* regExp = RegExp::create(m_exec->globalData(), pattern->string(), reFlags);
             return RegExpObject::create(m_exec, m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
         case ObjectReferenceTag: {
@@ -1721,11 +1720,11 @@ DeserializationResult CloneDeserializer::deserialize()
             }
 
             if (JSValue terminal = readTerminal()) {
-                putProperty(outputObjectStack.last(), Identifier(m_exec, cachedString->ustring()), terminal);
+                putProperty(outputObjectStack.last(), Identifier(m_exec, cachedString->string()), terminal);
                 goto objectStartVisitMember;
             }
             stateStack.append(ObjectEndVisitMember);
-            propertyNameStack.append(Identifier(m_exec, cachedString->ustring()));
+            propertyNameStack.append(Identifier(m_exec, cachedString->string()));
             goto stateUnknown;
         }
         case ObjectEndVisitMember: {

@@ -55,16 +55,16 @@ void FunctionPrototype::finishCreation(ExecState* exec, const String& name)
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString.ustring(), functionProtoFuncToString);
+    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString.string(), functionProtoFuncToString);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().toString, toStringFunction, DontEnum);
 
-    *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply.ustring(), functionProtoFuncApply);
+    *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply.string(), functionProtoFuncApply);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().apply, *applyFunction, DontEnum);
 
-    *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call.ustring(), functionProtoFuncCall);
+    *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call.string(), functionProtoFuncCall);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
 
-    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind.ustring(), functionProtoFuncBind);
+    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind.string(), functionProtoFuncBind);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().bind, bindFunction, DontEnum);
 }
 

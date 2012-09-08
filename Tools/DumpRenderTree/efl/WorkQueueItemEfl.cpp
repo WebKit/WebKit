@@ -38,9 +38,9 @@ bool LoadItem::invoke() const
     if (!m_target->length())
         targetFrame = browser->mainFrame();
     else
-        targetFrame = ewk_frame_child_find(browser->mainFrame(), m_target->ustring().utf8().data());
+        targetFrame = ewk_frame_child_find(browser->mainFrame(), m_target->string().utf8().data());
 
-    ewk_frame_uri_set(targetFrame, m_url->ustring().utf8().data());
+    ewk_frame_uri_set(targetFrame, m_url->string().utf8().data());
 
     return true;
 }
@@ -48,9 +48,9 @@ bool LoadItem::invoke() const
 bool LoadHTMLStringItem::invoke() const
 {
     if (!m_unreachableURL->length())
-        ewk_frame_contents_set(browser->mainFrame(), m_content->ustring().utf8().data(), 0, 0, 0, m_baseURL->ustring().utf8().data());
+        ewk_frame_contents_set(browser->mainFrame(), m_content->string().utf8().data(), 0, 0, 0, m_baseURL->string().utf8().data());
     else
-        ewk_frame_contents_alternate_set(browser->mainFrame(), m_content->ustring().utf8().data(), 0, 0, 0, m_baseURL->ustring().utf8().data(), m_unreachableURL->ustring().utf8().data());
+        ewk_frame_contents_alternate_set(browser->mainFrame(), m_content->string().utf8().data(), 0, 0, 0, m_baseURL->string().utf8().data(), m_unreachableURL->string().utf8().data());
 
     return true;
 }
@@ -63,7 +63,7 @@ bool ReloadItem::invoke() const
 
 bool ScriptItem::invoke() const
 {
-    return ewk_frame_script_execute(browser->mainFrame(), m_script->ustring().utf8().data());
+    return ewk_frame_script_execute(browser->mainFrame(), m_script->string().utf8().data());
 }
 
 bool BackForwardItem::invoke() const

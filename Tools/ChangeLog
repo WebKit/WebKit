@@ -1,3 +1,44 @@
+2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Rename the ustring() accessor to string()
+        https://bugs.webkit.org/show_bug.cgi?id=95919
+
+        Reviewed by Geoffrey Garen.
+
+        Update EFL's DRT.
+
+        Fix some string conversion that have been made useless
+        with recent changes.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::queueLoad):
+        (TestRunner::addOriginAccessWhitelistEntry):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::setUserStyleSheetLocation):
+        (TestRunner::setValueForUser):
+        (TestRunner::elementDoesAutoCompleteForElementWithId):
+        (TestRunner::execCommand):
+        (TestRunner::findString):
+        (TestRunner::isCommandEnabled):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::pauseAnimationAtTimeOnElementWithId):
+        (TestRunner::pauseTransitionAtTimeOnElementWithId):
+        (toInt):
+        (TestRunner::overridePreference):
+        (TestRunner::addUserScript):
+        (TestRunner::addUserStyleSheet):
+        (TestRunner::evaluateInWebInspector):
+        (TestRunner::evaluateScriptInIsolatedWorld):
+        (TestRunner::setTextDirection):
+        * DumpRenderTree/efl/WorkQueueItemEfl.cpp:
+        (LoadItem::invoke):
+        (LoadHTMLStringItem::invoke):
+        (ScriptItem::invoke):
+
 2012-09-06  Jeffrey Pfau  <jpfau@apple.com>
 
         Extend third-party storage blocking API to optionally allow blocking all storage

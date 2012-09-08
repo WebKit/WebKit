@@ -1509,7 +1509,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         next();
         TreeExpression re = context.createRegExp(location, *pattern, *flags, start);
         if (!re) {
-            const char* yarrErrorMsg = Yarr::checkSyntax(pattern->ustring());
+            const char* yarrErrorMsg = Yarr::checkSyntax(pattern->string());
             ASSERT(!m_errorMessage.isNull());
             failWithMessage(yarrErrorMsg);
         }

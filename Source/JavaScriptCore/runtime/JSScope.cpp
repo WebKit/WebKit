@@ -210,7 +210,7 @@ JSValue JSScope::resolveBase(CallFrame* callFrame, const Identifier& identifier,
     if (!isStrict)
         return callFrame->lexicalGlobalObject();
 
-    return throwError(callFrame, createErrorForInvalidGlobalAssignment(callFrame, identifier.ustring()));
+    return throwError(callFrame, createErrorForInvalidGlobalAssignment(callFrame, identifier.string()));
 }
 
 JSValue JSScope::resolveWithBase(CallFrame* callFrame, const Identifier& identifier, Register* base)

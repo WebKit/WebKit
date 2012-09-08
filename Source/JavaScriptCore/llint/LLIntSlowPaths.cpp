@@ -815,7 +815,7 @@ LLINT_SLOW_PATH_DECL(slow_path_ensure_property_exists)
     PropertySlot slot(object);
     Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
     if (!object->getPropertySlot(exec, ident, slot))
-        LLINT_THROW(createErrorForInvalidGlobalAssignment(exec, ident.ustring()));
+        LLINT_THROW(createErrorForInvalidGlobalAssignment(exec, ident.string()));
     LLINT_END();
 }
 

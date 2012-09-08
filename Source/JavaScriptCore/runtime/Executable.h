@@ -712,7 +712,7 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-            m_nameValue.set(globalData, this, jsString(&globalData, name().ustring()));
+            m_nameValue.set(globalData, this, jsString(&globalData, name().string()));
         }
 
     private:

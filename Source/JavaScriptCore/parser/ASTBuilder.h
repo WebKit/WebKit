@@ -220,7 +220,7 @@ public:
 
     ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, int start)
     {
-        if (Yarr::checkSyntax(pattern.ustring()))
+        if (Yarr::checkSyntax(pattern.string()))
             return 0;
         RegExpNode* node = new (m_globalData) RegExpNode(location, pattern, flags);
         int size = pattern.length() + 2; // + 2 for the two /'s

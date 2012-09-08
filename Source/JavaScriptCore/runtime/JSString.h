@@ -531,13 +531,13 @@ namespace JSC {
         if (value.isDouble())
             return globalData.numericStrings.add(value.asDouble());
         if (value.isTrue())
-            return globalData.propertyNames->trueKeyword.ustring();
+            return globalData.propertyNames->trueKeyword.string();
         if (value.isFalse())
-            return globalData.propertyNames->falseKeyword.ustring();
+            return globalData.propertyNames->falseKeyword.string();
         if (value.isNull())
-            return globalData.propertyNames->nullKeyword.ustring();
+            return globalData.propertyNames->nullKeyword.string();
         if (value.isUndefined())
-            return globalData.propertyNames->undefinedKeyword.ustring();
+            return globalData.propertyNames->undefinedKeyword.string();
         return value.toString(exec)->value(exec);
     }
 

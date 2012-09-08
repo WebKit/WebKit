@@ -150,7 +150,7 @@ const String JSFunction::calculatedDisplayName(ExecState* exec)
     if (!actualName.isEmpty() || isHostFunction())
         return actualName;
     
-    return jsExecutable()->inferredName().ustring();
+    return jsExecutable()->inferredName().string();
 }
 
 const SourceCode* JSFunction::sourceCode() const

@@ -65,7 +65,7 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) c
     PropertyNameArray propertyNames(exec);
     JSObject::getOwnPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); it++) {
-        String stringKey = it->ustring();
+        String stringKey = it->string();
         if (stringKey.isEmpty())
             continue;
         JSValue value = object->get(exec, *it);
@@ -90,7 +90,7 @@ bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
     PropertyNameArray propertyNames(exec);
     JSObject::getOwnPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); it++) {
-        String stringKey = it->ustring();
+        String stringKey = it->string();
         if (!stringKey.isEmpty())
             names.append(stringKey);
     }

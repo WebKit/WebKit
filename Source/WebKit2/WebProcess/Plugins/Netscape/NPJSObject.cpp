@@ -243,7 +243,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());
 
     for (size_t i = 0; i < propertyNames.size(); ++i)
-        nameIdentifiers[i] = static_cast<NPIdentifier>(IdentifierRep::get(propertyNames[i].ustring().utf8().data()));
+        nameIdentifiers[i] = static_cast<NPIdentifier>(IdentifierRep::get(propertyNames[i].string().utf8().data()));
 
     *identifiers = nameIdentifiers;
     *identifierCount = propertyNames.size();
