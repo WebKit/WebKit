@@ -33,8 +33,8 @@
 
 #if ENABLE(LLINT_C_LOOP)
 #include "CodeBlock.h"
-#include "LLintCLoop.h"
-#include "LLintSlowPaths.h"
+#include "LLIntCLoop.h"
+#include "LLIntSlowPaths.h"
 #include "VMInspector.h"
 #include <wtf/MathExtras.h>
 

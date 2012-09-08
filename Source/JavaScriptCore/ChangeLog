@@ -1,3 +1,12 @@
+2012-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        LLInt buildfix for case sensitive filesystems
+        https://bugs.webkit.org/show_bug.cgi?id=96099
+
+        Reviewed by Michael Saboff.
+
+        * llint/LowLevelInterpreter.cpp: Fix filenames.
+
 2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Rename the ustring() accessor to string()
