@@ -1,3 +1,18 @@
+2012-09-07  Gavin Barraclough  <barraclough@apple.com>
+
+        CALLFRAME_OFFSET and EXCEPTION_OFFSET are same in ctiTrampoline on ARM Thumb2
+        https://bugs.webkit.org/show_bug.cgi?id=82013
+
+        Reviewed by Geoff Garen.
+
+        Neither of these values need to be stored. At all.
+
+        * jit/JITStubs.cpp:
+        (JSC):
+        (JSC::ctiTrampoline):
+        (JSC::JITThunks::JITThunks):
+            - Nothing to see here. Move along.
+
 2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127938.

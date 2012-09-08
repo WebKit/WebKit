@@ -204,8 +204,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define PRESERVED_R10_OFFSET             0x58
 #define PRESERVED_R11_OFFSET             0x5C
 #define REGISTER_FILE_OFFSET             0x60
-#define CALLFRAME_OFFSET                 0x64
-#define EXCEPTION_OFFSET                 0x64
 #define FIRST_STACK_ARGUMENT             0x68
 
 #elif (COMPILER(GCC) || COMPILER(MSVC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
@@ -283,8 +281,6 @@ extern "C" {
 #define PRESERVED_RETURN_ADDRESS_OFFSET 76
 #define THUNK_RETURN_ADDRESS_OFFSET 80
 #define REGISTER_FILE_OFFSET        84
-#define CALLFRAME_OFFSET            88
-#define EXCEPTION_OFFSET            92
 #define GLOBAL_DATA_OFFSET         100
 #define STACK_LENGTH               104
 #elif CPU(SH4)
@@ -463,8 +459,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "li    $17,512      # set timeoutCheckRegister" "\n"
     "move  $25,$4       # move executableAddress to t9" "\n"
     "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store registerFile to current stack" "\n"
-    "sw    $6," STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "($29)     # store callFrame to curent stack" "\n"
-    "sw    $7," STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "($29)     # store exception to current stack" "\n"
     "lw    $9," STRINGIZE_VALUE_OF(STACK_LENGTH + 20) "($29)    # load globalData from previous stack" "\n"
     "jalr  $25" "\n"
     "sw    $9," STRINGIZE_VALUE_OF(GLOBAL_DATA_OFFSET) "($29)   # store globalData to current stack" "\n"
@@ -552,8 +546,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "str r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
     "str r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
     "str r1, [sp, #" STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "]" "\n"
-    "str r2, [sp, #" STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "]" "\n"
-    "str r3, [sp, #" STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "]" "\n"
     "mov r5, r2" "\n"
     "mov r6, #512" "\n"
     "blx r0" "\n"
@@ -681,8 +673,6 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unu
     str r10, [sp, # PRESERVED_R10_OFFSET ]
     str r11, [sp, # PRESERVED_R11_OFFSET ]
     str r1, [sp, # REGISTER_FILE_OFFSET ]
-    str r2, [sp, # CALLFRAME_OFFSET ]
-    str r3, [sp, # EXCEPTION_OFFSET ]
     mov r5, r2
     mov r6, #512
     blx r0
@@ -807,7 +797,6 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR11) == PRESERVED_R11_OFFSET);
 
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
     // The fifth argument is the first item already on the stack.
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused1) == FIRST_STACK_ARGUMENT);
 
@@ -827,8 +816,6 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == PRESERVED_RETURN_ADDRESS_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused1) == EXCEPTION_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == GLOBAL_DATA_OFFSET);
 
 #endif
