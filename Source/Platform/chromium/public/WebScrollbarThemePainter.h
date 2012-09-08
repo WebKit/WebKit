@@ -49,7 +49,6 @@ public:
         return *this;
     }
 
-    bool isNull() const { return m_theme; }
     WEBKIT_EXPORT void assign(const WebScrollbarThemePainter&);
 
     WEBKIT_EXPORT void paintScrollbarBackground(WebCanvas*, const WebRect&);
