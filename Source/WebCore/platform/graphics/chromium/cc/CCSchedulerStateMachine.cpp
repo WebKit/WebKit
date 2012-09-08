@@ -203,11 +203,7 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_COMMIT:
-        if ((m_needsCommit || !m_visible) && !m_needsForcedCommit)
-            m_commitState = COMMIT_STATE_WAITING_FOR_FIRST_DRAW;
-        else
-            m_commitState = COMMIT_STATE_IDLE;
-
+        m_commitState = COMMIT_STATE_WAITING_FOR_FIRST_DRAW;
         m_needsRedraw = true;
         if (m_drawIfPossibleFailed)
             m_lastFrameNumberWhereDrawWasCalled = -1;

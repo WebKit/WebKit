@@ -766,7 +766,7 @@ TEST(CCSchedulerStateMachineTest, TestFullCycle)
 
     // Commit.
     state.updateState(CCSchedulerStateMachine::ACTION_COMMIT);
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW, state.commitState());
     EXPECT_TRUE(state.needsRedraw());
 
     // Expect to do nothing until vsync.
@@ -979,6 +979,11 @@ TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgress)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
     state.updateState(state.nextAction());
 
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW, state.commitState());
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW_IF_POSSIBLE, state.nextAction());
+    state.updateState(state.nextAction());
+
     // Expect to be told to begin context recreation, independent of vsync state
     state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
@@ -1009,9 +1014,6 @@ TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgressAndAnother
     state.didLoseContext();
 
     // Ask for another draw and also set needs commit. Expect nothing happens.
-    // Setting another commit will put us into
-    // COMMIT_STATE_WAITING_FOR_FIRST_DRAW after we finish the frame on the main
-    // thread.
     state.setNeedsRedraw(true);
     state.setNeedsCommit(true);
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
@@ -1104,7 +1106,7 @@ TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenCommitInProgress)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
     state.updateState(state.nextAction());
 
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW, state.commitState());
 
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
 }

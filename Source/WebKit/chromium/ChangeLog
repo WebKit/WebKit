@@ -1,3 +1,22 @@
+2012-09-07  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Multiple commits without invalidation allowed per redraw.
+        https://bugs.webkit.org/show_bug.cgi?id=95661
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestContinuousCommit):
+        (WebKitTests::CCLayerTreeHostTestContinuousCommit::CCLayerTreeHostTestContinuousCommit):
+        (WebKitTests):
+        (WebKitTests::TEST_F):
+        (CCLayerTreeHostTestContinuousInvalidate):
+        (WebKitTests::CCLayerTreeHostTestContinuousInvalidate::CCLayerTreeHostTestContinuousInvalidate):
+        (CCLayerTreeHostTestContinuousAnimate):
+        (WebKitTests::CCLayerTreeHostTestContinuousAnimate::CCLayerTreeHostTestContinuousAnimate):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: WebCore accessibility roles should be cross-platform

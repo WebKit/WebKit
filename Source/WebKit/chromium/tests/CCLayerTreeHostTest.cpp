@@ -2849,4 +2849,171 @@ TEST_F(CCLayerTreeHostTestLostContextWhileUpdatingResources, runMultiThread)
     runTest(true);
 }
 
+class CCLayerTreeHostTestContinuousCommit : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestContinuousCommit()
+        : m_numCommitComplete(0)
+        , m_numDrawLayers(0)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
+        m_layerTreeHost->rootLayer()->setBounds(IntSize(10, 10));
+
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommit() OVERRIDE
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) OVERRIDE
+    {
+        if (m_numDrawLayers == 1)
+            m_numCommitComplete++;
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        m_numDrawLayers++;
+        if (m_numDrawLayers == 2)
+            endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+        // Check that we didn't commit twice between first and second draw.
+        EXPECT_EQ(1, m_numCommitComplete);
+    }
+
+private:
+    int m_numCommitComplete;
+    int m_numDrawLayers;
+};
+
+TEST_F(CCLayerTreeHostTestContinuousCommit, runMultiThread)
+{
+    runTest(true);
+}
+
+class CCLayerTreeHostTestContinuousInvalidate : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestContinuousInvalidate()
+        : m_numCommitComplete(0)
+        , m_numDrawLayers(0)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
+        m_layerTreeHost->rootLayer()->setBounds(IntSize(10, 10));
+
+        m_contentLayer = ContentLayerChromium::create(&m_mockDelegate);
+        m_contentLayer->setBounds(IntSize(10, 10));
+        m_contentLayer->setPosition(FloatPoint(0, 0));
+        m_contentLayer->setAnchorPoint(FloatPoint(0, 0));
+        m_contentLayer->setIsDrawable(true);
+        m_layerTreeHost->rootLayer()->addChild(m_contentLayer);
+
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommit() OVERRIDE
+    {
+        m_contentLayer->setNeedsDisplay();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) OVERRIDE
+    {
+        if (m_numDrawLayers == 1)
+            m_numCommitComplete++;
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        m_numDrawLayers++;
+        if (m_numDrawLayers == 2)
+            endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+        // Check that we didn't commit twice between first and second draw.
+        EXPECT_EQ(1, m_numCommitComplete);
+
+        // Clear layer references so CCLayerTreeHost dies.
+        m_contentLayer.clear();
+    }
+
+private:
+    MockContentLayerChromiumClient m_mockDelegate;
+    RefPtr<LayerChromium> m_contentLayer;
+    int m_numCommitComplete;
+    int m_numDrawLayers;
+};
+
+TEST_F(CCLayerTreeHostTestContinuousInvalidate, runMultiThread)
+{
+    runTest(true);
+}
+
+class CCLayerTreeHostTestContinuousAnimate : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestContinuousAnimate()
+        : m_numCommitComplete(0)
+        , m_numDrawLayers(0)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
+        m_layerTreeHost->rootLayer()->setBounds(IntSize(10, 10));
+
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void animate(double) OVERRIDE
+    {
+        m_layerTreeHost->setNeedsAnimate();
+    }
+
+    virtual void layout() OVERRIDE
+    {
+        m_layerTreeHost->rootLayer()->setNeedsDisplay();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) OVERRIDE
+    {
+        if (m_numDrawLayers == 1)
+            m_numCommitComplete++;
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        m_numDrawLayers++;
+        if (m_numDrawLayers == 2)
+            endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+        // Check that we didn't commit twice between first and second draw.
+        EXPECT_EQ(1, m_numCommitComplete);
+    }
+
+private:
+    int m_numCommitComplete;
+    int m_numDrawLayers;
+};
+
+TEST_F(CCLayerTreeHostTestContinuousAnimate, runMultiThread)
+{
+    runTest(true);
+}
+
 } // namespace
