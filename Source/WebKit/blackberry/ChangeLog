@@ -1,3 +1,18 @@
+2012-09-07  Ming Xie  <mxie@rim.com>
+
+
+        [BlackBerry] Remove browser from the build info page
+        https://bugs.webkit.org/show_bug.cgi?id=96162
+
+        Reviewed by George Staikos.
+        Internal reviewed by Jeff Rogers.
+
+        WebKit build should not have the build info for browser which is
+        built on top of webkit.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::buildPage):
+
 2012-09-07  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Initialize caret rectangle with invalid location
