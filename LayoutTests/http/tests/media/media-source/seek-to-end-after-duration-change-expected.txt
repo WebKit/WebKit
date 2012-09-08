@@ -1,0 +1,10 @@
+Test that the video tag seeks to the end of the file if duration is truncated before the current playback position.
+
+EVENT(webkitsourceopen)
+EVENT(loadeddata)
+EVENT(seeked)
+EVENT(durationchange)
+EVENT(seeking)
+EVENT(seeked)
+END OF TEST
+

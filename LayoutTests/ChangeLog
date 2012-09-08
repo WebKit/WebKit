@@ -1,3 +1,17 @@
+2012-09-07  Victoria Kirst  <vrk@chromium.org>
+
+        Seek to end after duration change in HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=95986
+
+        Reviewed by Eric Carlson.
+
+        This seeks the media element to the end of the media resource if the current playback
+        position has become greater than the duration after a duration change.
+        http://dev.w3.org/html5/spec/media-elements.html#durationChange
+
+        * http/tests/media/media-source/seek-to-end-after-duration-change-expected.txt: Added.
+        * http/tests/media/media-source/seek-to-end-after-duration-change.html: Added.
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: WebCore accessibility roles should be cross-platform

@@ -3258,8 +3258,16 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
     LOG(Media, "HTMLMediaElement::mediaPlayerDurationChanged");
 
     beginProcessingMediaPlayerCallback();
+
     scheduleEvent(eventNames().durationchangeEvent);
     mediaPlayerCharacteristicChanged(player);
+
+    float now = currentTime();
+    float dur = duration();
+    ExceptionCode ignoredException;
+    if (now > dur)
+        seek(dur, ignoredException);
+
     endProcessingMediaPlayerCallback();
 }
 

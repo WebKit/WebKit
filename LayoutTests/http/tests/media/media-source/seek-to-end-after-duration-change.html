@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM, true);
+
+            function onSourceOpen()
+            {
+                segmentHelper.addSourceBuffer();
+                waitForEventOnce('loadeddata', onLoadedData, false);
+                segmentHelper.appendInitSegment();
+                segmentHelper.appendAllMediaSegments();
+            }
+
+            function onLoadedData()
+            {
+                waitForEventOnce('seeked', onExplicitSeek, false);
+                video.currentTime = 3;
+            }
+
+            function onExplicitSeek()
+            {
+                var currentTime = video.currentTime;
+                if (currentTime != 3) {
+                    failTest("Seeked to " + currentTime + " instead of 3");
+                    return;
+                }
+
+                waitForEventOnce('durationchange', onDurationChange, false);
+                mediaSource.duration = 2;
+            }
+
+            function onDurationChange()
+            {
+                MediaSourceTest.expectDuration(video, mediaSource, 2);
+                waitForEventOnce('seeking', function() {
+                    waitForEventOnce('seeked', onSeekToEnd, false);
+                    mediaSource.endOfStream();
+                }, false);
+            }
+
+            function onSeekToEnd()
+            {
+                var currentTime = video.currentTime;
+                var duration = video.duration;
+                if (currentTime != duration) {
+                    failTest("Seeked to " + currentTime + " instead of " + duration);
+                    return;
+                }
+                endTest();
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                mediaSource = new WebKitMediaSource();
+                waitForEvent('webkitsourceopen', onSourceOpen, false, false, mediaSource);
+
+                segmentHelper.init(video, function(success) {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Test that the video tag seeks to the end of the file if duration is truncated before the current playback position.</p>
+    </body>
+</html>
