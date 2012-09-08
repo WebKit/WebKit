@@ -1,3 +1,15 @@
+2012-09-08  Kenichi Ishibashi  <bashi@chromium.org>
+
+        webkit.py gdb pretty printer can't print CString
+        https://bugs.webkit.org/show_bug.cgi?id=96068
+
+        Reviewed by Tony Chang.
+
+        Update WTFCStringPrinter to follow r126191.
+
+        * gdb/webkit.py:
+        (WTFCStringPrinter.to_string):
+
 2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Rename the ustring() accessor to string()

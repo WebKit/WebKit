@@ -115,10 +115,10 @@ class WTFAtomicStringPrinter(StringPrinter):
 class WTFCStringPrinter(StringPrinter):
     "Print a WTF::CString"
     def to_string(self):
-        # The CString holds a buffer, which is a refptr to a WTF::Vector of chars.
-        vector = self.val['m_buffer']['m_ptr']['m_vector']
-        # The vector has two more layers of buffer members.
-        return vector['m_buffer']['m_buffer']
+        # The CString holds a buffer, which is a refptr to a WTF::CStringBuffer.
+        data = self.val['m_buffer']['m_ptr']['m_data'].cast(gdb.lookup_type('char').pointer())
+        length = self.val['m_buffer']['m_ptr']['m_length']
+        return ''.join([chr((data + i).dereference()) for i in xrange(length)])
 
 
 class WTFStringImplPrinter(StringPrinter):
