@@ -165,9 +165,6 @@ BUGWKEFL : fast/events/touch/touch-stale-node-crash.html = TEXT
 BUGWKEFL : fast/events/touch/touch-target-limited.html = TEXT
 BUGWKEFL : fast/events/touch/touch-target.html = TEXT
 
-// WebKit2 can't use TAB key to navigate on webpage links
-BUGWK95329 : fast/events/tab-focus-link-in-canvas.html = TEXT
-
 // WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
 BUGWKEFL : fast/media/media-query-list-02.html = TEXT
 BUGWKEFL : fast/media/media-query-list-03.html = TEXT

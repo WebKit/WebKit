@@ -874,6 +874,16 @@ bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef
     return toImpl(preferencesRef)->artificialPluginInitializationDelayEnabled();
 }
 
+void WKPreferencesSetTabToLinksEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setTabToLinksEnabled(enabled);
+}
+
+bool WKPreferencesGetTabToLinksEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->tabToLinksEnabled();
+}
+
 void WKPreferencesSetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setScrollingPerformanceLoggingEnabled(enabled);

@@ -1,3 +1,16 @@
+2012-09-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] New fast/events/tab-focus-link-in-canvas fails from r126908
+        https://bugs.webkit.org/show_bug.cgi?id=95329
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip fast/events/tab-focus-link-in-canvas for WK2 now that WebKitTestRunner
+        supports overriding the "WebKitTabToLinksPreferenceKey" preference.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/wk2/Skipped:
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION (r127936): Multiple accessibility tests failing on Lion

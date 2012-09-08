@@ -131,7 +131,13 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
 
-    // FIXME: Need an explicit way to set "WebKitTabToLinksPreferenceKey" directly in WebPage.
+    if (preference == "WebKitTabToLinksPreferenceKey") {
+       WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::tabsToLinksKey(), enabled);
+       for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
+            WebPage* webPage = static_cast<WebFrameLoaderClient*>((*i)->mainFrame()->loader()->client())->webFrame()->page();
+            webPage->setTabToLinksEnabled(enabled);
+        }
+    }
 
     if (preference == "WebKit2AsynchronousPluginInitializationEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey(), enabled);

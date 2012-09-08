@@ -475,6 +475,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetAsynchronousPluginInitializationEnabled(preferences, false);
     WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(preferences, false);
     WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);
+    WKPreferencesSetTabToLinksEnabled(preferences, false);
 
 // [Qt][WK2]REGRESSION(r104881):It broke hundreds of tests
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=76247

@@ -581,6 +581,8 @@ public:
     void setAsynchronousPluginInitializationEnabledForAllPlugins(bool enabled) { m_asynchronousPluginInitializationEnabledForAllPlugins = enabled; }
     bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
     void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
+    void setTabToLinksEnabled(bool enabled) { m_tabToLinks = enabled; }
+    bool tabToLinksEnabled() const { return m_tabToLinks; }
 
     bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }
     void setScrollingPerformanceLoggingEnabled(bool);

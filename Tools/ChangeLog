@@ -1,3 +1,17 @@
+2012-09-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] New fast/events/tab-focus-link-in-canvas fails from r126908
+        https://bugs.webkit.org/show_bug.cgi?id=95329
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Explicitely disable TabToLinks setting in WebKitTestRunner.
+        Tests override the "WebKitTabToLinksPreferenceKey" preference
+        to enable it.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2012-09-08  Kenichi Ishibashi  <bashi@chromium.org>
 
         webkit.py gdb pretty printer can't print CString

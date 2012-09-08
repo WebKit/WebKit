@@ -1,3 +1,26 @@
+2012-09-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] New fast/events/tab-focus-link-in-canvas fails from r126908
+        https://bugs.webkit.org/show_bug.cgi?id=95329
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add implementation for overriding the WebKitTabToLinksPreferenceKey
+        preference as well as the corresponding WKPreferences API that
+        is needed by WebKitTestRunner.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTabToLinksEnabled):
+        (WKPreferencesGetTabToLinksEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setTabToLinksEnabled):
+        (WebKit::WebPage::tabToLinksEnabled):
+
 2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Rename the ustring() accessor to string()
