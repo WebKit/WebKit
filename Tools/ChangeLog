@@ -1,3 +1,15 @@
+2012-09-06  Jeffrey Pfau  <jpfau@apple.com>
+
+        Extend third-party storage blocking API to optionally allow blocking all storage
+        https://bugs.webkit.org/show_bug.cgi?id=95915
+
+        Reviewed by Brady Eidson.
+
+        Modified API test to use new revised API.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: WebCore accessibility roles should be cross-platform

@@ -8,7 +8,7 @@ if (window.testRunner) {
 	testRunner.waitUntilDone();
 	testRunner.setCanOpenWindows(true);
 	testRunner.setCloseRemainingWindowsWhenComplete(true);
-	internals.settings.setThirdPartyStorageBlockingEnabled(true);
+	internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 }
 
 document.location = "resources/document-for-cross-origin-worker-websql.html"

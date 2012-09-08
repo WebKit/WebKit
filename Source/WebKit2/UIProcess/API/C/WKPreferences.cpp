@@ -817,14 +817,14 @@ bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->requestAnimationFrameEnabled();
 }
 
-void WKPreferencesSetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy)
 {
-    toImpl(preferencesRef)->setThirdPartyStorageBlockingEnabled(flag);
+    toImpl(preferencesRef)->setStorageBlockingPolicy(toStorageBlockingPolicy(policy));
 }
 
-bool WKPreferencesGetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef)
+WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->thirdPartyStorageBlockingEnabled();
+    return toAPI(static_cast<WebCore::SecurityOrigin::StorageBlockingPolicy>(toImpl(preferencesRef)->storageBlockingPolicy()));
 }
 
 void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)

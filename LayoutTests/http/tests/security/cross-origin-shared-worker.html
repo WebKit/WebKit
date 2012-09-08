@@ -6,13 +6,13 @@ if (window.testRunner) {
 	testRunner.dumpAsText();
 	testRunner.dumpChildFramesAsText();
 	testRunner.waitUntilDone();
-	internals.settings.setThirdPartyStorageBlockingEnabled(true);
+	internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 }
 
 function decrement() {
 	--frames;
 	if (!frames && window.testRunner) {
-		internals.settings.setThirdPartyStorageBlockingEnabled(false);
+		internals.settings.setStorageBlockingPolicy('AllowAll');
 		testRunner.notifyDone();
 	}
 }

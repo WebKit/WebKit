@@ -1,3 +1,25 @@
+2012-09-06  Jeffrey Pfau  <jpfau@apple.com>
+
+        Extend third-party storage blocking API to optionally allow blocking all storage
+        https://bugs.webkit.org/show_bug.cgi?id=95915
+
+        Reviewed by Brady Eidson.
+
+        Update WK2 API to use revised Settings API.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toStorageBlockingPolicy):
+        (WebKit):
+        (WebKit::toAPI):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetStorageBlockingPolicy):
+        (WKPreferencesGetStorageBlockingPolicy):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-09-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Set theme for the inspector view

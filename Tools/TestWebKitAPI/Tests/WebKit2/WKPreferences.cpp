@@ -101,7 +101,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     EXPECT_FALSE(WKPreferencesGetCompositingBordersVisible(preference));
     EXPECT_FALSE(WKPreferencesGetCompositingRepaintCountersVisible(preference));
     EXPECT_FALSE(WKPreferencesGetNeedsSiteSpecificQuirks(preference));
-    EXPECT_FALSE(WKPreferencesGetThirdPartyStorageBlockingEnabled(preference));
+    EXPECT_EQ(kWKAllowAllStorage, WKPreferencesGetStorageBlockingPolicy(preference));
 
     WKRelease(preference);
 }

@@ -6,7 +6,7 @@ var frames = 2;
 function decrement(event) {
 	--frames;
 	if (!frames && window.testRunner) {
-		internals.settings.setThirdPartyStorageBlockingEnabled(false);
+		internals.settings.setStorageBlockingPolicy('AllowAll');
 		testRunner.notifyDone();
 	}
 }

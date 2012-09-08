@@ -540,6 +540,7 @@ WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-s
 WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html = TEXT
 WONTFIX SKIP : http/tests/security/cross-origin-shared-worker.html = TEXT
 WONTFIX SKIP : http/tests/security/cross-origin-shared-worker-allowed.html = TEXT
+WONTFIX SKIP : http/tests/security/same-origin-shared-worker-blocked.html = TEXT
 WONTFIX SKIP : storage/indexeddb/basics-shared-workers.html = PASS
 
 // test_shell does not support message ports

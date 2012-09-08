@@ -30,6 +30,7 @@
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
 #include "KURL.h"
+#include "SecurityOrigin.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -601,8 +602,8 @@ namespace WebCore {
         void setWindowFocusRestricted(bool restricted) { m_windowFocusRestricted = restricted; }
         bool windowFocusRestricted() const { return m_windowFocusRestricted; }
 
-        void setThirdPartyStorageBlockingEnabled(bool enabled) { m_thirdPartyStorageBlockingEnabled = enabled; }
-        bool thirdPartyStorageBlockingEnabled() const { return m_thirdPartyStorageBlockingEnabled; }
+        void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
+        SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy() const { return m_storageBlockingPolicy; }
 
         void setScrollingPerformanceLoggingEnabled(bool);
         bool scrollingPerformanceLoggingEnabled() { return m_scrollingPerformanceLoggingEnabled; }
@@ -652,6 +653,7 @@ namespace WebCore {
         unsigned m_sessionStorageQuota;
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
+        SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
 #if ENABLE(TEXT_AUTOSIZING)
         float m_textAutosizingFontScaleFactor;
         IntSize m_textAutosizingWindowSizeOverride;
@@ -794,8 +796,6 @@ namespace WebCore {
         bool m_windowFocusRestricted : 1;
 
         bool m_diagnosticLoggingEnabled : 1;
-
-        bool m_thirdPartyStorageBlockingEnabled : 1;
 
         bool m_scrollingPerformanceLoggingEnabled : 1;
 

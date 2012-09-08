@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+var frames = 1;
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	internals.settings.setStorageBlockingPolicy('BlockAll');
+}
+
+function decrement() {
+	--frames;
+	if (!frames && window.testRunner)
+		internals.settings.setStorageBlockingPolicy('AllowAll');
+}
+</script>
+</head>
+<body>
+<p>This iframe should return a security error:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-shared-worker.html" onload="decrement()"></iframe>
+</body>
+</html>

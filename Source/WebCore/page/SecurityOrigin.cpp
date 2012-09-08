@@ -122,7 +122,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     , m_isUnique(false)
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
-    , m_blockThirdPartyStorage(false)
+    , m_storageBlockingPolicy(AllowAllStorage)
     , m_enforceFilePathSeparation(false)
     , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
@@ -148,7 +148,7 @@ SecurityOrigin::SecurityOrigin()
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
     , m_canLoadLocalResources(false)
-    , m_blockThirdPartyStorage(false)
+    , m_storageBlockingPolicy(AllowAllStorage)
     , m_enforceFilePathSeparation(false)
     , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
@@ -165,7 +165,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_universalAccess(other->m_universalAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
-    , m_blockThirdPartyStorage(other->m_blockThirdPartyStorage)
+    , m_storageBlockingPolicy(other->m_storageBlockingPolicy)
     , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
     , m_needsDatabaseIdentifierQuirkForFiles(other->m_needsDatabaseIdentifierQuirkForFiles)
 {
@@ -389,7 +389,10 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
     if (!topOrigin)
         return true;
 
-    if ((m_blockThirdPartyStorage || topOrigin->m_blockThirdPartyStorage) && topOrigin->isThirdParty(this))
+    if (m_storageBlockingPolicy == BlockAllStorage || topOrigin->m_storageBlockingPolicy == BlockAllStorage)
+        return false;
+
+    if ((m_storageBlockingPolicy == BlockThirdPartyStorage || topOrigin->m_storageBlockingPolicy == BlockThirdPartyStorage) && topOrigin->isThirdParty(this))
         return false;
 
     return true;

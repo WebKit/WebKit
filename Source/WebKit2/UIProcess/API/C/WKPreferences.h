@@ -36,6 +36,13 @@
 extern "C" {
 #endif
 
+enum WKStorageBlockingPolicy {
+    kWKAllowAllStorage = 0,
+    kWKBlockThirdPartyStorage,
+    kWKBlockAllStorage
+};
+typedef enum WKStorageBlockingPolicy WKStorageBlockingPolicy;
+
 WK_EXPORT WKTypeID WKPreferencesGetTypeID();
 
 WK_EXPORT WKPreferencesRef WKPreferencesCreate();
@@ -206,8 +213,8 @@ WK_EXPORT void WKPreferencesSetShouldRespectImageOrientation(WKPreferencesRef pr
 WK_EXPORT bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesGetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy);
+WK_EXPORT WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

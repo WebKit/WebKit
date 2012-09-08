@@ -5,13 +5,13 @@ var frames = 2;
 if (window.testRunner) {
 	testRunner.dumpAsText();
 	testRunner.dumpChildFramesAsText();
-	internals.settings.setThirdPartyStorageBlockingEnabled(true);
+	internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 }
 
 function decrement() {
 	--frames;
 	if (!frames && window.testRunner)
-		internals.settings.setThirdPartyStorageBlockingEnabled(false);
+		internals.settings.setStorageBlockingPolicy('AllowAll');
 }
 </script>
 </head>

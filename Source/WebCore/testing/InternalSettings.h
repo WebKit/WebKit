@@ -141,7 +141,7 @@ public:
     void setEnableMockPagePopup(bool, ExceptionCode&);
     String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
     void setMemoryInfoEnabled(bool, ExceptionCode&);
-    void setThirdPartyStorageBlockingEnabled(bool, ExceptionCode&);
+    void setStorageBlockingPolicy(const String&, ExceptionCode&);
 private:
     explicit InternalSettings(Page*);
     virtual void hostDestroyed() OVERRIDE { m_page = 0; }

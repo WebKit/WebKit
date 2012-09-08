@@ -1,3 +1,29 @@
+2012-09-06  Jeffrey Pfau  <jpfau@apple.com>
+
+        Extend third-party storage blocking API to optionally allow blocking all storage
+        https://bugs.webkit.org/show_bug.cgi?id=95915
+
+        Reviewed by Brady Eidson.
+
+        Update tests to use revised API.
+
+        * http/tests/security/cross-origin-local-storage.html:
+        * http/tests/security/cross-origin-plugin-private-browsing-toggled.html:
+        * http/tests/security/cross-origin-plugin.html:
+        * http/tests/security/cross-origin-session-storage.html:
+        * http/tests/security/cross-origin-shared-worker.html:
+        * http/tests/security/cross-origin-websql.html:
+        * http/tests/security/cross-origin-worker-websql.html:
+        * http/tests/security/resources/document-for-cross-origin-worker-websql.html:
+        * http/tests/security/same-origin-document-domain-storage-allowed.html:
+        * http/tests/security/same-origin-shared-worker-blocked-expected.txt: Added.
+        * http/tests/security/same-origin-shared-worker-blocked.html: Added.
+        * http/tests/security/same-origin-storage-blocked-expected.txt: Added.
+        * http/tests/security/same-origin-storage-blocked.html: Added.
+        * http/tests/security/same-origin-websql-blocked-expected.txt: Added.
+        * http/tests/security/same-origin-websql-blocked.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-07  Adam Barth  <abarth@chromium.org>
 
         [V8] DOM wrapper creation involves a bunch of sketchy code related to finding the Frame

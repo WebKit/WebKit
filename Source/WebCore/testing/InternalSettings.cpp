@@ -628,10 +628,18 @@ void InternalSettings::setMemoryInfoEnabled(bool enabled, ExceptionCode& ec)
     settings()->setMemoryInfoEnabled(enabled);
 }
 
-void InternalSettings::setThirdPartyStorageBlockingEnabled(bool enabled, ExceptionCode& ec)
+void InternalSettings::setStorageBlockingPolicy(const String& mode, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    settings()->setThirdPartyStorageBlockingEnabled(enabled);
+
+    if (mode == "AllowAll")
+        settings()->setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);
+    else if (mode == "BlockThirdParty")
+        settings()->setStorageBlockingPolicy(SecurityOrigin::BlockThirdPartyStorage);
+    else if (mode == "BlockAll")
+        settings()->setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
+    else
+        ec = SYNTAX_ERR;
 }
 
 }

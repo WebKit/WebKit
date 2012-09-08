@@ -79,7 +79,7 @@ module window {
         boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
 #endif
         void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
-        void setThirdPartyStorageBlockingEnabled(in boolean enabled) raises(DOMException);
+        void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
     };
 }
 
