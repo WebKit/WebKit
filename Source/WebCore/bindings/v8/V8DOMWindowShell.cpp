@@ -193,8 +193,6 @@ bool V8DOMWindowShell::isContextInitialized()
 
 void V8DOMWindowShell::disposeContext()
 {
-    m_perContextData.clear();
-
     if (!m_context.isEmpty()) {
         m_frame->loader()->client()->willReleaseScriptContext(m_context.get(), 0);
         m_context.clear();
@@ -205,6 +203,8 @@ void V8DOMWindowShell::disposeContext()
         bool isMainFrame = m_frame->page() && (m_frame->page()->mainFrame() == m_frame); 
         V8GCForContextDispose::instance().notifyContextDisposed(isMainFrame);
     }
+
+    m_perContextData.clear();
 }
 
 void V8DOMWindowShell::destroyGlobal()

@@ -560,11 +560,6 @@ sub GetInternalFields
     my $name = $dataNode->name;
 
     my @customInternalFields = ();
-
-    if ($name eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@customInternalFields, "perContextDataIndex");
-    }
-
     # We can't ask whether a parent type has a given extendedAttribute,
     # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
@@ -1092,7 +1087,7 @@ END
     return value;
 END
         } else {
-            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
+            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.GetIsolate()").";\n");
         }
     }
 
@@ -3364,14 +3359,37 @@ END
     }
 
     AddToImplIncludes("Frame.h");
+    my $frame = "0";
+    if (IsNodeSubType($dataNode)) {
+        # DocumentType nodes are the only nodes that may have a NULL document.
+        if ($interfaceName eq "DocumentType") {
+            $frame = "impl->document() ? impl->document()->frame() : 0";
+        } else {
+            $frame = "impl->document()->frame()";
+        }
+    }
+    push(@implContent, <<END);
+    Frame* frame = $frame;
+END
 
     if (IsSubType($dataNode, "Document")) {
         push(@implContent, <<END);
-    if (Frame* frame = impl->frame()) {
-        if (frame->script()->windowShell()->context().IsEmpty() && frame->script()->windowShell()->initializeIfNeeded()) {
-            // initializeIfNeeded may have created a wrapper for the object, retry from the start.
-            return ${className}::wrap(impl.get(), creationContext, isolate);
-        }
+    if (frame && frame->script()->windowShell()->context().IsEmpty() && frame->script()->windowShell()->initializeIfNeeded()) {
+        // initializeIfNeeded may have created a wrapper for the object, retry from the start.
+        return ${className}::wrap(impl.get(), creationContext, isolate);
+    }
+END
+    }
+
+    # FIXME: We need a better way of recovering the correct prototype chain
+    # for every sort of object. For now, we special-case cross-origin visible
+    # objects (i.e., those with CheckSecurity).
+    if (IsVisibleAcrossOrigins($dataNode)) {
+        AddToImplIncludes("Frame.h");
+        push(@implContent, <<END);
+    if (impl->frame()) {
+        frame = impl->frame();
+        frame->script()->windowShell()->initializeIfNeeded();
     }
 END
     }
@@ -3386,12 +3404,18 @@ END
         ASSERT(!context.IsEmpty());
         context->Enter();
     }
+END
 
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
+    push(@implContent, <<END);
+    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+END
 
+    push(@implContent, <<END);
     if (!context.IsEmpty())
         context->Exit();
+END
 
+    push(@implContent, <<END);
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 END
@@ -3567,7 +3591,7 @@ sub GenerateFunctionCallString()
     }
 
     $return .= ".release()" if ($returnIsRef);
-    $result .= $indent . ReturnNativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()") . ";\n";
+    $result .= $indent . ReturnNativeToJSValue($function->signature, $return, "args.GetIsolate()") . ";\n";
 
     return $result;
 }
@@ -3998,8 +4022,6 @@ sub NativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
-    my $getCreationContext = shift;
-    my $getCreationContextArg = $getCreationContext ? ", $getCreationContext" : "";
     my $getIsolate = shift;
     my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
     my $type = GetTypeFromSignature($signature);
@@ -4056,18 +4078,18 @@ sub NativeToJSValue
             AddToImplIncludes("V8$sequenceType.h");
             AddToImplIncludes("$sequenceType.h");
         }
-        return "v8Array($value$getIsolateArg)";
+        return "v8Array($value, $getIsolate)";
     }
 
     AddIncludesForType($type);
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}$getCreationContextArg$getIsolateArg" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", true)" : ")");
+        return "toV8(${value}, v8::Handle<v8::Object>()" . ($signature->extendedAttributes->{"ReturnNewObject"} ? "$getIsolateArg, true)" : "$getIsolateArg)");
     }
 
     if ($type eq "EventTarget") {
-        return "V8DOMWrapper::convertEventTargetToV8Object($value$getCreationContextArg$getIsolateArg)";
+        return "V8DOMWrapper::convertEventTargetToV8Object($value, v8::Handle<v8::Object>()$getIsolateArg)";
     }
 
     if ($type eq "EventListener") {
@@ -4084,7 +4106,7 @@ sub NativeToJSValue
     AddToImplIncludes("wtf/RefPtr.h");
     AddToImplIncludes("wtf/GetPtr.h");
 
-    return "toV8($value$getCreationContextArg$getIsolateArg)";
+    return "toV8($value, v8::Handle<v8::Object>()$getIsolateArg)";
 }
 
 sub ReturnNativeToJSValue

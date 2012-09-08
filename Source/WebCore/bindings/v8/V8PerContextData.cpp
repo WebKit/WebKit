@@ -31,25 +31,12 @@
 #include "config.h"
 #include "V8PerContextData.h"
 
-#include "V8DOMWindow.h"
 #include "V8ObjectConstructor.h"
-#include "V8WorkerContext.h"
 
 namespace WebCore {
 
-static const int perContextDataIndex = V8DOMWindow::perContextDataIndex;
-COMPILE_ASSERT(V8DOMWindow::perContextDataIndex == V8WorkerContext::perContextDataIndex, DOMWindowAndWorkerContextMustHaveTheSamePerContextDataIndex);
-
-V8PerContextData* V8PerContextData::current()
-{
-    return static_cast<V8PerContextData*>(v8::Handle<v8::Object>::Cast(v8::Context::GetCurrent()->Global()->GetPrototype())->GetPointerFromInternalField(perContextDataIndex));
-}
-
 void V8PerContextData::dispose()
 {
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype())->SetPointerInInternalField(perContextDataIndex, 0);
-
     {
         WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
         for (; it != m_wrapperBoilerplates.end(); ++it) {
@@ -86,8 +73,6 @@ void V8PerContextData::dispose()
 
 bool V8PerContextData::init()
 {
-    v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype())->SetPointerInInternalField(perContextDataIndex, this);
-
     v8::Handle<v8::String> prototypeString = v8::String::NewSymbol("prototype");
     if (prototypeString.IsEmpty())
         return false;

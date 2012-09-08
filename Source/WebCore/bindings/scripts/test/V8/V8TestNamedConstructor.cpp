@@ -157,6 +157,7 @@ ActiveDOMObject* V8TestNamedConstructor::toActiveDOMObject(v8::Handle<v8::Object
 v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
+    Frame* frame = 0;
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -166,12 +167,9 @@ v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedCons
         ASSERT(!context.IsEmpty());
         context->Enter();
     }
-
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
-
+    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
     if (!context.IsEmpty())
         context->Exit();
-
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, wrapper, isolate);

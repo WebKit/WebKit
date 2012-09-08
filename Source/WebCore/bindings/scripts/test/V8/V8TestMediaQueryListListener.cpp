@@ -113,6 +113,7 @@ bool V8TestMediaQueryListListener::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestMediaQueryListListener::wrapSlow(PassRefPtr<TestMediaQueryListListener> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
+    Frame* frame = 0;
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -122,12 +123,9 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrapSlow(PassRefPtr<TestMed
         ASSERT(!context.IsEmpty());
         context->Enter();
     }
-
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
-
+    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
     if (!context.IsEmpty())
         context->Exit();
-
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);
