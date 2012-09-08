@@ -179,11 +179,6 @@ bool V8TestActiveDOMObject::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMObject> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
-    Frame* frame = 0;
-    if (impl->frame()) {
-        frame = impl->frame();
-        frame->script()->windowShell()->initializeIfNeeded();
-    }
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -193,9 +188,12 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMO
         ASSERT(!context.IsEmpty());
         context->Enter();
     }
-    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+
+    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
+
     if (!context.IsEmpty())
         context->Exit();
+
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);

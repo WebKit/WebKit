@@ -157,48 +157,20 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
-v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Frame* frame, WrapperTypeInfo* type, void* impl)
+v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(WrapperTypeInfo* type, void* impl)
 {
-#if ENABLE(WORKERS)
-    WorkerContext* workerContext = 0;
-#endif
-    if (!frame) {
-        v8::Handle<v8::Context> context = v8::Context::GetCurrent();
-        if (!context.IsEmpty()) {
-            v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-            if (isWrapperOfType(globalPrototype, &V8DOMWindow::info)) {
-                Frame* globalFrame = V8DOMWindow::toNative(globalPrototype)->frame();
-                if (globalFrame && globalFrame->script()->canExecuteScripts(NotAboutToExecuteScript))
-                    frame = globalFrame;
-            }
-#if ENABLE(WORKERS)
-            else if (isWrapperOfType(globalPrototype, &V8WorkerContext::info))
-                workerContext = V8WorkerContext::toNative(lookupDOMWrapper(V8WorkerContext::GetTemplate(), context->Global()));
-#endif
-        }
-    }
+    V8PerContextData* perContextData = V8PerContextData::current();
 
-    V8PerContextData* contextData = 0;
-    if (frame)
-        contextData = perContextDataForCurrentWorld(frame);
-#if ENABLE(WORKERS)
-    else if (workerContext)
-        contextData = perContextData(workerContext);
-#endif
+    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 
-    v8::Local<v8::Object> instance;
-    if (contextData)
-        instance = contextData->createWrapperFromCache(type);
-    else {
-        v8::Local<v8::Function> function = type->getTemplate()->GetFunction();
-        instance = V8ObjectConstructor::newInstance(function);
-    }
-    if (!instance.IsEmpty()) {
-        // Avoid setting the DOM wrapper for failed allocations.
-        setDOMWrapper(instance, type, impl);
-        if (type == &V8HTMLDocument::info)
-            instance = V8HTMLDocument::wrapInShadowObject(instance, static_cast<Node*>(impl));
-    }
+    // Avoid setting the DOM wrapper for failed allocations.
+    if (instance.IsEmpty())
+        return instance;
+
+    setDOMWrapper(instance, type, impl);
+    if (type == &V8HTMLDocument::info)
+        instance = V8HTMLDocument::wrapInShadowObject(instance, static_cast<Node*>(impl));
+
     return instance;
 }
 

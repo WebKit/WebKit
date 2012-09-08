@@ -1,3 +1,15 @@
+2012-09-07  Adam Barth  <abarth@chromium.org>
+
+        [V8] DOM wrapper creation involves a bunch of sketchy code related to finding the Frame
+        https://bugs.webkit.org/show_bug.cgi?id=96147
+
+        Reviewed by Eric Seidel.
+
+        The V8 results for this test now match the JSC results. We can remove
+        the chromium-specific baseline.
+
+        * platform/chromium/fast/workers/storage/test-authorizer-sync-expected.txt: Removed.
+
 2012-09-07  James Robinson  <jamesr@chromium.org>
 
         Skip some tests that appear to be making bots unstable.
