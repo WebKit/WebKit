@@ -1,3 +1,10 @@
+2012-09-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unreviewed prospective build fix.
+
+        * tests/WebCompositorInputHandlerImplTest.cpp: Looks like someone is missing an #include.
+        Remove the using directive from r127959.
+
 2012-09-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed prospective build fix.

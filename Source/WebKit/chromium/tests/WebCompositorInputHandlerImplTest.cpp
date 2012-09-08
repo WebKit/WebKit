@@ -38,8 +38,8 @@
 #include <public/WebInputHandlerClient.h>
 #include <public/WebPoint.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
-using namespace WTF;
 using namespace WebKit;
 
 namespace {
