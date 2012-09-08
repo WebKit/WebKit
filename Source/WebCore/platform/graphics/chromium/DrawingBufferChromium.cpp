@@ -166,11 +166,8 @@ class DrawingBufferPrivate : public WebKit::WebExternalTextureLayerClient {
 public:
     explicit DrawingBufferPrivate(DrawingBuffer* drawingBuffer)
         : m_drawingBuffer(drawingBuffer)
+        , m_layer(adoptPtr(WebKit::Platform::current()->compositorSupport()->createExternalTextureLayer(this)))
     {
-        if (WebKit::WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
-            m_layer = adoptPtr(compositorSupport->createExternalTextureLayer(this));
-        else
-            m_layer = adoptPtr(WebKit::WebExternalTextureLayer::create(this));
 
         GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
         m_layer->setOpaque(!attributes.alpha);

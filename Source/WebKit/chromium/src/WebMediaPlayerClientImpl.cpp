@@ -118,10 +118,7 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
     if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
-        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_videoLayer = adoptPtr(compositorSupport->createVideoLayer(this));
-        else
-            m_videoLayer = adoptPtr(WebVideoLayer::create(this));
+        m_videoLayer = adoptPtr(Platform::current()->compositorSupport()->createVideoLayer(this));
 
         m_videoLayer->layer()->setOpaque(m_opaque);
         GraphicsLayerChromium::registerContentsLayer(m_videoLayer->layer());

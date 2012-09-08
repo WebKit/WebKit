@@ -93,12 +93,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_scrollableArea(0)
 {
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
-
-    if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-        m_layer = adoptPtr(compositorSupport->createContentLayer(m_opaqueRectTrackingContentLayerDelegate.get()));
-    else
-        m_layer = adoptPtr(WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get()));
-
+    m_layer = adoptPtr(Platform::current()->compositorSupport()->createContentLayer(m_opaqueRectTrackingContentLayerDelegate.get()));
     m_layer->layer()->setDrawsContent(m_drawsContent && m_contentsVisible);
     m_layer->layer()->setScrollClient(this);
     updateDebugIndicators();
@@ -466,10 +461,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     bool childrenChanged = false;
     if (image) {
         if (m_contentsLayerPurpose != ContentsLayerForImage) {
-            if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-                m_imageLayer = adoptPtr(compositorSupport->createImageLayer());
-            else
-                m_imageLayer = adoptPtr(WebImageLayer::create());
+            m_imageLayer = adoptPtr(Platform::current()->compositorSupport()->createImageLayer());
             registerContentsLayer(m_imageLayer->layer());
 
             setupContentsLayer(m_imageLayer->layer());
@@ -722,11 +714,7 @@ void GraphicsLayerChromium::updateMasksToBounds()
 void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
-        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_transformLayer = adoptPtr(compositorSupport->createLayer());
-        else
-            m_transformLayer = adoptPtr(WebLayer::create());
-
+        m_transformLayer = adoptPtr(Platform::current()->compositorSupport()->createLayer());
         m_transformLayer->setPreserves3D(true);
         m_transformLayer->setAnimationDelegate(this);
         m_layer->layer()->transferAnimationsTo(m_transformLayer.get());

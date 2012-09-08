@@ -68,13 +68,9 @@ LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
 {
     ASSERT(m_node);
     ASSERT(owningWebViewImpl);
-    if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport()) {
-        m_contentLayer = adoptPtr(compositorSupport->createContentLayer(this));
-        m_clipLayer = adoptPtr(compositorSupport->createLayer());
-    } else {
-        m_contentLayer = adoptPtr(WebContentLayer::create(this));
-        m_clipLayer = adoptPtr(WebLayer::create());
-    }
+    WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport();
+    m_contentLayer = adoptPtr(compositorSupport->createContentLayer(this));
+    m_clipLayer = adoptPtr(compositorSupport->createLayer());
     m_clipLayer->setAnchorPoint(WebFloatPoint());
     m_clipLayer->addChild(m_contentLayer->layer());
     m_contentLayer->layer()->setDrawsContent(false);
@@ -208,21 +204,14 @@ void LinkHighlight::startHighlightAnimation()
 
     WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport();
 
-    OwnPtr<WebFloatAnimationCurve> curve;
-    if (compositorSupport)
-        curve = adoptPtr(compositorSupport->createFloatAnimationCurve());
-    else
-        curve = adoptPtr(WebFloatAnimationCurve::create());
+    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(compositorSupport->createFloatAnimationCurve());
 
     curve->add(WebFloatKeyframe(0, startOpacity));
     curve->add(WebFloatKeyframe(duration / 2, startOpacity));
     // For layout tests we don't fade out.
     curve->add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
 
-    if (compositorSupport)
-        m_animation = adoptPtr(compositorSupport->createAnimation(*curve, WebAnimation::TargetPropertyOpacity));
-    else
-        m_animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
+    m_animation = adoptPtr(compositorSupport->createAnimation(*curve, WebAnimation::TargetPropertyOpacity));
 
     m_contentLayer->layer()->setDrawsContent(true);
     m_contentLayer->layer()->addAnimation(m_animation.get());
