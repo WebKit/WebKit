@@ -1,3 +1,16 @@
+2012-09-08  Andreas Kling  <kling@webkit.org>
+
+        Give AtomicString SimpleClassVectorTraits.
+        <http://webkit.org/b/96186>
+
+        Reviewed by Karl Anders Carlsson.
+
+        AtomicString can be initialized/moved/compared with memset/memcpy/memcmp,
+        so add a VectorTraits<AtomicString> to make Vector<AtomicString> a little
+        more efficient.
+
+        * wtf/VectorTraits.h:
+
 2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127938.
