@@ -172,11 +172,19 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
     }
 #else
     bool wasNumber = false;
-    int identifier = app->arguments().at(1).toInt(&wasNumber, 10);
+    qulonglong id = app->arguments().at(1).toULongLong(&wasNumber, 10);
     if (!wasNumber) {
         qDebug() << "Error: connection identifier wrong.";
         return 1;
     }
+    CoreIPC::Connection::Identifier identifier;
+#if OS(WINDOWS)
+    // Convert to HANDLE
+    identifier = reinterpret_cast<CoreIPC::Connection::Identifier>(id);
+#else
+    // Convert to int
+    identifier = static_cast<CoreIPC::Connection::Identifier>(id);
+#endif
 #endif
 #if USE(ACCELERATED_COMPOSITING)
     CoordinatedGraphicsLayer::initFactory();

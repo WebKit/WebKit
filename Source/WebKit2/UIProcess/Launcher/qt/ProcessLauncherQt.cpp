@@ -38,6 +38,12 @@
 #include <QtCore/qglobal.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RunLoop.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
+
+#if defined(Q_OS_UNIX)
 #include <errno.h>
 #include <fcntl.h>
 #include <runtime/InitializeThreading.h>
@@ -45,14 +51,15 @@
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
-#include <wtf/text/WTFString.h>
+#endif
 
 #if defined(Q_OS_LINUX)
 #include <sys/prctl.h>
 #include <signal.h>
+#endif
+
+#if OS(WINDOWS)
+#include <windows.h>
 #endif
 
 #if OS(DARWIN)
@@ -127,6 +134,15 @@ void ProcessLauncher::launchProcess()
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 
     commandLine = commandLine.arg(serviceName);
+#elif OS(WINDOWS)
+    CoreIPC::Connection::Identifier connector, clientIdentifier;
+    if (!CoreIPC::Connection::createServerAndClientIdentifiers(connector, clientIdentifier)) {
+        // FIXME: What should we do here?
+        ASSERT_NOT_REACHED();
+    }
+    commandLine = commandLine.arg(qulonglong(clientIdentifier));
+    // Ensure that the child process inherits the client identifier.
+    ::SetHandleInformation(clientIdentifier, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
 #else
     int sockets[2];
     if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
@@ -153,7 +169,7 @@ void ProcessLauncher::launchProcess()
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
     webProcess->start(commandLine);
 
-#if !OS(DARWIN)
+#if OS(UNIX) && !OS(DARWIN)
     // Don't expose the web socket to possible future web processes
     while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1) {
         if (errno != EINTR) {
@@ -175,7 +191,9 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
+#if OS(UNIX)
     setpriority(PRIO_PROCESS, webProcess->pid(), 10);
+#endif
 
     RunLoop::main()->dispatch(bind(&WebKit::ProcessLauncher::didFinishLaunchingProcess, this, webProcess, connector));
 }
