@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(PerformanceEntry* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(PerformanceEntry* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();

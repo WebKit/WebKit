@@ -41,17 +41,17 @@ public:
     {
         return reinterpret_cast<TestCustomNamedGetter*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestCustomNamedGetter*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestCustomNamedGetter*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestCustomNamedGetter>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestCustomNamedGetter>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
@@ -59,13 +59,13 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl
     return V8TestCustomNamedGetter::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     return V8TestCustomNamedGetter::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

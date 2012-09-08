@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     Float64Array* imp = V8Float64Array::toNative(args.Holder());
     EXCEPTION_BLOCK(Float32Array*, array, V8Float32Array::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    return toV8(imp->foo(array), v8::Handle<v8::Context>(), args.GetIsolate());
+    return toV8(imp->foo(array), v8::Handle<v8::Object>(), args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> setCallback(const v8::Arguments& args)
@@ -67,7 +67,7 @@ static v8::Handle<v8::Value> setCallback(const v8::Arguments& args)
 
 } // namespace Float64ArrayV8Internal
 
-v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
@@ -147,12 +147,23 @@ bool V8Float64Array::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<ArrayBufferView*>(impl.get())) == static_cast<void*>(impl.get()));
     Frame* frame = 0;
+
+    v8::Handle<v8::Context> context;
+    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
+        ASSERT(!context.IsEmpty());
+        context->Enter();
+    }
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+    if (!context.IsEmpty())
+        context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);

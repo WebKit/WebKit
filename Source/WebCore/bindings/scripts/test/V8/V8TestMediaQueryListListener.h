@@ -41,16 +41,16 @@ public:
     {
         return reinterpret_cast<TestMediaQueryListListener*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestMediaQueryListListener*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestMediaQueryListListener*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestMediaQueryListListener>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestMediaQueryListListener>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListListener* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListListener* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
@@ -58,13 +58,13 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListList
     return V8TestMediaQueryListListener::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     return V8TestMediaQueryListListener::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

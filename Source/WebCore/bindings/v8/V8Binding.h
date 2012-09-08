@@ -128,7 +128,7 @@ namespace WebCore {
     struct V8ValueTraits {
         static inline v8::Handle<v8::Value> arrayV8Value(const T& value, v8::Isolate* isolate)
         {
-            return toV8(WTF::getPtr(value), v8::Handle<v8::Context>(), isolate);
+            return toV8(WTF::getPtr(value), v8::Handle<v8::Object>(), isolate);
         }
     };
 

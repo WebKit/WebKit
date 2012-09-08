@@ -102,7 +102,7 @@ static v8::Handle<v8::Value> portsAttrGetter(v8::Local<v8::String> name, const v
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.Holder()->CreationContext(), info.GetIsolate()));
+        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.Holder(), info.GetIsolate()));
     return portArray;
 }
 
@@ -293,11 +293,22 @@ bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> val
 }
 
 
-v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;
+
+    v8::Handle<v8::Context> context;
+    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
+        ASSERT(!context.IsEmpty());
+        context->Enter();
+    }
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+    if (!context.IsEmpty())
+        context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);

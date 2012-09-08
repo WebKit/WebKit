@@ -249,7 +249,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
         return toV8(static_cast<interfaceName*>(target), creationContext, isolate);
 
 // A JS object of type EventTarget is limited to a small number of possible classes.
-v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!target)
         return v8NullWithCheck(isolate);

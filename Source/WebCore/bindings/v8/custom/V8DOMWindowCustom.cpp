@@ -465,7 +465,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     if (!openedWindow)
         return v8::Undefined();
 
-    return toV8(openedWindow.release(), args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8(openedWindow.release(), args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
@@ -482,7 +482,7 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
 
     Frame* child = frame->tree()->scopedChild(index);
     if (child)
-        return toV8(child->document()->domWindow(), info.Holder()->CreationContext(), info.GetIsolate());
+        return toV8(child->document()->domWindow(), info.Holder(), info.GetIsolate());
 
     return v8Undefined();
 }
@@ -504,7 +504,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
     AtomicString propName = toWebCoreAtomicString(name);
     Frame* child = frame->tree()->scopedChild(propName);
     if (child)
-        return toV8(child->document()->domWindow(), info.Holder()->CreationContext(), info.GetIsolate());
+        return toV8(child->document()->domWindow(), info.Holder(), info.GetIsolate());
 
     // Search IDL functions defined in the prototype
     if (!info.Holder()->GetRealNamedProperty(name).IsEmpty())
@@ -518,8 +518,8 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
             RefPtr<HTMLCollection> items = doc->windowNamedItems(propName);
             if (!items->isEmpty()) {
                 if (items->hasExactlyOneItem())
-                    return toV8(items->item(0), info.Holder()->CreationContext(), info.GetIsolate());
-                return toV8(items.release(), info.Holder()->CreationContext(), info.GetIsolate());
+                    return toV8(items->item(0), info.Holder(), info.GetIsolate());
+                return toV8(items.release(), info.Holder(), info.GetIsolate());
             }
         }
     }
@@ -599,7 +599,7 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
     return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), target, DoNotReportSecurityError);
 }
 
-v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     // Notice that we explicitly ignore creationContext because the DOMWindow is its own creationContext.
 

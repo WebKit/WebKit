@@ -120,7 +120,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertyGetter(uint32_t in
     if (!result)
         return v8Undefined();
 
-    return toV8(result.release(), info.Holder()->CreationContext(), info.GetIsolate());
+    return toV8(result.release(), info.Holder(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

@@ -50,7 +50,7 @@ v8::Handle<v8::Value> V8IDBCursorWithValue::valueAccessorGetter(v8::Local<v8::St
     }
 
     RefPtr<IDBAny> result = imp->value();
-    v8::Handle<v8::Value> wrapper = toV8(result.get(), info.Holder()->CreationContext(), info.GetIsolate());
+    v8::Handle<v8::Value> wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
     info.Holder()->SetHiddenValue(propertyName, wrapper);
     return wrapper;
 }

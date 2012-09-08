@@ -120,7 +120,7 @@ static v8::Handle<v8::Value> supplementalNodeAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestInterface.supplementalNode._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return toV8(TestSupplemental::supplementalNode(imp), v8::Handle<v8::Context>(), info.GetIsolate());
+    return toV8(TestSupplemental::supplementalNode(imp), v8::Handle<v8::Object>(), info.GetIsolate());
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -168,7 +168,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(scriptContext, imp, strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
-    return toV8(result.release(), v8::Handle<v8::Context>(), args.GetIsolate());
+    return toV8(result.release(), v8::Handle<v8::Object>(), args.GetIsolate());
     }
     fail:
     return setDOMException(ec, args.GetIsolate());
@@ -344,11 +344,22 @@ ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> objec
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;
+
+    v8::Handle<v8::Context> context;
+    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
+        ASSERT(!context.IsEmpty());
+        context->Enter();
+    }
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+    if (!context.IsEmpty())
+        context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, wrapper, isolate);

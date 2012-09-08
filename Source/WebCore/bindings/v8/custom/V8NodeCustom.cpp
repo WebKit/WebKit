@@ -125,7 +125,7 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     return v8::Null(args.GetIsolate());
 }
 
-v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);

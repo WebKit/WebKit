@@ -42,17 +42,17 @@ public:
     {
         return reinterpret_cast<TestEventConstructor*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestEventConstructor*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestEventConstructor*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventConstructor>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventConstructor>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
@@ -60,13 +60,13 @@ v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl, 
     return V8TestEventConstructor::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     return V8TestEventConstructor::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);
 }

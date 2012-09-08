@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
     return constructWebGLArrayWithArrayBufferArgument<DataView, char>(args, &info, v8::kExternalByteArray, false);
 }
 
-v8::Handle<v8::Value> toV8(DataView* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(DataView* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);

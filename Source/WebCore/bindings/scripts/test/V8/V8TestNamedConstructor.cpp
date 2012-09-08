@@ -61,7 +61,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
 
     // Make sure the document is added to the DOM Node map. Otherwise, the TestNamedConstructor instance
     // may end up being the only node in the map and get garbage-collected prematurely.
-    toV8(document, args.Holder()->CreationContext(), args.GetIsolate());
+    toV8(document, args.Holder(), args.GetIsolate());
 
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -154,11 +154,22 @@ ActiveDOMObject* V8TestNamedConstructor::toActiveDOMObject(v8::Handle<v8::Object
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;
+
+    v8::Handle<v8::Context> context;
+    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
+        ASSERT(!context.IsEmpty());
+        context->Enter();
+    }
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+    if (!context.IsEmpty())
+        context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, wrapper, isolate);

@@ -69,7 +69,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     // FIXME: The correct way to do this would be to make HTMLImageElement derive from
     // ActiveDOMObject and use its interface to keep its wrapper alive. Then we would
     // remove this code and the special case in isObservableThroughDOM.
-    toV8(document, args.Holder()->CreationContext(), args.GetIsolate());
+    toV8(document, args.Holder(), args.GetIsolate());
 
     int width;
     int height;

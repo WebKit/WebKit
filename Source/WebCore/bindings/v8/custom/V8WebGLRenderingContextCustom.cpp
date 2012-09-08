@@ -114,7 +114,7 @@ static int* jsArrayToIntArray(v8::Handle<v8::Array> array, uint32_t len)
     return data;
 }
 
-static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
@@ -172,39 +172,39 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     const char* referenceName = 0;
     switch (extension->getName()) {
     case WebGLExtension::WebKitWebGLLoseContextName:
-        extensionObject = toV8(static_cast<WebGLLoseContext*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<WebGLLoseContext*>(extension), contextObject, isolate);
         referenceName = "webKitWebGLLoseContextName";
         break;
     case WebGLExtension::EXTTextureFilterAnisotropicName:
-        extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension), contextObject, isolate);
         referenceName = "extTextureFilterAnisotropicName";
         break;
     case WebGLExtension::OESStandardDerivativesName:
-        extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension), contextObject, isolate);
         referenceName = "oesStandardDerivativesName";
         break;
     case WebGLExtension::OESTextureFloatName:
-        extensionObject = toV8(static_cast<OESTextureFloat*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<OESTextureFloat*>(extension), contextObject, isolate);
         referenceName = "oesTextureFloatName";
         break;
     case WebGLExtension::OESVertexArrayObjectName:
-        extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension), contextObject, isolate);
         referenceName = "oesVertexArrayObjectName";
         break;
     case WebGLExtension::WebGLDebugRendererInfoName:
-        extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension), contextObject, isolate);
         referenceName = "webGLDebugRendererInfoName";
         break;
     case WebGLExtension::WebGLDebugShadersName:
-        extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension), contextObject, isolate);
         referenceName = "webGLDebugShadersName";
         break;
     case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
-        extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), contextObject, isolate);
         referenceName = "webKitWebGLCompressedTextureS3TCName";
         break;
     case WebGLExtension::WebKitWebGLDepthTextureName:
-        extensionObject = toV8(static_cast<WebGLDepthTexture*>(extension), contextObject->CreationContext(), isolate);
+        extensionObject = toV8(static_cast<WebGLDepthTexture*>(extension), contextObject, isolate);
         referenceName = "webKitWebGLDepthTextureName";
         break;
     }
@@ -247,7 +247,7 @@ static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, Objec
     }
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 static WebGLUniformLocation* toWebGLUniformLocation(v8::Handle<v8::Value> value, bool& ok)
@@ -287,7 +287,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
         return v8::Null(args.GetIsolate());
     v8::Local<v8::Array> array = v8::Array::New(shaders.size());
     for (size_t ii = 0; ii < shaders.size(); ++ii)
-        array->Set(v8Integer(ii, args.GetIsolate()), toV8(shaders[ii].get(), args.Holder()->CreationContext(), args.GetIsolate()));
+        array->Set(v8Integer(ii, args.GetIsolate()), toV8(shaders[ii].get(), args.Holder(), args.GetIsolate()));
     return array;
 }
 
@@ -323,7 +323,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
     WebGLGetInfo info = context->getFramebufferAttachmentParameter(target, attachment, pname, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Arguments& args)
@@ -339,7 +339,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
     WebGLGetInfo info = context->getParameter(pname, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const v8::Arguments& args)
@@ -358,7 +358,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     WebGLGetInfo info = context->getProgramParameter(program, pname, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getRenderbufferParameterCallback(const v8::Arguments& args)
@@ -383,7 +383,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     WebGLGetInfo info = context->getShaderParameter(shader, pname, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(const v8::Arguments& args)
@@ -427,7 +427,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     WebGLGetInfo info = context->getUniform(program, location, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
-    return toV8Object(info, args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8Object(info, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getVertexAttribCallback(const v8::Arguments& args)

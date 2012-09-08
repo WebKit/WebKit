@@ -59,7 +59,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const
         return setDOMException(ec, args.GetIsolate());
 
     notification->ref();
-    return toV8(notification.get(), args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8(notification.get(), args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8::Arguments& args)
@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8:
         return setDOMException(ec, args.GetIsolate());
 
     notification->ref();
-    return toV8(notification.get(), args.Holder()->CreationContext(), args.GetIsolate());
+    return toV8(notification.get(), args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::Arguments& args)

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(IDBKey* key, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(IDBKey* key, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!key)
         return v8NullWithCheck(isolate);

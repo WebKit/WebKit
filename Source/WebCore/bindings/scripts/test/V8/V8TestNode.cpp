@@ -109,26 +109,21 @@ bool V8TestNode::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<Node*>(impl.get())) == static_cast<void*>(impl.get()));
     Frame* frame = impl->document()->frame();
 
-    // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;
-    if (frame) {
-        v8::Handle<v8::Context> underlyingHandle = frame->script()->unsafeHandleToCurrentWorldContext();
-        if (v8::Context::GetCurrent() != underlyingHandle) {
-            // For performance, we enter the context only if the currently running context
-            // is different from the context that we are about to enter.
-            context = v8::Local<v8::Context>::New(underlyingHandle);
-            if (!context.IsEmpty())
-                context->Enter();
-        }
+    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
+        ASSERT(!context.IsEmpty());
+        context->Enter();
     }
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
-    // Exit the node's context if it was entered.
     if (!context.IsEmpty())
         context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))

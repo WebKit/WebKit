@@ -92,7 +92,7 @@ v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String> name
 {
     INC_STATS("DOM.Console.memoryAccessorGetter");
     Console* imp = V8Console::toNative(info.Holder());
-    return toV8(imp->memory(), info.Holder()->CreationContext(), info.GetIsolate());
+    return toV8(imp->memory(), info.Holder(), info.GetIsolate());
 }
 
 } // namespace WebCore

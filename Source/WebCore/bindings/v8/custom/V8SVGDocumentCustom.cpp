@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(SVGDocument* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(SVGDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
