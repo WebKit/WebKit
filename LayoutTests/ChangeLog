@@ -1,3 +1,33 @@
+2012-09-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [Chromium] Layout Tests tables/mozilla/bugs/bug27038*.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=93006
+
+        Unreviewed Chromium rebaselining.
+
+        The tests were not rebaselined after bug 81826 (the TestExpectations were wrongly pointing
+        to bug 37244). The new rebaselines are expected as we add the extra logical height to the
+        last section, which was our original behavior before bug 37244.
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug27038-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug27038-1-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug27038-1-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug27038-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug27038-1-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug27038-2-expected.txt: Removed.
+        * platform/chromium-win/tables/mozilla/bugs/bug27038-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug27038-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug27038-2-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/gtk/tables/mozilla/bugs/bug27038-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug27038-2-expected.txt: Removed.
+        * tables/mozilla/bugs/bug27038-1-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug27038-1-expected.txt.
+        * tables/mozilla/bugs/bug27038-2-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug27038-2-expected.txt.
+
 2012-09-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests after r127939

@@ -2860,8 +2860,6 @@ BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-
 
 BUGWK81931 SNOWLEOPARD WIN DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
-BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
-BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
 // The majority of these are only failing on the debug bots
 BUGWK82122 MAC DEBUG : css3/selectors3/xml/css3-modsel-100.xml = TEXT PASS
