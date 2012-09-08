@@ -27,25 +27,15 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
-#include "CCProxy.h"
 #include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureCurveTarget.h"
 #include "TraceEvent.h"
-#include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
+#include <public/WebInputHandlerClient.h>
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
-
-namespace WebCore {
-
-PassOwnPtr<CCInputHandler> CCInputHandler::create(CCInputHandlerClient* inputHandlerClient)
-{
-    return WebKit::WebCompositorInputHandlerImpl::create(inputHandlerClient);
-}
-
-}
 
 namespace WebKit {
 
@@ -58,15 +48,8 @@ WebCompositorInputHandler* WebCompositorInputHandler::fromIdentifier(int identif
     return WebCompositorInputHandlerImpl::fromIdentifier(identifier);
 }
 
-PassOwnPtr<WebCompositorInputHandlerImpl> WebCompositorInputHandlerImpl::create(WebCore::CCInputHandlerClient* inputHandlerClient)
-{
-    return adoptPtr(new WebCompositorInputHandlerImpl(inputHandlerClient));
-}
-
 WebCompositorInputHandler* WebCompositorInputHandlerImpl::fromIdentifier(int identifier)
 {
-    ASSERT(WebCompositorImpl::initialized());
-    ASSERT(CCProxy::isImplThread());
 
     if (!s_compositors)
         return 0;
@@ -78,26 +61,20 @@ WebCompositorInputHandler* WebCompositorInputHandlerImpl::fromIdentifier(int ide
     return 0;
 }
 
-WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl(CCInputHandlerClient* inputHandlerClient)
+WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl()
     : m_client(0)
     , m_identifier(s_nextAvailableIdentifier++)
-    , m_inputHandlerClient(inputHandlerClient)
+    , m_inputHandlerClient(0)
 #ifndef NDEBUG
     , m_expectScrollUpdateEnd(false)
     , m_expectPinchUpdateEnd(false)
 #endif
     , m_gestureScrollStarted(false)
 {
-    ASSERT(CCProxy::isImplThread());
-
-    if (!s_compositors)
-        s_compositors = new HashSet<WebCompositorInputHandlerImpl*>;
-    s_compositors->add(this);
 }
 
 WebCompositorInputHandlerImpl::~WebCompositorInputHandlerImpl()
 {
-    ASSERT(CCProxy::isImplThread());
     if (m_client)
         m_client->willShutdown();
 
@@ -111,7 +88,6 @@ WebCompositorInputHandlerImpl::~WebCompositorInputHandlerImpl()
 
 void WebCompositorInputHandlerImpl::setClient(WebCompositorInputHandlerClient* client)
 {
-    ASSERT(CCProxy::isImplThread());
     // It's valid to set a new client if we've never had one or to clear the client, but it's not valid to change from having one client to a different one.
     ASSERT(!m_client || !client);
     m_client = client;
@@ -119,7 +95,6 @@ void WebCompositorInputHandlerImpl::setClient(WebCompositorInputHandlerClient* c
 
 void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
 {
-    ASSERT(CCProxy::isImplThread());
     ASSERT(m_client);
 
     WebCompositorInputHandlerImpl::EventDisposition disposition = handleInputEventInternal(event);
@@ -140,19 +115,19 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
 {
     if (event.type == WebInputEvent::MouseWheel) {
         const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
-        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y), CCInputHandlerClient::Wheel);
+        WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(wheelEvent.x, wheelEvent.y), WebInputHandlerClient::ScrollInputTypeWheel);
         switch (scrollStatus) {
-        case CCInputHandlerClient::ScrollStarted: {
+        case WebInputHandlerClient::ScrollStatusStarted: {
             TRACE_EVENT_INSTANT2("cc", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
-            m_inputHandlerClient->scrollBy(IntPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+            m_inputHandlerClient->scrollBy(WebPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             return DidHandle;
         }
-        case CCInputHandlerClient::ScrollIgnored:
+        case WebInputHandlerClient::ScrollStatusIgnored:
             // FIXME: This should be DropEvent, but in cases where we fail to properly sync scrollability it's safer to send the
             // event to the main thread. Change back to DropEvent once we have synchronization bugs sorted out.
             return DidNotHandle; 
-        case CCInputHandlerClient::ScrollOnMainThread:
+        case WebInputHandlerClient::ScrollStatusOnMainThread:
             return DidNotHandle;
         }
     } else if (event.type == WebInputEvent::GestureScrollBegin) {
@@ -162,14 +137,14 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         m_expectScrollUpdateEnd = true;
 #endif
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
+        WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(gestureEvent.x, gestureEvent.y), WebInputHandlerClient::ScrollInputTypeGesture);
         switch (scrollStatus) {
-        case CCInputHandlerClient::ScrollStarted:
+        case WebInputHandlerClient::ScrollStatusStarted:
             m_gestureScrollStarted = true;
             return DidHandle;
-        case CCInputHandlerClient::ScrollOnMainThread:
+        case WebInputHandlerClient::ScrollStatusOnMainThread:
             return DidNotHandle;
-        case CCInputHandlerClient::ScrollIgnored:
+        case WebInputHandlerClient::ScrollStatusIgnored:
             return DropEvent;
         }
     } else if (event.type == WebInputEvent::GestureScrollUpdate) {
@@ -179,7 +154,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidNotHandle;
 
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->scrollBy(IntPoint(gestureEvent.x, gestureEvent.y),
+        m_inputHandlerClient->scrollBy(WebPoint(gestureEvent.x, gestureEvent.y),
             IntSize(-gestureEvent.data.scrollUpdate.deltaX, -gestureEvent.data.scrollUpdate.deltaY));
         return DidHandle;
     } else if (event.type == WebInputEvent::GestureScrollEnd) {
@@ -210,7 +185,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     } else if (event.type == WebInputEvent::GesturePinchUpdate) {
         ASSERT(m_expectPinchUpdateEnd);
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->pinchGestureUpdate(gestureEvent.data.pinchUpdate.scale, IntPoint(gestureEvent.x, gestureEvent.y));
+        m_inputHandlerClient->pinchGestureUpdate(gestureEvent.data.pinchUpdate.scale, WebPoint(gestureEvent.x, gestureEvent.y));
         return DidHandle;
     } else if (event.type == WebInputEvent::GestureFlingStart) {
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
@@ -227,9 +202,9 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
 
 WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::handleGestureFling(const WebGestureEvent& gestureEvent)
 {
-    CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
+    WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(gestureEvent.x, gestureEvent.y), WebInputHandlerClient::ScrollInputTypeGesture);
     switch (scrollStatus) {
-    case CCInputHandlerClient::ScrollStarted: {
+    case WebInputHandlerClient::ScrollStatusStarted: {
         m_wheelFlingCurve = PlatformGestureCurveFactory::get()->createCurve(gestureEvent.data.flingStart.sourceDevice, FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
         TRACE_EVENT_ASYNC_BEGIN1("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this, "curve", m_wheelFlingCurve->debugName());
         m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
@@ -240,11 +215,11 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }
-    case CCInputHandlerClient::ScrollOnMainThread: {
+    case WebInputHandlerClient::ScrollStatusOnMainThread: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::scrollOnMainThread");
         return DidNotHandle;
     }
-    case CCInputHandlerClient::ScrollIgnored: {
+    case WebInputHandlerClient::ScrollStatusIgnored: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::ignored");
         // We still pass the curve to the main thread if there's nothing scrollable, in case something
         // registers a handler before the curve is over.
@@ -254,10 +229,16 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     return DidNotHandle;
 }
 
-int WebCompositorInputHandlerImpl::identifier() const
+void WebCompositorInputHandlerImpl::bindToClient(WebInputHandlerClient* client)
 {
-    ASSERT(CCProxy::isImplThread());
-    return m_identifier;
+    ASSERT(!m_inputHandlerClient);
+
+    TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::bindToClient");
+    if (!s_compositors)
+        s_compositors = new HashSet<WebCompositorInputHandlerImpl*>;
+    s_compositors->add(this);
+
+    m_inputHandlerClient = client;
 }
 
 void WebCompositorInputHandlerImpl::animate(double monotonicTime)

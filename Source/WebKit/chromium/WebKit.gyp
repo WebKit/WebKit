@@ -485,6 +485,8 @@
                 'src/WebCache.cpp',
                 'src/WebColorName.cpp',
                 'src/WebCommon.cpp',
+                'src/WebCompositorInputHandlerImpl.cpp',
+                'src/WebCompositorInputHandlerImpl.h',
                 'src/WebCrossOriginPreflightResultCache.cpp',
                 'src/WebCursorInfo.cpp',
                 'src/WebDOMEvent.cpp',

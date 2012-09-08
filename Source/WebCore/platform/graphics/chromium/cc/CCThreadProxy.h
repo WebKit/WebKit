@@ -59,7 +59,6 @@ public:
     virtual void setVisible(bool) OVERRIDE;
     virtual bool initializeRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
-    virtual int compositorIdentifier() const OVERRIDE;
     virtual void implSideRenderingStats(CCRenderingStats&) OVERRIDE;
     virtual const RendererCapabilities& rendererCapabilities() const OVERRIDE;
     virtual void loseContext() OVERRIDE;
@@ -133,7 +132,7 @@ private:
     void requestReadbackOnImplThread(ReadbackRequest*);
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
-    void initializeImplOnImplThread(CCCompletionEvent*);
+    void initializeImplOnImplThread(CCCompletionEvent*, PassOwnPtr<CCInputHandler>);
     void setSurfaceReadyOnImplThread();
     void setVisibleOnImplThread(CCCompletionEvent*, bool);
     void initializeContextOnImplThread(CCGraphicsContext*);
@@ -154,7 +153,6 @@ private:
     bool m_forcedCommitRequested;
     OwnPtr<CCThreadProxyContextRecreationTimer> m_contextRecreationTimer;
     CCLayerTreeHost* m_layerTreeHost;
-    int m_compositorIdentifier;
     bool m_rendererInitialized;
     RendererCapabilities m_RendererCapabilitiesMainThreadCopy;
     bool m_started;

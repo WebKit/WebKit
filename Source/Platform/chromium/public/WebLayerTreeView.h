@@ -84,10 +84,6 @@ public:
     virtual void setRootLayer(const WebLayer&) = 0;
     virtual void clearRootLayer() = 0;
 
-    // Returns a unique identifier that can be used on the compositor thread to request a
-    // WebCompositorInputHandler instance.
-    virtual int compositorIdentifier() = 0;
-
 
     // View properties ---------------------------------------------------
 

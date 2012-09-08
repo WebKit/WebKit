@@ -28,8 +28,9 @@
 
 namespace WebKit {
 class WebCompositorOutputSurface;
-struct WebSize;
+class WebInputHandler;
 class WebThread;
+struct WebSize;
 
 class WebLayerTreeViewClient {
 public:
@@ -71,6 +72,8 @@ public:
     // Signals a successful recreation of the output surface (e.g. after a lost
     // 3D context event).
     virtual void didRecreateOutputSurface(bool success) { }
+
+    virtual WebInputHandler* createInputHandler() { return 0; }
 
     // Indicates that a frame will be committed to the impl side of the compositor
     // for rendering.

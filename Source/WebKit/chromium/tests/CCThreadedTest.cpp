@@ -28,6 +28,7 @@
 
 #include "CCActiveAnimation.h"
 #include "CCAnimationTestCommon.h"
+#include "CCInputHandler.h"
 #include "CCLayerAnimationController.h"
 #include "CCLayerImpl.h"
 #include "CCLayerTreeHostImpl.h"
@@ -227,6 +228,16 @@ public:
         return m_testHooks->createOutputSurface();
     }
 
+    virtual void didRecreateOutputSurface(bool succeeded) OVERRIDE
+    {
+        m_testHooks->didRecreateOutputSurface(succeeded);
+    }
+
+    virtual PassOwnPtr<CCInputHandler> createInputHandler() OVERRIDE
+    {
+        return nullptr;
+    }
+
     virtual void willCommit() OVERRIDE
     {
     }
@@ -243,11 +254,6 @@ public:
 
     virtual void didCompleteSwapBuffers() OVERRIDE
     {
-    }
-
-    virtual void didRecreateOutputSurface(bool succeeded) OVERRIDE
-    {
-        m_testHooks->didRecreateOutputSurface(succeeded);
     }
 
     virtual void scheduleComposite() OVERRIDE

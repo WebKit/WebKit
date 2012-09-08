@@ -70,8 +70,7 @@ PassOwnPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 }
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTreeSettings& settings)
-    : m_compositorIdentifier(-1)
-    , m_animating(false)
+    : m_animating(false)
     , m_needsAnimateLayers(false)
     , m_client(client)
     , m_commitNumber(0)
@@ -105,11 +104,7 @@ bool CCLayerTreeHost::initialize()
         m_proxy = CCSingleThreadProxy::create(this);
     m_proxy->start();
 
-    if (!m_proxy->initializeContext())
-        return false;
-
-    m_compositorIdentifier = m_proxy->compositorIdentifier();
-    return true;
+    return m_proxy->initializeContext();
 }
 
 CCLayerTreeHost::~CCLayerTreeHost()
@@ -290,6 +285,11 @@ void CCLayerTreeHost::commitComplete()
 PassOwnPtr<CCGraphicsContext> CCLayerTreeHost::createContext()
 {
     return m_client->createOutputSurface();
+}
+
+PassOwnPtr<CCInputHandler> CCLayerTreeHost::createInputHandler()
+{
+    return m_client->createInputHandler();
 }
 
 PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)

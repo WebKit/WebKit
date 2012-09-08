@@ -32,6 +32,7 @@ class WebCompositorOutputSurface;
 }
 
 namespace WebCore {
+class CCInputHandler;
 class IntSize;
 
 class CCLayerTreeHostClient {
@@ -44,6 +45,7 @@ public:
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface() = 0;
     virtual void didRecreateOutputSurface(bool success) = 0;
+    virtual PassOwnPtr<CCInputHandler> createInputHandler() = 0;
     virtual void willCommit() = 0;
     virtual void didCommit() = 0;
     virtual void didCommitAndDrawFrame() = 0;

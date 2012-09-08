@@ -46,7 +46,6 @@ PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_layerTreeHost(layerTreeHost)
     , m_contextLost(false)
-    , m_compositorIdentifier(-1)
     , m_rendererInitialized(false)
     , m_nextFrameIsNewlyCommittedFrame(false)
 {

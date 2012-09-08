@@ -124,6 +124,7 @@
 #include "WebAccessibilityObject.h"
 #include "WebActiveWheelFlingParameters.h"
 #include "WebAutofillClient.h"
+#include "WebCompositorInputHandlerImpl.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebFrameImpl.h"
@@ -415,6 +416,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_recreatingGraphicsContext(false)
     , m_compositorSurfaceReady(false)
     , m_deviceScaleInCompositor(1)
+    , m_inputHandlerIdentifier(-1)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
@@ -3772,7 +3774,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_isAcceleratedCompositingActive = true;
         updateLayerTreeViewport();
 
-        m_client->didActivateCompositor(m_layerTreeView->compositorIdentifier());
+        m_client->didActivateCompositor(m_inputHandlerIdentifier);
     } else {
         TRACE_EVENT0("webkit", "WebViewImpl::setIsAcceleratedCompositingActive(true)");
 
@@ -3806,7 +3808,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 m_layerTreeView->setSurfaceReady();
             m_layerTreeView->setHasTransparentBackground(isTransparent());
             updateLayerTreeViewport();
-            m_client->didActivateCompositor(m_layerTreeView->compositorIdentifier());
+            m_client->didActivateCompositor(m_inputHandlerIdentifier);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
             if (m_pageOverlays)
@@ -3890,6 +3892,13 @@ WebGraphicsContext3D* WebViewImpl::createContext3D()
 WebCompositorOutputSurface* WebViewImpl::createOutputSurface()
 {
     return m_client->createOutputSurface();
+}
+
+WebInputHandler* WebViewImpl::createInputHandler()
+{
+    WebCompositorInputHandlerImpl* handler = new WebCompositorInputHandlerImpl();
+    m_inputHandlerIdentifier = handler->identifier();
+    return handler;
 }
 
 void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScaleDelta)

@@ -1,3 +1,27 @@
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Implement WebCompositorInputHandlerImpl on top of exposed API instead of CC internals
+        https://bugs.webkit.org/show_bug.cgi?id=96151
+
+        Reviewed by Adrienne Walker.
+
+        This adds public input handling interfaces for the compositor.
+
+        * chromium/public/WebInputHandler.h:
+        (WebKit):
+        (WebInputHandler):
+        (WebKit::WebInputHandler::~WebInputHandler):
+        * chromium/public/WebInputHandlerClient.h:
+        (WebKit):
+        (WebInputHandlerClient):
+        (WebKit::WebInputHandlerClient::~WebInputHandlerClient):
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebKit):
+        (WebKit::WebLayerTreeViewClient::createInputHandler):
+        (WebLayerTreeViewClient):
+
 2012-09-07  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add RTCPeerConnection::createAnswer

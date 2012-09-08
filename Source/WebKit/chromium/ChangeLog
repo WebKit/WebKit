@@ -1,3 +1,68 @@
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Implement WebCompositorInputHandlerImpl on top of exposed API instead of CC internals
+        https://bugs.webkit.org/show_bug.cgi?id=96151
+
+        Reviewed by Adrienne Walker.
+
+        Moves input handler setup code up to the WebKit layer instead of reaching in to CC internals.
+        WebLayerTreeViewImpl implements createInputHandler() by asking its embedder for a WebInputHandler. If one is
+        provided, it wraps the WebInputHandler in a CCInputHandler implementation to pass down to CC.
+
+        WebViewImpl implements WebLayerTreeView::createInputHandler() by constructing a WebCompositorInputHandlerImpl
+        and storing its identifier for the didActivateCompositor call.  From this point on the setup is the same as
+        before.
+
+        WCIHI changes covered by unit tests, overall scrolling behavior manually tested.
+
+        * WebKit.gypi:
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::fromIdentifier):
+        (WebKit::WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl):
+        (WebKit::WebCompositorInputHandlerImpl::~WebCompositorInputHandlerImpl):
+        (WebKit::WebCompositorInputHandlerImpl::setClient):
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEvent):
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::bindToClient):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+        (WebKit::WebCompositorInputHandlerImpl::identifier):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createInputHandler):
+        (WebKit):
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * src/WebToCCInputHandlerAdapter.cpp: Added.
+        (WebKit):
+        (WebKit::WebToCCInputHandlerAdapter::create):
+        (WebKit::WebToCCInputHandlerAdapter::WebToCCInputHandlerAdapter):
+        (WebKit::WebToCCInputHandlerAdapter::~WebToCCInputHandlerAdapter):
+        (WebToCCInputHandlerAdapter::ClientAdapter):
+        (WebKit::WebToCCInputHandlerAdapter::ClientAdapter::ClientAdapter):
+        (WebKit::WebToCCInputHandlerAdapter::ClientAdapter::~ClientAdapter):
+        (WebKit::WebToCCInputHandlerAdapter::bindToClient):
+        (WebKit::WebToCCInputHandlerAdapter::animate):
+        * src/WebToCCInputHandlerAdapter.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCLayerTreeHostClient.h.
+        (WebKit):
+        (WebToCCInputHandlerAdapter):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+        (WebKit::WebViewImpl::createInputHandler):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCThreadedTest.cpp:
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (MockWebInputHandlerClient):
+        (WebKit::MockWebInputHandlerClient::MockWebInputHandlerClient):
+        (WebKit::MockWebInputHandlerClient::~MockWebInputHandlerClient):
+        (WebKit::WebCompositorInputHandlerImplTest::WebCompositorInputHandlerImplTest):
+        (WebCompositorInputHandlerImplTest):
+        (WebKit::TEST_F):
+
 2012-09-07  David Reveman  <reveman@chromium.org>
 
         [Chromium] Multiple commits without invalidation allowed per redraw.

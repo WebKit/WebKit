@@ -27,10 +27,13 @@
 #include "WebLayerTreeViewImpl.h"
 
 #include "CCFontAtlas.h"
+#include "CCInputHandler.h"
 #include "CCLayerTreeHost.h"
 #include "LayerChromium.h"
 #include "WebLayerImpl.h"
+#include "WebToCCInputHandlerAdapter.h"
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebInputHandler.h>
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeView.h>
 #include <public/WebLayerTreeViewClient.h>
@@ -89,11 +92,6 @@ void WebLayerTreeViewImpl::setRootLayer(const WebLayer& root)
 void WebLayerTreeViewImpl::clearRootLayer()
 {
     m_layerTreeHost->setRootLayer(PassRefPtr<LayerChromium>());
-}
-
-int WebLayerTreeViewImpl::compositorIdentifier()
-{
-    return m_layerTreeHost->compositorIdentifier();
 }
 
 void WebLayerTreeViewImpl::setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize)
@@ -246,6 +244,14 @@ PassOwnPtr<WebCompositorOutputSurface> WebLayerTreeViewImpl::createOutputSurface
 void WebLayerTreeViewImpl::didRecreateOutputSurface(bool success)
 {
     m_client->didRecreateOutputSurface(success);
+}
+
+PassOwnPtr<CCInputHandler> WebLayerTreeViewImpl::createInputHandler()
+{
+    OwnPtr<WebInputHandler> handler = adoptPtr(m_client->createInputHandler());
+    if (handler)
+        return WebToCCInputHandlerAdapter::create(handler.release());
+    return nullptr;
 }
 
 void WebLayerTreeViewImpl::willCommit()

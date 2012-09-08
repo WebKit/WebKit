@@ -144,6 +144,7 @@ public:
     void willCommit();
     void commitComplete();
     PassOwnPtr<CCGraphicsContext> createContext();
+    PassOwnPtr<CCInputHandler> createInputHandler();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didLoseContext();
     enum RecreateResult {
@@ -161,8 +162,6 @@ public:
     void updateLayers(CCTextureUpdateQueue&, size_t contentsMemoryLimitBytes);
 
     CCLayerTreeHostClient* client() { return m_client; }
-
-    int compositorIdentifier() const { return m_compositorIdentifier; }
 
     // Only used when compositing on the main thread.
     void composite();
@@ -266,8 +265,6 @@ private:
     void animateLayers(double monotonicTime);
     bool animateLayersRecursive(LayerChromium* current, double monotonicTime);
     void setAnimationEventsRecursive(const CCAnimationEventsVector&, LayerChromium*, double wallClockTime);
-
-    int m_compositorIdentifier;
 
     bool m_animating;
     bool m_needsAnimateLayers;

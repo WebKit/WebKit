@@ -51,7 +51,6 @@ public:
     virtual void setSurfaceReady() OVERRIDE;
     virtual void setRootLayer(const WebLayer&) OVERRIDE;
     virtual void clearRootLayer() OVERRIDE;
-    virtual int compositorIdentifier() OVERRIDE;
     virtual void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize = WebSize()) OVERRIDE;
     virtual WebSize layoutViewportSize() const OVERRIDE;
     virtual WebSize deviceViewportSize() const OVERRIDE;
@@ -81,6 +80,7 @@ public:
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE;
     virtual PassOwnPtr<WebCompositorOutputSurface> createOutputSurface() OVERRIDE;
     virtual void didRecreateOutputSurface(bool success) OVERRIDE;
+    virtual PassOwnPtr<WebCore::CCInputHandler> createInputHandler() OVERRIDE;
     virtual void willCommit() OVERRIDE;
     virtual void didCommit() OVERRIDE;
     virtual void didCommitAndDrawFrame() OVERRIDE;

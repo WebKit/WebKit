@@ -79,8 +79,6 @@ public:
     // reinitialized.
     virtual bool recreateContext() = 0;
 
-    virtual int compositorIdentifier() const = 0;
-
     virtual void implSideRenderingStats(CCRenderingStats&) = 0;
 
     virtual const RendererCapabilities& rendererCapabilities() const = 0;
