@@ -2430,7 +2430,7 @@ bool RenderLayer::hasOverflowControls() const
     return m_hBar || m_vBar || m_scrollCorner || renderer()->style()->resize() != RESIZE_NONE;
 }
 
-void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
+void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
 {
     if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
         return;
@@ -2441,7 +2441,7 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
 
     const IntRect borderBox = box->pixelSnappedBorderBoxRect();
     const IntRect& scrollCorner = scrollCornerRect();
-    IntRect absBounds(borderBox.location() + offsetFromLayer, borderBox.size());
+    IntRect absBounds(borderBox.location() + offsetFromRoot, borderBox.size());
     if (m_vBar)
         m_vBar->setFrameRect(IntRect(verticalScrollbarStart(absBounds.x(), absBounds.maxX()),
                                      absBounds.y() + box->borderTop(),
@@ -2454,34 +2454,15 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
                                      absBounds.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
                                      m_hBar->height()));
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
-        if (m_hBar) {
-            layer->setPosition(m_hBar->frameRect().location() - offsetFromLayer);
-            layer->setSize(m_hBar->frameRect().size());
-        }
-        layer->setDrawsContent(m_hBar);
-    }
-    if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
-        if (m_vBar) {
-            layer->setPosition(m_vBar->frameRect().location() - offsetFromLayer);
-            layer->setSize(m_vBar->frameRect().size());
-        }
-        layer->setDrawsContent(m_vBar);
-    }
-
-    if (GraphicsLayer* layer = layerForScrollCorner()) {
-        const LayoutRect& scrollCornerAndResizer = scrollCornerAndResizerRect();
-        layer->setPosition(scrollCornerAndResizer.location());
-        layer->setSize(scrollCornerAndResizer.size());
-        layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
-    }
-#endif
-
     if (m_scrollCorner)
         m_scrollCorner->setFrameRect(scrollCorner);
     if (m_resizer)
         m_resizer->setFrameRect(resizerCornerRect(this, borderBox));
+
+#if USE(ACCELERATED_COMPOSITING)    
+    if (isComposited())
+        backing()->positionOverflowControlsLayers(offsetFromRoot);
+#endif
 }
 
 int RenderLayer::scrollWidth() const

@@ -1,3 +1,14 @@
+2012-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        box-shadow causes overlay scrollbars to be in the wrong position when element is composited
+        https://bugs.webkit.org/show_bug.cgi?id=85647
+
+        Reviewed by James Robinson.
+
+        Test overlay scrollbars in composited layers.
+
+        * ManualTests/scrollbars/scrollbars-in-composited-layers.html: Added.
+
 2012-09-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move user agent helpers to WebCore

@@ -131,6 +131,7 @@ public:
     void updateCompositedBounds();
     
     void updateAfterWidgetResize();
+    void positionOverflowControlsLayers(const IntSize& offsetFromRoot);
 
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const;

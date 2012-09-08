@@ -848,6 +848,35 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     return layersChanged;
 }
 
+void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFromRoot)
+{
+    IntSize offsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
+    if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
+        Scrollbar* hBar = m_owningLayer->horizontalScrollbar();
+        if (hBar) {
+            layer->setPosition(hBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
+            layer->setSize(hBar->frameRect().size());
+        }
+        layer->setDrawsContent(hBar);
+    }
+    
+    if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
+        Scrollbar* vBar = m_owningLayer->verticalScrollbar();
+        if (vBar) {
+            layer->setPosition(vBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
+            layer->setSize(vBar->frameRect().size());
+        }
+        layer->setDrawsContent(vBar);
+    }
+
+    if (GraphicsLayer* layer = layerForScrollCorner()) {
+        const LayoutRect& scrollCornerAndResizer = m_owningLayer->scrollCornerAndResizerRect();
+        layer->setPosition(scrollCornerAndResizer.location() - offsetFromRenderer);
+        layer->setSize(scrollCornerAndResizer.size());
+        layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
+    }
+}
+
 bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
 {
     bool layerChanged = false;
