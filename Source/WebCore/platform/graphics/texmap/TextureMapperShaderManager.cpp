@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-#define STRINGIFY(src...) #src
+#define STRINGIFY(...) #__VA_ARGS__
 
 static const char* fragmentShaderSourceOpacityAndMask =
     STRINGIFY(
@@ -388,12 +388,12 @@ StandardFilterProgram::StandardFilterProgram(GraphicsContext3D* context, FilterO
                 }
             );
 
-#define STANDARD_FILTER(x...) \
+#define STANDARD_FILTER(...) \
         "precision mediump float;\n"\
         "varying highp vec2 v_texCoord;\n"\
         "uniform highp float u_amount;\n"\
         "uniform sampler2D u_texture;\n"\
-        #x\
+        #__VA_ARGS__ \
         "void main(void)\n { gl_FragColor = shade(texture2D(u_texture, v_texCoord)); }"
 
     const char* fragmentShaderSource = 0;
