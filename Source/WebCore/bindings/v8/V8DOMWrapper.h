@@ -119,7 +119,7 @@ namespace WebCore {
         static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
         static void setNamedHiddenWindowReference(Frame*, const char*, v8::Handle<v8::Value>);
 
-        static v8::Local<v8::Object> instantiateV8Object(Frame*, WrapperTypeInfo*, void*);
+        static v8::Local<v8::Object> instantiateV8Object(WrapperTypeInfo*, void*);
 
         static v8::Handle<v8::Object> getCachedWrapper(Node* node)
         {

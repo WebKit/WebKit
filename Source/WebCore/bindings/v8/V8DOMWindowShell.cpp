@@ -170,11 +170,6 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
     ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
-static v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context> context)
-{
-    return v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-}
-
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
 {
     return adoptRef(new V8DOMWindowShell(frame));
@@ -193,6 +188,8 @@ bool V8DOMWindowShell::isContextInitialized()
 
 void V8DOMWindowShell::disposeContext()
 {
+    m_perContextData.clear();
+
     if (!m_context.isEmpty()) {
         m_frame->loader()->client()->willReleaseScriptContext(m_context.get(), 0);
         m_context.clear();
@@ -203,8 +200,6 @@ void V8DOMWindowShell::disposeContext()
         bool isMainFrame = m_frame->page() && (m_frame->page()->mainFrame() == m_frame); 
         V8GCForContextDispose::instance().notifyContextDisposed(isMainFrame);
     }
-
-    m_perContextData.clear();
 }
 
 void V8DOMWindowShell::destroyGlobal()

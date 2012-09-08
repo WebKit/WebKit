@@ -113,7 +113,6 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handl
 {
     v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<Node*>(impl.get())) == static_cast<void*>(impl.get()));
-    Frame* frame = impl->document()->frame();
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -123,9 +122,12 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handl
         ASSERT(!context.IsEmpty());
         context->Enter();
     }
-    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
+
+    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
+
     if (!context.IsEmpty())
         context->Exit();
+
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMNode(impl, wrapper, isolate);

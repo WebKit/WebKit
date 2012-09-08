@@ -254,6 +254,11 @@ PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value> value)
     return resolver;
 }
 
+v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context> context)
+{
+    return v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
+}
+
 DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
     v8::Handle<v8::Object> global = context->Global();

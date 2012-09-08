@@ -353,6 +353,7 @@ namespace WebCore {
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
     PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>);
 
+    v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context>);
     DOMWindow* toDOMWindow(v8::Handle<v8::Context>);
     ScriptExecutionContext* toScriptExecutionContext(v8::Handle<v8::Context>);
 
