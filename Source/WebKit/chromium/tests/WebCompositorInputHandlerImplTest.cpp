@@ -39,6 +39,7 @@
 #include <public/WebPoint.h>
 #include <wtf/OwnPtr.h>
 
+using namespace WTF;
 using namespace WebKit;
 
 namespace {
