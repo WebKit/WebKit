@@ -1,3 +1,15 @@
+2012-09-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Set theme for the inspector view
+        https://bugs.webkit.org/show_bug.cgi?id=96108
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the theme for the inspector view when it is created.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use same default minimum logical font size in DRT and WTR

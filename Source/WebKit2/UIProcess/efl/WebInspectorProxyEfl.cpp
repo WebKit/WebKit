@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "WebProcessProxy.h"
+#include "ewk_view.h"
 #include "ewk_view_private.h"
 #include <WebCore/NotImplemented.h>
 #include <unistd.h>
@@ -46,6 +47,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         return 0;
 
     m_inspectorView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()));
+    ewk_view_theme_set(m_inspectorView, TEST_THEME_DIR"/default.edj");
     return ewk_view_page_get(m_inspectorView);
 }
 
