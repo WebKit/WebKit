@@ -3567,6 +3567,9 @@ BUGWK95136 : fast/css/sticky/sticky-writing-mode-vertical-rl.html = IMAGE
 
 BUGWK95617 : fast/js/function-constructor-this-value.html = PASS TEXT
 
+// These tests appear to be making bots flaky. See bug for details.
+BUGWK96041 SKIP : platform/chromium-linux/compositing/gestures = PASS IMAGE
+
 //Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
 BUGWK80394 MAC WIN : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+TEXT
 BUGWK80394 MAC WIN : fast/block/float/024.html = IMAGE+TEXT

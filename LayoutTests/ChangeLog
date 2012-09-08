@@ -1,3 +1,9 @@
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
+        Skip some tests that appear to be making bots unstable.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-07  Victoria Kirst  <vrk@chromium.org>
 
         Seek to end after duration change in HTMLMediaElement
