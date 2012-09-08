@@ -72,6 +72,8 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
     , m_programInfo(programInfo)
     , m_isInitialized(false)
 {
+    platformInit();
+
     String originalVertexShader = programInfo.vertexShaderString();
     if (originalVertexShader.isNull())
         originalVertexShader = defaultVertexShaderString();
@@ -102,7 +104,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
 
 PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledProgram()
 {
-    ASSERT(m_isInitialized && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
+    ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
     if (!m_compiledProgram)
         m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader);
     return m_compiledProgram;
@@ -263,9 +265,21 @@ String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator c
     
 CustomFilterValidatedProgram::~CustomFilterValidatedProgram()
 {
+    platformDestroy();
+
     if (m_globalContext)
         m_globalContext->removeValidatedProgram(this);
 }
+
+#if !PLATFORM(BLACKBERRY)
+void CustomFilterValidatedProgram::platformInit()
+{
+}
+
+void CustomFilterValidatedProgram::platformDestroy()
+{
+}
+#endif
 
 } // namespace WebCore
 

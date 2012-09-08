@@ -39,6 +39,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+// PlatformCompiledProgram defines a type that is compatible with the framework used to implement accelerated compositing on a particular platform.
+#if PLATFORM(BLACKBERRY)
+namespace WebCore {
+class LayerCompiledProgram;
+}
+typedef WebCore::LayerCompiledProgram PlatformCompiledProgram;
+#endif
+
 namespace WebCore {
 
 class ANGLEWebKitBridge;
@@ -71,6 +79,10 @@ public:
     const CustomFilterProgramInfo& programInfo() const { return m_programInfo; }
     PassRefPtr<CustomFilterCompiledProgram> compiledProgram();
 
+#if PLATFORM(BLACKBERRY)
+    PlatformCompiledProgram* platformCompiledProgram();
+#endif
+
     bool isInitialized() const { return m_isInitialized; }
 
     // 'detachFromGlobalContext' is called when the CustomFilterGlobalContext is deleted, and there's no need for the callback anymore. 
@@ -78,6 +90,9 @@ public:
     void detachFromGlobalContext() { m_globalContext = 0; }
 private:
     CustomFilterValidatedProgram(CustomFilterGlobalContext*, const CustomFilterProgramInfo&);
+
+    void platformInit();
+    void platformDestroy();
 
     static String defaultVertexShaderString();
     static String defaultFragmentShaderString();
@@ -95,6 +110,9 @@ private:
     String m_validatedFragmentShader;
 
     RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
+#if PLATFORM(BLACKBERRY)
+    PlatformCompiledProgram* m_platformCompiledProgram;
+#endif
 
     bool m_isInitialized;
 };

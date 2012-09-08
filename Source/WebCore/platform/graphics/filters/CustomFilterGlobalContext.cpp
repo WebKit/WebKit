@@ -87,9 +87,6 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
 
 PassRefPtr<CustomFilterValidatedProgram> CustomFilterGlobalContext::getValidatedProgram(const CustomFilterProgramInfo& programInfo)
 {
-    // Check that the context is already prepared.
-    ASSERT(m_context);
-
     CustomFilterValidatedProgramsMap::iterator iter = m_programs.find(programInfo);
     if (iter != m_programs.end())
         return iter->second;
