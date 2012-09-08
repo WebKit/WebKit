@@ -1,3 +1,13 @@
+2012-09-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests after r127939
+        https://bugs.webkit.org/show_bug.cgi?id=96182
+
+        Unreviewed EFL gardening of failing tests after r127939.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] New fast/events/tab-focus-link-in-canvas fails from r126908
