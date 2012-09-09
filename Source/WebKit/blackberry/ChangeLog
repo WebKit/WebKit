@@ -1,3 +1,22 @@
+2012-09-08  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Exiting fullscreen mode can leave user stuck without Browser menus
+        https://bugs.webkit.org/show_bug.cgi?id=96027
+
+        Reviewed by Antonio Gomes.
+
+        The changes for bug 87337 (landed as trunk svn revision 119119)
+        introduced a bug. The same conditions are not checked on enter
+        fullscreen vs. exit. Web sites such as http://videojs.com
+        and youtube's mobile HTML5 player make the div container
+        of the video element go fullscreen. This is allowed in
+        WebPagePrivate::enterFullScreenForElement() but disallowed in
+        WebPagePrivate::exitFullScreenForElement(). I am fixing this by
+        allowing containers of video elements to exit fullscreen.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+
 2012-09-07  Ming Xie  <mxie@rim.com>
 
 

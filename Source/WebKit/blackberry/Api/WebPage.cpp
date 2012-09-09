@@ -6025,7 +6025,7 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
 {
 #if ENABLE(VIDEO)
     // TODO: We should not check video tag when we decide to support all elements.
-    if (!element || !element->hasTagName(HTMLNames::videoTag))
+    if (!element || (!element->hasTagName(HTMLNames::videoTag) && !containsVideoTags(element)))
         return;
     if (m_webSettings->fullScreenVideoCapable()) {
         // The Browser chrome has its own fullscreen video widget.
