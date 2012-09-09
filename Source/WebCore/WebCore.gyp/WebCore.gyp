@@ -1335,7 +1335,6 @@
         '../../ThirdParty/glu/glu.gyp:libtess',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
-        '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -1355,7 +1354,6 @@
       'export_dependent_settings': [
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
-        '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -1380,6 +1378,7 @@
           'WEBCORE_NAVIGATOR_VENDOR="Google Inc."',
         ],
         'include_dirs': [
+          '../../Platform/chromium',
           '<(INTERMEDIATE_DIR)',
           '<@(webcore_include_dirs)',
           '<(chromium_src_dir)/gpu',
@@ -2146,7 +2145,6 @@
         'webcore_rendering',
         # Exported.
         'webcore_bindings',
-        '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -2156,7 +2154,6 @@
       ],
       'export_dependent_settings': [
         'webcore_bindings',
-        '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
