@@ -1935,6 +1935,7 @@ SET(WebCore_SOURCES
     platform/mediastream/IceOptions.cpp
     platform/mediastream/MediaHints.cpp
     platform/mediastream/MediaStreamCenter.cpp
+    platform/mediastream/MediaStreamSource.cpp
     platform/mediastream/PeerConnection00Handler.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp
