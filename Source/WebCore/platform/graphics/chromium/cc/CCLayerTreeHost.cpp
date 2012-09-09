@@ -414,11 +414,18 @@ void CCLayerTreeHost::setVisible(bool visible)
     m_proxy->setVisible(visible);
 }
 
-void CCLayerTreeHost::evictAllContentTextures()
+void CCLayerTreeHost::unlinkAllContentTextures()
 {
     ASSERT(CCProxy::isMainThread());
     ASSERT(m_contentsTextureManager.get());
-    m_contentsTextureManager->allBackingTexturesWereDeleted();
+    m_contentsTextureManager->unlinkAllBackings();
+}
+
+void CCLayerTreeHost::deleteUnlinkedTextures()
+{
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
+    ASSERT(m_contentsTextureManager.get());
+    m_contentsTextureManager->deleteAllUnlinkedBackings();
 }
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
