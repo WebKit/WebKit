@@ -38,7 +38,8 @@
 
 namespace WebCore {
 
-static inline bool isBreakableSpace(UChar ch, bool treatNoBreakSpaceAsBreak)
+template<bool treatNoBreakSpaceAsBreak>
+static inline bool isBreakableSpace(UChar ch)
 {
     switch (ch) {
     case ' ':
@@ -138,12 +139,16 @@ static inline bool shouldBreakAfter(UChar lastCh, UChar ch, UChar nextCh)
     return false;
 }
 
-static inline bool needsLineBreakIterator(UChar ch)
+template<bool treatNoBreakSpaceAsBreak>
+inline bool needsLineBreakIterator(UChar ch)
 {
+    if (treatNoBreakSpaceAsBreak)
+        return ch > asciiLineBreakTableLastChar;
     return ch > asciiLineBreakTableLastChar && ch != noBreakSpace;
 }
 
-int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, bool treatNoBreakSpaceAsBreak)
+template<bool treatNoBreakSpaceAsBreak>
+static inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
 {
     const UChar* str = lazyBreakIterator.string();
     int len = lazyBreakIterator.length();
@@ -154,16 +159,16 @@ int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, boo
     for (int i = pos; i < len; i++) {
         UChar ch = str[i];
 
-        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastLastCh, lastCh, ch))
+        if (isBreakableSpace<treatNoBreakSpaceAsBreak>(ch) || shouldBreakAfter(lastLastCh, lastCh, ch))
             return i;
 
-        if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
+        if (needsLineBreakIterator<treatNoBreakSpaceAsBreak>(ch) || needsLineBreakIterator<treatNoBreakSpaceAsBreak>(lastCh)) {
             if (nextBreak < i && i) {
                 TextBreakIterator* breakIterator = lazyBreakIterator.get();
                 if (breakIterator)
                     nextBreak = textBreakFollowing(breakIterator, i - 1);
             }
-            if (i == nextBreak && !isBreakableSpace(lastCh, treatNoBreakSpaceAsBreak))
+            if (i == nextBreak && !isBreakableSpace<treatNoBreakSpaceAsBreak>(lastCh))
                 return i;
         }
 
@@ -172,6 +177,16 @@ int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, boo
     }
 
     return len;
+}
+
+int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, int pos)
+{
+    return nextBreakablePosition<false>(lazyBreakIterator, pos);
+}
+
+int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
+{
+    return nextBreakablePosition<true>(lazyBreakIterator, pos);
 }
 
 } // namespace WebCore
