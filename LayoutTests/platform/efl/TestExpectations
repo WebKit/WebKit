@@ -170,7 +170,6 @@ BUGWKEFL SKIP : accessibility = TEXT
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -769,9 +768,6 @@ BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PA
 BUGWK86615 : editing/deleting/5408255.html = TEXT
 BUGWK86615 : editing/deleting/regional-indicators.html = TEXT
 
-// Custom font loading delaying text drawing on Canvas
-BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
-
 // Tests failing due to rounding problems in colors inside pixman
 BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
@@ -1076,9 +1072,6 @@ BUGWK95840 : http/tests/security/cross-origin-plugin-allowed.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
-
-// Fails after r127534.
-BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT
 
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT

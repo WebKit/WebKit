@@ -44,6 +44,9 @@ BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 // EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
+// Custom font loading delaying text drawing on Canvas
+BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
+
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
 BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT

@@ -1,3 +1,17 @@
+2012-09-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip test cases passing reliably on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=96204
+
+        Unreviewed EFL gardening.
+
+        Unskip test cases that are passing reliably on the
+        EFL build bots.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

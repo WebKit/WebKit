@@ -200,7 +200,6 @@ BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
-BUGWKEFL : http/tests/inspector/resource-main-cookies.php = TEXT
 BUGWKEFL : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TEXT
 BUGWKEFL : inspector/debugger/debugger-completions-on-call-frame.html = TEXT
 BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT
