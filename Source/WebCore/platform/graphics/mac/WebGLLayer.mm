@@ -33,6 +33,7 @@
 #import "GraphicsContext3D.h"
 #import "GraphicsLayer.h"
 #import <OpenGL/OpenGL.h>
+#import <OpenGL/gl.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
