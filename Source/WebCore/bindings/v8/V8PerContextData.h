@@ -41,7 +41,7 @@ namespace WebCore {
 
 class V8PerContextData {
 public:
-    static PassOwnPtr<V8PerContextData> create(v8::Handle<v8::Context> context)
+    static PassOwnPtr<V8PerContextData> create(v8::Persistent<v8::Context> context)
     {
         return adoptPtr(new V8PerContextData(context));
     }
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    explicit V8PerContextData(v8::Handle<v8::Context> context)
+    explicit V8PerContextData(v8::Persistent<v8::Context> context)
         : m_context(context)
     {
     }
@@ -91,7 +91,7 @@ private:
     typedef WTF::HashMap<WrapperTypeInfo*, v8::Persistent<v8::Function> > ConstructorMap;
     ConstructorMap m_constructorMap;
 
-    v8::Handle<v8::Context> m_context;
+    v8::Persistent<v8::Context> m_context;
     ScopedPersistent<v8::Value> m_errorPrototype;
     ScopedPersistent<v8::Value> m_objectPrototype;
 };
