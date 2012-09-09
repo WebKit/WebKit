@@ -209,9 +209,9 @@ PassRefPtr<WebContextMenuProxy> QtPageClient::createContextMenuProxy(WebPageProx
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorChooserProxy> QtPageClient::createColorChooserProxy(WebPageProxy* webPageProxy, const WebCore::Color& initialColor)
+PassRefPtr<WebColorChooserProxy> QtPageClient::createColorChooserProxy(WebPageProxy* webPageProxy, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect)
 {
-    return WebColorChooserProxyQt::create(webPageProxy, m_webView, initialColor);
+    return WebColorChooserProxyQt::create(webPageProxy, m_webView, initialColor, elementRect);
 }
 #endif
 

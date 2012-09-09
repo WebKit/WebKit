@@ -21,6 +21,7 @@
 #ifndef WebColorChooserProxyQt_h
 #define WebColorChooserProxyQt_h
 
+#include "IntRect.h"
 #include "WebColorChooserProxy.h"
 #include <QtCore/QObject>
 #include <wtf/OwnPtr.h>
@@ -43,9 +44,9 @@ class WebColorChooserProxyQt : public QObject, public WebColorChooserProxy {
     Q_OBJECT
 
 public:
-    static PassRefPtr<WebColorChooserProxy> create(WebColorChooserProxy::Client* client, QQuickWebView* webView, const WebCore::Color& initialColor)
+    static PassRefPtr<WebColorChooserProxy> create(WebColorChooserProxy::Client* client, QQuickWebView* webView, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect)
     {
-        return adoptRef(new WebColorChooserProxyQt(client, webView, initialColor));
+        return adoptRef(new WebColorChooserProxyQt(client, webView, initialColor, elementRect));
     }
     ~WebColorChooserProxyQt();
 
@@ -58,7 +59,7 @@ private Q_SLOTS:
     void notifyColorSelected(const QColor&);
 
 private:
-    WebColorChooserProxyQt(WebColorChooserProxy::Client*, QQuickWebView*, const WebCore::Color&);
+    WebColorChooserProxyQt(WebColorChooserProxy::Client*, QQuickWebView*, const WebCore::Color&, const WebCore::IntRect&);
 
     void createItem(QObject*);
     void createContext(QQmlComponent*, QObject*);

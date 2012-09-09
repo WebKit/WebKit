@@ -43,7 +43,7 @@ WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, cons
     , m_page(page)
 {
     m_page->setActiveColorChooser(this);
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowColorChooser(initialColor), m_page->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowColorChooser(initialColor, client->elementRectRelativeToRootView()), m_page->pageID());
 }
 
 WebColorChooser::~WebColorChooser()

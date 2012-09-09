@@ -34,16 +34,19 @@ namespace WebKit {
 class ColorChooserContextObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QColor currentColor READ currentColor CONSTANT FINAL)
+    Q_PROPERTY(QRectF elementRect READ elementRect CONSTANT FINAL)
 
 public:
-    ColorChooserContextObject(const QColor& color)
+    ColorChooserContextObject(const QColor& color, const QRectF& rect)
         : m_currentColor(color)
+        , m_rect(rect)
     {
     }
 
     QColor currentColor() const { return m_currentColor; }
+    QRectF elementRect() const { return m_rect; }
 
-    Q_INVOKABLE void accept(const QColor& color) { emit accepted(color); };
+    Q_INVOKABLE void accept(const QColor& color) { emit accepted(color); }
     Q_INVOKABLE void reject() { emit rejected(); }
 
 Q_SIGNALS:
@@ -52,13 +55,15 @@ Q_SIGNALS:
 
 private:
     QColor m_currentColor;
+    QRectF m_rect;
 };
 
-WebColorChooserProxyQt::WebColorChooserProxyQt(WebColorChooserProxy::Client* client, QQuickWebView* webView, const Color& initialColor)
+WebColorChooserProxyQt::WebColorChooserProxyQt(WebColorChooserProxy::Client* client, QQuickWebView* webView, const Color& initialColor, const IntRect& elementRect)
     : WebColorChooserProxy(client)
     , m_webView(webView)
 {
-    ColorChooserContextObject* contextObject = new ColorChooserContextObject(initialColor);
+    const QRectF mappedRect= m_webView->mapRectFromWebContent(QRect(elementRect));
+    ColorChooserContextObject* contextObject = new ColorChooserContextObject(initialColor, mappedRect);
     createItem(contextObject);
 }
 

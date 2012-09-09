@@ -180,7 +180,7 @@ public:
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& initialColor) = 0;
+    virtual PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
 #endif
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;

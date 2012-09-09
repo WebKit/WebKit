@@ -2707,11 +2707,11 @@ void WebPageProxy::needTouchEvents(bool needTouchEvents)
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-void WebPageProxy::showColorChooser(const WebCore::Color& initialColor)
+void WebPageProxy::showColorChooser(const WebCore::Color& initialColor, const IntRect& elementRect)
 {
     ASSERT(!m_colorChooser);
 
-    m_colorChooser = m_pageClient->createColorChooserProxy(this, initialColor);
+    m_colorChooser = m_pageClient->createColorChooserProxy(this, initialColor, elementRect);
 }
 
 void WebPageProxy::setColorChooserColor(const WebCore::Color& color)

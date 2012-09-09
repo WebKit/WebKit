@@ -38,9 +38,11 @@ MouseArea {
         color: "gainsboro"
         opacity: 0.8
         radius: 5
-        width: parent.width / 4
-        height: parent.height / 4
-        anchors.centerIn: parent
+        width: 200
+        height: 200
+        x: (model.elementRect.x + width > parent.width) ? parent.width - width : model.elementRect.x
+        y: (model.elementRect.y + model.elementRect.height + height < parent.height ) ? model.elementRect.y + model.elementRect.height
+                                                                                      : model.elementRect.y - height;
 
         Rectangle {
             color: "red"
