@@ -49,9 +49,9 @@ class HTMLDocument;
 
 // V8WindowShell represents all the per-global object state for a Frame that
 // persist between navigations.
-class V8DOMWindowShell : public RefCounted<V8DOMWindowShell> {
+class V8DOMWindowShell {
 public:
-    static PassRefPtr<V8DOMWindowShell> create(Frame*);
+    static PassOwnPtr<V8DOMWindowShell> create(Frame*);
 
     v8::Persistent<v8::Context> context() const { return m_context.get(); }
 
@@ -81,7 +81,7 @@ public:
     V8PerContextData* perContextData() { return m_perContextData.get(); }
 
 private:
-    V8DOMWindowShell(Frame*);
+    explicit V8DOMWindowShell(Frame*);
 
     void disposeContext();
 

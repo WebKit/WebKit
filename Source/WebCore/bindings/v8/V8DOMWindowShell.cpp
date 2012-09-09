@@ -170,9 +170,9 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
     ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
-PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
+PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
 {
-    return adoptRef(new V8DOMWindowShell(frame));
+    return adoptPtr(new V8DOMWindowShell(frame));
 }
 
 V8DOMWindowShell::V8DOMWindowShell(Frame* frame)
