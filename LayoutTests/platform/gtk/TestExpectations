@@ -467,6 +467,9 @@ BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PAS
 BUGWK90957 : fast/js/random-array-gc-stress.html = CRASH PASS
 
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
+BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
+
+BUGWK96199 : editing/pasteboard/paste-blockquote-into-blockquote-4.html = CRASH PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -1308,6 +1311,9 @@ BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.ht
 
 BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 
+BUGWK96180 : fast/js/named-function-expression.html = TEXT
+
+BUGWK96196 : accessibility/spinbutton-value.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
