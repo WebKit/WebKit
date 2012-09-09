@@ -46,6 +46,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 
@@ -71,6 +72,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXTitleUIElement: (null)
 
 ------------
 
