@@ -120,7 +120,7 @@ private:
         m_dropShadowColor = color;
     }
 
-    WebFilterOperation(FilterType, SkScalar matrix[20]);
+    WEBKIT_EXPORT WebFilterOperation(FilterType, SkScalar matrix[20]);
 
     WebFilterOperation(FilterType type, WebRect rect, float inset)
     {

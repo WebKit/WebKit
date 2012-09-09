@@ -1,3 +1,16 @@
+2012-09-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Export WebFilterOperation(FilterType, SkScalar[20]) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=96215
+
+        Reviewed by Adrienne Walker.
+
+        Unlike the other WebFilterOperation constructors this one is defined out-of-line and so must be exported to be
+        usable outside of WebKit.dll
+
+        * chromium/public/WebFilterOperation.h:
+        (WebFilterOperation):
+
 2012-09-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused WebScrollbarThemePainter::isNull
