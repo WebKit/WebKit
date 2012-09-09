@@ -122,9 +122,6 @@ BUGWKEFL : svg/dom/viewspec-parser-4.html = TEXT PASS
 BUGWKEFL : svg/dom/viewspec-parser-2.html = TEXT PASS
 BUGWKEFL : svg/dom/viewspec-parser-5.html = TEXT PASS
 
-// Test is flaky and needs to be fixed
-BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
-
 // ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
 BUGWK35220 : inspector/debugger/debugger-no-nested-pause.html = TEXT CRASH PASS
 BUGWK35220 : inspector/debugger/debugger-pause-in-internal.html = TEXT CRASH PASS

@@ -203,6 +203,9 @@ BUGWKEFL : inspector/profiler/heap-snapshot.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-enum-stability.html = TEXT PASS
 BUGWK95066 : inspector/styles/media-queries.html = TEXT PASS
 
+// Test is flaky and needs to be fixed
+BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
+
 // Aborting application cache downloads is flaky.
 BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS
 BUGWK87633 : http/tests/appcache/abort-cache-ondownloading-resource-404.html = TEXT PASS
