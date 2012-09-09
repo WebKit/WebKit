@@ -102,12 +102,16 @@ BUGWKEFL : fast/encoding/parser-tests-110.html = TEXT PASS
 BUGWKEFL : fast/loader/fragment-after-redirect-gets-back-entry.html = TEXT PASS
 BUGWKEFL : fast/loader/child-frame-add-after-back-forward.html = TEXT PASS
 BUGWKEFL : fast/forms/validation-message-user-modify.html = TEXT PASS
+BUGWKEFL : fast/events/backspace-navigates-back.html = TEXT PASS
 BUGWKEFL : fast/events/onchange-click-hang.html = TEXT PASS
 BUGWKEFL : fast/events/dispatch-message-string-data.html = TEXT PASS
+BUGWKEFL : fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html = IMAGE PASS
 BUGWKEFL : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TEXT PASS
 BUGWKEFL : http/tests/inspector/change-iframe-src.html = TEXT PASS
+BUGWKEFL : http/tests/loading/fire-error-event-empty-404-script.html = TEXT CRASH PASS
 BUGWKEFL : jquery/data.html = TEXT PASS
 BUGWKEFL : jquery/offset.html = TEXT PASS
+BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html  = TEXT PASS CRASH
 BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html = TEXT PASS CRASH
 BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html = TEXT PASS CRASH
 BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html = TEXT PASS CRASH
@@ -117,6 +121,9 @@ BUGWKEFL : svg/dom/viewspec-parser-1.html = TEXT PASS
 BUGWKEFL : svg/dom/viewspec-parser-4.html = TEXT PASS
 BUGWKEFL : svg/dom/viewspec-parser-2.html = TEXT PASS
 BUGWKEFL : svg/dom/viewspec-parser-5.html = TEXT PASS
+
+// Test is flaky and needs to be fixed
+BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 // ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
 BUGWK35220 : inspector/debugger/debugger-no-nested-pause.html = TEXT CRASH PASS
@@ -146,6 +153,9 @@ BUGWK93470 : fast/dom/title-directionality.html = TEXT
 
 // WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
 BUGWKEFL : fast/events/popup-blocking-click-in-iframe.html = TEXT
+
+// Interactive form validation setting is not enabled in WebKitTestRunner
+BUGWK95936 : fast/forms/number/number-interactive-validation-required.html = TEXT
 
 // WebKitTestRunner eventSender needs touch events support
 BUGWKEFL : fast/events/touch/basic-multi-touch-events-limited.html = TEXT
