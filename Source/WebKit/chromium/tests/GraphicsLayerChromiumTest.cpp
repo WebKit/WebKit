@@ -68,7 +68,7 @@ public:
         Platform::current()->compositorSupport()->initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
         m_platformLayer = m_graphicsLayer->platformLayer();
-        m_layerTreeView = adoptPtr(WebLayerTreeView::create(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings()));
+        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings()));
         m_layerTreeView->setViewportSize(WebSize(1, 1), WebSize(1, 1));
     }
 
@@ -98,9 +98,9 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 {
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 
-    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(Platform::current()->compositorSupport()->createFloatAnimationCurve());
     curve->add(WebFloatKeyframe(0.0, 0.0));
-    OwnPtr<WebAnimation> floatAnimation(adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity)));
+    OwnPtr<WebAnimation> floatAnimation(adoptPtr(Platform::current()->compositorSupport()->createAnimation(*curve, WebAnimation::TargetPropertyOpacity)));
     int animationId = floatAnimation->id();
     ASSERT_TRUE(m_platformLayer->addAnimation(floatAnimation.get()));
 
