@@ -28,7 +28,6 @@
 #include <limits>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/WTFString.h>
 
 template<typename IntegerType> struct PrintfFormatTrait { static const char format[]; };
@@ -75,12 +74,12 @@ void testBoundaries()
     buffer.resize(bufferSize);
 
     const IntegerType min = std::numeric_limits<IntegerType>::min();
-    CString minStringData = String(WTF::numberToStringImpl(min)).latin1();
+    CString minStringData = String::number(min).latin1();
     snprintf(buffer.data(), bufferSize, PrintfFormatTrait<IntegerType>::format, min);
     ASSERT_STREQ(buffer.data(), minStringData.data());
 
     const IntegerType max = std::numeric_limits<IntegerType>::max();
-    CString maxStringData = String(WTF::numberToStringImpl(max)).latin1();
+    CString maxStringData = String::number(max).latin1();
     snprintf(buffer.data(), bufferSize, PrintfFormatTrait<IntegerType>::format, max);
     ASSERT_STREQ(buffer.data(), maxStringData.data());
 }
@@ -94,7 +93,7 @@ void testNumbers()
 
     for (int i = -100; i < 100; ++i) {
         const IntegerType number = static_cast<IntegerType>(i);
-        CString numberStringData = String(WTF::numberToStringImpl(number)).latin1();
+        CString numberStringData = String::number(number).latin1();
         snprintf(buffer.data(), bufferSize, PrintfFormatTrait<IntegerType>::format, number);
         ASSERT_STREQ(buffer.data(), numberStringData.data());
     }

@@ -219,7 +219,6 @@ SOURCES += \
     text/AtomicString.cpp \
     text/Base64.cpp \
     text/CString.cpp \
-    text/IntegerToStringConversion.cpp \
     text/StringBuilder.cpp \
     text/StringImpl.cpp \
     text/StringStatics.cpp \

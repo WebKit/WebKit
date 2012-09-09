@@ -424,10 +424,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\wtf\text\IntegerToStringConversion.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\wtf\text\IntegerToStringConversion.h"
 				>
 			</File>

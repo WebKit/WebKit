@@ -224,7 +224,6 @@
             'wtf/text/AtomicString.cpp',
             'wtf/text/Base64.cpp',
             'wtf/text/CString.cpp',
-            'wtf/text/IntegerToStringConversion.cpp',
             'wtf/text/StringBuilder.cpp',
             'wtf/text/StringImpl.cpp',
             'wtf/text/StringStatics.cpp',
