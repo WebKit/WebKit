@@ -614,22 +614,11 @@ namespace JSC {
         // Returns the index of the added var.
         enum ConstantMode { IsConstant, IsVariable };
         enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
-        enum VarType { Captured, NotCaptured };
         int addGlobalVar(const Identifier&, ConstantMode, FunctionMode);
-        void declareParameter(const Identifier&, int parameterIndex);
 
-        void allocateCapturedVars();
-        void allocateUncapturedVars();
-        void allocateActivationVar();
-        void allocateArgumentsVars();
-        void allocateCalleeVarUndeclared();
-        void declareParameters();
-        void declareCallee();
-        void initCalleeVar();
-        void initArgumentsVars();
-        void initActivationVar();
-        void initThisParameter();
-        void initFunctionDeclarations();
+        void addParameter(const Identifier&, int parameterIndex);
+        RegisterID* resolveCallee(FunctionBodyNode*);
+        void addCallee(FunctionBodyNode*, RegisterID*);
 
         void preserveLastVar();
         bool shouldAvoidResolveGlobal();
@@ -749,6 +738,9 @@ namespace JSC {
 
         int m_globalVarStorageOffset;
 
+        bool m_hasCreatedActivation;
+        int m_firstLazyFunction;
+        int m_lastLazyFunction;
         HashMap<unsigned int, FunctionBodyNode*, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int> > m_lazyFunctions;
         typedef HashMap<FunctionBodyNode*, unsigned> FunctionOffsetMap;
         FunctionOffsetMap m_functionOffsets;

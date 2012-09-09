@@ -314,7 +314,7 @@ public:
         FuncDeclNode* decl = new (m_globalData) FuncDeclNode(location, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
         if (*name == m_globalData->propertyNames->arguments)
             usesArguments();
-        m_scope.m_funcDeclarations->data.append(DeclarationStacks::FunctionDeclaration(decl->body()));
+        m_scope.m_funcDeclarations->data.append(decl->body());
         body->setLoc(bodyStartLine, bodyEndLine, location.column);
         return decl;
     }
@@ -508,7 +508,7 @@ public:
     {
         if (m_globalData->propertyNames->arguments == *ident)
             usesArguments();
-        m_scope.m_varDeclarations->data.append(DeclarationStacks::VarDeclaration(ident, attrs));
+        m_scope.m_varDeclarations->data.append(std::make_pair(ident, attrs));
     }
 
     ExpressionNode* combineCommaNodes(const JSTokenLocation& location, ExpressionNode* list, ExpressionNode* init)

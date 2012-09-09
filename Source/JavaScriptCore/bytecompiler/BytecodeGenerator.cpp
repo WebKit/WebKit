@@ -278,6 +278,9 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     , m_codeType(GlobalCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
+    , m_hasCreatedActivation(true)
+    , m_firstLazyFunction(0)
+    , m_lastLazyFunction(0)
     , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
@@ -317,7 +320,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     globalObject->addRegisters(newGlobals);
 
     for (size_t i = 0; i < functionStack.size(); ++i) {
-        FunctionBodyNode* function = functionStack[i].node;
+        FunctionBodyNode* function = functionStack[i];
         bool propertyDidExist = 
             globalObject->removeDirect(*m_globalData, function->ident()); // Newly declared functions overwrite existing properties.
         
@@ -329,236 +332,12 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     }
 
     for (size_t i = 0; i < varStack.size(); ++i) {
-        if (globalObject->hasProperty(exec, *varStack[i].name))
+        if (globalObject->hasProperty(exec, *varStack[i].first))
             continue;
         addGlobalVar(
-            *varStack[i].name,
-            (varStack[i].attributes & DeclarationStacks::IsConstant) ? IsConstant : IsVariable,
+            *varStack[i].first,
+            (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable,
             NotFunctionOrNotSpecializable);
-    }
-}
-
-void BytecodeGenerator::allocateCapturedVars()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-    if (!node->hasCapturedVariables())
-        return;
-
-    DeclarationStacks::FunctionStack& functionStack = node->functionStack();
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        if (!node->captures(functionStack[i].node->ident()))
-            continue;
-        functionStack[i].reg = addVar(functionStack[i].node->ident(), false);
-        m_functions.add(functionStack[i].node->ident().impl());
-    }
-
-    DeclarationStacks::VarStack& varStack = node->varStack();
-    for (size_t i = 0; i < varStack.size(); ++i) {
-        if (!node->captures(*varStack[i].name))
-            continue;
-        varStack[i].reg = addVar(*varStack[i].name, varStack[i].attributes & DeclarationStacks::IsConstant);
-    }
-}
-
-void BytecodeGenerator::allocateUncapturedVars()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    DeclarationStacks::FunctionStack& functionStack = node->functionStack();
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        if (node->captures(functionStack[i].node->ident()))
-            continue;
-        functionStack[i].reg = addVar(functionStack[i].node->ident(), false);
-        m_functions.add(functionStack[i].node->ident().impl());
-    }
-
-    DeclarationStacks::VarStack& varStack = node->varStack();
-    for (size_t i = 0; i < varStack.size(); ++i) {
-        if (node->captures(*varStack[i].name))
-            continue;
-        varStack[i].reg = addVar(*varStack[i].name, varStack[i].attributes & DeclarationStacks::IsConstant);
-    }
-}
-
-void BytecodeGenerator::allocateActivationVar()
-{
-    if (!m_codeBlock->needsFullScopeChain())
-        return;
-
-    m_activationRegister = addVar();
-    m_codeBlock->setActivationRegister(m_activationRegister->index());
-}
-
-void BytecodeGenerator::allocateArgumentsVars()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    // Both op_tear_off_activation and op_tear_off_arguments tear off the 'arguments'
-    // object, if created.
-    if (!m_codeBlock->needsFullScopeChain() && !node->usesArguments())
-        return;
-
-    RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
-    RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
-
-    // We can save a little space by hard-coding the knowledge that the two
-    // 'arguments' values are stored in consecutive registers, and storing
-    // only the index of the assignable one.
-    m_codeBlock->setArgumentsRegister(argumentsRegister->index());
-    ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->index() == JSC::unmodifiedArgumentsRegister(m_codeBlock->argumentsRegister()));
-}
-
-void BytecodeGenerator::allocateCalleeVarUndeclared()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    if (node->ident().isNull() || !node->functionNameIsInScope())
-        return;
-
-    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
-        return;
-
-    if (!node->captures(node->ident())) {
-        m_calleeRegister.setIndex(RegisterFile::Callee);
-        return;
-    }
-
-    m_calleeRegister.setIndex(addVar()->index());
-}
-
-void BytecodeGenerator::declareParameters()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-    FunctionParameters& parameters = *node->parameters();
-    m_parameters.grow(parameters.size() + 1); // reserve space for "this"
-
-    // Add "this" as a parameter
-    int nextParameterIndex = CallFrame::thisArgumentOffset();
-    m_thisRegister.setIndex(nextParameterIndex--);
-    m_codeBlock->addParameter();
-    
-    for (size_t i = 0; i < parameters.size(); ++i)
-        declareParameter(parameters[i], nextParameterIndex--);
-}
-
-void BytecodeGenerator::declareCallee()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    if (node->ident().isNull() || !node->functionNameIsInScope())
-        return;
-
-    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
-        return;
-
-    symbolTable().add(node->ident().impl(), SymbolTableEntry(m_calleeRegister.index(), ReadOnly));
-}
-
-void BytecodeGenerator::initCalleeVar()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    if (node->ident().isNull() || !node->functionNameIsInScope())
-        return;
-
-    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
-    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks) {
-        emitOpcode(op_push_name_scope);
-        instructions().append(addConstant(node->ident()));
-        instructions().append(RegisterFile::Callee);
-        instructions().append(ReadOnly | DontDelete);
-
-        // Put a mirror object in compilation scope, so compile-time variable resolution sees the property name we'll see at runtime.
-        m_scope.set(*globalData(),
-            JSNameScope::create(
-                m_scope->globalObject()->globalExec(),
-                node->ident(),
-                jsUndefined(),
-                ReadOnly | DontDelete,
-                m_scope.get()
-            )
-        );
-
-        return;
-    }
-
-    if (!node->captures(node->ident()))
-        return;
-
-    // Move the callee into the captured section of the stack.
-    RegisterID callee(RegisterFile::Callee);
-    emitMove(&m_calleeRegister, &callee);
-}
-
-void BytecodeGenerator::initArgumentsVars()
-{
-    if (!m_codeBlock->usesArguments())
-        return;
-
-    int argumentsRegister = m_codeBlock->argumentsRegister();
-    int unmodifiedArgumentsRegister = JSC::unmodifiedArgumentsRegister(argumentsRegister);
-
-    prependComment("unmodified arguments");
-    emitInitLazyRegister(&registerFor(unmodifiedArgumentsRegister));
-    prependComment("arguments");
-    emitInitLazyRegister(&registerFor(argumentsRegister));
-
-    if ((m_codeBlock->usesArguments() && m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks) {
-        emitOpcode(op_create_arguments);
-        instructions().append(m_codeBlock->argumentsRegister());
-    }
-}
-
-void BytecodeGenerator::initActivationVar()
-{
-    if (!m_codeBlock->needsFullScopeChain())
-        return;
-
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    emitInitLazyRegister(m_activationRegister);
-
-    bool canLazilyCreateFunctions = !node->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
-    if (canLazilyCreateFunctions)
-        return;
-
-    emitOpcode(op_create_activation);
-    instructions().append(m_activationRegister->index());
-}
-
-void BytecodeGenerator::initThisParameter()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    if (isConstructor()) {
-        prependComment("'this' because we are a Constructor function");
-        emitOpcode(op_create_this);
-        instructions().append(m_thisRegister.index());
-    } else if (!m_codeBlock->isStrictMode() && (node->usesThis() || m_codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
-        ValueProfile* profile = emitProfiledOpcode(op_convert_this);
-        instructions().append(m_thisRegister.index());
-        instructions().append(profile);
-    }
-}
-
-void BytecodeGenerator::initFunctionDeclarations()
-{
-    FunctionBodyNode* node = static_cast<FunctionBodyNode*>(m_scopeNode);
-
-    const DeclarationStacks::FunctionStack& functionStack = node->functionStack();
-    bool canLazilyCreateFunctions = !node->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        FunctionBodyNode* function = functionStack[i].node;
-        const Identifier& ident = function->ident();
-        RegisterID* reg = &registerFor(symbolTable().get(ident.impl()).getIndex());
-        if (node->captures(ident) || ident == propertyNames().arguments || !canLazilyCreateFunctions)
-            emitNewFunction(reg, function);
-        else {
-            emitInitLazyRegister(reg);
-            m_lazyFunctions.set(reg->index(), function);
-        }
     }
 }
 
@@ -580,6 +359,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
     , m_codeType(FunctionCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
+    , m_hasCreatedActivation(false)
+    , m_firstLazyFunction(0)
+    , m_lastLazyFunction(0)
     , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
@@ -594,26 +376,142 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         m_codeBlock->setNeedsFullScopeChain(true);
 
     codeBlock->setGlobalData(m_globalData);
+    
+    prependComment("entering Function block");
+    emitOpcode(op_enter);
+    if (m_codeBlock->needsFullScopeChain()) {
+        m_activationRegister = addVar();
+        prependComment("activation for Full Scope Chain");
+        emitInitLazyRegister(m_activationRegister);
+        m_codeBlock->setActivationRegister(m_activationRegister->index());
+    }
 
-    allocateArgumentsVars();
-    allocateActivationVar();
-    allocateCalleeVarUndeclared();
-    allocateCapturedVars();
+    // Both op_tear_off_activation and op_tear_off_arguments tear off the 'arguments'
+    // object, if created.
+    if (m_codeBlock->needsFullScopeChain() || functionBody->usesArguments()) {
+        RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
+        RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
+
+        // We can save a little space by hard-coding the knowledge that the two
+        // 'arguments' values are stored in consecutive registers, and storing
+        // only the index of the assignable one.
+        codeBlock->setArgumentsRegister(argumentsRegister->index());
+        ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->index() == JSC::unmodifiedArgumentsRegister(codeBlock->argumentsRegister()));
+
+        prependComment("arguments for Full Scope Chain");
+        emitInitLazyRegister(argumentsRegister);
+        prependComment("unmodified arguments for Full Scope Chain");
+        emitInitLazyRegister(unmodifiedArgumentsRegister);
+        
+        if (m_codeBlock->isStrictMode()) {
+            prependComment("create arguments for strict mode");
+            emitOpcode(op_create_arguments);
+            instructions().append(argumentsRegister->index());
+        }
+
+        // The debugger currently retrieves the arguments object from an activation rather than pulling
+        // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
+        // but for now we force eager creation of the arguments object when debugging.
+        if (m_shouldEmitDebugHooks) {
+            prependComment("create arguments for debug hooks");
+            emitOpcode(op_create_arguments);
+            instructions().append(argumentsRegister->index());
+        }
+    }
+
+    RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.
+
+    const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
+    const DeclarationStacks::VarStack& varStack = functionBody->varStack();
+
+    // Captured variables and functions go first so that activations don't have
+    // to step over the non-captured locals to mark them.
+    m_hasCreatedActivation = false;
+    if (functionBody->hasCapturedVariables()) {
+        for (size_t i = 0; i < functionStack.size(); ++i) {
+            FunctionBodyNode* function = functionStack[i];
+            const Identifier& ident = function->ident();
+            if (functionBody->captures(ident)) {
+                if (!m_hasCreatedActivation) {
+                    m_hasCreatedActivation = true;
+                    prependComment("activation for captured vars");
+                    emitOpcode(op_create_activation);
+                    instructions().append(m_activationRegister->index());
+                }
+                m_functions.add(ident.impl());
+                prependComment("captured function var");
+                emitNewFunction(addVar(ident, false), function);
+            }
+        }
+        for (size_t i = 0; i < varStack.size(); ++i) {
+            const Identifier& ident = *varStack[i].first;
+            if (functionBody->captures(ident))
+                addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+        }
+    }
+    bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
+    if (!canLazilyCreateFunctions && !m_hasCreatedActivation) {
+        m_hasCreatedActivation = true;
+        prependComment("cannot lazily create functions");
+        emitOpcode(op_create_activation);
+        instructions().append(m_activationRegister->index());
+    }
+
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
-    allocateUncapturedVars();
-    if (m_shouldEmitDebugHooks) // FIXME: What about eval?
+
+    m_firstLazyFunction = codeBlock->m_numVars;
+    for (size_t i = 0; i < functionStack.size(); ++i) {
+        FunctionBodyNode* function = functionStack[i];
+        const Identifier& ident = function->ident();
+        if (!functionBody->captures(ident)) {
+            m_functions.add(ident.impl());
+            RefPtr<RegisterID> reg = addVar(ident, false);
+            // Don't lazily create functions that override the name 'arguments'
+            // as this would complicate lazy instantiation of actual arguments.
+            prependComment("a function that override 'arguments'");
+            if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
+                emitNewFunction(reg.get(), function);
+            else {
+                emitInitLazyRegister(reg.get());
+                m_lazyFunctions.set(reg->index(), function);
+            }
+        }
+    }
+    m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
+    for (size_t i = 0; i < varStack.size(); ++i) {
+        const Identifier& ident = *varStack[i].first;
+        if (!functionBody->captures(ident))
+            addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+    }
+
+    if (m_shouldEmitDebugHooks)
         codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+
+    FunctionParameters& parameters = *functionBody->parameters();
+    m_parameters.grow(parameters.size() + 1); // reserve space for "this"
+
+    // Add "this" as a parameter
+    int nextParameterIndex = CallFrame::thisArgumentOffset();
+    m_thisRegister.setIndex(nextParameterIndex--);
+    m_codeBlock->addParameter();
+    
+    for (size_t i = 0; i < parameters.size(); ++i)
+        addParameter(parameters[i], nextParameterIndex--);
+
     preserveLastVar();
 
-    declareParameters(); // Parameters lose to functions
-    declareCallee(); // Callee loses to everything
+    // We declare the callee's name last because it should lose to a var, function, and/or parameter declaration.
+    addCallee(functionBody, calleeRegister);
 
-    emitOpcode(op_enter);
-    initArgumentsVars();
-    initActivationVar();
-    initCalleeVar();
-    initThisParameter();
-    initFunctionDeclarations();
+    if (isConstructor()) {
+        prependComment("'this' because we are a Constructor function");
+        emitOpcode(op_create_this);
+        instructions().append(m_thisRegister.index());
+    } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
+        ValueProfile* profile = emitProfiledOpcode(op_convert_this);
+        instructions().append(m_thisRegister.index());
+        instructions().append(profile);
+    }
 }
 
 BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
@@ -634,6 +532,9 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolT
     , m_codeType(EvalCode)
     , m_nextConstantOffset(0)
     , m_globalConstantIndex(0)
+    , m_hasCreatedActivation(true)
+    , m_firstLazyFunction(0)
+    , m_lastLazyFunction(0)
     , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
@@ -654,14 +555,14 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolT
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
-        m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, functionStack[i].node));
+        m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, functionStack[i]));
 
     const DeclarationStacks::VarStack& varStack = evalNode->varStack();
     unsigned numVariables = varStack.size();
     Vector<Identifier> variables;
     variables.reserveCapacity(numVariables);
     for (size_t i = 0; i < numVariables; ++i)
-        variables.append(*varStack[i].name);
+        variables.append(*varStack[i].first);
     codeBlock->adoptVariables(variables);
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     preserveLastVar();
@@ -679,7 +580,54 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
     return reg;
 }
 
-void BytecodeGenerator::declareParameter(const Identifier& ident, int parameterIndex)
+RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
+{
+    if (functionBodyNode->ident().isNull() || !functionBodyNode->functionNameIsInScope())
+        return 0;
+
+    m_calleeRegister.setIndex(RegisterFile::Callee);
+
+    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
+    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks) {
+        emitOpcode(op_push_name_scope);
+        instructions().append(addConstant(functionBodyNode->ident()));
+        instructions().append(m_calleeRegister.index());
+        instructions().append(ReadOnly | DontDelete);
+
+        // Put a mirror object in compilation scope, so compile-time variable resolution sees the property name we'll see at runtime.
+        m_scope.set(*globalData(),
+            JSNameScope::create(
+                m_scope->globalObject()->globalExec(),
+                functionBodyNode->ident(),
+                jsUndefined(),
+                ReadOnly | DontDelete,
+                m_scope.get()
+            )
+        );
+        return 0;
+    }
+
+    if (!functionBodyNode->captures(functionBodyNode->ident()))
+        return &m_calleeRegister;
+
+    // Move the callee into the captured section of the stack.
+    return emitMove(addVar(), &m_calleeRegister);
+}
+
+void BytecodeGenerator::addCallee(FunctionBodyNode* functionBodyNode, RegisterID* calleeRegister)
+{
+    if (functionBodyNode->ident().isNull() || !functionBodyNode->functionNameIsInScope())
+        return;
+
+    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
+    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
+        return;
+
+    ASSERT(calleeRegister);
+    symbolTable().add(functionBodyNode->ident().impl(), SymbolTableEntry(calleeRegister->index(), ReadOnly));
+}
+
+void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex)
 {
     // Parameters overwrite var declarations, but not function declarations.
     StringImpl* rep = ident.impl();
@@ -723,11 +671,9 @@ RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
 
 RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
 {
-    FunctionBodyNode* node = m_lazyFunctions.get(reg->index());
-    if (!node)
+    if (m_lastLazyFunction <= reg->index() || reg->index() < m_firstLazyFunction)
         return reg;
-
-    emitLazyNewFunction(reg, node);
+    emitLazyNewFunction(reg, m_lazyFunctions.get(reg->index()));
     return reg;
 }
 
@@ -2003,7 +1949,9 @@ void BytecodeGenerator::createArgumentsIfNecessary()
 
 void BytecodeGenerator::createActivationIfNecessary()
 {
-    if (!m_codeBlock->needsFullScopeChain() || m_codeType != FunctionCode)
+    if (m_hasCreatedActivation)
+        return;
+    if (!m_codeBlock->needsFullScopeChain())
         return;
     emitOpcode(op_create_activation);
     instructions().append(m_activationRegister->index());

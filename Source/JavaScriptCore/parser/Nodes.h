@@ -85,29 +85,9 @@ namespace JSC {
     typedef HashSet<RefPtr<StringImpl>, IdentifierRepHash> IdentifierSet;
 
     namespace DeclarationStacks {
-        struct VarDeclaration {
-            VarDeclaration(const Identifier* name, unsigned attributes)
-                : name(name)
-                , attributes(attributes)
-                , reg(0)
-            {
-            }
-            const Identifier* name;
-            unsigned attributes;
-            RegisterID* reg;
-        };
-        struct FunctionDeclaration {
-            explicit FunctionDeclaration(FunctionBodyNode* node)
-                : node(node)
-                , reg(0)
-            {
-            }
-            FunctionBodyNode* node;
-            RegisterID* reg;
-        };
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
-        typedef Vector<VarDeclaration> VarStack;
-        typedef Vector<FunctionDeclaration> FunctionStack;
+        typedef Vector<std::pair<const Identifier*, unsigned> > VarStack;
+        typedef Vector<FunctionBodyNode*> FunctionStack;
     }
 
     struct SwitchInfo {
