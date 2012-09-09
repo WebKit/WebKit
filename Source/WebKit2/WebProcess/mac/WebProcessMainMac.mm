@@ -29,6 +29,7 @@
 #import "CommandLine.h"
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
+#import "StringUtilities.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
 #import <WebCore/RunLoop.h>
@@ -93,11 +94,10 @@ int WebProcessMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // Initialize the shim.
     // FIXME: Make the shim work.
     WebProcess::shared().initializeShim();
-
-    // Create the connection.
+    // FIXME: Pass the client identifier here.
+    WebProcess::shared().initializeSandbox(String());
     WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort, xpcConnection), RunLoop::main());
 
     WKAXRegisterRemoteApp();
@@ -125,6 +125,8 @@ int WebProcessMain(const CommandLine& commandLine)
     if (serviceName.isEmpty() && clientExecutable.isEmpty())
         return EXIT_FAILURE;
 
+    String clientIdentifier;
+
     // Get the server port.
     mach_port_t serverPort;
     if (clientExecutable.isEmpty()) {
@@ -132,6 +134,12 @@ int WebProcessMain(const CommandLine& commandLine)
         if (kr) {
             WTFLogAlways("bootstrap_look_up result: %s (%x)\n", mach_error_string(kr), kr);
             return 2;
+        }
+        
+        clientIdentifier = commandLine["client-identifier"];
+        if (!clientIdentifier) {
+            WTFLogAlways("No client identifier passed to the WebProcess");
+            return EXIT_FAILURE;
         }
     }
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
@@ -185,6 +193,16 @@ int WebProcessMain(const CommandLine& commandLine)
             WTFLogAlways("Failed to obtain send right for port received from the UI process.\n");
             return EXIT_FAILURE;
         }
+
+        RetainPtr<NSURL> clientExecutableURL = adoptNS([[NSURL alloc] initFileURLWithPath:nsStringFromWebCoreString(clientExecutable)]);
+        RetainPtr<CFURLRef> clientBundleURL = adoptCF(WKCopyBundleURLForExecutableURL((CFURLRef)clientExecutableURL.get()));
+        RetainPtr<NSBundle> clientBundle = adoptNS([[NSBundle alloc] initWithURL:(NSURL *)clientBundleURL.get()]);
+        
+        clientIdentifier = [clientBundle.get() bundleIdentifier];
+        if (!clientIdentifier) {
+            WTFLogAlways("Failed to obtain bundle identifier from the client executable. .\n");
+            return EXIT_FAILURE;
+        }
     }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
@@ -206,14 +224,6 @@ int WebProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // Initialize the shim.
-    WebProcess::shared().initializeShim();
-
-    // Create the connection.
-    WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
-
-    [pool drain];
-
 #if USE(APPKIT)
      // Initialize AppKit.
     [NSApplication sharedApplication];
@@ -223,8 +233,14 @@ int WebProcessMain(const CommandLine& commandLine)
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
+    WebProcess::shared().initializeShim();
+    WebProcess::shared().initializeSandbox(clientIdentifier);
+    WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
+
     WKAXRegisterRemoteApp();
-    
+
+    [pool drain];
+
     RunLoop::run();
 
     // FIXME: Do more cleanup here.

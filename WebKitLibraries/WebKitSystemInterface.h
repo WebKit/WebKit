@@ -249,6 +249,8 @@ void WKCFURLRequestSetHTTPRequestBodyParts(CFMutableURLRequestRef, CFArrayRef bo
 
 void WKSetVisibleApplicationName(CFStringRef);
 
+CFURLRef WKCopyBundleURLForExecutableURL(CFURLRef);
+
 typedef enum {
     WKMediaUIPartFullscreenButton   = 0,
     WKMediaUIPartMuteButton,

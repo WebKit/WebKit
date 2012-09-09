@@ -1,3 +1,37 @@
+2012-09-08  Sam Weinig  <sam@webkit.org>
+
+        Switch to entering the sandbox directly from main(), rather than waiting for the initialization message
+        https://bugs.webkit.org/show_bug.cgi?id=96194
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Pass a client identifier to WebProcess as a command line argument
+        so that it can be used to create private temporary and cache directories.
+
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::initializeSandbox):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Expose the initializeSandbox() function and stop calling it from platformInitializeWebProcess()
+        since it is now going to be called from WebProcessMain.  Also, move changing the current working
+        directory to sandbox initialization function and replace use of creation parameters with just
+        the client identifier.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Add some new exceptions that come from entering the sandbox earlier in the AppKit
+        initialization process. Don't allow access to com.apple.coreservices.appleevents.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMainXPC):
+        (WebKit::WebProcessMain):
+        Enter the sandbox explicitly, not waiting until the initialization message.  Also,
+        since we now have an extra parameter for the client identifier, make the WebProcess
+        launches the UIProcess code path work by extracting a client identifier from the 
+        client executable path.
+
 2012-09-09  Patrick Gansterer  <paroga@webkit.org>
 
         Make the String initialization on the function side of String::number()

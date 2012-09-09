@@ -128,6 +128,7 @@ public:
 
 #if PLATFORM(MAC)
     void initializeShim();
+    void initializeSandbox(const String& clientIdentifier);
 
 #if USE(ACCELERATED_COMPOSITING)
     mach_port_t compositingRenderServerPort() const { return m_compositingRenderServerPort; }

@@ -180,8 +180,10 @@ static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const c
 
 #endif
 
-static void initializeSandbox(const WebProcessCreationParameters& parameters)
+void WebProcess::initializeSandbox(const String& clientIdentifier)
 {
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+
 #if ENABLE(WEB_PROCESS_SANDBOX)
 
 #if DEBUG_BYPASS_SANDBOX
@@ -191,7 +193,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
-    String systemDirectorySuffix = "com.apple.WebProcess+" + parameters.uiProcessBundleIdentifier;
+    String systemDirectorySuffix = "com.apple.WebProcess+" + clientIdentifier;
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
@@ -248,10 +250,6 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
     
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
 {
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
-
-    initializeSandbox(parameters);
-
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
     SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);

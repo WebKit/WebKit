@@ -222,11 +222,14 @@ void ProcessLauncher::launchProcess()
 
         RetainPtr<CFStringRef> cfLocalization(AdoptCF, WKCopyCFLocalizationPreferredName(NULL));
         CString localization = String(cfLocalization.get()).utf8();
-        
+
+        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
+
         // Make a unique, per pid, per process launcher web process service name.
         CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
-        const char* args[] = { [processAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-localization", localization.data(), 0 };
+        const char* args[] = { [processAppExecutablePath fileSystemRepresentation], frameworkExecutablePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-localization", localization.data(), "-client-identifier", clientIdentifier.data(), 0 };
 
         // Register ourselves.
         kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
