@@ -1,3 +1,22 @@
+2012-09-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] Fix PLATFORM(WIN) vs. OS(WINDOWS) in various files
+        https://bugs.webkit.org/show_bug.cgi?id=96178
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        PLATFORM(WIN) is used in various places, where it is safe to use OS(WINDOWS) to allow
+        the re-use of that code path in ports beyond Safari/Windows.
+
+        * Platform/CoreIPC/BinarySemaphore.h:
+        (BinarySemaphore):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Platform/SharedMemory.h:
+        (Handle):
+        (SharedMemory):
+        * Platform/WorkQueue.h:
+
 2012-09-08  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Minibrowser crashes on right mouse click

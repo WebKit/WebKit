@@ -86,7 +86,7 @@ public:
     // Note that this will adopt the mach port and destroy it when the work queue is invalidated.
     void registerMachPortEventHandler(mach_port_t, MachPortEventType, const Function<void()>&);
     void unregisterMachPortEventHandler(mach_port_t);
-#elif PLATFORM(WIN)
+#elif OS(WINDOWS)
     void registerHandle(HANDLE, const Function<void()>&);
     void unregisterAndCloseHandle(HANDLE);
 #elif PLATFORM(QT)
@@ -117,7 +117,7 @@ private:
     HashMap<mach_port_t, EventSource*> m_eventSources;
     dispatch_queue_t m_dispatchQueue;
 #endif
-#elif PLATFORM(WIN)
+#elif OS(WINDOWS)
     class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
     public:
         static PassRefPtr<WorkItemWin> create(const Function<void()>&, WorkQueue*);

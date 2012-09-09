@@ -148,7 +148,7 @@ public:
 #endif
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
-#elif PLATFORM(WIN)
+#elif OS(WINDOWS)
     typedef HANDLE Identifier;
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
@@ -379,7 +379,7 @@ private:
     xpc_connection_t m_xpcConnection;
 #endif
 
-#elif PLATFORM(WIN)
+#elif OS(WINDOWS)
     // Called on the connection queue.
     void readEventHandler();
     void writeEventHandler();
