@@ -377,7 +377,6 @@ SOURCES += \
     Platform/CoreIPC/ArgumentDecoder.cpp \
     Platform/CoreIPC/ArgumentEncoder.cpp \
     Platform/CoreIPC/Attachment.cpp \
-    Platform/CoreIPC/BinarySemaphore.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
     Platform/Logging.cpp \
@@ -855,6 +854,11 @@ mac: {
         Platform/mac/WorkQueueMac.cpp \
         Platform/mac/SharedMemoryMac.cpp
 
+} else:win32 {
+    SOURCES += \
+        Platform/CoreIPC/win/ConnectionWin.cpp \
+        Platform/win/WorkQueueWin.cpp \
+        Platform/win/SharedMemoryWin.cpp
 } else {
     SOURCES += \
         Platform/CoreIPC/unix/AttachmentUnix.cpp \
@@ -862,6 +866,15 @@ mac: {
         Platform/qt/WorkQueueQt.cpp \
         Platform/unix/SharedMemoryUnix.cpp
 }
+
+win32 {
+    SOURCES += \
+        Platform/CoreIPC/win/BinarySemaphoreWin.cpp
+} else {
+    SOURCES += \
+        Platform/CoreIPC/BinarySemaphore.cpp
+}
+
 
 contains(DEFINES, ENABLE_INSPECTOR_SERVER=1) {
     HEADERS += \
