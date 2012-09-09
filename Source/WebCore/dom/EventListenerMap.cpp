@@ -69,43 +69,29 @@ EventListenerMap::EventListenerMap()
 {
 }
 
-bool EventListenerMap::isEmpty() const
-{
-    if (m_hashMap)
-        return m_hashMap->isEmpty();
-    return !m_singleEventListenerVector;
-}
-
 bool EventListenerMap::contains(const AtomicString& eventType) const
 {
-    if (m_hashMap)
-        return m_hashMap->contains(eventType);
-    return m_singleEventListenerType == eventType;
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType)
+            return true;
+    }
+    return false;
 }
 
 void EventListenerMap::clear()
 {
     assertNoActiveIterators();
 
-    if (m_hashMap)
-        m_hashMap.clear();
-    else {
-        m_singleEventListenerType = nullAtom;
-        m_singleEventListenerVector.clear();
-    }
+    m_entries.clear();
 }
 
 Vector<AtomicString> EventListenerMap::eventTypes() const
 {
     Vector<AtomicString> types;
+    types.reserveInitialCapacity(m_entries.size());
 
-    if (m_hashMap) {
-        EventListenerHashMap::iterator it = m_hashMap->begin();
-        EventListenerHashMap::iterator end = m_hashMap->end();
-        for (; it != end; ++it)
-            types.append(it->first);
-    } else if (m_singleEventListenerVector)
-        types.append(m_singleEventListenerType);
+    for (unsigned i = 0; i < m_entries.size(); ++i)
+        types.uncheckedAppend(m_entries[i].first);
 
     return types;
 }
@@ -125,30 +111,13 @@ bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListen
 {
     assertNoActiveIterators();
 
-    if (m_singleEventListenerVector && m_singleEventListenerType != eventType) {
-        // We already have a single (first) listener vector, and this event is not
-        // of that type, so create the hash map and move the first listener vector there.
-        ASSERT(!m_hashMap);
-        m_hashMap = adoptPtr(new EventListenerHashMap);
-        m_hashMap->add(m_singleEventListenerType, m_singleEventListenerVector.release());
-        m_singleEventListenerType = nullAtom;
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType)
+            return addListenerToVector(m_entries[i].second.get(), listener, useCapture);
     }
 
-    if (m_hashMap) {
-        EventListenerHashMap::AddResult result = m_hashMap->add(eventType, nullptr);
-        if (result.isNewEntry)
-            result.iterator->second = adoptPtr(new EventListenerVector);
-
-        return addListenerToVector(result.iterator->second.get(), listener, useCapture);
-    }
-
-    if (!m_singleEventListenerVector) {
-        m_singleEventListenerType = eventType;
-        m_singleEventListenerVector = adoptPtr(new EventListenerVector);
-    }
-
-    ASSERT(m_singleEventListenerType == eventType);
-    return addListenerToVector(m_singleEventListenerVector.get(), listener, useCapture);
+    m_entries.append(std::make_pair(eventType, adoptPtr(new EventListenerVector)));
+    return addListenerToVector(m_entries.last().second.get(), listener, useCapture);
 }
 
 static bool removeListenerFromVector(EventListenerVector* listenerVector, EventListener* listener, bool useCapture, size_t& indexOfRemovedListener)
@@ -165,40 +134,26 @@ bool EventListenerMap::remove(const AtomicString& eventType, EventListener* list
 {
     assertNoActiveIterators();
 
-    if (!m_hashMap) {
-        if (m_singleEventListenerType != eventType)
-            return false;
-        bool wasRemoved = removeListenerFromVector(m_singleEventListenerVector.get(), listener, useCapture, indexOfRemovedListener);
-        if (m_singleEventListenerVector->isEmpty()) {
-            m_singleEventListenerVector.clear();
-            m_singleEventListenerType = nullAtom;
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType) {
+            bool wasRemoved = removeListenerFromVector(m_entries[i].second.get(), listener, useCapture, indexOfRemovedListener);
+            if (m_entries[i].second->isEmpty())
+                m_entries.remove(i);
+            return wasRemoved;
         }
-        return wasRemoved;
     }
 
-    EventListenerHashMap::iterator it = m_hashMap->find(eventType);
-    if (it == m_hashMap->end())
-        return false;
-
-    bool wasRemoved = removeListenerFromVector(it->second.get(), listener, useCapture, indexOfRemovedListener);
-    if (it->second->isEmpty())
-        m_hashMap->remove(it);
-    return wasRemoved;
+    return false;
 }
 
 EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
 {
     assertNoActiveIterators();
 
-    if (m_hashMap) {
-        EventListenerHashMap::iterator it = m_hashMap->find(eventType);
-        if (it == m_hashMap->end())
-            return 0;
-        return it->second.get();
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType)
+            return m_entries[i].second.get();
     }
-
-    if (m_singleEventListenerType == eventType)
-        return m_singleEventListenerVector.get();
 
     return 0;
 }
@@ -224,28 +179,13 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicStr
 {
     assertNoActiveIterators();
 
-    if (m_hashMap) {
-        EventListenerHashMap::iterator result = m_hashMap->find(eventType);
-        ASSERT(result != m_hashMap->end());
-
-        EventListenerVector* listenerVector = result->second.get();
-        ASSERT(listenerVector);
-
-        removeFirstListenerCreatedFromMarkup(listenerVector);
-
-        if (listenerVector->isEmpty())
-            m_hashMap->remove(result);
-
-        return;
-    }
-
-    ASSERT(m_singleEventListenerVector);
-    ASSERT(m_singleEventListenerType == eventType);
-
-    removeFirstListenerCreatedFromMarkup(m_singleEventListenerVector.get());
-    if (m_singleEventListenerVector->isEmpty()) {
-        m_singleEventListenerVector.clear();
-        m_singleEventListenerType = nullAtom;
+    for (unsigned i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].first == eventType) {
+            removeFirstListenerCreatedFromMarkup(m_entries[i].second.get());
+            if (m_entries[i].second->isEmpty())
+                m_entries.remove(i);
+            return;
+        }
     }
 }
 
@@ -263,29 +203,22 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
 {
     assertNoActiveIterators();
 
-    if (m_hashMap) {
-        EventListenerHashMap::iterator end = m_hashMap->end();
-        for (EventListenerHashMap::iterator it = m_hashMap->begin(); it != end; ++it)
-            copyListenersNotCreatedFromMarkupToTarget(it->first, it->second.get(), target);
-        return;
-    }
-
-    if (!m_singleEventListenerVector)
-        return;
-
-    copyListenersNotCreatedFromMarkupToTarget(m_singleEventListenerType, m_singleEventListenerVector.get(), target);
+    for (unsigned i = 0; i < m_entries.size(); ++i)
+        copyListenersNotCreatedFromMarkupToTarget(m_entries[i].first, m_entries[i].second.get(), target);
 }
 
 #endif // ENABLE(SVG)
 
 EventListenerIterator::EventListenerIterator()
     : m_map(0)
+    , m_entryIndex(0)
     , m_index(0)
 {
 }
 
 EventListenerIterator::EventListenerIterator(EventTarget* target)
     : m_map(0)
+    , m_entryIndex(0)
     , m_index(0)
 {
     ASSERT(target);
@@ -302,11 +235,6 @@ EventListenerIterator::EventListenerIterator(EventTarget* target)
         m_map->m_activeIteratorCount++;
     }
 #endif
-
-    if (m_map->m_hashMap) {
-        m_mapIterator = m_map->m_hashMap->begin();
-        m_mapEnd = m_map->m_hashMap->end();
-    }
 }
 
 #ifndef NDEBUG
@@ -324,21 +252,13 @@ EventListener* EventListenerIterator::nextListener()
     if (!m_map)
         return 0;
 
-    if (m_map->m_hashMap) {
-        for (; m_mapIterator != m_mapEnd; ++m_mapIterator) {
-            EventListenerVector& listeners = *m_mapIterator->second;
-            if (m_index < listeners.size())
-                return listeners[m_index++].listener.get();
-            m_index = 0;
-        }
-        return 0;
+    for (; m_entryIndex < m_map->m_entries.size(); ++m_entryIndex) {
+        EventListenerVector& listeners = *m_map->m_entries[m_entryIndex].second;
+        if (m_index < listeners.size())
+            return listeners[m_index++].listener.get();
+        m_index = 0;
     }
 
-    if (!m_map->m_singleEventListenerVector)
-        return 0;
-    EventListenerVector& listeners = *m_map->m_singleEventListenerVector;
-    if (m_index < listeners.size())
-        return listeners[m_index++].listener.get();
     return 0;
 }
 

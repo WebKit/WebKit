@@ -1,3 +1,15 @@
+2012-09-09  Andreas Kling  <kling@webkit.org>
+
+        EventListenerMap: Use Vector instead of HashMap as backend.
+        <http://webkit.org/b/77982>
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline inspector test whose output depended on the internal ordering of event
+        listeners (changed as listeners are no longer stored in an unordered HashMap.)
+
+        * inspector/console/command-line-api-getEventListeners-expected.txt:
+
 2012-09-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION (r127936): Multiple accessibility tests failing on Lion
