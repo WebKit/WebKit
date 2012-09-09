@@ -28,7 +28,7 @@ layer at (65,213) size 225x45 scrollWidth 329 scrollHeight 54
         RenderBlock {DIV} at (1,1) size 6x36
         RenderBlock {DIV} at (-4,1) size 36x36
     RenderButton {INPUT} at (284,0) size 46x45
-layer at (127,217) size 49x36
+layer at (127,217) size 48x36
   RenderBlock (relative positioned) {DIV} at (-11,-12) size 49x36
 layer at (57,310) size 240x180
   RenderVideo {VIDEO} at (45,298) size 240x180
@@ -52,5 +52,5 @@ layer at (65,438) size 225x45 scrollWidth 329 scrollHeight 54
         RenderBlock {DIV} at (1,1) size 6x36
         RenderBlock {DIV} at (-4,1) size 36x36
     RenderButton {INPUT} at (284,0) size 46x45
-layer at (127,442) size 49x36 backgroundClip at (60,417) size 225x45 clip at (60,417) size 225x45 outlineClip at (60,417) size 225x45
+layer at (127,442) size 48x36 backgroundClip at (60,417) size 225x45 clip at (60,417) size 225x45 outlineClip at (60,417) size 225x45
   RenderBlock (relative positioned) {DIV} at (-11,-12) size 49x36
