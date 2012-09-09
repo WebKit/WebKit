@@ -172,9 +172,6 @@ public:
     v8::Local<v8::Context> mainWorldContext();
     v8::Local<v8::Context> currentWorldContext();
 
-    // WARNING! The handle returned by this function might be Disposed() when JavaScript is executed.
-    v8::Persistent<v8::Context> unsafeHandleToCurrentWorldContext();
-
     // Pass command-line flags to the JS engine.
     static void setFlags(const char* string, int length);
 

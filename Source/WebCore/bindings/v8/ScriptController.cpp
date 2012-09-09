@@ -411,21 +411,16 @@ void ScriptController::finishedWithEvent(Event* event)
 {
 }
 
-v8::Persistent<v8::Context> ScriptController::unsafeHandleToCurrentWorldContext()
+v8::Local<v8::Context> ScriptController::currentWorldContext()
 {
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
         if (m_frame != toFrameIfNotDetached(context->get()))
-            return v8::Persistent<v8::Context>();
-        return context->get();
+            return v8::Local<v8::Context>();
+        return v8::Local<v8::Context>::New(context->get());
     }
     windowShell()->initializeIfNeeded();
-    return windowShell()->context();
-}
-
-v8::Local<v8::Context> ScriptController::currentWorldContext()
-{
-    return v8::Local<v8::Context>::New(unsafeHandleToCurrentWorldContext());
+    return v8::Local<v8::Context>::New(windowShell()->context());
 }
 
 v8::Local<v8::Context> ScriptController::mainWorldContext()
