@@ -83,6 +83,8 @@ public:
     // Compositing thread must notify the SurfacePool when EGLImages are composited
     void notifyBuffersComposited(const Vector<TileBuffer*>& buffers);
 
+    void destroyPlatformSync(void* platformSync);
+
 private:
     // This is necessary so BackingStoreTile can atomically swap buffers with m_backBuffer.
     friend class BackingStoreTile;

@@ -32,6 +32,8 @@ struct Buffer;
 }
 }
 
+namespace WebKit {
+
 // Represents a fence that has been inserted into the command stream. You can wait on the corresponding platform sync
 // object to make sure that previous commands have been completed.
 // There is no reason to wait twice on the same platform sync object, so the only mechanism provided to access the sync
@@ -54,6 +56,8 @@ public:
         return tmp;
     }
 
+    ~Fence();
+
 private:
     Fence(void* platformSync)
         : m_platformSync(platformSync)
@@ -63,7 +67,6 @@ private:
     void* m_platformSync;
 };
 
-namespace WebKit {
 class TileBuffer {
     public:
         TileBuffer(const Platform::IntSize&);

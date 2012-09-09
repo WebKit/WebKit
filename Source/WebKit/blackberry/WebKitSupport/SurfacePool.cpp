@@ -123,7 +123,13 @@ void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
     }
 #endif
 
-    pthread_mutex_init(&m_mutex, 0);
+    // m_mutex must be recursive because destroyPlatformSync may be called indirectly
+    // from notifyBuffersComposited
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&m_mutex, &attr);
+    pthread_mutexattr_destroy(&attr);
 }
 
 PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(BlackBerry::Platform::Graphics::Drawable* drawable) const
@@ -280,12 +286,16 @@ void SurfacePool::notifyBuffersComposited(const Vector<TileBuffer*>& tileBuffers
     // fence that may be active among these tiles and add its sync object to the garbage set
     // for later destruction to make sure it doesn't leak.
     RefPtr<Fence> fence = Fence::create(eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, 0));
-    for (unsigned int i = 0; i < tileBuffers.size(); ++i) {
-        if (EGLSyncKHR platformSync = tileBuffers[i]->fence()->takePlatformSync())
-            m_garbage.insert(platformSync);
-
+    for (unsigned int i = 0; i < tileBuffers.size(); ++i)
         tileBuffers[i]->setFence(fence);
-    }
+#endif
+}
+
+void SurfacePool::destroyPlatformSync(void* platformSync)
+{
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL && USE(SKIA)
+    Platform::MutexLocker locker(&m_mutex);
+    m_garbage.insert(platformSync);
 #endif
 }
 

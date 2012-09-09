@@ -27,6 +27,12 @@
 namespace BlackBerry {
 namespace WebKit {
 
+Fence::~Fence()
+{
+    if (m_platformSync)
+        SurfacePool::globalSurfacePool()->destroyPlatformSync(m_platformSync);
+}
+
 TileBuffer::TileBuffer(const Platform::IntSize& size)
     : m_size(size)
     , m_fence(Fence::create())
