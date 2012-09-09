@@ -78,6 +78,10 @@ accessibility/aria-checkbox-sends-notification.html
 accessibility/menu-list-sends-change-notification.html
 accessibility/multiselect-list-reports-active-option.html
 
+# Test needs a minor fix.
+# https://bugs.webkit.org/show_bug.cgi?id=96173
+platform/mac/accessibility/update-children-when-aria-role-changes.html
+
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

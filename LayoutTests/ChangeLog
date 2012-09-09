@@ -1,5 +1,27 @@
 2012-09-09  Dominic Mazzoni  <dmazzoni@google.com>
 
+        REGRESSION (r127936): Multiple accessibility tests failing on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=96173
+
+        Unreviewed.
+
+        Rebaselining 5 tests that previously assumed that several elements 
+        like 'P' and 'DIV' map to GroupRole so they should expose groupAttrs, 
+        including TitleUIElement. Group attributes aren't actually needed for 
+        a 'P' or 'DIV' element, so it makes sense to just update the expectations.
+
+        Marking platform/mac/accessibility/update-children-when-aria-role-changes.html
+        as Skipped temporarily, will upload a patch to fix it.
+
+        * accessibility/transformed-element-expected.txt:
+        * platform/mac/Skipped:
+        * platform/mac/accessibility/image-map2-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-one-cell-expected.txt:
+
+2012-09-09  Dominic Mazzoni  <dmazzoni@google.com>
+
         Unreviewed, rolling out r127963.
         http://trac.webkit.org/changeset/127963
         https://bugs.webkit.org/show_bug.cgi?id=96173

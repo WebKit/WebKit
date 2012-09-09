@@ -21,7 +21,6 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
-AXTitleUIElement: (null)
 
 ------------
 AXRole: AXLink
