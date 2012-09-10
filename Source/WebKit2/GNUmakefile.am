@@ -109,7 +109,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	$(LIBSOUP_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(XCOMPOSITE_CFLAGS) \
-	$(XDAMAGE_CFLAGS) \
 	$(XT_CFLAGS)
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS = \
@@ -156,18 +155,10 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDF
 	$(version_script) \
 	$(no_undefined)
 
-libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD := \
+libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
 	-lpthread \
 	libWebCore.la \
-	libWebCorePlatform.la \
-	libWebCoreModules.la
-
-if ENABLE_SVG
-libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD += \
-	libWebCoreSVG.la
-endif
-
-libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD += \
+	libWebCoreModules.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
@@ -191,7 +182,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(UNICODE_LIBS) \
 	$(XRENDER_LIBS) \
 	$(XCOMPOSITE_LIBS) \
-	$(XDAMAGE_LIBS) \
 	$(XT_LIBS) \
 	$(ZLIB_LIBS)
 
@@ -207,55 +197,6 @@ endif
 
 if ENABLE_WEBKIT2
 pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
-
-if ENABLE_INTROSPECTION
-
-WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-	$(AM_V_GEN)$(G_IR_SCANNER) -v --warn-all \
-	     --symbol-prefix=webkit \
-	     --identifier-prefix=WebKit \
-	     --namespace=WebKit2 \
-	     --nsversion=@WEBKITGTK_API_VERSION@ \
-	     --include=GObject-2.0 \
-	     --include=Gtk-3.0 \
-	     --include=Soup-2.4 \
-	     --library=webkit2gtk-@WEBKITGTK_API_VERSION@ \
-	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
-	     --libtool="$(LIBTOOL)" \
-	     --pkg=gobject-2.0 \
-	     --pkg=gtk+-@GTK_API_VERSION@ \
-	     --pkg=libsoup-2.4 \
-	     --pkg-export=webkit2gtk-@WEBKITGTK_API_VERSION@ \
-	     --output=$@ \
-	     --add-include-path=$(WebKit2) \
-	     --add-include-path=$(top_builddir) \
-	     --c-include="webkit2/webkit2.h" \
-	     -I$(srcdir)/Source \
-	     -I$(WebKit2) \
-	     -I$(GENSOURCES) \
-	     -I$(GENSOURCES_WEBKIT2) \
-	     -I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
-	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
-	     -I$(top_srcdir) \
-	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk/include \
-	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk \
-	     -DWEBKIT2_COMPILATION \
-	     $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h \
-	     $(webkit2gtk_h_api) \
-	     $(WebKit2)/UIProcess/API/gtk/*.cpp
-
-gir2dir = $(datadir)/gir-1.0
-gir2_DATA = WebKit2-@WEBKITGTK_API_VERSION@.gir
-
-typelibs2dir = $(libdir)/girepository-1.0
-typelibs2_DATA = WebKit2-@WEBKITGTK_API_VERSION@.typelib
-
-WebKit2-@WEBKITGTK_API_VERSION@.typelib: WebKit2-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
-	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit2) --includedir $(top_builddir) $< -o $@
-
-CLEANFILES += WebKit2-@WEBKITGTK_API_VERSION@.gir WebKit2-@WEBKITGTK_API_VERSION@.typelib
-
-endif
 endif
 
 # WebKit2 specific variables
@@ -533,15 +474,7 @@ Programs_WebKitPluginProcess_SOURCES = \
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libWebCore.la
-
-#if ENABLE_SVG
-Programs_WebKitPluginProcess_LDADD += \
-    libWebCoreSVG.la
-#endif
-
-Programs_WebKitPluginProcess_LDADD += \
-	libWebCorePlatform.la \
+	libWebCore.la \
 	libWebCoreGtk2.la \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \

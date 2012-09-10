@@ -48,10 +48,6 @@ public:
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 
-#if USE(ACCELERATED_COMPOSITING)
-    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
-#endif
-
 private:
     explicit DrawingAreaProxyImpl(WebPageProxy*);
 
@@ -82,6 +78,9 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
+
+    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+
 #if USE(COORDINATED_GRAPHICS)
     virtual void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectory);
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

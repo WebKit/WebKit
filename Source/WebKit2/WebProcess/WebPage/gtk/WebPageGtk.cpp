@@ -156,7 +156,7 @@ PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL&)
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void WebPage::setAcceleratedCompositingWindowId(int64_t nativeWindowHandle)
+void WebPage::widgetMapped(int64_t nativeWindowHandle)
 {
     m_nativeWindowHandle = nativeWindowHandle;
 }

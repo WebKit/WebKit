@@ -1,8 +1,8 @@
 AC_PREREQ(2.60)
 
 m4_define([webkit_major_version], [1])
-m4_define([webkit_minor_version], [10])
-m4_define([webkit_micro_version], [2])
+m4_define([webkit_minor_version], [9])
+m4_define([webkit_micro_version], [91])
 
 # This is the version we'll be using as part of our User-Agent string
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
@@ -11,7 +11,7 @@ m4_define([webkit_micro_version], [2])
 m4_define([webkit_user_agent_major_version], [537])
 m4_define([webkit_user_agent_minor_version], [6])
 
-AC_INIT([WebKitGTK],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
+AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
 AC_CONFIG_MACRO_DIR([Source/autotools])
 AC_CONFIG_AUX_DIR([Source/autotools])
@@ -35,13 +35,13 @@ AC_CONFIG_SRCDIR([Source/WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
-LIBWEBKITGTK_VERSION=17:5:17
+LIBWEBKITGTK_VERSION=17:1:17
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
-LIBJAVASCRIPTCOREGTK_VERSION=13:11:13
+LIBJAVASCRIPTCOREGTK_VERSION=13:7:13
 AC_SUBST([LIBJAVASCRIPTCOREGTK_VERSION])
 
-LIBWEBKIT2GTK_VERSION=18:5:0
+LIBWEBKIT2GTK_VERSION=18:1:0
 AC_SUBST([LIBWEBKIT2GTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
@@ -567,11 +567,8 @@ AC_MSG_RESULT([$with_acceleration_backend])
 
 if test "$with_acceleration_backend" = "opengl"; then
     PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite]);
-    PKG_CHECK_MODULES([XDAMAGE], [xdamage]);
     AC_SUBST(XCOMPOSITE_CFLAGS)
     AC_SUBST(XCOMPOSITE_LIBS)
-    AC_SUBST(XDAMAGE_CFLAGS)
-    AC_SUBST(XDAMAGE_LIBS)
 fi
 
 # OpenGL is turned on by default (along with WebGL and accelerated compositing), but if

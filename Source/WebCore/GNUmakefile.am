@@ -543,31 +543,6 @@ endif # END ENABLE_NOTIFICATIONS
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
 if ENABLE_SVG
-nodist_libWebCoreSVG_la_SOURCES = \
-       $(webcore_svg_built_sources)
-
-libWebCoreSVG_la_SOURCES = \
-       $(webcore_svg_sources)
-
-libWebCoreSVG_la_CXXFLAGS = \
-       $(SYMBOL_VISIBILITY_INLINES) \
-       $(global_cxxflags)
-
-libWebCoreSVG_la_CFLAGS = \
-       $(SYMBOL_VISIBILITY) \
-       $(global_cflags)
-
-libWebCoreSVG_la_CPPFLAGS = \
-       -DBUILDING_WebCore \
-       -DBUILDING_WEBKIT \
-       $(global_cppflags) \
-       $(webcore_cppflags) \
-       $(webcoregtk_cppflags) \
-       $(javascriptcore_cppflags) \
-       -fno-strict-aliasing \
-       $(CAIRO_CFLAGS) \
-       $(LIBSOUP_CFLAGS)
-
 FEATURE_DEFINES += ENABLE_SVG=1
 webcore_cppflags += -DENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
@@ -974,14 +949,8 @@ DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/
 $(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) : | $(supplemental_dependency_file) $(webcore_built_sources)
 
 noinst_LTLIBRARIES += \
-	libWebCorePlatform.la \
 	libWebCoreModules.la \
 	libWebCore.la
-
-if ENABLE_SVG
-noinst_LTLIBRARIES += \
-       libWebCoreSVG.la
-endif
 
 # Artificial dependency to try to force a relink of the WebCore libraries
 # When their makefiles change.
@@ -991,31 +960,24 @@ $(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source
 webcoremodules_lib_for_dep = libWebcoreModules.la
 $(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
-webcoreplatform_lib_for_dep = libWebcorePlatform.la
-$(webcoreplatform_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
-
-webcoresvg_lib_for_dep = libWebCoreSVG.la
-$(webcoresvg_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
-
 nodist_EXTRA_libWebCore_la_SOURCES = \
-       $(webcore_built_nosources)
+	$(webcore_built_nosources)
 
 nodist_libWebCore_la_SOURCES = \
-       $(webcore_built_sources)
+	$(webcore_built_sources)
 
 libWebCore_la_SOURCES = \
-       $(webcore_sources)
+	$(webcore_sources)
 
 libWebCore_la_CXXFLAGS = \
-       $(SYMBOL_VISIBILITY_INLINES) \
-       $(global_cxxflags)
+	$(SYMBOL_VISIBILITY_INLINES) \
+	$(global_cxxflags)
 
 libWebCore_la_CFLAGS = \
-       $(SYMBOL_VISIBILITY) \
-       $(global_cflags)
+	$(SYMBOL_VISIBILITY) \
+	$(global_cflags)
 
 libWebCore_la_CPPFLAGS = \
-	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
@@ -1030,7 +992,6 @@ libWebCore_la_CPPFLAGS = \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
-	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
@@ -1054,42 +1015,6 @@ libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
 
 libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
 
-libWebCorePlatform_la_SOURCES = \
-	$(webcore_platform_sources)
-
-libWebCorePlatform_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
-	$(global_cxxflags)
-
-libWebCorePlatform_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
-	$(global_cflags)
-
-libWebCorePlatform_la_CPPFLAGS = \
-	-DBUILDING_WEBKIT \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(javascriptcore_cppflags) \
-	-fno-strict-aliasing \
-	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(GAMEPAD_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBSECRET_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(PANGO_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(XRENDER_CFLAGS) \
-	$(XT_CFLAGS)
-
 # We have a different library with only the files that require GTK+. It allows us
 # to build a common WebCore lib and two different gtk WebCore libs depending on
 # the gtk version. In WeKit2 gtk2 is not supported, but the plugin process needs to
@@ -1110,7 +1035,6 @@ libWebCoreGtk_la_CFLAGS = \
 	$(global_cflags)
 
 libWebCoreGtk_la_CPPFLAGS = \
-	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
@@ -1130,14 +1054,12 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(HILDON_CFLAGS) \
-	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(XCOMPOSITE_CFLAGS) \
-	$(XDAMAGE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
 

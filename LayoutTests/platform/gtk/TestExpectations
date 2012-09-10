@@ -614,7 +614,7 @@ BUGWKGTK : accessibility/aria-scrollbar-role.html = TEXT
 BUGWKGTK : accessibility/aria-text-role.html = TEXT
 BUGWKGTK : accessibility/aria-used-on-image-maps.html = TEXT
 BUGWKGTK : accessibility/button-press-action.html = TEXT
-BUGWKGTK : accessibility/canvas-description-and-role.html = TEXT
+BUGWKGTK : accessibility/canvas.html = TEXT
 BUGWKGTK : accessibility/canvas-fallback-content.html = TEXT
 BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = TEXT
 BUGWKGTK : accessibility/ellipsis-text.html = TEXT
@@ -1070,6 +1070,9 @@ BUGWK84044 SKIP : accessibility/image-link.html = TEXT
 BUGWK84045 SKIP : accessibility/image-map1.html = TEXT
 BUGWK84045 SKIP : accessibility/image-map2.html = TEXT
 
+// Properly expose <legend> elements to ATs
+BUGWK84137 SKIP : accessibility/legend.html = TEXT
+
 // [DRT] didDetectXSS is not implemented
 BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEXT
 
@@ -1291,9 +1294,6 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
 
 BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
-
-BUGWKGTK SKIP : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT
-BUGWKGTK : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

@@ -145,6 +145,7 @@ public:
 private:
     MediaPlayerPrivate(MediaPlayer*);
 
+    FrameView* frameView() const;
     void updateStates();
     String userAgent(const String&) const;
 

@@ -54,7 +54,6 @@
 #include "NumberInputType.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
-#include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "ScriptEventListener.h"
@@ -977,7 +976,6 @@ void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior even
         return;
 
     RefPtr<HTMLInputElement> protector(this);
-    EventQueueScope scope;
     String sanitizedValue = sanitizeValue(value);
     bool valueChanged = sanitizedValue != this->value();
 

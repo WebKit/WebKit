@@ -101,16 +101,7 @@ private:
                     node.convertToStructureTransitionWatchpoint(structureValue.singleton());
                 break;
             }
-                
-            case CheckArray: {
-                if (!modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode()))
-                    break;
-                ASSERT(node.refCount() == 1);
-                node.setOpAndDefaultFlags(Phantom);
-                eliminated = true;
-                break;
-            }
-                
+                    
             default:
                 break;
             }

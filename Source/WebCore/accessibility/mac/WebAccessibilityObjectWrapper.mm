@@ -1578,9 +1578,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { FormRole, NSAccessibilityGroupRole },
         { SpinButtonRole, NSAccessibilityIncrementorRole },
         { FooterRole, NSAccessibilityGroupRole },
-        { ToggleButtonRole, NSAccessibilityButtonRole },
-        { CanvasRole, NSAccessibilityImageRole },
-        { LegendRole, NSAccessibilityGroupRole }
+        { ToggleButtonRole, NSAccessibilityButtonRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1601,10 +1599,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 {
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-    AccessibilityRole role = m_object->roleValue();
-    if (role == CanvasRole && m_object->canvasHasFallbackContent())
-        role = GroupRole;
-    NSString* string = roleValueToNSString(role);
+    NSString* string = roleValueToNSString(m_object->roleValue());
     if (string != nil)
         return string;
     return NSAccessibilityUnknownRole;
@@ -2000,7 +1995,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }
-        if (m_object->supportsRangeValue())
+        if (m_object->isProgressIndicator() || m_object->isSlider() || m_object->isScrollbar())
             return [NSNumber numberWithFloat:m_object->valueForRange()];
         if (m_object->roleValue() == SliderThumbRole)
             return [NSNumber numberWithFloat:m_object->parentObject()->valueForRange()];

@@ -4377,59 +4377,6 @@ String HTMLMediaElement::mediaPlayerDocumentHost() const
     return document()->url().host();
 }
 
-void HTMLMediaElement::mediaPlayerExitFullscreen()
-{
-    exitFullscreen();
-}
-
-bool HTMLMediaElement::mediaPlayerIsVideo() const
-{
-    return isVideo();
-}
-
-LayoutRect HTMLMediaElement::mediaPlayerContentBoxRect() const
-{
-    if (renderer())
-        return renderer()->enclosingBox()->contentBoxRect();
-    return LayoutRect();
-}
-
-void HTMLMediaElement::mediaPlayerSetSize(const IntSize& size)
-{
-    setAttribute(widthAttr, String::number(size.width()));
-    setAttribute(heightAttr, String::number(size.height()));
-}
-
-void HTMLMediaElement::mediaPlayerPause()
-{
-    pause();
-}
-
-void HTMLMediaElement::mediaPlayerPlay()
-{
-    play();
-}
-
-bool HTMLMediaElement::mediaPlayerIsPaused() const
-{
-    return paused();
-}
-
-bool HTMLMediaElement::mediaPlayerIsLooping() const
-{
-    return loop();
-}
-
-HostWindow* HTMLMediaElement::mediaPlayerHostWindow()
-{
-    return mediaPlayerOwningDocument()->view()->hostWindow();
-}
-
-IntRect HTMLMediaElement::mediaPlayerWindowClipRect()
-{
-    return mediaPlayerOwningDocument()->view()->windowClipRect();
-}
-
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;

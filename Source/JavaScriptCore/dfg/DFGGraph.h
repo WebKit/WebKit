@@ -76,7 +76,16 @@ struct ResolveGlobalData {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
-    Graph(JSGlobalData&, CodeBlock*, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues);
+    Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
+        : m_globalData(globalData)
+        , m_codeBlock(codeBlock)
+        , m_profiledBlock(codeBlock->alternative())
+        , m_hasArguments(false)
+        , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
+        , m_mustHandleValues(mustHandleValues)
+    {
+        ASSERT(m_profiledBlock);
+    }
     
     using Vector<Node, 64>::operator[];
     using Vector<Node, 64>::at;
@@ -576,10 +585,8 @@ public:
         if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild();
                  childIdx < node.firstChild() + node.numChildren();
-                 childIdx++) {
-                if (!!m_varArgChildren[childIdx])
-                    vote(m_varArgChildren[childIdx], ballot);
-            }
+                 childIdx++)
+                vote(m_varArgChildren[childIdx], ballot);
             return;
         }
         
@@ -601,10 +608,8 @@ public:
             NodeIndex nodeIndex = block[indexInBlock];
             Node& node = at(nodeIndex);
             if (node.flags() & NodeHasVarArgs) {
-                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); ++childIdx) {
-                    if (!!m_varArgChildren[childIdx])
-                        compareAndSwap(m_varArgChildren[childIdx], oldThing, newThing, node.shouldGenerate());
-                }
+                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); ++childIdx)
+                    compareAndSwap(m_varArgChildren[childIdx], oldThing, newThing, node.shouldGenerate());
                 continue;
             }
             if (!node.child1())
@@ -680,8 +685,6 @@ public:
     unsigned m_parameterSlots;
     unsigned m_osrEntryBytecodeIndex;
     Operands<JSValue> m_mustHandleValues;
-    
-    OptimizationFixpointState m_fixpointState;
 private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);

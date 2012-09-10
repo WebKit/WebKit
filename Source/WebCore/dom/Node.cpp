@@ -2681,12 +2681,12 @@ void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 
 void Node::dispatchChangeEvent()
 {
-    dispatchScopedEvent(Event::create(eventNames().changeEvent, true, false));
+    dispatchEvent(Event::create(eventNames().changeEvent, true, false));
 }
 
 void Node::dispatchInputEvent()
 {
-    dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));
+    dispatchEvent(Event::create(eventNames().inputEvent, true, false));
 }
 
 bool Node::disabled() const

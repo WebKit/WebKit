@@ -41,7 +41,7 @@ class Graph;
 // a wide range of subexpression similarities. It's known to produce big wins
 // on a few benchmarks, and is relatively cheap to run.
 
-bool performCSE(Graph&);
+bool performCSE(Graph&, OptimizationFixpointState);
 
 } } // namespace JSC::DFG
 

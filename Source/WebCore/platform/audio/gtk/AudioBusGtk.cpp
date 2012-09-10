@@ -28,6 +28,7 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
+#include <gio/gio.h>
 #include <glib.h>
 
 namespace WebCore {
@@ -35,12 +36,14 @@ namespace WebCore {
 PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
     GOwnPtr<gchar> filename(g_strdup_printf("%s.wav", name));
-    const char* environmentPath = getenv("AUDIO_RESOURCES_PATH");
-    GOwnPtr<gchar> absoluteFilename;
-    if (environmentPath)
+    GOwnPtr<gchar> absoluteFilename(g_build_filename(sharedResourcesPath().data(), "resources", "audio", filename.get(), NULL));
+
+    GFile* file = g_file_new_for_path(filename.get());
+    if (!g_file_query_exists(file, 0)) {
+        // Uninstalled case, assume we're in the WebKit root directory.
+        const char* environmentPath = getenv("AUDIO_RESOURCES_PATH");
         absoluteFilename.set(g_build_filename(environmentPath, filename.get(), NULL));
-    else
-        absoluteFilename.set(g_build_filename(sharedResourcesPath().data(), "resources", "audio", filename.get(), NULL));
+    }
     return createBusFromAudioFile(absoluteFilename.get(), false, sampleRate);
 }
 

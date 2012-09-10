@@ -306,23 +306,6 @@ bool AccessibilityNodeObject::accessibilityIsIgnored() const
     return m_role == UnknownRole;
 }
 
-bool AccessibilityNodeObject::canvasHasFallbackContent() const
-{
-    Node* node = this->node();
-    if (!node || !node->hasTagName(canvasTag))
-        return false;
-
-    // If it has any children that are elements, we'll assume it might be fallback
-    // content. If it has no children or its only children are not elements
-    // (e.g. just text nodes), it doesn't have fallback content.
-    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
-        if (child->isElementNode())
-            return true;
-    }
-
-    return false;
-}
-
 bool AccessibilityNodeObject::canSetFocusAttribute() const
 {
     Node* node = this->node();
@@ -400,16 +383,5 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
     
     return role;
 }   
-
-// If you call node->rendererIsEditable() since that will return true if an ancestor is editable.
-// This only returns true if this is the element that actually has the contentEditable attribute set.
-bool AccessibilityNodeObject::hasContentEditableAttributeSet() const
-{
-    if (!hasAttribute(contenteditableAttr))
-        return false;
-    const AtomicString& contentEditableValue = getAttribute(contenteditableAttr);
-    // Both "true" (case-insensitive) and the empty string count as true.
-    return contentEditableValue.isEmpty() || equalIgnoringCase(contentEditableValue, "true");
-}
 
 } // namespace WebCore

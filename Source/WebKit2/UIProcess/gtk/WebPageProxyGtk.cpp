@@ -110,9 +110,9 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void WebPageProxy::setAcceleratedCompositingWindowId(uint64_t nativeWindowId)
+void WebPageProxy::widgetMapped(uint64_t nativeWindowId)
 {
-    process()->send(Messages::WebPage::SetAcceleratedCompositingWindowId(nativeWindowId), m_pageID);
+    process()->send(Messages::WebPage::WidgetMapped(nativeWindowId), m_pageID);
 }
 #endif
 

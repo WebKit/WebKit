@@ -71,7 +71,6 @@ private:
     void intValueGetterCallback(CppVariant*);
     void minValueGetterCallback(CppVariant*);
     void maxValueGetterCallback(CppVariant*);
-    void valueDescriptionGetterCallback(CppVariant*);
     void childrenCountGetterCallback(CppVariant*);
     void insertionPointLineNumberGetterCallback(CppVariant*);
     void selectedTextRangeGetterCallback(CppVariant*);

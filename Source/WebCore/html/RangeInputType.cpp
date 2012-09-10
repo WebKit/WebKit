@@ -42,7 +42,6 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
-#include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
@@ -235,7 +234,6 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
     newValue = stepRange.clampValue(newValue);
 
     if (newValue != current) {
-        EventQueueScope scope;
         ExceptionCode ec;
         TextFieldEventBehavior eventBehavior = DispatchChangeEvent;
         setValueAsDecimal(newValue, eventBehavior, ec);

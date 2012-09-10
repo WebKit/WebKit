@@ -41,7 +41,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return DefaultBehavior;
 
     AccessibilityRole role = roleValue();
-    if (role == HorizontalRuleRole)
+    if (role == SplitterRole)
         return IncludeObject;
 
     // We expose the slider as a whole but not its value indicator.
@@ -84,16 +84,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // usually have no need for the anonymous block. And when the wrong objects
     // get included or ignored, needed accessibility signals do not get emitted.
     if (role == ParagraphRole || role == DivRole) {
-        if (textUnderElement().isEmpty())
+        AccessibilityObject* child = firstAnonymousBlockChild();
+        if (!child)
             return DefaultBehavior;
 
-        if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
-            return DefaultBehavior;
-
-        for (RenderObject* r = renderer()->firstChild(); r; r = r->nextSibling()) {
-            if (r->isAnonymousBlock())
-                return IncludeObject;
-        }
+        child = child->firstChild();
+        if (child->isLink() || !child->firstAnonymousBlockChild())
+            return IncludeObject;
     }
 
     // Block spans result in objects of ATK_ROLE_PANEL which are almost always unwanted.

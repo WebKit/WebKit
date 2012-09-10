@@ -69,11 +69,8 @@ javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 llint_nosources :=
 offlineasm_nosources :=
-webcore_platform_sources :=
-webcore_modules_sources :=
-webcore_svg_built_sources :=
-webcore_svg_sources :=
 webcore_cppflags :=
+webcore_modules_sources :=
 webcore_sources :=
 webcore_libadd :=
 webcore_built_sources :=
@@ -101,7 +98,6 @@ minibrowser_built_sources :=
 global_cppflags :=
 global_cflags :=
 global_cxxflags :=
-common_webcore_shards_cppflags :=
 JSCORE_GIRSOURCES :=
 WEBKIT_GIRSOURCES :=
 FEATURE_DEFINES :=
@@ -300,7 +296,6 @@ BUILT_SOURCES += \
 	$(javascriptcore_built_nosources) \
 	$(webcore_built_sources) \
 	$(webcore_built_nosources) \
-	$(webcore_svg_built_sources) \
 	$(webkitgtk_built_sources) \
 	$(webkitgtk_built_nosources) \
 	$(webkit2_built_sources) \

@@ -40,12 +40,10 @@
 namespace WebCore {
 
 struct FilterData {
-public:
-    enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
-
     FilterData()
         : savedContext(0)
-        , state(PaintingSource)
+        , builded(false)
+        , markedForRemoval(false)
     {
     }
 
@@ -56,7 +54,8 @@ public:
     AffineTransform shearFreeAbsoluteTransform;
     FloatRect boundaries;
     FloatSize scale;
-    FilterDataState state;
+    bool builded : 1;
+    bool markedForRemoval : 1;
 };
 
 class GraphicsContext;

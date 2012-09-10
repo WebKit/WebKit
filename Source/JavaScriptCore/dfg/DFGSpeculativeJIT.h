@@ -2197,7 +2197,7 @@ public:
     
     const TypedArrayDescriptor* typedArrayDescriptor(Array::Mode);
     
-    void checkArray(Node&);
+    const TypedArrayDescriptor* speculateArray(Array::Mode, Edge baseEdge, GPRReg baseReg);
     
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);

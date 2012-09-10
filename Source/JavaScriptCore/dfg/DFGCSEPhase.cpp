@@ -35,8 +35,9 @@ namespace JSC { namespace DFG {
 
 class CSEPhase : public Phase {
 public:
-    CSEPhase(Graph& graph)
+    CSEPhase(Graph& graph, OptimizationFixpointState fixpointState)
         : Phase(graph, "common subexpression elimination")
+        , m_fixpointState(fixpointState)
     {
         // Replacements are used to implement local common subexpression elimination.
         m_replacements.resize(m_graph.size());
@@ -326,7 +327,7 @@ private:
         return false;
     }
 
-    bool checkStructureElimination(const StructureSet& structureSet, NodeIndex child1)
+    bool checkStructureLoadElimination(const StructureSet& structureSet, NodeIndex child1)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -623,37 +624,8 @@ private:
         }
         return NoNode;
     }
-    
-    bool checkArrayElimination(NodeIndex child1, Array::Mode arrayMode)
-    {
-        for (unsigned i = m_indexInBlock; i--;) {
-            NodeIndex index = m_currentBlock->at(i);
-            if (index == child1) 
-                break;
 
-            Node& node = m_graph[index];
-            switch (node.op()) {
-            case PutByOffset:
-            case PutStructure:
-                // Changing the structure or putting to the storage cannot
-                // change the property storage pointer.
-                break;
-                
-            case CheckArray:
-                if (node.child1() == child1 && node.arrayMode() == arrayMode)
-                    return true;
-                break;
-                
-            default:
-                if (m_graph.clobbersWorld(index))
-                    return false;
-                break;
-            }
-        }
-        return false;
-    }
-
-    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, Array::Mode arrayMode)
+    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, bool hasIntegerIndexPrediction)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -663,7 +635,9 @@ private:
             Node& node = m_graph[index];
             switch (node.op()) {
             case GetIndexedPropertyStorage: {
-                if (node.child1() == child1 && node.arrayMode() == arrayMode)
+                SpeculatedType basePrediction = m_graph[node.child2()].prediction();
+                bool nodeHasIntegerIndexPrediction = !(!(basePrediction & SpecInt32) && basePrediction);
+                if (node.child1() == child1 && hasIntegerIndexPrediction == nodeHasIntegerIndexPrediction)
                     return index;
                 break;
             }
@@ -1014,7 +988,7 @@ private:
             ASSERT(replacement.variableAccessData() == variableAccessData);
             // FIXME: We should be able to remove SetLocals that can exit; we just need
             // to replace them with appropriate type checks.
-            if (m_graph.m_fixpointState == FixpointNotConverged) {
+            if (m_fixpointState == FixpointNotConverged) {
                 // Need to be conservative at this time; if the SetLocal has any chance of performing
                 // any speculations then we cannot do anything.
                 if (variableAccessData->isCaptured()) {
@@ -1103,7 +1077,7 @@ private:
             
         case PutGlobalVar:
         case PutGlobalVarCheck:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (m_fixpointState == FixpointNotConverged)
                 break;
             eliminate(globalVarStoreElimination(node.registerPointer()));
             break;
@@ -1129,7 +1103,7 @@ private:
             
         case CheckStructure:
         case ForwardCheckStructure:
-            if (checkStructureElimination(node.structureSet(), node.child1().index()))
+            if (checkStructureLoadElimination(node.structureSet(), node.child1().index()))
                 eliminate();
             break;
             
@@ -1140,7 +1114,7 @@ private:
             break;
             
         case PutStructure:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (m_fixpointState == FixpointNotConverged)
                 break;
             eliminate(putStructureStoreElimination(node.child1().index()), PhantomPutStructure);
             break;
@@ -1150,13 +1124,10 @@ private:
                 eliminate();
             break;
                 
-        case CheckArray:
-            if (checkArrayElimination(node.child1().index(), node.arrayMode()))
-                eliminate();
-            break;
-            
         case GetIndexedPropertyStorage: {
-            setReplacement(getIndexedPropertyStorageLoadElimination(node.child1().index(), node.arrayMode()));
+            SpeculatedType basePrediction = m_graph[node.child2()].prediction();
+            bool nodeHasIntegerIndexPrediction = !(!(basePrediction & SpecInt32) && basePrediction);
+            setReplacement(getIndexedPropertyStorageLoadElimination(node.child1().index(), nodeHasIntegerIndexPrediction));
             break;
         }
 
@@ -1169,7 +1140,7 @@ private:
             break;
             
         case PutByOffset:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (m_fixpointState == FixpointNotConverged)
                 break;
             eliminate(putByOffsetStoreElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1().index()));
             break;
@@ -1207,13 +1178,14 @@ private:
     unsigned m_indexInBlock;
     Vector<NodeIndex, 16> m_replacements;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
+    OptimizationFixpointState m_fixpointState;
     bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.
 };
 
-bool performCSE(Graph& graph)
+bool performCSE(Graph& graph, OptimizationFixpointState fixpointState)
 {
     SamplingRegion samplingRegion("DFG CSE Phase");
-    return runPhase<CSEPhase>(graph);
+    return runPhase<CSEPhase>(graph, fixpointState);
 }
 
 } } // namespace JSC::DFG

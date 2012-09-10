@@ -206,20 +206,6 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("UserInterfaceTooltip");
     case WebAccessibilityRoleToggleButton:
         return result.append("ToggleButton");
-    case WebAccessibilityRoleCanvas:
-        return result.append("Canvas");
-    case WebAccessibilityRoleParagraph:
-        return result.append("Paragraph");
-    case WebAccessibilityRoleDiv:
-        return result.append("Div");
-    case WebAccessibilityRoleLabel:
-        return result.append("Label");
-    case WebAccessibilityRoleForm:
-        return result.append("Form");
-    case WebAccessibilityRoleHorizontalRule:
-        return result.append("HorizontalRule");
-    case WebAccessibilityRoleLegend:
-        return result.append("Legend");
     default:
         // Also matches WebAccessibilityRoleUnknown.
         return result.append("Unknown");
@@ -261,12 +247,6 @@ string getOrientation(const WebAccessibilityObject& object)
         return "AXOrientation: AXVerticalOrientation";
 
     return "AXOrientation: AXHorizontalOrientation";
-}
-
-string getValueDescription(const WebAccessibilityObject& object)
-{
-    string valueDescription = object.valueDescription().utf8();
-    return valueDescription.insert(0, "AXValueDescription: ");
 }
 
 string getAttributes(const WebAccessibilityObject& object)
@@ -321,7 +301,6 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindProperty("intValue", &AccessibilityUIElement::intValueGetterCallback);
     bindProperty("minValue", &AccessibilityUIElement::minValueGetterCallback);
     bindProperty("maxValue", &AccessibilityUIElement::maxValueGetterCallback);
-    bindProperty("valueDescription", &AccessibilityUIElement::valueDescriptionGetterCallback);
     bindProperty("childrenCount", &AccessibilityUIElement::childrenCountGetterCallback);
     bindProperty("insertionPointLineNumber", &AccessibilityUIElement::insertionPointLineNumberGetterCallback);
     bindProperty("selectedTextRange", &AccessibilityUIElement::selectedTextRangeGetterCallback);
@@ -469,11 +448,6 @@ void AccessibilityUIElement::minValueGetterCallback(CppVariant* result)
 void AccessibilityUIElement::maxValueGetterCallback(CppVariant* result)
 {
     result->set(accessibilityObject().maxValueForRange());
-}
-
-void AccessibilityUIElement::valueDescriptionGetterCallback(CppVariant* result)
-{
-    result->set(getValueDescription(accessibilityObject()));
 }
 
 void AccessibilityUIElement::childrenCountGetterCallback(CppVariant* result)

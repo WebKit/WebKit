@@ -132,7 +132,7 @@ enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };
 
-enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };
+enum OptimizationFixpointState { FixpointConverged, FixpointNotConverged };
 
 inline bool shouldShowDisassembly()
 {

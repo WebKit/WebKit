@@ -64,10 +64,7 @@ public:
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 
     void initialize();
-
-    enum CompositePurpose { ForResize, NotForResize };
-    void compositeLayersToContext(CompositePurpose = NotForResize);
-
+    void compositeLayersToContext();
     void flushAndRenderLayers();
     bool flushPendingLayerChanges();
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
