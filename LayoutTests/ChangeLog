@@ -1,5 +1,37 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Add baseline for css3/masking test cases
+        https://bugs.webkit.org/show_bug.cgi?id=96235
+
+        Unreviewed EFL gardening.
+
+        Generate baselines for css3/masking test cases added
+        in r127608.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-filter-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-hidden-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-relative-overflow-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-ellipse-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-evenodd-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-nonzero-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-rectangle-expected.txt: Added.
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip 3 spatial navigation test cases failing after r128006
         https://bugs.webkit.org/show_bug.cgi?id=96233
 
