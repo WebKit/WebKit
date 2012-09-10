@@ -62,15 +62,6 @@ namespace WebCore {
 
     typedef unsigned CallbackAllowedValueFlags;
 
-    class V8AuxiliaryContext {
-    public:
-        V8AuxiliaryContext();
-        virtual ~V8AuxiliaryContext();
-    private:
-        v8::HandleScope m_handleScope;
-        static v8::Persistent<v8::Context>& auxiliaryContext();
-    };
-
     typedef WTF::Vector<RefPtr<MessagePort>, 1> MessagePortArray;
     typedef WTF::Vector<RefPtr<ArrayBuffer>, 1> ArrayBufferArray;
 

@@ -26,6 +26,7 @@
 #ifndef V8PerIsolateData_h
 #define V8PerIsolateData_h
 
+#include "ScopedPersistent.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -91,7 +92,7 @@ public:
     DOMDataList& allStores() { return m_domDataList; }
 
     V8HiddenPropertyName* hiddenPropertyName() { return m_hiddenPropertyName.get(); }
-    v8::Persistent<v8::Context>& auxiliaryContext() { return m_auxiliaryContext; }
+    v8::Handle<v8::Context> ensureAuxiliaryContext();
 
     void registerDOMDataStore(DOMDataStore* domDataStore) 
     {
@@ -151,7 +152,7 @@ private:
     DOMDataStore* m_domDataStore;
 
     OwnPtr<V8HiddenPropertyName> m_hiddenPropertyName;
-    v8::Persistent<v8::Context> m_auxiliaryContext;
+    ScopedPersistent<v8::Context> m_auxiliaryContext;
 
     bool m_constructorMode;
     friend class ConstructorMode;

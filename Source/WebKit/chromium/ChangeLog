@@ -1,5 +1,17 @@
 2012-09-10  Adam Barth  <abarth@chromium.org>
 
+        [V8] V8AuxiliaryContext used by IDB leaks memory
+        https://bugs.webkit.org/show_bug.cgi?id=96317
+
+        Reviewed by Tony Chang.
+
+        Call the V8 APIs directly instead of using a helper class.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::TEST):
+
+2012-09-10  Adam Barth  <abarth@chromium.org>
+
         [V8] Inline firstFrame and currentFrame into their unique callers
         https://bugs.webkit.org/show_bug.cgi?id=96309
 

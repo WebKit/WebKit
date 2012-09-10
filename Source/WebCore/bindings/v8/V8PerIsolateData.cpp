@@ -107,6 +107,13 @@ void V8PerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
 }
 #endif
 
+v8::Handle<v8::Context> V8PerIsolateData::ensureAuxiliaryContext()
+{
+    if (m_auxiliaryContext.isEmpty())
+        m_auxiliaryContext.adopt(v8::Context::New());
+    return m_auxiliaryContext.get();
+}
+
 v8::Handle<v8::Value> V8PerIsolateData::constructorOfToString(const v8::Arguments& args)
 {
     // The DOM constructors' toString functions grab the current toString

@@ -162,7 +162,9 @@ static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<S
 
     RefPtr<SerializedScriptValue> value = prpValue;
 
-    V8AuxiliaryContext context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Handle<v8::Value> v8Value(value->deserialize());
     v8::Handle<v8::Value> v8Key(getNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size()));
     if (v8Key.IsEmpty())
@@ -207,7 +209,9 @@ PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDB
     if (!keyPathElements.size())
         return 0;
 
-    V8AuxiliaryContext context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Handle<v8::Value> v8Value(value->deserialize());
     v8::Handle<v8::Value> parent(ensureNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1));
     if (parent.IsEmpty())

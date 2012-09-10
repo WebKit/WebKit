@@ -48,24 +48,6 @@
 
 namespace WebCore {
 
-V8AuxiliaryContext::V8AuxiliaryContext()
-{
-    auxiliaryContext()->Enter();
-}
-
-V8AuxiliaryContext::~V8AuxiliaryContext()
-{
-    auxiliaryContext()->Exit();
-}
-
-v8::Persistent<v8::Context>& V8AuxiliaryContext::auxiliaryContext()
-{
-    v8::Persistent<v8::Context>& context = V8PerIsolateData::current()->auxiliaryContext();
-    if (context.IsEmpty())
-        context = v8::Context::New();
-    return context;
-}
-
 // Use an array to hold dependents. It works like a ref-counted scheme.
 // A value can be added more than once to the DOM object.
 void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)

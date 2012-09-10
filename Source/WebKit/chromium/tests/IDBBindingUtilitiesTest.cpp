@@ -28,6 +28,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "SerializedScriptValue.h"
+#include "V8PerIsolateData.h"
 #include "V8Utilities.h"
 
 #include <gtest/gtest.h>
@@ -91,7 +92,9 @@ void checkKeyPathNumberValue(SerializedScriptValue* value, const String& keyPath
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 {
-    V8AuxiliaryContext v8context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
@@ -103,7 +106,9 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 {
-    V8AuxiliaryContext v8context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::Number::New(456));
 
@@ -115,7 +120,9 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 
 TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 {
-    V8AuxiliaryContext v8context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
@@ -129,7 +136,9 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 
 TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 {
-    V8AuxiliaryContext v8context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
@@ -141,7 +150,9 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 
 TEST(InjectIDBKeyTest, SubProperty)
 {
-    V8AuxiliaryContext v8context;
+    v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
