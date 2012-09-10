@@ -130,6 +130,8 @@ id CallFrameLoadDelegate(IMP, WebView *, SEL, id, id, id);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, id, id, id);
 id CallFrameLoadDelegate(IMP, WebView *, SEL, id, NSTimeInterval, id, id);
 
+BOOL CallFrameLoadDelegateReturningBoolean(BOOL, IMP, WebView *, SEL);
+
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, id, id);

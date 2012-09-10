@@ -475,6 +475,16 @@ id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id obj
     return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, object1, interval, object2, object3);
 }
 
+BOOL CallFrameLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector)
+{
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *)>(objc_msgSend)(self->_private->frameLoadDelegate, selector, self);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
 id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
     return CallDelegate(implementation, self, self->_private->resourceProgressDelegate, selector, object1, object2);

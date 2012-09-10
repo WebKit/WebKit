@@ -1986,7 +1986,7 @@ bool WebFrameLoaderClient::shouldSendDoNotTrackHTTPHeader() const
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
 
     if (implementations->shouldSendDoNotTrackHTTPHeaderFunc)
-        return CallResourceLoadDelegateReturningBoolean(YES, implementations->shouldSendDoNotTrackHTTPHeaderFunc, webView, @selector(webViewShouldSendDoNotTrackHTTPHeader:));
+        return CallFrameLoadDelegateReturningBoolean(YES, implementations->shouldSendDoNotTrackHTTPHeaderFunc, webView, @selector(webViewShouldSendDoNotTrackHTTPHeader:));
     return false;
 }
 
