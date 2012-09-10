@@ -2072,6 +2072,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(SMOOTH_SCROLLING)
     settings->setEnableScrollAnimator(store.getBoolValueForKey(WebPreferencesKey::scrollAnimatorEnabledKey()));
 #endif
+    settings->setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
 
     // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
     // is enabled on Mac so that scrollbars are always in their own layers.

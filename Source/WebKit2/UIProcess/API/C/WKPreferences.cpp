@@ -884,6 +884,16 @@ bool WKPreferencesGetTabToLinksEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->tabToLinksEnabled();
 }
 
+void WKPreferencesSetInteractiveFormValidationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setInteractiveFormValidationEnabled(enabled);
+}
+
+bool WKPreferencesGetInteractiveFormValidationEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->interactiveFormValidationEnabled();
+}
+
 void WKPreferencesSetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setScrollingPerformanceLoggingEnabled(enabled);

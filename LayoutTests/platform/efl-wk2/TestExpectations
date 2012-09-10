@@ -152,9 +152,6 @@ BUGWK93470 : fast/dom/title-directionality.html = TEXT
 // WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
 BUGWKEFL : fast/events/popup-blocking-click-in-iframe.html = TEXT
 
-// Interactive form validation setting is not enabled in WebKitTestRunner
-BUGWK95936 : fast/forms/number/number-interactive-validation-required.html = TEXT
-
 // WebKitTestRunner eventSender needs touch events support
 BUGWKEFL : fast/events/touch/basic-multi-touch-events-limited.html = TEXT
 BUGWKEFL : fast/events/touch/basic-multi-touch-events.html = TEXT
