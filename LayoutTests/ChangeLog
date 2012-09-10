@@ -1,3 +1,9 @@
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
+        Mark gradient-with-scaled-ancestor.html as flaky
+
+        * platform/chromium/TestExpectations:
+
 2012-09-10  Jon Lee  <jonlee@apple.com>
 
         Remove stray Changelog message.
