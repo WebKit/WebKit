@@ -49,13 +49,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = currentFrame(BindingState::instance());
-    if (!frame)
-        return throwError(ReferenceError, "AudioContext constructor associated frame is unavailable", args.GetIsolate());
-
-    Document* document = frame->document();
-    if (!document)
-        return throwError(ReferenceError, "AudioContext constructor associated document is unavailable", args.GetIsolate());
+    Document* document = currentDocument(BindingState::instance());
 
     RefPtr<AudioContext> audioContext;
     

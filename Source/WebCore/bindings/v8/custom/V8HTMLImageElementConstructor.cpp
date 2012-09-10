@@ -55,14 +55,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    // FIXME: We shouldn't need to go through the Frame to get the Document.
-    Frame* frame = currentFrame(BindingState::instance());
-    if (!frame)
-        return throwError(ReferenceError, "Image constructor associated frame is unavailable", args.GetIsolate());
-
-    Document* document = frame->document();
-    if (!document)
-        return throwError(ReferenceError, "Image constructor associated document is unavailable", args.GetIsolate());
+    Document* document = currentDocument(BindingState::instance());
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLImageElement instance
     // may end up being the only node in the map and get garbage-collected prematurely.

@@ -2027,11 +2027,7 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = currentFrame(BindingState::instance());
-    if (!frame)
-        return throwError(ReferenceError, "${implClassName} constructor associated frame is unavailable", args.GetIsolate());
-
-    Document* document = frame->document();
+    Document* document = currentDocument(BindingState::instance());
 
     // Make sure the document is added to the DOM Node map. Otherwise, the ${implClassName} instance
     // may end up being the only node in the map and get garbage-collected prematurely.
