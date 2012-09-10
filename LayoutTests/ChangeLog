@@ -1,3 +1,9 @@
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed fix of webkit-lint for Chromium gardening
+
+        * platform/chromium/TestExpectations:
+
 2012-09-10  Alex Sakhartchouk  <alexst@chromium.org>
 
         [chromium] gradient-with-scaled-ancestor.html rebaseline

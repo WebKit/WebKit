@@ -3323,7 +3323,7 @@ BUGWK94242 DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS TIM
 
 // Need rebaseline.
 BUGWK89344 : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGWK89344 : media/audio-repaint.html = IMAGE+TEXT
+BUGCR145590 BUGWK89344 : media/audio-repaint.html = IMAGE+TEXT TIMEOUT
 BUGWK89344 : media/controls-after-reload.html = IMAGE+TEXT
 BUGWK89344 : media/controls-layout-direction.html = IMAGE
 BUGWK89344 : media/controls-strict.html = IMAGE+TEXT
@@ -3557,7 +3557,6 @@ BUGCR145590 ANDROID : http/tests/security/video-cross-origin-readback.html = TEX
 BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html = TEXT
 BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html = TEXT
 BUGCR145590 ANDROID : media/audio-data-url.html = TEXT
-BUGCR145590 ANDROID : media/audio-repaint.html = TEXT TIMEOUT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-events.html = TIMEOUT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-not-loaded.html = TEXT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-syntax.html = TEXT
