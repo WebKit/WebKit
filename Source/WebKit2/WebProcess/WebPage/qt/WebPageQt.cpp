@@ -442,6 +442,7 @@ void WebPage::hidePopupMenu()
 
 bool WebPage::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
 {
+#ifndef QT_NO_CLIPBOARD
     if (platformMouseEvent.button() != WebCore::MiddleButton)
         return false;
 
@@ -452,6 +453,7 @@ bool WebPage::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEve
             return true;
         }
     }
+#endif
     return false;
 }
 

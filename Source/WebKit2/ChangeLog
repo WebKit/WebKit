@@ -1,3 +1,17 @@
+2012-09-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt][WK2] REGRESSION(r127861): It made one test fail and one test crash
+        https://bugs.webkit.org/show_bug.cgi?id=96243
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Skip the code if QClipboard is not available, and give WebCore a chance to handle the event first.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::handleMouseReleaseEvent):
+
 2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] WK2 build fixes for MSVC
