@@ -8,7 +8,7 @@
       testRunner.dumpAsText();
   if (window.webkitRequestFileSystem) {
       // These two calls should throw an exception but should NOT cause a NULL pointer crash:
-      webkitResolveLocalFileSystemURL('');
+      webkitResolveLocalFileSystemURL('', function() {});
       try {
           webkitRequestFileSystem(TEMPORARY, 100);
       }

@@ -36,7 +36,7 @@ module window {
         [V8EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size,
                 in [Callback] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
         [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url,
-                in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+                in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
     };
 
 }

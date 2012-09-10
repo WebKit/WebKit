@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Ensures that we get exceptions when we do not include required arguments for webkitRequestFileSystem and webkitResolveLocalFileSystemURL methods.');
+
+if (window.webkitResolveLocalFileSystemURL) {
+    var notEnoughArguments = '"TypeError: Not enough arguments"';
+    shouldThrow('webkitResolveLocalFileSystemURL()', notEnoughArguments);
+    shouldThrow('webkitResolveLocalFileSystemURL("")', notEnoughArguments);
+    shouldThrow('webkitRequestFileSystem()', notEnoughArguments);
+    shouldThrow('webkitRequestFileSystem(TEMPORARY)', notEnoughArguments);
+    shouldThrow('webkitRequestFileSystem(TEMPORARY, 1)', notEnoughArguments);
+} else
+    debug("This test requires window.webkitResolveLocalFileSystemURL.");
+</script>
+<script src="../js/resources/js-test-post.js"></script>

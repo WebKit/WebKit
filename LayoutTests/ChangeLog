@@ -1,3 +1,17 @@
+2012-09-09  Taiju Tsuiki  <tzik@chromium.org>
+
+        successCallback of ResolveLocalFileSystemURL should not be optional.
+        https://bugs.webkit.org/show_bug.cgi?id=94802
+
+        Reviewed by Kent Tamura.
+
+        Spec says it should not optional.
+        http://www.w3.org/TR/file-system-api/#widl-LocalFileSystem-resolveLocalFileSystemURL-void-DOMString-url-EntryCallback-successCallback-ErrorCallback-errorCallback
+
+        * fast/filesystem/entry-points-missing-arguments-expected.txt: Added.
+        * fast/filesystem/entry-points-missing-arguments.html: Added.
+        * fast/filesystem/filesystem-no-callback-null-ptr-crash.html:
+
 2012-09-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests to paint the bots green.
