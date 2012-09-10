@@ -11,7 +11,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -25,7 +24,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -39,7 +37,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -53,7 +50,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -67,7 +63,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -81,7 +76,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -95,7 +89,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -109,7 +102,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -123,7 +115,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -137,7 +128,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -151,7 +141,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -165,7 +154,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }
@@ -179,7 +167,6 @@ DecodeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
 }
@@ -193,7 +180,6 @@ ResizeImage Properties:
     endTime : <number>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
 }

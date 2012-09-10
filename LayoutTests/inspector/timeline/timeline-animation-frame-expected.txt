@@ -9,7 +9,6 @@ RequestAnimationFrame Properties:
     frameId : <string>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "RequestAnimationFrame"
     usedHeapSize : <number>
 }
@@ -23,7 +22,6 @@ FireAnimationFrame Properties:
     endTime : <number>
     frameId : <string>
     startTime : <number>
-    totalHeapSize : <number>
     type : "FireAnimationFrame"
     usedHeapSize : <number>
 }
@@ -36,7 +34,6 @@ CancelAnimationFrame Properties:
     frameId : <string>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "CancelAnimationFrame"
     usedHeapSize : <number>
 }

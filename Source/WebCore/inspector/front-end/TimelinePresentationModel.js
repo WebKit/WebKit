@@ -674,9 +674,9 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     /**
      * @return {number}
      */
-    get totalHeapSize()
+    get usedHeapSizeDelta()
     {
-        return this._record.totalHeapSize;
+        return this._record.usedHeapSizeDelta || 0;
     },
 
     /**
@@ -805,8 +805,14 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         if (this.scriptName && this.type !== recordTypes.FunctionCall)
             contentHelper._appendElementRow(WebInspector.UIString("Function Call"), this._linkifyScriptLocation());
 
-        if (this.usedHeapSize)
-            contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize), Number.bytesToString(this.totalHeapSize)));
+        if (this.usedHeapSize) {
+            if (this.usedHeapSizeDelta) {
+                var sign = this.usedHeapSizeDelta > 0 ? "+" : "-";
+                contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"),
+                    WebInspector.UIString("%s (%s%s)", Number.bytesToString(this.usedHeapSize), sign, Number.bytesToString(this.usedHeapSizeDelta)));
+            } else if (this.category === WebInspector.TimelinePresentationModel.categories().scripting)
+                contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), Number.bytesToString(this.usedHeapSize));
+        }
 
         if (this.callSiteStackTrace)
             contentHelper._appendStackTrace(callSiteStackTraceLabel || WebInspector.UIString("Call Site stack"), this.callSiteStackTrace, this._linkifyCallFrame.bind(this));

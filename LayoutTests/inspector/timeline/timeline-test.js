@@ -12,7 +12,7 @@ InspectorTest.timelinePropertyFormatters = {
     url: "formatAsTypeName",
     scriptName: "formatAsTypeName",
     usedHeapSize: "formatAsTypeName",
-    totalHeapSize: "formatAsTypeName",
+    usedHeapSizeDelta: "skip",
     mimeType: "formatAsTypeName",
     id: "formatAsTypeName",
     counters: "formatAsTypeName",

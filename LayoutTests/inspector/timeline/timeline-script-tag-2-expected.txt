@@ -12,7 +12,6 @@ EvaluateScript Properties:
     endTime : <number>
     frameId : <string>
     startTime : <number>
-    totalHeapSize : <number>
     type : "EvaluateScript"
     usedHeapSize : <number>
 }

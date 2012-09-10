@@ -502,12 +502,16 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     }
 }
 
-void InspectorTimelineAgent::setHeapSizeStatistics(InspectorObject* record)
+static size_t getUsedHeapSize()
 {
     HeapInfo info;
     ScriptGCEvent::getHeapSize(info);
-    record->setNumber("usedHeapSize", info.usedJSHeapSize);
-    record->setNumber("totalHeapSize", info.totalJSHeapSize);
+    return info.usedJSHeapSize;
+}
+
+void InspectorTimelineAgent::setHeapSizeStatistics(InspectorObject* record)
+{
+    record->setNumber("usedHeapSize", getUsedHeapSize());
 
     if (m_state->getBoolean(TimelineAgentState::includeMemoryDetails)) {
         RefPtr<InspectorObject> counters = InspectorObject::create();
@@ -535,6 +539,9 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
         entry.record->setObject("data", entry.data);
         entry.record->setArray("children", entry.children);
         entry.record->setNumber("endTime", timestamp());
+        size_t usedHeapSizeDelta = getUsedHeapSize() - entry.usedHeapSizeAtStart;
+        if (usedHeapSizeDelta)
+            entry.record->setNumber("usedHeapSizeDelta", usedHeapSizeDelta);
         addRecordToTimeline(entry.record, type, entry.frameId);
     }
 }
@@ -572,7 +579,7 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     String frameId;
     if (frame && m_pageAgent)
         frameId = m_pageAgent->frameId(frame);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId));
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId, getUsedHeapSize()));
     if (hasLowLevelDetails && !m_platformInstrumentationClientInstalledAtStackDepth && !PlatformInstrumentation::hasClient()) {
         m_platformInstrumentationClientInstalledAtStackDepth = m_recordStack.size();
         PlatformInstrumentation::setClient(this);

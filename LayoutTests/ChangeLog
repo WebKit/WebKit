@@ -1,3 +1,40 @@
+2012-09-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: only display heap size statistics for timeline records when it makes sense
+        https://bugs.webkit.org/show_bug.cgi?id=96119
+
+        Reviewed by Yury Semikhatsky.
+
+        - rebase timeline tests to drop totalHeapSize
+        - add support for "skip" formatter, to handle cases where value is optionally present in the dumped object;
+        - drop custom expectations that are identical to base;
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.addObject):
+        * inspector/timeline/timeline-animation-frame-expected.txt:
+        * inspector/timeline/timeline-decode-resize-expected.txt:
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
+        * inspector/timeline/timeline-event-dispatch-expected.txt:
+        * inspector/timeline/timeline-injected-script-eval-expected.txt:
+        * inspector/timeline/timeline-layout-expected.txt:
+        * inspector/timeline/timeline-load-event-expected.txt:
+        * inspector/timeline/timeline-mark-timeline-expected.txt:
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-paint-expected.txt:
+        * inspector/timeline/timeline-parse-html-expected.txt:
+        * inspector/timeline/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline/timeline-script-tag-1-expected.txt:
+        * inspector/timeline/timeline-script-tag-2-expected.txt:
+        * inspector/timeline/timeline-test.js:
+        * inspector/timeline/timeline-time-stamp-expected.txt:
+        * inspector/timeline/timeline-timer-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-animation-frame-expected.txt: Removed.
+        * platform/chromium/inspector/timeline/timeline-event-dispatch-expected.txt: Removed.
+        * platform/chromium/inspector/timeline/timeline-layout-expected.txt: Removed.
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt: Removed.
+        * platform/chromium/inspector/timeline/timeline-parse-html-expected.txt: Removed.
+        * platform/chromium/inspector/timeline/timeline-timer-expected.txt: Removed.
+
 2012-09-10  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r128042. Added baseline to newly added

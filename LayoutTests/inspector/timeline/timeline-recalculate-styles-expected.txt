@@ -10,7 +10,6 @@ RecalculateStyles Properties:
     endTime : <number>
     frameId : <string>
     startTime : <number>
-    totalHeapSize : <number>
     type : "RecalculateStyles"
     usedHeapSize : <number>
 }

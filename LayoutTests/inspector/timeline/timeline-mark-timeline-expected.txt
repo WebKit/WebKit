@@ -9,7 +9,6 @@ TimeStamp Properties:
     frameId : <string>
     stackTrace : <object>
     startTime : <number>
-    totalHeapSize : <number>
     type : "TimeStamp"
     usedHeapSize : <number>
 }

@@ -139,8 +139,10 @@ InspectorTest.addObject = function(object, customFormatters, prefix, firstLinePr
         var propValue = object[prop];
         if (customFormatters && customFormatters[prop]) {
             var formatterName = customFormatters[prop];
-            var formatter = InspectorTest.formatters[formatterName];
-            InspectorTest.addResult(prefixWithName + formatter(propValue));
+            if (formatterName !== "skip") {
+                var formatter = InspectorTest.formatters[formatterName];
+                InspectorTest.addResult(prefixWithName + formatter(propValue));
+            }
         } else
             InspectorTest.dump(propValue, customFormatters, "    " + prefix, prefixWithName);
     }

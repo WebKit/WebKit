@@ -8,7 +8,6 @@ MarkLoad Properties:
     }
     frameId : <string>
     startTime : <number>
-    totalHeapSize : <number>
     type : "MarkLoad"
     usedHeapSize : <number>
 }

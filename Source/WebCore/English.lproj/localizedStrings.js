@@ -42,7 +42,6 @@ localizedStrings["%s collected"] = "%s collected";
 localizedStrings["%s download"] = "%s download";
 localizedStrings["%s latency"] = "%s latency";
 localizedStrings["%s latency, %s download (%s total)"] = "%s latency, %s download (%s total)";
-localizedStrings["%s of %s"] = "%s of %s";
 localizedStrings["%s%.2f%%"] = "%s%.2f%%";
 localizedStrings["%s%d"] = "%s%d";
 localizedStrings["%s%s"] = "%s%s";
@@ -738,4 +737,4 @@ localizedStrings["Styles recalculation forced"] = "Styles recalculation forced";
 localizedStrings["Layout invalidated"] = "Layout invalidated";
 localizedStrings["Layout forced"] = "Layout forced";
 localizedStrings["Paused on assertion."] = "Paused on assertion.";
-
+localizedStrings["%s (%s%s)"] = "%s (%s%s)";
