@@ -154,6 +154,7 @@ bool PageWidgetDelegate::handleInputEvent(Page* page, PageWidgetEventHandler& ha
     case WebInputEvent::GestureFlingCancel:
     case WebInputEvent::GestureTap:
     case WebInputEvent::GestureTapDown:
+    case WebInputEvent::GestureTapCancel:
     case WebInputEvent::GestureDoubleTap:
     case WebInputEvent::GestureTwoFingerTap:
     case WebInputEvent::GestureLongPress:

@@ -116,6 +116,7 @@ public:
         GestureFlingCancel,
         GestureTap,
         GestureTapDown,
+        GestureTapCancel,
         GestureDoubleTap,
         GestureTwoFingerTap,
         GestureLongPress,
@@ -216,6 +217,7 @@ public:
             || type == GesturePinchUpdate
             || type == GestureTap
             || type == GestureTapDown
+            || type == GestureTapCancel
             || type == GestureDoubleTap
             || type == GestureTwoFingerTap
             || type == GestureLongPress

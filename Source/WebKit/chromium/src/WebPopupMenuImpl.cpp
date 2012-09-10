@@ -288,6 +288,7 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::Undefined:
     case WebInputEvent::MouseEnter:
     case WebInputEvent::ContextMenu:
+    case WebInputEvent::GestureTapCancel:
         return false;
     }
     return false;

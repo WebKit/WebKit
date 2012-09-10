@@ -392,6 +392,7 @@ bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit:
     case WebKit::WebInputEvent::GestureFlingCancel:  eventName = "GestureFlingCancel"; break;
     case WebKit::WebInputEvent::GestureTap:          eventName = "GestureTap"; break;
     case WebKit::WebInputEvent::GestureTapDown:      eventName = "GestureTapDown"; break;
+    case WebKit::WebInputEvent::GestureTapCancel:    eventName = "GestureTapCancel"; break;
     case WebKit::WebInputEvent::GestureDoubleTap:    eventName = "GestureDoubleTap"; break;
     case WebKit::WebInputEvent::GestureTwoFingerTap: eventName = "GestureTwoFingerTap"; break;
     case WebKit::WebInputEvent::GestureLongPress:    eventName = "GestureLongPress"; break;
