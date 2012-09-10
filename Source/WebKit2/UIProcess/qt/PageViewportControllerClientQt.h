@@ -120,13 +120,6 @@ private:
     QQuickWebView* const m_viewportItem;
     QQuickWebPage* const m_pageItem;
 
-    bool allowsUserScaling() const;
-    qreal devicePixelRatio() const;
-    qreal minimumContentsScale() const;
-    qreal maximumContentsScale() const;
-    qreal currentContentsScale() const;
-    QSizeF contentsLayoutSize() const;
-
     float viewportScaleForRect(const QRectF&) const;
     QRectF visibleContentsRect() const;
     QRectF nearestValidVisibleContentsRect() const;

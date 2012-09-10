@@ -350,36 +350,6 @@ void PageViewportControllerClientQt::didResumeContent()
     updateViewportController();
 }
 
-bool PageViewportControllerClientQt::allowsUserScaling() const
-{
-    return m_controller->allowsUserScaling();
-}
-
-qreal PageViewportControllerClientQt::devicePixelRatio() const
-{
-    return m_controller->devicePixelRatio();
-}
-
-qreal PageViewportControllerClientQt::minimumContentsScale() const
-{
-    return m_controller->minimumContentsScale();
-}
-
-qreal PageViewportControllerClientQt::maximumContentsScale() const
-{
-    return m_controller->maximumContentsScale();
-}
-
-qreal PageViewportControllerClientQt::currentContentsScale() const
-{
-    return m_pageItem->contentsScale();
-}
-
-QSizeF PageViewportControllerClientQt::contentsLayoutSize() const
-{
-    return m_controller->contentsLayoutSize();
-}
-
 bool PageViewportControllerClientQt::scrollAnimationActive() const
 {
     return m_viewportItem->isFlicking();

@@ -1,3 +1,26 @@
+2012-09-10  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] QWebKitTest should retrieve the viewport state from the PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=96106
+
+        Reviewed by Simon Hausmann.
+
+        The functions in PageViewportControllerClientQt proxying the
+        viewport state values can be removed if QWebKitTest uses the
+        PageViewportController to retrieve these values.
+
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::viewportController):
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::viewport):
+        (QWebKitTest::devicePixelRatio):
+        (QWebKitTest::contentsScale):
+        * UIProcess/PageViewportController.h:
+        (WebKit::PageViewportController::currentContentsScale):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2] Make WK2 C API headers compile in the Qt build on Windows

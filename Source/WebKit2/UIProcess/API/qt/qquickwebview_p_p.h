@@ -87,7 +87,7 @@ public:
     int loadProgress() const { return m_loadProgress; }
     void setNeedsDisplay();
 
-    WebKit::PageViewportControllerClientQt* pageViewportControllerClient() const { return m_pageViewportControllerClient.data(); }
+    WebKit::PageViewportController* viewportController() const { return m_pageViewportController.data(); }
     virtual void updateViewportSize() { }
     void updateTouchViewportSize();
 

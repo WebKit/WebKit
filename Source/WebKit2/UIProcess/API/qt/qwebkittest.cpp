@@ -148,7 +148,7 @@ static inline QJsonObject toJsonObject(const QSizeF& sizeF)
 QJsonObject QWebKitTest::viewport() const
 {
     QJsonObject viewportData;
-    if (const PageViewportControllerClientQt* const viewportHandler = m_webViewPrivate->pageViewportControllerClient()) {
+    if (const PageViewportController* const viewportHandler = m_webViewPrivate->viewportController()) {
         viewportData.insert(QLatin1String("layoutSize"), toJsonObject(viewportHandler->contentsLayoutSize()));
         viewportData.insert(QLatin1String("isScalable"), viewportHandler->allowsUserScaling());
         viewportData.insert(QLatin1String("minimumScale"), viewportHandler->minimumContentsScale());
@@ -165,14 +165,14 @@ QJsonObject QWebKitTest::viewport() const
 
 QVariant QWebKitTest::devicePixelRatio() const
 {
-    if (const PageViewportControllerClientQt* const viewport = m_webViewPrivate->pageViewportControllerClient())
+    if (const PageViewportController* const viewport = m_webViewPrivate->viewportController())
         return viewport->devicePixelRatio();
     return 1.0;
 }
 
 QVariant QWebKitTest::contentsScale() const
 {
-    if (const PageViewportControllerClientQt* const viewport = m_webViewPrivate->pageViewportControllerClient())
+    if (const PageViewportController* const viewport = m_webViewPrivate->viewportController())
         return viewport->currentContentsScale();
     return 1.0;
 }

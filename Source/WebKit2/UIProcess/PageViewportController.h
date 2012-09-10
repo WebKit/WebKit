@@ -93,6 +93,7 @@ public:
     float devicePixelRatio() const { return m_devicePixelRatio; }
     float minimumContentsScale() const { return m_minimumScale; }
     float maximumContentsScale() const { return m_maximumScale; }
+    float currentContentsScale() const { return convertFromViewport(m_effectiveScale); }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
