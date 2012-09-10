@@ -58,7 +58,7 @@ static WTF::String urlSuitableForTestResult(const WTF::String& uriString)
 static void onConsoleMessage(Ewk_View_Smart_Data*, const char* message, unsigned int lineNumber, const char*)
 {
     // Tests expect only the filename part of local URIs
-    WTF::String newMessage = message;
+    WTF::String newMessage = WTF::String::fromUTF8(message);
     if (!newMessage.isEmpty()) {
         const size_t fileProtocol = newMessage.find("file://");
         if (fileProtocol != WTF::notFound)

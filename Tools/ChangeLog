@@ -1,3 +1,17 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][DRT] Encoding issue in printed console messages
+        https://bugs.webkit.org/show_bug.cgi?id=96263
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Correctly handle CONSOLE messages that contain non-ascii
+        characters in EFL's DRT. We need to use String::fromUTF8()
+        to construct a WTF::String from a raw string.
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onConsoleMessage):
+
 2012-09-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] User style sheet location should be reset before each test
