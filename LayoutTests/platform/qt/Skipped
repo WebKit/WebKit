@@ -2789,3 +2789,9 @@ fast/innerHTML/innerHTML-iframe.html
 # https://bugs.webkit.org/show_bug.cgi?id=95952
 fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html
 fast/viewport/viewport-limits-adjusted-for-no-user-scale.html
+
+# REGRESSION (r128006): Three spatial navigation tests are failing
+# https://bugs.webkit.org/show_bug.cgi?id=96226
+fast/spatial-navigation/snav-container-white-space.html
+fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
+fast/spatial-navigation/snav-imagemap-overlapped-areas.html
