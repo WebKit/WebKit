@@ -532,7 +532,7 @@ IntRect Element::boundsInRootViewSpace()
         // Get the bounding rectangle from the SVG model.
         SVGElement* svgElement = static_cast<SVGElement*>(this);
         FloatRect localRect;
-        if (svgElement->boundingBox(localRect))
+        if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
     } else
 #endif
@@ -580,7 +580,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
         // Get the bounding rectangle from the SVG model.
         SVGElement* svgElement = static_cast<SVGElement*>(this);
         FloatRect localRect;
-        if (svgElement->boundingBox(localRect))
+        if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
     } else
 #endif

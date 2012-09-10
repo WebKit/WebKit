@@ -248,7 +248,7 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
     return svgRareData()->elementInstances();
 }
 
-bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
+bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
     if (isStyledLocatable()) {
         rect = static_cast<SVGStyledLocatableElement*>(this)->getBBox(styleUpdateStrategy);
