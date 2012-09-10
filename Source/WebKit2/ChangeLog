@@ -1,3 +1,32 @@
+2012-09-10  Brady Eidson  <beidson@apple.com>
+
+        Javascript in foreground tabs should not wait synchronously for plug-ins to load
+        <rdar://problem/12067415> and https://bugs.webkit.org/show_bug.cgi?id=96167
+
+        Reviewed by Geoff Garen.
+
+        Synchronously waiting for initialization to complete when javascript accesses the plug-in script object severely
+        reduces the effectiveness of having an asynchronous NPP_New.
+
+        Such as with background tabs that have never been viewed, we already have cases where JS calls into the plug-in 
+        element fail because we haven't bothered to initialize the plug-in.
+
+        We get a huge win by expanding that to foreground tabs that simply haven't finished initializing their plug-ins.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scriptObject): If initialization is not complete just return 0 - They can get at the script object later.
+
+        Remove the notion of "wait for asynchronous initialization" altogether:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (BuiltInPDFView):
+        * WebProcess/Plugins/Plugin.h:
+        (Plugin):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        (PluginProxy):
+
 2012-09-07  Jer Noble  <jer.noble@apple.com>
 
         <audio> and <video> should send Do Not Track when appropriate

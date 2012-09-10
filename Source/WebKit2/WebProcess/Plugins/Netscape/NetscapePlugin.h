@@ -55,7 +55,6 @@ public:
     static PassRefPtr<NetscapePlugin> fromNPP(NPP);
 
     // In-process NetscapePlugins don't support asynchronous initialization.
-    virtual void waitForAsynchronousInitialization() { }
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
 #if PLATFORM(MAC)

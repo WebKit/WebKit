@@ -71,7 +71,6 @@ private:
     virtual bool initialize(const Parameters&);
     bool initializeSynchronously();
 
-    virtual void waitForAsynchronousInitialization();
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual PassRefPtr<ShareableBitmap> snapshot();

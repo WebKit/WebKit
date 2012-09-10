@@ -1,3 +1,13 @@
+2012-09-10  Brady Eidson  <beidson@apple.com>
+
+        Javascript in foreground tabs should not wait synchronously for plug-ins to load
+        <rdar://problem/12067415> and https://bugs.webkit.org/show_bug.cgi?id=96167
+
+        Reviewed by Geoff Garen.
+
+        * platform/mac-wk2/plugins/script-object-access-fails-during-slow-initialization-expected.txt: Added.
+        * platform/mac-wk2/plugins/script-object-access-fails-during-slow-initialization.html: Added.
+
 2012-09-07  Jer Noble  <jer.noble@apple.com>
 
         <audio> and <video> should send Do Not Track when appropriate

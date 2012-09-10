@@ -1,3 +1,21 @@
+2012-09-10  Brady Eidson  <beidson@apple.com>
+
+        Javascript in foreground tabs should not wait synchronously for plug-ins to load
+        <rdar://problem/12067415> and https://bugs.webkit.org/show_bug.cgi?id=96167
+
+        Reviewed by Geoff Garen.
+
+        Enhance the "Slow NPP_New" plug-in to also be able to return properties to javascript.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/SlowNPPNew.cpp:
+        (PluginObject):
+        (SlowNPPNew::PluginObject::PluginObject):
+        (SlowNPPNew::PluginObject::~PluginObject):
+        (SlowNPPNew::PluginObject::hasProperty):
+        (SlowNPPNew::PluginObject::getProperty):
+        (SlowNPPNew::NPP_GetValue):
+        (SlowNPPNew):
+
 2012-09-10  Tim Horton  <timothy_horton@apple.com>
 
         WKTR often reports an unresponsive WebProcess on Mac bots
