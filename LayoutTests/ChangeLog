@@ -1,3 +1,13 @@
+2012-09-10  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after r128042. Added baseline to newly added
+        http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii.html
+        https://bugs.webkit.org/show_bug.cgi?id=96061
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unskip fast/forms/validation-message-in-relative-body.html
