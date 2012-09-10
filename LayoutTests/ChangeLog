@@ -1,3 +1,29 @@
+2012-09-10  Justin Novosad  <junov@chromium.org>
+
+        Implement canvas v5 line dash feature
+        https://bugs.webkit.org/show_bug.cgi?id=82560
+
+        Reviewed by Darin Adler.
+
+        New layout tests for the canvas lineDash feature.
+        -Validate normal behavior of lineDash state change operations.
+        -Validate behavior when attempting invalid state changes.
+        -Validate rendering behavior.
+
+        * fast/canvas/canvas-lineDash-expected.txt: Added.
+        * fast/canvas/canvas-lineDash-invalid-expected.txt: Added.
+        * fast/canvas/canvas-lineDash-invalid.html: Added.
+        * fast/canvas/canvas-lineDash.html: Added.
+        * fast/canvas/script-tests/canvas-lineDash-invalid.js: Added.
+        (resetLineDash):
+        (trySettingLineDash):
+        (trySettingLineDashWithNoArgs):
+        (trySettingLineDashOffset):
+        * fast/canvas/script-tests/canvas-lineDash.js: Added.
+        (dataToArray):
+        (getPixel):
+        (pixelShouldBe):
+
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
         The options dictionary in Notification constructor should not accept event listeners

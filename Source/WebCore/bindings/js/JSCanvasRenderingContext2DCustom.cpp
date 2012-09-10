@@ -94,11 +94,11 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
 JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    const DashArray* dash = context->webkitLineDash();
+    const Vector<float>& dash = context->getLineDash();
 
     MarkedArgumentBuffer list;
-    DashArray::const_iterator end = dash->end();
-    for (DashArray::const_iterator it = dash->begin(); it != end; ++it)
+    Vector<float>::const_iterator end = dash.end();
+    for (Vector<float>::const_iterator it = dash.begin(); it != end; ++it)
         list.append(JSValue(*it));
     return constructArray(exec, globalObject(), list);
 }
@@ -108,7 +108,7 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue valu
     if (!isJSArray(value))
         return;
 
-    DashArray dash;
+    Vector<float> dash;
     JSArray* valueArray = asArray(value);
     for (unsigned i = 0; i < valueArray->length(); ++i) {
         float elem = valueArray->getIndex(i).toFloat(exec);

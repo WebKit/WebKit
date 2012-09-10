@@ -29,11 +29,13 @@
 #include <wtf/Vector.h>
 
 #if USE(CG)
-typedef Vector<CGFloat> DashArray;
+typedef CGFloat DashArrayElement;
 #elif USE(CAIRO)
-typedef Vector<double> DashArray;
+typedef double DashArrayElement;
 #else
-typedef Vector<float> DashArray;
+typedef float DashArrayElement;
 #endif
+
+typedef Vector<DashArrayElement> DashArray;
 
 #endif // DashArray_h

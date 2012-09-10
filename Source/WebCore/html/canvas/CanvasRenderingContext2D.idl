@@ -74,6 +74,10 @@ module html {
         attribute float shadowBlur;
         attribute [TreatNullAs=NullString] DOMString shadowColor;
 
+        void setLineDash(in sequence<float> dash);
+        sequence<float> getLineDash();
+        attribute float lineDashOffset;
+
         // FIXME: These attributes should also be implemented for V8.
 #if !(defined(V8_BINDING) && V8_BINDING)
         attribute [Custom] Array webkitLineDash;

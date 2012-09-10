@@ -375,6 +375,15 @@ enum ParameterDefaultPolicy {
         }
     };
 
+    template<>
+    struct NativeValueTraits<float> {
+        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, float& indexedValue)
+        {
+            indexedValue = jsValue.toFloat(exec);
+            return !exec->hadException();
+        }
+    };
+
     template <class T>
     Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
     {

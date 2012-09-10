@@ -508,40 +508,80 @@ void CanvasRenderingContext2D::setShadowColor(const String& color)
     applyShadow();
 }
 
-const DashArray* CanvasRenderingContext2D::webkitLineDash() const
+const Vector<float>& CanvasRenderingContext2D::getLineDash() const
 {
-    return &state().m_lineDash;
+    return state().m_lineDash;
 }
 
-void CanvasRenderingContext2D::setWebkitLineDash(const DashArray& dash)
+static bool lineDashSequenceIsValid(const Vector<float>& dash)
 {
-    if (state().m_lineDash == dash)
+    for (size_t i = 0; i < dash.size(); i++) {
+        if (!isfinite(dash[i]) || dash[i] < 0)
+            return false;
+    }
+    return true;
+}
+
+void CanvasRenderingContext2D::setLineDash(const Vector<float>& dash)
+{
+    if (!lineDashSequenceIsValid(dash))
         return;
+
     realizeSaves();
     modifiableState().m_lineDash = dash;
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-    c->setLineDash(state().m_lineDash, state().m_lineDashOffset);
+    // Spec requires the concatenation of two copies the dash list when the
+    // number of elements is odd
+    if (dash.size() % 2)
+        modifiableState().m_lineDash.append(dash);
+
+    applyLineDash();
 }
 
-float CanvasRenderingContext2D::webkitLineDashOffset() const
+void CanvasRenderingContext2D::setWebkitLineDash(const Vector<float>& dash)
+{
+    if (!lineDashSequenceIsValid(dash))
+        return;
+
+    realizeSaves();
+    modifiableState().m_lineDash = dash;
+
+    applyLineDash();
+}
+
+float CanvasRenderingContext2D::lineDashOffset() const
 {
     return state().m_lineDashOffset;
 }
 
-void CanvasRenderingContext2D::setWebkitLineDashOffset(float offset)
+void CanvasRenderingContext2D::setLineDashOffset(float offset)
 {
-    if (!isfinite(offset))
+    if (!isfinite(offset) || state().m_lineDashOffset == offset)
         return;
-    if (state().m_lineDashOffset == offset)
-        return;
+
     realizeSaves();
     modifiableState().m_lineDashOffset = offset;
+    applyLineDash();
+}
+
+float CanvasRenderingContext2D::webkitLineDashOffset() const
+{
+    return lineDashOffset();
+}
+
+void CanvasRenderingContext2D::setWebkitLineDashOffset(float offset)
+{
+    setLineDashOffset(offset);
+}
+
+void CanvasRenderingContext2D::applyLineDash() const
+{
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    c->setLineDash(state().m_lineDash, state().m_lineDashOffset);
+    DashArray convertedLineDash(state().m_lineDash.size());
+    for (size_t i = 0; i < state().m_lineDash.size(); ++i)
+        convertedLineDash[i] = static_cast<DashArrayElement>(state().m_lineDash[i]);
+    c->setLineDash(convertedLineDash, state().m_lineDashOffset);
 }
 
 float CanvasRenderingContext2D::globalAlpha() const

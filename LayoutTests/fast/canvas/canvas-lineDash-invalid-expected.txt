@@ -1,0 +1,19 @@
+Test for invalid input of setLineDash, getLineDash and lineDashOffset
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS trySettingLineDash([1, -1]) is initialLineDash
+PASS trySettingLineDash([1, Infinity]) is initialLineDash
+PASS trySettingLineDash([1, -Infinity]) is initialLineDash
+PASS trySettingLineDash([1, NaN]) is initialLineDash
+PASS trySettingLineDash([1, 'string']) is initialLineDash
+PASS trySettingLineDashWithNoArgs() threw exception TypeError: Not enough arguments.
+PASS trySettingLineDashOffset(Infinity) is initialLineDashOffset
+PASS trySettingLineDashOffset(-Infinity) is initialLineDashOffset
+PASS trySettingLineDashOffset(NaN) is initialLineDashOffset
+PASS trySettingLineDashOffset('string') is initialLineDashOffset
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

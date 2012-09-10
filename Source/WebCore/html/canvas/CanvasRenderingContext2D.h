@@ -84,9 +84,12 @@ public:
     float miterLimit() const;
     void setMiterLimit(float);
 
-    const DashArray* webkitLineDash() const;
-    void setWebkitLineDash(const DashArray&);
+    const Vector<float>& getLineDash() const;
+    void setLineDash(const Vector<float>&);
+    void setWebkitLineDash(const Vector<float>&);
 
+    float lineDashOffset() const;
+    void setLineDashOffset(float);
     float webkitLineDashOffset() const;
     void setWebkitLineDashOffset(float);
 
@@ -250,7 +253,7 @@ private:
         CompositeOperator m_globalComposite;
         AffineTransform m_transform;
         bool m_invertibleCTM;
-        DashArray m_lineDash;
+        Vector<float> m_lineDash;
         float m_lineDashOffset;
         bool m_imageSmoothingEnabled;
 
@@ -276,6 +279,7 @@ private:
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount); return m_stateStack.last(); }
     const State& state() const { return m_stateStack.last(); }
 
+    void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, RGBA32 color);
     void applyShadow();
     bool shouldDrawShadows() const;
