@@ -5105,19 +5105,6 @@ JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunctio
     if (!functionCallFrame)
         return jsNull();
 
-    CodeBlock* codeBlock = functionCallFrame->someCodeBlockForPossiblyInlinedCode();
-    if (codeBlock->usesArguments()) {
-        ASSERT(codeBlock->codeType() == FunctionCode);
-        int argumentsRegister = codeBlock->argumentsRegister();
-        int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
-        if (JSValue arguments = functionCallFrame->uncheckedR(argumentsRegister).jsValue())
-            return arguments;
-        JSValue arguments = JSValue(Arguments::create(callFrame->globalData(), functionCallFrame));
-        functionCallFrame->r(argumentsRegister) = arguments;
-        functionCallFrame->r(realArgumentsRegister) = arguments;
-        return arguments;
-    }
-
     Arguments* arguments = Arguments::create(functionCallFrame->globalData(), functionCallFrame);
     arguments->tearOff(functionCallFrame);
     return JSValue(arguments);

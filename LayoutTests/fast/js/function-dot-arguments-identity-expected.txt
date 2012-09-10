@@ -1,0 +1,12 @@
+This tests verifies the identity of function.arguments vs 'arguments' used locally.
+
+PASS: getArguments() == arguments should be false and is.
+PASS: getArguments() == eval('arguments') should be false and is.
+PASS: getArguments() == arguments {eval present} should be false and is.
+PASS: getArguments() == arguments {function present} should be false and is.
+PASS: getArguments() == arguments {closure present} should be false and is.
+PASS: getArguments() == arguments {with present} should be false and is.
+PASS: getArguments() == arguments {catch present} should be false and is.
+PASS: getArguments() == arguments {var declaration} should be false and is.
+PASS: getArguments() == arguments {function declaration} should be false and is.
+

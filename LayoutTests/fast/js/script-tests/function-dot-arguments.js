@@ -27,7 +27,7 @@ function assignTest()
     arguments = true;
     return g();
 }
-shouldBeTrue("assignTest()");
+shouldBe("assignTest().toString()", "'[object Arguments]'");
 
 function assignVarUndefinedTest()
 {
@@ -63,7 +63,7 @@ function assignVarInitTest()
     var arguments = true;
     return g();
 }
-shouldBeTrue("assignVarInitTest()");
+shouldBe("assignVarInitTest().toString()", "'[object Arguments]'");
 
 function assignVarInitTest2()
 {
@@ -75,7 +75,7 @@ function assignVarInitTest2()
     var a, arguments = true;
     return g();
 }
-shouldBeTrue("assignVarInitTest2()");
+shouldBe("assignVarInitTest2().toString()", "'[object Arguments]'");
 
 function assignConstUndefinedTest()
 {
@@ -111,7 +111,7 @@ function assignConstInitTest()
     const arguments = true;
     return g();
 }
-shouldBeTrue("assignConstInitTest()");
+shouldBe("assignConstInitTest().toString()", "'[object Arguments]'");
 
 function assignConstInitTest2()
 {
@@ -123,7 +123,7 @@ function assignConstInitTest2()
     const a, arguments = true;
     return g();
 }
-shouldBeTrue("assignConstInitTest2()");
+shouldBe("assignConstInitTest2().toString()", "'[object Arguments]'");
 
 function assignForInitTest()
 {
@@ -135,7 +135,7 @@ function assignForInitTest()
     for (var arguments = true; false;) { }
     return g();
 }
-shouldBeTrue("assignForInitTest()");
+shouldBe("assignForInitTest().toString()", "'[object Arguments]'");
 
 function assignForInitTest2()
 {
@@ -147,7 +147,7 @@ function assignForInitTest2()
     for (var a, arguments = true; false;) { }
     return g();
 }
-shouldBeTrue("assignForInitTest2()");
+shouldBe("assignForInitTest2().toString()", "'[object Arguments]'");
 
 function assignForInInitTest()
 {
@@ -159,7 +159,7 @@ function assignForInInitTest()
     for (arguments = true; false;) { }
     return g();
 }
-shouldBeTrue("assignForInInitTest()");
+shouldBe("assignForInInitTest().toString()", "'[object Arguments]'");
 
 function paramInitTest(arguments)
 {
@@ -236,7 +236,7 @@ function lexicalArgumentsLiveWrite1(a, b, c)
     lexicalArgumentsLiveWrite1.arguments[0] = 1;
     return a;
 }
-shouldBe("lexicalArgumentsLiveWrite1(0, 2, 3)", "1");
+shouldBe("lexicalArgumentsLiveWrite1(0, 2, 3)", "0");
 
 function lexicalArgumentsLiveWrite2(a, b, c)
 {
@@ -244,7 +244,7 @@ function lexicalArgumentsLiveWrite2(a, b, c)
     lexicalArgumentsLiveWrite2.arguments[1] = 2;
     return b;
 }
-shouldBe("lexicalArgumentsLiveWrite2(1, 0, 3)", "2");
+shouldBe("lexicalArgumentsLiveWrite2(1, 0, 3)", "0");
 
 function lexicalArgumentsLiveWrite3(a, b, c)
 {
@@ -252,7 +252,7 @@ function lexicalArgumentsLiveWrite3(a, b, c)
     lexicalArgumentsLiveWrite3.arguments[2] = 3;
     return c;
 }
-shouldBe("lexicalArgumentsLiveWrite3(1, 2, 0)", "3");
+shouldBe("lexicalArgumentsLiveWrite3(1, 2, 0)", "0");
 
 function argumentsNotLiveRead1(a, b, c)
 {
@@ -321,4 +321,4 @@ function overwroteArgumentsInDynamicScope3() {
 }
 shouldBeTrue("overwroteArgumentsInDynamicScope1()");
 shouldBeTrue("overwroteArgumentsInDynamicScope2()");
-shouldBeTrue("overwroteArgumentsInDynamicScope3()");
+shouldBe("overwroteArgumentsInDynamicScope3().toString()", "'[object Arguments]'");

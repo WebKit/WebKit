@@ -1,3 +1,32 @@
+2012-09-10  Geoffrey Garen  <ggaren@apple.com>
+
+        DFG misses arguments tear-off for function.arguments if 'arguments' is used
+        https://bugs.webkit.org/show_bug.cgi?id=96227
+
+        Reviewed by Gavin Barraclough.
+
+        We've decided not to allow function.arguments to alias the local
+        'arguments' object, or a local var or function named 'arguments'.
+        Aliasing complicates the implementation (cf, this bug) and can produce
+        surprising behavior for web programmers.
+
+        Eliminating the aliasing has the side-effect of fixing this bug.
+
+        The compatibilty story: function.arguments is deprecated, was never
+        specified, and throws an exception in strict mode, so we expect it to
+        disappear over time. Firefox does not alias to 'arguments'; Chrome
+        does, but not if you use eval or with; IE does; Safari did.
+
+        * dfg/DFGByteCodeParser.cpp: Noticed a little cleanup while verifying
+        this code. Use the CodeBlock method for better encapsulation.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveArgumentsFromVMCode): Behavior change: don't
+        alias.
+
+        * tests/mozilla/js1_4/Functions/function-001.js:
+        (TestFunction_4): Updated test expectations for changed behavior.
+
 2012-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         offlineasm has some impossible to implement, and unused, instructions

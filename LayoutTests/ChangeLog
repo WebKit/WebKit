@@ -1,3 +1,21 @@
+2012-09-10  Geoffrey Garen  <ggaren@apple.com>
+
+        DFG misses arguments tear-off for function.arguments if 'arguments' is used
+        https://bugs.webkit.org/show_bug.cgi?id=96227
+
+        Reviewed by Gavin Barraclough.
+
+        New test, and updated expectations.
+ 
+        * fast/js/script-tests/function-dot-arguments.js:
+        * fast/js/function-dot-arguments-expected.txt: Updated for new behavior.
+
+        * fast/js/dfg-tear-off-function-dot-arguments.html:
+        * fast/js/script-tests/dfg-tear-off-function-dot-arguments.js: Added. New test for bug cited here.
+
+        * fast/js/function-dot-arguments-identity-expected.txt:
+        * fast/js/function-dot-arguments-identity.html: Added. New test for new behavior.
+
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed Rebaseline for Chromium Win XP.

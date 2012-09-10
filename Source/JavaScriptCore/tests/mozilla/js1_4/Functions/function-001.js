@@ -82,7 +82,7 @@
         SECTION,
         "return function.arguments when function contains an arguments property",
         "PASS",
-        TestFunction_4( "F", "A", "I", "L" ) +"");
+        TestFunction_4( "P", "A", "S", "S" ) +"");
 
     test();
 
@@ -100,7 +100,7 @@
     }
 
     function TestFunction_4( a, b, c, d, e ) {
-        var arguments = "PASS";
-        return TestFunction_4.arguments;
+        var arguments = "FAIL";
+        return Array.prototype.join.call(TestFunction_4.arguments, "");
     }
 

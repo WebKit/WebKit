@@ -3191,7 +3191,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
                 inlineCallFrame.capturedVars.set(i);
         }
         
-        if (codeBlock->usesArguments() || codeBlock->needsActivation()) {
+        if (codeBlock->argumentsAreCaptured()) {
             for (int i = argumentCountIncludingThis; i--;)
                 inlineCallFrame.capturedVars.set(argumentToOperand(i) + inlineCallFrame.stackOffset);
         }
