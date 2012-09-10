@@ -36,6 +36,7 @@
 #include "LLIntCLoop.h"
 #include "LLIntSlowPaths.h"
 #include "VMInspector.h"
+#include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
 using namespace JSC::LLInt;
@@ -98,6 +99,10 @@ using namespace JSC::LLInt;
 #define OFFLINE_ASM_LOCAL_LABEL(label)   label:
 
 
+//============================================================================
+// Some utilities:
+//
+
 namespace JSC {
 namespace LLInt {
 
@@ -116,11 +121,15 @@ static double Ints2Double(uint32_t lo, uint32_t hi)
 } // namespace LLint
 
 
+//============================================================================
+// The llint C++ interpreter loop:
+//
+
 JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
                        bool isInitializationPass)
 {
     #define CAST reinterpret_cast
-    #define SIGN_BIT32(x) (x & 0x80000000)
+    #define SIGN_BIT32(x) ((x) & 0x80000000)
 
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function. The
@@ -212,6 +221,13 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     CLoopRegister rRetVPC;
     CLoopDoubleRegister d0, d1;
 
+#if COMPILER(MSVC)
+    // Keep the compiler happy. We don't really need this, but the compiler
+    // will complain. This makes the warning go away.
+    t0.i = 0;
+    t1.i = 0;
+#endif
+
     // Instantiate the pseudo JIT stack frame used by the LLINT C Loop backend:
     JITStackFrame jitStackFrame;
 
@@ -252,8 +268,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     JSValue functionReturnValue;
     Opcode opcode;
 
-    if (bootstrapOpcodeId != llint_unused)
-        opcode = LLInt::getOpcode(bootstrapOpcodeId);
+    opcode = LLInt::getOpcode(bootstrapOpcodeId);
 
     #if ENABLE(OPCODE_STATS)
         #define RECORD_OPCODE_STATS(__opcode) \
@@ -395,9 +410,13 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
 
 
     // Keep the compiler happy so that it doesn't complain about unused
-    // labels for the LLInt trampoline glue:
+    // labels for the LLInt trampoline glue. The labels are automatically
+    // emitted by label macros above, and some of them are referenced by
+    // the llint generated code. Since we can't tell ahead of time which
+    // will be referenced and which will be not, we'll just passify the
+    // compiler on all such labels:
     #define LLINT_OPCODE_ENTRY(__opcode, length) \
-        UNUSED_PARAM(&&__opcode);
+        UNUSED_LABEL(__opcode);
         FOR_EACH_LLINT_NATIVE_HELPER(LLINT_OPCODE_ENTRY)
     #undef LLINT_OPCODE_ENTRY
 

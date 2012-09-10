@@ -1,3 +1,30 @@
+2012-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Fixed a few llint C++ interpreter bugs.
+        https://bugs.webkit.org/show_bug.cgi?id=96127.
+
+        Reviewed by Geoffrey Garen.
+
+        * llint/LLIntCLoop.h:
+            CLoop::execute()'s bootstrapOpcodeId does not need a default
+            value. There is no case when this function is called without
+            that parameter being specified.
+        * llint/LowLevelInterpreter.asm:
+            Moved the dispatchAfterCall() call to where it is needed.
+            For the C_LOOP back-end, it generates unreachable code. 
+        * llint/LowLevelInterpreter.cpp:
+            #include <wtf/Assertions.h> because LLIntAssembly.h needs it.
+        (JSC):
+            Fixed bug in SIGN_BIT32() macro.
+            Placate a MSVC warning for t0, and t1 being uninitialized.
+        (JSC::CLoop::execute):
+            The bootstrapOpcodeId arg should always be specified.
+            MSVC doesn't like UNUSED_PARAM() for labels. Switch to using
+                the new UNUSED_LABEL() macro.
+        * offlineasm/cloop.rb:
+        * offlineasm/generate_offset_extractor.rb:
+            Resolved a compiler warning found via MSVC.
+
 2012-09-09  Patrick Gansterer  <paroga@webkit.org>
 
         Add StringBuilder::appendNumber() and use it

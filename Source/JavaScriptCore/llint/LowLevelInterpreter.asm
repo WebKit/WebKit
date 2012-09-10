@@ -177,8 +177,8 @@ macro slowPathForCall(advance, slowPath)
                 cloopCallJSFunction callee
             else
                 call callee
+                dispatchAfterCall()
             end
-            dispatchAfterCall()
         end)
 end
 

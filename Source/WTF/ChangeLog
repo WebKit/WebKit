@@ -1,3 +1,14 @@
+2012-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Fixed ASSERT() and ASSERT_AT() macros so that they can be used in
+        comma expressions. Also, added UNUSED_LABEL().
+        https://bugs.webkit.org/show_bug.cgi?id=96127.
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Assertions.h:
+        * wtf/UnusedParam.h: Added UNUSED_LABEL(). Removed an obsolete comment.
+
 2012-09-09  Patrick Gansterer  <paroga@webkit.org>
 
         Add StringBuilder::appendNumber() and use it

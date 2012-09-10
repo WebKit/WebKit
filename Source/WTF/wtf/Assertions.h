@@ -168,19 +168,18 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 */
 #ifndef CRASH
 #if COMPILER(CLANG)
-#define CRASH() do { \
-    WTFReportBacktrace(); \
-    WTFInvokeCrashHook(); \
-    *(int *)(uintptr_t)0xbbadbeef = 0; \
-    __builtin_trap(); \
-} while (0)
+#define CRASH() \
+    (WTFReportBacktrace(), \
+     WTFInvokeCrashHook(), \
+     (*(int *)(uintptr_t)0xbbadbeef = 0), \
+     __builtin_trap())
 #else
-#define CRASH() do { \
-    WTFReportBacktrace(); \
-    WTFInvokeCrashHook(); \
-    *(int *)(uintptr_t)0xbbadbeef = 0; \
-    ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while (0)
+#define CRASH() \
+    (WTFReportBacktrace(), \
+     WTFInvokeCrashHook(), \
+     (*(int *)(uintptr_t)0xbbadbeef = 0), \
+     ((void(*)())0)() /* More reliable, but doesn't say BBADBEEF */ \
+    )
 #endif
 #endif
 
@@ -244,19 +243,17 @@ inline void assertUnused(T& x) { (void)x; }
 
 #else
 
-#define ASSERT(assertion) do \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        CRASH(); \
-    } \
-while (0)
+#define ASSERT(assertion) \
+    (!(assertion) ? \
+        (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
+         CRASH()) : \
+        (void)0)
 
-#define ASSERT_AT(assertion, file, line, function) do  \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(file, line, function, #assertion); \
-        CRASH(); \
-    } \
-while (0)
+#define ASSERT_AT(assertion, file, line, function) \
+    (!(assertion) ? \
+        (WTFReportAssertionFailure(file, line, function, #assertion), \
+         CRASH()) :                                                   \
+        (void)0)
 
 #define ASSERT_NOT_REACHED() do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \

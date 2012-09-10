@@ -43,7 +43,7 @@ const OpcodeID llint_unused = llint_end;
 class CLoop {
 public:
     static void initialize();
-    static JSValue execute(CallFrame*, OpcodeID bootstrapOpcodeId = llint_unused, bool isInitializationPass = false);
+    static JSValue execute(CallFrame*, OpcodeID bootstrapOpcodeId, bool isInitializationPass = false);
 
     static void* catchRoutineFor(Instruction* catchPCForInterpreter);
 
