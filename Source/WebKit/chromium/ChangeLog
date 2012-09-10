@@ -1,3 +1,23 @@
+2012-09-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Define new setSharedWorkerRepository function in preparation for removing WebKitPlatformSupport::sharedWorkerRepository()
+        https://bugs.webkit.org/show_bug.cgi?id=95861
+
+        Reviewed by Adam Barth.
+
+        Followup patch to Chromium will call this new function, then we can remove all references to the legacy function on WebKitPlatformSupport.
+
+        * public/WebSharedWorkerRepository.h:
+        (WebKit):
+        * src/SharedWorkerRepository.cpp:
+        (WebKit):
+        (WebKit::setSharedWorkerRepository):
+        (WebKit::sharedWorkerRepository):
+        (WebCore::SharedWorkerRepository::isAvailable):
+        (WebCore::SharedWorkerRepository::connect):
+        (WebCore::SharedWorkerRepository::documentDetached):
+        (WebCore::SharedWorkerRepository::hasSharedWorkers):
+
 2012-09-10  Catalin Badea  <badea@adobe.com>
 
         webkit build for 64-bit Mac chromium

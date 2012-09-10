@@ -54,6 +54,9 @@ public:
     virtual bool hasSharedWorkers(DocumentID) = 0;
 };
 
+// Initializes shared worker support.
+WEBKIT_EXPORT void setSharedWorkerRepository(WebSharedWorkerRepository*);
+
 } // namespace WebKit
 
 #endif // WebSharedWorkerRepository_h
