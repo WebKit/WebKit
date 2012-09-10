@@ -1323,7 +1323,7 @@ JSValueRef QtRuntimeMethod::connectOrDisconnect(JSContextRef context, JSObjectRe
     }
 
     if ((!(d->m_flags & QtRuntimeMethod::MethodIsSignal))) {
-        setException(context, exception, QStringLiteral("QtMetaMethod.%3: %1::%2() is not a signal").arg(QString::fromUtf8(d->m_object.data()->metaObject()->className())).arg(QString::fromAscii(d->m_identifier)).arg(functionName));
+        setException(context, exception, QStringLiteral("QtMetaMethod.%3: %1::%2() is not a signal").arg(QString::fromUtf8(d->m_object.data()->metaObject()->className())).arg(QString::fromLatin1(d->m_identifier)).arg(functionName));
         return JSValueMakeUndefined(context);
     }
 

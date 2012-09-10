@@ -150,7 +150,7 @@ class tst_qrawwebview : public QObject {
     Q_OBJECT
 public:
     tst_qrawwebview()
-        : m_resourceDir(QString::fromAscii(TESTS_SOURCE_DIR "/html/resources"))
+        : m_resourceDir(QString::fromLatin1(TESTS_SOURCE_DIR "/html/resources"))
         , m_baseUrl(QUrl::fromLocalFile(TESTS_SOURCE_DIR "/html").toString())
     { }
 

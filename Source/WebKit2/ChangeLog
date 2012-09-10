@@ -1,3 +1,14 @@
+2012-09-10  Kevin Funk  <kevin.funk@kdab.com>
+
+        Replace calls to QString::fromAscii which is deprecated in Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=96242
+
+        Reviewed by Simon Hausmann.
+
+        Replace with QString::fromLatin1 which does the same.
+
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] New fast/forms/number/number-interactive-validation-required.html fails
