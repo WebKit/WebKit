@@ -49,7 +49,6 @@ public:
 DOMWindow* activeDOMWindow(BindingState*);
 DOMWindow* firstDOMWindow(BindingState*);
 
-Frame* activeFrame(BindingState*);
 Frame* firstFrame(BindingState*);
 
 // FIXME: When implementing this function for JSC, we need to understand if there

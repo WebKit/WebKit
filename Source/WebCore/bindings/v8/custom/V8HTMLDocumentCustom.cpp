@@ -119,8 +119,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.write()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
-    Frame* frame = activeFrame(BindingState::instance());
-    htmlDocument->write(writeHelperGetString(args), frame ? frame->document() : NULL);
+    htmlDocument->write(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
 }
 
@@ -128,8 +127,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.writeln()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
-    Frame* frame = activeFrame(BindingState::instance());
-    htmlDocument->writeln(writeHelperGetString(args), frame ? frame->document() : NULL);
+    htmlDocument->writeln(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
 }
 
@@ -160,9 +158,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
         }
     }
 
-    Frame* frame = activeFrame(BindingState::instance());
-    htmlDocument->open(frame ? frame->document() : NULL);
-    // Return the document.
+    htmlDocument->open(activeDOMWindow(BindingState::instance())->document());
     return args.Holder();
 }
 
