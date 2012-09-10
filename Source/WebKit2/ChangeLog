@@ -1,3 +1,18 @@
+2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Sanitize the suggested filename when building the download destination URI
+        https://bugs.webkit.org/show_bug.cgi?id=96260
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The suggested filename returned by the server can contain
+        directory separators so that the filename would be interpreted as
+        a full path.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadDecideDestination): Convert any directory separator
+        contained in the suggested filename to an underscore.
+
 2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix generation of forward headers for generated files in WebCore on Windows
