@@ -1,3 +1,15 @@
+2012-09-10  Hojong Han  <hojong.han@samsung.com>
+
+        [EFL] JIT memory usage is not retrieved
+        https://bugs.webkit.org/show_bug.cgi?id=96095
+
+        Reviewed by Geoffrey Garen.
+
+        Fill JITBytes for EFL port.
+
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+
 2012-09-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake][EFL] Enable the LLInt
