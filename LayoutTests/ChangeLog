@@ -1,5 +1,20 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] fast/forms/menulist-restrict-line-height.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=94878
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Generate baseline for fast/forms/menulist-restrict-line-height.html
+        and unskip the test now that <select> element's text is no longer
+        clipped when a CSS line-height is specified.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.txt: Added.
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2] New fast/forms/number/number-interactive-validation-required.html fails
         https://bugs.webkit.org/show_bug.cgi?id=95936
 

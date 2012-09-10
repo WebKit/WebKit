@@ -1023,9 +1023,6 @@ BUGWK85877 : fast/forms/select-style.html = MISSING
 // Test 2 in below test is failing.
 BUGWK94877 : fast/forms/listbox-hit-test-zoomed.html = MISSING
 
-// The text in the popup button is clipped.
-BUGWK94878 : fast/forms/menulist-restrict-line-height.html = MISSING
-
 // Cancel mark in search field is not working.
 BUGWK94880 : fast/forms/search-cancel-button-style-sharing.html = MISSING
 BUGWK94880 : fast/forms/search-rtl.html = MISSING

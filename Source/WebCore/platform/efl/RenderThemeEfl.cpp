@@ -897,6 +897,8 @@ void RenderThemeEfl::adjustMenuListStyle(StyleResolver* styleResolver, RenderSty
     adjustSizeConstraints(style, ComboBox);
     style->resetBorder();
     style->setWhiteSpace(PRE);
+
+    style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
 bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, const IntRect& rect)
