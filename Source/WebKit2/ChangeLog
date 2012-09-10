@@ -1,3 +1,35 @@
+2012-09-10  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][WK2] Add fullscreen enter / exit signals to the ewk_view API
+        https://bugs.webkit.org/show_bug.cgi?id=92362
+
+        Reviewed by Gyuyoung Kim.
+
+        Handle WebFullScreenManagerProxy::enterFullScreen and exitFullScreen
+        methods, so that ewk_view could enter and exit fullscreen mode when requested.
+        Also, two callbacks were added to ewk_view API, so that UI could customise
+        behavior when fullscreen mode is requested, e.g. show security dialog.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_fullscreen_enabled_set):
+        (ewk_settings_fullscreen_enabled_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_initialize):
+        (ewk_view_full_screen_enter):
+        (ewk_view_full_screen_exit):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (fullScreenCallback):
+        (checkFullScreenProperty):
+        (TEST_F):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+
 2012-09-10  Kevin Funk  <kevin.funk@kdab.com>
 
         [Qt] Fix deprecation failures if QT_NO_DEPRECATED enabled

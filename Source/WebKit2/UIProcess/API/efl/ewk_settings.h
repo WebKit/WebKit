@@ -44,6 +44,31 @@ extern "C" {
 typedef struct _Ewk_Settings Ewk_Settings;
 
 /**
+ * Enables/disables the Javascript Fullscreen API. The Javascript API allows
+ * to request full screen mode, for more information see:
+ * http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html
+ *
+ * Default value for Javascript Fullscreen API setting is @c EINA_TRUE .
+ *
+ * @param settings settings object to enable Javascript Fullscreen API
+ * @param enable @c EINA_TRUE to enable Javascript Fullscreen API or
+ *               @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_fullscreen_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether the Javascript Fullscreen API is enabled or not.
+ *
+ * @param settings settings object to query whether Javascript Fullscreen API is enabled
+ *
+ * @return @c EINA_TRUE if the Javascript Fullscreen API is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_fullscreen_enabled_get(const Ewk_Settings *settings);
+
+/**
  * Enables/disables the javascript executing.
  *
  * @param settings settings object to set javascript executing

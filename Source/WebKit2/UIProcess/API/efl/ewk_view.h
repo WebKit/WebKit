@@ -106,6 +106,8 @@ struct _Ewk_View_Smart_Class {
     //  - if overridden, have to call parent method if desired
     Eina_Bool (*focus_in)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*focus_out)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*fullscreen_enter)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*fullscreen_exit)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*mouse_wheel)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Wheel *ev);
     Eina_Bool (*mouse_down)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Down *ev);
     Eina_Bool (*mouse_up)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Up *ev);
@@ -118,7 +120,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 2UL
+#define EWK_VIEW_SMART_CLASS_VERSION 3UL
 
 /**
  * Initializer for whole Ewk_View_Smart_Class structure.
@@ -130,7 +132,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.

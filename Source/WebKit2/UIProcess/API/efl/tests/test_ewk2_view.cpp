@@ -34,6 +34,7 @@
 using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
+bool fullScreenCallbackCalled;
 
 static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
 {
@@ -299,4 +300,63 @@ TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
 
     ASSERT_TRUE(ewk_view_mouse_events_enabled_set(webView(), EINA_FALSE));
     ASSERT_FALSE(ewk_view_mouse_events_enabled_get(webView()));
+}
+
+static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData)
+{
+    fullScreenCallbackCalled = true;
+    return false;
+}
+
+static void checkFullScreenProperty(Evas_Object* webView, bool expectedState)
+{
+    if (environment->useX11Window()) {
+        Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(webView));
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+        bool windowState = false;
+        while (((windowState = ecore_evas_fullscreen_get(ecoreEvas)) != expectedState))
+            ecore_main_loop_iterate();
+        ASSERT_TRUE(expectedState == windowState);
+    }
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
+{
+    const char fullscreenHTML[] =
+        "<!doctype html><head><script>function makeFullScreen(){"
+        "var div = document.getElementById(\"fullscreen\");"
+        "div.webkitRequestFullScreen();"
+        "document.title = \"fullscreen entered\";"
+        "}</script></head>"
+        "<body><div id=\"fullscreen\" style=\"width:100px; height:100px\" onclick=\"makeFullScreen()\"></div></body>";
+
+    ewkViewClass()->fullscreen_enter = fullScreenCallback;
+
+    ewk_view_html_string_load(webView(), fullscreenHTML, "file:///", 0);
+    waitUntilLoadFinished();
+    mouseClick(50, 50);
+    waitUntilTitleChangedTo("fullscreen entered");
+    ASSERT_TRUE(fullScreenCallbackCalled);
+    checkFullScreenProperty(webView(), true);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
+{
+    const char fullscreenHTML[] =
+        "<!doctype html><head><script>function makeFullScreenAndExit(){"
+        "var div = document.getElementById(\"fullscreen\");"
+        "div.webkitRequestFullScreen();"
+        "document.webkitCancelFullScreen();"
+        "document.title = \"fullscreen exited\";"
+        "}</script></head>"
+        "<body><div id=\"fullscreen\" style=\"width:100px; height:100px\" onclick=\"makeFullScreenAndExit()\"></div></body>";
+
+    ewkViewClass()->fullscreen_exit = fullScreenCallback;
+
+    ewk_view_html_string_load(webView(), fullscreenHTML, "file:///", 0);
+    waitUntilLoadFinished();
+    mouseClick(50, 50);
+    waitUntilTitleChangedTo("fullscreen exited");
+    ASSERT_TRUE(fullScreenCallbackCalled);
+    checkFullScreenProperty(webView(), false);
 }

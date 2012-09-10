@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebFullScreenManagerProxy.h"
+#include "ewk_view_private.h"
 
 #if ENABLE(FULLSCREEN_API)
 
@@ -52,12 +53,22 @@ bool WebFullScreenManagerProxy::isFullScreen()
 
 void WebFullScreenManagerProxy::enterFullScreen()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    willEnterFullScreen();
+    ewk_view_full_screen_enter(m_webView);
+    didEnterFullScreen();
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    willExitFullScreen();
+    ewk_view_full_screen_exit(m_webView);
+    didExitFullScreen();
 }
 
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)

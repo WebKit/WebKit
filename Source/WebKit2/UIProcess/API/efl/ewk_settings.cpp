@@ -31,6 +31,27 @@
 
 using namespace WebKit;
 
+Eina_Bool ewk_settings_fullscreen_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+#if ENABLE(FULLSCREEN_API)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+    WKPreferencesSetFullScreenEnabled(settings->preferences.get(), enable);
+    return true;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_settings_fullscreen_enabled_get(const Ewk_Settings* settings)
+{
+#if ENABLE(FULLSCREEN_API)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+    return WKPreferencesGetFullScreenEnabled(settings->preferences.get());
+#else
+    return false;
+#endif
+}
+
 Eina_Bool ewk_settings_javascript_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);

@@ -31,6 +31,29 @@
 
 using namespace EWK2UnitTest;
 
+TEST_F(EWK2UnitTestBase, ewk_settings_fullscreen_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+#if ENABLE(FULLSCREEN_API)
+    ASSERT_TRUE(ewk_settings_fullscreen_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_fullscreen_enabled_set(settings, EINA_TRUE));
+    ASSERT_TRUE(ewk_settings_fullscreen_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_fullscreen_enabled_set(settings, EINA_FALSE));
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_get(settings));
+#else
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_get(settings));
+
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_set(settings, EINA_TRUE));
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_get(settings));
+
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_set(settings, EINA_FALSE));
+    ASSERT_FALSE(ewk_settings_fullscreen_enabled_get(settings));
+#endif
+}
+
 TEST_F(EWK2UnitTestBase, ewk_settings_javascript_enabled)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());

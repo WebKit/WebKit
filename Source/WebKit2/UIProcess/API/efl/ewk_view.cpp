@@ -35,6 +35,7 @@
 #include "WebPageGroup.h"
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxyEfl.h"
+#include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
@@ -57,6 +58,10 @@
 #include <WebCore/EflScreenUtilities.h>
 #include <WebKit2/WKPageGroup.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
@@ -715,6 +720,10 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     ewk_view_policy_client_attach(wkPage, ewkView);
     ewk_view_resource_load_client_attach(wkPage, ewkView);
     ewk_view_ui_client_attach(wkPage, ewkView);
+#if ENABLE(FULLSCREEN_API)
+    priv->pageProxy->fullScreenManager()->setWebView(ewkView);
+    ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
+#endif
 }
 
 static Evas_Object* _ewk_view_add_with_smart(Evas* canvas, Evas_Smart* smart)
@@ -1150,6 +1159,37 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
 
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
 }
+
+#if ENABLE(FULLSCREEN_API)
+/**
+ * @internal
+ * Calls fullscreen_enter callback or falls back to default behavior and enables fullscreen mode.
+ */
+void ewk_view_full_screen_enter(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+
+    if (!smartData->api->fullscreen_enter || !smartData->api->fullscreen_enter(smartData)) {
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+        ecore_evas_fullscreen_set(ecoreEvas, true);
+    }
+}
+
+/**
+ * @internal
+ * Calls fullscreen_exit callback or falls back to default behavior and disables fullscreen mode.
+ */
+void ewk_view_full_screen_exit(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+
+    if (!smartData->api->fullscreen_exit || !smartData->api->fullscreen_exit(smartData)) {
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+        ecore_evas_fullscreen_set(ecoreEvas, false);
+    }
+}
+#endif
+
 
 /**
  * @internal
