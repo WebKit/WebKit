@@ -89,7 +89,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
             return DefaultBehavior;
 
         child = child->firstChild();
-        if (child->isLink() || !child->firstAnonymousBlockChild())
+        if (child && (child->isLink() || !child->firstAnonymousBlockChild()))
             return IncludeObject;
     }
 
