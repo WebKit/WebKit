@@ -1,3 +1,18 @@
+2012-09-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Narrowing down flaky crash expectation for fast/js/random-array-gc-stress.html.
+        The test only crashes in release builds.
+
+        Removing flaky expectation for jquery/manipulation.html, the test is consistently
+        passing.
+
+        Removing failure expectation for fast/js/named-function-expression.html, the offending
+        commit was rolled out in r127987.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

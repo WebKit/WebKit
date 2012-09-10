@@ -464,7 +464,7 @@ BUGWK93727 DEBUG : fullscreen/full-screen-iframe-not-allowed.html = CRASH PASS
 BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
 BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
 
-BUGWK90957 : fast/js/random-array-gc-stress.html = CRASH PASS
+BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
@@ -488,8 +488,6 @@ BUGWK56561 : svg/custom/clip-path-referencing-use2.svg = PASS TEXT
 BUGWK62204 : svg/custom/circular-marker-reference-4.svg = PASS TEXT
 
 BUGWK89097 : plugins/plugin-initiate-popup-window.html = PASS TEXT
-
-BUGWK61932 : jquery/manipulation.html = PASS TEXT
 
 BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
@@ -1310,8 +1308,6 @@ BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 
 BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
-
-BUGWK96180 : fast/js/named-function-expression.html = TEXT
 
 BUGWK96196 : accessibility/spinbutton-value.html = TEXT
 
