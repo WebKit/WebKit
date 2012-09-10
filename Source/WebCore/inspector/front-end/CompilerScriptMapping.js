@@ -41,6 +41,8 @@ WebInspector.CompilerScriptMapping = function(workspace)
     this._scriptForSourceMap = new Map();
     this._sourceMapForUISourceCode = new Map();
     this._uiSourceCodeByURL = {};
+    this._originalUISourceCodeForScriptId = {};
+    this._scriptForOriginalUISource = new Map();
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
@@ -53,7 +55,11 @@ WebInspector.CompilerScriptMapping.prototype = {
     {
         var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
         var sourceMap = this._sourceMapForScriptId[debuggerModelLocation.scriptId];
-        var entry = sourceMap.findEntry(debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber || 0);
+        var lineNumber = debuggerModelLocation.lineNumber;
+        var columnNumber = debuggerModelLocation.columnNumber || 0;
+        var entry = sourceMap.findEntry(lineNumber, columnNumber);
+        if (entry.length === 2)
+            return new WebInspector.UILocation(this._originalUISourceCodeForScriptId[debuggerModelLocation.scriptId], lineNumber, columnNumber);
         return new WebInspector.UILocation(this._uiSourceCodeByURL[entry[2]], entry[3], entry[4]);
     },
 
@@ -65,33 +71,12 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
+        var script = this._scriptForOriginalUISource.get(uiSourceCode);
+        if (script)
+            return WebInspector.debuggerModel.createRawLocation(script, lineNumber, columnNumber);
         var sourceMap = this._sourceMapForUISourceCode.get(uiSourceCode);
         var entry = sourceMap.findEntryReversed(uiSourceCode.url, lineNumber);
         return WebInspector.debuggerModel.createRawLocation(this._scriptForSourceMap.get(sourceMap), entry[0], entry[1]);
-    },
-
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodes: function()
-    {
-        var result = [];
-        for (var url in this._uiSourceCodeByURL)
-            result.push(this._uiSourceCodeByURL[url]);
-        return result;
-    },
-    
-    /**
-     * @param {WebInspector.SourceMapParser} sourceMap
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    _uiSourceCodesForSourceMap: function(sourceMap)
-    {
-        var result = []
-        var sourceURLs = sourceMap.sources();
-        for (var i = 0; i < sourceURLs.length; ++i)
-            result.push(this._uiSourceCodeByURL[sourceURLs[i]]);
-        return result;
     },
 
     /**
@@ -99,11 +84,15 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     addScript: function(script)
     {
+        var originalUISourceCode = new WebInspector.JavaScriptSource(script.sourceURL, null, script, this, true);
+        this._originalUISourceCodeForScriptId[script.scriptId] = originalUISourceCode;
+        this._scriptForOriginalUISource.put(originalUISourceCode, script);
+        this._workspace.project().addUISourceCode(originalUISourceCode);
+
         var sourceMap = this.loadSourceMapForScript(script);
 
         if (this._scriptForSourceMap.get(sourceMap)) {
             this._sourceMapForScriptId[script.scriptId] = sourceMap;
-            var uiSourceCodes = this._uiSourceCodesForSourceMap(sourceMap);
             script.setSourceMapping(this);
             return;
         }
@@ -169,6 +158,8 @@ WebInspector.CompilerScriptMapping.prototype = {
         this._scriptForSourceMap = new Map();
         this._sourceMapForUISourceCode = new Map();
         this._uiSourceCodeByURL = {};
+        this._originalUISourceCodeForScriptId = {};
+        this._scriptForOriginalUISource = new Map();
     }
 }
 
@@ -314,22 +305,25 @@ WebInspector.SourceMapParser.prototype = {
             }
 
             columnNumber += this._decodeVLQ(stringCharIterator);
-            if (!this._isSeparator(stringCharIterator.peek())) {
-                var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
-                if (sourceIndexDelta) {
-                    sourceIndex += sourceIndexDelta;
-                    sourceURL = sources[sourceIndex];
-                    reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
-                }
-                sourceLineNumber += this._decodeVLQ(stringCharIterator);
-                sourceColumnNumber += this._decodeVLQ(stringCharIterator);
-                if (!this._isSeparator(stringCharIterator.peek()))
-                    nameIndex += this._decodeVLQ(stringCharIterator);
-
-                this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
-                if (!reverseMappings[sourceLineNumber])
-                    reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
+            if (this._isSeparator(stringCharIterator.peek())) {
+                this._mappings.push([lineNumber, columnNumber]);
+                continue;
             }
+
+            var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
+            if (sourceIndexDelta) {
+                sourceIndex += sourceIndexDelta;
+                sourceURL = sources[sourceIndex];
+                reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
+            }
+            sourceLineNumber += this._decodeVLQ(stringCharIterator);
+            sourceColumnNumber += this._decodeVLQ(stringCharIterator);
+            if (!this._isSeparator(stringCharIterator.peek()))
+                nameIndex += this._decodeVLQ(stringCharIterator);
+
+            this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
+            if (!reverseMappings[sourceLineNumber])
+                reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
         }
     },
 

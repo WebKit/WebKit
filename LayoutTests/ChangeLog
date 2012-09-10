@@ -1,3 +1,15 @@
+2012-09-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: support empty entries in source maps.
+        https://bugs.webkit.org/show_bug.cgi?id=96088
+
+        Reviewed by Vsevolod Vlasov.
+
+        Empty entries should be mapped to the compiled script.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/resources/source-map.json:
+
 2012-09-10  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r128006): Three spatial navigation tests are failing

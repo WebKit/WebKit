@@ -71,6 +71,8 @@ function test()
             };
             var mapping = new WebInspector.SourceMapParser("source-map.json", mappingPayload);
             checkMapping(0, 0, "example.js", 0, 0, mapping);
+            var entry = mapping.findEntry(0, 1);
+            InspectorTest.assertEquals(2, entry.length);
             checkMapping(0, 2, "example.js", 0, 2, mapping);
             next();
         },
@@ -131,25 +133,25 @@ function test()
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
             mapping.addScript(script);
 
-            var uiSourceCodeList = mapping.uiSourceCodes();
-            InspectorTest.assertEquals(2, uiSourceCodeList.length);
-            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source1.js", uiSourceCodeList[0].url);
-            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source2.js", uiSourceCodeList[1].url);
+            var uiSourceCode1 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source1.js"];
+            var uiSourceCode2 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source2.js"];
+            var originalUISourceCode = mapping._originalUISourceCodeForScriptId[script.scriptId];
 
-            InspectorTest.checkUILocation(uiSourceCodeList[0], 4, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 81)));
-            InspectorTest.checkUILocation(uiSourceCodeList[0], 5, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 93)));
-            InspectorTest.checkUILocation(uiSourceCodeList[1], 7, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 151)));
+            InspectorTest.checkUILocation(uiSourceCode1, 4, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 81)));
+            InspectorTest.checkUILocation(uiSourceCode1, 5, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 93)));
+            InspectorTest.checkUILocation(uiSourceCode2, 7, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 151)));
+            InspectorTest.checkUILocation(originalUISourceCode, 1, 200, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 200)));
 
-            InspectorTest.checkRawLocation(script, 0, 42, mapping.uiLocationToRawLocation(uiSourceCodeList[0], 3, 10));
-            InspectorTest.checkRawLocation(script, 1, 85, mapping.uiLocationToRawLocation(uiSourceCodeList[1], 0, 0));
-            InspectorTest.checkRawLocation(script, 1, 110, mapping.uiLocationToRawLocation(uiSourceCodeList[1], 5, 2));
+            InspectorTest.checkRawLocation(script, 0, 42, mapping.uiLocationToRawLocation(uiSourceCode1, 3, 10));
+            InspectorTest.checkRawLocation(script, 1, 85, mapping.uiLocationToRawLocation(uiSourceCode2, 0, 0));
+            InspectorTest.checkRawLocation(script, 1, 110, mapping.uiLocationToRawLocation(uiSourceCode2, 5, 2));
 
-            uiSourceCodeList[0].requestContent(didRequestContent1);
+            uiSourceCode1.requestContent(didRequestContent1);
 
             function didRequestContent1(content, contentEncoded, mimeType)
             {
                 InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
-                uiSourceCodeList[1].requestContent(didRequestContent2);
+                uiSourceCode2.requestContent(didRequestContent2);
             }
 
             function didRequestContent2(content, contentEncoded, mimeType)
@@ -174,14 +176,12 @@ function test()
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
             mapping.addScript(script);
 
-            var uiSourceCodeList = mapping.uiSourceCodes();
-            InspectorTest.assertEquals(1, uiSourceCodeList.length);
-            InspectorTest.assertEquals("source.js", uiSourceCodeList[0].url);
+            var uiSourceCode = mapping._uiSourceCodeByURL["source.js"];
 
-            InspectorTest.checkUILocation(uiSourceCodeList[0], 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
-            InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCodeList[0], 2, 4));
+            InspectorTest.checkUILocation(uiSourceCode, 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
+            InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCode, 2, 4));
 
-            uiSourceCodeList[0].requestContent(didRequestContent);
+            uiSourceCode.requestContent(didRequestContent);
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
