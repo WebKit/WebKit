@@ -131,10 +131,10 @@
       <dep package="pango"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.0.tar.xz" version="3.4.0"
+    <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.2.tar.xz" version="3.4.2"
             repo="ftp.gnome.org"
-            hash="sha256:00af8be8bc60355e08a8f57e3e7503c916cec5cd5c6acb3eaedb01330b81f3e0"
-            md5sum="f9a0bc875cf95c0462910d2d32528464"/>
+            hash="sha256:b1ab72bc61434418160ff0c7edfd93c74758ed8a35e2ed3d07e3e218c2705480"
+            md5sum="9e20443fbaa3ba3e9cbd2fc44d6be121"/>
   </autotools>
 
   <autotools id="glib"
@@ -192,10 +192,10 @@
       <dep package="gtk+"/>
       <dep package="librsvg"/>
     </dependencies>
-    <branch module="pub/GNOME/sources/gnome-themes-standard/3.4/gnome-themes-standard-3.4.0.tar.xz" version="3.4.0"
+    <branch module="pub/GNOME/sources/gnome-themes-standard/3.4/gnome-themes-standard-3.4.2.tar.xz" version="3.4.2"
             repo="ftp.gnome.org"
-            hash="sha256:6c85056db16b748a14c412554371a22f096b981d2eca3ae3d6922a435d43b0fd"
-            md5sum="046a122a4231c7f7fc805b052b4498ce">
+            hash="sha256:aa29d23708e3357775fb7ea2de14b90551a2c732fce297f3372dae005374c3a8"
+            md5sum="bbe736709a7cf00bd18f3b2b82e7a59e">
     </branch>
   </autotools>
 

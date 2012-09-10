@@ -1,3 +1,15 @@
+2012-09-10  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] failure to build jhbuild dependencies with cups 1.6
+        https://bugs.webkit.org/show_bug.cgi?id=95991
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Bump gtk+ and gnome-themes-standard dependencies to 3.4.2 to allow
+        building with cups >= 1.6 [GNOME #670373].
+
+        * gtk/jhbuild.modules:
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] Encoding issue in printed console messages
