@@ -257,6 +257,7 @@ http/tests/fileapi
 fast/dom/DOMURL/check-instanceof-domurl-functions.html
 fast/forms/file/input-file-entries.html
 fast/forms/file/recover-file-input-in-unposted-form.html
+http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html
@@ -2217,6 +2218,3 @@ fast/dom/HTMLDialogElement
 
 # Windows does not have global selection.
 editing/pasteboard/paste-global-selection.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=96133
-http/tests/security/contentSecurityPolicy/blob-urls-match-self.html

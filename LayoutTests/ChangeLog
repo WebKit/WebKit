@@ -1,3 +1,16 @@
+2012-09-10  Mike West  <mkwst@chromium.org>
+
+        http/tests/security/contentSecurityPolicy/blob-urls-match-self.html fails on Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=96133
+
+        Reviewed by Jochen Eisinger.
+
+        Blob is indeed disabled on Windows. Moving this skipped test up with
+        the other ENABLE(BLOB) tests so that it can be reenabled when BLOB
+        rolls in.
+
+        * platform/win/Skipped:
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] 2 fast/forms tests need rebaseline after r128032
