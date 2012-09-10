@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+        }
+
+        function test() {
+            var test = document.getElementById('testframe');
+            var location = test.contentWindow.location.href;
+        }
+    </script>
+</head>
+
+<body>
+    <p>Sandboxing a frame puts it into a unique origin by default, which the
+    containing document shouldn't have script access to. This test passes if a
+    console warning is generated, noting the access violation.</p>
+
+    <iframe src="resources/blank.html" id="testframe" sandbox onload="test();"></iframe>
+</body>
+</html>

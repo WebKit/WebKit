@@ -1755,10 +1755,16 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
     if (activeWindowURL.isNull())
         return String();
 
-    // FIXME: This error message should contain more specifics of why the same origin check has failed.
-    // Perhaps we should involve the security origin object in composing it.
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    return "Unsafe JavaScript attempt to access frame with URL " + document()->url().string() + " from frame with URL " + activeWindowURL.string() + ". Domains, protocols and ports must match.\n";
+    String message = makeString("Unsafe JavaScript attempt to access frame with URL ", document()->url().string(), " from frame with URL ", activeWindowURL.string(), ".");
+    if (document()->isSandboxed(SandboxOrigin) || activeWindow->document()->isSandboxed(SandboxOrigin)) {
+        if (document()->isSandboxed(SandboxOrigin) && activeWindow->document()->isSandboxed(SandboxOrigin))
+            return makeString("Sandbox access violation: ", message, " Both frames are sandboxed into unique origins.\n");
+        if (document()->isSandboxed(SandboxOrigin))
+            return makeString("Sandbox access violation: ", message, " The frame being accessed is sandboxed into a unique origin.\n");
+        return makeString("Sandbox access violation: ", message, " The frame requesting access is sandboxed into a unique origin.\n");
+    }
+    return makeString(message, " Domains, protocols and ports must match.\n");
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)

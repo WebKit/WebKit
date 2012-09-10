@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/srcdoc-in-sandbox-cannot-access-parent.html from frame with URL about:srcdoc. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Sandbox access violation: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/srcdoc-in-sandbox-cannot-access-parent.html from frame with URL about:srcdoc. The frame requesting access is sandboxed into a unique origin.
 
 CONSOLE MESSAGE: line 4: TypeError: 'undefined' is not an object (evaluating 'parent.document.getElementById')
 PASS
