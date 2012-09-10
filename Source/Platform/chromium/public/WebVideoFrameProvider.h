@@ -46,7 +46,8 @@ public:
     class Client {
     public:
         // Provider will call this method to tell the client to stop using it.
-        // stopUsingProvider() may be called from any thread.
+        // stopUsingProvider() may be called from any thread. The client should
+        // block until it has putCurrentFrame any outstanding frames.
         virtual void stopUsingProvider() = 0;
 
         // Notifies the provider's client that a call to getCurrentFrame() will return new data.
@@ -57,17 +58,20 @@ public:
         virtual void didUpdateMatrix(const float*) = 0;
     };
 
-    // May be called from any thread.
+    // May be called from any thread, but there must be some external guarantee
+    // that the provider is not destroyed before this call returns.
     virtual void setVideoFrameProviderClient(Client*) = 0;
 
     // This function places a lock on the current frame and returns a pointer to it.
     // Calls to this method should always be followed with a call to putCurrentFrame().
     // The ownership of the object is not transferred to the caller and
-    // the caller should not free the returned object.
+    // the caller should not free the returned object. Only the current provider
+    // client should call this function.
     virtual WebVideoFrame* getCurrentFrame() = 0;
     // This function releases the lock on the video frame in chromium. It should
     // always be called after getCurrentFrame(). Frames passed into this method
-    // should no longer be referenced after the call is made.
+    // should no longer be referenced after the call is made. Only the current
+    // provider client should call this function.
     virtual void putCurrentFrame(WebVideoFrame*) = 0;
 };
 

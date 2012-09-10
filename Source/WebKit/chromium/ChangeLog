@@ -1,3 +1,37 @@
+2012-09-10  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix deadlock between WebMediaPlayerClientImpl dtor and PutCurrentFrame
+        https://bugs.webkit.org/show_bug.cgi?id=96010
+
+        Reviewed by James Robinson.
+
+        The key fix here is that the destructor no longer has a mutex.
+        The m_compositingMutex was supposedly protecting races between
+        ~WebMediaPlayerClientImpl and setVideoFrameProviderClient. The
+        former is only called from the main thread and the latter is called
+        from the compositor thread only when the main thread is blocked (and
+        it already asserts that this is the case).
+
+        In addition, the m_providerMutex in CCVideoLayerImpl prevents the
+        destruction of WebMediaPlayerClientImpl, thus keeping the frame
+        acquired via getCurrentFrame alive until putCurrentFrame is called.
+        These functions are only called by the client, and comments are added
+        to the interface to better document this.
+
+        To prevent a race between load() and getCurrentFrame/putCurrentFrame
+        (which are called from different threads) a new m_webMediaPlayerMutex
+        to replace part of what the old m_compositingMutex was doing.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::load):
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        (WebKit::WebMediaPlayerClientImpl::setVideoFrameProviderClient):
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-09-10  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Don't use WebGestureEvent.boundingBox for touch adjustment

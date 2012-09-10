@@ -1,3 +1,16 @@
+2012-09-10  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix deadlock between WebMediaPlayerClientImpl dtor and PutCurrentFrame
+        https://bugs.webkit.org/show_bug.cgi?id=96010
+
+        Reviewed by James Robinson.
+
+        Add some additional clarifying comments.
+
+        * chromium/public/WebVideoFrameProvider.h:
+        (Client):
+        (WebVideoFrameProvider):
+
 2012-09-10  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Remove the Descriptor postfix

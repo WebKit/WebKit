@@ -197,7 +197,7 @@ private:
     bool acceleratedRenderingInUse();
 #endif
 
-    Mutex m_compositingMutex; // Guards m_currentVideoFrame and m_videoFrameProviderClient.
+    Mutex m_webMediaPlayerMutex; // Guards the m_webMediaPlayer
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
     WebVideoFrame* m_currentVideoFrame;
