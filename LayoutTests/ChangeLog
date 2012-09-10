@@ -1,3 +1,20 @@
+2012-09-04  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: content-counter-010.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=81447
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/css/content-counter-010-expected.html: Added.
+        * fast/css/content-counter-010.htm: Added.
+          Note that <meta http-equiv="Content-Type" content="text/html; charset=utf-8"  was added to the suite test 
+          to allow it to render correctly from a file:/ url.
+        * fast/lists/w3-css3-lower-armenian-expected.txt:
+        * fast/lists/w3-css3-lower-armenian.html:
+        * fast/lists/w3-css3-upper-armenian-expected.txt:
+        * fast/lists/w3-css3-upper-armenian.html:
+          Amended tests to conform to revised specification for numbers between 7000 and 7999.
+
 2012-09-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Font value should be parsed as a individual property

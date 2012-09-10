@@ -31,8 +31,8 @@ PASS list marker is ՌՊ.
 PASS list marker is ՌՊԿ.
 PASS list marker is ՌՊԿԵ.
 PASS list marker is ՐՊԿԵ.
-PASS list marker is ՈՒԵ.
-PASS list marker is ՈՒՊ.
-PASS list marker is ՈՒՊԿԵ.
+PASS list marker is ՒԵ.
+PASS list marker is ՒՊ.
+PASS list marker is ՒՊԿԵ.
 PASS list marker is ՔՋՂԹ.
 
