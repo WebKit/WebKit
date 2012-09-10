@@ -33,11 +33,13 @@
 
 namespace WebKit {
 
-WebNotification::WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& originString, uint64_t notificationID)
+WebNotification::WebNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
     : m_title(title)
     , m_body(body)
     , m_iconURL(iconURL)
     , m_tag(tag)
+    , m_lang(lang)
+    , m_dir(dir)
     , m_origin(WebSecurityOrigin::createFromString(originString))
     , m_notificationID(notificationID)
 {

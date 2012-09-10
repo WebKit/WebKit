@@ -76,12 +76,12 @@ void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connect
     didReceiveWebNotificationManagerProxyMessage(connection, messageID, arguments);
 }
 
-void WebNotificationManagerProxy::show(WebPageProxy* page, const String& title, const String& body, const String& iconURL, const String& tag, const String& originString, uint64_t notificationID)
+void WebNotificationManagerProxy::show(WebPageProxy* page, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
 {
     if (!isNotificationIDValid(notificationID))
         return;
     
-    RefPtr<WebNotification> notification = WebNotification::create(title, body, iconURL, tag, originString, notificationID);
+    RefPtr<WebNotification> notification = WebNotification::create(title, body, iconURL, tag, lang, dir, originString, notificationID);
     m_notifications.set(notificationID, notification);
     m_provider.show(page, notification.get());
 }

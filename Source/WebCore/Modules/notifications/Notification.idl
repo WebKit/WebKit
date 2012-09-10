@@ -64,8 +64,8 @@ module threads {
         attribute EventListener onclose;
         attribute EventListener onclick;
 
-        attribute DOMString dir;
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
+        attribute DOMString dir;
         attribute DOMString replaceId;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS

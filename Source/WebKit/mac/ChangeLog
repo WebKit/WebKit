@@ -1,3 +1,18 @@
+2012-09-07  Jon Lee  <jonlee@apple.com>
+
+        Update notifications to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=91726
+        <rdar://problem/11910451>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Expose lang and dir.
+
+        * WebView/WebNotification.h:
+        * WebView/WebNotification.mm:
+        (-[WebNotification lang]):
+        (-[WebNotification dir]):
+
 2012-09-10  Jer Noble  <jer.noble@apple.com>
 
         NSInvalidArgumentException in WebFrameLoaderClient::shouldSendDoNotTrackHTTPHeader()

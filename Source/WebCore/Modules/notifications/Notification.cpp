@@ -146,6 +146,15 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
         notification->setBody(argument);
     if (options.get("tag", argument))
         notification->setTag(argument);
+    if (options.get("lang", argument))
+        notification->setLang(argument);
+    if (options.get("dir", argument))
+        notification->setDir(argument);
+    if (options.get("icon", argument)) {
+        KURL iconURI = argument.isEmpty() ? KURL() : context->completeURL(argument);
+        if (!iconURI.isEmpty() && iconURI.isValid())
+            notification->setIconURL(iconURI);
+    }
 
     notification->suspendIfNeeded();
     return notification.release();

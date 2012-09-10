@@ -86,13 +86,19 @@ public:
     bool isHTML() const { return m_isHTML; }
     void setHTML(bool isHTML) { m_isHTML = isHTML; }
     
+#if ENABLE(LEGACY_NOTIFICATIONS)
     KURL url() const { return m_notificationURL; }
     void setURL(KURL url) { m_notificationURL = url; }
-    
+#endif
+
     KURL iconURL() const { return m_icon; }
+    void setIconURL(const KURL& url) { m_icon = url; }
 
     String title() const { return m_title; }
     String body() const { return m_body; }
+
+    String lang() const { return m_lang; }
+    void setLang(const String& lang) { m_lang = lang; }
 
     String dir() const { return m_direction; }
     void setDir(const String& dir) { m_direction = dir; }
@@ -174,10 +180,12 @@ private:
     KURL m_icon;
     String m_title;
     String m_body;
-    // FIXME: Deprecate HTML Notifications.
+#if ENABLE(LEGACY_NOTIFICATIONS)
     KURL m_notificationURL;
+#endif
 
     String m_direction;
+    String m_lang;
     String m_tag;
 
     enum NotificationState {

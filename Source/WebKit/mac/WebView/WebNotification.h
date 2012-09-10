@@ -38,6 +38,8 @@
 - (NSString *)body;
 - (NSString *)tag;
 - (NSString *)iconURL;
+- (NSString *)lang;
+- (NSString *)dir;
 - (WebSecurityOrigin *)origin;
 - (uint64_t)notificationID;
 

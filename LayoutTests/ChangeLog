@@ -1,3 +1,16 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        The options dictionary in Notification constructor should not accept event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=95538
+        <rdar://problem/12213901>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make sure the onshow handler added in the options dictionary does not get called.
+
+        * http/tests/notifications/events-in-dictionary-expected.txt: Added.
+        * http/tests/notifications/events-in-dictionary.html: Added.
+
 2012-09-10  Geoffrey Garen  <ggaren@apple.com>
 
         DFG misses arguments tear-off for function.arguments if 'arguments' is used

@@ -117,6 +117,24 @@ Notification* core(WebNotification *notification)
 #endif
 }
 
+- (NSString *)lang
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    return core(self)->lang();
+#else
+    return nil;
+#endif
+}
+
+- (NSString *)dir
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    return core(self)->dir();
+#else
+    return nil;
+#endif
+}
+
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

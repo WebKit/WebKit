@@ -1,3 +1,36 @@
+2012-09-07  Jon Lee  <jonlee@apple.com>
+
+        Update notifications to latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=91726
+        <rdar://problem/11910451>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Expose lang and dir.
+
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationCopyLang):
+        (WKNotificationCopyDir):
+        * UIProcess/API/C/WKNotification.h:
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::lang):
+        (WebKit::WebNotification::dir):
+        (WebNotification):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show):
+
 2012-09-10  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
