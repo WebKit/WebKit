@@ -68,10 +68,7 @@ DOMWindow* firstDOMWindow(BindingState*)
 
 Document* currentDocument(BindingState*)
 {
-    DOMWindow* current = toDOMWindow(v8::Context::GetCurrent());
-    if (!current)
-        return 0;
-    return current->document();
+    return toDOMWindow(v8::Context::GetCurrent())->document();
 }
 
 void printErrorMessageForFrame(Frame* frame, const String& message)
