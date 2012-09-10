@@ -29,7 +29,7 @@
 
 #include <stdint.h>
 
-#if defined(WIN32) || defined(_WIN32)
+#if (defined(WIN32) || defined(_WIN32)) && !defined(BUILDING_QT__)
 #include <WebKit2/WKBaseWin.h>
 #endif
 

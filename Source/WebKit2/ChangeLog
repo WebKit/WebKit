@@ -1,3 +1,18 @@
+2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] Make WK2 C API headers compile in the Qt build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96246
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WKBase.h and WKAPICast.h include files that are specific to the Safari/Windows
+        port if WIN32 or _WIN32 is defined. When building WebKit2 on Windows with Qt, we
+        do not want to include these files, as they define an API that is different to ours
+        (the view aspect differs). Therefore guard the inclusion with !defined(BUILDING_QT__)
+
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+
 2012-09-10  Kevin Funk  <kevin.funk@kdab.com>
 
         Replace calls to QString::fromAscii which is deprecated in Qt5
