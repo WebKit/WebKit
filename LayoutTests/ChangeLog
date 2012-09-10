@@ -1,3 +1,23 @@
+2012-09-07  Jer Noble  <jer.noble@apple.com>
+
+        <audio> and <video> should send Do Not Track when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        Reviewed by Eric Carlson.
+
+        Add a new HTTP test ensuring the DNT header is passed correctly during video tests.
+
+        * http/tests/media/resources/video-donottrack-check-donottrack.php: Added.
+        * http/tests/media/video-donottrack-expected.txt: Added.
+        * http/tests/media/video-donottrack.html: Added.
+
+        Skip the new tests on platforms which do not support it:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
         The options dictionary in Notification constructor should not accept event listeners

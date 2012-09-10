@@ -1,3 +1,26 @@
+2012-09-07  Jer Noble  <jer.noble@apple.com>
+
+        <audio> and <video> should send Do Not Track when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        Reviewed by Eric Carlson.
+
+        Add support for the shouldSendDoNotTrackHTTPHeader by passing the request
+        on to the WebFrameLoadDelegate.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::shouldSendDoNotTrackHeader):
+            Pass the question on to the WebFrameLoadDelegate.
+        * WebView/WebDelegateImplementationCaching.h:
+        (WebFrameLoadDelegateImplementationCache):
+            Add an entry for the delegate's webViewShouldSendDoNotTrackHeader method.
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallResourceLoadDelegateReturningBoolean): Added a 0-parameter overloaded function.
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]): initialize the 
+            cached value for shouldSendDoNotTrackHeaderFunc.
+
 2012-09-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Rename the ustring() accessor to string()

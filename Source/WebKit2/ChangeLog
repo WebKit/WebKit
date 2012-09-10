@@ -1,3 +1,30 @@
+2012-09-07  Jer Noble  <jer.noble@apple.com>
+
+        <audio> and <video> should send Do Not Track when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        Reviewed by Eric Carlson.
+
+        Add support for the shouldSendDoNotTrackHTTPHeader by passing the request
+        on to the WebFrameLoadDelegate.
+
+        * Shared/APIClientTraits.cpp: Increment the interfaceSizes for 
+            WKBundlePageLoaderClient by the value of the new functions.
+        * Shared/APIClientTraits.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Add a new API to 
+            WKBundlePageLoaderClient and bump the version number.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldSendDoNotTrackHTTPHeader):
+            Pass the question on to the client.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldSendDoNotTrackHTTPHeader):
+            Pass the question on to the bundle.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+            Add an entry for the new function in the Qt loader client.
+
 2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Don't convert to UTF-8 the suggestedFilename passed to Download::decideDestinationWithSuggestedFilename()

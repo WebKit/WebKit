@@ -80,6 +80,7 @@ private:
     static bool shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
     static void didReceiveIntentForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleIntentRequestRef, WKTypeRef*, const void*);
     static void registerIntentServiceForFrame(WKBundlePageRef, WKBundleFrameRef, WKIntentServiceInfoRef, WKTypeRef*, const void*);
+    static bool shouldSendDoNotTrackHTTPHeader(WKBundlePageRef, const void*);
 
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef);
@@ -167,6 +168,8 @@ private:
 
     void dumpAllFramesText();
     void dumpAllFrameScrollPositions();
+
+    bool shouldSendDoNotTrackHTTPHeader();
 
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;

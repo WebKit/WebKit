@@ -430,4 +430,9 @@
         printf ("postProgressFinishedNotification\n");
 }
 
+- (BOOL)webViewShouldSendDoNotTrackHTTPHeader:(WebView*)sender
+{
+    return gTestRunner->shouldSendDoNotTrackHTTPHeader();
+}
+
 @end

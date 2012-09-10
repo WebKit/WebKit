@@ -1,3 +1,34 @@
+2012-09-07  Jer Noble  <jer.noble@apple.com>
+
+        <audio> and <video> should send Do Not Track when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        Reviewed by Eric Carlson.
+
+        Add a testRunner JS API for calling setShouldSendDoNotTrackHTTPHeader to DRT and 
+        WTR. Add FrameLoaderClient client methods for retrieving that value.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setShouldSendDoNotTrackHTTPHeaderCallback): Pass through to the TestRunner.
+        (TestRunner::staticFunctions): Add the setShouldSendDoNotTrackHTTPHeader function.
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setShouldSendDoNotTrackHTTPHeader): Simple setter.
+        (TestRunner::shouldSendDoNotTrackHTTPHeader): Simple getter.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webViewShouldSendDoNotTrackHTTPHeader:]): 
+            Pass the question on to the TestRunner.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+            Add the setShouldSendDoNotTrackHTTPHeader client function.
+        (WTR::InjectedBundlePage::shouldSendDoNotTrackHTTPHeader):
+            Pass the question on to the TestRunner.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::shouldSendDoNotTrackHTTPHeader): Simple getter.
+        (WTR::TestRunner::setShouldSendDoNotTrackHTTPHeader): Simple Setter.
+
 2012-09-10  Ojan Vafai  <ojan@chromium.org>
 
         Make EFL bots work on the flakiness dashboard

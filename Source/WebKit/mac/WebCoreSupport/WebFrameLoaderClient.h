@@ -227,6 +227,8 @@ private:
 #if PLATFORM(MAC)
     virtual RemoteAXObjectRef accessibilityRemoteObject() OVERRIDE { return 0; }
 #endif
+
+    virtual bool shouldSendDoNotTrackHTTPHeader() const OVERRIDE;
     
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 

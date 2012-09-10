@@ -93,8 +93,9 @@ TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expe
     , m_shouldPaintBrokenImage(true)
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
     , m_areLegacyWebNotificationPermissionRequestsIgnored(false)
-    , m_customFullScreenBehavior(false) 
+    , m_customFullScreenBehavior(false)
     , m_hasPendingWebNotificationClick(false)
+    , m_shouldSendDoNotTrackHTTPHeader(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
     , m_titleTextDirection("ltr")
@@ -712,6 +713,16 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
     // May be able to be made platform independant by using shared WorkQueue
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->notifyDone();
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setShouldSendDoNotTrackHTTPHeaderCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setShouldSendDoNotTrackHTTPHeader(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
 
@@ -2327,6 +2338,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "denyWebNotificationPermission", denyWebNotificationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeAllWebNotificationPermissions", removeAllWebNotificationPermissionsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "simulateWebNotificationClick", simulateWebNotificationClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setShouldSendDoNotTrackHTTPHeader", setShouldSendDoNotTrackHTTPHeaderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

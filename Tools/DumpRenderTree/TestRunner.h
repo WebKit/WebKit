@@ -367,6 +367,9 @@ public:
 
     bool hasPendingWebNotificationClick() const { return m_hasPendingWebNotificationClick; }
 
+    void setShouldSendDoNotTrackHTTPHeader(bool value) { m_shouldSendDoNotTrackHTTPHeader = value; }
+    bool shouldSendDoNotTrackHTTPHeader() const { return m_shouldSendDoNotTrackHTTPHeader; }
+
 private:
     TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 
@@ -423,6 +426,7 @@ private:
     bool m_areLegacyWebNotificationPermissionRequestsIgnored;
     bool m_customFullScreenBehavior;
     bool m_hasPendingWebNotificationClick;
+    bool m_shouldSendDoNotTrackHTTPHeader;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

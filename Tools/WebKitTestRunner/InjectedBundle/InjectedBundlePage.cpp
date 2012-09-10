@@ -304,7 +304,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didFinishProgress, // didFinishProgress
         0, // shouldForceUniversalAccessFromLocalURL
         didReceiveIntentForFrame, // didReceiveIntentForFrame
-        registerIntentServiceForFrame // registerIntentServiceForFrame
+        registerIntentServiceForFrame, // registerIntentServiceForFrame
+        shouldSendDoNotTrackHTTPHeader
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 
@@ -621,6 +622,11 @@ void InjectedBundlePage::registerIntentServiceForFrame(WKBundlePageRef page, WKB
 #endif
 }
 
+bool InjectedBundlePage::shouldSendDoNotTrackHTTPHeader(WKBundlePageRef page, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldSendDoNotTrackHTTPHeader();
+}
+
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishDocumentLoadForFrame(frame);
@@ -774,6 +780,11 @@ void InjectedBundlePage::didFinishProgress()
         return;
 
     InjectedBundle::shared().stringBuilder()->append("postProgressFinishedNotification\n");
+}
+
+bool InjectedBundlePage::shouldSendDoNotTrackHTTPHeader()
+{
+    return InjectedBundle::shared().testRunner()->shouldSendDoNotTrackHTTPHeader();
 }
 
 enum FrameNamePolicy { ShouldNotIncludeFrameName, ShouldIncludeFrameName };

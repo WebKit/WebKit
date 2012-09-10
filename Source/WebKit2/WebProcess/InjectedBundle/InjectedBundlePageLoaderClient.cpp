@@ -335,4 +335,12 @@ bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebP
     return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(page), toAPI(url.impl()), m_client.clientInfo);
 }
 
+bool InjectedBundlePageLoaderClient::shouldSendDoNotTrackHTTPHeader(WebPage* page)
+{
+    if (!m_client.shouldSendDoNotTrackHTTPHeader)
+        return false;
+
+    return m_client.shouldSendDoNotTrackHTTPHeader(toAPI(page), m_client.clientInfo);
+}
+
 } // namespace WebKit

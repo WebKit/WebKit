@@ -1622,6 +1622,15 @@ bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore:
     return webPage->injectedBundleLoaderClient().shouldForceUniversalAccessFromLocalURL(webPage, url.string());
 }
 
+bool WebFrameLoaderClient::shouldSendDoNotTrackHTTPHeader() const
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return false;
+
+    return webPage->injectedBundleLoaderClient().shouldSendDoNotTrackHTTPHeader(webPage);
+}
+
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     RefPtr<WebFrameNetworkingContext> context = WebFrameNetworkingContext::create(m_frame);

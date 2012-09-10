@@ -165,6 +165,9 @@ module WTR {
         void denyWebNotificationPermission(in DOMString origin);
         void removeAllWebNotificationPermissions();
         void simulateWebNotificationClick(in object notification);
+
+        // Do Not Track support
+        void setShouldSendDoNotTrackHTTPHeader(in boolean flag);
     };
 
 }

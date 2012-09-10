@@ -111,6 +111,7 @@ typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
 typedef void (*WKBundlePageDidReceiveIntentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRequestRef intentRequest, WKTypeRef* userData, const void* clientInfo);
 typedef void (*WKBundlePageRegisterIntentServiceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef* userData, const void* clientInfo);
+typedef bool (*WKBundlePageShouldSendDoNotTrackHTTPHeaderCallback)(WKBundlePageRef page, const void* clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -153,10 +154,13 @@ struct WKBundlePageLoaderClient {
     // Version 3
     WKBundlePageDidReceiveIntentForFrameCallback                            didReceiveIntentForFrame;
     WKBundlePageRegisterIntentServiceForFrameCallback                       registerIntentServiceForFrame;
+
+    // Version 4
+    WKBundlePageShouldSendDoNotTrackHTTPHeaderCallback                      shouldSendDoNotTrackHTTPHeader;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 3 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 4 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

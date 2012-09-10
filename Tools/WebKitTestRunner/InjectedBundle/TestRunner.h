@@ -235,6 +235,9 @@ public:
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();
 
+    bool shouldSendDoNotTrackHTTPHeader() const { return m_shouldSendDoNotTrackHTTPHeader; }
+    void setShouldSendDoNotTrackHTTPHeader(bool flag) { m_shouldSendDoNotTrackHTTPHeader = flag; }
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
@@ -276,6 +279,8 @@ private:
     WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
+
+    bool m_shouldSendDoNotTrackHTTPHeader;
 };
 
 } // namespace WTR
