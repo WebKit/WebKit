@@ -404,6 +404,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
 	Source/JavaScriptCore/llint/LLIntCommon.h \
+	Source/JavaScriptCore/llint/LLIntCLoop.cpp \
+	Source/JavaScriptCore/llint/LLIntCLoop.h \
 	Source/JavaScriptCore/llint/LLIntData.cpp \
 	Source/JavaScriptCore/llint/LLIntData.h \
 	Source/JavaScriptCore/llint/LLIntEntrypoints.cpp \
@@ -411,6 +413,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/llint/LLIntExceptions.cpp \
 	Source/JavaScriptCore/llint/LLIntExceptions.h \
 	Source/JavaScriptCore/llint/LLIntOfflineAsmConfig.h \
+	Source/JavaScriptCore/llint/LLIntOpcode.h \
 	Source/JavaScriptCore/llint/LLIntSlowPaths.cpp \
 	Source/JavaScriptCore/llint/LLIntSlowPaths.h \
 	Source/JavaScriptCore/llint/LLIntThunks.cpp \
@@ -566,6 +569,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSValueInlineMethods.h \
 	Source/JavaScriptCore/runtime/JSVariableObject.cpp \
 	Source/JavaScriptCore/runtime/JSVariableObject.h \
+	Source/JavaScriptCore/runtime/JSWithScope.h \
 	Source/JavaScriptCore/runtime/JSWrapperObject.cpp \
 	Source/JavaScriptCore/runtime/JSWrapperObject.h \
 	Source/JavaScriptCore/runtime/LiteralParser.cpp \
@@ -693,6 +697,7 @@ offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/asm.rb \
 	Source/JavaScriptCore/offlineasm/ast.rb \
 	Source/JavaScriptCore/offlineasm/backends.rb \
+	Source/JavaScriptCore/offlineasm/cloop.rb \
 	Source/JavaScriptCore/offlineasm/config.rb \
 	Source/JavaScriptCore/offlineasm/generate_offset_extractor.rb \
 	Source/JavaScriptCore/offlineasm/instructions.rb \

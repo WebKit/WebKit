@@ -1,3 +1,9 @@
+2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2012-09-09  Mark Lam  <mark.lam@apple.com>
 
         Fixed a few llint C++ interpreter bugs.
