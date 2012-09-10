@@ -66,6 +66,7 @@ FIND_PACKAGE(FLEX REQUIRED)
 FIND_PACKAGE(Gperf REQUIRED)
 FIND_PACKAGE(Perl REQUIRED)
 FIND_PACKAGE(PythonInterp REQUIRED)
+FIND_PACKAGE(Ruby)
 
 # -----------------------------------------------------------------------------
 # Determine the target processor

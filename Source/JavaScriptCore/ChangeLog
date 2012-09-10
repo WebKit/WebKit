@@ -1,3 +1,14 @@
+2012-09-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [CMake][EFL] Enable the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=92682
+
+        Reviewed by Csaba Osztrogonác.
+
+        Generate the headers needed by LLint when LLint is enabled.
+
+        * CMakeLists.txt:
+
 2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
