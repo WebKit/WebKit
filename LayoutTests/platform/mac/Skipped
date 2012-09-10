@@ -1010,6 +1010,13 @@ http/tests/security/MessagePort/event-listener-context.html
 platform/mac/accessibility/search-with-frames.html
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
+# https://bugs.webkit.org/show_bug.cgi?id=96226
+# REGRESSION (r128006): Three spatial navigation tests are failing
+
+fast/spatial-navigation/snav-container-white-space.html
+fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
+fast/spatial-navigation/snav-imagemap-overlapped-areas.html
+
 # Assorted failures that need investigation
 
 # --- Canvas ---

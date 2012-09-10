@@ -1,5 +1,16 @@
 2012-09-10  Dan Bernstein  <mitz@apple.com>
 
+        REGRESSION (r128006): Three spatial navigation tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=96226
+
+        Added fast/spatial-navigation/snav-container-white-space.html,
+        fast/spatial-navigation/snav-div-overflow-scrol-hidden.html, and
+        fast/spatial-navigation/snav-imagemap-overlapped-areas.html to the mac skip list.
+
+        * platform/mac/Skipped:
+
+2012-09-10  Dan Bernstein  <mitz@apple.com>
+
         Added platform-specific results for this test from r128042.
 
         * platform/mac/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
