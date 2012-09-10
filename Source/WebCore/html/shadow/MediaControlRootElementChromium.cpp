@@ -29,13 +29,17 @@
 #if ENABLE(VIDEO)
 #include "MediaControlRootElementChromium.h"
 
+#include "CSSValueKeywords.h"
 #include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RenderMedia.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
+#include "StyleResolver.h"
 #include "Text.h"
 
 #if ENABLE(VIDEO_TRACK)
@@ -59,6 +63,69 @@ MediaControlElementType MediaControlChromiumEnclosureElement::displayType() cons
     return MediaControlsPanel;
 }
 
+
+class RenderMediaControlPanelEnclosureElement : public RenderBlock {
+public:
+    RenderMediaControlPanelEnclosureElement(Node*);
+
+private:
+    virtual void layout() OVERRIDE;
+};
+
+RenderMediaControlPanelEnclosureElement::RenderMediaControlPanelEnclosureElement(Node* node)
+    : RenderBlock(node)
+{
+}
+
+static const int hideTimeDisplayWidth = 350;
+static const int hideVolumeDisplayWidth = 275;
+static const int hideMuteButtonWidth = 210;
+static const int hideFullscreenButtonWidth = 150;
+static const int hideTimelineWidth = 100;
+
+void RenderMediaControlPanelEnclosureElement::layout()
+{
+    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    if (!mediaElement || !mediaElement->renderer())
+    return;
+
+    float mediaWidthFloat = toRenderMedia(mediaElement->renderer())->contentBoxRect().width().toFloat();
+    int mediaWidth = round(adjustFloatForAbsoluteZoom(mediaWidthFloat, style()));
+
+    MediaControlRootElementChromium* elementShadow = (MediaControlRootElementChromium *) mediaElement->mediaControls();
+
+    if (mediaWidth < hideTimeDisplayWidth)
+        elementShadow->hideTimeDisplay();
+    else
+        elementShadow->showTimeDisplay();
+
+    if (mediaWidth < hideVolumeDisplayWidth)
+        elementShadow->hideVolumeSlider();
+    else
+        elementShadow->showVolumeSlider();
+
+    if (mediaWidth < hideMuteButtonWidth)
+        elementShadow->hideMuteButton();
+    else
+        elementShadow->showMuteButton();
+
+    if (mediaWidth < hideFullscreenButtonWidth)
+        elementShadow->hideFullscreenButton();
+    else
+        elementShadow->showFullscreenButton();
+
+    if (mediaWidth < hideTimelineWidth)
+        elementShadow->hideTimeline();
+    else
+        elementShadow->showTimeline();
+
+    if (mediaElement->renderer()->isVideo())
+        // Update padding according to video width.
+        static_cast<MediaControlPanelEnclosureElement*>(node())->updatePadding(mediaWidth);
+
+    RenderBlock::layout();
+}
+
 MediaControlPanelEnclosureElement::MediaControlPanelEnclosureElement(Document* document)
     : MediaControlChromiumEnclosureElement(document)
 {
@@ -69,10 +136,37 @@ PassRefPtr<MediaControlPanelEnclosureElement> MediaControlPanelEnclosureElement:
     return adoptRef(new MediaControlPanelEnclosureElement(document));
 }
 
+RenderObject* MediaControlPanelEnclosureElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderMediaControlPanelEnclosureElement(this);
+}
+
 const AtomicString& MediaControlPanelEnclosureElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-enclosure"));
     return id;
+}
+
+// Make sure to keep these values in sync with the ones in mediaControlsChromium.css.
+static const int videoControlsHeight = 30;
+static const int maxPadding = 5;
+static const int minPadding = 0;
+static const int minPaddingAtWidth = 160;
+static const int decreaseStep = 60;
+
+void MediaControlPanelEnclosureElement::updatePadding(int mediaWidth)
+{
+    // Scale padding linearly between minPadding and maxPadding depending on mediaWidth.
+    float padding = round((mediaWidth - minPaddingAtWidth) / decreaseStep);
+    if (padding < minPadding)
+        padding = minPadding;
+    else if (padding > maxPadding)
+        padding = maxPadding;
+
+    setInlineStyleProperty(CSSPropertyPaddingRight, padding, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyPaddingBottom, padding, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyPaddingLeft, padding, CSSPrimitiveValue::CSS_PX);
+    setInlineStyleProperty(CSSPropertyHeight, padding + videoControlsHeight, CSSPrimitiveValue::CSS_PX);
 }
 
 MediaControlRootElementChromium::MediaControlRootElementChromium(Document* document)
@@ -94,6 +188,7 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_hideFullscreenControlsTimer(this, &MediaControlRootElementChromium::hideFullscreenControlsTimerFired)
     , m_isMouseOverControls(false)
     , m_isFullscreen(false)
+    , m_hiddenTimeDisplay(false)
 {
 }
 
@@ -257,15 +352,11 @@ void MediaControlRootElementChromium::reset()
 
     float duration = m_mediaController->duration();
     m_timeline->setDuration(duration);
-    m_timeline->show();
 
     m_durationDisplay->setInnerText(page->theme()->formatMediaControlsTime(duration), ASSERT_NO_EXCEPTION);
     m_durationDisplay->setCurrentValue(duration);
 
-    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
-
-    m_panelMuteButton->show();
 
     if (m_volumeSlider) {
         if (!m_mediaController->hasAudio())
@@ -283,19 +374,14 @@ void MediaControlRootElementChromium::reset()
             m_toggleClosedCaptionsButton->hide();
     }
 
-    if (m_mediaController->supportsFullscreen() && m_mediaController->hasVideo())
-        m_fullscreenButton->show();
-    else
-        m_fullscreenButton->hide();
+    showFullscreenButton();
+
     makeOpaque();
 }
 
 void MediaControlRootElementChromium::playbackStarted()
 {
     m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaController->currentTime());
-    m_currentTimeDisplay->show();
-    m_durationDisplay->hide();
     updateTimeDisplay();
 
     if (m_isFullscreen)
@@ -304,7 +390,6 @@ void MediaControlRootElementChromium::playbackStarted()
 
 void MediaControlRootElementChromium::playbackProgressed()
 {
-    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
     if (!m_isMouseOverControls && m_mediaController->hasVideo())
@@ -314,7 +399,6 @@ void MediaControlRootElementChromium::playbackProgressed()
 void MediaControlRootElementChromium::playbackStopped()
 {
     m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
     makeOpaque();
 
@@ -330,8 +414,8 @@ void MediaControlRootElementChromium::updateTimeDisplay()
     if (!page)
         return;
 
-    // After seek, hide duration display and show current time.
-    if (now > 0) {
+    // After seek or playback start, hide duration display and show current time.
+    if (!m_hiddenTimeDisplay && now > 0) {
         m_currentTimeDisplay->show();
         m_durationDisplay->hide();
     }
@@ -340,6 +424,8 @@ void MediaControlRootElementChromium::updateTimeDisplay()
     ExceptionCode ec;
     m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), ec);
     m_currentTimeDisplay->setCurrentValue(now);
+
+    m_timeline->setPosition(m_mediaController->currentTime());
 }
 
 void MediaControlRootElementChromium::reportedError()
@@ -476,6 +562,61 @@ void MediaControlRootElementChromium::showVolumeSlider()
         return;
 
     m_volumeSlider->show();
+}
+
+void MediaControlRootElementChromium::hideVolumeSlider()
+{
+    m_volumeSlider->hide();
+}
+
+void MediaControlRootElementChromium::showTimeDisplay()
+{
+    m_hiddenTimeDisplay = false;
+    m_durationDisplay->show();
+    updateTimeDisplay();
+}
+
+void MediaControlRootElementChromium::hideTimeDisplay()
+{
+    m_hiddenTimeDisplay = true;
+    m_durationDisplay->hide();
+    m_currentTimeDisplay->hide();
+}
+
+void MediaControlRootElementChromium::showMuteButton()
+{
+    if (!m_mediaController->hasAudio())
+        return;
+
+    m_panelMuteButton->show();
+}
+
+void MediaControlRootElementChromium::hideMuteButton()
+{
+    m_panelMuteButton->hide();
+}
+
+void MediaControlRootElementChromium::showFullscreenButton()
+{
+    if (!m_mediaController->supportsFullscreen() || !m_mediaController->hasVideo())
+        return;
+
+    m_fullscreenButton->show();
+}
+
+void MediaControlRootElementChromium::hideFullscreenButton()
+{
+    m_fullscreenButton->hide();
+}
+
+void MediaControlRootElementChromium::showTimeline()
+{
+    m_timeline->show();
+}
+
+void MediaControlRootElementChromium::hideTimeline()
+{
+    m_timeline->hide();
 }
 
 #if ENABLE(VIDEO_TRACK)

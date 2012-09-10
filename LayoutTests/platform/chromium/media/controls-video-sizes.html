@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Video Controls - selective control element display</title>
+    <script src="../../../media/video-test.js"></script>
+    <script>
+        var videos = document.getElementsByTagName("video");
+        var ready = 0;
+
+        if (window.testRunner)
+            testRunner.dumpAsText(true); // To get pixels.
+
+        function init()
+        {
+            for (var i = 0; i < videos.length;  i++) {
+                videos[i].src = "../../../media/content/test.ogv";
+                videos[i].addEventListener('canplaythrough', function () {
+                    ready += 1;
+                    if (ready == videos.length)
+                        endTest();
+                }, false);
+            }
+        }
+    </script>
+</head>
+<body onload="init()" style="zoom: 75%;">
+    <p>Lose time display at 349px in Chromium</p>
+    <video controls width="350px"></video>
+    <video controls width="349px"></video>
+    <p>Lose volume slider at 274px and mute button at 209px in Chromium</p>
+    <video controls width="275px"></video>
+    <video controls width="274px"></video>
+    <video controls width="210px"></video>
+    <video controls width="209px"></video>
+    <p>Lose fullscreen button at 149px, transport bar at 99px in Chromium</p>
+    <video controls width="150px"></video>
+    <video controls width="149px"></video>
+    <video controls width="100px"></video>
+    <video controls width="99px"></video>
+</body>
+</html>

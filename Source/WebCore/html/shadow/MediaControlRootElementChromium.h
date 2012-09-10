@@ -74,6 +74,8 @@ private:
 class MediaControlPanelEnclosureElement : public MediaControlChromiumEnclosureElement {
 public:
     static PassRefPtr<MediaControlPanelEnclosureElement> create(Document*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
+    void updatePadding(int mediaWidth);
 
 private:
     explicit MediaControlPanelEnclosureElement(Document*);
@@ -109,6 +111,16 @@ public:
     void changedClosedCaptionsVisibility();
 
     void showVolumeSlider();
+    void hideVolumeSlider();
+    void showTimeDisplay();
+    void hideTimeDisplay();
+    void showMuteButton();
+    void hideMuteButton();
+    void showFullscreenButton();
+    void hideFullscreenButton();
+    void showTimeline();
+    void hideTimeline();
+
     void updateTimeDisplay();
     void updateStatusDisplay();
 
@@ -159,6 +171,7 @@ private:
     Timer<MediaControlRootElementChromium> m_hideFullscreenControlsTimer;
     bool m_isMouseOverControls;
     bool m_isFullscreen;
+    bool m_hiddenTimeDisplay;
 };
 
 }

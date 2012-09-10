@@ -1,0 +1,70 @@
+Lose time display at 349px in Chromium
+
+ 
+Lose volume slider at 274px in Chromium
+
+ 
+Lose mute button at 209px in Chromium
+
+ 
+Lose transport bar at 99px in Chromium
+
+ 
+
+** The audio width is 350 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'block') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 349 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 275 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 274 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == 'none') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 210 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == 'none') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == '-webkit-box') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 209 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == 'none') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == 'none') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 100 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == 'none') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == 'none') OK
+EXPECTED (getComputedStyle(timeline)['display'] == '-webkit-box') OK
+
+** The audio width is 99 **
+EXPECTED (getComputedStyle(enclosure)['display'] == 'block') OK
+EXPECTED (getComputedStyle(remainingtime)['display'] == 'none') OK
+EXPECTED (getComputedStyle(volumeslider)['display'] == 'none') OK
+EXPECTED (getComputedStyle(mutebutton)['display'] == 'none') OK
+EXPECTED (getComputedStyle(timeline)['display'] == 'none') OK
+END OF TEST
+

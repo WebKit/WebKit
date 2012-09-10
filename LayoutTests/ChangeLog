@@ -1,3 +1,30 @@
+2012-09-10  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [Chromium] Handle smaller sizes of media elements in media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=89344
+
+        Reviewed by Eric Carlson.
+
+        The redesign of the Chrome video controls calls for successive removal of individual
+        elements in the Chrome video and audio controls as the element becomes smaller in width.
+        It also requires decreasing padding on the enclosure element of videos.
+
+        These platform-specific tests check if the correct interactive elements are shown for
+        different video and audio element widths and the correct padding is applied for videos.
+
+        * platform/chromium/TestExpectations:
+          Mark failing tests for later rebaseline.
+        * platform/chromium/media/controls-audio-sizes-expected.txt: Added.
+        * platform/chromium/media/controls-audio-sizes.html: Added.
+          Tests if the correct elements are shown for audio elements.
+        * platform/chromium/media/controls-video-sizes-expected.txt: Added.
+        * platform/chromium/media/controls-video-sizes.html: Added.
+        * platform/chromium-mac/platform/chromium/media/controls-video-sizes-expected.png: Added.
+          Tests if the correct elements are shown for video elements.
+        * platform/chromium/media/controls-video-sizes-padding-expected.txt: Added.
+        * platform/chromium/media/controls-video-sizes-padding.html: Added.
+          Tests if the correct padding is applied to the enclosure of the video controls.
+
 2012-09-10  Tony Chang  <tony@chromium.org>
 
         fast/canvas/webgl/shader-precision-format.html is flaky in debug

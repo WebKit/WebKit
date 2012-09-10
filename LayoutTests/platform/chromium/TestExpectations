@@ -3321,6 +3321,31 @@ BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS T
 
 BUGWK94242 DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS TIMEOUT
 
+// Need rebaseline.
+BUGWK89344 : media/audio-controls-rendering.html = IMAGE+TEXT
+BUGWK89344 : media/audio-repaint.html = IMAGE+TEXT
+BUGWK89344 : media/controls-after-reload.html = IMAGE+TEXT
+BUGWK89344 : media/controls-layout-direction.html = IMAGE
+BUGWK89344 : media/controls-strict.html = IMAGE+TEXT
+BUGWK89344 : media/controls-styling-strict.html = IMAGE+TEXT
+BUGWK89344 : media/controls-styling.html = IMAGE+TEXT
+BUGWK89344 : media/controls-without-preload.html = IMAGE+TEXT
+BUGWK89344 : media/media-controls-clone.html = IMAGE+TEXT
+BUGWK89344 : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGWK89344 : media/track/track-cue-rendering-horizontal.html = IMAGE+TEXT
+BUGWK89344 : media/track/track-cue-rendering-vertical.html = IMAGE+TEXT
+BUGWK89344 : media/video-controls-rendering.html = IMAGE+TEXT
+BUGWK89344 : media/video-display-toggle.html = IMAGE+TEXT
+BUGWK89344 : media/video-empty-source.html = IMAGE+TEXT
+BUGWK89344 : media/video-no-audio.html = IMAGE+TEXT
+BUGWK89344 : media/video-playing-and-pause.html = IMAGE+TEXT
+BUGWK89344 : media/video-zoom-controls.html = IMAGE+TEXT
+BUGWK89344 : http/tests/media/video-buffered-range-contains-currentTime.html = IMAGE
+BUGWK89344 : fast/hidpi/video-controls-in-hidpi.html = IMAGE+TEXT
+BUGWK89344 : fast/layers/video-layer.html = IMAGE+TEXT
+BUGWK89344 : compositing/video/video-controls-layer-creation.html = IMAGE
+BUGWK89344 LINUX ANDROID WIN : platform/chromium/media/controls-video-sizes.html = IMAGE
+
 // Supposedly started failing between CR r140760 and CR r141216.  The failures
 // look like they involve antialiasing; the fact that the test clearly expects
 // these pixels not to be antialiased means these shouldn't just be rebaselined

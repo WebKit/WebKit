@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Controls - reduce padding of control enclosure with video width</title>
+    <script src="../../../media/media-file.js"></script>
+    <script src="../../../media/media-controls.js"></script>
+    <script src="../../../media/video-test.js"></script>
+    <script>
+        function test(event, video)
+        {
+            video.removeEventListener('loadedmetadata', test);
+            if (window.internals) {
+                enclosure = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-enclosure");
+                consoleWrite("");
+                consoleWrite("** The panel has a left padding of " + document.defaultView.getComputedStyle(enclosure)['padding-left'] + " **");
+            }
+        }
+
+        function init()
+        {
+            var file = findMediaFile('video', '../../../media/content/test');
+            var videos = document.getElementsByTagName("video");
+            for (var i = 0; i < videos.length;  i++) {
+                var video = videos[i];
+                video.addEventListener('loadedmetadata', test(event, video), false);
+                video.src = file;
+            }
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    <p>Padding on controls enclosure changes from 5px to 4px at 400px width in Chromium</p>
+    <video controls width="401px"></video>
+    <video controls width="400px"></video>
+    <p>Padding on controls enclosure changes from 4px to 3px at 340px width in Chromium</p>
+    <video controls width="341px"></video>
+    <video controls width="340px"></video>
+    <p>Padding on controls enclosure changes from 3px to 2px at 280px width in Chromium</p>
+    <video controls width="281px"></video>
+    <video controls width="280px"></video>
+    <p>Padding on controls enclosure changes from 2px to 1px at 220px width in Chromium</p>
+    <video controls width="221px"></video>
+    <video controls width="220px"></video>
+    <p>Padding on controls enclosure changes from 1px to 0px at 160px width in Chromium</p>
+    <video controls width="161px"></video>
+    <video controls width="160px"></video>
+</body>
+</html>

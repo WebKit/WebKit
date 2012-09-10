@@ -1,0 +1,36 @@
+Padding on controls enclosure changes from 5px to 4px at 400px width in Chromium
+
+Padding on controls enclosure changes from 4px to 3px at 340px width in Chromium
+
+ 
+Padding on controls enclosure changes from 3px to 2px at 280px width in Chromium
+
+ 
+Padding on controls enclosure changes from 2px to 1px at 220px width in Chromium
+
+ 
+Padding on controls enclosure changes from 1px to 0px at 160px width in Chromium
+
+ 
+
+** The panel has a left padding of 4px **
+
+** The panel has a left padding of 4px **
+
+** The panel has a left padding of 3px **
+
+** The panel has a left padding of 3px **
+
+** The panel has a left padding of 2px **
+
+** The panel has a left padding of 2px **
+
+** The panel has a left padding of 1px **
+
+** The panel has a left padding of 1px **
+
+** The panel has a left padding of 0px **
+
+** The panel has a left padding of 0px **
+END OF TEST
+
