@@ -1,3 +1,20 @@
+2012-09-10  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; rolling out r128081.
+        http://trac.webkit.org/changeset/128081
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        New test http/tests/media/video-donottrack.html fails to run on Apple test bots.
+
+        * http/tests/media/resources/video-donottrack-check-donottrack.php: Removed.
+        * http/tests/media/video-donottrack-expected.txt: Removed.
+        * http/tests/media/video-donottrack.html: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
         Mark gradient-with-scaled-ancestor.html as flaky

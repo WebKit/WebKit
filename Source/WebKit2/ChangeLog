@@ -1,3 +1,22 @@
+2012-09-10  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; rolling out r128081.
+        http://trac.webkit.org/changeset/128081
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        New test http/tests/media/video-donottrack.html fails to run on Apple test bots.
+
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2012-09-07  Jon Lee  <jonlee@apple.com>
 
         Update notifications to latest spec

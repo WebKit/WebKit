@@ -1629,7 +1629,6 @@ static inline IMP getMethod(id o, SEL s)
     cache->didDisplayInsecureContentFunc = getMethod(delegate, @selector(webViewDidDisplayInsecureContent:));
     cache->didRunInsecureContentFunc = getMethod(delegate, @selector(webView:didRunInsecureContent:));
     cache->didDetectXSSFunc = getMethod(delegate, @selector(webView:didDetectXSS:));
-    cache->shouldSendDoNotTrackHTTPHeaderFunc = getMethod(delegate, @selector(webViewShouldSendDoNotTrackHTTPHeader:));
 }
 
 - (void)_cacheScriptDebugDelegateImplementations

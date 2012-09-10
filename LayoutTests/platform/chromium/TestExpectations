@@ -1472,8 +1472,6 @@ BUGCR10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = TEXT
 // Windows is missing the green box. Started to pass in roll to WebKit r50313
 BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 
-BUGWK96287 SKIP : http/tests/media/video-donottrack.html = TIMEOUT
-
 // -----------------------------------------------------------------
 // MAC PORT TESTS
 // -----------------------------------------------------------------

@@ -138,5 +138,3 @@ BUGWK94005 : css2.1/20110323/word-spacing-remove-space-003.htm = IMAGE
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-006.htm = IMAGE
 BUGWK94006 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
-// Added by bug 96134
-BUGWK96292 : http/tests/media/video-donottrack.html = TEXT

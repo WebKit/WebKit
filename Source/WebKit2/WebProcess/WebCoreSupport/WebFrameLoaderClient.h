@@ -241,8 +241,6 @@ private:
 
     virtual bool shouldForceUniversalAccessFromLocalURL(const WebCore::KURL&) OVERRIDE;
 
-    virtual bool shouldSendDoNotTrackHTTPHeader() const OVERRIDE;
-
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() OVERRIDE;
 
     WebFrame* m_frame;

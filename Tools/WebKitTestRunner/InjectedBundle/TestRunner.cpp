@@ -90,7 +90,6 @@ TestRunner::TestRunner()
     , m_customFullScreenBehavior(false)
     , m_userStyleSheetEnabled(false)
     , m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
-    , m_shouldSendDoNotTrackHTTPHeader(false)
 {
     platformInitialize();
 }

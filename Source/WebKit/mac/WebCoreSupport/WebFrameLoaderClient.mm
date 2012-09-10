@@ -1980,16 +1980,6 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 }
 #endif
 
-bool WebFrameLoaderClient::shouldSendDoNotTrackHTTPHeader() const
-{
-    WebView *webView = getWebView(m_webFrame.get());
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-
-    if (implementations->shouldSendDoNotTrackHTTPHeaderFunc)
-        return CallFrameLoadDelegateReturningBoolean(YES, implementations->shouldSendDoNotTrackHTTPHeaderFunc, webView, @selector(webViewShouldSendDoNotTrackHTTPHeader:));
-    return false;
-}
-
 @implementation WebFramePolicyListener
 + (void)initialize
 {

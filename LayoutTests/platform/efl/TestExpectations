@@ -166,9 +166,6 @@ BUGWK95300 SKIP : fast/dom/DeviceMotion = TEXT
 // The EFL port has no support for accessibility features
 BUGWKEFL SKIP : accessibility = TEXT
 
-// Missing DNT support for HTMLMediaElement
-BUGWK96292 : http/tests/media/video-donottrack.html = TEXT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////

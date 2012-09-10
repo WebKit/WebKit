@@ -94,7 +94,6 @@ public:
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);
 
     bool shouldForceUniversalAccessFromLocalURL(WebPage*, const String& url);
-    bool shouldSendDoNotTrackHTTPHeader(WebPage*);
 };
 
 } // namespace WebKit

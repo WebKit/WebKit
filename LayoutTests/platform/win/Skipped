@@ -2218,6 +2218,3 @@ fast/dom/HTMLDialogElement
 
 # Windows does not have global selection.
 editing/pasteboard/paste-global-selection.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=96293
-http/tests/media/video-donottrack.html

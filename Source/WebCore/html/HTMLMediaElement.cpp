@@ -4487,19 +4487,6 @@ IntRect HTMLMediaElement::mediaPlayerWindowClipRect()
     return mediaPlayerOwningDocument()->view()->windowClipRect();
 }
 
-bool HTMLMediaElement::mediaPlayerShouldSendDoNotTrackHTTPHeader() const
-{
-    Frame* frame = document()->frame();
-    if (!frame)
-        return false;
-
-    FrameLoaderClient* client = frame->loader()->client();
-    if (!client)
-        return false;
-
-    return client->shouldSendDoNotTrackHTTPHeader();
-}
-
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;

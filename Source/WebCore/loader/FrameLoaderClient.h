@@ -343,8 +343,6 @@ namespace WebCore {
         virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(DOMWindowExtension*) { }
         virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(DOMWindowExtension*) { }
         virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(DOMWindowExtension*) { }
-
-        virtual bool shouldSendDoNotTrackHTTPHeader() const { return false; }
     };
 
 } // namespace WebCore

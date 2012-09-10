@@ -297,9 +297,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     if (!userAgent.isEmpty())
         [headerFields.get() setObject:userAgent forKey:@"User-Agent"];
 
-    if (player()->mediaPlayerClient()->mediaPlayerShouldSendDoNotTrackHTTPHeader())
-        [headerFields.get() setObject:@"1" forKey:@"DNT"];
-
     if ([headerFields.get() count])
         [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
 #endif

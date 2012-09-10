@@ -1,3 +1,19 @@
+2012-09-10  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; rolling out r128081.
+        http://trac.webkit.org/changeset/128081
+        https://bugs.webkit.org/show_bug.cgi?id=96134
+
+        New test http/tests/media/video-donottrack.html fails to run on Apple test bots.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebDelegateImplementationCaching.h:
+        (WebFrameLoadDelegateImplementationCache):
+        * WebView/WebDelegateImplementationCaching.mm:
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+
 2012-09-07  Jon Lee  <jonlee@apple.com>
 
         Update notifications to latest spec

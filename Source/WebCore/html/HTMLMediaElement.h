@@ -433,7 +433,6 @@ private:
     virtual bool mediaPlayerIsPaused() const OVERRIDE;
     virtual HostWindow* mediaPlayerHostWindow() OVERRIDE;
     virtual IntRect mediaPlayerWindowClipRect() OVERRIDE;
-    virtual bool mediaPlayerShouldSendDoNotTrackHTTPHeader() const OVERRIDE;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const OVERRIDE;

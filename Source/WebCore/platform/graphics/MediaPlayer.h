@@ -202,8 +202,6 @@ public:
     virtual bool mediaPlayerIsPaused() const { return true; }
     virtual HostWindow* mediaPlayerHostWindow() { return 0; }
     virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
-
-    virtual bool mediaPlayerShouldSendDoNotTrackHTTPHeader() const { return false; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -420,8 +418,6 @@ public:
     String userAgent() const;
 
     String engineDescription() const;
-
-    bool shouldSendDoNotTrackHTTPHeader() const;
 
 private:
     MediaPlayer(MediaPlayerClient*);
