@@ -328,6 +328,7 @@ EOF
 EOF
 
     unshift(@contents, map { "#include \"$_\"\n" } sort keys(%contentsIncludes));
+    unshift(@contents, "#include \"config.h\"\n");
     unshift(@contents, @contentsPrefix);
 
     return { name => $filename, contents => \@contents };
