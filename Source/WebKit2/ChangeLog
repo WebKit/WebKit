@@ -1,5 +1,12 @@
 2012-09-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * UIProcess/WebContext.h: Added a default value for relatedPage argment - if
+        you don't have one, null is fine.
+
+2012-09-10  Alexey Proskuryakov  <ap@apple.com>
+
         [WK2] Add an API to open a page in same process
         https://bugs.webkit.org/show_bug.cgi?id=96306
 

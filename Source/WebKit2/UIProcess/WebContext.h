@@ -103,7 +103,7 @@ public:
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*, WebPageProxy* relatedPage);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*, WebPageProxy* relatedPage = 0);
 
     WebProcessProxy* relaunchProcessIfNecessary();
 
