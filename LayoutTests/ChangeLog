@@ -1,3 +1,18 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        [Tests] Move fast/notifications/notifications-double-show.html to http/tests/notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95537
+        <rdar://problem/12213860>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Calling show() multiple times should only call the ondisplay event handler once.
+
+        * fast/notifications/notifications-double-show-expected.txt: Removed.
+        * fast/notifications/notifications-double-show.html: Removed.
+        * http/tests/notifications/legacy/double-show-expected.txt: Added.
+        * http/tests/notifications/legacy/double-show.html: Added.
+
 2012-09-04  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: content-counter-010.htm fails

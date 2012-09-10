@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Sending double-show notification...");
+
+if (window.testRunner) {
+    testRunner.grantWebNotificationPermission(testURL);
+    testRunner.waitUntilDone();
+}
+
+shouldBeDefined("window.webkitNotifications");
+
+var N = window.webkitNotifications.createNotification("http://0.0.0.0/my_icon.png", "New E-mail", "Meet me tonight at 8!");
+N.ondisplay = function() {
+    testPassed("ondisplay event handler called");
+    testCompleted();
+};
+N.show();
+N.show();
+setTimeout(testCompleted, 100);
+</script>
