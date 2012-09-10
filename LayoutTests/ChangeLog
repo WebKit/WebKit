@@ -1,5 +1,18 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] 2 fast/forms tests need rebaseline after r128032
+        https://bugs.webkit.org/show_bug.cgi?id=96253
+
+        Unreviewed EFL gardening.
+
+        Rebaseline 2 fast/forms tests due to r128032.
+
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.txt:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] fast/forms/menulist-restrict-line-height.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=94878
 
