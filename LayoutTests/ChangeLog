@@ -1,5 +1,11 @@
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
+        Unreviewed Rebaseline for Chromium Win XP.
+
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
         Rebaselined for Chromium.
 
         * platform/chromium/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
