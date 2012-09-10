@@ -144,7 +144,11 @@ for(header, WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2) {
 
     eval($${header_target}.target = $$dest_dir/$$header_name)
     eval($${header_target}.depends = $$header_path)
-    eval($${header_target}.commands = $${QMAKE_MKDIR} $$dest_dir && echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$header_path\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${header_target}.target))
+
+    win32: eval($${header_target}.commands = ($${QMAKE_MKDIR} $$toSystemPath($$dest_dir) 2>nul || echo>nul))
+    else: eval($${header_target}.commands = $${QMAKE_MKDIR} $$toSystemPath($$dest_dir) )
+
+    eval($${header_target}.commands += && echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$header_path\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${header_target}.target))
 
     GENERATORS += $$header_target
 }

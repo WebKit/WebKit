@@ -1,3 +1,18 @@
+2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix generation of forward headers for generated files in WebCore on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96245
+
+        Reviewed by Tor Arne Vestbø.
+
+        We generate the forwarding header files of generated WebCore sources by using
+        mkdir to ensure the target directory exists, followed by
+        echo #include "..." > file.h. On Windows mkdir returns with an error if the
+        target directory exists. For us that is not an error, so work around it with
+        (mkdir path 2>nul || echo>nul)
+
+        * DerivedSources.pri:
+
 2012-09-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt][WK2] REGRESSION(r127861): It made one test fail and one test crash
