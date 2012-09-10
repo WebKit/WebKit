@@ -121,23 +121,6 @@ void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const 
     parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name), child);
 }
 
-void V8DOMWrapper::setNamedHiddenWindowReference(Frame* frame, const char* name, v8::Handle<v8::Value> jsObject)
-{
-    // Get DOMWindow
-    if (!frame)
-        return; // Object might be detached from window
-    v8::Handle<v8::Context> context = frame->script()->currentWorldContext();
-    if (context.IsEmpty())
-        return;
-
-    v8::Handle<v8::Object> global = context->Global();
-    // Look for real DOM wrapper.
-    global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
-    ASSERT(!global.IsEmpty());
-
-    setNamedHiddenReference(global, name, jsObject);
-}
-
 WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
