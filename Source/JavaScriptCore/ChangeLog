@@ -1,3 +1,13 @@
+2012-09-10  Patrick Gansterer  <paroga@webkit.org>
+
+        [JSC] Use StringBuilder::appendNumber() instead of String::number()
+        https://bugs.webkit.org/show_bug.cgi?id=96236
+
+        Reviewed by Benjamin Poulain.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+
 2012-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Combine MarkStack and SlotVisitor into single class
