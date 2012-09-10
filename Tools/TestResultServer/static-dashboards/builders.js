@@ -163,6 +163,8 @@ function isChromiumTipOfTreeGpuTestRunner(builder)
 
 function isWebkitTestRunner(builder)
 {
+    if (builder.indexOf('EFL') != -1)
+        return builder.indexOf('Build') == -1;
     if (builder.indexOf('Tests') != -1) {
         // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
         return builder.indexOf('Win') == -1 || (builder.indexOf('Qt') != -1 && builder.indexOf('Chromium') != -1);

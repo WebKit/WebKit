@@ -190,7 +190,7 @@ test('realModifiers', 3, function() {
     equal(realModifiers('BUGFOO'), '');
 });
 
-test('allTestsWithSamePlatformAndBuildType', 12, function() {
+test('allTestsWithSamePlatformAndBuildType', 13, function() {
     // FIXME: test that allTestsWithSamePlatformAndBuildType actually returns the right set of tests.
     for (var i = 0; i < PLATFORMS.length; i++)
         ok(g_allTestsByPlatformAndBuildType[PLATFORMS[i]]);
@@ -310,20 +310,20 @@ test('headerForTestTableHtml', 1, function() {
 test('htmlForTestTypeSwitcherGroup', 6, function() {
     var container = document.createElement('div');
     g_crossDashboardState.testType = 'ui_tests';
-    container.innerHTML = htmlForTestTypeSwitcher();
+    container.innerHTML = htmlForTestTypeSwitcher(true);
     var selects = container.querySelectorAll('select');
-    equal(selects.length, 3);
-    var group = selects[2];
+    equal(selects.length, 2);
+    var group = selects[1];
     equal(group.parentNode.textContent.indexOf('Group:'), 0);
     equal(group.children.length, 3);
 
     g_crossDashboardState.testType = 'layout-tests';
-    container.innerHTML = htmlForTestTypeSwitcher();
+    container.innerHTML = htmlForTestTypeSwitcher(true);
     var selects = container.querySelectorAll('select');
-    equal(selects.length, 3);
-    var group = selects[2];
+    equal(selects.length, 2);
+    var group = selects[1];
     equal(group.parentNode.textContent.indexOf('Group:'), 0);
-    equal(group.children.length, 3);
+    equal(group.children.length, 4);
 });
 
 test('htmlForIndividualTestOnAllBuilders', 1, function() {
@@ -348,6 +348,7 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
     resetGlobals();
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
+    BUILDER_TO_MASTER[builderName] = CHROMIUM_BUILDER_MASTER;
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
 
     equal(htmlForIndividualTestOnAllBuildersWithResultsLinks(test),
@@ -361,13 +362,6 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
             '</tr></thead>' +
             '<tbody></tbody>' +
         '</table>' +
-        '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
-        '<div class=skipped-builder-list>' +
-            '<div class=skipped-builder>Webkit Linux</div>' +
-            '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
-            '<div class=skipped-builder>Webkit Mac10.7</div>' +
-            '<div class=skipped-builder>Webkit Win</div>' +
-        '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
@@ -393,13 +387,6 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinksWebkitMaster', 1, functi
             '</tr></thead>' +
             '<tbody></tbody>' +
         '</table>' +
-        '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
-        '<div class=skipped-builder-list>' +
-            '<div class=skipped-builder>Webkit Linux</div>' +
-            '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
-            '<div class=skipped-builder>Webkit Mac10.7</div>' +
-            '<div class=skipped-builder>Webkit Win</div>' +
-        '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span>' +
@@ -511,10 +498,11 @@ test('generateWebkitBuildersFromBuilderList', 1, function() {
         "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS Release", "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux SH4 Release",
         "Qt SnowLeopard Release", "Qt Windows 32-bit Debug", "Qt Windows 32-bit Release", "SnowLeopard Intel Debug (Build)", "SnowLeopard Intel Debug (Tests)",
         "SnowLeopard Intel Debug (WebKit2 Tests)", "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Release (Tests)", "SnowLeopard Intel Release (WebKit2 Tests)",
-        "WinCE Release (Build)", "WinCairo Release", "Windows 7 Release (Tests)", "Windows 7 Release (WebKit2 Tests)", "Windows Debug (Build)", "Windows Release (Build)", "Windows XP Debug (Tests)"];
-    var expectedBuilders = [["Chromium Linux Release (Tests)", 2], ["Chromium Mac Release (Tests)"], ["Chromium Win Release (Tests)"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
+        "WinCE Release (Build)", "WinCairo Release", "Windows 7 Release (Tests)", "Windows 7 Release (WebKit2 Tests)", "Windows Debug (Build)", "Windows Release (Build)", "Windows XP Debug (Tests)",
+        "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug"];
+    var expectedBuilders = [["Chromium Linux Release (Tests)", 2], ["Chromium Mac Release (Tests)"], ["EFL Linux Release"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
         ["GTK Linux 64-bit Release"], ["Lion Debug (Tests)"], ["Lion Debug (WebKit2 Tests)"], ["Lion Release (Tests)"], ["Lion Release (WebKit2 Tests)"], ["Qt Linux Release"],
-        ["SnowLeopard Intel Debug (Tests)"], ["SnowLeopard Intel Debug (WebKit2 Tests)"], ["SnowLeopard Intel Release (Tests)"], ["SnowLeopard Intel Release (WebKit2 Tests)"]];
+        ["SnowLeopard Intel Debug (Tests)"], ["SnowLeopard Intel Debug (WebKit2 Tests)"], ["SnowLeopard Intel Release (Tests)"], ["SnowLeopard Intel Release (WebKit2 Tests)"], ["EFL Linux 64-bit Debug"]];
     deepEqual(generateBuildersFromBuilderList(builderList, isWebkitTestRunner), expectedBuilders);
 });
 
@@ -526,7 +514,7 @@ test('generateChromiumWebkitTipOfTreeBuildersFromBuilderList', 1, function() {
         "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder",
         "Linux (Content Shell)"];
     var expectedBuilders = [["Webkit Linux", 2], ["Webkit Linux (dbg)"], ["Webkit Linux 32"], ["Webkit Mac10.6"],
-        ["Webkit Mac10.6 (dbg)"], ["Webkit Mac10.7"], ["Webkit Win"], ["Webkit Win (dbg)(1)"], ["Webkit Win (dbg)(2)"], ["Webkit Win7"], ["Linux (Content Shell)"]];
+        ["Webkit Mac10.6 (dbg)"], ["Webkit Mac10.7"], ["Webkit Win"], ["Webkit Win (dbg)(1)"], ["Webkit Win (dbg)(2)"], ["Webkit Win7"]];
     deepEqual(generateBuildersFromBuilderList(builderList, isChromiumWebkitTipOfTreeTestRunner), expectedBuilders);
 });
 
@@ -629,9 +617,9 @@ test('builderGroupIsToTWebKitAttribute', 2, function() {
     testBuilderGroups['@DEPS - dummy.org'].expectedGroups = 1;
 
     var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
     equal(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@DEPS - dummy.org', BuilderGroup.DEPS_WEBKIT, JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@DEPS - dummy.org', JSON.parse(testJSONData));
     equal(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
 });
 
@@ -644,10 +632,10 @@ test('builderGroupExpectedGroups', 4, function() {
 
     var testJSONData = "{ \"Dummy Builder 1\": null }";
     equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 3);
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 1);
     var testJSONData = "{ \"Dummy Builder 2\": null }";
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 2);
     onErrorLoadingBuilderList('http://build.dummy.org', testBuilderGroups,  '@ToT - dummy.org');
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 3);
@@ -662,9 +650,8 @@ test('requestBuilderListAddsBuilderGroupEntry', 2, function() {
         var builderFilter = null;
         var master = { builderJsonPath: function() {} };
         var groupName = '@ToT - dummy.org';
-        var groupEnum = null;
         var builderGroup = { expectedGroups: 0 };
-        requestBuilderList(testBuilderGroups, builderFilter, master, groupName, groupEnum, builderGroup);
+        requestBuilderList(testBuilderGroups, builderFilter, master, groupName, builderGroup);
 
         equal(testBuilderGroups['@ToT - dummy.org'], builderGroup);
         equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 1);

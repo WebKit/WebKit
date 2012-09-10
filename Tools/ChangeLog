@@ -1,3 +1,19 @@
+2012-09-10  Ojan Vafai  <ojan@chromium.org>
+
+        Make EFL bots work on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=96164
+
+        Reviewed by Tony Chang.
+
+        Also, update outdated unittests that had started failing.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (isWebkitTestRunner):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (nonChromiumPlatform):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
 2012-09-10  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Remove the Descriptor postfix

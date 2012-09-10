@@ -40,7 +40,7 @@ var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
 // instead of matching the values we use in the TestExpectations file.
-var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
+var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX', 'EFL'];
 var PLATFORM_UNIONS = {
     'MAC': ['SNOWLEOPARD', 'LION'],
     'WIN': ['XP', 'WIN7'],
@@ -265,6 +265,8 @@ function nonChromiumPlatform(builderNameUpperCase)
         return 'GTK_LINUX';
     if (stringContains(builderNameUpperCase, 'QT LINUX'))
         return 'QT_LINUX';
+    if (stringContains(builderNameUpperCase, 'EFL'))
+        return 'EFL';
 }
 
 function chromiumPlatform(builderNameUpperCase)
