@@ -30,8 +30,9 @@
  */
 
 #include "config.h"
-#include "WebFrameImpl.h"
 #include "WebSubstringUtil.h"
+
+#import <Cocoa/Cocoa.h>
 
 #include "ColorMac.h"
 #include "Document.h"
@@ -45,9 +46,8 @@
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "TextIterator.h"
+#include "WebFrameImpl.h"
 #include "platform/WebRect.h"
-
-#import <Cocoa/Cocoa.h>
 
 using namespace WebCore;
 

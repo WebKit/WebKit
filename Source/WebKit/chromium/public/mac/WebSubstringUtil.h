@@ -31,6 +31,8 @@
 #ifndef WebSubstringUtil_h
 #define WebSubstringUtil_h
 
+#include "../platform/WebCommon.h"
+
 namespace WebKit {
 class WebFrame;
 }

@@ -135,8 +135,9 @@ public:
     operator CGSize() const;
 #endif
 
-#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
-        || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(QT) && USE(QTKIT))
+#if (PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))) \
+        && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES) \
+        || (PLATFORM(QT) && USE(QTKIT))
     explicit FloatSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif

@@ -199,8 +199,8 @@ public:
     operator CGRect() const;
 #endif
 
-#if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
-        || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if (PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))) \
+        && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatRect(const NSRect&);
     operator NSRect() const;
 #endif

@@ -51,7 +51,6 @@ typedef NPP_t* NPP;
 
 #if OS(DARWIN)
 typedef struct CGFont* CGFontRef;
-typedef uintptr_t ATSFontContainerRef;
 #ifdef __OBJC__
 @class NSFont;
 #else
