@@ -1,3 +1,11 @@
+2012-09-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding flaky crash expectation for editing/deleting/25322-2.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-10  Mike West  <mkwst@chromium.org>
 
         CSP parsing doesn't seem treat as invalid policies with a non-ASCII path

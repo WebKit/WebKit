@@ -469,6 +469,7 @@ BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
 
+BUGWK96199 : editing/deleting/25322-2.html = CRASH PASS
 BUGWK96199 : editing/pasteboard/paste-blockquote-into-blockquote-4.html = CRASH PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
