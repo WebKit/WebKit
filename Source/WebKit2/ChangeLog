@@ -1,5 +1,15 @@
 2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Don't convert to UTF-8 the suggestedFilename passed to Download::decideDestinationWithSuggestedFilename()
+        https://bugs.webkit.org/show_bug.cgi?id=96261
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse):
+
+2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Sanitize the suggested filename when building the download destination URI
         https://bugs.webkit.org/show_bug.cgi?id=96260
 

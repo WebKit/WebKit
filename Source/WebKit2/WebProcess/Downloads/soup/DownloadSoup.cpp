@@ -76,7 +76,7 @@ public:
         }
 
         bool overwrite;
-        String destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename.utf8().data(), overwrite);
+        String destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename, overwrite);
         if (destinationURI.isEmpty()) {
 #if PLATFORM(GTK)
             GOwnPtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
