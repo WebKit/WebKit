@@ -1,3 +1,13 @@
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
+        Rebaselined test for Chromium gardening
+
+        Minor discrepancy in color does not affect semantics of test output.
+        I rebaselined this test for Mac, but snowleopard produces slightly different
+        colors.
+        
+        * platform/chromium-mac-snowleopard/compositing/overflow/overflow-scaled-descendant-overlapping-expected.png: Added.
+
 2012-09-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: support empty entries in source maps.
