@@ -79,6 +79,9 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._expect_port_for_expectations_path('chromium', 'LayoutTests/platform/chromium/TestExpectations')
         self._expect_port_for_expectations_path(None, '/mock-checkout/LayoutTests/platform/win/TestExpectations')
         self._expect_port_for_expectations_path('win', 'LayoutTests/platform/win/TestExpectations')
+        self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl/TestExpectations')
+        self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl-wk1/TestExpectations')
+        self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl-wk2/TestExpectations')
 
     def assert_lines_lint(self, lines, should_pass, expected_output=None):
         self._error_collector.reset_errors()

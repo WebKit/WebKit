@@ -1,3 +1,25 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        TestExpectationsChecker._determine_port_from_expectations_path() does not support cascaded TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=96205
+
+        Reviewed by Tony Chang.
+
+        _determine_port_from_expectations_path() was calling port.path_to_test_expectations_file()
+        internally, which means that it would support only 1 TestExpectations file per port. This
+        is an issue for ports such as EFL that support cascased TestExpectations (efl-wk2 -> efl
+        and efl-wk1 -> efl).
+
+        This patch makes _determine_port_from_expectations_path() call port.expectations_files()
+        instead so that all the ports TestExpectations are recognized. The ports are also
+        constructed twice, with "webkit_test_runner" option set to True and False so that we
+        retrieve the TestExpectations paths for both WebKit1 and WebKit2.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._determine_port_from_expectations_path):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Add corresponding unit test.
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+
 2012-09-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [WTR] Generated source files should include config.h
