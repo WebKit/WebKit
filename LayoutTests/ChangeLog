@@ -1,3 +1,20 @@
+2012-09-10  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] gradient-with-scaled-ancestor.html rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=96110
+
+        Reviewed by Adrienne Walker.
+
+        Fixed a bug in the test, rebaselining the results at proper resolution. 
+
+        * platform/chromium-linux-x86/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Removed.
+        * platform/chromium-linux/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+        * platform/chromium-mac-snowleopard/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+        * platform/chromium-mac/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Removed.
+        * platform/chromium-win/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-09-10  Brady Eidson  <beidson@apple.com>
 
         Javascript in foreground tabs should not wait synchronously for plug-ins to load

@@ -2637,8 +2637,6 @@ BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = 
 BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-icon-hidpi.html = IMAGE
 BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
 
-BUGWK95847 LINUX WIN ANDROID MAC : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
-
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
 
