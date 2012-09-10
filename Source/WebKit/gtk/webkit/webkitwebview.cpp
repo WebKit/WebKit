@@ -427,7 +427,7 @@ static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
     if (!selection->selection().isNonOrphanedCaretOrRange()
          || (selection->selection().isCaret() && !selection->selection().isContentEditable())) {
         if (Node* focusedNode = getFocusedNode(frame))
-            return focusedNode->getPixelSnappedRect().location();
+            return focusedNode->pixelSnappedBoundingBox().location();
 
         // There was no selection and no focused node, so just put the context
         // menu into the corner of the view, offset slightly.
@@ -1608,7 +1608,7 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
                 String title = static_cast<Element*>(titleNode)->title();
                 if (!title.isEmpty()) {
                     if (FrameView* view = coreFrame->view()) {
-                        GdkRectangle area = view->contentsToWindow(node->getPixelSnappedRect());
+                        GdkRectangle area = view->contentsToWindow(node->pixelSnappedBoundingBox());
                         gtk_tooltip_set_tip_area(tooltip, &area);
                     }
                     gtk_tooltip_set_text(tooltip, title.utf8().data());

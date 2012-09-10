@@ -138,7 +138,7 @@ void CalendarPickerElement::openPopup()
         parameters.step = 1.0;
     else
         parameters.step = step.toDouble();
-    parameters.anchorRectInRootView = document()->view()->contentsToRootView(hostInput()->getPixelSnappedRect());
+    parameters.anchorRectInRootView = document()->view()->contentsToRootView(hostInput()->pixelSnappedBoundingBox());
     parameters.currentValue = input->value();
     // FIXME: parameters.suggestionValues and suggestionLabels will be used when we support datalist.
     m_chooser = chrome->client()->openDateTimeChooser(this, parameters);

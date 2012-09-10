@@ -786,7 +786,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
     if (Node* node = hit.innerNonSharedNode()) {
         Frame* frame = node->document()->frame();
         FrameView* view = frame ? frame->view() : 0;
-        m_webView->priv->tooltipArea = view ? view->contentsToWindow(node->getPixelSnappedRect()) : IntRect();
+        m_webView->priv->tooltipArea = view ? view->contentsToWindow(node->pixelSnappedBoundingBox()) : IntRect();
     } else
         m_webView->priv->tooltipArea = IntRect();
 }

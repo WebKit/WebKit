@@ -283,7 +283,7 @@ void Element::scrollIntoView(bool alignToTop)
     if (!renderer())
         return;
 
-    LayoutRect bounds = getRect();
+    LayoutRect bounds = boundingBox();
     // Align to the top / bottom and to the closest edge.
     if (alignToTop)
         renderer()->scrollRectToVisible(bounds, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
@@ -298,7 +298,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     if (!renderer())
         return;
 
-    LayoutRect bounds = getRect();
+    LayoutRect bounds = boundingBox();
     if (centerIfNeeded)
         renderer()->scrollRectToVisible(bounds, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
     else
@@ -1639,7 +1639,7 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             frame->selection()->revealSelection();
         }
     } else if (renderer() && !renderer()->isWidget())
-        renderer()->scrollRectToVisible(getRect());
+        renderer()->scrollRectToVisible(boundingBox());
 }
 
 void Element::blur()

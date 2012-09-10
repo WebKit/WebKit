@@ -75,7 +75,6 @@ public:
 
     virtual void attach() OVERRIDE;
     virtual void detach() OVERRIDE;
-    virtual LayoutRect getRect() const OVERRIDE;
     virtual void setFocus(bool = true) OVERRIDE;
     virtual void setActive(bool active = true, bool pause = false) OVERRIDE;
     virtual void setHovered(bool = true) OVERRIDE;
@@ -131,9 +130,6 @@ private:
     void insertBeforeCommon(Node* nextChild, Node* oldChild);
 
     static void dispatchPostAttachCallbacks();
-
-    bool getUpperLeftCorner(FloatPoint&) const;
-    bool getLowerRightCorner(FloatPoint&) const;
 
     Node* m_firstChild;
     Node* m_lastChild;

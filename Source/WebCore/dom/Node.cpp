@@ -796,7 +796,7 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
     return m_renderer && m_renderer->isBoxModelObject() ? toRenderBoxModelObject(m_renderer) : 0;
 }
 
-LayoutRect Node::getRect() const
+LayoutRect Node::boundingBox() const
 {
     if (renderer())
         return renderer()->absoluteBoundingBoxRect();

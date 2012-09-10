@@ -208,7 +208,7 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 
 IntRect ColorInputType::elementRectRelativeToRootView() const
 {
-    return element()->document()->view()->contentsToRootView(element()->getPixelSnappedRect());
+    return element()->document()->view()->contentsToRootView(element()->pixelSnappedBoundingBox());
 }
 
 Color ColorInputType::currentColor()

@@ -58,7 +58,7 @@ static IntRect boundingBoxForEventNodes(Node* eventNode)
             node = node->traverseNextSibling(eventNode);
             continue;
         }
-        result.unite(pixelSnappedIntRect(node->getRect()));
+        result.unite(node->pixelSnappedBoundingBox());
         node = node->traverseNextNode(eventNode);
     }
     return eventNode->document()->view()->contentsToWindow(result);

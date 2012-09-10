@@ -401,8 +401,8 @@ public:
     }
 
     virtual bool shouldUseInputMethod();
-    virtual LayoutRect getRect() const;
-    IntRect getPixelSnappedRect() const { return pixelSnappedIntRect(getRect()); }
+    virtual LayoutRect boundingBox() const;
+    IntRect pixelSnappedBoundingBox() const { return pixelSnappedIntRect(boundingBox()); }
     LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return pixelSnappedIntRect(renderRect(isReplaced)); }
 

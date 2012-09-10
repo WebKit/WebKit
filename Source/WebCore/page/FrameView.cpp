@@ -1743,7 +1743,7 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
 {
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    LayoutRect bounds = element->getRect();
+    LayoutRect bounds = element->boundingBox();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
     setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
@@ -2341,7 +2341,7 @@ void FrameView::scrollToAnchor()
 
     LayoutRect rect;
     if (anchorNode != m_frame->document())
-        rect = anchorNode->getRect();
+        rect = anchorNode->boundingBox();
 
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).

@@ -515,7 +515,7 @@ EditorState WebPage::editorState() const
     }
 
     if (selectionRoot)
-        result.editorRect = frame->view()->contentsToWindow(selectionRoot->getPixelSnappedRect());
+        result.editorRect = frame->view()->contentsToWindow(selectionRoot->pixelSnappedBoundingBox());
 
     RefPtr<Range> range;
     if (result.hasComposition && (range = frame->editor()->compositionRange())) {

@@ -1016,7 +1016,7 @@ WebRect WebViewImpl::computeBlockBounds(const WebRect& rect, AutoZoomType zoomTy
 
     // Return the bounding box in the window coordinate system.
     if (node) {
-        IntRect rect = node->Node::getPixelSnappedRect();
+        IntRect rect = node->Node::pixelSnappedBoundingBox();
         Frame* frame = node->document()->frame();
         return frame->view()->contentsToWindow(rect);
     }
@@ -3307,7 +3307,7 @@ void WebViewImpl::applyAutofillSuggestions(
         refreshAutofillPopup();
     } else {
         m_autofillPopupShowing = true;
-        m_autofillPopup->showInRect(focusedNode->getPixelSnappedRect(), focusedNode->ownerDocument()->view(), 0);
+        m_autofillPopup->showInRect(focusedNode->pixelSnappedBoundingBox(), focusedNode->ownerDocument()->view(), 0);
     }
 }
 
@@ -3615,7 +3615,7 @@ void WebViewImpl::refreshAutofillPopup()
         return;
     }
 
-    WebRect newWidgetRect = m_autofillPopup->refresh(focusedWebCoreNode()->getPixelSnappedRect());
+    WebRect newWidgetRect = m_autofillPopup->refresh(focusedWebCoreNode()->pixelSnappedBoundingBox());
     // Let's resize the backing window if necessary.
     WebPopupMenuImpl* popupMenu = static_cast<WebPopupMenuImpl*>(m_autofillPopup->client());
     if (popupMenu && popupMenu->client()->windowRect() != newWidgetRect)

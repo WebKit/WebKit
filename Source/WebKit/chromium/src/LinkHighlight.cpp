@@ -149,7 +149,7 @@ bool LinkHighlight::computeHighlightLayerPathAndPosition(RenderLayer* compositin
         return false;
 
     bool pathHasChanged = false;
-    FloatRect boundingRect = m_node->getPixelSnappedRect();
+    FloatRect boundingRect = m_node->pixelSnappedBoundingBox();
 
     // FIXME: If we ever use a more sophisticated highlight path, we'll need
     // to devise a way of detecting when it changes.
