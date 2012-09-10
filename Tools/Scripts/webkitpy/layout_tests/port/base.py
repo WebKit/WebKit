@@ -156,7 +156,7 @@ class Port(object):
         if self.get_option('webkit_test_runner'):
             # Add some more time to WebKitTestRunner because it needs to syncronise the state
             # with the web process and we want to detect if there is a problem with that in the driver.
-            return 50 * 1000
+            return 80 * 1000
         return 35 * 1000
 
     def driver_stop_timeout(self):

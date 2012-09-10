@@ -1,3 +1,18 @@
+2012-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        WKTR often reports an unresponsive WebProcess on Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=95906
+
+        Reviewed by Dan Bernstein.
+
+        Attempt to work around resource contention issues by increasing the NRWT
+        timeout when running against WKTR, as well as WKTR's own WebProcess timeout.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_timeout_ms): Default timeout when using WKTR -> 80 seconds.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR): LongTimeout (used when waiting for WebProcess to finish) -> 60 seconds.
+
 2012-09-07  Jer Noble  <jer.noble@apple.com>
 
         <audio> and <video> should send Do Not Track when appropriate
