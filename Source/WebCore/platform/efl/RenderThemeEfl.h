@@ -67,6 +67,9 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SeekBackwardButton,
     FullScreenButton,
 #endif
+#if ENABLE(VIDEO_TRACK)
+    ToggleCaptionsButton,
+#endif
     Spinner,
     FormTypeLast
 };
@@ -199,6 +202,10 @@ public:
     virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
+#if ENABLE(VIDEO_TRACK)
+    virtual bool supportsClosedCaptioning() const OVERRIDE;
+    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 #endif
     virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE { return true; }
 

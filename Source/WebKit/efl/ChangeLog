@@ -1,3 +1,18 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Create a toggle button for closed captions
+        https://bugs.webkit.org/show_bug.cgi?id=96259
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add closed caption toggling button to default WebKitEFL
+        theme.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption.png: Added.
+        * DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption_disabled.png: Added.
+        * DefaultTheme/widget/mediacontrol/togglecaptionsbutton/toggle_captions_button.edc: Added.
+
 2012-09-09  Emil A Eklund  <eae@chromium.org>
 
         Rename Node::getRect/getPixelSnappedRect and remove ContainerNode::getRect

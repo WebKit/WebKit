@@ -594,6 +594,9 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("mediacontrol/seekbackward_button"),
         W("mediacontrol/fullscreen_button"),
 #endif
+#if ENABLE(VIDEO_TRACK)
+        W("mediacontrol/toggle_captions_button"),
+#endif
         W("spinner"),
 #undef W
         0
@@ -1105,6 +1108,12 @@ bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElemen
         edje_object_signal_emit(entry->o, "seekbackward", "");
     else if (mediaElementType == MediaEnterFullscreenButton)
         edje_object_signal_emit(entry->o, "fullscreen", "");
+#if ENABLE(VIDEO_TRACK)
+    else if (mediaElementType == MediaShowClosedCaptionsButton)
+        edje_object_signal_emit(entry->o, "show_captions", "");
+    else if (mediaElementType == MediaHideClosedCaptionsButton)
+        edje_object_signal_emit(entry->o, "hide_captions", "");
+#endif
     else
         return false;
 
@@ -1276,6 +1285,28 @@ bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo
 {
     info.context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
     return true;
+}
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+bool RenderThemeEfl::supportsClosedCaptioning() const
+{
+    return true;
+}
+
+bool RenderThemeEfl::paintMediaToggleClosedCaptionsButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
+    if (!mediaNode)
+        mediaNode = object->node();
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!emitMediaButtonSignal(ToggleCaptionsButton, mediaElement->webkitClosedCaptionsVisible() ? MediaShowClosedCaptionsButton : MediaHideClosedCaptionsButton, rect))
+        return false;
+
+    return paintThemePart(object, ToggleCaptionsButton, info, rect);
 }
 #endif
 

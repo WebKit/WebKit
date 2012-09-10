@@ -1032,9 +1032,6 @@ BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-block
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
 BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
-// Fails after r127035.
-BUGWK95428 : media/video-controls-captions.html = TEXT
-
 // Started failing on JSC ports after r127202.
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 

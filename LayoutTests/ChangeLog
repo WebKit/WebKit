@@ -1,3 +1,22 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Create a toggle button for closed captions
+        https://bugs.webkit.org/show_bug.cgi?id=96259
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip media/video-controls-captions.html test case
+        now that EFL has a toggle button for closed captions.
+
+        Rebaseline a few media track test cases that now
+        display the new closed caption toggling button.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.txt:
+
 2012-09-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed gardening, unskip tests passing after r128040 landed.
