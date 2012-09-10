@@ -2000,10 +2000,33 @@ WebInspector.ElementsTreeUpdater = function(treeOutline)
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
 
     this._treeOutline = treeOutline;
-    this._recentlyModifiedNodes = [];
+    this._recentlyModifiedNodes = new Map();
 }
 
 WebInspector.ElementsTreeUpdater.prototype = {
+
+    /**
+     * @param {!WebInspector.DOMNode} node
+     * @param {boolean} isUpdated
+     * @param {WebInspector.DOMNode=} parentNode
+     */
+    _nodeModified: function(node, isUpdated, parentNode)
+    {
+        if (this._treeOutline._visible)
+            this._updateModifiedNodesSoon();
+
+        var entry = /** @type {WebInspector.ElementsTreeUpdater.UpdateEntry} */ this._recentlyModifiedNodes.get(node);
+        if (!entry) {
+            entry = new WebInspector.ElementsTreeUpdater.UpdateEntry(isUpdated, parentNode);
+            this._recentlyModifiedNodes.put(node, entry);
+            return;
+        }
+
+        entry.isUpdated |= isUpdated;
+        if (parentNode)
+            entry.parent = parentNode;
+    },
+
     _documentUpdated: function(event)
     {
         var inspectedRootDocument = event.data;
@@ -2018,30 +2041,22 @@ WebInspector.ElementsTreeUpdater.prototype = {
 
     _attributesUpdated: function(event)
     {
-        this._recentlyModifiedNodes.push({node: event.data.node, updated: true});
-        if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+        this._nodeModified(event.data.node, true);
     },
 
     _characterDataModified: function(event)
     {
-        this._recentlyModifiedNodes.push({node: event.data, updated: true});
-        if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+        this._nodeModified(event.data, true);
     },
 
     _nodeInserted: function(event)
     {
-        this._recentlyModifiedNodes.push({node: event.data, parent: event.data.parentNode, inserted: true});
-        if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+        this._nodeModified(event.data, false, event.data.parentNode);
     },
 
     _nodeRemoved: function(event)
     {
-        this._recentlyModifiedNodes.push({node: event.data.node, parent: event.data.parent, removed: true});
-        if (this._treeOutline._visible)
-            this._updateModifiedNodesSoon();
+        this._nodeModified(event.data.node, false, event.data.parent);
     },
 
     _childNodeCountUpdated: function(event)
@@ -2055,7 +2070,7 @@ WebInspector.ElementsTreeUpdater.prototype = {
     {
         if (this._updateModifiedNodesTimeout)
             return;
-        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 0);
+        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 50);
     },
 
     _updateModifiedNodes: function()
@@ -2067,15 +2082,18 @@ WebInspector.ElementsTreeUpdater.prototype = {
 
         var updatedParentTreeElements = [];
 
-        var hidePanelWhileUpdating = this._recentlyModifiedNodes.length > 10;
+        var hidePanelWhileUpdating = this._recentlyModifiedNodes.size() > 10;
         if (hidePanelWhileUpdating) {
             var treeOutlineContainerElement = this._treeOutline.element.parentNode;
             this._treeOutline.element.addStyleClass("hidden");
             var originalScrollTop = treeOutlineContainerElement ? treeOutlineContainerElement.scrollTop : 0;
         }
 
-        for (var i = 0; i < this._recentlyModifiedNodes.length; ++i) {
-            var parent = this._recentlyModifiedNodes[i].parent;
+        var keys = this._recentlyModifiedNodes.keys();
+        for (var i = 0, size = keys.length; i < size; ++i) {
+            var node = keys[i];
+            var entry = this._recentlyModifiedNodes.get(node);
+            var parent = entry.parent;
 
             if (parent === this._treeOutline._rootDOMNode) {
                 // Document's children have changed, perform total update.
@@ -2084,13 +2102,10 @@ WebInspector.ElementsTreeUpdater.prototype = {
                 return;
             }
 
-            var node = this._recentlyModifiedNodes[i].node;
-
-            if (this._recentlyModifiedNodes[i].updated) {
+            if (entry.isUpdated) {
                 var nodeItem = this._treeOutline.findTreeElement(node);
                 if (nodeItem)
                     nodeItem.updateTitle();
-                continue;
             }
 
             if (!parent)
@@ -2113,7 +2128,7 @@ WebInspector.ElementsTreeUpdater.prototype = {
                 treeOutlineContainerElement.scrollTop = originalScrollTop;
             this._treeOutline.updateSelection();
         }
-        this._recentlyModifiedNodes = [];
+        this._recentlyModifiedNodes.clear();
     },
 
     _reset: function()
@@ -2121,6 +2136,18 @@ WebInspector.ElementsTreeUpdater.prototype = {
         this._treeOutline.rootDOMNode = null;
         this._treeOutline.selectDOMNode(null, false);
         WebInspector.domAgent.hideDOMNodeHighlight();
-        this._recentlyModifiedNodes = [];
+        this._recentlyModifiedNodes.clear();
     }
+}
+
+/**
+ * @constructor
+ * @param {boolean} isUpdated
+ * @param {WebInspector.DOMNode=} parent
+ */
+WebInspector.ElementsTreeUpdater.UpdateEntry = function(isUpdated, parent)
+{
+    this.isUpdated = isUpdated;
+    if (parent)
+        this.parent = parent;
 }
