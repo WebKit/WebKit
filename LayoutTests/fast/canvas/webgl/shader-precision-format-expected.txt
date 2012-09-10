@@ -50,4 +50,7 @@ Test that getShaderPrecisionFormat returns the same thing every call.
 PASS shaderPrecisionFormat.rangeMin == shaderPrecisionFormat2.rangeMin is true
 PASS shaderPrecisionFormat.rangeMax == shaderPrecisionFormat2.rangeMax is true
 PASS shaderPrecisionFormat.precision == shaderPrecisionFormat2.precision is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

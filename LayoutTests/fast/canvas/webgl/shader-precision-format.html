@@ -13,6 +13,10 @@
 <div id="description"></div>
 <div id="console"></div>
 <script>
+if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(true);
+}
+
 var wtu = WebGLTestUtils;
 description(document.title);
 debug("Tests that WebGLShaderPrecisionFormat class and getShaderPrecisionFormat work.");

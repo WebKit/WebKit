@@ -3027,9 +3027,6 @@ BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TEX
 
 BUGWK83647 WIN LINUX ANDROID : fast/multicol/cell-shrinkback.html = IMAGE
 
-BUGWK84065 DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
-BUGWK84065 DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
-
 // IETC grid layout
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
