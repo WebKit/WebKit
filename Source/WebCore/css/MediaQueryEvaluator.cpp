@@ -82,7 +82,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
     , m_frame(0)
     , m_style(0)
@@ -90,7 +90,7 @@ MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool 
 {
 }
 
-MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
+MediaQueryEvaluator::MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
     , m_frame(0)
     , m_style(0)
@@ -98,7 +98,7 @@ MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool me
 {
 }
 
-MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
     : m_mediaType(acceptedMediaType)
     , m_frame(frame)
     , m_style(style)

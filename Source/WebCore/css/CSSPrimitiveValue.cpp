@@ -56,65 +56,65 @@ namespace WebCore {
 static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitTypes unitType)
 {
     switch (unitType) {
-    case CSSPrimitiveValue:: CSS_CALC:
-    case CSSPrimitiveValue:: CSS_CALC_PERCENTAGE_WITH_NUMBER:
-    case CSSPrimitiveValue:: CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSPrimitiveValue:: CSS_CM:
-    case CSSPrimitiveValue:: CSS_DEG:
-    case CSSPrimitiveValue:: CSS_DIMENSION:
+    case CSSPrimitiveValue::CSS_CALC:
+    case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH:
+    case CSSPrimitiveValue::CSS_CM:
+    case CSSPrimitiveValue::CSS_DEG:
+    case CSSPrimitiveValue::CSS_DIMENSION:
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    case CSSPrimitiveValue:: CSS_DPPX:
-    case CSSPrimitiveValue:: CSS_DPI:
-    case CSSPrimitiveValue:: CSS_DPCM:
+    case CSSPrimitiveValue::CSS_DPPX:
+    case CSSPrimitiveValue::CSS_DPI:
+    case CSSPrimitiveValue::CSS_DPCM:
 #endif
-    case CSSPrimitiveValue:: CSS_EMS:
-    case CSSPrimitiveValue:: CSS_EXS:
-    case CSSPrimitiveValue:: CSS_GRAD:
-    case CSSPrimitiveValue:: CSS_HZ:
-    case CSSPrimitiveValue:: CSS_IN:
-    case CSSPrimitiveValue:: CSS_KHZ:
-    case CSSPrimitiveValue:: CSS_MM:
-    case CSSPrimitiveValue:: CSS_MS:
-    case CSSPrimitiveValue:: CSS_NUMBER:
-    case CSSPrimitiveValue:: CSS_PERCENTAGE:
-    case CSSPrimitiveValue:: CSS_PC:
-    case CSSPrimitiveValue:: CSS_PT:
-    case CSSPrimitiveValue:: CSS_PX:
-    case CSSPrimitiveValue:: CSS_RAD:
-    case CSSPrimitiveValue:: CSS_REMS:
-    case CSSPrimitiveValue:: CSS_S:
-    case CSSPrimitiveValue:: CSS_TURN:
-    case CSSPrimitiveValue:: CSS_VW:
-    case CSSPrimitiveValue:: CSS_VH:
-    case CSSPrimitiveValue:: CSS_VMIN:
+    case CSSPrimitiveValue::CSS_EMS:
+    case CSSPrimitiveValue::CSS_EXS:
+    case CSSPrimitiveValue::CSS_GRAD:
+    case CSSPrimitiveValue::CSS_HZ:
+    case CSSPrimitiveValue::CSS_IN:
+    case CSSPrimitiveValue::CSS_KHZ:
+    case CSSPrimitiveValue::CSS_MM:
+    case CSSPrimitiveValue::CSS_MS:
+    case CSSPrimitiveValue::CSS_NUMBER:
+    case CSSPrimitiveValue::CSS_PERCENTAGE:
+    case CSSPrimitiveValue::CSS_PC:
+    case CSSPrimitiveValue::CSS_PT:
+    case CSSPrimitiveValue::CSS_PX:
+    case CSSPrimitiveValue::CSS_RAD:
+    case CSSPrimitiveValue::CSS_REMS:
+    case CSSPrimitiveValue::CSS_S:
+    case CSSPrimitiveValue::CSS_TURN:
+    case CSSPrimitiveValue::CSS_VW:
+    case CSSPrimitiveValue::CSS_VH:
+    case CSSPrimitiveValue::CSS_VMIN:
         return true;
-    case CSSPrimitiveValue:: CSS_ATTR:
-    case CSSPrimitiveValue:: CSS_COUNTER:
-    case CSSPrimitiveValue:: CSS_COUNTER_NAME:
+    case CSSPrimitiveValue::CSS_ATTR:
+    case CSSPrimitiveValue::CSS_COUNTER:
+    case CSSPrimitiveValue::CSS_COUNTER_NAME:
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-    case CSSPrimitiveValue:: CSS_DASHBOARD_REGION:
+    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
 #endif
 #if !ENABLE(CSS_IMAGE_RESOLUTION)
-    case CSSPrimitiveValue:: CSS_DPPX:
-    case CSSPrimitiveValue:: CSS_DPI:
-    case CSSPrimitiveValue:: CSS_DPCM:
+    case CSSPrimitiveValue::CSS_DPPX:
+    case CSSPrimitiveValue::CSS_DPI:
+    case CSSPrimitiveValue::CSS_DPCM:
 #endif
-    case CSSPrimitiveValue:: CSS_IDENT:
-    case CSSPrimitiveValue:: CSS_PAIR:
-    case CSSPrimitiveValue:: CSS_PARSER_HEXCOLOR:
-    case CSSPrimitiveValue:: CSS_PARSER_IDENTIFIER:
-    case CSSPrimitiveValue:: CSS_PARSER_INTEGER:
-    case CSSPrimitiveValue:: CSS_PARSER_OPERATOR:
-    case CSSPrimitiveValue:: CSS_RECT:
-    case CSSPrimitiveValue:: CSS_QUAD:
-    case CSSPrimitiveValue:: CSS_RGBCOLOR:
-    case CSSPrimitiveValue:: CSS_SHAPE:
-    case CSSPrimitiveValue:: CSS_STRING:
-    case CSSPrimitiveValue:: CSS_UNICODE_RANGE:
-    case CSSPrimitiveValue:: CSS_UNKNOWN:
-    case CSSPrimitiveValue:: CSS_URI:
+    case CSSPrimitiveValue::CSS_IDENT:
+    case CSSPrimitiveValue::CSS_PAIR:
+    case CSSPrimitiveValue::CSS_PARSER_HEXCOLOR:
+    case CSSPrimitiveValue::CSS_PARSER_IDENTIFIER:
+    case CSSPrimitiveValue::CSS_PARSER_INTEGER:
+    case CSSPrimitiveValue::CSS_PARSER_OPERATOR:
+    case CSSPrimitiveValue::CSS_RECT:
+    case CSSPrimitiveValue::CSS_QUAD:
+    case CSSPrimitiveValue::CSS_RGBCOLOR:
+    case CSSPrimitiveValue::CSS_SHAPE:
+    case CSSPrimitiveValue::CSS_STRING:
+    case CSSPrimitiveValue::CSS_UNICODE_RANGE:
+    case CSSPrimitiveValue::CSS_UNKNOWN:
+    case CSSPrimitiveValue::CSS_URI:
 #if ENABLE(CSS_VARIABLES)
-    case CSSPrimitiveValue:: CSS_VARIABLE_NAME:
+    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
 #endif
         return false;
     }
@@ -155,9 +155,9 @@ static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes
     case CSSPrimitiveValue::CSS_VMIN:
         return CSSPrimitiveValue::UViewportPercentageLength;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    case CSSPrimitiveValue:: CSS_DPPX:
-    case CSSPrimitiveValue:: CSS_DPI:
-    case CSSPrimitiveValue:: CSS_DPCM:
+    case CSSPrimitiveValue::CSS_DPPX:
+    case CSSPrimitiveValue::CSS_DPI:
+    case CSSPrimitiveValue::CSS_DPCM:
         return CSSPrimitiveValue::UResolution;
 #endif
     default:
