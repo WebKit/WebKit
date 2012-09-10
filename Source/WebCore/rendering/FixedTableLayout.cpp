@@ -145,7 +145,7 @@ int FixedTableLayout::calcWidthArray(int)
         unsigned span = cell->colSpan();
         int fixedBorderBoxLogicalWidth = 0;
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
-            fixedBorderBoxLogicalWidth = cell->computeBorderBoxLogicalWidth(logicalWidth.value());
+            fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth.value());
             logicalWidth.setValue(fixedBorderBoxLogicalWidth);
         }
 
