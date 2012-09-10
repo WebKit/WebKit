@@ -36,54 +36,62 @@ namespace WebCore {
 
 static size_t immutableElementAttributeDataSize(unsigned count)
 {
-    return sizeof(ImmutableElementAttributeData) + sizeof(Attribute) * count;
+    return sizeof(ElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
 }
 
 PassRefPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)
 {
     void* slot = WTF::fastMalloc(immutableElementAttributeDataSize(attributes.size()));
-    return adoptRef(new (slot) ImmutableElementAttributeData(attributes));
+    return adoptRef(new (slot) ElementAttributeData(attributes));
 }
 
-PassRefPtr<ElementAttributeData> ElementAttributeData::create()
+ElementAttributeData::ElementAttributeData()
+    : m_isMutable(true)
+    , m_arraySize(0)
+    , m_mutableAttributeVector(new Vector<Attribute, 4>)
 {
-    return adoptRef(new MutableElementAttributeData);
 }
 
-ImmutableElementAttributeData::ImmutableElementAttributeData(const Vector<Attribute>& attributes)
-    : ElementAttributeData(attributes.size())
+ElementAttributeData::ElementAttributeData(const Vector<Attribute>& attributes)
+    : m_isMutable(false)
+    , m_arraySize(attributes.size())
 {
-    for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&m_attributeArray[i]) Attribute(attributes[i]);
+    Attribute* buffer = reinterpret_cast<Attribute*>(&m_attributes);
+    for (unsigned i = 0; i < attributes.size(); ++i)
+        new (&buffer[i]) Attribute(attributes[i]);
 }
 
-MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementAttributeData& other)
+ElementAttributeData::ElementAttributeData(const ElementAttributeData& other)
+    : RefCounted<ElementAttributeData>()
+    , m_isMutable(true)
+    , m_arraySize(0)
+    , m_inlineStyleDecl(other.m_inlineStyleDecl)
+    , m_attributeStyle(other.m_attributeStyle)
+    , m_classNames(other.m_classNames)
+    , m_idForStyleResolution(other.m_idForStyleResolution)
+    , m_mutableAttributeVector(new Vector<Attribute, 4>)
 {
-    const ElementAttributeData& baseOther = static_cast<const ElementAttributeData&>(other);
+    // This copy constructor should only be used by makeMutable() to go from immutable to mutable.
+    ASSERT(!other.m_isMutable);
 
-    m_inlineStyleDecl = baseOther.m_inlineStyleDecl;
-    m_attributeStyle = baseOther.m_attributeStyle;
-    m_classNames = baseOther.m_classNames;
-    m_idForStyleResolution = baseOther.m_idForStyleResolution;
+    // An immutable ElementAttributeData should never have a mutable inline StylePropertySet attached.
+    ASSERT(!other.m_inlineStyleDecl || !other.m_inlineStyleDecl->isMutable());
 
-    // An ImmutableElementAttributeData should never have a mutable inline StylePropertySet attached.
-    ASSERT(!baseOther.m_inlineStyleDecl || !baseOther.m_inlineStyleDecl->isMutable());
-
-    m_attributeVector.reserveCapacity(baseOther.m_arraySize);
-    for (unsigned i = 0; i < baseOther.m_arraySize; ++i)
-        m_attributeVector.uncheckedAppend(other.m_attributeArray[i]);
+    const Attribute* otherBuffer = reinterpret_cast<const Attribute*>(&other.m_attributes);
+    for (unsigned i = 0; i < other.m_arraySize; ++i)
+        m_mutableAttributeVector->append(otherBuffer[i]);
 }
 
-ImmutableElementAttributeData::~ImmutableElementAttributeData()
+ElementAttributeData::~ElementAttributeData()
 {
-    for (unsigned i = 0; i < m_arraySize; ++i)
-        m_attributeArray[i].~Attribute();
-}
-
-PassRefPtr<ElementAttributeData> ElementAttributeData::makeMutableCopy() const
-{
-    ASSERT(!isMutable());
-    return adoptRef(new MutableElementAttributeData(static_cast<const ImmutableElementAttributeData&>(*this)));
+    if (isMutable()) {
+        ASSERT(!m_arraySize);
+        delete m_mutableAttributeVector;
+    } else {
+        Attribute* buffer = reinterpret_cast<Attribute*>(&m_attributes);
+        for (unsigned i = 0; i < m_arraySize; ++i)
+            buffer[i].~Attribute();
+    }
 }
 
 typedef Vector<RefPtr<Attr> > AttrList;
@@ -228,7 +236,7 @@ void ElementAttributeData::addAttribute(const Attribute& attribute, Element* ele
     if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->willModifyAttribute(attribute.name(), nullAtom, attribute.value());
 
-    mutableAttributeVector().append(attribute);
+    m_mutableAttributeVector->append(attribute);
 
     if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->didAddAttribute(attribute);
@@ -239,7 +247,7 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element, Synch
     ASSERT(isMutable());
     ASSERT(index < length());
 
-    Attribute& attribute = mutableAttributeVector().at(index);
+    Attribute& attribute = m_mutableAttributeVector->at(index);
     QualifiedName name = attribute.name();
 
     if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
@@ -248,7 +256,7 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element, Synch
     if (RefPtr<Attr> attr = attrIfExists(element, name))
         attr->detachFromElementWithValue(attribute.value());
 
-    mutableAttributeVector().remove(index);
+    m_mutableAttributeVector->remove(index);
 
     if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->didRemoveAttribute(name);
@@ -296,7 +304,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addMember(m_classNames);
     info.addInstrumentedMember(m_idForStyleResolution);
     if (m_isMutable)
-        info.addVector(mutableAttributeVector());
+        info.addVectorPtr(m_mutableAttributeVector);
     for (unsigned i = 0, len = length(); i < len; i++)
         info.addInstrumentedMember(*attributeItem(i));
 }
@@ -340,15 +348,17 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
     clearAttributes(&targetElement);
 
     if (sourceData.isMutable())
-        mutableAttributeVector() = sourceData.mutableAttributeVector();
+        *m_mutableAttributeVector = *sourceData.m_mutableAttributeVector;
     else {
-        mutableAttributeVector().reserveInitialCapacity(sourceData.m_arraySize);
+        ASSERT(m_mutableAttributeVector->isEmpty());
+        m_mutableAttributeVector->reserveInitialCapacity(sourceData.m_arraySize);
+        const Attribute* sourceBuffer = reinterpret_cast<const Attribute*>(&sourceData.m_attributes);
         for (unsigned i = 0; i < sourceData.m_arraySize; ++i)
-            mutableAttributeVector().uncheckedAppend(sourceData.immutableAttributeArray()[i]);
+            m_mutableAttributeVector->uncheckedAppend(sourceBuffer[i]);
     }
 
     for (unsigned i = 0; i < length(); ++i) {
-        const Attribute& attribute = mutableAttributeVector().at(i);
+        const Attribute& attribute = m_mutableAttributeVector->at(i);
         if (targetElement.isStyledElement() && attribute.name() == HTMLNames::styleAttr) {
             static_cast<StyledElement&>(targetElement).styleAttributeChanged(attribute.value(), StyledElement::DoNotReparseStyleAttribute);
             continue;
@@ -370,7 +380,7 @@ void ElementAttributeData::clearAttributes(Element* element)
         detachAttrObjectsFromElement(element);
 
     clearClass();
-    mutableAttributeVector().clear();
+    m_mutableAttributeVector->clear();
 }
 
 PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const
