@@ -145,16 +145,15 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     // Call with 4 arguments instead of 3, pass additional null as the last parameter.
     // By calling the function with 4 arguments, we create a setter on arguments object
     // which would shadow property "3" on the prototype.
-    String code = ASCIILiteral("(function() {" \
-        "with (this[2]) {" \
-        "with (this[1]) {" \
-        "with (this[0]) {");
-    code.append("return function(");
-    code.append(m_eventParameterName);
-    code.append(") {");
-    code.append(m_code);
-    // Insert '\n' otherwise //-style comments could break the handler.
-    code.append("\n};}}}})");
+    String code = "(function() {"
+        "with (this[2]) {"
+        "with (this[1]) {"
+        "with (this[0]) {"
+            "return function(" + m_eventParameterName + ") {" +
+                m_code + "\n" // Insert '\n' otherwise //-style comments could break the handler.
+            "};"
+        "}}}})";
+
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
 
     v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(codeExternalString, m_sourceURL, m_position);
@@ -219,14 +218,8 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (!toStringTemplate.IsEmpty())
         toStringFunction = toStringTemplate->GetFunction();
     if (!toStringFunction.IsEmpty()) {
-        String toStringResult = ASCIILiteral("function ");
-        toStringResult.append(m_functionName);
-        toStringResult.append("(");
-        toStringResult.append(m_eventParameterName);
-        toStringResult.append(") {\n  ");
-        toStringResult.append(m_code);
-        toStringResult.append("\n}");
-        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8ExternalString(toStringResult));
+        String toStringString = "function " + m_functionName + "(" + m_eventParameterName + ") {\n  " + m_code + "\n}";
+        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8ExternalString(toStringString));
         wrappedFunction->Set(v8::String::NewSymbol("toString"), toStringFunction);
     }
 
