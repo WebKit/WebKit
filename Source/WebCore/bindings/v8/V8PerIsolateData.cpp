@@ -74,6 +74,13 @@ void V8PerIsolateData::dispose(v8::Isolate* isolate)
     isolate->SetData(0);
 }
 
+v8::Handle<v8::FunctionTemplate> V8PerIsolateData::toStringTemplate()
+{
+    if (m_toStringTemplate.isEmpty())
+        m_toStringTemplate.set(v8::FunctionTemplate::New(constructorOfToString));
+    return v8::Local<v8::FunctionTemplate>::New(m_toStringTemplate.get());
+}
+
 void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);

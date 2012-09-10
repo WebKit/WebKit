@@ -71,13 +71,7 @@ public:
     TemplateMap& rawTemplateMap() { return m_rawTemplates; }
     TemplateMap& templateMap() { return m_templates; }
 
-    v8::Persistent<v8::FunctionTemplate>& toStringTemplate()
-    {
-        if (m_toStringTemplate.IsEmpty())
-            m_toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorOfToString));
-        return m_toStringTemplate;
-    }
-
+    v8::Handle<v8::FunctionTemplate> toStringTemplate();
     v8::Persistent<v8::FunctionTemplate>& lazyEventListenerToStringTemplate()
     {
         return m_lazyEventListenerToStringTemplate;
@@ -143,7 +137,7 @@ private:
 
     TemplateMap m_rawTemplates;
     TemplateMap m_templates;
-    v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
+    ScopedPersistent<v8::FunctionTemplate> m_toStringTemplate;
     v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
     OwnPtr<StringCache> m_stringCache;
     OwnPtr<IntegerCache> m_integerCache;
