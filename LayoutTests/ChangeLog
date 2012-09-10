@@ -1,3 +1,9 @@
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
+        Rebaselined for Chromium.
+
+        * platform/chromium/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+
 2012-09-10  Ojan Vafai  <ojan@chromium.org>
 
         Update the css3/filters test expectations to match the bots.
