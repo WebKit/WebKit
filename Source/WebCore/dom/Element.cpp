@@ -2246,7 +2246,7 @@ void Element::createMutableAttributeData()
     if (!m_attributeData)
         m_attributeData = ElementAttributeData::create();
     else
-        m_attributeData = m_attributeData->makeMutable();
+        m_attributeData = m_attributeData->makeMutableCopy();
 }
 
 } // namespace WebCore
