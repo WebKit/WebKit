@@ -1,3 +1,9 @@
+2012-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Added platform-specific results for this test from r128042.
+
+        * platform/mac/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+
 2012-09-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: only display heap size statistics for timeline records when it makes sense
