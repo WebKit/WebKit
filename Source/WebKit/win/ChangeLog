@@ -1,3 +1,16 @@
+2012-09-10  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Update Windows port accessible role mappings to fix some tests
+        https://bugs.webkit.org/show_bug.cgi?id=96219
+
+        Reviewed by Chris Fleizach.
+
+        Update a bunch of accessible role mappings to fix tests and improve win
+        accessibility.
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs
