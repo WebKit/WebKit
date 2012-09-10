@@ -1,3 +1,15 @@
+2012-09-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Font value should be parsed as a individual property
+        https://bugs.webkit.org/show_bug.cgi?id=96271
+
+        Reviewed by Eric Seidel.
+
+        Updated test to the latest W3C approved version. It adds a test
+        that verifies this fix.
+
+        * canvas/philip/tests/2d.text.font.parse.invalid.html:
+
 2012-09-10  Silvia Pfeiffer  <silviapf@chromium.org>
 
         [Chromium] Handle smaller sizes of media elements in media controls.
