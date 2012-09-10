@@ -50,7 +50,7 @@ private:
     
     virtual const char* renderName() const;
 
-    virtual bool recomputeLogicalWidth() OVERRIDE;
+    virtual bool updateLogicalWidthAndColumnWidth() OVERRIDE;
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight) OVERRIDE;
     virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&) OVERRIDE;
 

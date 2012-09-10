@@ -1009,7 +1009,7 @@ protected:
 
     virtual bool requiresColumns(int desiredColumnCount) const;
 
-    virtual bool recomputeLogicalWidth();
+    virtual bool updateLogicalWidthAndColumnWidth();
 
     virtual bool canCollapseAnonymousBlockChild() const { return true; }
 

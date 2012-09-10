@@ -68,9 +68,9 @@ void RenderMultiColumnBlock::computeColumnCountAndWidth()
     }
 }
 
-bool RenderMultiColumnBlock::recomputeLogicalWidth()
+bool RenderMultiColumnBlock::updateLogicalWidthAndColumnWidth()
 {
-    bool relayoutChildren = RenderBlock::recomputeLogicalWidth();
+    bool relayoutChildren = RenderBlock::updateLogicalWidthAndColumnWidth();
     LayoutUnit oldColumnWidth = m_columnWidth;
     computeColumnCountAndWidth();
     if (m_columnWidth != oldColumnWidth)

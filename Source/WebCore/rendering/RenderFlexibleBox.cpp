@@ -254,7 +254,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutSize previousSize = size();
 
     setLogicalHeight(0);
-    computeLogicalWidth();
+    updateLogicalWidth();
 
     m_overflow.clear();
 

@@ -58,7 +58,7 @@ public:
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
 
     virtual void layout() OVERRIDE;
-    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight() OVERRIDE;
     // FIXME: This override is not needed and should be removed
     // it only exists to make computePreferredLogicalWidths public.

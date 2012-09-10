@@ -168,11 +168,11 @@ void RenderTableCell::computePreferredLogicalWidths()
     }
 }
 
-void RenderTableCell::computeLogicalWidth()
+void RenderTableCell::updateLogicalWidth()
 {
 }
 
-void RenderTableCell::updateLogicalWidth(LayoutUnit w)
+void RenderTableCell::setCellLogicalWidth(LayoutUnit w)
 {
     if (w == logicalWidth())
         return;

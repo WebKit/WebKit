@@ -51,7 +51,7 @@ LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) cons
     return portionLogicalTop + columnIndex * computedColumnHeight();
 }
 
-void RenderMultiColumnSet::computeLogicalWidth()
+void RenderMultiColumnSet::updateLogicalWidth()
 {
     // Our logical width starts off matching the column block itself.
     // This width will be fixed up after the flow thread lays out once it is determined exactly how many

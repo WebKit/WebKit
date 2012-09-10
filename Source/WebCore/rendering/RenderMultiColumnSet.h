@@ -62,7 +62,7 @@ public:
     }
 
 private:
-    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight() OVERRIDE;
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;

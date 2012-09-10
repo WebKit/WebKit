@@ -212,7 +212,7 @@ void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
     m_captions.remove(index);
 }
 
-void RenderTable::computeLogicalWidth()
+void RenderTable::updateLogicalWidth()
 {
     recalcSectionsIfNeeded();
 
@@ -346,7 +346,7 @@ void RenderTable::layout()
     initMaxMarginValues();
     
     LayoutUnit oldLogicalWidth = logicalWidth();
-    computeLogicalWidth();
+    updateLogicalWidth();
 
     if (logicalWidth() != oldLogicalWidth) {
         for (unsigned i = 0; i < m_captions.size(); i++)

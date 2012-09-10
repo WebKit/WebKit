@@ -1615,7 +1615,7 @@ void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)
     }
 }
 
-void RenderBox::computeLogicalWidth()
+void RenderBox::updateLogicalWidth()
 {
     LogicalExtentComputedValues computedValues;
     computeLogicalWidthInRegion(computedValues);

@@ -1415,12 +1415,12 @@ void RenderBlock::computeRegionRangeForBlock()
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
 }
 
-bool RenderBlock::recomputeLogicalWidth()
+bool RenderBlock::updateLogicalWidthAndColumnWidth()
 {
     LayoutUnit oldWidth = logicalWidth();
     LayoutUnit oldColumnWidth = desiredColumnWidth();
 
-    computeLogicalWidth();
+    updateLogicalWidth();
     calcColumnWidth();
 
     return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth();
@@ -1468,7 +1468,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    if (recomputeLogicalWidth())
+    if (updateLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
     m_overflow.clear();
@@ -2654,7 +2654,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
             if (isHorizontalWritingMode() == r->isHorizontalWritingMode())
                 r->computeLogicalHeight();
             else
-                r->computeLogicalWidth();
+                r->updateLogicalWidth();
             oldLogicalTop = logicalTopForChild(r);
         }
         
@@ -3760,7 +3760,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     if (!needsBlockDirectionLocationSetBeforeLayout || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
         o->layoutIfNeeded();
     else {
-        o->computeLogicalWidth();
+        o->updateLogicalWidth();
         o->computeAndSetBlockDirectionMargins(this);
     }
     setLogicalWidthForFloat(newObj, logicalWidthForChild(o) + marginStartForChild(o) + marginEndForChild(o));
@@ -4652,7 +4652,7 @@ LayoutUnit RenderBlock::getClearDelta(RenderBox* child, LayoutUnit logicalTop)
             LayoutUnit childOldLogicalTop = child->logicalTop();
 
             child->setLogicalTop(newLogicalTop);
-            child->computeLogicalWidth();
+            child->updateLogicalWidth();
             region = regionAtBlockOffset(logicalTopForChild(child));
             borderBox = child->borderBoxRectInRegion(region, offsetFromLogicalTopOfFirstPage() + logicalTopForChild(child), DoNotCacheRenderBoxRegionInfo);
             LayoutUnit childLogicalWidthAtNewLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();

@@ -364,7 +364,7 @@ public:
     LayoutUnit containingBlockAvailableLineWidthInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
 
-    virtual void computeLogicalWidth();
+    virtual void updateLogicalWidth();
     virtual void computeLogicalHeight();
     void computeLogicalHeight(LogicalExtentComputedValues&) const;
 
@@ -449,7 +449,7 @@ public:
     bool tryLayoutDoingPositionedMovementOnly()
     {
         LayoutUnit oldWidth = width();
-        computeLogicalWidth();
+        updateLogicalWidth();
         // If we shrink to fit our width may have changed, so we still need full layout.
         if (oldWidth != width())
             return false;

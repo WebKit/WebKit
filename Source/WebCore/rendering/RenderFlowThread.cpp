@@ -166,7 +166,7 @@ void RenderFlowThread::layout()
                 previousRegionLogicalWidth = regionLogicalWidth;
             }
             
-            computeLogicalWidth(); // Called to get the maximum logical width for the region.
+            updateLogicalWidth(); // Called to get the maximum logical width for the region.
             
             LayoutUnit logicalHeight = 0;
             for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
@@ -196,7 +196,7 @@ void RenderFlowThread::layout()
         dispatchRegionLayoutUpdateEvent();
 }
 
-void RenderFlowThread::computeLogicalWidth()
+void RenderFlowThread::updateLogicalWidth()
 {
     LayoutUnit logicalWidth = 0;
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {

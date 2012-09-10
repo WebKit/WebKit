@@ -73,7 +73,7 @@ public:
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
-    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight() OVERRIDE;
 
     void paintFlowThreadPortionInRegion(PaintInfo&, RenderRegion*, LayoutRect flowThreadPortionRect, LayoutRect flowThreadPortionOverflowRect, const LayoutPoint&) const;

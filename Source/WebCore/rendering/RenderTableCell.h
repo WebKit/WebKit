@@ -76,7 +76,7 @@ public:
 
     virtual void computePreferredLogicalWidths();
 
-    void updateLogicalWidth(LayoutUnit);
+    void setCellLogicalWidth(LayoutUnit);
 
     virtual int borderLeft() const;
     virtual int borderRight() const;
@@ -175,7 +175,7 @@ private:
 
     virtual void willBeRemovedFromTree() OVERRIDE;
 
-    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() OVERRIDE;
 
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);

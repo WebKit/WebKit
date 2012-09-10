@@ -224,7 +224,7 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
         LayoutUnit oldheight = height();
         if (!preferredLogicalWidthsDirty())
             setPreferredLogicalWidthsDirty(true);
-        computeLogicalWidth();
+        updateLogicalWidth();
         computeLogicalHeight();
 
         if (imageSizeChanged || width() != oldwidth || height() != oldheight) {

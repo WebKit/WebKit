@@ -247,7 +247,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutSize previousSize = size();
 
-    computeLogicalWidth();
+    updateLogicalWidth();
     computeLogicalHeight();
 
     m_overflow.clear();

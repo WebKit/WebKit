@@ -96,7 +96,7 @@ void RenderView::computeLogicalHeight()
         setLogicalHeight(viewLogicalHeight());
 }
 
-void RenderView::computeLogicalWidth()
+void RenderView::updateLogicalWidth()
 {
     if (!shouldUsePrintingLayout() && m_frameView)
         setLogicalWidth(viewLogicalWidth());
