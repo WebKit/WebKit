@@ -1,3 +1,9 @@
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
+        Skip video-donottrack.html on Chromium
+
+        * platform/chromium/TestExpectations:
+
 2012-09-10  Justin Novosad  <junov@chromium.org>
 
         Implement canvas v5 line dash feature
