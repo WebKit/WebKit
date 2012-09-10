@@ -1,3 +1,21 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Several test cases need rebaseline after bug 88171
+        https://bugs.webkit.org/show_bug.cgi?id=96240
+
+        Unreviewed EFL gardening.
+
+        Rebaseline 3 test cases due to bug 88171. The output
+        is much better now.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css1/formatting_model/floating_elements-expected.png: Added.
+        * platform/efl/css1/formatting_model/floating_elements-expected.txt:
+        * platform/efl/fast/block/float/010-expected.png:
+        * platform/efl/fast/block/float/010-expected.txt:
+        * platform/efl/fast/block/float/independent-align-positioning-expected.png:
+        * platform/efl/fast/block/float/independent-align-positioning-expected.txt:
+
 2012-09-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] REGRESSION(r127861): It made one test fail and one test crash
@@ -6,6 +24,55 @@
         Unreviewed gardening, skip new failing and crashing tests to paint the bot green.
 
         * platform/qt-5.0-wk2/Skipped:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Several fast/block test cases need rebaseline after r127163
+        https://bugs.webkit.org/show_bug.cgi?id=96237
+
+        Unreviewed EFL gardening.
+
+        Rebaseline 4 fast/block test cases due to r127163.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/block/float/024-expected.png:
+        * platform/efl/fast/block/float/024-expected.txt:
+        * platform/efl/fast/block/margin-collapse/025-expected.txt:
+        * platform/efl/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/efl/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/efl/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add baseline for css3/masking test cases
+        https://bugs.webkit.org/show_bug.cgi?id=96235
+
+        Unreviewed EFL gardening.
+
+        Generate baselines for css3/masking test cases added
+        in r127608.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-filter-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-overflow-hidden-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-circle-relative-overflow-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-ellipse-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-evenodd-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-polygon-nonzero-expected.txt: Added.
+        * platform/efl/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/efl/css3/masking/clip-path-rectangle-expected.txt: Added.
 
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 

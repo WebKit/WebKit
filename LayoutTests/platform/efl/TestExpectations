@@ -923,11 +923,6 @@ BUGWK90334 : css3/flexbox/anonymous-block.html = IMAGE
 // Test started failing after r122681 due to wrong scrollbar positioning
 BUGWK91359 : css3/flexbox/flexbox-overflow-auto.html = IMAGE
 
-// Require rebaseline after bug 88171
-BUGWK88171 : fast/block/float/independent-align-positioning.html = TEXT
-BUGWK88171 : fast/block/float/010.html = TEXT
-BUGWK88171 : css1/formatting_model/floating_elements.html = TEXT
-
 // Looks like missing multipart/x-mixed-replace support in libsoup. Failing on both GTK and EFL.
 BUGWK68979 : http/tests/multipart/multipart-replace-non-html-content.php = TEXT
 
