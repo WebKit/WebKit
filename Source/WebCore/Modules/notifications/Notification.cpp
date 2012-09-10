@@ -138,13 +138,6 @@ PassRefPtr<Notification> Notification::create(const String& title, const String&
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-static void getAndAddEventListener(const AtomicString& eventName, const char* property, const Dictionary& options, Notification* notification)
-{
-    RefPtr<EventListener> listener = options.getEventListener(property, notification);
-    if (listener)
-        notification->addEventListener(eventName, listener.release(), false);
-}
-
 PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, const String& title, const Dictionary& options)
 {
     RefPtr<Notification> notification(adoptRef(new Notification(context, title)));
@@ -153,10 +146,6 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
         notification->setBody(argument);
     if (options.get("tag", argument))
         notification->setTag(argument);
-    getAndAddEventListener(eventNames().showEvent, "onshow", options, notification.get());
-    getAndAddEventListener(eventNames().closeEvent, "onclose", options, notification.get());
-    getAndAddEventListener(eventNames().errorEvent, "onerror", options, notification.get());
-    getAndAddEventListener(eventNames().clickEvent, "onclick", options, notification.get());
 
     notification->suspendIfNeeded();
     return notification.release();

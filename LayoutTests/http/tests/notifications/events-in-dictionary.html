@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+	testRunner.waitUntilDone();
+
+description("This test ensures event handlers defined inside the options dictionary are ignored.");
+
+if (window.testRunner) {
+	testRunner.grantWebNotificationPermission(testURL);
+	shouldBeEqualToString("Notification.permission", "granted");
+
+	var n = new Notification("title", { onshow: function() {
+		testFailed("onshow event handler defined in options dictionary should not be called");
+	}});
+	n.addEventListener("show", function() {
+		testPassed("onshow event handler defined after Notification construction was called");
+		testCompleted();
+	});
+}
+
+setTimeout(testCompleted, 100);
+</script>
