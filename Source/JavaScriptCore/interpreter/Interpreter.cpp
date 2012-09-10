@@ -4475,50 +4475,43 @@ skip_id_custom_self:
         goto vm_throw;
     }
     DEFINE_OPCODE(op_tear_off_activation) {
-        /* tear_off_activation activation(r) arguments(r)
+        /* tear_off_activation activation(r)
 
            Copy locals and named parameters from the register file to the heap.
-           Point the bindings in 'activation' and 'arguments' to this new backing
-           store. (Note that 'arguments' may not have been created. If created,
-           'arguments' already holds a copy of any extra / unnamed parameters.)
+           Point the bindings in 'activation' to this new backing store.
 
            This opcode appears before op_ret in functions that require full scope chains.
         */
 
         int activation = vPC[1].u.operand;
-        int arguments = vPC[2].u.operand;
         ASSERT(codeBlock->needsFullScopeChain());
         JSValue activationValue = callFrame->r(activation).jsValue();
-        if (activationValue) {
+        if (activationValue)
             asActivation(activationValue)->tearOff(*globalData);
-
-            if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue())
-                asArguments(argumentsValue)->didTearOffActivation(*globalData, asActivation(activationValue));
-        } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
-            if (!codeBlock->isStrictMode())
-                asArguments(argumentsValue)->tearOff(callFrame);
-        }
 
         vPC += OPCODE_LENGTH(op_tear_off_activation);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_tear_off_arguments) {
-        /* tear_off_arguments arguments(r)
+        /* tear_off_arguments arguments(r) activation(r)
 
            Copy named parameters from the register file to the heap. Point the
-           bindings in 'arguments' to this new backing store. (Note that
-           'arguments' may not have been created. If created, 'arguments' already
-           holds a copy of any extra / unnamed parameters.)
+           bindings in 'arguments' to this new backing store. (If 'activation'
+           was also copied to the heap, 'arguments' will point to its storage.)
 
            This opcode appears before op_ret in functions that don't require full
            scope chains, but do use 'arguments'.
         */
 
-        int src1 = vPC[1].u.operand;
-        ASSERT(!codeBlock->needsFullScopeChain() && codeBlock->ownerExecutable()->usesArguments());
-
-        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src1)).jsValue())
-            asArguments(arguments)->tearOff(callFrame);
+        int arguments = vPC[1].u.operand;
+        int activation = vPC[2].u.operand;
+        ASSERT(codeBlock->usesArguments());
+        if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
+            if (JSValue activationValue = callFrame->r(activation).jsValue())
+                asArguments(argumentsValue)->didTearOffActivation(callFrame->globalData(), asActivation(activationValue));
+            else
+                asArguments(argumentsValue)->tearOff(callFrame);
+        }
 
         vPC += OPCODE_LENGTH(op_tear_off_arguments);
         NEXT_INSTRUCTION();

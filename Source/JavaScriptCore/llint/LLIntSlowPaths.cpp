@@ -1454,26 +1454,19 @@ LLINT_SLOW_PATH_DECL(slow_path_tear_off_activation)
 {
     LLINT_BEGIN();
     ASSERT(exec->codeBlock()->needsFullScopeChain());
-    JSValue activationValue = LLINT_OP(1).jsValue();
-    if (!activationValue) {
-        if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister(pc[2].u.operand)).jsValue()) {
-            if (!exec->codeBlock()->isStrictMode())
-                asArguments(v)->tearOff(exec);
-        }
-        LLINT_END();
-    }
-    JSActivation* activation = asActivation(activationValue);
-    activation->tearOff(globalData);
-    if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister(pc[2].u.operand)).jsValue())
-        asArguments(v)->didTearOffActivation(globalData, activation);
+    jsCast<JSActivation*>(LLINT_OP(1).jsValue())->tearOff(globalData);
     LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
 {
     LLINT_BEGIN();
-    ASSERT(exec->codeBlock()->usesArguments() && !exec->codeBlock()->needsFullScopeChain());
-    asArguments(exec->uncheckedR(unmodifiedArgumentsRegister(pc[1].u.operand)).jsValue())->tearOff(exec);
+    ASSERT(exec->codeBlock()->usesArguments());
+    Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(unmodifiedArgumentsRegister(pc[1].u.operand)).jsValue());
+    if (JSValue activationValue = LLINT_OP_C(2).jsValue())
+        arguments->didTearOffActivation(globalData, jsCast<JSActivation*>(activationValue));
+    else
+        arguments->tearOff(exec);
     LLINT_END();
 }
 

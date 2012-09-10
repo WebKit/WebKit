@@ -703,24 +703,22 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
     unsigned activation = currentInstruction[1].u.operand;
-    unsigned arguments = currentInstruction[2].u.operand;
-    Jump activationCreated = branch32(NotEqual, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
-    Jump argumentsNotCreated = branch32(Equal, tagFor(arguments), TrustedImm32(JSValue::EmptyValueTag));
-    activationCreated.link(this);
+    Jump activationNotCreated = branch32(Equal, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall stubCall(this, cti_op_tear_off_activation);
-    stubCall.addArgument(currentInstruction[1].u.operand);
-    stubCall.addArgument(unmodifiedArgumentsRegister(currentInstruction[2].u.operand));
+    stubCall.addArgument(activation);
     stubCall.call();
-    argumentsNotCreated.link(this);
+    activationNotCreated.link(this);
 }
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
+    int activation = currentInstruction[1].u.operand;
 
     Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(dst)), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
     stubCall.addArgument(unmodifiedArgumentsRegister(dst));
+    stubCall.addArgument(activation);
     stubCall.call();
     argsNotCreated.link(this);
 }

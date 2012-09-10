@@ -637,6 +637,7 @@ namespace JSC {
 
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue);
+        RegisterID* addConstantEmptyValue();
         unsigned addRegExp(RegExp*);
 
         unsigned addConstantBuffer(unsigned length);
@@ -713,6 +714,7 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;
         RegisterID* m_activationRegister;
+        RegisterID* m_emptyValueRegister;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;

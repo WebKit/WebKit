@@ -1483,13 +1483,10 @@ end
 _llint_op_tear_off_activation:
     traceExecution()
     loadis 8[PB, PC, 8], t0
-    loadis 16[PB, PC, 8], t1
-    btpnz [cfr, t0, 8], .opTearOffActivationCreated
-    btpz [cfr, t1, 8], .opTearOffActivationNotCreated
-.opTearOffActivationCreated:
+    btpz [cfr, t0, 8], .opTearOffActivationNotCreated
     callSlowPath(_llint_slow_path_tear_off_activation)
 .opTearOffActivationNotCreated:
-    dispatch(3)
+    dispatch(2)
 
 
 _llint_op_tear_off_arguments:
@@ -1499,7 +1496,7 @@ _llint_op_tear_off_arguments:
     btpz [cfr, t0, 8], .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_ret:

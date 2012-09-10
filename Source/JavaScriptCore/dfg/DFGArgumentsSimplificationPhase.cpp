@@ -616,6 +616,7 @@ public:
                     
                     node.setOpAndDefaultFlags(Nop);
                     m_graph.clearAndDerefChild1(node);
+                    m_graph.clearAndDerefChild2(node);
                     node.setRefCount(0);
                     break;
                 }

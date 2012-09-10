@@ -1639,13 +1639,10 @@ end
 _llint_op_tear_off_activation:
     traceExecution()
     loadi 4[PC], t0
-    loadi 8[PC], t1
-    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffActivationCreated
-    bieq TagOffset[cfr, t1, 8], EmptyValueTag, .opTearOffActivationNotCreated
-.opTearOffActivationCreated:
+    bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffActivationNotCreated
     callSlowPath(_llint_slow_path_tear_off_activation)
 .opTearOffActivationNotCreated:
-    dispatch(3)
+    dispatch(2)
 
 
 _llint_op_tear_off_arguments:
@@ -1655,7 +1652,7 @@ _llint_op_tear_off_arguments:
     bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_ret:

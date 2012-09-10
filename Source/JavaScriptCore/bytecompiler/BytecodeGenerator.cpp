@@ -272,6 +272,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     , m_scopeNode(programNode)
     , m_codeBlock(codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_emptyValueRegister(0)
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(0)
@@ -353,6 +354,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
     , m_scopeNode(functionBody)
     , m_codeBlock(codeBlock)
     , m_activationRegister(0)
+    , m_emptyValueRegister(0)
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(0)
@@ -386,8 +388,6 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         m_codeBlock->setActivationRegister(m_activationRegister->index());
     }
 
-    // Both op_tear_off_activation and op_tear_off_arguments tear off the 'arguments'
-    // object, if created.
     if (m_codeBlock->needsFullScopeChain() || functionBody->usesArguments()) {
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
         RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
@@ -526,6 +526,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolT
     , m_scopeNode(evalNode)
     , m_codeBlock(codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
+    , m_emptyValueRegister(0)
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_baseScopeDepth(codeBlock->baseScopeDepth())
@@ -1111,18 +1112,33 @@ unsigned BytecodeGenerator::addConstant(const Identifier& ident)
     return result.iterator->second;
 }
 
+// We can't hash JSValue(), so we use a dedicated data member to cache it.
+RegisterID* BytecodeGenerator::addConstantEmptyValue()
+{
+    if (!m_emptyValueRegister) {
+        int index = m_nextConstantOffset;
+        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
+        ++m_nextConstantOffset;
+        m_codeBlock->addConstant(JSValue());
+        m_emptyValueRegister = &m_constantPoolRegisters[index];
+    }
+
+    return m_emptyValueRegister;
+}
+
 RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
 {
-    int index = m_nextConstantOffset;
+    if (!v)
+        return addConstantEmptyValue();
 
+    int index = m_nextConstantOffset;
     JSValueMap::AddResult result = m_jsValueMap.add(JSValue::encode(v), m_nextConstantOffset);
     if (result.isNewEntry) {
         m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
         ++m_nextConstantOffset;
-        m_codeBlock->addConstant(JSValue(v));
+        m_codeBlock->addConstant(v);
     } else
         index = result.iterator->second;
-
     return &m_constantPoolRegisters[index];
 }
 
@@ -2046,10 +2062,12 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
     if (m_codeBlock->needsFullScopeChain()) {
         emitOpcode(op_tear_off_activation);
         instructions().append(m_activationRegister->index());
-        instructions().append(m_codeBlock->argumentsRegister());
-    } else if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !m_codeBlock->isStrictMode()) {
+    }
+
+    if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !m_codeBlock->isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister());
+        instructions().append(m_activationRegister ? m_activationRegister->index() : emitLoad(0, JSValue())->index());
     }
 
     // Constructors use op_ret_object_or_this to check the result is an

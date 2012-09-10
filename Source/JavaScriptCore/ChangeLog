@@ -1,3 +1,72 @@
+2012-09-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored op_tear_off* to support activations that don't allocate space for 'arguments'
+        https://bugs.webkit.org/show_bug.cgi?id=96231
+
+        Reviewed by Gavin Barraclough.
+
+        This is a step toward smaller activations.
+
+        As a side-effect, this patch eliminates a load and branch from the hot path
+        of activation tear-off by moving it to the cold path of arguments tear-off. Our
+        optimizing assumptions are that activations are common and that reifying the
+        arguments object is less common.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName): Updated for new opcode lengths.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addConstantValue): Added support for JSValue()
+        in the bytecode, which we use when we have 'arguments' but no activation.
+
+        (JSC::BytecodeGenerator::emitReturn): Always emit tear_off_arguments
+        if we've allocated the arguments registers. This allows tear_off_activation
+        not to worry about the arguments object anymore.
+
+        Also, pass the activation and arguments values directly to these opcodes
+        instead of requiring the opcodes to infer the values through special
+        registers. This gives us more flexibility to move or eliminate registers.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (Node): Updated for new opcode lengths.
+
+        * dfg/DFGOperations.cpp: Activation tear-off doesn't worry about the
+        arguments object anymore. If 'arguments' is in use and reified, it's
+        responsible for aliasing back to the activation object in tear_off_arguments.
+
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Don't pass the arguments object to
+        activation tear-off; do pass the activation object to arguments tear-off.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Ditto.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Same change in a few more execution engines.
+
 2012-09-10  Patrick Gansterer  <paroga@webkit.org>
 
         [JSC] Use StringBuilder::appendNumber() instead of String::number()

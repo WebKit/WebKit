@@ -2855,13 +2855,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_tear_off_activation: {
-            addToGraph(TearOffActivation, OpInfo(unmodifiedArgumentsRegister(currentInstruction[2].u.operand)), get(currentInstruction[1].u.operand), get(currentInstruction[2].u.operand));
+            addToGraph(TearOffActivation, get(currentInstruction[1].u.operand));
             NEXT_OPCODE(op_tear_off_activation);
         }
-            
+
         case op_tear_off_arguments: {
             m_graph.m_hasArguments = true;
-            addToGraph(TearOffArguments, get(unmodifiedArgumentsRegister(currentInstruction[1].u.operand)));
+            addToGraph(TearOffArguments, get(unmodifiedArgumentsRegister(currentInstruction[1].u.operand)), get(currentInstruction[2].u.operand));
             NEXT_OPCODE(op_tear_off_arguments);
         }
             

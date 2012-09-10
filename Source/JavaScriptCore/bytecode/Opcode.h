@@ -174,8 +174,8 @@ namespace JSC {
         macro(op_call, 6) \
         macro(op_call_eval, 6) \
         macro(op_call_varargs, 5) \
-        macro(op_tear_off_activation, 3) \
-        macro(op_tear_off_arguments, 2) \
+        macro(op_tear_off_activation, 2) \
+        macro(op_tear_off_arguments, 3) \
         macro(op_ret, 2) \
         macro(op_call_put_result, 3) /* has value profiling */ \
         macro(op_ret_object_or_this, 3) \

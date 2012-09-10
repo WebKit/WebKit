@@ -4023,43 +4023,39 @@ void SpeculativeJIT::compile(Node& node)
         
     case TearOffActivation: {
         JSValueOperand activationValue(this, node.child1());
-        JSValueOperand argumentsValue(this, node.child2());
         
         GPRReg activationValueTagGPR = activationValue.tagGPR();
         GPRReg activationValuePayloadGPR = activationValue.payloadGPR();
-        GPRReg argumentsValueTagGPR = argumentsValue.tagGPR();
-        
-        JITCompiler::JumpList created;
-        created.append(m_jit.branch32(JITCompiler::NotEqual, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag)));
-        created.append(m_jit.branch32(JITCompiler::NotEqual, argumentsValueTagGPR, TrustedImm32(JSValue::EmptyValueTag)));
-        
+
+        JITCompiler::Jump created = m_jit.branch32(JITCompiler::NotEqual, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+
         addSlowPathGenerator(
             slowPathCall(
-                created, this, operationTearOffActivation, NoResult, activationValuePayloadGPR,
-                static_cast<int32_t>(node.unmodifiedArgumentsRegister())));
+                created, this, operationTearOffActivation, NoResult, activationValuePayloadGPR));
         
         noResult(m_compileIndex);
         break;
     }
         
     case TearOffArguments: {
-        JSValueOperand argumentsValue(this, node.child1());
-        GPRReg argumentsValueTagGPR = argumentsValue.tagGPR();
-        GPRReg argumentsValuePayloadGPR = argumentsValue.payloadGPR();
+        JSValueOperand unmodifiedArgumentsValue(this, node.child1());
+        JSValueOperand activationValue(this, node.child2());
+        GPRReg unmodifiedArgumentsValuePayloadGPR = unmodifiedArgumentsValue.payloadGPR();
+        GPRReg activationValuePayloadGPR = activationValue.payloadGPR();
         
-        JITCompiler::Jump created = m_jit.branch32(
-            JITCompiler::NotEqual, argumentsValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+        JITCompiler::Jump created = m_jit.branchTest32(
+            JITCompiler::NonZero, unmodifiedArgumentsValuePayloadGPR);
         
         if (node.codeOrigin.inlineCallFrame) {
             addSlowPathGenerator(
                 slowPathCall(
                     created, this, operationTearOffInlinedArguments, NoResult,
-                    argumentsValuePayloadGPR, node.codeOrigin.inlineCallFrame));
+                    unmodifiedArgumentsValuePayloadGPR, activationValuePayloadGPR, node.codeOrigin.inlineCallFrame));
         } else {
             addSlowPathGenerator(
                 slowPathCall(
                     created, this, operationTearOffArguments, NoResult,
-                    argumentsValuePayloadGPR));
+                    unmodifiedArgumentsValuePayloadGPR, activationValuePayloadGPR));
         }
         
         noResult(m_compileIndex);

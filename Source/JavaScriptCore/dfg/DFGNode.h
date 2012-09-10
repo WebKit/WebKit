@@ -337,12 +337,6 @@ struct Node {
         return variableAccessData()->local();
     }
     
-    VirtualRegister unmodifiedArgumentsRegister()
-    {
-        ASSERT(op() == TearOffActivation);
-        return static_cast<VirtualRegister>(m_opInfo);
-    }
-    
     VirtualRegister unlinkedLocal()
     {
         ASSERT(op() == GetLocalUnlinked);

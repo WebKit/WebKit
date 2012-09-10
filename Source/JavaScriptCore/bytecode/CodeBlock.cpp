@@ -1407,14 +1407,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_tear_off_activation: {
             int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            dataLog("[%4d] tear_off_activation\t %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data());
+            dataLog("[%4d] tear_off_activation\t %s", location, registerName(exec, r0).data());
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
         case op_tear_off_arguments: {
             int r0 = (++it)->u.operand;
-            dataLog("[%4d] tear_off_arguments %s", location, registerName(exec, r0).data());
+            int r1 = (++it)->u.operand;
+            dataLog("[%4d] tear_off_arguments %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data());
             dumpBytecodeCommentAndNewLine(location);
             break;
         }

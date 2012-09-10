@@ -1165,40 +1165,28 @@ JSCell* DFG_OPERATION operationCreateInlinedArguments(
     return result;
 }
 
-void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell, int32_t unmodifiedArgumentsRegister)
+void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    if (!activationCell) {
-        if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister).jsValue()) {
-            if (!exec->codeBlock()->isStrictMode())
-                asArguments(v)->tearOff(exec);
-        }
-        return;
-    }
-    JSActivation* activation = jsCast<JSActivation*>(activationCell);
-    activation->tearOff(exec->globalData());
-    if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister).jsValue())
-        asArguments(v)->didTearOffActivation(exec->globalData(), activation);
+    jsCast<JSActivation*>(activationCell)->tearOff(exec->globalData());
 }
 
-
-void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell)
+void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell* activationCell)
 {
     ASSERT(exec->codeBlock()->usesArguments());
-    ASSERT(!exec->codeBlock()->needsFullScopeChain());
-    asArguments(argumentsCell)->tearOff(exec);
+    if (activationCell) {
+        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec->globalData(), jsCast<JSActivation*>(activationCell));
+        return;
+    }
+    jsCast<Arguments*>(argumentsCell)->tearOff(exec);
 }
 
 void DFG_OPERATION operationTearOffInlinedArguments(
-    ExecState* exec, JSCell* argumentsCell, InlineCallFrame* inlineCallFrame)
+    ExecState* exec, JSCell* argumentsCell, JSCell* activationCell, InlineCallFrame* inlineCallFrame)
 {
-    // This should only be called when the inline code block uses arguments but does not
-    // need a full scope chain. We could assert it, except that the assertion would be
-    // rather expensive and may cause side effects that would greatly diverge debug-mode
-    // behavior from release-mode behavior, since getting the code block of an inline
-    // call frame implies call frame reification.
-    asArguments(argumentsCell)->tearOff(exec, inlineCallFrame);
+    ASSERT_UNUSED(activationCell, !activationCell); // Currently, we don't inline functions with activations.
+    jsCast<Arguments*>(argumentsCell)->tearOff(exec, inlineCallFrame);
 }
 
 EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)

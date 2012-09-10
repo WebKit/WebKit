@@ -559,25 +559,23 @@ void JIT::emit_op_construct(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
-    unsigned activation = currentInstruction[1].u.operand;
-    unsigned arguments = currentInstruction[2].u.operand;
-    Jump activationCreated = branchTestPtr(NonZero, addressFor(activation));
-    Jump argumentsNotCreated = branchTestPtr(Zero, addressFor(arguments));
-    activationCreated.link(this);
+    int activation = currentInstruction[1].u.operand;
+    Jump activationNotCreated = branchTestPtr(Zero, addressFor(activation));
     JITStubCall stubCall(this, cti_op_tear_off_activation);
     stubCall.addArgument(activation, regT2);
-    stubCall.addArgument(unmodifiedArgumentsRegister(arguments), regT2);
     stubCall.call();
-    argumentsNotCreated.link(this);
+    activationNotCreated.link(this);
 }
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int activation = currentInstruction[2].u.operand;
 
     Jump argsNotCreated = branchTestPtr(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(dst))));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
     stubCall.addArgument(unmodifiedArgumentsRegister(dst), regT2);
+    stubCall.addArgument(activation, regT2);
     stubCall.call();
     argsNotCreated.link(this);
 }

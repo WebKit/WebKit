@@ -2311,20 +2311,8 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    CallFrame* callFrame = stackFrame.callFrame;
-    ASSERT(callFrame->codeBlock()->needsFullScopeChain());
-    JSValue activationValue = stackFrame.args[0].jsValue();
-    if (!activationValue) {
-        if (JSValue v = stackFrame.args[1].jsValue()) {
-            if (!callFrame->codeBlock()->isStrictMode())
-                asArguments(v)->tearOff(callFrame);
-        }
-        return;
-    }
-    JSActivation* activation = asActivation(stackFrame.args[0].jsValue());
-    activation->tearOff(*stackFrame.globalData);
-    if (JSValue v = stackFrame.args[1].jsValue())
-        asArguments(v)->didTearOffActivation(*stackFrame.globalData, activation);
+    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    jsCast<JSActivation*>(stackFrame.args[0].jsValue())->tearOff(*stackFrame.globalData);
 }
 
 DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
@@ -2332,8 +2320,13 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    ASSERT(callFrame->codeBlock()->usesArguments() && !callFrame->codeBlock()->needsFullScopeChain());
-    asArguments(stackFrame.args[0].jsValue())->tearOff(callFrame);
+    ASSERT(callFrame->codeBlock()->usesArguments());
+    Arguments* arguments = jsCast<Arguments*>(stackFrame.args[0].jsValue());
+    if (JSValue activationValue = stackFrame.args[1].jsValue()) {
+        arguments->didTearOffActivation(callFrame->globalData(), jsCast<JSActivation*>(activationValue));
+        return;
+    }
+    arguments->tearOff(callFrame);
 }
 
 DEFINE_STUB_FUNCTION(void, op_profile_will_call)
