@@ -1,3 +1,21 @@
+2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WK2 build fixes for MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=96248
+
+        Reviewed by Tor Arne Vestbø.
+
+        MSVC is picky when it comes to the use of forward declaration and the use of
+        such forward declared types in templates. In these instances inline functions were
+        passed parameters in RefPtrs that were only forward declared, but at compile time
+        MSVC wants to know what type it is in order to completely instantiate RefPtr (which
+        needs to call the type destructor for example). Therefore this patch resolves a couple
+        of forward declarations with direct header file inclusions.
+
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        * UIProcess/InspectorServer/WebSocketServerClient.h:
+        * UIProcess/qt/QtPageClient.h:
+
 2012-09-10  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] QWebKitTest should retrieve the viewport state from the PageViewportController

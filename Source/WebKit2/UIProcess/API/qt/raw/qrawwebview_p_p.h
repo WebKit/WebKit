@@ -25,8 +25,10 @@
 #ifndef qrawwebview_p_p_h
 #define qrawwebview_p_p_h
 
+#include "FindIndicator.h"
 #include "PageClient.h"
 #include "WebContextMenuProxy.h"
+#include "WebEditCommandProxy.h"
 #include "WebPopupMenuProxy.h"
 #include "qrawwebview_p.h"
 

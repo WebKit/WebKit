@@ -28,12 +28,9 @@
 
 #if ENABLE(INSPECTOR_SERVER)
 
+#include <WebCore/HTTPRequest.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class HTTPRequest;
-}
 
 namespace WebKit {
 
