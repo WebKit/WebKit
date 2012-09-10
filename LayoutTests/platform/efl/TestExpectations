@@ -977,12 +977,6 @@ BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 // ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
 
-// Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html = TEXT
-BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
-
 BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
 
 BUGWK93976 : fast/css-generated-content/quotes-lang.html = IMAGE

@@ -1,5 +1,23 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Several CSS 2.1 need rebaseline after bug 93148
+        https://bugs.webkit.org/show_bug.cgi?id=96241
+
+        Unreviewed EFL gardening.
+
+        Rebaseline several CSS 2.1 due to bug 93148.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/nested-layers-with-hover-expected.txt: Added.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Unskip 2 test cases fixed in r127987
         https://bugs.webkit.org/show_bug.cgi?id=96234
 
