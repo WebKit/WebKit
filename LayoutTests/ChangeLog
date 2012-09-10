@@ -1,5 +1,17 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Unskip 2 test cases fixed in r127987
+        https://bugs.webkit.org/show_bug.cgi?id=96234
+
+        Unreviewed EFL gardening.
+
+        Unskip 2 test cases that are now passing consistently
+        after r127987.
+
+        * platform/efl/TestExpectations:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Several test cases need rebaseline after bug 88171
         https://bugs.webkit.org/show_bug.cgi?id=96240
 

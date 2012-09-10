@@ -1059,7 +1059,3 @@ BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT
 
-// Fails after r127939.
-BUGWK96180 : fast/js/named-function-expression.html = TEXT
-BUGWK96180 : inspector/debugger/debugger-expand-scope.html = TEXT
-
