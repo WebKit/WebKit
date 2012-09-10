@@ -527,8 +527,8 @@ def armV7LowerMisplacedAddresses(list)
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "i"),
                                            annotation)
-            when "bbeq", "bbneq", "bba", "bbaeq", "bbb", "bbbeq", "btbo", "btbz", "btbnz", "tbz", "tbnz",
-                "tbo", "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq"
+            when "bbeq", "bbneq", "bba", "bbaeq", "bbb", "bbbeq", "btbz", "btbnz", "tbz", "tbnz",
+                "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "b"),
@@ -579,8 +579,8 @@ def armV7LowerRegisterReuse(list)
             case node.opcode
             when "cieq", "cineq", "cia", "ciaeq", "cib", "cibeq", "cigt", "cigteq", "cilt", "cilteq",
                 "cpeq", "cpneq", "cpa", "cpaeq", "cpb", "cpbeq", "cpgt", "cpgteq", "cplt", "cplteq",
-                "tio", "tis", "tiz", "tinz", "tbo", "tbs", "tbz", "tbnz", "tpo", "tps", "tpz", "tpnz",
-                "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq", "cbgt", "cbgteq", "cblt", "cblteq"
+                "tis", "tiz", "tinz", "tbs", "tbz", "tbnz", "tps", "tpz", "tpnz", "cbeq", "cbneq",
+                "cba", "cbaeq", "cbb", "cbbeq", "cbgt", "cbgteq", "cblt", "cblteq"
                 if node.operands.size == 2
                     if node.operands[0] == node.operands[1]
                         tmp = Tmp.new(node.codeOrigin, :gpr)
@@ -940,9 +940,6 @@ class Instruction
         when "btinz", "btpnz", "btbnz"
             emitArmV7Test(operands)
             $asm.puts "bne #{operands[-1].asmLabel}"
-        when "btio", "btpo", "btbo"
-            emitArmV7Test(operands)
-            $asm.puts "bvs #{operands[-1].asmLabel}"
         when "btis", "btps", "btbs"
             emitArmV7Test(operands)
             $asm.puts "bmi #{operands[-1].asmLabel}"
@@ -982,8 +979,6 @@ class Instruction
             emitArmV7Compare(operands, "lt")
         when "cilteq", "cplteq", "cblteq"
             emitArmV7Compare(operands, "le")
-        when "tio", "tbo", "tpo"
-            emitArmV7TestSet(operands, "vs")
         when "tis", "tbs", "tps"
             emitArmV7TestSet(operands, "mi")
         when "tiz", "tbz", "tpz"

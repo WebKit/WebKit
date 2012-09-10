@@ -835,10 +835,6 @@ class Instruction
             handleX86IntBranch("jl", :byte)
         when "bblteq"
             handleX86IntBranch("jlteq", :byte)
-        when "btio"
-            handleX86BranchTest("jo", :int)
-        when "btpo"
-            handleX86BranchTest("jo", :ptr)
         when "btis"
             handleX86BranchTest("js", :int)
         when "btps"
@@ -851,8 +847,6 @@ class Instruction
             handleX86BranchTest("jnz", :int)
         when "btpnz"
             handleX86BranchTest("jnz", :ptr)
-        when "btbo"
-            handleX86BranchTest("jo", :byte)
         when "btbs"
             handleX86BranchTest("js", :byte)
         when "btbz"
@@ -967,24 +961,18 @@ class Instruction
             handleX86IntCompareSet("setle", :byte)
         when "cplteq"
             handleX86IntCompareSet("setle", :ptr)
-        when "tio"
-            handleX86SetTest("seto", :int)
         when "tis"
             handleX86SetTest("sets", :int)
         when "tiz"
             handleX86SetTest("setz", :int)
         when "tinz"
             handleX86SetTest("setnz", :int)
-        when "tpo"
-            handleX86SetTest("seto", :ptr)
         when "tps"
             handleX86SetTest("sets", :ptr)
         when "tpz"
             handleX86SetTest("setz", :ptr)
         when "tpnz"
             handleX86SetTest("setnz", :ptr)
-        when "tbo"
-            handleX86SetTest("seto", :byte)
         when "tbs"
             handleX86SetTest("sets", :byte)
         when "tbz"
