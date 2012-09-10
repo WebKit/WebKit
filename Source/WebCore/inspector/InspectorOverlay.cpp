@@ -385,7 +385,7 @@ void InspectorOverlay::drawRectHighlight()
 
     Highlight highlight;
     buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, &highlight);
-    evaluateInOverlay("highlightRect", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
+    evaluateInOverlay("drawRectHighlight", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
 }
 
 void InspectorOverlay::drawPausedInDebuggerMessage()
