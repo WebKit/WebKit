@@ -1,3 +1,20 @@
+2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix build of WTR with Qt on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Windows loves to define min and max as macros, which beautifully
+        clashes in many places where min and max are used as variable or method
+        names. It can be convinced not to do this when min and max are already
+        define as macros (expanding to themselves). We have this kind of
+        workaround in config.h files all over WebKit and as it turns out when
+        building WTR with Qt on Windows we do end up with such a clash. Therefore
+        we need the same workaround.
+
+        * WebKitTestRunner/config.h:
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] New fast/forms/number/number-interactive-validation-required.html fails
