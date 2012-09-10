@@ -157,15 +157,6 @@ public:
     // FIXME: void* is a compile hack.
     void attachDebugger(void*);
 
-    // --- Static methods assume we are running VM in single thread, ---
-    // --- and there is only one VM instance.                        ---
-
-    // Returns the frame for the entered context. See comments in
-    static Frame* retrieveFrameForEnteredContext();
-
-    // Returns the frame for the current context. See comments in
-    static Frame* retrieveFrameForCurrentContext();
-
     // Returns V8 Context. If none exists, creates a new context.
     // It is potentially slow and consumes memory.
     static v8::Local<v8::Context> mainWorldContext(Frame*);

@@ -1,3 +1,17 @@
+2012-09-10  Adam Barth  <abarth@chromium.org>
+
+        [V8] Inline firstFrame and currentFrame into their unique callers
+        https://bugs.webkit.org/show_bug.cgi?id=96309
+
+        Reviewed by Eric Seidel.
+
+        This patch just lines these WebCore functions because we only call them
+        from here.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::frameForEnteredContext):
+        (WebKit::WebFrame::frameForCurrentContext):
+
 2012-09-10  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Add unused GestureTapCancel

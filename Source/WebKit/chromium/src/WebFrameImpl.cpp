@@ -571,16 +571,18 @@ int WebFrame::instanceCount()
 
 WebFrame* WebFrame::frameForEnteredContext()
 {
-    Frame* frame =
-        ScriptController::retrieveFrameForEnteredContext();
-    return WebFrameImpl::fromFrame(frame);
+    v8::Handle<v8::Context> context = v8::Context::GetEntered();
+    if (context.IsEmpty())
+        return 0;
+    return frameForContext(context);
 }
 
 WebFrame* WebFrame::frameForCurrentContext()
 {
-    Frame* frame =
-        ScriptController::retrieveFrameForCurrentContext();
-    return WebFrameImpl::fromFrame(frame);
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context.IsEmpty())
+        return 0;
+    return frameForContext(context);
 }
 
 #if WEBKIT_USING_V8

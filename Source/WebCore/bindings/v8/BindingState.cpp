@@ -66,22 +66,6 @@ DOMWindow* firstDOMWindow(BindingState*)
     return toDOMWindow(v8::Context::GetEntered());
 }
 
-Frame* firstFrame(BindingState*)
-{
-    v8::Handle<v8::Context> context = v8::Context::GetEntered();
-    if (context.IsEmpty())
-        return 0;
-    return toFrameIfNotDetached(context);
-}
-
-Frame* currentFrame(BindingState*)
-{
-    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
-    if (context.IsEmpty())
-        return 0;
-    return toFrameIfNotDetached(context);
-}
-
 Document* currentDocument(BindingState*)
 {
     DOMWindow* current = toDOMWindow(v8::Context::GetCurrent());

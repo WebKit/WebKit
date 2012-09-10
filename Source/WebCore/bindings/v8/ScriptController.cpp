@@ -92,16 +92,6 @@ void ScriptController::setFlags(const char* string, int length)
     v8::V8::SetFlagsFromString(string, length);
 }
 
-Frame* ScriptController::retrieveFrameForEnteredContext()
-{
-    return firstFrame(BindingState::instance());
-}
-
-Frame* ScriptController::retrieveFrameForCurrentContext()
-{
-    return currentFrame(BindingState::instance());
-}
-
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
     return !v8::Context::InContext() || BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame);
