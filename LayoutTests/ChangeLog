@@ -183,6 +183,12 @@
 
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
+        Unreviewed rebaselne for Chromium Gardening 
+
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.png:
+
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
         Rebaselined test for Chromium gardening
 
         Minor discrepancy in color does not affect semantics of test output.
