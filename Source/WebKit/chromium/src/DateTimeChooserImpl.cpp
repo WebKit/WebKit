@@ -121,9 +121,10 @@ void DateTimeChooserImpl::setValueAndClosePopup(int numValue, const String& stri
 }
 
 void DateTimeChooserImpl::didClosePopup()
-{    
-    m_client->didEndChooser();
+{
+    ASSERT(m_client);
     m_popup = 0;
+    m_client->didEndChooser();
 }
 
 } // namespace WebKit
