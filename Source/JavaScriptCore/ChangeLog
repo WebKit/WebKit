@@ -1,5 +1,17 @@
 2012-09-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows (32-bit) build.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_tear_off_arguments):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_tear_off_arguments): Get operands 1 and 2, not 1 and 1. :(
+
+        Also took this opportunity to rename to indicate that these values are
+        not destinations anymore.
+
+2012-09-10  Geoffrey Garen  <ggaren@apple.com>
+
         DFG misses arguments tear-off for function.arguments if 'arguments' is used
         https://bugs.webkit.org/show_bug.cgi?id=96227
 

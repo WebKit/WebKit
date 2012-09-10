@@ -712,12 +712,12 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int activation = currentInstruction[1].u.operand;
+    int arguments = currentInstruction[1].u.operand;
+    int activation = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(dst)), TrustedImm32(JSValue::EmptyValueTag));
+    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments)), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
-    stubCall.addArgument(unmodifiedArgumentsRegister(dst));
+    stubCall.addArgument(unmodifiedArgumentsRegister(arguments));
     stubCall.addArgument(activation);
     stubCall.call();
     argsNotCreated.link(this);

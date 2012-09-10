@@ -569,12 +569,12 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
+    int arguments = currentInstruction[1].u.operand;
     int activation = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branchTestPtr(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(dst))));
+    Jump argsNotCreated = branchTestPtr(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(arguments))));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
-    stubCall.addArgument(unmodifiedArgumentsRegister(dst), regT2);
+    stubCall.addArgument(unmodifiedArgumentsRegister(arguments), regT2);
     stubCall.addArgument(activation, regT2);
     stubCall.call();
     argsNotCreated.link(this);
