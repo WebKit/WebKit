@@ -4,6 +4,14 @@
 
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
+        Unreviewed update to Chromium TestExpectations
+
+        Skip fast/js/function-dot-arguments-identity.html on Chromium
+
+        * platform/chromium/TestExpectations:
+
+2012-09-10  Fady Samuel  <fsamuel@chromium.org>
+
         Skip video-donottrack.html on Chromium
 
         * platform/chromium/TestExpectations:

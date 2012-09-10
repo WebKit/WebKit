@@ -3630,3 +3630,5 @@ BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 
 BUGWK96041 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = PASS TEXT
+
+BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
