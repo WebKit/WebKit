@@ -105,10 +105,13 @@ static void launchXPCService(const ProcessLauncher::LaunchOptions&, const Enviro
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    CString clientIdentifier = bundleIdentifier ? String([[NSBundle mainBundle] bundleIdentifier]).utf8() : *_NSGetProgname();
+
     xpc_object_t bootStrapMessage = xpc_dictionary_create(0, 0, 0);
     xpc_dictionary_set_string(bootStrapMessage, "message-name", "bootstrap");
-    xpc_dictionary_set_string(bootStrapMessage, "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] executablePath] fileSystemRepresentation]);
     xpc_dictionary_set_mach_send(bootStrapMessage, "server-port", listeningPort);
+    xpc_dictionary_set_string(bootStrapMessage, "client-identifier", clientIdentifier.data());
 
     that->ref();
 

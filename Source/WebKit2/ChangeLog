@@ -1,3 +1,44 @@
+2012-09-09  Sam Weinig  <sam@webkit.org>
+
+        Simplify WebKit2 XPC service backend now that I know it doesn't need to soft link WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=96228
+
+        Reviewed by Dan Bernstein.
+
+        We soft link the non-XPC service WebProcess backend to the WebKit2 framework to
+        ensure that we can close all the necessary file descriptors at launch, without
+        fear that we will be closing one we open while initializing WebKit2 or one of its
+        dependencies. Since we don't need to close file descriptors in the XPC service 
+        backend, we don't need to soft link! While here, also do some cleanup and code
+        sharing.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::launchXPCService):
+        We don't need to send the framework executable path anymore (it was used for the
+        soft linking), but we do need the client identifier.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files. Link the XPC service to WebKit2.framework.
+
+        * WebKit2Service/MainMacService.mm:
+        Now that we don't have to soft link, just make this a stub that calls immediately
+        into the WebKit2 framework.
+        
+        * WebProcess/mac/WebProcessInitialization.h: Added.
+        * WebProcess/mac/WebProcessInitialization.mm: Added.
+        (WebKit::InitializeWebProcess):
+        Move initialization that is common between the XPC and non-XPC backends here.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        Remove XPC backend related code. Use new shared InitializeWebProcess function.
+
+        * WebProcess/mac/WebProcessXPCServiceMain.h: Added.
+        * WebProcess/mac/WebProcessXPCServiceMain.mm: Added.
+        (WebKit::WebKit2ServiceEventHandler):
+        (WebProcessXPCServiceMain):
+        Move XPC service backend initialization here.
+
 2012-09-09  Emil A Eklund  <eae@chromium.org>
 
         Rename Node::getRect/getPixelSnappedRect and remove ContainerNode::getRect

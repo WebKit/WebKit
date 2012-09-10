@@ -31,26 +31,20 @@
 #import "EnvironmentVariables.h"
 #import "StringUtilities.h"
 #import "WebProcess.h"
-#import "WebSystemInterface.h"
+#import "WebProcessInitialization.h"
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
 #import <objc/objc-auto.h>
-#import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <signal.h>
 #import <spawn.h>
 #import <stdio.h>
 #import <sysexits.h>
 #import <unistd.h>
-#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
-#import <wtf/text/StringBuilder.h>
-
-#if HAVE(XPC)
-#import <xpc/xpc.h>
-#endif
+#import <wtf/text/WTFString.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
@@ -66,47 +60,7 @@ extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, u
 
 using namespace WebCore;
 
-#if HAVE(XPC)
 namespace WebKit {
-int WebProcessMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort);
-}
-
-extern "C" WK_EXPORT int WebKitMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort);
-
-int WebKitMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort)
-{
-    ASSERT(!objc_collectingEnabled());
-
-    return WebKit::WebProcessMainXPC(xpcConnection, serverPort);
-}
-#endif
-
-namespace WebKit {
-
-#if HAVE(XPC)
-
-int WebProcessMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    InitWebCoreSystemInterface();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-    // FIXME: Make the shim work.
-    WebProcess::shared().initializeShim();
-    // FIXME: Pass the client identifier here.
-    WebProcess::shared().initializeSandbox(String());
-    WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort, xpcConnection), RunLoop::main());
-
-    WKAXRegisterRemoteApp();
-
-    [pool drain];
-
-    return 0;
-}
-#endif
 
 int WebProcessMain(const CommandLine& commandLine)
 {
@@ -211,6 +165,8 @@ int WebProcessMain(const CommandLine& commandLine)
     if (cfLocalization)
         WKSetDefaultLocalization(cfLocalization.get());
 
+    [pool drain];
+
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
     signal(SIGILL, _exit);
@@ -218,11 +174,6 @@ int WebProcessMain(const CommandLine& commandLine)
     signal(SIGBUS, _exit);
     signal(SIGSEGV, _exit);
 #endif
-
-    InitWebCoreSystemInterface();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
 
 #if USE(APPKIT)
      // Initialize AppKit.
@@ -233,13 +184,7 @@ int WebProcessMain(const CommandLine& commandLine)
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
-    WebProcess::shared().initializeShim();
-    WebProcess::shared().initializeSandbox(clientIdentifier);
-    WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
-
-    WKAXRegisterRemoteApp();
-
-    [pool drain];
+    InitializeWebProcess(clientIdentifier, CoreIPC::Connection::Identifier(serverPort));
 
     RunLoop::run();
 

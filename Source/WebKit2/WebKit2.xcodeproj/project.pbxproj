@@ -581,7 +581,6 @@
 		BC33DD681238464600360F3F /* WebNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33DD671238464600360F3F /* WebNumber.h */; };
 		BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */; };
 		BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
-		BC3DE46915A91763008D26FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC3DE47215A91764008D26FC /* MainMacService.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3DE47115A91764008D26FC /* MainMacService.mm */; };
 		BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4075D7124FF0270068F20A /* WKArray.cpp */; };
 		BC4075F4124FF0270068F20A /* WKArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4075D8124FF0270068F20A /* WKArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -796,6 +795,11 @@
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };
 		BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */; };
 		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
+		BCDC308715FD6A8B006B6695 /* WebProcessInitialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDC308515FD6A8B006B6695 /* WebProcessInitialization.mm */; };
+		BCDC308815FD6A8B006B6695 /* WebProcessInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDC308615FD6A8B006B6695 /* WebProcessInitialization.h */; };
+		BCDC308B15FD6CD1006B6695 /* WebProcessXPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCDC308915FD6CD1006B6695 /* WebProcessXPCServiceMain.mm */; };
+		BCDC308C15FD6CD1006B6695 /* WebProcessXPCServiceMain.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDC308A15FD6CD1006B6695 /* WebProcessXPCServiceMain.h */; };
+		BCDC308E15FDB9A7006B6695 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BCDDB317124EBD130048D13C /* WKBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB316124EBD130048D13C /* WKBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */; };
 		BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32C124EC2E10048D13C /* WKAPICast.h */; };
@@ -1873,6 +1877,10 @@
 		BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesStore.h; sourceTree = "<group>"; };
 		BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesStore.cpp; sourceTree = "<group>"; };
 		BCDB86C01200FB97007254BE /* WebURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURL.h; sourceTree = "<group>"; };
+		BCDC308515FD6A8B006B6695 /* WebProcessInitialization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessInitialization.mm; sourceTree = "<group>"; };
+		BCDC308615FD6A8B006B6695 /* WebProcessInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessInitialization.h; sourceTree = "<group>"; };
+		BCDC308915FD6CD1006B6695 /* WebProcessXPCServiceMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessXPCServiceMain.mm; sourceTree = "<group>"; };
+		BCDC308A15FD6CD1006B6695 /* WebProcessXPCServiceMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessXPCServiceMain.h; sourceTree = "<group>"; };
 		BCDDB316124EBD130048D13C /* WKBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBase.h; sourceTree = "<group>"; };
 		BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharedAPICast.h; sourceTree = "<group>"; };
 		BCDDB32C124EC2E10048D13C /* WKAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAPICast.h; sourceTree = "<group>"; };
@@ -2063,11 +2071,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BC3DE46315A91763008D26FC /* Frameworks */ = {
+		BCDC308D15FDB99A006B6695 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC3DE46915A91763008D26FC /* Foundation.framework in Frameworks */,
+				BCDC308E15FDB9A7006B6695 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2264,10 +2272,14 @@
 				512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */,
 				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
 				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
+				BCDC308615FD6A8B006B6695 /* WebProcessInitialization.h */,
+				BCDC308515FD6A8B006B6695 /* WebProcessInitialization.mm */,
 				BC3065C312592F8900E71278 /* WebProcessMac.mm */,
 				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
 				511F8A77138B460900A95F44 /* WebProcessShim.h */,
 				511F8A78138B460900A95F44 /* WebProcessShim.mm */,
+				BCDC308A15FD6CD1006B6695 /* WebProcessXPCServiceMain.h */,
+				BCDC308915FD6CD1006B6695 /* WebProcessXPCServiceMain.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4239,6 +4251,8 @@
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */,
 				BC59548915C7868500FD1E3E /* WebKit2.h in Headers */,
+				BCDC308815FD6A8B006B6695 /* WebProcessInitialization.h in Headers */,
+				BCDC308C15FD6CD1006B6695 /* WebProcessXPCServiceMain.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4331,7 +4345,7 @@
 			buildConfigurationList = BC3DE47615A91764008D26FC /* Build configuration list for PBXNativeTarget "WebKit2Service" */;
 			buildPhases = (
 				BC3DE46215A91763008D26FC /* Sources */,
-				BC3DE46315A91763008D26FC /* Frameworks */,
+				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
 			);
 			buildRules = (
@@ -5029,6 +5043,8 @@
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
 				3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */,
 				CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */,
+				BCDC308715FD6A8B006B6695 /* WebProcessInitialization.mm in Sources */,
+				BCDC308B15FD6CD1006B6695 /* WebProcessXPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

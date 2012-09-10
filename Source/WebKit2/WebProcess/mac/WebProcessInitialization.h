@@ -23,22 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AvailabilityMacros.h>
+#ifndef WebProcessInitialization_h
+#define WebProcessInitialization_h
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#include "Connection.h"
 
-#import "WebProcessXPCServiceMain.h"
+namespace WebKit {
 
-int main(int argc, char** argv)
-{
-    return WebProcessXPCServiceMain(argc, argv);
-}
+void InitializeWebProcess(const String& clientIdentifier, CoreIPC::Connection::Identifier connectionIdentifier);
 
-#else
+} // namespace WebKit
 
-int main(int argc, char** argv)
-{
-    return 0;
-}
-
-#endif
+#endif // WebProcessInitialization_h

@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AvailabilityMacros.h>
+#ifndef WebProcessXPCServiceMain_h
+#define WebProcessXPCServiceMain_h
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if HAVE(XPC)
 
-#import "WebProcessXPCServiceMain.h"
+#include "WKBase.h"
 
-int main(int argc, char** argv)
-{
-    return WebProcessXPCServiceMain(argc, argv);
-}
-
-#else
-
-int main(int argc, char** argv)
-{
-    return 0;
-}
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+WK_EXPORT int WebProcessXPCServiceMain(int argc, char** argv);
+
+#ifdef __cplusplus
+}; // extern "C"
+#endif
+
+#endif // HAVE(XPC)
+
+#endif // WebProcessXPCServiceMain_h

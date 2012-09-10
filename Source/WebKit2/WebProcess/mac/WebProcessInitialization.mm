@@ -23,22 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AvailabilityMacros.h>
+#import "config.h"
+#import "WebProcessInitialization.h"
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#import "WebProcess.h"
+#import "WebSystemInterface.h"
+#import <WebCore/RunLoop.h>
+#import <WebKitSystemInterface.h>
+#import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 
-#import "WebProcessXPCServiceMain.h"
+using namespace WebCore;
 
-int main(int argc, char** argv)
+namespace WebKit {
+
+void InitializeWebProcess(const String& clientIdentifier, CoreIPC::Connection::Identifier connectionIdentifier)
 {
-    return WebProcessXPCServiceMain(argc, argv);
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    InitWebCoreSystemInterface();
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
+    RunLoop::initializeMainRunLoop();
+
+    WebProcess::shared().initializeShim();
+    WebProcess::shared().initializeSandbox(clientIdentifier);
+    WebProcess::shared().initialize(connectionIdentifier, RunLoop::main());
+
+    WKAXRegisterRemoteApp();
+
+    [pool drain];
 }
 
-#else
-
-int main(int argc, char** argv)
-{
-    return 0;
-}
-
-#endif
+} // namespace WebKit
