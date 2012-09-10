@@ -1,5 +1,25 @@
 2012-09-10  Mike West  <mkwst@chromium.org>
 
+        CSP parsing doesn't seem treat as invalid policies with a non-ASCII path
+        https://bugs.webkit.org/show_bug.cgi?id=96061
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        (testPreescapedPolicy):
+        (test):
+        (testImpl):
+            To test non-ASCII characters, we need to ensure that we don't encode
+            them when testing.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-04-expected.txt:
+            Adding a warning for the policy here that contains an invalid
+            character.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii.html: Added.
+            Test paths with invalid characters.
+
+2012-09-10  Mike West  <mkwst@chromium.org>
+
         http/tests/security/contentSecurityPolicy/blob-urls-match-self.html fails on Windows port
         https://bugs.webkit.org/show_bug.cgi?id=96133
 

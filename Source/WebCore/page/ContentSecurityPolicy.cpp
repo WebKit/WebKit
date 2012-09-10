@@ -1110,8 +1110,10 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
     const UChar* valueBegin = position;
     skipWhile<isDirectiveValueCharacter>(position, end);
 
-    if (position != end)
+    if (position != end) {
+        m_policy->reportInvalidDirectiveValueCharacter(name, String(valueBegin, end - valueBegin));
         return false;
+    }
 
     // The directive-value may be empty.
     if (valueBegin == position)
@@ -1501,6 +1503,12 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
         message = "'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.\n";
     else
         message = makeString("Invalid plugin type in 'plugin-types' Content Security Policy directive: '", pluginType, "'.\n");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const
+{
+    String message = makeString("The value for Content Security Policy directive '", directiveName, "' contains an invalid character: '", value, "'. Non-whitespace characters outside ASCII 0x21-0x7E must be percent-encoded, as described in RFC 3986, section 2.1: http://tools.ietf.org/html/rfc3986#section-2.1.");
     logToConsole(message);
 }
 
