@@ -27,35 +27,52 @@
 #define SlotVisitor_h
 
 #include "CopiedSpace.h"
-#include "MarkStack.h"
+#include "HandleTypes.h"
 #include "MarkStackInlineMethods.h"
+
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 
-class Heap;
+class ConservativeRoots;
 class GCThreadSharedData;
+class Heap;
+template<typename T> class WriteBarrierBase;
+template<typename T> class JITWriteBarrier;
 
-class SlotVisitor : public MarkStack {
-    friend class HeapRootVisitor;
+class SlotVisitor {
+    WTF_MAKE_NONCOPYABLE(SlotVisitor);
+    friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
+
 public:
     SlotVisitor(GCThreadSharedData&);
+    ~SlotVisitor();
 
-    void donate()
-    {
-        ASSERT(m_isInParallelMode);
-        if (Options::numberOfGCMarkers() == 1)
-            return;
-        
-        donateKnownParallel();
-    }
+    void append(ConservativeRoots&);
     
+    template<typename T> void append(JITWriteBarrier<T>*);
+    template<typename T> void append(WriteBarrierBase<T>*);
+    void appendValues(WriteBarrierBase<Unknown>*, size_t count);
+    
+    template<typename T>
+    void appendUnbarrieredPointer(T**);
+    void appendUnbarrieredValue(JSValue*);
+    
+    void addOpaqueRoot(void*);
+    bool containsOpaqueRoot(void*);
+    int opaqueRootCount();
+
+    GCThreadSharedData& sharedData() { return m_shared; }
+    bool isEmpty() { return m_stack.isEmpty(); }
+
+    void setup();
+    void reset();
+
+    size_t visitCount() const { return m_visitCount; }
+
+    void donate();
     void drain();
-    
-    void donateAndDrain()
-    {
-        donate();
-        drain();
-    }
+    void donateAndDrain();
     
     enum SharedDrainMode { SlaveDrain, MasterDrain };
     void drainFromShared(SharedDrainMode);
@@ -78,19 +95,84 @@ public:
     
     void doneCopying(); 
         
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+    VTableSpectrum m_visitedTypeCounts;
+#endif
+
+    void addWeakReferenceHarvester(WeakReferenceHarvester*);
+    void addUnconditionalFinalizer(UnconditionalFinalizer*);
+
+#if ENABLE(OBJECT_MARK_LOGGING)
+    inline void resetChildCount() { m_logChildCount = 0; }
+    inline unsigned childCount() { return m_logChildCount; }
+    inline void incrementChildCount() { m_logChildCount++; }
+#endif
+
 private:
+    friend class ParallelModeEnabler;
+    
+    JS_EXPORT_PRIVATE static void validate(JSCell*);
+
+    void append(JSValue*);
+    void append(JSValue*, size_t count);
+    void append(JSCell**);
+
+    void internalAppend(JSCell*);
+    void internalAppend(JSValue);
+    void internalAppend(JSValue*);
+    
+    JS_EXPORT_PRIVATE void mergeOpaqueRoots();
+    void mergeOpaqueRootsIfNecessary();
+    void mergeOpaqueRootsIfProfitable();
+    
     void* allocateNewSpaceOrPin(void*, size_t);
     void* allocateNewSpaceSlow(size_t);
 
     void donateKnownParallel();
 
+    MarkStackArray m_stack;
+    HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+    
+    size_t m_visitCount;
+    bool m_isInParallelMode;
+    
+    GCThreadSharedData& m_shared;
+
+    bool m_shouldHashConst; // Local per-thread copy of shared flag for performance reasons
+    typedef HashMap<StringImpl*, JSValue> UniqueStringMap;
+    UniqueStringMap m_uniqueStrings;
+
+#if ENABLE(OBJECT_MARK_LOGGING)
+    unsigned m_logChildCount;
+#endif
+
     CopiedAllocator m_copiedAllocator;
+
+public:
+#if !ASSERT_DISABLED
+    bool m_isCheckingForDefaultMarkViolation;
+    bool m_isDraining;
+#endif
 };
 
-inline SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
-    : MarkStack(shared)
-{
-}
+class ParallelModeEnabler {
+public:
+    ParallelModeEnabler(SlotVisitor& stack)
+        : m_stack(stack)
+    {
+        ASSERT(!m_stack.m_isInParallelMode);
+        m_stack.m_isInParallelMode = true;
+    }
+    
+    ~ParallelModeEnabler()
+    {
+        ASSERT(m_stack.m_isInParallelMode);
+        m_stack.m_isInParallelMode = false;
+    }
+    
+private:
+    SlotVisitor& m_stack;
+};
 
 } // namespace JSC
 

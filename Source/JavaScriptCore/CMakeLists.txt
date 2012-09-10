@@ -119,6 +119,7 @@ SET(JavaScriptCore_SOURCES
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
     heap/MarkStack.cpp
+    heap/SlotVisitor.cpp
     heap/WeakSet.cpp
     heap/WeakHandleOwner.cpp
     heap/WeakBlock.cpp

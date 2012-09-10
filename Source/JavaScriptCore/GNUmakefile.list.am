@@ -266,6 +266,7 @@ javascriptcore_sources += \
     Source/JavaScriptCore/heap/HeapTimer.cpp \
 	Source/JavaScriptCore/heap/IncrementalSweeper.h \
 	Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
+    Source/JavaScriptCore/heap/SlotVisitor.cpp \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/SlotVisitorInlineMethods.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \

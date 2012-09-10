@@ -564,7 +564,7 @@ namespace JSC {
         return m_classInfo;
     }
 
-    ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
+    ALWAYS_INLINE void SlotVisitor::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         if (!cell)

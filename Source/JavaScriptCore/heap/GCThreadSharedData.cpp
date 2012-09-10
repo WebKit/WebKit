@@ -29,6 +29,7 @@
 #include "JSGlobalData.h"
 #include "MarkStack.h"
 #include "SlotVisitor.h"
+#include "SlotVisitorInlineMethods.h"
 #include <wtf/MainThread.h>
 
 namespace JSC {

@@ -29,7 +29,7 @@
 #if ENABLE(JIT)
 
 #include "MacroAssembler.h"
-#include "MarkStack.h"
+#include "SlotVisitor.h"
 #include "WriteBarrier.h"
 
 namespace JSC {
@@ -135,7 +135,7 @@ public:
     }
 };
 
-template<typename T> inline void MarkStack::append(JITWriteBarrier<T>* slot)
+template<typename T> inline void SlotVisitor::append(JITWriteBarrier<T>* slot)
 {
     internalAppend(slot->get());
 }

@@ -28,6 +28,7 @@
 
 #include <wtf/ASCIICType.h>
 #include "LinkBuffer.h"
+#include "Options.h"
 #include "Yarr.h"
 #include "YarrCanonicalizeUCS2.h"
 

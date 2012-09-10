@@ -27,10 +27,115 @@
 #define SlotVisitorInlineMethods_h
 
 #include "CopiedSpaceInlineMethods.h"
+#include "Options.h"
 #include "SlotVisitor.h"
 
 namespace JSC {
 
+ALWAYS_INLINE void SlotVisitor::append(JSValue* slot, size_t count)
+{
+    for (size_t i = 0; i < count; ++i) {
+        JSValue& value = slot[i];
+        internalAppend(value);
+    }
+}
+
+template<typename T>
+inline void SlotVisitor::appendUnbarrieredPointer(T** slot)
+{
+    ASSERT(slot);
+    JSCell* cell = *slot;
+    internalAppend(cell);
+}
+
+ALWAYS_INLINE void SlotVisitor::append(JSValue* slot)
+{
+    ASSERT(slot);
+    internalAppend(*slot);
+}
+
+ALWAYS_INLINE void SlotVisitor::appendUnbarrieredValue(JSValue* slot)
+{
+    ASSERT(slot);
+    internalAppend(*slot);
+}
+
+ALWAYS_INLINE void SlotVisitor::append(JSCell** slot)
+{
+    ASSERT(slot);
+    internalAppend(*slot);
+}
+
+ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue value)
+{
+    if (!value || !value.isCell())
+        return;
+    internalAppend(value.asCell());
+}
+
+inline void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
+{
+    m_shared.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
+}
+
+inline void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* unconditionalFinalizer)
+{
+    m_shared.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
+}
+
+inline void SlotVisitor::addOpaqueRoot(void* root)
+{
+#if ENABLE(PARALLEL_GC)
+    if (Options::numberOfGCMarkers() == 1) {
+        // Put directly into the shared HashSet.
+        m_shared.m_opaqueRoots.add(root);
+        return;
+    }
+    // Put into the local set, but merge with the shared one every once in
+    // a while to make sure that the local sets don't grow too large.
+    mergeOpaqueRootsIfProfitable();
+    m_opaqueRoots.add(root);
+#else
+    m_opaqueRoots.add(root);
+#endif
+}
+
+inline bool SlotVisitor::containsOpaqueRoot(void* root)
+{
+    ASSERT(!m_isInParallelMode);
+#if ENABLE(PARALLEL_GC)
+    ASSERT(m_opaqueRoots.isEmpty());
+    return m_shared.m_opaqueRoots.contains(root);
+#else
+    return m_opaqueRoots.contains(root);
+#endif
+}
+
+inline int SlotVisitor::opaqueRootCount()
+{
+    ASSERT(!m_isInParallelMode);
+#if ENABLE(PARALLEL_GC)
+    ASSERT(m_opaqueRoots.isEmpty());
+    return m_shared.m_opaqueRoots.size();
+#else
+    return m_opaqueRoots.size();
+#endif
+}
+
+inline void SlotVisitor::mergeOpaqueRootsIfNecessary()
+{
+    if (m_opaqueRoots.isEmpty())
+        return;
+    mergeOpaqueRoots();
+}
+    
+inline void SlotVisitor::mergeOpaqueRootsIfProfitable()
+{
+    if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold())
+        return;
+    mergeOpaqueRoots();
+}
+    
 ALWAYS_INLINE bool SlotVisitor::checkIfShouldCopyAndPinOtherwise(void* oldPtr, size_t bytes)
 {
     if (CopiedSpace::isOversize(bytes)) {
@@ -54,6 +159,21 @@ ALWAYS_INLINE void* SlotVisitor::allocateNewSpace(size_t bytes)
     ASSERT(result);
     return result;
 }       
+
+inline void SlotVisitor::donate()
+{
+    ASSERT(m_isInParallelMode);
+    if (Options::numberOfGCMarkers() == 1)
+        return;
+    
+    donateKnownParallel();
+}
+
+inline void SlotVisitor::donateAndDrain()
+{
+    donate();
+    drain();
+}
 
 } // namespace JSC
 

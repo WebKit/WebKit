@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "LinkBuffer.h"
+#include "Options.h"
 
 namespace JSC {
 

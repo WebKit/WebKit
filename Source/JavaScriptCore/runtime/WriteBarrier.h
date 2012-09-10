@@ -225,14 +225,14 @@ template <typename U, typename V> inline bool operator==(const WriteBarrierBase<
     return lhs.get() == rhs.get();
 }
 
-// MarkStack functions
+// SlotVisitor functions
 
-template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
+template<typename T> inline void SlotVisitor::append(WriteBarrierBase<T>* slot)
 {
     internalAppend(*slot->slot());
 }
 
-ALWAYS_INLINE void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
+ALWAYS_INLINE void SlotVisitor::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     append(barriers->slot(), count);
 }

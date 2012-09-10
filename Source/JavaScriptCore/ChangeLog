@@ -1,3 +1,110 @@
+2012-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Combine MarkStack and SlotVisitor into single class
+        https://bugs.webkit.org/show_bug.cgi?id=96043
+
+        Reviewed by Geoff Garen.
+
+        Move all of MarkStack into SlotVisitor. The remaining stuff in MarkStack.cpp actually has to do 
+        with MarkStack management/allocation. Cleaned up a few of the header files while I was at it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        * dfg/DFGCommon.h:
+        * heap/GCThreadSharedData.cpp:
+        * heap/GCThreadSharedData.h:
+        (GCThreadSharedData):
+        * heap/HeapRootVisitor.h:
+        * heap/MarkStack.cpp:
+        (JSC):
+        * heap/MarkStack.h:
+        (JSC):
+        (MarkStackSegment):
+        (JSC::MarkStackSegment::data):
+        (JSC::MarkStackSegment::capacityFromSize):
+        (JSC::MarkStackSegment::sizeFromCapacity):
+        (MarkStackSegmentAllocator):
+        (MarkStackArray):
+        * heap/MarkStackInlineMethods.h:
+        (JSC::MarkStackArray::postIncTop):
+        (JSC):
+        (JSC::MarkStackArray::preDecTop):
+        (JSC::MarkStackArray::setTopForFullSegment):
+        (JSC::MarkStackArray::setTopForEmptySegment):
+        (JSC::MarkStackArray::top):
+        (JSC::MarkStackArray::validatePrevious):
+        (JSC::MarkStackArray::append):
+        (JSC::MarkStackArray::canRemoveLast):
+        (JSC::MarkStackArray::removeLast):
+        (JSC::MarkStackArray::isEmpty):
+        (JSC::MarkStackArray::size):
+        * heap/SlotVisitor.cpp: Added.
+        (JSC):
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::~SlotVisitor):
+        (JSC::SlotVisitor::setup):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::append):
+        (JSC::visitChildren):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::SlotVisitor::startCopying):
+        (JSC::SlotVisitor::allocateNewSpaceSlow):
+        (JSC::SlotVisitor::allocateNewSpaceOrPin):
+        (JSC::JSString::tryHashConstLock):
+        (JSC::JSString::releaseHashConstLock):
+        (JSC::JSString::shouldTryHashConst):
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::copyAndAppend):
+        (JSC::SlotVisitor::doneCopying):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        (JSC::SlotVisitor::finalizeUnconditionalFinalizers):
+        (JSC::SlotVisitor::validate):
+        * heap/SlotVisitor.h:
+        (JSC):
+        (SlotVisitor):
+        (JSC::SlotVisitor::sharedData):
+        (JSC::SlotVisitor::isEmpty):
+        (JSC::SlotVisitor::visitCount):
+        (JSC::SlotVisitor::resetChildCount):
+        (JSC::SlotVisitor::childCount):
+        (JSC::SlotVisitor::incrementChildCount):
+        (ParallelModeEnabler):
+        (JSC::ParallelModeEnabler::ParallelModeEnabler):
+        (JSC::ParallelModeEnabler::~ParallelModeEnabler):
+        * heap/SlotVisitorInlineMethods.h:
+        (JSC::SlotVisitor::append):
+        (JSC):
+        (JSC::SlotVisitor::appendUnbarrieredPointer):
+        (JSC::SlotVisitor::appendUnbarrieredValue):
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::addWeakReferenceHarvester):
+        (JSC::SlotVisitor::addUnconditionalFinalizer):
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::opaqueRootCount):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfProfitable):
+        (JSC::SlotVisitor::donate):
+        (JSC::SlotVisitor::donateAndDrain):
+        * jit/JITWriteBarrier.h:
+        (JSC::SlotVisitor::append):
+        * jit/JumpReplacementWatchpoint.cpp:
+        * runtime/JSCell.h:
+        * runtime/Structure.h:
+        (JSC::SlotVisitor::internalAppend):
+        * runtime/WriteBarrier.h:
+        (JSC):
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendValues):
+        * yarr/YarrJIT.cpp:
+
 2012-09-10  Hojong Han  <hojong.han@samsung.com>
 
         [EFL] JIT memory usage is not retrieved

@@ -365,7 +365,7 @@ EXPORTS
     ?unlock@Mutex@WTF@@QAEXXZ
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
-    ?validate@MarkStack@JSC@@KAXPAVJSCell@2@@Z
+    ?validate@SlotVisitor@JSC@@CAXPAVJSCell@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z

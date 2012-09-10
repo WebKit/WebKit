@@ -45,6 +45,7 @@
 #include "LowLevelInterpreter.h"
 #include "MethodCallLinkStatus.h"
 #include "RepatchBuffer.h"
+#include "SlotVisitorInlineMethods.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>

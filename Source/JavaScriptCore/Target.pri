@@ -89,6 +89,7 @@ SOURCES += \
     heap/MarkedAllocator.cpp \
     heap/MarkedBlock.cpp \
     heap/MarkedSpace.cpp \
+    heap/SlotVisitor.cpp \
     heap/VTableSpectrum.cpp \
     heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \

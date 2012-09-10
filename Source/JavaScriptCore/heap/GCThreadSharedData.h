@@ -26,7 +26,12 @@
 #ifndef GCThreadSharedData_h
 #define GCThreadSharedData_h
 
+#include "ListableHandler.h"
 #include "MarkStack.h"
+#include "UnconditionalFinalizer.h"
+#include "WeakReferenceHarvester.h"
+#include <wtf/HashSet.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -48,7 +53,6 @@ public:
 #endif
     
 private:
-    friend class MarkStack;
     friend class SlotVisitor;
 
 #if ENABLE(PARALLEL_GC)
@@ -64,7 +68,7 @@ private:
     bool m_shouldHashConst;
 
     Vector<ThreadIdentifier> m_markingThreads;
-    Vector<MarkStack*> m_markingThreadsMarkStack;
+    Vector<SlotVisitor*> m_markingThreadsMarkStack;
     
     Mutex m_markingLock;
     ThreadCondition m_markingCondition;

@@ -31,94 +31,81 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void MarkStack::append(JSValue* slot, size_t count)
+inline size_t MarkStackArray::postIncTop()
 {
-    for (size_t i = 0; i < count; ++i) {
-        JSValue& value = slot[i];
-        internalAppend(value);
+    size_t result = m_top++;
+    ASSERT(result == m_topSegment->m_top++);
+    return result;
+}
+        
+inline size_t MarkStackArray::preDecTop()
+{
+    size_t result = --m_top;
+    ASSERT(result == --m_topSegment->m_top);
+    return result;
+}
+        
+inline void MarkStackArray::setTopForFullSegment()
+{
+    ASSERT(m_topSegment->m_top == m_segmentCapacity);
+    m_top = m_segmentCapacity;
+}
+
+inline void MarkStackArray::setTopForEmptySegment()
+{
+    ASSERT(!m_topSegment->m_top);
+    m_top = 0;
+}
+
+inline size_t MarkStackArray::top()
+{
+    ASSERT(m_top == m_topSegment->m_top);
+    return m_top;
+}
+
+#if ASSERT_DISABLED
+inline void MarkStackArray::validatePrevious() { }
+#else
+inline void MarkStackArray::validatePrevious()
+{
+    unsigned count = 0;
+    for (MarkStackSegment* current = m_topSegment->m_previous; current; current = current->m_previous)
+        count++;
+    ASSERT(count == m_numberOfPreviousSegments);
+}
+#endif
+
+inline void MarkStackArray::append(const JSCell* cell)
+{
+    if (m_top == m_segmentCapacity)
+        expand();
+    m_topSegment->data()[postIncTop()] = cell;
+}
+
+inline bool MarkStackArray::canRemoveLast()
+{
+    return !!m_top;
+}
+
+inline const JSCell* MarkStackArray::removeLast()
+{
+    return m_topSegment->data()[preDecTop()];
+}
+
+inline bool MarkStackArray::isEmpty()
+{
+    if (m_top)
+        return false;
+    if (m_topSegment->m_previous) {
+        ASSERT(m_topSegment->m_previous->m_top == m_segmentCapacity);
+        return false;
     }
+    return true;
 }
 
-template<typename T>
-inline void MarkStack::appendUnbarrieredPointer(T** slot)
+inline size_t MarkStackArray::size()
 {
-    ASSERT(slot);
-    JSCell* cell = *slot;
-    internalAppend(cell);
-}
-
-ALWAYS_INLINE void MarkStack::append(JSValue* slot)
-{
-    ASSERT(slot);
-    internalAppend(*slot);
-}
-
-ALWAYS_INLINE void MarkStack::appendUnbarrieredValue(JSValue* slot)
-{
-    ASSERT(slot);
-    internalAppend(*slot);
-}
-
-ALWAYS_INLINE void MarkStack::append(JSCell** slot)
-{
-    ASSERT(slot);
-    internalAppend(*slot);
-}
-
-ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
-{
-    if (!value || !value.isCell())
-        return;
-    internalAppend(value.asCell());
-}
-
-inline void MarkStack::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
-{
-    m_shared.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
-}
-
-inline void MarkStack::addUnconditionalFinalizer(UnconditionalFinalizer* unconditionalFinalizer)
-{
-    m_shared.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
-}
-
-inline void MarkStack::addOpaqueRoot(void* root)
-{
-#if ENABLE(PARALLEL_GC)
-    if (Options::numberOfGCMarkers() == 1) {
-        // Put directly into the shared HashSet.
-        m_shared.m_opaqueRoots.add(root);
-        return;
-    }
-    // Put into the local set, but merge with the shared one every once in
-    // a while to make sure that the local sets don't grow too large.
-    mergeOpaqueRootsIfProfitable();
-    m_opaqueRoots.add(root);
-#else
-    m_opaqueRoots.add(root);
-#endif
-}
-
-inline bool MarkStack::containsOpaqueRoot(void* root)
-{
-    ASSERT(!m_isInParallelMode);
-#if ENABLE(PARALLEL_GC)
-    ASSERT(m_opaqueRoots.isEmpty());
-    return m_shared.m_opaqueRoots.contains(root);
-#else
-    return m_opaqueRoots.contains(root);
-#endif
-}
-
-inline int MarkStack::opaqueRootCount()
-{
-    ASSERT(!m_isInParallelMode);
-#if ENABLE(PARALLEL_GC)
-    ASSERT(m_opaqueRoots.isEmpty());
-    return m_shared.m_opaqueRoots.size();
-#else
-    return m_opaqueRoots.size();
-#endif
+    return m_top + m_segmentCapacity * m_numberOfPreviousSegments;
 }
 
 } // namespace JSC
