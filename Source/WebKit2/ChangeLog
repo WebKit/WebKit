@@ -1,3 +1,33 @@
+2012-09-10  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Add an API to open a page in same process
+        https://bugs.webkit.org/show_bug.cgi?id=96306
+
+        Reviewed by Anders Carlsson.
+
+        The name "related" inspired by <http://wiki.whatwg.org/wiki/Links_to_Unrelated_Browsing_Contexts>.
+
+        * UIProcess/API/mac/WKView.h: Added an API. It's unwieldy, but I blame
+        WKBrowsingContextGroup, not the related view.
+
+        * UIProcess/API/mac/WKViewPrivate.h: Matching SPI for clients that mostly use
+        C APIs.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:]): Use new back-end
+        signature.
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:relatedToView:]):
+        Get page from WKView, and call back-end.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Reimplement existing method
+        by calling new, more powerful one.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]): Just one change,
+        pass relatedPage to the context.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::createWebPage): If related page
+        is not null, use its process.
+
+        * UIProcess/WebContext.h: (WebContext): Updated createWebPage signature.
+
 2012-09-10  Brady Eidson  <beidson@apple.com>
 
         Javascript in foreground tabs should not wait synchronously for plug-ins to load
