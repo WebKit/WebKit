@@ -48,7 +48,7 @@ public:
 
 struct CCRenderPassSize {
     // If you add a new field to this class, make sure to add it to the copy() tests.
-    int m_id;
+    CCRenderPass::Id m_id;
     CCQuadList m_quadList;
     CCSharedQuadStateList m_sharedQuadStateList;
     WebKit::WebTransformationMatrix m_transformToRootTarget;

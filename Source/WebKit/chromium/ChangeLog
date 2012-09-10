@@ -1,3 +1,12 @@
+2012-09-09  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed gardening after r127907
+
+        Fix CCRenderPassTest::copyShouldBeIdenticalExceptIdAndQuads
+
+        * tests/CCRenderPassTest.cpp:
+        (CCRenderPassSize): Changed type of m_id
+
 2012-09-09  Emil A Eklund  <eae@chromium.org>
 
         Rename Node::getRect/getPixelSnappedRect and remove ContainerNode::getRect
