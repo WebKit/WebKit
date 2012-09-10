@@ -1,3 +1,15 @@
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip 3 spatial navigation test cases failing after r128006
+        https://bugs.webkit.org/show_bug.cgi?id=96233
+
+        Unreviewed EFL gardening.
+
+        Mark 3 spatial navigation test cases as expected to fail due
+        to a regression caused by r128006.
+
+        * platform/efl/TestExpectations:
+
 2012-09-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
