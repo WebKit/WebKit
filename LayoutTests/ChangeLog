@@ -1,3 +1,10 @@
+2012-09-10  Ojan Vafai  <ojan@chromium.org>
+
+        Update the css3/filters test expectations to match the bots.
+        90+ of these tests never failed, so adding the whole css3/filters
+        directory was incorrect.
+        * platform/chromium/TestExpectations:
+
 2012-09-10  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed fix of webkit-lint for Chromium gardening

@@ -2491,7 +2491,14 @@ BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html
 BUGWK74137 WIN LINUX ANDROID LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
 
 // CSS3 filters needs rebaselines on windows after 94372
-BUGWK82783 WIN : css3/filters/ = PASS IMAGE
+BUGWK82783 WIN : css3/filters/filter-change-repaint.html = IMAGE
+BUGWK82783 WIN : css3/filters/filter-change-repaint-composited.html = IMAGE
+BUGWK82783 WIN : css3/filters/filter-repaint-composited-fallback-crash.html = IMAGE
+BUGWK82783 WIN : css3/filters/filter-repaint-composited-fallback.html = IMAGE
+BUGWK82783 WIN : css3/filters/filter-repaint-child-layers.html = IMAGE
+BUGWK82783 WIN : css3/filters/effect-brightness.html = IMAGE
+BUGWK82783 WIN : css3/filters/crash-hw-sw-switch.html = IMAGE
+BUGWK82783 WIN : css3/filters/effect-brightness-clamping.html = IMAGE
 
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
@@ -3436,16 +3443,16 @@ BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
 // Following tests need baselines on Win and Linux 
-BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-color-matrix.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-color-matrix.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-color-check.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-parameters.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = IMAGE
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
 
 // Flaky
 BUGWK95246 : http/tests/security/mixedContent/filesystem-url-in-iframe.html = PASS TEXT
