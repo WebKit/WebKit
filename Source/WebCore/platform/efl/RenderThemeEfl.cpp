@@ -878,7 +878,9 @@ void RenderThemeEfl::adjustButtonStyle(StyleResolver* styleResolver, RenderStyle
         return;
     }
 
-    adjustSizeConstraints(style, Button);
+    // adjustSizeConstrains can make SquareButtonPart's size wrong (by adjusting paddings), so call it only for PushButtonPart and ButtonPart
+    if (style->appearance() == PushButtonPart || style->appearance() == ButtonPart)
+        adjustSizeConstraints(style, Button);
 }
 
 bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
