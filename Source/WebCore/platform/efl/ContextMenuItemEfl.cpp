@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2011-2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 
 #include "ContextMenuItem.h"
 
+#include "ContextMenu.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -121,15 +122,21 @@ bool ContextMenuItem::enabled() const
     return m_platformDescription.enabled;
 }
 
-void ContextMenuItem::setSubMenu(ContextMenu*)
+void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-    notImplemented();
+    m_platformDescription.subMenuItems = *menu->platformDescription();
 }
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
-{                                                                                       
-    return 0;
-}  
+{
+    return &m_platformDescription.subMenuItems;
+}
+
+void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>& items)
+{
+    m_platformDescription.subMenuItems = items;
+}
+
 #endif
 }
 #endif // ENABLE(CONTEXT_MENUS)
