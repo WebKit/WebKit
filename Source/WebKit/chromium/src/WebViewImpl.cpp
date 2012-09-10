@@ -711,9 +711,10 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         hideSelectPopup();
         ASSERT(!m_selectPopup);
 
-        if (!event.boundingBox.isEmpty()) {
+        if (event.data.tap.width > 0) {
+            IntRect boundingBox(event.x - event.data.tap.width / 2, event.y - event.data.tap.height / 2, event.data.tap.width, event.data.tap.height);
             Vector<IntRect> goodTargets;
-            findGoodTouchTargets(event.boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
+            findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
             if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets))

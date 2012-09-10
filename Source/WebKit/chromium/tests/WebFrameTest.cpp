@@ -1276,7 +1276,8 @@ static WebGestureEvent fatTap(int x, int y)
     event.type = WebInputEvent::GestureTap;
     event.x = x;
     event.y = y;
-    event.boundingBox = WebCore::IntRect(x - 25, y - 25, 50, 50);
+    event.data.tap.width = 50;
+    event.data.tap.height = 50;
     return event;
 }
 
