@@ -37,7 +37,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -681,10 +680,8 @@ Decimal Decimal::floor() const
 
 Decimal Decimal::fromDouble(double doubleValue)
 {
-    if (isfinite(doubleValue)) {
-        NumberToStringBuffer buffer;
-        return fromString(numberToString(doubleValue, buffer));
-    }
+    if (isfinite(doubleValue))
+        return fromString(String::numberToStringECMAScript(doubleValue));
 
     if (isinf(doubleValue))
         return infinity(doubleValue < 0 ? Negative : Positive);

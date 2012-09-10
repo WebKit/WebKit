@@ -28,7 +28,6 @@
 #include "Decimal.h"
 #include <limits>
 #include <wtf/MathExtras.h>
-#include <wtf/dtoa.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -87,8 +86,7 @@ String serializeForNumberType(double number)
 {
     // According to HTML5, "the best representation of the number n as a floating
     // point number" is a string produced by applying ToString() to n.
-    NumberToStringBuffer buffer;
-    return String(numberToString(number, buffer));
+    return String::numberToStringECMAScript(number);
 }
 
 Decimal parseToDecimalForNumberType(const String& string, const Decimal& fallbackValue)
