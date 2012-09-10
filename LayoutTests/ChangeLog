@@ -1,5 +1,18 @@
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Unskip fast/forms/validation-message-in-relative-body.html
+        https://bugs.webkit.org/show_bug.cgi?id=96265
+
+        Unreviewed EFL gardening.
+
+        Unskip fast/forms/validation-message-in-relative-body.html as
+        it is passing after r128030. The test required interactive
+        form validation setting to be enabled in WebKitTestRunner.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Create a toggle button for closed captions
         https://bugs.webkit.org/show_bug.cgi?id=96259
 

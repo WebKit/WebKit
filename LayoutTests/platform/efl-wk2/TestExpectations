@@ -199,7 +199,6 @@ BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
 BUGWKEFL : fast/forms/legend-access-key.html = TEXT
 BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
-BUGWKEFL : fast/forms/validation-message-in-relative-body.html = TEXT
 BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
