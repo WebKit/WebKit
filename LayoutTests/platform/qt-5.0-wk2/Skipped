@@ -498,8 +498,3 @@ http/tests/security/cross-origin-plugin.html
 
 # ENABLE(OVERFLOW_SCROLLING) is disabled (not enabled)
 compositing/overflow/overflow-auto-with-touch-toggle.html
-
-# [Qt][WK2] REGRESSION(r127861): It made one test fail and one test crash
-# https://bugs.webkit.org/show_bug.cgi?id=96243
-fast/events/mouse-click-events.html started
-scrollbars/scrollbar-middleclick-nopaste.html
