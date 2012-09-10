@@ -1,3 +1,17 @@
+2012-09-10  Genevieve Mak  <gmak@rim.com>
+
+        Change -data-blackberry-webworks-context to -data-webworks-context
+        because not all webworks apps are blackberry apps.
+        https://bugs.webkit.org/show_bug.cgi?id=96297
+
+        Reviewed by Antonio Gomes.
+
+        PR #193726
+        Rubber Stamped interally by Mike Fenton.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::webWorksContext):
+
 2012-09-09  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Fix flicker due to introduction of the fence extension.

@@ -121,7 +121,7 @@ WTF::String webWorksContext(const WebCore::Element* element)
     if (!element)
         return WTF::String();
 
-    DEFINE_STATIC_LOCAL(QualifiedName, webworksContextAttr, (nullAtom, "data-blackberry-webworks-context", nullAtom));
+    DEFINE_STATIC_LOCAL(QualifiedName, webworksContextAttr, (nullAtom, "data-webworks-context", nullAtom));
     if (element->fastHasAttribute(webworksContextAttr))
         return element->fastGetAttribute(webworksContextAttr);
 
