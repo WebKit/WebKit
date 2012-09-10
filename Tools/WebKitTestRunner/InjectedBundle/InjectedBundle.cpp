@@ -244,6 +244,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
     m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
+    m_testRunner->setUserStyleSheetEnabled(false);
 
     page()->prepare();
 

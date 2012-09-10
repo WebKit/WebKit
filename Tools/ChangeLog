@@ -1,3 +1,15 @@
+2012-09-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] User style sheet location should be reset before each test
+        https://bugs.webkit.org/show_bug.cgi?id=96262
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        User style sheet location is reset before each test now.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2012-09-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix build of WTR with Qt on Windows
