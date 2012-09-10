@@ -1071,6 +1071,9 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
 {
     if (!rules)
         return;
+
+    TreeScope* treeScope = m_element->treeScope();
+
     // In some cases we may end up looking up style for random elements in the middle of a recursive tree resolve.
     // Ancestor identifier filter won't be up-to-date in that case and we can't use the fast path.
     bool canUseFastReject = m_checker.parentStackIsConsistent(m_parentNode);
@@ -1093,7 +1096,6 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             // b) the tree scope allows author rules
             // c) the rules comes from a scoped style sheet within the same tree scope
             // d) the rule contains shadow-ID pseudo elements
-            TreeScope* treeScope = m_element->treeScope();
             if (!MatchingUARulesScope::isMatchingUARules()
                 && !treeScope->applyAuthorStyles()
 #if ENABLE(STYLE_SCOPED)
