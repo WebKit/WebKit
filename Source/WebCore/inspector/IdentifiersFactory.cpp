@@ -56,8 +56,8 @@ String IdentifiersFactory::requestId(unsigned long identifier)
 String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
 {
     StringBuilder builder;
-    builder.append(String::number(s_processId));
-    builder.append(".");
+    builder.appendNumber(s_processId);
+    builder.append('.');
     builder.append(id);
     return builder.toString();
 }

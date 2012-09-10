@@ -472,8 +472,8 @@ String SecurityOrigin::toRawString() const
     result.append(m_host);
 
     if (m_port) {
-        result.append(":");
-        result.append(String::number(m_port));
+        result.append(':');
+        result.appendNumber(m_port);
     }
 
     return result.toString();

@@ -43,10 +43,10 @@ FontFeatureValue::FontFeatureValue(const String& tag, int value)
 String FontFeatureValue::customCssText() const
 {
     StringBuilder builder;
-    builder.append("'");
+    builder.append('\'');
     builder.append(m_tag);
-    builder.append("' ");
-    builder.append(String::number(m_value));
+    builder.appendLiteral("' ");
+    builder.appendNumber(m_value);
     return builder.toString();
 }
 

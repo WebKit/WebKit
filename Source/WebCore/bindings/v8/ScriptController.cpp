@@ -220,7 +220,7 @@ static inline String resourceString(const v8::Handle<v8::Function> function)
     StringBuilder builder;
     builder.append(resourceName);
     builder.append(':');
-    builder.append(String::number(lineNumber));
+    builder.appendNumber(lineNumber);
     return builder.toString();
 }
 

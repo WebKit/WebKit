@@ -164,7 +164,7 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
     }
 
     name.appendLiteral("/<!--frame");
-    name.append(String::number(childCount()));
+    name.appendNumber(childCount());
     name.appendLiteral("-->-->");
 
     return name.toAtomicString();

@@ -52,7 +52,7 @@ static void appendProxyServerString(StringBuilder& builder, const ProxyServer& p
 
     builder.append(':');
     ASSERT(proxyServer.port() != -1);
-    builder.append(String::number(proxyServer.port()));
+    builder.appendNumber(proxyServer.port());
 }
 
 String toString(const Vector<ProxyServer>& proxyServers)

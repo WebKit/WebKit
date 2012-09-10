@@ -85,7 +85,7 @@ static String hostName(const KURL& url, bool secure)
     builder.append(url.host().lower());
     if (url.port() && ((!secure && url.port() != 80) || (secure && url.port() != 443))) {
         builder.append(':');
-        builder.append(String::number(url.port()));
+        builder.appendNumber(url.port());
     }
     return builder.toString();
 }

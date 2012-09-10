@@ -42,25 +42,37 @@ TextStream& TextStream::operator<<(bool b)
 
 TextStream& TextStream::operator<<(int i)
 {
-    m_text.append(String::number(i));
+    m_text.appendNumber(i);
     return *this;
 }
 
 TextStream& TextStream::operator<<(unsigned i)
 {
-    m_text.append(String::number(i));
+    m_text.appendNumber(i);
     return *this;
 }
 
 TextStream& TextStream::operator<<(long i)
 {
-    m_text.append(String::number(i));
+    m_text.appendNumber(i);
     return *this;
 }
 
 TextStream& TextStream::operator<<(unsigned long i)
 {
-    m_text.append(String::number(i));
+    m_text.appendNumber(i);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(long long i)
+{
+    m_text.appendNumber(i);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(unsigned long long i)
+{
+    m_text.appendNumber(i);
     return *this;
 }
 
@@ -101,20 +113,5 @@ String TextStream::release()
     m_text.clear();
     return result;
 }
-
-#if OS(WINDOWS) && CPU(X86_64)
-TextStream& TextStream::operator<<(__int64 i)
-{
-    char buffer[printBufferSize];
-    snprintf(buffer, sizeof(buffer) - 1, "%I64i", i);
-    return *this << buffer;
-}
-TextStream& TextStream::operator<<(unsigned __int64 i)
-{
-    char buffer[printBufferSize];
-    snprintf(buffer, sizeof(buffer) - 1, "%I64u", i);
-    return *this << buffer;
-}
-#endif
 
 }

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "StringBuilder.h"
 
+#include "IntegerToStringConversion.h"
 #include "WTFString.h"
 
 namespace WTF {
@@ -284,6 +285,36 @@ void StringBuilder::append(const LChar* characters, unsigned length)
         while (characters < end)
             *(dest++) = *(characters++);
     }
+}
+
+void StringBuilder::appendNumber(int number)
+{
+    numberToStringSigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(unsigned int number)
+{
+    numberToStringUnsigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(long number)
+{
+    numberToStringSigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(unsigned long number)
+{
+    numberToStringUnsigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(long long number)
+{
+    numberToStringSigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(unsigned long long number)
+{
+    numberToStringUnsigned<StringBuilder>(number, this);
 }
 
 bool StringBuilder::canShrink() const

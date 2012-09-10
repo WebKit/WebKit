@@ -358,8 +358,8 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
 
     StringBuilder builder;
     builder.append(signature);
-    builder.append(" #");
-    builder.append(String::number(nextIndex));
+    builder.appendLiteral(" #");
+    builder.appendNumber(nextIndex);
     AtomicString formKey = builder.toAtomicString();
     m_formToKeyMap.add(form, formKey);
     return formKey;

@@ -92,7 +92,7 @@ namespace JSC {
                 traceBuild.append(sourceURL);
                 if (line > -1) {
                     traceBuild.append(':');
-                    traceBuild.append(String::number(line));
+                    traceBuild.appendNumber(line);
                 }
             }
             return traceBuild.toString().impl();

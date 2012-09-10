@@ -1072,13 +1072,13 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
 {
     StringBuilder stringBuilder;
     stringBuilder.append(weekdayName[dayOfWeek]);
-    stringBuilder.append(", ");
-    stringBuilder.append(String::number(day));
-    stringBuilder.append(" ");
+    stringBuilder.appendLiteral(", ");
+    stringBuilder.appendNumber(day);
+    stringBuilder.append(' ');
     stringBuilder.append(monthName[month]);
-    stringBuilder.append(" ");
-    stringBuilder.append(String::number(year));
-    stringBuilder.append(" ");
+    stringBuilder.append(' ');
+    stringBuilder.appendNumber(year);
+    stringBuilder.append(' ');
 
     stringBuilder.append(twoDigitStringFromNumber(hours));
     stringBuilder.append(':');
@@ -1087,7 +1087,7 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     stringBuilder.append(twoDigitStringFromNumber(seconds));
     stringBuilder.append(' ');
 
-    stringBuilder.append(utcOffset > 0 ? "+" : "-");
+    stringBuilder.append(utcOffset > 0 ? '+' : '-');
     int absoluteUTCOffset = abs(utcOffset);
     stringBuilder.append(twoDigitStringFromNumber(absoluteUTCOffset / 60));
     stringBuilder.append(twoDigitStringFromNumber(absoluteUTCOffset % 60));

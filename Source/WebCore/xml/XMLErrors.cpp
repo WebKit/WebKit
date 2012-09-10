@@ -79,11 +79,11 @@ void XMLErrors::appendErrorMessage(const String& typeString, TextPosition positi
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
     m_errorMessages.append(typeString);
-    m_errorMessages.append(" on line ");
-    m_errorMessages.append(String::number(position.m_line.oneBasedInt()));
-    m_errorMessages.append(" at column ");
-    m_errorMessages.append(String::number(position.m_column.oneBasedInt()));
-    m_errorMessages.append(": ");
+    m_errorMessages.appendLiteral(" on line ");
+    m_errorMessages.appendNumber(position.m_line.oneBasedInt());
+    m_errorMessages.appendLiteral(" at column ");
+    m_errorMessages.appendNumber(position.m_column.oneBasedInt());
+    m_errorMessages.appendLiteral(": ");
     m_errorMessages.append(message);
 }
 

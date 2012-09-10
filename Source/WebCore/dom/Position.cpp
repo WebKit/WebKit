@@ -1321,7 +1321,7 @@ void Position::formatForDebugger(char* buffer, unsigned length) const
     else {
         char s[1024];
         result.appendLiteral("offset ");
-        result.append(String::number(m_offset));
+        result.appendNumber(m_offset);
         result.appendLiteral(" of ");
         deprecatedNode()->formatForDebugger(s, sizeof(s));
         result.append(s);

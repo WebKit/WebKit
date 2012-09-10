@@ -145,9 +145,9 @@ static void appendServerMapMousePosition(StringBuilder& url, Event* event)
     int x = absolutePosition.x();
     int y = absolutePosition.y();
     url.append('?');
-    url.append(String::number(x));
+    url.appendNumber(x);
     url.append(',');
-    url.append(String::number(y));
+    url.appendNumber(y);
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* event)

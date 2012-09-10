@@ -809,7 +809,7 @@ static String nodePosition(Node* node)
                 result.append('}');
             } else {
                 result.appendLiteral("child ");
-                result.append(String::number(n->nodeIndex()));
+                result.appendNumber(n->nodeIndex());
                 result.appendLiteral(" {");
                 result.append(getTagName(n));
                 result.append('}');

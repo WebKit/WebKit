@@ -2001,7 +2001,7 @@ String CanvasRenderingContext2D::font() const
     if (fontDescription.smallCaps() == FontSmallCapsOn)
         serializedFont.appendLiteral("small-caps ");
 
-    serializedFont.append(String::number(fontDescription.computedPixelSize()));
+    serializedFont.appendNumber(fontDescription.computedPixelSize());
     serializedFont.appendLiteral("px");
 
     const FontFamily& firstFontFamily = fontDescription.family();

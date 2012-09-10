@@ -124,7 +124,7 @@ public:
         } else
             append(&c, 1);
     }
-    
+
     void append(char c)
     {
         append(static_cast<LChar>(c));
@@ -132,6 +132,13 @@ public:
 
     template<unsigned charactersCount>
     ALWAYS_INLINE void appendLiteral(const char (&characters)[charactersCount]) { append(characters, charactersCount - 1); }
+
+    WTF_EXPORT_PRIVATE void appendNumber(int);
+    WTF_EXPORT_PRIVATE void appendNumber(unsigned int);
+    WTF_EXPORT_PRIVATE void appendNumber(long);
+    WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
+    WTF_EXPORT_PRIVATE void appendNumber(long long);
+    WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
 
     String toString()
     {

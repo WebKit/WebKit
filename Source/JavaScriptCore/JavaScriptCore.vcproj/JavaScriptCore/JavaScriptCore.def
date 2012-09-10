@@ -66,6 +66,12 @@ EXPORTS
     ?allocateSlowCase@MarkedAllocator@JSC@@AAEPAXXZ
     ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
+    ?appendNumber@StringBuilder@WTF@@QAEXH@Z
+    ?appendNumber@StringBuilder@WTF@@QAEXI@Z
+    ?appendNumber@StringBuilder@WTF@@QAEXJ@Z
+    ?appendNumber@StringBuilder@WTF@@QAEXK@Z
+    ?appendNumber@StringBuilder@WTF@@QAEX_J@Z
+    ?appendNumber@StringBuilder@WTF@@QAEX_K@Z
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?base64Decode@WTF@@YA_NABVString@1@AAV?$Vector@D$0A@@1@W4Base64DecodePolicy@1@@Z
     ?base64Encode@WTF@@YA?AVString@1@PBDIW4Base64EncodePolicy@1@@Z

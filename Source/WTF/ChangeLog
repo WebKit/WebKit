@@ -1,5 +1,21 @@
 2012-09-09  Patrick Gansterer  <paroga@webkit.org>
 
+        Add StringBuilder::appendNumber() and use it
+        https://bugs.webkit.org/show_bug.cgi?id=96030
+
+        Reviewed by Eric Seidel.
+
+        Also fix a bunch of append() vs. appendLiteral() issues in the surrounding code.
+
+        * wtf/DateMath.cpp:
+        (WTF::makeRFC2822DateString):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendNumber):
+        * wtf/text/StringBuilder.h:
+        (StringBuilder):
+
+2012-09-09  Patrick Gansterer  <paroga@webkit.org>
+
         Make the String initialization on the function side of String::number()
         https://bugs.webkit.org/show_bug.cgi?id=95940
 
