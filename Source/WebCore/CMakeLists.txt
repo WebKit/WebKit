@@ -2015,6 +2015,9 @@ SET(WebCore_SOURCES
     rendering/BidiRun.cpp
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
+    rendering/ExclusionInterval.cpp
+    rendering/ExclusionRectangle.cpp
+    rendering/ExclusionShape.cpp
     rendering/FilterEffectRenderer.cpp
     rendering/FixedTableLayout.cpp
     rendering/FlowThreadController.cpp

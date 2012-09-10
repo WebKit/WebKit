@@ -32,7 +32,10 @@
 
 #if ENABLE(CSS_EXCLUSIONS)
 
+#include "ExclusionShape.h"
+#include "FloatRect.h"
 #include "LayoutTypesInlineMethods.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -64,14 +67,18 @@ public:
     static void removeWrapShapeInfoForRenderBlock(const RenderBlock*);
     static bool isWrapShapeInfoEnabledForRenderBlock(const RenderBlock*);
 
-    LayoutUnit shapeTop() const { return m_shapeTop; }
+    LayoutUnit shapeLogicalTop() const 
+    { 
+        ASSERT(m_shape);
+        return m_shape->shapeLogicalBoundingBox().y();
+    }
     bool hasSegments() const;
     const SegmentList& segments() const
     {
         ASSERT(hasSegments());
         return m_segments;
     }
-    bool computeSegmentsForLine(LayoutUnit);
+    bool computeSegmentsForLine(LayoutUnit lineTop);
     LineState lineState() const;
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
     void dirtyWrapShapeSize() { m_wrapShapeSizeDirty = true; }
@@ -80,10 +87,7 @@ private:
     WrapShapeInfo(RenderBlock*);
 
     RenderBlock* m_block;
-    LayoutUnit m_shapeLeft;
-    LayoutUnit m_shapeTop;
-    LayoutUnit m_shapeWidth;
-    LayoutUnit m_shapeHeight;
+    OwnPtr<ExclusionShape> m_shape;
 
     LayoutUnit m_lineTop;
     LayoutUnit m_logicalWidth;
@@ -95,10 +99,15 @@ private:
 
 inline WrapShapeInfo::LineState WrapShapeInfo::lineState() const
 {
-    if (m_lineTop < m_shapeTop)
+    ASSERT(m_shape);
+    FloatRect shapeBounds = m_shape->shapeLogicalBoundingBox();
+
+    if (m_lineTop < shapeBounds.y())
         return LINE_BEFORE_SHAPE;
-    if (m_lineTop < m_shapeTop + m_shapeHeight)
+
+    if (m_lineTop < shapeBounds.maxY())
         return LINE_INSIDE_SHAPE;
+
     return LINE_AFTER_SHAPE;
 }
 

@@ -4870,6 +4870,12 @@ webcore_sources += \
 	Source/WebCore/rendering/CounterNode.h \
 	Source/WebCore/rendering/EllipsisBox.cpp \
 	Source/WebCore/rendering/EllipsisBox.h \
+	Source/WebCore/rendering/ExclusionInterval.cpp \
+	Source/WebCore/rendering/ExclusionInterval.h \
+	Source/WebCore/rendering/ExclusionRectangle.cpp \
+	Source/WebCore/rendering/ExclusionRectangle.h \
+	Source/WebCore/rendering/ExclusionShape.cpp \
+	Source/WebCore/rendering/ExclusionShape.h \
 	Source/WebCore/rendering/FilterEffectRenderer.cpp \
 	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \

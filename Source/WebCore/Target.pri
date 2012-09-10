@@ -1096,6 +1096,9 @@ SOURCES += \
     rendering/BidiRun.cpp \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
+    rendering/ExclusionInterval.cpp \
+    rendering/ExclusionRectangle.cpp \
+    rendering/ExclusionShape.cpp \
     rendering/FilterEffectRenderer.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/FlowThreadController.cpp \
@@ -2278,6 +2281,9 @@ HEADERS += \
     rendering/break_lines.h \
     rendering/CounterNode.h \
     rendering/EllipsisBox.h \
+    rendering/ExclusionInterval.h \
+    rendering/ExclusionRectangle.h \
+    rendering/ExclusionShape.h \
     rendering/FilterEffectRenderer.h \
     rendering/FixedTableLayout.h \
     rendering/HitTestingTransformState.h \

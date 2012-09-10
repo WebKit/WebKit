@@ -38386,6 +38386,30 @@
 				RelativePath="..\rendering\EllipsisBox.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\rendering\ExclusionInterval.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionInterval.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionRectangle.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionSRectangle.h"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionShape.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionShape.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\rendering\FilterEffectRenderer.cpp"
 				>

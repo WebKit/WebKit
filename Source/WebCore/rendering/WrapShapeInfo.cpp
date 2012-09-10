@@ -105,37 +105,28 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
 
     // FIXME: Bug 89993: The wrap shape may come from the parent object
     BasicShape* shape = m_block->style()->wrapShapeInside();
-
     ASSERT(shape);
 
-    switch (shape->type()) {
-    case BasicShape::BASIC_SHAPE_RECTANGLE: {
-        BasicShapeRectangle* rect = static_cast<BasicShapeRectangle *>(shape);
-        m_shapeLeft = valueForLength(rect->x(), m_logicalWidth);
-        m_shapeWidth = valueForLength(rect->width(), m_logicalWidth);
-        m_shapeTop = valueForLength(rect->y(), m_logicalHeight);
-        m_shapeHeight = valueForLength(rect->height(), m_logicalHeight);
-        break;
-    }
-    // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
-    case BasicShape::BASIC_SHAPE_CIRCLE:
-    case BasicShape::BASIC_SHAPE_ELLIPSE:
-    case BasicShape::BASIC_SHAPE_POLYGON: {
-        notImplemented();
-        break;
-    }
-    }
+    m_shape = ExclusionShape::createExclusionShape(shape, logicalWidth, logicalHeight);
+    ASSERT(m_shape);
 }
 
 bool WrapShapeInfo::computeSegmentsForLine(LayoutUnit lineTop)
 {
     m_lineTop = lineTop;
     m_segments.clear();
+
     if (lineState() == LINE_INSIDE_SHAPE) {
-        LineSegment segment;
-        segment.logicalLeft = m_shapeLeft;
-        segment.logicalRight = m_shapeLeft + m_shapeWidth;
-        m_segments.append(segment);
+        ASSERT(m_shape);
+
+        Vector<ExclusionInterval> intervals;
+        m_shape->getInsideIntervals(lineTop, lineTop, intervals); // FIXME: Bug 95479, workaround for now
+        for (size_t i = 0; i < intervals.size(); i++) {
+            LineSegment segment;
+            segment.logicalLeft = intervals[i].x1;
+            segment.logicalRight = intervals[i].x2;
+            m_segments.append(segment);
+        }
     }
     return m_segments.size();
 }

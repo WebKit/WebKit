@@ -1297,8 +1297,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #if ENABLE(CSS_EXCLUSIONS)
     WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
     // Move to the top of the shape inside to begin layout
-    if (wrapShapeInfo && logicalHeight() < wrapShapeInfo->shapeTop())
-        setLogicalHeight(wrapShapeInfo->shapeTop());
+    if (wrapShapeInfo && logicalHeight() < wrapShapeInfo->shapeLogicalTop())
+        setLogicalHeight(wrapShapeInfo->shapeLogicalTop());
 #endif
 
     while (!end.atEnd()) {
