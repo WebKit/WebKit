@@ -45,8 +45,8 @@
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCConfiguration.h>
-#include <public/WebRTCICECandidateDescriptor.h>
-#include <public/WebRTCSessionDescriptionDescriptor.h>
+#include <public/WebRTCICECandidate.h>
+#include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
 #include <public/WebRTCVoidRequest.h>
 #include <wtf/PassOwnPtr.h>
@@ -164,7 +164,7 @@ void RTCPeerConnectionHandlerChromium::stop()
     m_webHandler->stop();
 }
 
-void RTCPeerConnectionHandlerChromium::didGenerateICECandidate(const WebKit::WebRTCICECandidateDescriptor& iceCandidate)
+void RTCPeerConnectionHandlerChromium::didGenerateICECandidate(const WebKit::WebRTCICECandidate& iceCandidate)
 {
     m_client->didGenerateIceCandidate(iceCandidate);
 }

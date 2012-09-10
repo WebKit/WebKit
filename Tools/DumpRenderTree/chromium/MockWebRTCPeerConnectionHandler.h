@@ -35,7 +35,7 @@
 
 #include "Task.h"
 #include <public/WebRTCPeerConnectionHandler.h>
-#include <public/WebRTCSessionDescriptionDescriptor.h>
+#include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
 
 namespace WebKit {
@@ -50,12 +50,12 @@ public:
 
     virtual void createOffer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void createAnswer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
-    virtual void setLocalDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
-    virtual void setRemoteDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
-    virtual WebKit::WebRTCSessionDescriptionDescriptor localDescription() OVERRIDE;
-    virtual WebKit::WebRTCSessionDescriptionDescriptor remoteDescription() OVERRIDE;
+    virtual void setLocalDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescription&) OVERRIDE;
+    virtual void setRemoteDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescription&) OVERRIDE;
+    virtual WebKit::WebRTCSessionDescription localDescription() OVERRIDE;
+    virtual WebKit::WebRTCSessionDescription remoteDescription() OVERRIDE;
     virtual bool updateICE(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
-    virtual bool addICECandidate(const WebKit::WebRTCICECandidateDescriptor&) OVERRIDE;
+    virtual bool addICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void stop() OVERRIDE;
@@ -68,8 +68,8 @@ private:
 
     WebKit::WebRTCPeerConnectionHandlerClient* m_client;
     TaskList m_taskList;
-    WebKit::WebRTCSessionDescriptionDescriptor m_localDescription;
-    WebKit::WebRTCSessionDescriptionDescriptor m_remoteDescription;
+    WebKit::WebRTCSessionDescription m_localDescription;
+    WebKit::WebRTCSessionDescription m_remoteDescription;
 };
 
 #endif // ENABLE(MEDIA_STREAM)

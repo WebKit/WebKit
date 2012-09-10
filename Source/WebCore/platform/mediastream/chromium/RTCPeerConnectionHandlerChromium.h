@@ -42,7 +42,7 @@
 
 namespace WebKit {
 class WebMediaStreamDescriptor;
-class WebRTCICECandidateDescriptor;
+class WebRTCICECandidate;
 }
 
 namespace WebCore {
@@ -67,7 +67,7 @@ public:
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
-    virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidateDescriptor&) OVERRIDE;
+    virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
     virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;
     virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;

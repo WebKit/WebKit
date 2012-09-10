@@ -35,9 +35,9 @@ namespace WebKit {
 class WebMediaConstraints;
 class WebMediaStreamDescriptor;
 class WebRTCConfiguration;
-class WebRTCICECandidateDescriptor;
+class WebRTCICECandidate;
 class WebRTCPeerConnectionHandlerClient;
-class WebRTCSessionDescriptionDescriptor;
+class WebRTCSessionDescription;
 class WebRTCSessionDescriptionRequest;
 class WebRTCVoidRequest;
 
@@ -49,12 +49,12 @@ public:
 
     virtual void createOffer(const WebRTCSessionDescriptionRequest&, const WebMediaConstraints&) = 0;
     virtual void createAnswer(const WebRTCSessionDescriptionRequest&, const WebMediaConstraints&) = 0;
-    virtual void setLocalDescription(const WebRTCVoidRequest&, const WebRTCSessionDescriptionDescriptor&) = 0;
-    virtual void setRemoteDescription(const WebRTCVoidRequest&, const WebRTCSessionDescriptionDescriptor&) = 0;
-    virtual WebRTCSessionDescriptionDescriptor localDescription() = 0;
-    virtual WebRTCSessionDescriptionDescriptor remoteDescription() = 0;
+    virtual void setLocalDescription(const WebRTCVoidRequest&, const WebRTCSessionDescription&) = 0;
+    virtual void setRemoteDescription(const WebRTCVoidRequest&, const WebRTCSessionDescription&) = 0;
+    virtual WebRTCSessionDescription localDescription() = 0;
+    virtual WebRTCSessionDescription remoteDescription() = 0;
     virtual bool updateICE(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
-    virtual bool addICECandidate(const WebRTCICECandidateDescriptor&) = 0;
+    virtual bool addICECandidate(const WebRTCICECandidate&) = 0;
     virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;
     virtual void removeStream(const WebMediaStreamDescriptor&) = 0;
     virtual void stop() = 0;

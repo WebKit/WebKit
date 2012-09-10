@@ -32,65 +32,61 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <public/WebRTCSessionDescriptionRequest.h>
+#include <public/WebRTCICECandidate.h>
 
-#include "RTCSessionDescriptionDescriptor.h"
-#include "RTCSessionDescriptionRequest.h"
-#include <public/WebRTCSessionDescription.h>
-#include <wtf/PassOwnPtr.h>
+#include "RTCIceCandidateDescriptor.h"
+#include <public/WebString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebRTCSessionDescriptionRequest::WebRTCSessionDescriptionRequest(const PassRefPtr<RTCSessionDescriptionRequest>& constraints)
-    : m_private(constraints)
+WebRTCICECandidate::WebRTCICECandidate(RTCIceCandidateDescriptor* iceCandidate)
+    : m_private(iceCandidate)
 {
 }
 
-void WebRTCSessionDescriptionRequest::assign(const WebRTCSessionDescriptionRequest& other)
+WebRTCICECandidate::WebRTCICECandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidate)
+    : m_private(iceCandidate)
+{
+}
+
+void WebRTCICECandidate::assign(const WebRTCICECandidate& other)
 {
     m_private = other.m_private;
 }
 
-void WebRTCSessionDescriptionRequest::reset()
+void WebRTCICECandidate::reset()
 {
     m_private.reset();
 }
 
-void WebRTCSessionDescriptionRequest::requestSucceeded(const WebRTCSessionDescription& sessionDescription) const
+void WebRTCICECandidate::initialize(const WebString& candidate, const WebString& sdpMid, unsigned short sdpMLineIndex)
 {
-    ASSERT(m_private.get());
-    m_private->requestSucceeded(sessionDescription);
+    m_private = RTCIceCandidateDescriptor::create(candidate, sdpMid, sdpMLineIndex);
 }
 
-void WebRTCSessionDescriptionRequest::requestFailed(const WebString& error) const
+WebRTCICECandidate::operator PassRefPtr<WebCore::RTCIceCandidateDescriptor>() const
 {
-    ASSERT(m_private.get());
-    m_private->requestFailed(error);
+    return m_private.get();
 }
 
-class ExtraDataContainer : public WebCore::RTCSessionDescriptionRequest::ExtraData {
-public:
-    ExtraDataContainer(WebRTCSessionDescriptionRequest::ExtraData* extraData) : m_extraData(WTF::adoptPtr(extraData)) { }
-
-    WebRTCSessionDescriptionRequest::ExtraData* extraData() { return m_extraData.get(); }
-
-private:
-    OwnPtr<WebRTCSessionDescriptionRequest::ExtraData> m_extraData;
-};
-
-WebRTCSessionDescriptionRequest::ExtraData* WebRTCSessionDescriptionRequest::extraData() const
+WebString WebRTCICECandidate::candidate() const
 {
-    RefPtr<RTCSessionDescriptionRequest::ExtraData> data = m_private->extraData();
-    if (!data)
-        return 0;
-    return static_cast<ExtraDataContainer*>(data.get())->extraData();
+    ASSERT(!m_private.isNull());
+    return m_private->candidate();
 }
 
-void WebRTCSessionDescriptionRequest::setExtraData(ExtraData* extraData)
+WebString WebRTCICECandidate::sdpMid() const
 {
-    m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
+    ASSERT(!m_private.isNull());
+    return m_private->sdpMid();
+}
+
+unsigned short WebRTCICECandidate::sdpMLineIndex() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->sdpMLineIndex();
 }
 
 } // namespace WebKit

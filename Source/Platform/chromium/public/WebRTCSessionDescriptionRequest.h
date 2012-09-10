@@ -41,7 +41,7 @@ class RTCSessionDescriptionRequest;
 }
 
 namespace WebKit {
-class WebRTCSessionDescriptionDescriptor;
+class WebRTCSessionDescription;
 
 class WebRTCSessionDescriptionRequest {
 public:
@@ -65,7 +65,7 @@ public:
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
-    WEBKIT_EXPORT void requestSucceeded(const WebRTCSessionDescriptionDescriptor&) const;
+    WEBKIT_EXPORT void requestSucceeded(const WebRTCSessionDescription&) const;
     WEBKIT_EXPORT void requestFailed(const WebString& error) const;
 
     // Extra data associated with this object.

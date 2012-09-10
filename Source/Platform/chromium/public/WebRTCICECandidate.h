@@ -28,68 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebRTCICECandidate_h
+#define WebRTCICECandidate_h
 
-#if ENABLE(MEDIA_STREAM)
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
 
-#include <public/WebRTCICECandidateDescriptor.h>
-
-#include "RTCIceCandidateDescriptor.h"
-#include <public/WebString.h>
-
-using namespace WebCore;
+namespace WebCore {
+class RTCIceCandidateDescriptor;
+}
 
 namespace WebKit {
 
-WebRTCICECandidateDescriptor::WebRTCICECandidateDescriptor(RTCIceCandidateDescriptor* iceCandidate)
-    : m_private(iceCandidate)
-{
-}
+class WebString;
 
-WebRTCICECandidateDescriptor::WebRTCICECandidateDescriptor(PassRefPtr<RTCIceCandidateDescriptor> iceCandidate)
-    : m_private(iceCandidate)
-{
-}
+class WebRTCICECandidate {
+public:
+    WebRTCICECandidate() { }
+    WebRTCICECandidate(const WebRTCICECandidate& other) { assign(other); }
+    ~WebRTCICECandidate() { reset(); }
 
-void WebRTCICECandidateDescriptor::assign(const WebRTCICECandidateDescriptor& other)
-{
-    m_private = other.m_private;
-}
+    WebRTCICECandidate& operator=(const WebRTCICECandidate& other)
+    {
+        assign(other);
+        return *this;
+    }
 
-void WebRTCICECandidateDescriptor::reset()
-{
-    m_private.reset();
-}
+    WEBKIT_EXPORT void assign(const WebRTCICECandidate&);
 
-void WebRTCICECandidateDescriptor::initialize(const WebString& candidate, const WebString& sdpMid, unsigned short sdpMLineIndex)
-{
-    m_private = RTCIceCandidateDescriptor::create(candidate, sdpMid, sdpMLineIndex);
-}
+    WEBKIT_EXPORT void initialize(const WebString& candidate, const WebString& sdpMid, unsigned short sdpMLineIndex);
+    WEBKIT_EXPORT void reset();
+    bool isNull() const { return m_private.isNull(); }
 
-WebRTCICECandidateDescriptor::operator PassRefPtr<WebCore::RTCIceCandidateDescriptor>() const
-{
-    return m_private.get();
-}
+    WEBKIT_EXPORT WebString candidate() const;
+    WEBKIT_EXPORT WebString sdpMid() const;
+    WEBKIT_EXPORT unsigned short sdpMLineIndex() const;
 
-WebString WebRTCICECandidateDescriptor::candidate() const
-{
-    ASSERT(!m_private.isNull());
-    return m_private->candidate();
-}
+#if WEBKIT_IMPLEMENTATION
+    WebRTCICECandidate(WebCore::RTCIceCandidateDescriptor*);
+    WebRTCICECandidate(WTF::PassRefPtr<WebCore::RTCIceCandidateDescriptor>);
 
-WebString WebRTCICECandidateDescriptor::sdpMid() const
-{
-    ASSERT(!m_private.isNull());
-    return m_private->sdpMid();
-}
+    operator WTF::PassRefPtr<WebCore::RTCIceCandidateDescriptor>() const;
+#endif
 
-unsigned short WebRTCICECandidateDescriptor::sdpMLineIndex() const
-{
-    ASSERT(!m_private.isNull());
-    return m_private->sdpMLineIndex();
-}
+private:
+    WebPrivatePtr<WebCore::RTCIceCandidateDescriptor> m_private;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(MEDIA_STREAM)
-
+#endif // WebRTCICECandidate_h

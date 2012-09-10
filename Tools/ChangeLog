@@ -1,3 +1,25 @@
+2012-09-10  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Remove the Descriptor postfix
+        https://bugs.webkit.org/show_bug.cgi?id=96268
+
+        Reviewed by Adam Barth.
+
+        After consideration I realized that there is no need whatsoever in using the Descriptor prefix
+        in the WekKit embedder API. Removed from WebRTCSessionDescription and WebRTCICECandidate to start with.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCSessionDescriptionRequestSuccededTask::RTCSessionDescriptionRequestSuccededTask):
+        (MockWebRTCPeerConnectionHandler::createOffer):
+        (MockWebRTCPeerConnectionHandler::createAnswer):
+        (MockWebRTCPeerConnectionHandler::setLocalDescription):
+        (MockWebRTCPeerConnectionHandler::setRemoteDescription):
+        (MockWebRTCPeerConnectionHandler::localDescription):
+        (MockWebRTCPeerConnectionHandler::remoteDescription):
+        (MockWebRTCPeerConnectionHandler::addICECandidate):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+
 2012-09-10  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [Gtk] failure to build jhbuild dependencies with cups 1.6
