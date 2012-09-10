@@ -28,12 +28,9 @@
 
 import logging
 import os
-import signal
-import subprocess
 
 from webkitpy.layout_tests.port.server_process import ServerProcess
 from webkitpy.layout_tests.port.driver import Driver
-from webkitpy.common.system.executive import Executive
 
 _log = logging.getLogger(__name__)
 
@@ -54,15 +51,17 @@ class XvfbDriver(Driver):
         display_id = self._worker_number * 2 + running_displays
         if pixel_tests:
             display_id += 1
+        self._lock_file = "/tmp/.X%d-lock" % display_id
+
         run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
-        self._lock_file = "/tmp/.X%d-lock" % display_id
 
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
-        environment['DISPLAY'] = ":%d" % (display_id)
+        environment['DISPLAY'] = ":%d" % display_id
+
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
@@ -73,5 +72,5 @@ class XvfbDriver(Driver):
         if getattr(self, '_xvfb_process', None):
             self._port.host.executive.kill_process(self._xvfb_process.pid)
             self._xvfb_process = None
-            if self._port.host.filesystem.isfile(self._lock_file):
+            if self._port.host.filesystem.exists(self._lock_file):
                 self._port.host.filesystem.remove(self._lock_file)

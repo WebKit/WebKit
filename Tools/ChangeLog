@@ -1,3 +1,21 @@
+2012-09-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Clean up the code in XvfbDriver
+        https://bugs.webkit.org/show_bug.cgi?id=96202
+
+        Reviewed by Philippe Normand.
+
+        Changes:
+        - Remove unneeded imports,
+        - assign the _lock_file member variable when the display number is determined,
+        - no need for parentheses around a single string format argument,
+        - use FileSystem.exists method when checking if lock file is present as it
+        makes the intention much more clearer.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver._start):
+        (XvfbDriver.stop):
+
 2012-09-09  Patrick Gansterer  <paroga@webkit.org>
 
         Make the String initialization on the function side of String::number()
