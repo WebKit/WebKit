@@ -1152,7 +1152,7 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
 BUGWK86971 : svg/custom/non-scaling-stroke.svg = TEXT
 
-BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
+BUGWK84678 BUGWK96226 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
 
@@ -1314,6 +1314,10 @@ BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 BUGWK96180 : fast/js/named-function-expression.html = TEXT
 
 BUGWK96196 : accessibility/spinbutton-value.html = TEXT
+
+BUGWK96226 : fast/spatial-navigation/snav-div-overflow-scrol-hidden.html = TEXT
+BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
+BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
