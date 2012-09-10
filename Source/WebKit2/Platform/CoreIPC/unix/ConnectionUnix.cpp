@@ -39,8 +39,8 @@
 #include <wtf/OwnArrayPtr.h>
 
 #if PLATFORM(QT)
+#include <QPointer>
 #include <QSocketNotifier>
-#include <QWeakPointer>
 #elif PLATFORM(GTK)
 #include <glib.h>
 #endif
@@ -175,7 +175,7 @@ public:
     }
 
 private:
-    QWeakPointer<QSocketNotifier> const m_socketNotifier;
+    QPointer<QSocketNotifier> const m_socketNotifier;
 };
 #endif
 

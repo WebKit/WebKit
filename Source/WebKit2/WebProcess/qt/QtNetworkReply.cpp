@@ -73,7 +73,7 @@ qint64 QtNetworkReply::readData(char* data, qint64 maxlen)
         return 0;
 
     qint64 bytesRead = maxlen < m_bytesAvailable ? maxlen : m_bytesAvailable;
-    if (qMemCopy(data, static_cast<char*>(m_sharedMemory->data()) + m_sharedMemorySize - m_bytesAvailable, bytesRead)) {
+    if (memcpy(data, static_cast<char*>(m_sharedMemory->data()) + m_sharedMemorySize - m_bytesAvailable, bytesRead)) {
         m_bytesAvailable -= bytesRead;
         return bytesRead;
     }

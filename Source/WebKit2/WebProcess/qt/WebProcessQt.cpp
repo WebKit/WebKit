@@ -98,7 +98,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     // The Mac port of WebKit2 uses a fudge factor of 1000 here to account for misalignment, however,
     // that tends to overestimate the memory quite a bit (1 byte misalignment ~ 48 MiB misestimation).
     // We use 1024 * 1023 for now to keep the estimation error down to +/- ~1 MiB.
-    uint64_t freeVolumeSpace = WebCore::getVolumeFreeSizeForPath(diskCache->cacheDirectory().toAscii().constData()) / 1024 / 1023;
+    uint64_t freeVolumeSpace = WebCore::getVolumeFreeSizeForPath(diskCache->cacheDirectory().toLocal8Bit().constData()) / 1024 / 1023;
 
     // The following variables are initialised to 0 because WebProcess::calculateCacheSizes might not
     // set them in some rare cases.

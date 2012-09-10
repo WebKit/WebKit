@@ -1,3 +1,15 @@
+2012-09-10  Kevin Funk  <kevin.funk@kdab.com>
+
+        [Qt] Fix deprecation failures if QT_NO_DEPRECATED enabled
+        https://bugs.webkit.org/show_bug.cgi?id=96258
+
+        Reviewed by Simon Hausmann.
+
+        Sync with latest changes in Qt5.
+
+        * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp:
+        * WebProcess/qt/WebProcessQt.cpp:
+
 2012-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Sanitize the suggested filename when building the download destination URI
