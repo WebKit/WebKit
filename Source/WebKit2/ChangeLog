@@ -1,3 +1,10 @@
+2012-09-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix speling error in comment.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::isTransparentSilverlightBackgroundValue):
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules

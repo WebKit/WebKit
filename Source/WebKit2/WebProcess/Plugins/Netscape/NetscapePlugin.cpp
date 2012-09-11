@@ -565,7 +565,7 @@ bool NetscapePlugin::allowPopups() const
 static bool isTransparentSilverlightBackgroundValue(const String& lowercaseBackgroundValue)
 {
     // This checks if the background color value is transparent, according to
-    // the forumat documented at http://msdn.microsoft.com/en-us/library/cc838148(VS.95).aspx
+    // the format documented at http://msdn.microsoft.com/en-us/library/cc838148(VS.95).aspx
     if (lowercaseBackgroundValue.startsWith('#')) {
         if (lowercaseBackgroundValue.length() == 5 && lowercaseBackgroundValue[1] != 'f') {
             // An 8-bit RGB value with alpha transparency, in the form #ARGB.
