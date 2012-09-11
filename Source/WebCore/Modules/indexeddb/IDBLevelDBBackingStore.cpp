@@ -372,22 +372,19 @@ static bool deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
 bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
 {
     IDB_TRACE("IDBLevelDBBackingStore::deleteDatabase");
-    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(m_db.get());
+    OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
 
     int64_t databaseId;
     String version;
     int64_t intVersion;
-    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId)) {
-        transaction->rollback();
+    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId))
         return true;
-    }
 
     const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::OriginName);
     const Vector<char> stopKey = DatabaseMetaDataKey::encode(databaseId + 1, DatabaseMetaDataKey::OriginName);
-    if (!deleteRange(transaction.get(), startKey, stopKey)) {
-        transaction->rollback();
-        return false;
-    }
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next())
+        transaction->remove(it->key());
 
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
     transaction->remove(key);

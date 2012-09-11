@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class LevelDBDatabase;
+class LevelDBWriteBatch;
 
 using WTF::AVLTree;
 
@@ -167,6 +168,22 @@ private:
     TreeType m_tree;
     bool m_finished;
     HashSet<TransactionIterator*> m_iterators;
+};
+
+class LevelDBWriteOnlyTransaction {
+public:
+    static PassOwnPtr<LevelDBWriteOnlyTransaction> create(LevelDBDatabase*);
+
+    ~LevelDBWriteOnlyTransaction();
+    void remove(const LevelDBSlice& key);
+    bool commit();
+
+private:
+    LevelDBWriteOnlyTransaction(LevelDBDatabase*);
+
+    LevelDBDatabase* m_db;
+    OwnPtr<LevelDBWriteBatch> m_writeBatch;
+    bool m_finished;
 };
 
 }

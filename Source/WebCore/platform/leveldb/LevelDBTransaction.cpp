@@ -485,6 +485,41 @@ void LevelDBTransaction::notifyIteratorsOfTreeChange()
     }
 }
 
+PassOwnPtr<LevelDBWriteOnlyTransaction> LevelDBWriteOnlyTransaction::create(LevelDBDatabase* db)
+{
+    return adoptPtr(new LevelDBWriteOnlyTransaction(db));
+}
+
+LevelDBWriteOnlyTransaction::LevelDBWriteOnlyTransaction(LevelDBDatabase* db)
+    : m_db(db)
+    , m_writeBatch(LevelDBWriteBatch::create())
+    , m_finished(false)
+{
+}
+
+LevelDBWriteOnlyTransaction::~LevelDBWriteOnlyTransaction()
+{
+    m_writeBatch->clear();
+}
+
+void LevelDBWriteOnlyTransaction::remove(const LevelDBSlice& key)
+{
+    ASSERT(!m_finished);
+    m_writeBatch->remove(key);
+}
+
+bool LevelDBWriteOnlyTransaction::commit()
+{
+    ASSERT(!m_finished);
+
+    if (!m_db->write(*m_writeBatch))
+        return false;
+
+    m_finished = true;
+    m_writeBatch->clear();
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // USE(LEVELDB)
