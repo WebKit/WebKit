@@ -218,6 +218,8 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("Form");
     case WebAccessibilityRoleHorizontalRule:
         return result.append("HorizontalRule");
+    case WebAccessibilityRoleLegend:
+        return result.append("Legend");
     default:
         // Also matches WebAccessibilityRoleUnknown.
         return result.append("Unknown");

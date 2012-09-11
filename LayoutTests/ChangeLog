@@ -1,3 +1,19 @@
+2012-09-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Properly expose <legend> elements to ATs
+        https://bugs.webkit.org/show_bug.cgi?id=84137
+
+        Reviewed by Chris Fleizach.
+
+        Created a new WebCore Accessibility Role, LegendRole. Used it to map to
+        the expected platform role, ATK_ROLE_LABEL. Also established the needed
+        AtkRelation pair, label-for/labelled-by between the legend and fieldset.
+
+        * accessibility/legend.html: Modified the test to be more platform-agnostic.
+        * platform/gtk/TestExpectations: Removed legend.html from the skipped list.
+        * platform/gtk/accessibility/legend-expected.txt: Added.
+        * platform/mac/accessibility/legend-expected.txt: Updated.
+
 2012-09-10  Philip Rogers  <pdr@google.com>
 
         Remove unnecessary work in SMILTimeContainer::updateAnimations

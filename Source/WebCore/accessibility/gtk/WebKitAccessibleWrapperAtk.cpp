@@ -99,6 +99,15 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
     if (!coreObject->isAccessibilityRenderObject())
         return returnString(coreObject->stringValue());
 
+    if (coreObject->isFieldset()) {
+        AccessibilityObject* label = coreObject->titleUIElement();
+        if (label) {
+            AtkObject* atkObject = label->wrapper();
+            if (ATK_IS_TEXT(atkObject))
+                return atk_text_get_text(ATK_TEXT(atkObject), 0, -1);
+        }
+    }
+
     if (coreObject->isControl()) {
         AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
         if (label) {
@@ -166,6 +175,23 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
 {
+    if (coreObject->isFieldset()) {
+        AccessibilityObject* label = coreObject->titleUIElement();
+        if (label)
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+        return;
+    }
+
+    if (coreObject->roleValue() == LegendRole) {
+        for (AccessibilityObject* parent = coreObject->parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
+            if (parent->isFieldset()) {
+                atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, parent->wrapper());
+                break;
+            }
+        }
+        return;
+    }
+
     if (coreObject->isControl()) {
         AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
         if (label)
@@ -519,6 +545,7 @@ static AtkRole atkRole(AccessibilityRole role)
     case ParagraphRole:
         return ATK_ROLE_PARAGRAPH;
     case LabelRole:
+    case LegendRole:
         return ATK_ROLE_LABEL;
     case DivRole:
         return ATK_ROLE_SECTION;

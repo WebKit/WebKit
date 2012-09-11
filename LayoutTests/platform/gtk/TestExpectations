@@ -1092,9 +1092,6 @@ BUGWK84044 SKIP : accessibility/image-link.html = TEXT
 BUGWK84045 SKIP : accessibility/image-map1.html = TEXT
 BUGWK84045 SKIP : accessibility/image-map2.html = TEXT
 
-// Properly expose <legend> elements to ATs
-BUGWK84137 SKIP : accessibility/legend.html = TEXT
-
 // [DRT] didDetectXSS is not implemented
 BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEXT
 

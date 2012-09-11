@@ -1,3 +1,17 @@
+2012-09-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Properly expose <legend> elements to ATs
+        https://bugs.webkit.org/show_bug.cgi?id=84137
+
+        Reviewed by Chris Fleizach.
+
+        Created a new WebCore Accessibility Role, LegendRole. Used it to map to
+        the expected platform role, ATK_ROLE_LABEL. Also established the needed
+        AtkRelation pair, label-for/labelled-by between the legend and fieldset.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString): added "Legend" string for WebAccessibilityRoleLegend
+
 2012-09-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; rolling out r128081.
