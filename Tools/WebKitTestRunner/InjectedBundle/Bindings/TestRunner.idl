@@ -68,6 +68,7 @@ module WTR {
         void setUserStyleSheetEnabled(in boolean value);
         void setUserStyleSheetLocation(in DOMString location);
         void setMinimumTimerInterval(in double interval); // Interval specified in seconds.
+        void setSpatialNavigationEnabled(in boolean value);
 
         // Special DOM functions.
         void clearBackForwardList();

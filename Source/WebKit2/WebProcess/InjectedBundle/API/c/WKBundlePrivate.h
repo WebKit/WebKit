@@ -66,6 +66,7 @@ WK_EXPORT void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundle, WKBundlePag
 WK_EXPORT void WKBundleSetPopupBlockingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSwitchNetworkLoaderToNewTestingSession(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
+WK_EXPORT void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleRemoveOriginAccessWhitelistEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleResetOriginAccessWhitelists(WKBundleRef bundle);

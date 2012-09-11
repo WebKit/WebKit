@@ -1,3 +1,21 @@
+2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs testRunner.setSpatialNavigationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=96269
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a new setter for spacial navigation enabling to Injected Bundle private API.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetSpatialNavigationEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setSpatialNavigationEnabled):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-11  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [Qt][WK2] Page loading status API lacks a status for intentionally stopped loading

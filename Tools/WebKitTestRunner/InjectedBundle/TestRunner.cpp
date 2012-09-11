@@ -688,6 +688,11 @@ void TestRunner::setMinimumTimerInterval(double seconds)
     WKBundleSetMinimumTimerInterval(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), seconds);
 }
 
+void TestRunner::setSpatialNavigationEnabled(bool enabled)
+{
+    WKBundleSetSpatialNavigationEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

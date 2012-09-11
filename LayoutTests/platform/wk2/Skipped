@@ -732,9 +732,6 @@ platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
 # WebKitTestRunner needs layoutTestController.hasGrammarMarker
 editing/spelling/grammar.html
 
-# WebKitTestRunner needs layoutTestController.setSpatialNavigationEnabled
-fast/spatial-navigation
-
 # WebKitTestRunner needs layoutTestController.dumpUserGestureInFrameLoadCallbacks
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
@@ -900,6 +897,14 @@ platform/mac/fast/loader/file-url-mimetypes.html
 webarchive/loading/cache-expired-subresource.html
 webarchive/loading/test-loading-archive.html
 webarchive/loading/test-loading-archive-subresource-null-mimetype.html
+
+# Some elements are skipped when focus is moved.
+fast/spatial-navigation/snav-container-white-space.html
+fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
+fast/spatial-navigation/snav-fully-aligned-horizontally.html
+fast/spatial-navigation/snav-fully-aligned-vertically.html
+fast/spatial-navigation/snav-iframe-no-scrollable-content.html
+fast/spatial-navigation/snav-imagemap-overlapped-areas.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

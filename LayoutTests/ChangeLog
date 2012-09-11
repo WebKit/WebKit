@@ -1,3 +1,14 @@
+2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs testRunner.setSpatialNavigationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=96269
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped fast/spatial-navigation tests. Put those which still fail to an appropriate group.
+
+        * platform/wk2/Skipped:
+
 2012-09-11  Philippe Liard  <pliard@chromium.org>
 
         Support LayoutTests on non-rooted Android devices.

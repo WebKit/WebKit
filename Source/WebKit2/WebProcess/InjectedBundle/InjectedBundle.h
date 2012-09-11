@@ -117,6 +117,7 @@ public:
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
     void switchNetworkLoaderToNewTestingSession();
     void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
+    void setSpatialNavigationEnabled(WebPageGroupProxy*, bool);
     void addOriginAccessWhitelistEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessWhitelistEntry(const String&, const String&, const String&, bool);
     void resetOriginAccessWhitelists();

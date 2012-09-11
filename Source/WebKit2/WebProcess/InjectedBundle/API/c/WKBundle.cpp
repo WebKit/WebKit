@@ -191,6 +191,11 @@ void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundleRef, WKBundlePageGr
     toImpl(bundleRef)->setAuthorAndUserStylesEnabled(toImpl(pageGroupRef), enabled);
 }
 
+void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->setSpatialNavigationEnabled(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundleRef, WKStringRef sourceOrigin, WKStringRef destinationProtocol, WKStringRef destinationHost, bool allowDestinationSubdomains)
 {
     toImpl(bundleRef)->addOriginAccessWhitelistEntry(toImpl(sourceOrigin)->string(), toImpl(destinationProtocol)->string(), toImpl(destinationHost)->string(), allowDestinationSubdomains);
