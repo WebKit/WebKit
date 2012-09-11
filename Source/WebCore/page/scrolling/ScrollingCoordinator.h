@@ -34,7 +34,6 @@
 #include <wtf/Forward.h>
 
 #if ENABLE(THREADED_SCROLLING)
-#include "ScrollingTreeState.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #endif
@@ -132,8 +131,8 @@ private:
     explicit ScrollingCoordinator(Page*);
 
     void recomputeWheelEventHandlerCount();
-    bool hasNonLayerViewportConstrainedObjects(FrameView*);
-    void updateShouldUpdateScrollLayerPositionOnMainThreadReason();
+    bool hasNonLayerFixedObjects(FrameView*);
+    void updateShouldUpdateScrollLayerPositionOnMainThread();
 
     void setScrollLayer(GraphicsLayer*);
     void setNonFastScrollableRegion(const Region&);
@@ -156,9 +155,7 @@ private:
 
     void setScrollParameters(const ScrollParameters&);
     void setWheelEventHandlerCount(unsigned);
-#if ENABLE(THREADED_SCROLLING)
-    void setShouldUpdateScrollLayerPositionOnMainThreadReason(ReasonForUpdatingScrollLayerPositionOnMainThreadFlags);
-#endif
+    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 
     void updateMainFrameScrollLayerPosition();
 

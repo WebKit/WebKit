@@ -223,15 +223,13 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerC
         m_private->scrollLayer()->setHaveWheelEventHandlers(wheelEventHandlerCount > 0);
 }
 
-#if ENABLE(THREADED_SCROLLING)
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThreadReason(ReasonForUpdatingScrollLayerPositionOnMainThreadFlags reasons)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool should)
 {
     // We won't necessarily get a setScrollLayer() call before this one, so grab the root ourselves.
     setScrollLayer(scrollLayerForFrameView(m_page->mainFrame()->view()));
     if (m_private->scrollLayer())
-        m_private->scrollLayer()->setShouldScrollOnMainThread(reasons);
+        m_private->scrollLayer()->setShouldScrollOnMainThread(should);
 }
-#endif
 
 bool ScrollingCoordinator::supportsFixedPositionLayers() const
 {

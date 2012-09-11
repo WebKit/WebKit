@@ -98,7 +98,7 @@ public:
 #endif
 
     void setScrollingPerformanceLoggingEnabled(bool flag);
-    bool scrollingPerformanceLoggingEnabled();
+    bool scrollingPeformanceLoggingEnabled();
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);

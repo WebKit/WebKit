@@ -1,3 +1,14 @@
+2012-09-10  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r127837.
+        http://trac.webkit.org/changeset/127837
+        https://bugs.webkit.org/show_bug.cgi?id=93898
+
+        Broke ScrollingCoordinator on chromium
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2012-09-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; rolling out r128081.

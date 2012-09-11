@@ -62,7 +62,7 @@ void ScrollingTree::updateDebugRootLayer()
 
     RetainPtr<CGColorRef> backgroundColor;
 
-    if (m_rootNode->shouldUpdateScrollLayerPositionOnMainThreadReason())
+    if (m_rootNode->shouldUpdateScrollLayerPositionOnMainThread())
         backgroundColor = adoptCF(CGColorCreateGenericRGB(1, 0, 0, .7));
 
     {

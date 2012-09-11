@@ -67,11 +67,9 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
 {
 }
 
-#if ENABLE(THREADED_SCROLLING)
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThreadReason(ReasonForUpdatingScrollLayerPositionOnMainThreadFlags)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
 {
 }
-#endif
 
 bool ScrollingCoordinator::supportsFixedPositionLayers() const
 {

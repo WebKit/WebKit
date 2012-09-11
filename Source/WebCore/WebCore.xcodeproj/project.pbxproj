@@ -511,7 +511,7 @@
 		1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */; };
 		1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */; };
-		1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */; };
 		1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */; };
 		1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */; };
 		1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */; };
