@@ -25,6 +25,7 @@
 #include "FrameLoaderClientBlackBerry.h"
 #include "NetworkJob.h"
 #include "Page.h"
+#include "ReadOnlyLatin1String.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
@@ -77,8 +78,15 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
 
     BlackBerry::Platform::NetworkRequest platformRequest;
     request.initializePlatformRequest(platformRequest, frame.loader() && frame.loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame.loader()->client())->cookiesEnabled(), isInitial, redirectCount);
-    platformRequest.setReferrer(frame.document()->url().string().utf8().data());
-    platformRequest.setSecurityOrigin(frame.document()->securityOrigin()->toRawString().utf8().data());
+
+    const String& documentUrl = frame.document()->url().string();
+    if (!documentUrl.isEmpty()) {
+        ReadOnlyLatin1String referrer(documentUrl);
+        platformRequest.setReferrer(referrer.data(), referrer.length());
+    }
+
+    ReadOnlyLatin1String securityOrigin(frame.document()->securityOrigin()->toRawString());
+    platformRequest.setSecurityOrigin(securityOrigin.data(), securityOrigin.length());
 
     // Attach any applicable auth credentials to the NetworkRequest.
     AuthenticationChallenge& challenge = guardJob->getInternal()->m_currentWebChallenge;
