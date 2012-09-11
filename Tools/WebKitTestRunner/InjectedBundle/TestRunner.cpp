@@ -678,6 +678,11 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef location)
         setUserStyleSheetEnabled(true);
 }
 
+void TestRunner::setMinimumTimerInterval(double seconds)
+{
+    WKBundleSetMinimumTimerInterval(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), seconds);
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

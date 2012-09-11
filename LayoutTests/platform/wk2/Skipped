@@ -818,14 +818,6 @@ java
 compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
-# WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
-fast/dom/timer-increase-min-interval-and-reset-part-1.html
-fast/dom/timer-increase-min-interval-and-reset-part-2.html
-fast/dom/timer-increase-min-interval-repeating.html
-fast/dom/timer-increase-min-interval.html
-fast/dom/timer-increase-then-decrease-min-interval-repeating.html
-fast/dom/timer-increase-then-decrease-min-interval.html
-
 # WebKitTestRunner needs layoutTestController.originsWithLocalStorage
 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html

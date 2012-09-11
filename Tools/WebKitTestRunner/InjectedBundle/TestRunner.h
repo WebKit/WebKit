@@ -106,6 +106,7 @@ public:
     void removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void setUserStyleSheetEnabled(bool);
     void setUserStyleSheetLocation(JSStringRef);
+    void setMinimumTimerInterval(double seconds); // Interval specified in seconds.
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);

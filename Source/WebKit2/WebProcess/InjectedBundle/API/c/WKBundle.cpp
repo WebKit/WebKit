@@ -236,6 +236,11 @@ uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundleRef, WKStringRef or
     return toImpl(bundleRef)->appCacheUsageForOrigin(toImpl(origin)->string());
 }
 
+void WKBundleSetMinimumTimerInterval(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, double seconds)
+{
+    toImpl(bundleRef)->setMinimumTimerInterval(toImpl(pageGroupRef), seconds);
+}
+
 int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels)
 {
     return toImpl(bundleRef)->numberOfPages(toImpl(frameRef), pageWidthInPixels, pageHeightInPixels);

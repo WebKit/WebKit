@@ -67,6 +67,7 @@ module WTR {
         void removeOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
         void setUserStyleSheetEnabled(in boolean value);
         void setUserStyleSheetLocation(in DOMString location);
+        void setMinimumTimerInterval(in double interval); // Interval specified in seconds.
 
         // Special DOM functions.
         void clearBackForwardList();

@@ -1,3 +1,14 @@
+2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
+        https://bugs.webkit.org/show_bug.cgi?id=96256
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped corresponding fast/dom/ tests.
+
+        * platform/wk2/Skipped:
+
 2012-09-11  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] New fast/canvas/canvas-lineDash.html introduced in r128116 fails.

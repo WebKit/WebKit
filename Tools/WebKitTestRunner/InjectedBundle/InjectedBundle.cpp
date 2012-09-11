@@ -240,6 +240,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);
+    WKBundleSetMinimumTimerInterval(m_bundle, m_pageGroup, 0.010); // 10 milliseconds (DOMTimer::s_minDefaultTimerInterval)
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 

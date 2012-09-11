@@ -1,3 +1,21 @@
+2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
+        https://bugs.webkit.org/show_bug.cgi?id=96256
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added new setter for minimum DOM timer interval to InjectedBundle private API.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetMinimumTimerInterval):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setMinimumTimerInterval):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-11  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][EFL] Fix compile warnings when enable tiled backing store
