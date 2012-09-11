@@ -1,3 +1,9 @@
+2012-09-11  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening. Update some expectations to reference specific bugs.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: title attribute is not exposed as the AXDescription on AXImage when there is no other fallback content

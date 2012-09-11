@@ -2060,8 +2060,8 @@ BUGCR58936 : fast/js/numeric-escapes-in-string-literals.html = TEXT
 // content of <video> elements.
 BUGWK91205 SKIP : media/nodesFromRect-shadowContent.html = TEXT
 
-BUGJAMESR LINUX ANDROID WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
+BUGWK48459 LINUX ANDROID WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
+BUGWK48459 LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
@@ -2611,7 +2611,7 @@ BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-deep.html = IMAGE IMAG
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-coplanar.html = IMAGE IMAGE+TEXT
 
 // We don't seem to load this glyph on windows
-BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
+BUGWK96430 WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
