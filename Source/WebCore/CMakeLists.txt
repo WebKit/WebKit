@@ -2681,28 +2681,6 @@ IF (WTF_USE_3D_GRAPHICS)
     )
 ENDIF ()
 
-IF (ENABLE_REQUEST_ANIMATION_FRAME)
-    LIST(APPEND WebCore_IDL_FILES
-        dom/RequestAnimationFrameCallback.idl
-    )
-    LIST(APPEND WebCore_SOURCES
-        dom/ScriptedAnimationController.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_VIBRATION)
-    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-        ${WEBCORE_DIR}/Modules/vibration
-    )
-    LIST(APPEND WebCore_IDL_FILES
-        Modules/vibration/NavigatorVibration.idl
-    )
-    LIST(APPEND WebCore_SOURCES
-        Modules/vibration/NavigatorVibration.cpp
-        Modules/vibration/Vibration.cpp
-    )
-ENDIF ()
-
 SET(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WebCore_INCLUDE_DIRECTORIES}"
     "${WEBCORE_DIR}/testing"
