@@ -421,10 +421,13 @@ enum ParameterDefaultPolicy {
         if (!stringImpl || !stringImpl->length())
             return jsEmptyString(exec);
 
-        // FIXME: we shouldn't invoke StringImpl::characters().
-        // FIXME: why not just return a SmallStrings when possible?
-        if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
-            return JSC::jsString(exec, s);
+        if (stringImpl->length() == 1) {
+            UChar singleCharacter = (*stringImpl)[0];
+            if (singleCharacter <= JSC::maxSingleCharacterString) {
+                JSC::JSGlobalData* globalData = &exec->globalData();
+                return globalData->smallStrings.singleCharacterString(globalData, static_cast<unsigned char>(singleCharacter));
+            }
+        }
 
         JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
         if (JSC::JSString* string = stringCache.get(stringImpl))
