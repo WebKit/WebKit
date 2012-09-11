@@ -117,10 +117,8 @@ v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
 
     String method = toWebCoreString(args[0]);
     String urlstring = toWebCoreString(args[1]);
-    ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return v8::Undefined();
 
+    ScriptExecutionContext* context = getScriptExecutionContext();
     KURL url = context->completeURL(urlstring);
 
     ExceptionCode ec = 0;

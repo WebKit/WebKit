@@ -47,36 +47,28 @@ namespace WebCore {
 v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessageChannel.Constructor");
-    // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
-    // Consider refactoring to reduce duplication.
+
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    // Get the ScriptExecutionContext (WorkerContext or Document)
     ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return v8::Undefined();
 
-    // Note: it's OK to let this RefPtr go out of scope because we also call
-    // SetDOMWrapper(), which effectively holds a reference to obj.
     RefPtr<MessageChannel> obj = MessageChannel::create(context);
 
-    v8::Local<v8::Object> messageChannel = args.Holder();
+    v8::Local<v8::Object> wrapper = args.Holder();
 
     // Create references from the MessageChannel wrapper to the two
     // MessagePort wrappers to make sure that the MessagePort wrappers
     // stay alive as long as the MessageChannel wrapper is around.
-    V8DOMWrapper::setNamedHiddenReference(messageChannel, "port1", toV8(obj->port1(), args.Holder(), args.GetIsolate()));
-    V8DOMWrapper::setNamedHiddenReference(messageChannel, "port2", toV8(obj->port2(), args.Holder(), args.GetIsolate()));
+    V8DOMWrapper::setNamedHiddenReference(wrapper, "port1", toV8(obj->port1(), args.Holder(), args.GetIsolate()));
+    V8DOMWrapper::setNamedHiddenReference(wrapper, "port2", toV8(obj->port2(), args.Holder(), args.GetIsolate()));
 
-    // Setup the standard wrapper object internal fields.
-    V8DOMWrapper::setDOMWrapper(messageChannel, &info, obj.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(obj.release(), messageChannel);
-    return messageChannel;
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, obj.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(obj.release(), wrapper);
+    return wrapper;
 }
-
 
 } // namespace WebCore

@@ -89,8 +89,6 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     SQLTransaction* transaction = V8SQLTransaction::toNative(args.Holder());
 
     ScriptExecutionContext* scriptExecutionContext = getScriptExecutionContext();
-    if (!scriptExecutionContext)
-        return v8::Undefined();
 
     RefPtr<SQLStatementCallback> callback;
     if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {

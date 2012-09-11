@@ -1598,8 +1598,6 @@ sub GenerateCallWith
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n");
-        push(@$outputArray, $indent . "if (!scriptContext)\n");
-        push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8Undefined()") . ";\n");
         push(@callWithArgs, "scriptContext");
     }
     if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
@@ -1848,8 +1846,6 @@ END
         push(@implContent, <<END);
 
     ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return throwError(ReferenceError, "${implClassName} constructor's associated context is not available", args.GetIsolate());
 END
     }
 

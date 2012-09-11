@@ -71,11 +71,7 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     if (urlstring.IsEmpty())
         return throwError(SyntaxError, "Empty URL", args.GetIsolate());
 
-    // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return throwError(ReferenceError, "WebSocket constructor's associated frame is not available", args.GetIsolate());
-
     const KURL& url = context->completeURL(toWebCoreString(urlstring));
 
     RefPtr<WebSocket> webSocket = WebSocket::create(context);

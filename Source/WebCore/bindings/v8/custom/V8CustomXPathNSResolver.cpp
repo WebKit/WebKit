@@ -30,6 +30,8 @@
 #include "config.h"
 #include "V8CustomXPathNSResolver.h"
 
+#include "Console.h"
+#include "DOMWindow.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
@@ -66,14 +68,13 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     }
 
     if (lookupNamespaceURIFunc.IsEmpty() && !m_resolver->IsFunction()) {
-        if (ScriptExecutionContext* context = getScriptExecutionContext())
-            context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
+        activeDOMWindow(BindingState::instance())->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
         return String();
     }
 
     // Catch exceptions from calling the namespace resolver.
-    v8::TryCatch try_catch;
-    try_catch.SetVerbose(true);  // Print exceptions to console.
+    v8::TryCatch tryCatch;
+    tryCatch.SetVerbose(true); // Print exceptions to console.
 
     const int argc = 1;
     v8::Handle<v8::Value> argv[argc] = { v8String(prefix) };
@@ -82,7 +83,7 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     v8::Handle<v8::Value> retval = ScriptController::callFunctionWithInstrumentation(0, function, m_resolver, argc, argv);
 
     // Eat exceptions from namespace resolver and return an empty string. This will most likely cause NAMESPACE_ERR.
-    if (try_catch.HasCaught())
+    if (tryCatch.HasCaught())
         return String();
 
     return toWebCoreStringWithNullCheck(retval);

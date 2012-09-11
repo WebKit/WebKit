@@ -61,8 +61,6 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Argument
         return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return throwError(ReferenceError, "MutationObserver constructor's associated frame unavailable", args.GetIsolate());
 
     RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
     RefPtr<MutationObserver> observer = MutationObserver::create(callback.release());

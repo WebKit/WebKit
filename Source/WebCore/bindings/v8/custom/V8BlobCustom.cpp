@@ -64,10 +64,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return throwError(ReferenceError, "Blob constructor associated document is unavailable", args.GetIsolate());
 
     if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();
