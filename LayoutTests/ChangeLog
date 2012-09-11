@@ -1,3 +1,15 @@
+2012-09-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing crashing expectations for two editing tests after they were fixed
+        in r128074.
+
+        Rebaselining accessibility/legend.html after r128140.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/legend-expected.txt:
+
 2012-09-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION (r127226): Calling DateTimeEditElement::layout() in focus handler should not dispatch blur event
