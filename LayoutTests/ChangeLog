@@ -1,3 +1,14 @@
+2012-09-11  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed chromium gardening.
+
+        Mark compositing/overflow/overflow-scaled-descendant-overflapping as
+        failing on cr-mac after r127789 and remove bad rebaselines.
+
+        * platform/chromium-mac-snowleopard/compositing/overflow/overflow-scaled-descendant-overlapping-expected.png: Removed.
+        * platform/chromium-mac/compositing/overflow/overflow-scaled-descendant-overlapping-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-09-11  Mike West  <mkwst@chromium.org>
 
         Improve console error messages when 'document.domain' blocks cross-origin script access.
