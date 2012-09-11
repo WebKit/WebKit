@@ -1,5 +1,22 @@
 2012-09-11  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Suppress keyboard requests while processing spell checking suggestions.
+        https://bugs.webkit.org/show_bug.cgi?id=96394
+
+        Reviewed by Rob Buis.
+
+        Suppress the VKB notification when the touch event
+        is a spell checking request.
+
+        PR 192925.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
+2012-09-11  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Colour Dialog popup request should return proper state.
         https://bugs.webkit.org/show_bug.cgi?id=96392
 

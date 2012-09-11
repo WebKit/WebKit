@@ -235,8 +235,10 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
 
             // Apply any suppressed changes. This does not eliminate the need
             // for the show after the handling of fat finger pressed as it may
-            // have triggered a state change.
-            m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
+            // have triggered a state change. Leave the change suppressed if
+            // we are triggering spell check options.
+            if (!shouldRequestSpellCheckOptions)
+                m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
 
             if (shouldSuppressMouseDownOnTouchDown())
                 handleFatFingerPressed();
