@@ -90,11 +90,21 @@ void QtWebPageLoadClient::dispatchLoadSucceeded()
     m_webView->d_func()->loadDidSucceed();
 }
 
+void QtWebPageLoadClient::dispatchLoadStopped()
+{
+    m_webView->d_func()->loadDidStop();
+}
+
 void QtWebPageLoadClient::dispatchLoadFailed(WebFrameProxy* frame, const QtWebError& error)
 {
+    if (error.isCancellation()) {
+        dispatchLoadStopped();
+        return;
+    }
+
     int errorCode = error.errorCode();
 
-    if (error.isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad) {
+    if (errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad) {
         // The active url might have changed
         m_webView->emitUrlChangeIfNeeded();
 

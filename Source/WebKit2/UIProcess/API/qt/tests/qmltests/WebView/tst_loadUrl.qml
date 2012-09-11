@@ -120,5 +120,22 @@ TestWebView {
             verify(webView.waitForLoadSucceeded())
             compare(webView.url, url)
         }
+
+        function test_stopStatus() {
+            var url = Qt.resolvedUrl("../common/test1.html")
+
+            webView.loadingChanged.connect(function(loadRequest) {
+                if (loadRequest.status == WebView.LoadStopStatus) {
+                    compare(webView.url, url)
+                    compare(loadRequest.url, url)
+                }
+            })
+
+            webView.url = url
+            compare(webView.url, url)
+            webView.stop()
+            verify(webView.waitForLoadStopped())
+            compare(webView.url, url)
+        }
     }
 }

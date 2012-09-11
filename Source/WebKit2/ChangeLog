@@ -1,3 +1,31 @@
+2012-09-11  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt][WK2] Page loading status API lacks a status for intentionally stopped loading
+        https://bugs.webkit.org/show_bug.cgi?id=83062
+
+        Reviewed by Tor Arne Vestbø.
+
+        When the loading of a page is intentionally interrupted, the loading
+        status is set to the new state LoadStoppedStatus. This reflects
+        reality more accurately because the page was not fully loaded
+        (a LoadSucceededStatus), and it wasn't an unexpected error
+        (a LoadFailedStatus).
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::loadDidStop):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/common/TestWebView.qml:
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit::QtWebPageLoadClient::dispatchLoadStopped):
+        (WebKit):
+        (WebKit::QtWebPageLoadClient::dispatchLoadFailed):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (QtWebPageLoadClient):
+
 2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Add a configure step to the Qt build system

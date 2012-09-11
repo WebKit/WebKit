@@ -50,6 +50,7 @@ private:
     void didChangeBackForwardList();
 
     void dispatchLoadSucceeded();
+    void dispatchLoadStopped();
     void dispatchLoadFailed(WebFrameProxy*, const QtWebError&);
 
 

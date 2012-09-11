@@ -28,6 +28,17 @@ WebView {
         loadStatus = null
         return failure
     }
+    function waitForLoadStopped() {
+        var timeout = 5000
+        var i = 0
+        while (i < timeout && loadStatus != WebView.LoadStoppedStatus) {
+            testResult.wait(50)
+            i += 50
+        }
+        var stop = loadStatus == WebView.LoadStoppedStatus
+        loadStatus = null
+        return stop
+    }
 
     TestResult { id: testResult }
 

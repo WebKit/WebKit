@@ -96,6 +96,7 @@ public:
     };
     enum LoadStatus {
         LoadStartedStatus,
+        LoadStoppedStatus,
         LoadSucceededStatus,
         LoadFailedStatus
     };

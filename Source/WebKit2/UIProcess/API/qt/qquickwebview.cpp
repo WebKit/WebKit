@@ -323,6 +323,14 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     webPageProxy->initializeWebPage();
 }
 
+void QQuickWebViewPrivate::loadDidStop()
+{
+    Q_Q(QQuickWebView);
+    ASSERT(!q->loading());
+    QWebLoadRequest loadRequest(q->url(), QQuickWebView::LoadStoppedStatus);
+    emit q->loadingChanged(&loadRequest);
+}
+
 void QQuickWebViewPrivate::onComponentComplete()
 {
     Q_Q(QQuickWebView);

@@ -79,6 +79,7 @@ public:
     virtual void loadProgressDidChange(int loadProgress);
     virtual void backForwardListDidChange();
     virtual void loadDidSucceed();
+    virtual void loadDidStop();
     virtual void loadDidFail(const WebKit::QtWebError& error);
     virtual void handleMouseEvent(QMouseEvent*);
 
