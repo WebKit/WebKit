@@ -1,3 +1,19 @@
+2012-09-11  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Fix history navigation for error pages.
+        https://bugs.webkit.org/show_bug.cgi?id=96410
+
+        Reviewed by Rob Buis.
+
+        Fix how history navigation handles restoring view state when navigating between error pages.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::saveViewStateToItem):
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2012-09-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Deploy StringBuilder::appendNumber() and StringBuilder::appendLiteral() in more places

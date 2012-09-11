@@ -109,7 +109,6 @@ FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry()
     , m_hasSentResponseToPlugin(false)
     , m_cancelLoadOnNextData(false)
     , m_wasProvisionalLoadTriggeredByUserGesture(true) // To avoid affecting the first load.
-    , m_shouldRestoreViewState(true)
 {
 }
 
@@ -1027,8 +1026,7 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
 
     ASSERT(item);
     HistoryItemViewState& viewState = item->viewState();
-    m_shouldRestoreViewState = viewState.shouldSaveViewState;
-    if (m_shouldRestoreViewState) {
+    if (viewState.shouldSaveViewState) {
         viewState.orientation = m_webPagePrivate->mainFrame()->orientation();
         viewState.isZoomToFitScale = m_webPagePrivate->currentScale() == m_webPagePrivate->zoomToFitScale();
         viewState.scale = m_webPagePrivate->currentScale();
@@ -1041,8 +1039,6 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
 
 void FrameLoaderClientBlackBerry::restoreViewState()
 {
-    if (!m_shouldRestoreViewState)
-        return;
     if (!isMainFrame())
         return;
 
@@ -1052,6 +1048,9 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     if (!currentItem)
         return;
 
+    HistoryItemViewState& viewState = currentItem->viewState();
+    if (!viewState.shouldSaveViewState)
+        return;
     // WebPagePrivate is messing up FrameView::wasScrolledByUser() by sending
     // scroll events that look like they were user generated all the time.
     //
@@ -1070,7 +1069,6 @@ void FrameLoaderClientBlackBerry::restoreViewState()
 
     // We need to reset this variable after the view state has been restored.
     m_webPagePrivate->m_didRestoreFromPageCache = false;
-    HistoryItemViewState& viewState = currentItem->viewState();
 
     // Restore the meta first.
     m_webPagePrivate->m_minimumScale = viewState.minimumScale;

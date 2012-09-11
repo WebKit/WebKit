@@ -219,8 +219,6 @@ private:
     bool m_cancelLoadOnNextData;
 
     bool m_wasProvisionalLoadTriggeredByUserGesture;
-
-    bool m_shouldRestoreViewState;
 };
 
 } // WebCore
