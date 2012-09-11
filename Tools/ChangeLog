@@ -1,5 +1,21 @@
 2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Fix passing of defines from the build system
+
+        We explicitly have to pass -DENABLE_FOO=0 for every single feature
+        that's not explicitly enabled in WEBKIT_CONFIG, since Platform.h
+        will add it's own defaults if the features are not defined.
+
+        At some point we might want to run a configure-test to inspect what
+        Platform.h will do, so we can sync up the build system's view of
+        the feature-defines with the compile-time situation.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/functions.prf:
+
+2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Fix --qt option to build-webkit
 
         Reviewed by Ossy.

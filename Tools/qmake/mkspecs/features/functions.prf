@@ -360,10 +360,12 @@ defineReplace(configDefines) {
     # To prevent clashes with Platform.h, we have to explicitly
     # disable features that are not enabled.
     for(define, FEATURE_DEFAULTS) {
-        disabledFeature = $$find(define, =0$)
-        isEmpty(disabledFeature): next()
+        anyFeatureDefine = $$find(define, =.$)
+        isEmpty(anyFeatureDefine): next()
 
-        enabledFeature = $$replace(disabledFeature, =0$, =1)
+        enabledFeature = $$replace(anyFeatureDefine, =.$, =1)
+        disabledFeature = $$replace(anyFeatureDefine, =.$, =0)
+
         !contains(defines, $$enabledFeature) {
             defines += $$disabledFeature
         }
