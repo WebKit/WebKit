@@ -110,7 +110,7 @@ public:
     void setPopupListIndexes(int size, const bool* selecteds);
 
     bool processingChange() const { return m_processingChange; }
-    void setProcessingChange(bool processingChange) { m_processingChange = processingChange; }
+    void setProcessingChange(bool);
 
     WTF::String elementText();
 

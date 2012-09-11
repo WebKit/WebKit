@@ -1,3 +1,38 @@
+2012-09-11  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] SelectionHandler drops caret change notifications
+        https://bugs.webkit.org/show_bug.cgi?id=96378
+
+        Reviewed by Antonio Gomes.
+
+        The selection handler deliberately drops caret change notifications
+        while the input handler is processing changes, to avoid displaying
+        intermediate state during a complex change.
+
+        However, this meant that the client was never informed of the final
+        caret position.
+
+        Fixed by notifying client about caret change after processing ends, if
+        one or more caret change notifications were dropped during processing.
+
+        PR #205073
+
+        Reviewed internally by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setProcessingChange):
+        (WebKit):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::SelectionHandler):
+        (BlackBerry::WebKit::SelectionHandler::inputHandlerDidFinishProcessingChange):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (BlackBerry::WebKit::SelectionHandler::notifyCaretPositionChangedIfNeeded):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2012-09-10  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] add a way to overscroll non-overflown content

@@ -71,7 +71,10 @@ public:
 
     bool lastUpdatedEndPointIsValid() const { return m_lastUpdatedEndPointIsValid; }
 
+    void inputHandlerDidFinishProcessingChange();
+
 private:
+    void notifyCaretPositionChangedIfNeeded();
     void caretPositionChanged();
     void regionForTextQuads(WTF::Vector<WebCore::FloatQuad>&, BlackBerry::Platform::IntRectRegion&, bool shouldClipToVisibleContent = true) const;
     WebCore::IntRect clippingRectForVisibleContent() const;
@@ -89,6 +92,7 @@ private:
     bool m_selectionActive;
     bool m_caretActive;
     bool m_lastUpdatedEndPointIsValid;
+    bool m_didSuppressCaretPositionChangedNotification;
     BlackBerry::Platform::IntRectRegion m_lastSelectionRegion;
 
     BlackBerry::Platform::StopWatch m_timer;
