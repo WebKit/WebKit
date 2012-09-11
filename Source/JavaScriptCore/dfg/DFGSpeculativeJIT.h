@@ -2161,7 +2161,9 @@ public:
     void compileNewFunctionNoCheck(Node&);
     void compileNewFunctionExpression(Node&);
     bool compileRegExpExec(Node&);
-    
+   
+    // It is NOT okay for the structure and the scratch register to be the same thing because if they are then the Structure will 
+    // get clobbered. 
     template <typename ClassType, bool destructor, typename StructureType> 
     void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
@@ -2176,24 +2178,16 @@ public:
         
         // The object is half-allocated: we have what we know is a fresh object, but
         // it's still on the GC's free list.
-        
-        // Ditch the structure by placing it into the structure slot, so that we can reuse
-        // scratchGPR.
-        m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
-        
-        // Now that we have scratchGPR back, remove the object from the free list
         m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
         m_jit.storePtr(scratchGPR, &allocator->m_freeList.head);
-        
-        // Initialize the object's classInfo pointer
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(&ClassType::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));
+
+        // Initialize the object's Structure.
+        m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSCell::structureOffset()));
         
         // Initialize the object's property storage pointer.
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, ClassType::offsetOfOutOfLineStorage()));
     }
 
-    // It is acceptable to have structure be equal to scratch, so long as you're fine
-    // with the structure GPR being clobbered.
     template<typename T>
     void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {

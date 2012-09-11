@@ -1,3 +1,43 @@
+2012-09-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove m_classInfo from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=96311
+
+        Reviewed by Oliver Hunt.
+
+        Now that no one is using the ClassInfo in JSCell, we can remove it for the greater good. This is a 1.5% win on v8v7 and 
+        a 1.7% win on kraken, and is an overall performance progression.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject): Had to rearrange the order of when we take things off the free list 
+        and when we store the Structure in the object because we would clobber the free list otherwise. This made it not okay for 
+        the structure argument and the scratch register to alias one another. Also removed the store of the ClassInfo pointer in the
+        object. Yay!
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp: Since it's no longer okay for for the scratch register and structure register to alias 
+        one another as stated above, had to add an extra temporary for passing the Structure.
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp: Ditto.
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject): Similar changes to DFG's inline allocation except that it removed the object from 
+        the free list first, so no changes were necessary there.
+        * llint/LowLevelInterpreter.asm: Change the constants for amount of inline storage to match PropertyOffset.h and remove 
+        the store of the ClassInfo pointer during inline allocation.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCell.h: Remove the m_classInfo field and associated methods.
+        (JSCell):
+        * runtime/JSObject.h:
+        (JSObject):
+        * runtime/PropertyOffset.h: Expand the number of inline storage properties to take up the extra space that we're freeing 
+        with the removal of the ClassInfo pointer.
+        (JSC):
+        * runtime/Structure.h:
+        (JSC):
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+
 2012-09-10  Geoffrey Garen  <ggaren@apple.com>
 
         Added large allocation support to MarkedSpace

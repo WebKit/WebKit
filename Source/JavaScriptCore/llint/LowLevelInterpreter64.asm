@@ -236,7 +236,7 @@ _llint_op_create_this:
     loadp Callee[cfr], t0
     loadp JSFunction::m_cachedInheritorID[t0], t2
     btpz t2, .opCreateThisSlow
-    allocateBasicJSObject(JSFinalObjectSizeClassIndex, JSGlobalData::jsFinalObjectClassInfo, t2, t0, t1, t3, .opCreateThisSlow)
+    allocateBasicJSObject(JSFinalObjectSizeClassIndex, t2, t0, t1, t3, .opCreateThisSlow)
     loadis 8[PB, PC, 8], t1
     storep t0, [cfr, t1, 8]
     dispatch(2)
@@ -267,7 +267,7 @@ _llint_op_new_object:
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
     loadp JSGlobalObject::m_emptyObjectStructure[t0], t1
-    allocateBasicJSObject(JSFinalObjectSizeClassIndex, JSGlobalData::jsFinalObjectClassInfo, t1, t0, t2, t3, .opNewObjectSlow)
+    allocateBasicJSObject(JSFinalObjectSizeClassIndex, t1, t0, t2, t3, .opNewObjectSlow)
     loadis 8[PB, PC, 8], t1
     storep t0, [cfr, t1, 8]
     dispatch(2)

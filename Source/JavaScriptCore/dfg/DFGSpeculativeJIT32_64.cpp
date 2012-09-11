@@ -3296,18 +3296,20 @@ void SpeculativeJIT::compile(Node& node)
         
         SpeculateCellOperand callee(this, node.child1());
         GPRTemporary result(this);
+        GPRTemporary structure(this);
         GPRTemporary scratch(this);
         
         GPRReg calleeGPR = callee.gpr();
         GPRReg resultGPR = result.gpr();
+        GPRReg structureGPR = structure.gpr();
         GPRReg scratchGPR = scratch.gpr();
         
         // Load the inheritorID. If the inheritorID is not set, go to slow path.
-        m_jit.loadPtr(MacroAssembler::Address(calleeGPR, JSFunction::offsetOfCachedInheritorID()), scratchGPR);
+        m_jit.loadPtr(MacroAssembler::Address(calleeGPR, JSFunction::offsetOfCachedInheritorID()), structureGPR);
         MacroAssembler::JumpList slowPath;
-        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, scratchGPR));
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, structureGPR));
         
-        emitAllocateJSFinalObject(scratchGPR, resultGPR, scratchGPR, slowPath);
+        emitAllocateJSFinalObject(structureGPR, resultGPR, scratchGPR, slowPath);
         
         addSlowPathGenerator(slowPathCall(slowPath, this, operationCreateThis, resultGPR, calleeGPR));
         

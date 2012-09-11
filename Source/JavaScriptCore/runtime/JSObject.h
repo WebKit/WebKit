@@ -346,9 +346,6 @@ namespace JSC {
         Structure* createInheritorID(JSGlobalData&);
 
         StorageBarrier m_outOfLineStorage;
-#if USE(JSVALUE32_64)
-        void* m_padding;
-#endif
     };
 
 

@@ -422,9 +422,6 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));
 
-    // initialize the object's classInfo pointer
-    storePtr(TrustedImmPtr(&ClassType::s_info), Address(result, JSCell::classInfoOffset()));
-
     // initialize the object's property storage pointer
     storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfOutOfLineStorage()));
 }

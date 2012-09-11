@@ -86,9 +86,9 @@ const HashFlags8BitBuffer = 64
 
 # Property storage constants
 if JSVALUE64
-    const InlineStorageCapacity = 5
-else
     const InlineStorageCapacity = 6
+else
+    const InlineStorageCapacity = 7
 end
 
 # Allocation constants
@@ -310,7 +310,7 @@ macro functionInitialization(profileArgSkip)
 .stackHeightOK:
 end
 
-macro allocateBasicJSObject(sizeClassIndex, classInfoOffset, structure, result, scratch1, scratch2, slowCase)
+macro allocateBasicJSObject(sizeClassIndex, structure, result, scratch1, scratch2, slowCase)
     if ALWAYS_ALLOCATE_SLOW
         jmp slowCase
     else
@@ -338,8 +338,6 @@ macro allocateBasicJSObject(sizeClassIndex, classInfoOffset, structure, result, 
         storep scratch2, offsetOfMySizeClass + offsetOfFirstFreeCell[scratch1]
     
         # Initialize the object.
-        loadp classInfoOffset[scratch1], scratch2
-        storep scratch2, [result]
         storep structure, JSCell::m_structure[result]
         storep 0, JSObject::m_outOfLineStorage[result]
     end

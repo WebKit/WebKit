@@ -34,9 +34,9 @@
 namespace JSC {
 
 #if USE(JSVALUE32_64)
-#define INLINE_STORAGE_CAPACITY 6
+#define INLINE_STORAGE_CAPACITY 7
 #else
-#define INLINE_STORAGE_CAPACITY 5
+#define INLINE_STORAGE_CAPACITY 6
 #endif
 
 typedef int PropertyOffset;
