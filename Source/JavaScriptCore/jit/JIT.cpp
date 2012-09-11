@@ -256,6 +256,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
         case op_get_by_id_out_of_line:
+        case op_get_array_length:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_arguments_length)
         DEFINE_OP(op_get_by_val)
@@ -358,7 +359,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_to_jsnumber)
         DEFINE_OP(op_to_primitive)
 
-        case op_get_array_length:
         case op_get_by_id_chain:
         case op_get_by_id_generic:
         case op_get_by_id_proto:
@@ -446,6 +446,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_div)
         DEFINE_SLOWCASE_OP(op_eq)
         case op_get_by_id_out_of_line:
+        case op_get_array_length:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_arguments_length)
         DEFINE_SLOWCASE_OP(op_get_by_val)

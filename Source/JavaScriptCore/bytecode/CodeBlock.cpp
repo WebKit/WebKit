@@ -291,10 +291,14 @@ void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
     
 #if ENABLE(LLINT)
-    Structure* structure = instruction[4].u.structure.get();
-    dataLog(" llint(");
-    dumpStructure("struct", exec, structure, ident);
-    dataLog(")");
+    if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_get_array_length)
+        dataLog(" llint(array_length)");
+    else {
+        Structure* structure = instruction[4].u.structure.get();
+        dataLog(" llint(");
+        dumpStructure("struct", exec, structure, ident);
+        dataLog(")");
+    }
 #endif
 
 #if ENABLE(JIT)
@@ -2080,6 +2084,8 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[6].u.structure.clear();
                 curInstruction[7].u.structureChain.clear();
                 curInstruction[0].u.opcode = interpreter->getOpcode(op_put_by_id);
+                break;
+            case op_get_array_length:
                 break;
             default:
                 ASSERT_NOT_REACHED();

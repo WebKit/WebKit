@@ -845,9 +845,6 @@ macro notSupported()
     end
 end
 
-_llint_op_get_array_length:
-    notSupported()
-
 _llint_op_get_by_id_chain:
     notSupported()
 

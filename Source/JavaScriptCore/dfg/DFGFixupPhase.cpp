@@ -92,7 +92,7 @@ private:
                 arrayMode = refineArrayMode(
                     fromObserved(arrayProfile->observedArrayModes(), false),
                     m_graph[node.child1()].prediction(),
-                    m_graph[m_compileIndex].prediction());                    
+                    m_graph[m_compileIndex].prediction());
                 if (modeSupportsLength(arrayMode) && arrayProfile->hasDefiniteStructure()) {
                     m_graph.ref(nodePtr->child1());
                     Node checkStructure(CheckStructure, nodePtr->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())), nodePtr->child1().index());

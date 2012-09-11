@@ -43,6 +43,9 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_method_check))
         instruction++;
+    
+    if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_get_array_length))
+        return GetByIdStatus(NoInformation, false);
 
     Structure* structure = instruction[4].u.structure.get();
     if (!structure)

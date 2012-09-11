@@ -2276,7 +2276,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id:
-        case op_get_by_id_out_of_line: {
+        case op_get_by_id_out_of_line:
+        case op_get_array_length: {
             SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);

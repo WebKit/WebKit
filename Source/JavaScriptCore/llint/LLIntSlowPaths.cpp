@@ -858,7 +858,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     JSValue result = baseValue.get(exec, ident, slot);
     LLINT_CHECK_EXCEPTION();
     LLINT_OP(1) = result;
-
+    
     if (!LLINT_ALWAYS_ACCESS_SLOW
         && baseValue.isCell()
         && slot.isCacheable()
@@ -880,6 +880,17 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
                 pc[5].u.operand = offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue);
             }
         }
+    }
+
+    if (!LLINT_ALWAYS_ACCESS_SLOW
+        && isJSArray(baseValue)
+        && ident == exec->propertyNames().length) {
+        pc[0].u.opcode = LLInt::getOpcode(llint_op_get_array_length);
+#if ENABLE(VALUE_PROFILER)
+        ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(pc - codeBlock->instructions().begin());
+        arrayProfile->observeStructure(baseValue.asCell()->structure());
+        pc[4].u.arrayProfile = arrayProfile;
+#endif
     }
 
 #if ENABLE(VALUE_PROFILER)    

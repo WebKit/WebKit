@@ -1168,6 +1168,34 @@ _llint_op_get_by_id_out_of_line:
     getById(withOutOfLineStorage)
 
 
+_llint_op_get_array_length:
+    traceExecution()
+    loadi 8[PC], t0
+    loadp 16[PC], t1
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlot)
+    loadp JSCell::m_structure[t3], t2
+    if VALUE_PROFILER
+        storep t2, ArrayProfile::m_lastSeenStructure[t1]
+    end
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalData[t1], t1
+    loadp JSGlobalData::jsArrayClassInfo[t1], t1
+    bpneq Structure::m_classInfo[t2], t1, .opGetArrayLengthSlow
+    loadi 4[PC], t1
+    loadp 32[PC], t2
+    loadp JSArray::m_storage[t3], t0
+    loadi ArrayStorage::m_length[t0], t0
+    bilt t0, 0, .opGetArrayLengthSlow
+    valueProfile(Int32Tag, t0, t2)
+    storep t0, PayloadOffset[cfr, t1, 8]
+    storep Int32Tag, TagOffset[cfr, t1, 8]
+    dispatch(9)
+
+.opGetArrayLengthSlow:
+    callSlowPath(_llint_slow_path_get_by_id)
+    dispatch(9)
+
+
 _llint_op_get_arguments_length:
     traceExecution()
     loadi 8[PC], t0

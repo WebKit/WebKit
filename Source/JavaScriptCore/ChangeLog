@@ -1,3 +1,45 @@
+2012-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt should optimize and profile array length accesses
+        https://bugs.webkit.org/show_bug.cgi?id=96417
+
+        Reviewed by Oliver Hunt.
+
+        This fixes the following hole in our array profiling strategy, where the array
+        is large (more than 1000 elements):
+        
+        for (var i = 0; i < array.length; ++i) ...
+        
+        The peeled use of array.length (in the array prologue) will execute only once
+        before DFG optimization kicks in from the loop's OSR point. Since it executed
+        only once, it executed in the LLInt. And prior to this patch, the LLInt did
+        not profile array.length accesses - so the DFG will assume, based on the lack
+        of profiling, that the access is in fact not an access to the JSArray length
+        property. That could then impede our ability to hoist the array structure
+        check, and may make us pessimistic in other ways as well, since the generic
+        GetById used for the array length access will be viewed as a side-effecting
+        operation.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules
