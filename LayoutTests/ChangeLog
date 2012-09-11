@@ -1,3 +1,44 @@
+2012-09-11  Mike West  <mkwst@chromium.org>
+
+        Improve console error messages when 'document.domain' blocks cross-origin script access.
+        https://bugs.webkit.org/show_bug.cgi?id=96247
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/cross-frame-access-callback-explicit-domain-DENY-expected.txt:
+        * http/tests/security/cross-frame-access-child-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-parent-explicit-domain-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-expected.txt:
+        * http/tests/security/cross-frame-access-protocol-explicit-domain-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * http/tests/security/view-source-no-javascript-url-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * platform/chromium/http/tests/security/inactive-document-with-empty-security-origin-expected.txt:
+        * platform/chromium/http/tests/security/window-named-proto-expected.txt:
+            Updating error message.
+
 2012-09-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] WebKitGtk+ crashes with non-UTF8 HTTP header names

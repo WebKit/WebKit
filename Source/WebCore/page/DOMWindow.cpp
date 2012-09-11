@@ -1755,16 +1755,35 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
     if (activeWindowURL.isNull())
         return String();
 
+    ASSERT(!activeWindow->document()->securityOrigin()->canAccess(document()->securityOrigin()));
+
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    String message = makeString("Unsafe JavaScript attempt to access frame with URL ", document()->url().string(), " from frame with URL ", activeWindowURL.string(), ".");
+    String message = "Unsafe JavaScript attempt to access frame with URL " + document()->url().string() + " from frame with URL " + activeWindowURL.string() + ".";
+
+    // Sandbox errors.
     if (document()->isSandboxed(SandboxOrigin) || activeWindow->document()->isSandboxed(SandboxOrigin)) {
         if (document()->isSandboxed(SandboxOrigin) && activeWindow->document()->isSandboxed(SandboxOrigin))
-            return makeString("Sandbox access violation: ", message, " Both frames are sandboxed into unique origins.\n");
+            return "Sandbox access violation: " + message + " Both frames are sandboxed into unique origins.\n";
         if (document()->isSandboxed(SandboxOrigin))
-            return makeString("Sandbox access violation: ", message, " The frame being accessed is sandboxed into a unique origin.\n");
-        return makeString("Sandbox access violation: ", message, " The frame requesting access is sandboxed into a unique origin.\n");
+            return "Sandbox access violation: " + message + " The frame being accessed is sandboxed into a unique origin.\n";
+        return "Sandbox access violation: " + message + " The frame requesting access is sandboxed into a unique origin.\n";
     }
-    return makeString(message, " Domains, protocols and ports must match.\n");
+
+    SecurityOrigin* activeOrigin = activeWindow->document()->securityOrigin();
+    SecurityOrigin* targetOrigin = document()->securityOrigin();
+    if (targetOrigin->protocol() != activeOrigin->protocol())
+        return message + " The frame requesting access has a protocol of '" + activeOrigin->protocol() + "', the frame being accessed has a protocol of '" + targetOrigin->protocol() + "'. Protocols must match.\n";
+
+    // 'document.domain' errors.
+    if (targetOrigin->domainWasSetInDOM() && activeOrigin->domainWasSetInDOM())
+        return message + " The frame requesting access set 'document.domain' to '" + activeOrigin->domain() + "', the frame being accessed set it to '" + targetOrigin->domain() + "'. Both must set 'document.domain' to the same value to allow access.\n";
+    if (activeOrigin->domainWasSetInDOM())
+        return message + " The frame requesting access set 'document.domain' to '" + activeOrigin->domain() + "', but the frame being accessed did not. Both must set 'document.domain' to the same value to allow access.\n";
+    if (targetOrigin->domainWasSetInDOM())
+        return message + " The frame being accessed set 'document.domain' to '" + targetOrigin->domain() + "', but the frame requesting access did not. Both must set 'document.domain' to the same value to allow access.\n";
+
+    // Default.
+    return message + " Domains, protocols and ports must match.\n";
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)
