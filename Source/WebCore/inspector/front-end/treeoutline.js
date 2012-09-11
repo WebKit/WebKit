@@ -623,7 +623,6 @@ TreeElement.prototype = {
     set title(x) {
         this._title = x;
         this._setListItemNodeContent();
-        this.didChange();
     },
 
     get tooltip() {
@@ -634,7 +633,6 @@ TreeElement.prototype = {
         this._tooltip = x;
         if (this._listItemNode)
             this._listItemNode.title = x ? x : "";
-        this.didChange();
     },
 
     get hasChildren() {
@@ -656,8 +654,6 @@ TreeElement.prototype = {
             this._listItemNode.classList.remove("parent");
             this.collapse();
         }
-
-        this.didChange();
     },
 
     get hidden() {
@@ -691,21 +687,6 @@ TreeElement.prototype = {
         this._shouldRefreshChildren = x;
         if (x && this.expanded)
             this.expand();
-    },
-
-    _fireDidChange: function()
-    {
-        delete this._didChangeTimeoutIdentifier;
-    },
-
-    didChange: function()
-    {
-        if (!this.treeOutline)
-            return;
-
-        // Prevent telling the TreeOutline multiple times in a row by delaying it with a timeout.
-        if (!this._didChangeTimeoutIdentifier)
-            this._didChangeTimeoutIdentifier = setTimeout(this._fireDidChange.bind(this), 0);
     },
 
     _setListItemNodeContent: function()
