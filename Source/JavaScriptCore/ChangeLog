@@ -1,5 +1,57 @@
 2012-09-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Added large allocation support to MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=96214
+
+        Originally reviewed by Oliver Hunt, then I added a design revision by
+        suggested by Phil Pizlo.
+
+        I expanded the imprecise size classes to cover up to 32KB, then added
+        an mmap-based allocator for everything bigger. There's a lot of tuning
+        we could do in these size classes, but currently they're almost
+        completely unused, so I haven't done any tuning.
+
+        Subtle point: the large allocator is a degenerate case of our free list
+        logic. Its list only ever contains zero or one items.
+
+        * heap/Heap.h:
+        (JSC::Heap::allocateStructure): Pipe in size information.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): Handle the case where we
+        find a free item in the sweep list but the item isn't big enough. This
+        can happen in the large allocator because it mixes sizes.
+
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocateSlowCase): More piping.
+
+        (JSC::MarkedAllocator::allocateBlock): Handle the oversize case.
+
+        (JSC::MarkedAllocator::addBlock): I moved the call to didAddBlock here
+        because it made more sense.
+
+        * heap/MarkedAllocator.h:
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::allocate):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::allocateWithoutDestructor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::allocateStructure):
+        (JSC::MarkedSpace::forEachBlock):
+        * runtime/Structure.h:
+        (JSC::Structure): More piping.
+
+2012-09-10  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Windows (32-bit) build.
 
         * jit/JITOpcodes.cpp:

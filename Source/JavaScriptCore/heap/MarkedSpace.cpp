@@ -90,6 +90,7 @@ MarkedSpace::MarkedSpace(Heap* heap)
         destructorAllocatorFor(cellSize).init(heap, this, cellSize, true, false);
     }
 
+    m_largeAllocator.init(heap, this, 0, true, false);
     m_structureAllocator.init(heap, this, WTF::roundUpToMultipleOf(32, sizeof(Structure)), true, true);
 }
 
@@ -127,6 +128,7 @@ void MarkedSpace::resetAllocators()
         destructorAllocatorFor(cellSize).reset();
     }
 
+    m_largeAllocator.reset();
     m_structureAllocator.reset();
 }
 
@@ -153,6 +155,7 @@ void MarkedSpace::canonicalizeCellLivenessData()
         destructorAllocatorFor(cellSize).zapFreeList();
     }
 
+    m_largeAllocator.zapFreeList();
     m_structureAllocator.zapFreeList();
 }
 
@@ -168,6 +171,9 @@ bool MarkedSpace::isPagedOut(double deadline)
             return true;
     }
 
+    if (m_largeAllocator.isPagedOut(deadline))
+        return true;
+
     if (m_structureAllocator.isPagedOut(deadline))
         return true;
 
@@ -178,7 +184,12 @@ void MarkedSpace::freeBlock(MarkedBlock* block)
 {
     allocatorFor(block).removeBlock(block);
     m_blocks.remove(block);
-    m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
+    if (block->capacity() == MarkedBlock::blockSize) {
+        m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
+        return;
+    }
+
+    MarkedBlock::destroy(block).deallocate();
 }
 
 void MarkedSpace::freeOrShrinkBlock(MarkedBlock* block)

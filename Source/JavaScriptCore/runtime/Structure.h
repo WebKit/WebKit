@@ -460,7 +460,7 @@ namespace JSC {
         ASSERT(!heap.globalData()->isInitializingObject());
         heap.globalData()->setInitializingObjectClass(&Structure::s_info);
 #endif
-        JSCell* result = static_cast<JSCell*>(heap.allocateStructure());
+        JSCell* result = static_cast<JSCell*>(heap.allocateStructure(sizeof(Structure)));
         result->clearStructure();
         return result;
     }

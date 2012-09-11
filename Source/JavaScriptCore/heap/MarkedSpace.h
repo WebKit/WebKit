@@ -80,7 +80,7 @@ public:
     MarkedAllocator& destructorAllocatorFor(size_t);
     void* allocateWithDestructor(size_t);
     void* allocateWithoutDestructor(size_t);
-    void* allocateStructure();
+    void* allocateStructure(size_t);
  
     void resetAllocators();
 
@@ -115,15 +115,15 @@ public:
 
 private:
     friend class LLIntOffsetsExtractor;
-    
-    // [ 32... 256 ]
+
+    // [ 32... 512 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
-    static const size_t preciseCutoff = 256;
+    static const size_t preciseCutoff = 512;
     static const size_t preciseCount = preciseCutoff / preciseStep;
 
-    // [ 512... 2048 ]
-    static const size_t impreciseStep = preciseCutoff;
-    static const size_t impreciseCutoff = maxCellSize;
+    // [ 1024... blockSize ]
+    static const size_t impreciseStep = 2 * preciseCutoff;
+    static const size_t impreciseCutoff = MarkedBlock::blockSize / 2;
     static const size_t impreciseCount = impreciseCutoff / impreciseStep;
 
     struct Subspace {
@@ -133,6 +133,7 @@ private:
 
     Subspace m_destructorSpace;
     Subspace m_normalSpace;
+    MarkedAllocator m_largeAllocator;
     MarkedAllocator m_structureAllocator;
 
     Heap* m_heap;
@@ -162,10 +163,12 @@ inline MarkedAllocator& MarkedSpace::firstAllocator()
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
 {
-    ASSERT(bytes && bytes <= maxCellSize);
+    ASSERT(bytes);
     if (bytes <= preciseCutoff)
         return m_normalSpace.preciseAllocators[(bytes - 1) / preciseStep];
-    return m_normalSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
+    if (bytes <= impreciseCutoff)
+        return m_normalSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
+    return m_largeAllocator;
 }
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(MarkedBlock* block)
@@ -181,25 +184,27 @@ inline MarkedAllocator& MarkedSpace::allocatorFor(MarkedBlock* block)
 
 inline MarkedAllocator& MarkedSpace::destructorAllocatorFor(size_t bytes)
 {
-    ASSERT(bytes && bytes <= maxCellSize);
+    ASSERT(bytes);
     if (bytes <= preciseCutoff)
         return m_destructorSpace.preciseAllocators[(bytes - 1) / preciseStep];
-    return m_destructorSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
+    if (bytes <= impreciseCutoff)
+        return m_normalSpace.impreciseAllocators[(bytes - 1) / impreciseStep];
+    return m_largeAllocator;
 }
 
 inline void* MarkedSpace::allocateWithoutDestructor(size_t bytes)
 {
-    return allocatorFor(bytes).allocate();
+    return allocatorFor(bytes).allocate(bytes);
 }
 
 inline void* MarkedSpace::allocateWithDestructor(size_t bytes)
 {
-    return destructorAllocatorFor(bytes).allocate();
+    return destructorAllocatorFor(bytes).allocate(bytes);
 }
 
-inline void* MarkedSpace::allocateStructure()
+inline void* MarkedSpace::allocateStructure(size_t bytes)
 {
-    return m_structureAllocator.allocate();
+    return m_structureAllocator.allocate(bytes);
 }
 
 template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
@@ -214,6 +219,7 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
         m_destructorSpace.impreciseAllocators[i].forEachBlock(functor);
     }
 
+    m_largeAllocator.forEachBlock(functor);
     m_structureAllocator.forEachBlock(functor);
 
     return functor.returnValue();
