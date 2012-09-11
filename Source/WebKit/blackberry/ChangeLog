@@ -1,3 +1,19 @@
+2012-09-11  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] add a way to overscroll non-overflown content
+        https://bugs.webkit.org/show_bug.cgi?id=96331
+        PR #195305
+
+        Reviewed by Yong Li.
+
+        Check -webkit-overflow-scrolling value for '-blackberry-touch' instead
+        of checking a custom HTML5 attribute.
+
+        No behavioural change. Mostly a rework of r128142.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::canScrollRenderBox):
+
 2012-09-11  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] make pickers/dialogs use appendLiteral
