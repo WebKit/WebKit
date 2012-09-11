@@ -1,3 +1,9 @@
+2012-09-11  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-09-11  Keishi Hattori  <keishi@webkit.org>
 
         Create Localizer factory method for LocaleMac
