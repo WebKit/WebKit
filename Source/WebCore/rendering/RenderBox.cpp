@@ -2118,7 +2118,7 @@ LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, cons
 
 LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 {
-    LayoutUnit result = -1;
+    LayoutUnit availableHeight = -1;
     
     // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
     // block that may have a specified height and then use it. In strict mode, this violates the
@@ -2163,38 +2163,40 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
                     return 0;
                 return -1;
             }
-            result = cb->overrideLogicalContentHeight();
+            availableHeight = cb->overrideLogicalContentHeight();
             includeBorderPadding = true;
         }
     } else if (cbstyle->logicalHeight().isFixed()) {
         // Otherwise we only use our percentage height if our containing block had a specified height.
         LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(cbstyle->logicalHeight().value());
-        result = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+        availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
     } else if (cbstyle->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
         LayoutUnit heightWithScrollbar = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
         if (heightWithScrollbar != -1) {
             LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
-            result = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+            availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
         }
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         LayoutUnit oldHeight = cb->logicalHeight();
         cb->updateLogicalHeight();
-        result = cb->contentLogicalHeight();
+        availableHeight = cb->contentLogicalHeight();
         cb->setLogicalHeight(oldHeight);
     }
 
-    if (result != -1) {
-        result = valueForLength(height, result);
-        if (includeBorderPadding) {
-            // It is necessary to use the border-box to match WinIE's broken
-            // box model.  This is essential for sizing inside
-            // table cells using percentage heights.
-            result -= borderAndPaddingLogicalHeight();
-            result = max<LayoutUnit>(0, result);
-        }
+    if (availableHeight == -1)
+        return availableHeight;
+
+    LayoutUnit result = valueForLength(height, availableHeight);
+    if (includeBorderPadding) {
+        // FIXME: Table cells should default to box-sizing: border-box so we can avoid this hack.
+        // It is necessary to use the border-box to match WinIE's broken
+        // box model. This is essential for sizing inside
+        // table cells using percentage heights.
+        result -= borderAndPaddingLogicalHeight();
+        return max<LayoutUnit>(0, result);
     }
     return result;
 }
