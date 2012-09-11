@@ -200,10 +200,10 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     }
 #endif    
     
-    updateLayerOpacity(renderer()->style());
-    updateLayerTransform(renderer()->style());
+    updateOpacity(renderer()->style());
+    updateTransform(renderer()->style());
 #if ENABLE(CSS_FILTERS)
-    updateLayerFilters(renderer()->style());
+    updateFilters(renderer()->style());
 #endif
 #if ENABLE(CSS_COMPOSITING)
     updateLayerBlendMode(renderer()->style());
@@ -224,12 +224,12 @@ void RenderLayerBacking::destroyGraphicsLayers()
     m_scrollingContentsLayer = nullptr;
 }
 
-void RenderLayerBacking::updateLayerOpacity(const RenderStyle* style)
+void RenderLayerBacking::updateOpacity(const RenderStyle* style)
 {
     m_graphicsLayer->setOpacity(compositingOpacity(style->opacity()));
 }
 
-void RenderLayerBacking::updateLayerTransform(const RenderStyle* style)
+void RenderLayerBacking::updateTransform(const RenderStyle* style)
 {
     // FIXME: This could use m_owningLayer->transform(), but that currently has transform-origin
     // baked into it, and we don't want that.
@@ -243,7 +243,7 @@ void RenderLayerBacking::updateLayerTransform(const RenderStyle* style)
 }
 
 #if ENABLE(CSS_FILTERS)
-void RenderLayerBacking::updateLayerFilters(const RenderStyle* style)
+void RenderLayerBacking::updateFilters(const RenderStyle* style)
 {
     m_canCompositeFilters = m_graphicsLayer->setFilters(style->filter());
 }
@@ -465,14 +465,14 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // Set transform property, if it is not animating. We have to do this here because the transform
     // is affected by the layer dimensions.
     if (!renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyWebkitTransform))
-        updateLayerTransform(renderer()->style());
+        updateTransform(renderer()->style());
 
     // Set opacity, if it is not animating.
     if (!renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity))
-        updateLayerOpacity(renderer()->style());
+        updateOpacity(renderer()->style());
         
 #if ENABLE(CSS_FILTERS)
-    updateLayerFilters(renderer()->style());
+    updateFilters(renderer()->style());
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
@@ -1610,7 +1610,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             // The boxSize param is only used for transform animations (which can only run on RenderBoxes), so we pass an empty size here.
             if (m_graphicsLayer->addAnimation(opacityVector, IntSize(), opacityAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyOpacity), timeOffset)) {
                 // To ensure that the correct opacity is visible when the animation ends, also set the final opacity.
-                updateLayerOpacity(toStyle);
+                updateOpacity(toStyle);
                 didAnimateOpacity = true;
             }
         }
@@ -1624,7 +1624,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             transformVector.insert(new TransformAnimationValue(1, &toStyle->transform()));
             if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final transform.
-                updateLayerTransform(toStyle);
+                updateTransform(toStyle);
                 didAnimateTransform = true;
             }
         }
@@ -1639,7 +1639,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             filterVector.insert(new FilterAnimationValue(1, &toStyle->filter()));
             if (m_graphicsLayer->addAnimation(filterVector, IntSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
                 // To ensure that the correct filter is visible when the animation ends, also set the final filter.
-                updateLayerFilters(toStyle);
+                updateFilters(toStyle);
                 didAnimateFilter = true;
             }
         }

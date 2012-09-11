@@ -201,10 +201,10 @@ private:
     // Result is perspective origin in pixels.
     FloatPoint computePerspectiveOrigin(const IntRect& borderBox) const;
 
-    void updateLayerOpacity(const RenderStyle*);
-    void updateLayerTransform(const RenderStyle*);
+    void updateOpacity(const RenderStyle*);
+    void updateTransform(const RenderStyle*);
 #if ENABLE(CSS_FILTERS)
-    void updateLayerFilters(const RenderStyle*);
+    void updateFilters(const RenderStyle*);
 #endif
 #if ENABLE(CSS_COMPOSITING)
     void updateLayerBlendMode(const RenderStyle*);
