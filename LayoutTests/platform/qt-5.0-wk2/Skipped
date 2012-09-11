@@ -446,11 +446,6 @@ fast/replaced/width100percent-textfield.html
 fast/transforms/transformed-focused-text-input.html
 editing/selection/14971.html
 
-# [Qt] [WK2] editing/inserting/typing-tab-designmode tests are failing
-# https://bugs.webkit.org/show_bug.cgi?id=91988
-editing/inserting/typing-tab-designmode-forms.html
-editing/inserting/typing-tab-designmode.html
-
 # Size of select is different when running DRT/WTR
 fast/replaced/three-selects-break.html
 
