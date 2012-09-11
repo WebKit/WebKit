@@ -1,3 +1,17 @@
+2012-09-11  Matt Lilek  <mrl@apple.com>
+
+        OS X port should compile with newer versions of clang
+        https://bugs.webkit.org/show_bug.cgi?id=96434
+
+        m_identIsVarDecl is unused - remove it.
+
+        Reviewed by Anders Carlsson.
+
+        * parser/NodeConstructors.h:
+        (JSC::ForInNode::ForInNode):
+        * parser/Nodes.h:
+        (ForInNode):
+
 2012-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt should optimize and profile array length accesses

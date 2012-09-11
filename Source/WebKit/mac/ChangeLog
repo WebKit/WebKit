@@ -1,3 +1,17 @@
+2012-09-11  Matt Lilek  <mrl@apple.com>
+
+        OS X port should compile with newer versions of clang
+        https://bugs.webkit.org/show_bug.cgi?id=96434
+
+        m_isTerminated is unused in the Hosted flavor of NetscapePluginStream.
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        (HostedNetscapePluginStream):
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+
 2012-09-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; rolling out r128081.

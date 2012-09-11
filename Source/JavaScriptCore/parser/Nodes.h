@@ -1204,7 +1204,6 @@ namespace JSC {
         ExpressionNode* m_lexpr;
         ExpressionNode* m_expr;
         StatementNode* m_statement;
-        bool m_identIsVarDecl;
     };
 
     class ContinueNode : public StatementNode, public ThrowableExpressionData {

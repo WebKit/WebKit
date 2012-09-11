@@ -119,7 +119,9 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_valueAttributeWasUpdatedAfterParsing(false)
     , m_wasModifiedByUser(false)
     , m_canReceiveDroppedFiles(false)
+#if ENABLE(TOUCH_EVENTS)
     , m_hasTouchEventHandler(false)
+#endif
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));

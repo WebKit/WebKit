@@ -89,7 +89,6 @@ private:
     
     RefPtr<NetscapePluginInstanceProxy> m_instance;
     uint32_t m_streamID;
-    bool m_isTerminated;
     RetainPtr<NSMutableURLRequest> m_request;
 
     RetainPtr<NSURL> m_requestURL;

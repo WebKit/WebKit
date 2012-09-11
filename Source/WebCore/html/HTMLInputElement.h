@@ -412,7 +412,9 @@ private:
     bool m_valueAttributeWasUpdatedAfterParsing : 1;
     bool m_wasModifiedByUser : 1;
     bool m_canReceiveDroppedFiles : 1;
-    bool m_hasTouchEventHandler: 1;
+#if ENABLE(TOUCH_EVENTS)
+    bool m_hasTouchEventHandler : 1;
+#endif
     OwnPtr<InputType> m_inputType;
 #if ENABLE(DATALIST_ELEMENT)
     OwnPtr<ListAttributeTargetObserver> m_listAttributeTargetObserver;

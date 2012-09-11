@@ -197,7 +197,7 @@ static CGColorSpaceRef createLinearSRGBColorSpace()
     
     CFBundleRef webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
     RetainPtr<CFURLRef> iccProfileURL(CFBundleCopyResourceURL(webCoreBundle, CFSTR("linearSRGB"), CFSTR("icc"), 0));
-    CFDataRef iccProfileData;
+    CFDataRef iccProfileData = 0;
     
     if (iccProfileURL && CFURLCreateDataAndPropertiesFromResource(0, iccProfileURL.get(), &iccProfileData, 0, 0, 0))
         linearSRGBSpace = CGColorSpaceCreateWithICCProfile(iccProfileData);
