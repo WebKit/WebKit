@@ -1,3 +1,50 @@
+2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Rewrite the EFL-related Find modules
+        https://bugs.webkit.org/show_bug.cgi?id=95237
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        FindEFL.cmake had several problems which caused unnecessary trouble
+        when building the EFL port under some setups:
+
+        o It looked for some modules (such as ecore) more than once for no
+        reason, which led to people adding libraries and include paths in
+        different ways across the build system.
+
+        o It depended on pkg-config being present for the searches to
+        succeed.
+
+        o It obtained the library definitions from pkg-config, so
+        ${FOO_LIBRARIES} would be set to something like "foo;bar" which
+        expanded to "-lfoo -lbar" to the linker. If a wrong -L<path> was
+        passed before that, the wrong library installation would end up
+        being picked up.
+
+        o Due to the problem above, we also needed to set the LINK_FLAGS
+        property for each target with the value of ${FOO_LDFLAGS}, which was
+        also obtained from pkg-config and sort of compensated the fact that
+        the libraries did not use absolute paths and added the required -L
+        paths. This also included dependencies for these libraries, so we
+        ended up including libraries indirectly, which is bad.
+
+        We have now replaced that file with a set of Find-modules which are
+        much more granular, each of them responsible for looking for a
+        single library and its components and setting library and include
+        locations the right way (with FIND_PATH() and FIND_LIBRARY()), so
+        that all the problems above are fixed.
+
+        * Source/cmake/EFLHelpers.cmake: Added.
+        * Source/cmake/FindEDBus.cmake: Added.
+        * Source/cmake/FindEFL.cmake: Removed.
+        * Source/cmake/FindEcore.cmake: Added.
+        * Source/cmake/FindEdje.cmake: Added.
+        * Source/cmake/FindEeze.cmake: Added.
+        * Source/cmake/FindEfreet.cmake: Added.
+        * Source/cmake/FindEina.cmake: Added.
+        * Source/cmake/FindEvas.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] In-source builds are broken

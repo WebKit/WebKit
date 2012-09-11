@@ -18,7 +18,3 @@ IF (ENABLE_GLIB_SUPPORT)
     ${JAVASCRIPTCORE_DIR}/wtf/gobject
   )
 ENDIF ()
-
-LIST(APPEND JavaScriptCore_LINK_FLAGS
-    ${ECORE_LDFLAGS}
-)
