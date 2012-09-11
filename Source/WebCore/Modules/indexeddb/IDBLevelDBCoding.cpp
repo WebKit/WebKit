@@ -505,9 +505,8 @@ const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& found
     return 0;
 }
 
-const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result)
+const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result = 0)
 {
-    ASSERT(result);
     const char* p = start;
     if (p >= limit)
         return 0;
@@ -517,8 +516,7 @@ const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<ch
     switch (type) {
     case IDBKeyNullTypeByte:
     case IDBKeyMinKeyTypeByte:
-        *result = encodeByte(type);
-        return p;
+        break;
     case IDBKeyArrayTypeByte: {
         int64_t length;
         p = decodeVarInt(p, limit, length);
@@ -526,16 +524,12 @@ const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<ch
             return 0;
         if (length < 0)
             return 0;
-        result->clear();
-        result->append(start, p - start);
         while (length--) {
-            Vector<char> subkey;
-            p = extractEncodedIDBKey(p, limit, &subkey);
+            p = extractEncodedIDBKey(p, limit);
             if (!p)
                 return 0;
-            result->append(subkey);
         }
-        return p;
+        break;
     }
     case IDBKeyStringTypeByte: {
         int64_t length;
@@ -544,20 +538,25 @@ const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<ch
             return 0;
         if (p + length * 2 > limit)
             return 0;
-        result->clear();
-        result->append(start, p - start + length * 2);
-        return p + length * 2;
+        p += length * 2;
+        break;
     }
     case IDBKeyDateTypeByte:
     case IDBKeyNumberTypeByte:
         if (p + sizeof(double) > limit)
             return 0;
-        result->clear();
-        result->append(start, 1 + sizeof(double));
-        return p + sizeof(double);
+        p += sizeof(double);
+        break;
     }
-    ASSERT_NOT_REACHED();
-    return 0;
+
+    if (result) {
+        ASSERT(p);
+        ASSERT(p <= limit);
+        result->clear();
+        result->append(start, p - start);
+    }
+
+    return p;
 }
 
 static IDBKey::Type keyTypeByteToKeyType(unsigned char type)
@@ -581,13 +580,13 @@ static IDBKey::Type keyTypeByteToKeyType(unsigned char type)
     return IDBKey::InvalidType;
 }
 
-int compareEncodedIDBKeys(const char*& p, const char* limitA, const char*& q, const char* limitB)
+int compareEncodedIDBKeys(const char*& ptrA, const char* limitA, const char*& ptrB, const char* limitB)
 {
-    ASSERT(&p != &q);
-    ASSERT(p < limitA);
-    ASSERT(q < limitB);
-    unsigned char typeA = *p++;
-    unsigned char typeB = *q++;
+    ASSERT(&ptrA != &ptrB);
+    ASSERT(ptrA < limitA);
+    ASSERT(ptrB < limitB);
+    unsigned char typeA = *ptrA++;
+    unsigned char typeB = *ptrB++;
 
     if (int x = IDBKey::compareTypes(keyTypeByteToKeyType(typeA), keyTypeByteToKeyType(typeB)))
         return x;
@@ -599,16 +598,16 @@ int compareEncodedIDBKeys(const char*& p, const char* limitA, const char*& q, co
         return 0;
     case IDBKeyArrayTypeByte: {
         int64_t lengthA, lengthB;
-        p = decodeVarInt(p, limitA, lengthA);
-        if (!p)
+        ptrA = decodeVarInt(ptrA, limitA, lengthA);
+        if (!ptrA)
             return 0;
-        q = decodeVarInt(q, limitB, lengthB);
-        if (!q)
+        ptrB = decodeVarInt(ptrB, limitB, lengthB);
+        if (!ptrB)
             return 0;
         if (lengthA < 0 || lengthB < 0)
             return 0;
         for (int64_t i = 0; i < lengthA && i < lengthB; ++i) {
-            if (int cmp = compareEncodedIDBKeys(p, limitA, q, limitB))
+            if (int cmp = compareEncodedIDBKeys(ptrA, limitA, ptrB, limitB))
                 return cmp;
         }
         if (lengthA < lengthB)
@@ -618,14 +617,14 @@ int compareEncodedIDBKeys(const char*& p, const char* limitA, const char*& q, co
         return 0;
     }
     case IDBKeyStringTypeByte:
-        return compareEncodedStringsWithLength(p, limitA, q, limitB);
+        return compareEncodedStringsWithLength(ptrA, limitA, ptrB, limitB);
     case IDBKeyDateTypeByte:
     case IDBKeyNumberTypeByte: {
         double d, e;
-        p = decodeDouble(p, limitA, &d);
-        ASSERT(p);
-        q = decodeDouble(q, limitB, &e);
-        ASSERT(q);
+        ptrA = decodeDouble(ptrA, limitA, &d);
+        ASSERT(ptrA);
+        ptrB = decodeDouble(ptrB, limitB, &e);
+        ASSERT(ptrB);
         if (d < e)
             return -1;
         if (d > e)
@@ -643,12 +642,12 @@ int compareEncodedIDBKeys(const Vector<char>& keyA, const Vector<char>& keyB)
     ASSERT(keyA.size() >= 1);
     ASSERT(keyB.size() >= 1);
 
-    const char* p = keyA.data();
-    const char* limitA = p + keyA.size();
-    const char* q = keyB.data();
-    const char* limitB = q + keyB.size();
+    const char* ptrA = keyA.data();
+    const char* limitA = ptrA + keyA.size();
+    const char* ptrB = keyB.data();
+    const char* limitB = ptrB + keyB.size();
 
-    return compareEncodedIDBKeys(p, limitA, q, limitB);
+    return compareEncodedIDBKeys(ptrA, limitA, ptrB, limitB);
 }
 
 Vector<char> encodeIDBKeyPath(const IDBKeyPath& keyPath)
@@ -720,8 +719,9 @@ IDBKeyPath decodeIDBKeyPath(const char* p, const char* limit)
 }
 
 namespace {
+
 template<typename KeyType>
-int decodeAndCompare(const LevelDBSlice& a, const LevelDBSlice& b)
+int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates = false)
 {
     KeyType keyA;
     KeyType keyB;
@@ -733,6 +733,103 @@ int decodeAndCompare(const LevelDBSlice& a, const LevelDBSlice& b)
 
     return keyA.compare(keyB);
 }
+
+template<>
+int compare<ExistsEntryKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates)
+{
+    KeyPrefix prefixA;
+    KeyPrefix prefixB;
+    const char* ptrA = KeyPrefix::decode(a.begin(), a.end(), &prefixA);
+    const char* ptrB = KeyPrefix::decode(b.begin(), b.end(), &prefixB);
+    ASSERT(ptrA);
+    ASSERT(ptrB);
+    ASSERT(prefixA.m_databaseId);
+    ASSERT(prefixA.m_objectStoreId);
+    ASSERT(prefixA.m_indexId == ExistsEntryKey::SpecialIndexNumber);
+    ASSERT(prefixB.m_databaseId);
+    ASSERT(prefixB.m_objectStoreId);
+    ASSERT(prefixB.m_indexId == ExistsEntryKey::SpecialIndexNumber);
+    ASSERT(ptrA != a.end());
+    ASSERT(ptrB != b.end());
+    // Prefixes are not compared - it is assumed this was already done.
+    ASSERT(!prefixA.compare(prefixB));
+
+    return compareEncodedIDBKeys(ptrA, a.end(), ptrB, b.end());
+}
+
+template<>
+int compare<ObjectStoreDataKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates)
+{
+    KeyPrefix prefixA;
+    KeyPrefix prefixB;
+    const char* ptrA = KeyPrefix::decode(a.begin(), a.end(), &prefixA);
+    const char* ptrB = KeyPrefix::decode(b.begin(), b.end(), &prefixB);
+    ASSERT(ptrA);
+    ASSERT(ptrB);
+    ASSERT(prefixA.m_databaseId);
+    ASSERT(prefixA.m_objectStoreId);
+    ASSERT(prefixA.m_indexId == ObjectStoreDataKey::SpecialIndexNumber);
+    ASSERT(prefixB.m_databaseId);
+    ASSERT(prefixB.m_objectStoreId);
+    ASSERT(prefixB.m_indexId == ObjectStoreDataKey::SpecialIndexNumber);
+    ASSERT(ptrA != a.end());
+    ASSERT(ptrB != b.end());
+    // Prefixes are not compared - it is assumed this was already done.
+    ASSERT(!prefixA.compare(prefixB));
+
+    return compareEncodedIDBKeys(ptrA, a.end(), ptrB, b.end());
+}
+
+template<>
+int compare<IndexDataKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates)
+{
+    KeyPrefix prefixA;
+    KeyPrefix prefixB;
+    const char* ptrA = KeyPrefix::decode(a.begin(), a.end(), &prefixA);
+    const char* ptrB = KeyPrefix::decode(b.begin(), b.end(), &prefixB);
+    ASSERT(ptrA);
+    ASSERT(ptrB);
+    ASSERT(prefixA.m_databaseId);
+    ASSERT(prefixA.m_objectStoreId);
+    ASSERT(prefixA.m_indexId >= MinimumIndexId);
+    ASSERT(prefixB.m_databaseId);
+    ASSERT(prefixB.m_objectStoreId);
+    ASSERT(prefixB.m_indexId >= MinimumIndexId);
+    ASSERT(ptrA != a.end());
+    ASSERT(ptrB != b.end());
+    // Prefixes are not compared - it is assumed this was already done.
+    ASSERT(!prefixA.compare(prefixB));
+
+    // index key
+    if (int x = compareEncodedIDBKeys(ptrA, a.end(), ptrB, b.end()))
+        return x;
+    if (ignoreDuplicates)
+        return 0;
+
+    // sequence number [optional]
+    int64_t sequenceNumberA = -1;
+    int64_t sequenceNumberB = -1;
+    if (ptrA != a.end())
+        ptrA = decodeVarInt(ptrA, a.end(), sequenceNumberA);
+    if (ptrB != b.end())
+        ptrB = decodeVarInt(ptrB, b.end(), sequenceNumberB);
+
+    // primar key [optional]
+    if (!ptrA || !ptrB)
+        return 0;
+    if (ptrA == a.end() && ptrB == b.end())
+        return 0;
+    if (ptrA == a.end())
+        return -1;
+    if (ptrB == b.end())
+        return 1;
+
+    if (int x = compareEncodedIDBKeys(ptrA, a.end(), ptrB, b.end()))
+        return x;
+
+    return compareInts(sequenceNumberA, sequenceNumberB);
+}
+
 }
 
 int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
@@ -766,9 +863,9 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
         if (typeByteA <= 1)
             return 0;
         if (typeByteA == DatabaseFreeListTypeByte)
-            return decodeAndCompare<DatabaseFreeListKey>(a, b);
+            return compare<DatabaseFreeListKey>(a, b);
         if (typeByteA == DatabaseNameTypeByte)
-            return decodeAndCompare<DatabaseNameKey>(a, b);
+            return compare<DatabaseNameKey>(a, b);
     }
 
     if (prefixA.type() == KeyPrefix::DatabaseMetaData) {
@@ -785,20 +882,20 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
             return 0;
 
         if (typeByteA == ObjectStoreMetaDataTypeByte)
-            return decodeAndCompare<ObjectStoreMetaDataKey>(a, b);
+            return compare<ObjectStoreMetaDataKey>(a, b);
         if (typeByteA == IndexMetaDataTypeByte)
-            return decodeAndCompare<IndexMetaDataKey>(a, b);
+            return compare<IndexMetaDataKey>(a, b);
         if (typeByteA == ObjectStoreFreeListTypeByte)
-            return decodeAndCompare<ObjectStoreFreeListKey>(a, b);
+            return compare<ObjectStoreFreeListKey>(a, b);
         if (typeByteA == IndexFreeListTypeByte)
-            return decodeAndCompare<IndexFreeListKey>(a, b);
+            return compare<IndexFreeListKey>(a, b);
         if (typeByteA == ObjectStoreNamesTypeByte)
-            return decodeAndCompare<ObjectStoreNamesKey>(a, b);
+            return compare<ObjectStoreNamesKey>(a, b);
         if (typeByteA == IndexNamesKeyTypeByte)
-            return decodeAndCompare<IndexNamesKey>(a, b);
+            return compare<IndexNamesKey>(a, b);
 
-        return 0;
         ASSERT_NOT_REACHED();
+        return 0;
     }
 
     if (prefixA.type() == KeyPrefix::ObjectStoreData) {
@@ -809,7 +906,7 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
         if (ptrB == endB)
             return 1; // FIXME: This case of non-existing user keys should not have to be handled this way.
 
-        return decodeAndCompare<ObjectStoreDataKey>(a, b);
+        return compare<ObjectStoreDataKey>(a, b);
     }
     if (prefixA.type() == KeyPrefix::ExistsEntry) {
         if (ptrA == endA && ptrB == endB)
@@ -819,7 +916,7 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
         if (ptrB == endB)
             return 1; // FIXME: This case of non-existing user keys should not have to be handled this way.
 
-        return decodeAndCompare<ExistsEntryKey>(a, b);
+        return compare<ExistsEntryKey>(a, b);
     }
     if (prefixA.type() == KeyPrefix::IndexData) {
         if (ptrA == endA && ptrB == endB)
@@ -829,16 +926,8 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
         if (ptrB == endB)
             return 1; // FIXME: This case of non-existing user keys should not have to be handled this way.
 
-        IndexDataKey indexDataKeyA;
-        IndexDataKey indexDataKeyB;
-
-        ptrA = IndexDataKey::decode(a.begin(), endA, &indexDataKeyA);
-        ptrB = IndexDataKey::decode(b.begin(), endB, &indexDataKeyB);
-        ASSERT(ptrA);
-        ASSERT(ptrB);
-
         bool ignoreDuplicates = indexKeys;
-        return indexDataKeyA.compare(indexDataKeyB, ignoreDuplicates);
+        return compare<IndexDataKey>(a, b, ignoreDuplicates);
     }
 
     ASSERT_NOT_REACHED();
