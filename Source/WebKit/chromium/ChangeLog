@@ -1,3 +1,14 @@
+2012-09-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128150.
+        http://trac.webkit.org/changeset/128150
+        https://bugs.webkit.org/show_bug.cgi?id=96357
+
+        it broke chromium compilation (Requested by loislo on
+        #webkit).
+
+        * DEPS:
+
 2012-09-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
