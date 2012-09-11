@@ -1,3 +1,12 @@
+2012-09-11  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] don't include content shell builders in the garden-o-matic view
+        https://bugs.webkit.org/show_bug.cgi?id=96418
+
+        Reviewed by James Robinson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+
 2012-09-11  Adam Klein  <adamk@chromium.org>
 
         Garden-o-matic should ignore a wider variety of warnings in buildbot json
