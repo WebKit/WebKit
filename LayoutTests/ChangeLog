@@ -1,3 +1,25 @@
+2012-09-10  Philip Rogers  <pdr@google.com>
+
+        Remove unnecessary work in SMILTimeContainer::updateAnimations
+        https://bugs.webkit.org/show_bug.cgi?id=96224
+
+        Reviewed by Nikolas Zimmermann.
+
+        This change should have no functional differences but a test
+        is being added to show that. SMILTimeContainer::updateAnimations
+        contained a comment explaining why a animateTransform needed to be
+        processed last but that is no longer the case (as the test shows).
+
+        * svg/animations/script-tests/use-animate-transform-and-position.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/use-animate-transform-and-position-expected.txt: Added.
+        * svg/animations/use-animate-transform-and-position.html: Added.
+
 2012-09-10  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; rolling out r128081.

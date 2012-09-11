@@ -204,18 +204,6 @@ void SMILTimeContainer::sortByPriority(Vector<SVGSMILElement*>& smilElements, SM
         updateDocumentOrderIndexes();
     std::sort(smilElements.begin(), smilElements.end(), PriorityCompare(elapsed));
 }
-    
-static bool applyOrderSortFunction(SVGSMILElement* a, SVGSMILElement* b)
-{
-    if (!a->hasTagName(SVGNames::animateTransformTag) && b->hasTagName(SVGNames::animateTransformTag))
-        return true;
-    return false;
-}
-    
-static void sortByApplyOrder(Vector<SVGSMILElement*>& smilElements)
-{
-    std::sort(smilElements.begin(), smilElements.end(), applyOrderSortFunction);
-}
 
 void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 {
@@ -229,12 +217,11 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     // FIXME: This should also consider timing relationships between the elements. Dependents
     // have higher priority.
     sortByPriority(toAnimate, elapsed);
-    
+
     // Calculate animation contributions.
     typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
-    typedef HashMap<ElementAttributePair, RefPtr<SVGSMILElement> > ResultElementMap;
+    typedef HashMap<ElementAttributePair, SVGSMILElement*> ResultElementMap;
     ResultElementMap resultsElements;
-    HashSet<SVGSMILElement*> contributingElements;
     for (unsigned n = 0; n < toAnimate.size(); ++n) {
         SVGSMILElement* animation = toAnimate[n];
         ASSERT(animation->timeContainer() == this);
@@ -242,7 +229,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         SVGElement* targetElement = animation->targetElement();
         if (!targetElement)
             continue;
-        
+
         QualifiedName attributeName = animation->attributeName();
         if (attributeName == anyQName()) {
             if (animation->hasTagName(SVGNames::animateMotionTag))
@@ -250,51 +237,36 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
             else
                 continue;
         }
-        
+
         // Results are accumulated to the first animation that animates and contributes to a particular element/attribute pair.
         ElementAttributePair key(targetElement, attributeName); 
-        SVGSMILElement* resultElement = resultsElements.get(key).get();
-        bool accumulatedResultElement = false;
+        SVGSMILElement* resultElement = resultsElements.get(key);
         if (!resultElement) {
             if (!animation->hasValidAttributeType())
                 continue;
             resultElement = animation;
-            resultsElements.add(key, resultElement);
-            accumulatedResultElement = true;
-        }
+        } else
+            ASSERT(resultElement != animation);
 
         // This will calculate the contribution from the animation and add it to the resultsElement.
-        if (animation->progress(elapsed, resultElement, seekToTime))
-            contributingElements.add(resultElement);
-        else if (accumulatedResultElement)
-            resultsElements.remove(key);
+        if (animation->progress(elapsed, resultElement, seekToTime) && resultElement == animation)
+            resultsElements.add(key, resultElement);
 
         SMILTime nextFireTime = animation->nextProgressTime();
         if (nextFireTime.isFinite())
             earliersFireTime = min(nextFireTime, earliersFireTime);
     }
-    
-    Vector<SVGSMILElement*> animationsToApply;
-    ResultElementMap::iterator end = resultsElements.end();
-    for (ResultElementMap::iterator it = resultsElements.begin(); it != end; ++it) {
-        SVGSMILElement* animation = it->second.get();
-        if (contributingElements.contains(animation))
-            animationsToApply.append(animation);
-    }
 
-    unsigned animationsToApplySize = animationsToApply.size();
-    if (!animationsToApplySize) {
+    unsigned resultsToApplySize = resultsElements.size();
+    if (!resultsToApplySize) {
         startTimer(earliersFireTime, animationFrameDelay);
         return;
     }
 
-    // Sort <animateTranform> to be the last one to be applied. <animate> may change transform attribute as
-    // well (directly or indirectly by modifying <use> x/y) and this way transforms combine properly.
-    sortByApplyOrder(animationsToApply);
-
     // Apply results to target elements.
-    for (unsigned i = 0; i < animationsToApplySize; ++i)
-        animationsToApply[i]->applyResultsToTarget();
+    ResultElementMap::iterator end = resultsElements.end();
+    for (ResultElementMap::iterator it = resultsElements.begin(); it != end; ++it)
+        it->second->applyResultsToTarget();
 
     startTimer(earliersFireTime, animationFrameDelay);
     Document::updateStyleForAllDocuments();
