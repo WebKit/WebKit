@@ -1,3 +1,13 @@
+2012-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: title attribute is not exposed as the AXDescription on AXImage when there is no other fallback content
+        https://bugs.webkit.org/show_bug.cgi?id=96412
+
+        Reviewed by Jon Honeycutt.
+
+        * accessibility/img-fallsback-to-title.html: Added.
+        * platform/mac/accessibility/img-fallsback-to-title-expected.txt: Added.
+
 2012-09-11  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark some tests as needing a rebaseline due to SVG filters change.

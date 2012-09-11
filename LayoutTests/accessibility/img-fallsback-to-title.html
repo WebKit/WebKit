@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex="0" id="images">
+    <img alt="" height="100" width="100">
+    <img title="test1" height="100" width="100">
+    <img alt="alt" title="test2" height="100" width="100">
+    <div role="img" title="test3" width="100" height="100">test</div>
+    <div role="img" alt="alt" title="test4" width="100" height="100">test</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that images will fallback to using the title attribute if no other descriptive text is present.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("images").focus();
+        var imagesGroup = accessibilityController.focusedElement;
+
+        // First image should have a description of "test1" because there is no alt tag (it should use the title).
+        // The title should NOT be in the help text.
+        var image1 = imagesGroup.childAtIndex(0).childAtIndex(0);
+        debug("Image1 description: " + image1.description);
+        debug("Image1 help: " + image1.helpText + "<br>");
+
+        // Second image should use the description from the alt tag instead of the title.
+        // The help text should reflect what's in the title.
+        var image2 = imagesGroup.childAtIndex(0).childAtIndex(1);
+        debug("Image2 description: " + image2.description);
+        debug("Image2 help: " + image2.helpText + "<br>");
+
+        // Now do the same checks for ARIA type images.
+        var image3 = imagesGroup.childAtIndex(1);
+        debug("Image3 description: " + image3.description);
+        debug("Image3 help: " + image3.helpText + "<br>");
+
+        // Now do the same checks for ARIA type images.
+        var image4 = imagesGroup.childAtIndex(2);
+        debug("Image4 description: " + image4.description);
+        debug("Image4 help: " + image4.helpText + "<br>");
+
+        // Verify that the first image (with an empty alt tag) is ignored
+        // by checking the children count of the group containing the native images == 2.
+        shouldBe("imagesGroup.childAtIndex(0).childrenCount", "2");
+    }
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
