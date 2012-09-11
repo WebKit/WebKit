@@ -35,7 +35,7 @@
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
 #include "V8Binding.h"
-#include "V8IsolatedContext.h"
+#include "V8DOMWindowShell.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -55,8 +55,8 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     ScriptExecutionContext* context = getScriptExecutionContext();
 
     RefPtr<SecurityOrigin> securityOrigin;
-    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered())
-        securityOrigin = isolatedContext->securityOrigin();
+    if (V8DOMWindowShell* isolatedWorldShell = V8DOMWindowShell::getEntered())
+        securityOrigin = isolatedWorldShell->isolatedWorldSecurityOrigin();
 
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
 

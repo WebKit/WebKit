@@ -2519,7 +2519,6 @@ sub GenerateImplementation
     AddToImplIncludes("RuntimeEnabledFeatures.h");
     AddToImplIncludes("V8Binding.h");
     AddToImplIncludes("V8DOMWrapper.h");
-    AddToImplIncludes("V8IsolatedContext.h");
 
     AddIncludesForType($interfaceName);
 

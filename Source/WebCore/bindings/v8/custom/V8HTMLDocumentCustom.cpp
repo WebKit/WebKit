@@ -40,9 +40,9 @@
 #include "HTMLNames.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
+#include "V8DOMWindowShell.h"
 #include "V8HTMLAllCollection.h"
 #include "V8HTMLCollection.h"
-#include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8RecursionScope.h"
 #include <wtf/text/StringBuilder.h>
@@ -183,7 +183,7 @@ v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Handle<v8::Object> creationCo
     v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, creationContext, isolate, forceNewObject);
     if (wrapper.IsEmpty())
         return wrapper;
-    if (!V8IsolatedContext::getEntered()) {
+    if (!V8DOMWindowShell::getEntered()) {
         if (Frame* frame = impl->frame())
             frame->script()->windowShell()->updateDocumentWrapper(wrapper);
     }

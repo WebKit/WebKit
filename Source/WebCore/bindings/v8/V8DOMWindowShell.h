@@ -31,7 +31,9 @@
 #ifndef V8DOMWindowShell_h
 #define V8DOMWindowShell_h
 
+#include "DOMWrapperWorld.h"
 #include "ScopedPersistent.h"
+#include "SecurityOrigin.h"
 #include "V8PerContextData.h"
 #include "WrapperTypeInfo.h"
 #include <wtf/Forward.h>
@@ -51,7 +53,7 @@ class HTMLDocument;
 // persist between navigations.
 class V8DOMWindowShell {
 public:
-    static PassOwnPtr<V8DOMWindowShell> create(Frame*);
+    static PassOwnPtr<V8DOMWindowShell> create(Frame*, PassRefPtr<DOMWrapperWorld>);
 
     v8::Persistent<v8::Context> context() const { return m_context.get(); }
 
@@ -68,7 +70,6 @@ public:
     bool isContextInitialized();
 
     v8::Persistent<v8::Context> createNewContext(v8::Handle<v8::Object> global, int extensionGroup, int worldId);
-    static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow*);
 
     bool initializeIfNeeded();
     void updateDocumentWrapper(v8::Handle<v8::Object> wrapper);
@@ -80,10 +81,38 @@ public:
 
     V8PerContextData* perContextData() { return m_perContextData.get(); }
 
-private:
-    explicit V8DOMWindowShell(Frame*);
+    DOMWrapperWorld* world() { return m_world.get(); }
 
-    void disposeContext();
+    void setIsolatedWorldSecurityOrigin(PassRefPtr<SecurityOrigin>);
+    SecurityOrigin* isolatedWorldSecurityOrigin() const
+    {
+        ASSERT(!m_world->isMainWorld());
+        return m_isolatedWorldShellSecurityOrigin.get();
+    };
+
+    // Returns the isolated world associated with
+    // v8::Context::GetEntered(). Because worlds are isolated, the entire
+    // JavaScript call stack should be from the same isolated world.
+    // Returns 0 if the entered context is from the main world.
+    //
+    // FIXME: Consider edge cases with DOM mutation events that might
+    // violate this invariant.
+    //
+    // FIXME: This is poorly named after the deletion of isolated contexts.
+    static V8DOMWindowShell* getEntered()
+    {
+        if (!DOMWrapperWorld::isolatedWorldsExist())
+            return 0;
+        if (!v8::Context::InContext())
+            return 0;
+        return enteredIsolatedWorldContext();
+    }
+
+    void destroyIsolatedShell();
+private:
+    V8DOMWindowShell(Frame*, PassRefPtr<DOMWrapperWorld>);
+
+    void disposeContext(bool weak = false);
 
     void setSecurityToken();
 
@@ -94,13 +123,22 @@ private:
     void updateDocumentProperty();
     void clearDocumentProperty();
 
+    void createContext();
+    bool installDOMWindow();
+
+    static V8DOMWindowShell* enteredIsolatedWorldContext();
+
     Frame* m_frame;
+    RefPtr<DOMWrapperWorld> m_world;
 
     OwnPtr<V8PerContextData> m_perContextData;
 
     ScopedPersistent<v8::Context> m_context;
     ScopedPersistent<v8::Object> m_global;
     ScopedPersistent<v8::Object> m_document;
+
+    // FIXME: Either remove this or the map in ScriptController.
+    RefPtr<SecurityOrigin> m_isolatedWorldShellSecurityOrigin;
 };
 
 } // namespace WebCore

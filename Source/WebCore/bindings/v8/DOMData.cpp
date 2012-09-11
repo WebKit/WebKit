@@ -31,7 +31,7 @@
 #include "config.h"
 #include "DOMData.h"
 #include "V8Binding.h"
-#include "V8IsolatedContext.h"
+#include "V8DOMWindowShell.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 
@@ -43,7 +43,7 @@ DOMDataStore& DOMData::getCurrentStore(v8::Isolate* isolate)
     V8PerIsolateData* data = V8PerIsolateData::current(isolate);
     if (UNLIKELY(data->domDataStore() != 0))
         return *data->domDataStore();
-    V8IsolatedContext* context = V8IsolatedContext::getEntered();
+    V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
     if (UNLIKELY(context != 0))
         return *context->world()->domDataStore();
     return defaultStore;

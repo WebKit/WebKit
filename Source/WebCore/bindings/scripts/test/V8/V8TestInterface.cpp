@@ -31,7 +31,6 @@
 #include "TestSupplemental.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
-#include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8TestObj.h"
 #include <wtf/GetPtr.h>

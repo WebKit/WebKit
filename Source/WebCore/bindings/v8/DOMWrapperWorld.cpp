@@ -90,13 +90,12 @@ void DOMWrapperWorld::deallocate(DOMWrapperWorld* world)
 
 static int temporaryWorldId = DOMWrapperWorld::uninitializedWorldId-1;
 
-PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::getOrCreateIsolatedWorld(int worldId, int extensionGroup)
+PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::ensureIsolatedWorld(int worldId, int extensionGroup)
 {
     ASSERT(worldId != mainWorldId);
-    ASSERT(worldId != uninitializedWorldId);
 
     WorldMap& map = isolatedWorldMap();
-    if (!worldId)
+    if (worldId == uninitializedWorldId)
         worldId = temporaryWorldId--;
     else {
         WorldMap::iterator i = map.find(worldId);

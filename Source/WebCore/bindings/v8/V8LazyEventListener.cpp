@@ -37,6 +37,7 @@
 #include "HTMLElement.h"
 #include "HTMLFormElement.h"
 #include "Node.h"
+#include "ScriptSourceCode.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"

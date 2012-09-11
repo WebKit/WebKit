@@ -32,7 +32,7 @@
 #include "WorldContextHandle.h"
 
 #include "ScriptController.h"
-#include "V8IsolatedContext.h"
+#include "V8DOMWindowShell.h"
 
 namespace WebCore {
 
@@ -42,15 +42,22 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
     if (worldToUse == UseMainWorld)
         return;
 
-    if (V8IsolatedContext* context = V8IsolatedContext::getEntered())
-        m_context = context->sharedContext();
+    V8DOMWindowShell* shell = V8DOMWindowShell::getEntered();
+    if (LIKELY(!shell)) {
+        m_worldToUse = UseMainWorld;
+        return;
+    }
+
+    ASSERT(!shell->context().IsEmpty());
+    m_context = SharedPersistent<v8::Context>::create(shell->context());
 }
 
 v8::Local<v8::Context> WorldContextHandle::adjustedContext(ScriptController* script) const
 {
-    if (m_worldToUse == UseMainWorld || !m_context || m_context->get().IsEmpty())
+    if (m_worldToUse == UseMainWorld)
         return script->mainWorldContext();
 
+    ASSERT(!m_context->get().IsEmpty());
     return v8::Local<v8::Context>::New(m_context->get());
 }
 

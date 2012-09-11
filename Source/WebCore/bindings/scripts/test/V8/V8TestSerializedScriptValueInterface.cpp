@@ -32,7 +32,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
-#include "V8IsolatedContext.h"
 #include "V8MessagePort.h"
 #include <wtf/ArrayBuffer.h>
 #include <wtf/UnusedParam.h>

@@ -2301,8 +2301,6 @@
             'bindings/v8/V8GCForContextDispose.h',
             'bindings/v8/V8HiddenPropertyName.cpp',
             'bindings/v8/V8HiddenPropertyName.h',
-            'bindings/v8/V8IsolatedContext.cpp',
-            'bindings/v8/V8IsolatedContext.h',
             'bindings/v8/V8LazyEventListener.cpp',
             'bindings/v8/V8LazyEventListener.h',
             'bindings/v8/V8NPObject.cpp',

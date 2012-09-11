@@ -41,12 +41,12 @@ namespace WebCore {
 // This class represent a collection of DOM wrappers for a specific world.
 class DOMWrapperWorld : public WTF::RefCountedBase {
 public:
-    static const int mainWorldId = -1;
-    static const int mainWorldExtensionGroup = -1;
-    static const int uninitializedWorldId = -2;
-    static const int uninitializedExtensionGroup = -2;
+    static const int mainWorldId = 0;
+    static const int mainWorldExtensionGroup = 0;
+    static const int uninitializedWorldId = -1;
+    static const int uninitializedExtensionGroup = -1;
     // If 0 is passed as worldId, the world will be assigned a temporary id instead.
-    static PassRefPtr<DOMWrapperWorld> getOrCreateIsolatedWorld(int worldId, int extensionGroup);
+    static PassRefPtr<DOMWrapperWorld> ensureIsolatedWorld(int worldId, int extensionGroup);
     static bool isolatedWorldsExist() { return isolatedWorldCount; }
     // FIXME: this is a workaround for a problem in WebViewImpl.
     // Do not use this anywhere else!!

@@ -37,7 +37,7 @@
 #include "NodeFilter.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
-#include "V8IsolatedContext.h"
+#include "V8DOMWindowShell.h"
 #include "V8Utilities.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -123,7 +123,7 @@ namespace WebCore {
                     return *wrapper;
             }
 
-            V8IsolatedContext* context = V8IsolatedContext::getEntered();
+            V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
             if (LIKELY(!context)) {
                 v8::Persistent<v8::Object>* wrapper = node->wrapper();
                 if (!wrapper)
