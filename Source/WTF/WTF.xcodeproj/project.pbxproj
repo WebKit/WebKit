@@ -17,6 +17,7 @@
 		4330F38F15745B0500AAFA8F /* URLString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4330F38E15745B0500AAFA8F /* URLString.cpp */; };
 		4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F0321BB156AA8D1006EBAF6 /* BitArray.h */; };
 		4F1D115415FF11BE0026E908 /* MemoryInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1D115315FF11BE0026E908 /* MemoryInstrumentation.h */; };
+		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
@@ -270,6 +271,7 @@
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		5D247B7314689C4700E78B76 /* WTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WTF.xcconfig; sourceTree = "<group>"; };
 		5D247EB11468B01500E78B76 /* HeaderDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeaderDetection.h; path = DerivedSources/WTF/HeaderDetection.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		A876DBD7151816E500DADB95 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				A8A472D4151A825B004123FF /* NullPtr.h */,
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
 				A8A472D6151A825B004123FF /* NumberOfCores.h */,
+				7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */,
 				A8A472D7151A825B004123FF /* OSAllocator.h */,
 				A8A472D8151A825B004123FF /* OSAllocatorPosix.cpp */,
 				A8A472DA151A825B004123FF /* OSRandomSource.cpp */,
@@ -982,6 +985,7 @@
 				A8A473F1151A825B004123FF /* NotFound.h in Headers */,
 				A8A473F3151A825B004123FF /* NullPtr.h in Headers */,
 				A8A473F5151A825B004123FF /* NumberOfCores.h in Headers */,
+				7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */,
 				A8A473F6151A825B004123FF /* OSAllocator.h in Headers */,
 				A8A473FA151A825B004123FF /* OSRandomSource.h in Headers */,
 				A8A473FB151A825B004123FF /* OwnArrayPtr.h in Headers */,
