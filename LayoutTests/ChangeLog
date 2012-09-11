@@ -1,3 +1,12 @@
+2012-09-11  Stephanie Lewis  <slewis@apple.com>
+
+        Skip spatial-navigation tests on mac-wk2 because they are all failing.
+        https://bugs.webkit.org/show_bug.cgi?id=96438.
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+
 2012-09-11  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, rolling out r128075
