@@ -2795,3 +2795,7 @@ fast/viewport/viewport-limits-adjusted-for-no-user-scale.html
 fast/spatial-navigation/snav-container-white-space.html
 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
 fast/spatial-navigation/snav-imagemap-overlapped-areas.html
+
+# New fast/canvas/canvas-lineDash.html introduced in r128116 fails
+# https://bugs.webkit.org/show_bug.cgi?id=96360
+fast/canvas/canvas-lineDash.html
