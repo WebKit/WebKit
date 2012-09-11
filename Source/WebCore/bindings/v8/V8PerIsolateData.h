@@ -48,11 +48,6 @@ class ExternalStringVisitor;
 
 typedef WTF::Vector<DOMDataStore*> DOMDataList;
 
-#ifndef NDEBUG
-class GlobalHandleInfo;
-typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
-#endif
-
 class V8PerIsolateData {
 public:
     static V8PerIsolateData* create(v8::Isolate*);
@@ -111,8 +106,6 @@ public:
     int nextDependentRetainedId() { return m_nextDependentRetainedId++; }
 
 #ifndef NDEBUG
-    GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
-
     int internalScriptRecursionLevel() const { return m_internalScriptRecursionLevel; }
     int incrementInternalScriptRecursionLevel() { return ++m_internalScriptRecursionLevel; }
     int decrementInternalScriptRecursionLevel() { return --m_internalScriptRecursionLevel; }
@@ -155,7 +148,6 @@ private:
     int m_nextDependentRetainedId;
 
 #ifndef NDEBUG
-    GlobalHandleMap m_globalHandleMap;
     int m_internalScriptRecursionLevel;
 #endif
     OwnPtr<GCEventData> m_gcEventData;

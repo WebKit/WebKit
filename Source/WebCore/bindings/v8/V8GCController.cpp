@@ -67,63 +67,6 @@
 
 namespace WebCore {
 
-#ifndef NDEBUG
-// Keeps track of global handles created (not JS wrappers
-// of DOM objects). Often these global handles are source
-// of leaks.
-//
-// If you want to let a C++ object hold a persistent handle
-// to a JS object, you should register the handle here to
-// keep track of leaks.
-//
-// When creating a persistent handle, call:
-//
-// #ifndef NDEBUG
-//    V8GCController::registerGlobalHandle(type, host, handle);
-// #endif
-//
-// When releasing the handle, call:
-//
-// #ifndef NDEBUG
-//    V8GCController::unregisterGlobalHandle(type, host, handle);
-// #endif
-//
-
-static GlobalHandleMap& currentGlobalHandleMap()
-{
-    return V8PerIsolateData::current()->globalHandleMap();
-}
-
-// The function is the place to set the break point to inspect
-// live global handles. Leaks are often come from leaked global handles.
-static void enumerateGlobalHandles()
-{
-    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
-    for (GlobalHandleMap::iterator it = globalHandleMap.begin(), end = globalHandleMap.end(); it != end; ++it) {
-        GlobalHandleInfo* info = it->second;
-        UNUSED_PARAM(info);
-        v8::Value* handle = it->first;
-        UNUSED_PARAM(handle);
-    }
-}
-
-void V8GCController::registerGlobalHandle(GlobalHandleType type, void* host, v8::Persistent<v8::Value> handle)
-{
-    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
-    ASSERT(!globalHandleMap.contains(*handle));
-    globalHandleMap.set(*handle, new GlobalHandleInfo(host, type));
-}
-
-void V8GCController::unregisterGlobalHandle(void* host, v8::Persistent<v8::Value> handle)
-{
-    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
-    ASSERT(globalHandleMap.contains(*handle));
-    GlobalHandleInfo* info = globalHandleMap.take(*handle);
-    ASSERT(info->m_host == host);
-    delete info;
-}
-#endif // ifndef NDEBUG
-
 typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
 
@@ -475,11 +418,6 @@ public:
 
 int V8GCController::workingSetEstimateMB = 0;
 
-namespace {
-
-
-}  // anonymous namespace
-
 void V8GCController::gcEpilogue()
 {
     v8::HandleScope scope;
@@ -500,8 +438,6 @@ void V8GCController::gcEpilogue()
 
     EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
     visitDOMNodes(&weakDOMNodeVisitor);
-
-    enumerateGlobalHandles();
 #endif
 
 #if PLATFORM(CHROMIUM)
@@ -536,11 +472,14 @@ void V8GCController::collectGarbage()
 {
     v8::HandleScope handleScope;
 
-    v8::Persistent<v8::Context> context = v8::Context::New();
-    if (context.IsEmpty())
+    ScopedPersistent<v8::Context> context;
+
+    context.adopt(v8::Context::New());
+    if (context.isEmpty())
         return;
+
     {
-        v8::Context::Scope scope(context);
+        v8::Context::Scope scope(context.get());
         v8::Local<v8::String> source = v8::String::New("if (gc) gc();");
         v8::Local<v8::String> name = v8::String::New("gc");
         v8::Handle<v8::Script> script = v8::Script::Compile(source, name);
@@ -549,7 +488,8 @@ void V8GCController::collectGarbage()
             script->Run();
         }
     }
-    context.Dispose();
+
+    context.clear();
 }
 
 }  // namespace WebCore

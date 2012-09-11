@@ -102,9 +102,6 @@ static void freeV8NPObject(NPObject* npObject)
         staticV8NPObjectMap()->clear();
     }
 
-#ifndef NDEBUG
-    V8GCController::unregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
-#endif
     v8NpObject->v8Object.Dispose();
     free(v8NpObject);
 }
@@ -176,9 +173,6 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));
     v8npObject->v8Object = v8::Persistent<v8::Object>::New(object);
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(NPOBJECT, v8npObject, v8npObject->v8Object);
-#endif
     v8npObject->rootObject = root;
 
     iter->second.append(v8npObject);
