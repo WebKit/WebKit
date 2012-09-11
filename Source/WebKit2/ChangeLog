@@ -1,3 +1,33 @@
+2012-09-11  Brady Eidson  <beidson@apple.com>
+
+        Get rid of the PluginProcessShim for 64-bit plug-ins
+        <rdar://problem/12068560> and https://bugs.webkit.org/show_bug.cgi?id=96415
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::getCurrentEventButtonState):
+        (WebKit):
+        (WebKit::beginModal): Moved from the shim, to be shared with shimmed processes.
+        (WebKit::endModal): Ditto.
+        (WebKit::replacedRunModalForWindow): Only used by Cocoa overrides.
+        (WebKit::PluginProcess::initializeShim):
+        (WebKit::PluginProcess::initializeCocoaOverrides): 
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Only call initializeShim for 32-bit processes, always call initializeCocoaOverrides
+
+        * PluginProcess/mac/PluginProcessShim.h:
+        (PluginProcessShimCallbacks):
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit):
+        (WebKit::shimModalDialog): Call beginModal/endModal from the shim callbacks.
+        (WebKit::shimAlert): Ditto.
+        (WebKit::WebKitPluginProcessShimInitialize): Don't do the Cocoa overrides as they are now handled outside the shim.
+
 2012-09-11  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Restore original value of mock scrollbars enabled in InternalSettings

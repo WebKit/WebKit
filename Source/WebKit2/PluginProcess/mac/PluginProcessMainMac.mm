@@ -116,8 +116,13 @@ int PluginProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // Initialize the shim.
+#if defined(__i386__)
+    // Initialize the shim for 32-bit only.
     PluginProcess::shared().initializeShim();
+#endif
+
+    // Initialize Cocoa overrides. 
+    PluginProcess::shared().initializeCocoaOverrides();
 
     // Initialize the plug-in process connection.
     PluginProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());

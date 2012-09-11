@@ -36,6 +36,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
+#import <objc/runtime.h>
 #import <wtf/HashSet.h>
 
 namespace WebKit {
@@ -160,16 +161,6 @@ static UInt32 getCurrentEventButtonState()
     return 0;
 #endif
 }
-    
-static void cocoaWindowShown(NSWindow *window)
-{
-    fullscreenWindowTracker().windowShown(window);
-}
-
-static void cocoaWindowHidden(NSWindow *window)
-{
-    fullscreenWindowTracker().windowHidden(window);
-}
 
 static void carbonWindowShown(WindowRef window)
 {
@@ -190,14 +181,44 @@ static void setModal(bool modalWindowIsShowing)
     PluginProcess::shared().setModalWindowIsShowing(modalWindowIsShowing);
 }
 
+static unsigned modalCount = 0;
+
+static void beginModal()
+{
+    // Make sure to make ourselves the front process
+    ProcessSerialNumber psn;
+    GetCurrentProcess(&psn);
+    SetFrontProcess(&psn);
+    
+    if (!modalCount++)
+        setModal(true);
+}
+
+static void endModal()
+{
+    if (!--modalCount)
+        setModal(false);
+}
+
+static IMP NSApplication_RunModalForWindow;
+
+static NSInteger replacedRunModalForWindow(id self, SEL _cmd, NSWindow* window)
+{
+    beginModal();
+    NSInteger result = ((NSInteger (*)(id, SEL, NSWindow *))NSApplication_RunModalForWindow)(self, _cmd, window);
+    endModal();
+
+    return result;
+}
+
 void PluginProcess::initializeShim()
 {
     const PluginProcessShimCallbacks callbacks = {
         shouldCallRealDebugger,
         isWindowActive,
         getCurrentEventButtonState,
-        cocoaWindowShown,
-        cocoaWindowHidden,
+        beginModal,
+        endModal,
         carbonWindowShown,
         carbonWindowHidden,
         setModal,
@@ -205,6 +226,30 @@ void PluginProcess::initializeShim()
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
     initFunc(callbacks);
+}
+
+void PluginProcess::initializeCocoaOverrides()
+{
+    // Override -[NSApplication runModalForWindow:]
+    Method runModalForWindowMethod = class_getInstanceMethod(objc_getClass("NSApplication"), @selector(runModalForWindow:));
+    NSApplication_RunModalForWindow = method_setImplementation(runModalForWindowMethod, reinterpret_cast<IMP>(replacedRunModalForWindow));
+
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+
+    // Track when any Cocoa window is about to be be shown.
+    id orderOnScreenObserver = [defaultCenter addObserverForName:WKWindowWillOrderOnScreenNotification()
+                                                          object:nil
+                                                           queue:nil
+                                                           usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowShown([notification object]); }];
+    // Track when any Cocoa window is about to be hidden.
+    id orderOffScreenObserver = [defaultCenter addObserverForName:WKWindowWillOrderOffScreenNotification()
+                                                           object:nil
+                                                            queue:nil
+                                                       usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowHidden([notification object]); }];
+
+    // Leak the two observers so that they observe notifications for the lifetime of the process.
+    CFRetain(orderOnScreenObserver);
+    CFRetain(orderOffScreenObserver);
 }
 
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)

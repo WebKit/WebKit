@@ -36,8 +36,8 @@ struct PluginProcessShimCallbacks {
     bool (*shouldCallRealDebugger)();
     bool (*isWindowActive)(WindowRef, bool& result);
     UInt32 (*getCurrentEventButtonState)();
-    void (*cocoaWindowShown)(NSWindow *);
-    void (*cocoaWindowHidden)(NSWindow *);
+    void (*beginModal)();
+    void (*endModal)();
     void (*carbonWindowShown)(WindowRef);
     void (*carbonWindowHidden)(WindowRef);
     void (*setModal)(bool);

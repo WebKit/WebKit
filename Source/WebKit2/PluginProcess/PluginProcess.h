@@ -56,6 +56,7 @@ public:
 
 #if PLATFORM(MAC)
     void initializeShim();
+    void initializeCocoaOverrides();
 
     void setModalWindowIsShowing(bool);
     void setFullscreenWindowIsShowing(bool);
