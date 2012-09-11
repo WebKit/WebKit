@@ -61,6 +61,8 @@ public:
 
     ALWAYS_INLINE size_t length() const { return m_string ? static_cast<size_t>(eina_stringshare_strlen(m_string)) : 0; }
 
+    static WKEinaSharedString adopt(Eina_Stringshare*);
+
 private:
     const char* m_string;
 };

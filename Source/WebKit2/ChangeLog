@@ -1,3 +1,22 @@
+2012-09-11  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] WKEinaSharedString needs a function to adopt eina stringshare.
+        https://bugs.webkit.org/show_bug.cgi?id=96201
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WKEinaSharedString needs a to adopt eina stringshare directly.
+
+        With this adopt function, an instance that is directly created with
+        eina_stringshare_add() can be easily handled by WKEinaSharedString
+        without calling eina_stringshare_del() for preventing memory leak.
+
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp:
+        (WKEinaSharedString::adopt):
+        * UIProcess/API/cpp/efl/WKEinaSharedString.h:
+        * UIProcess/API/efl/tests/test_ewk2_eina_shared_string.cpp:
+        (TEST_F):
+
 2012-09-11  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix the build with recent Qt5

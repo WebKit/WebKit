@@ -75,6 +75,18 @@ TEST_F(EWK2UnitTestBase, constructFromWKURL)
     checkString(string, testUrl);
 }
 
+TEST_F(EWK2UnitTestBase, constructFromEinaStringShare)
+{
+    WKEinaSharedString string(WKEinaSharedString::adopt(eina_stringshare_add(testString)));
+    checkString(string, testString);
+
+    string = WKEinaSharedString::adopt(eina_stringshare_add(anotherTestString));
+    checkString(string, anotherTestString);
+
+    string = string;
+    checkString(string, anotherTestString);
+}
+
 TEST_F(EWK2UnitTestBase, costructCopy)
 {
     WKEinaSharedString string(testString);
