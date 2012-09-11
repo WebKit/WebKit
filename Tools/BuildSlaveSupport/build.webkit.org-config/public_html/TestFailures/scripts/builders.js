@@ -56,7 +56,8 @@ function didFail(step)
         // FIXME: Do build.webkit.org bots output this marker when the tests fail to run?
         return step.text.indexOf(kCrashedOrHungOutputMarker) != -1;
     }
-    return step.results[0] > 0 && step.text.indexOf('warning') == -1;
+    function isWarning(text) { return text.indexOf('warning') != -1; }
+    return step.results[0] > 0 && !step.text.some(isWarning);
 }
 
 function failingSteps(buildInfo)

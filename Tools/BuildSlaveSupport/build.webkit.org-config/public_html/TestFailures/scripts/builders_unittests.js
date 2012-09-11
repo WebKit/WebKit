@@ -541,7 +541,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "results": [1, []],
         "statistics": {},
         "step_number": 4,
-        "text": ["extract_build", "warning"],
+        "text": ["extract_build", "warnings"],
         "times": [1318366370.94771, 1318366404.552783],
         "urls": {}
     }, {
