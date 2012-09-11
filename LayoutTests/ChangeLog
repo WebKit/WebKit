@@ -1,3 +1,16 @@
+2012-09-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] WebKitGtk+ crashes with non-UTF8 HTTP header names
+        https://bugs.webkit.org/show_bug.cgi?id=96284
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added a new test to make sure that WebKitGtk+ does not crash when
+        a non-UTF8 character is sent as part of a HTTP header name.
+
+        * http/tests/misc/non-utf8-header-name-expected.txt: Added.
+        * http/tests/misc/non-utf8-header-name.php: Added.
+
 2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement clearApplicationCacheForOrigin
