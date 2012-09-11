@@ -81,7 +81,7 @@ bool RenderMultiColumnBlock::updateLogicalWidthAndColumnWidth()
 void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& /*pageLogicalHeight*/, bool& /*pageLogicalHeightChanged*/, bool& /*hasSpecifiedPageLogicalHeight*/)
 {
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
-    computeLogicalHeight();
+    updateLogicalHeight();
     LayoutUnit newContentLogicalHeight = contentLogicalHeight();
     if (newContentLogicalHeight > ZERO_LAYOUT_UNIT) {
         // The regions will be invalidated when we lay them out and they change size to

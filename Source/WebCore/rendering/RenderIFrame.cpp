@@ -43,9 +43,9 @@ RenderIFrame::RenderIFrame(Element* element)
 {
 }
 
-void RenderIFrame::computeLogicalHeight()
+void RenderIFrame::updateLogicalHeight()
 {
-    RenderPart::computeLogicalHeight();
+    RenderPart::updateLogicalHeight();
     if (!flattenFrame())
          return;
 
@@ -175,7 +175,7 @@ void RenderIFrame::layoutSeamlessly()
     FrameView* childFrameView = static_cast<FrameView*>(widget());
     if (childFrameView) // Widget should never be null during layout(), but just in case.
         setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom());
-    computeLogicalHeight();
+    updateLogicalHeight();
 
     updateWidgetPosition(); // Notify the Widget of our final height.
 
@@ -191,7 +191,7 @@ void RenderIFrame::layout()
 
     if (flattenFrame()) {
         RenderPart::updateLogicalWidth();
-        RenderPart::computeLogicalHeight();
+        RenderPart::updateLogicalHeight();
         layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
         // FIXME: Is early return really OK here? What about transform/overflow code below?
         return;
@@ -201,7 +201,7 @@ void RenderIFrame::layout()
     } else {
         updateLogicalWidth();
         // No kids to layout as a replaced element.
-        computeLogicalHeight();
+        updateLogicalHeight();
     }
 
     m_overflow.clear();

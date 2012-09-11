@@ -248,7 +248,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutSize previousSize = size();
 
     updateLogicalWidth();
-    computeLogicalHeight();
+    updateLogicalHeight();
 
     m_overflow.clear();
 
@@ -269,7 +269,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         layoutVerticalBox(relayoutChildren);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
-    computeLogicalHeight();
+    updateLogicalHeight();
 
     if (previousSize.height() != height())
         relayoutChildren = true;
@@ -414,7 +414,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         setHeight(height() + toAdd);
 
         oldHeight = height();
-        computeLogicalHeight();
+        updateLogicalHeight();
 
         relayoutChildren = false;
         if (oldHeight != height())
@@ -447,7 +447,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // fill the height of a containing box by default.
             // Now do a layout.
             LayoutUnit oldChildHeight = child->height();
-            child->computeLogicalHeight();
+            child->updateLogicalHeight();
             if (oldChildHeight != child->height())
                 child->setChildNeedsLayout(true, MarkOnlyThis);
 
@@ -735,7 +735,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 
         // Now we have to calc our height, so we know how much space we have remaining.
         oldHeight = height();
-        computeLogicalHeight();
+        updateLogicalHeight();
         if (oldHeight != height())
             heightSpecified = true;
 

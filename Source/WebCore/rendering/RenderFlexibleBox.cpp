@@ -265,7 +265,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     layoutFlexItems(*m_orderIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
-    computeLogicalHeight();
+    updateLogicalHeight();
     repositionLogicalHeightDependentFlexItems(*m_orderIterator, lineContexts, oldClientAfterEdge);
 
     if (size() != previousSize)
@@ -1058,7 +1058,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
     if (style()->flexDirection() == FlowColumnReverse) {
         // We have to do an extra pass for column-reverse to reposition the flex items since the start depends
         // on the height of the flexbox, which we only know after we've positioned all the flex items.
-        computeLogicalHeight();
+        updateLogicalHeight();
         layoutColumnReverse(children, childSizes, crossAxisOffset, availableFreeSpace);
     }
 

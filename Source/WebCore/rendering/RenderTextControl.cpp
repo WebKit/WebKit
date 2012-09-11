@@ -144,7 +144,7 @@ int RenderTextControl::scrollbarThickness() const
     return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
-void RenderTextControl::computeLogicalHeight()
+void RenderTextControl::updateLogicalHeight()
 {
     HTMLElement* innerText = innerTextElement();
     ASSERT(innerText);
@@ -157,7 +157,7 @@ void RenderTextControl::computeLogicalHeight()
             setHeight(height() + scrollbarThickness());
     }
 
-    RenderBlock::computeLogicalHeight();
+    RenderBlock::updateLogicalHeight();
 }
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)

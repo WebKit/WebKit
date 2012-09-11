@@ -64,7 +64,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
     setComputedColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
 }
 
-void RenderMultiColumnSet::computeLogicalHeight()
+void RenderMultiColumnSet::updateLogicalHeight()
 {
     // Make sure our column height is up to date.
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());

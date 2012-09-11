@@ -222,7 +222,7 @@ void RenderFlowThread::updateLogicalWidth()
     }
 }
 
-void RenderFlowThread::computeLogicalHeight()
+void RenderFlowThread::updateLogicalHeight()
 {
     LayoutUnit logicalHeight = 0;
 

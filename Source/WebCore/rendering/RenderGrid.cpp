@@ -83,7 +83,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     layoutGridItems();
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
-    computeLogicalHeight();
+    updateLogicalHeight();
 
     if (size() != previousSize)
         relayoutChildren = true;

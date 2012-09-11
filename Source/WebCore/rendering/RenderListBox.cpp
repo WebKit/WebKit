@@ -250,14 +250,14 @@ LayoutUnit RenderListBox::listHeight() const
     return itemHeight() * numItems() - rowSpacing;
 }
 
-void RenderListBox::computeLogicalHeight()
+void RenderListBox::updateLogicalHeight()
 {
     int toAdd = borderAndPaddingHeight();
  
     int itemHeight = RenderListBox::itemHeight();
     setHeight(itemHeight * size() - rowSpacing + toAdd);
     
-    RenderBlock::computeLogicalHeight();
+    RenderBlock::updateLogicalHeight();
     
     if (m_vBar) {
         bool enabled = numVisibleItems() < numItems();

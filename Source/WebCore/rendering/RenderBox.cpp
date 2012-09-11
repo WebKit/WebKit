@@ -1961,7 +1961,7 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle* containingBlockStyle
     return shouldFlip;
 }
 
-void RenderBox::computeLogicalHeight()
+void RenderBox::updateLogicalHeight()
 {
     LogicalExtentComputedValues computedValues;
     computeLogicalHeight(computedValues);
@@ -2181,7 +2181,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         LayoutUnit oldHeight = cb->logicalHeight();
-        cb->computeLogicalHeight();
+        cb->updateLogicalHeight();
         result = cb->contentLogicalHeight();
         cb->setLogicalHeight(oldHeight);
     }
@@ -2276,7 +2276,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
                 ASSERT(cb->isRenderBlock());
                 RenderBlock* block = toRenderBlock(cb);
                 LayoutUnit oldHeight = block->height();
-                block->computeLogicalHeight();
+                block->updateLogicalHeight();
                 LayoutUnit newHeight = block->adjustContentBoxLogicalHeightForBoxSizing(block->contentHeight());
                 block->setHeight(oldHeight);
                 return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newHeight));
@@ -2347,7 +2347,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     if (isRenderBlock() && isOutOfFlowPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));
         LayoutUnit oldHeight = block->logicalHeight();
-        block->computeLogicalHeight();
+        block->updateLogicalHeight();
         LayoutUnit newHeight = block->adjustContentBoxLogicalHeightForBoxSizing(block->contentLogicalHeight());
         block->setLogicalHeight(oldHeight);
         return adjustContentBoxLogicalHeightForBoxSizing(newHeight);

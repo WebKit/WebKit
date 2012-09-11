@@ -230,7 +230,7 @@ void RenderSVGRoot::layout()
 
     LayoutSize oldSize = size();
     updateLogicalWidth();
-    computeLogicalHeight();
+    updateLogicalHeight();
     buildLocalToBorderBoxTransform();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());

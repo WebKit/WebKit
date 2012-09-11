@@ -77,7 +77,7 @@ private:
 
     virtual void computePreferredLogicalWidths();
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual void computeLogicalHeight() OVERRIDE;
+    virtual void updateLogicalHeight() OVERRIDE;
 
     virtual void layout();
 

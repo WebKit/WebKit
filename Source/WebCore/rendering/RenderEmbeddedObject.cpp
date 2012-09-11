@@ -231,7 +231,7 @@ void RenderEmbeddedObject::layout()
     ASSERT(needsLayout());
 
     updateLogicalWidth();
-    computeLogicalHeight();
+    updateLogicalHeight();
 
     RenderPart::layout();
 

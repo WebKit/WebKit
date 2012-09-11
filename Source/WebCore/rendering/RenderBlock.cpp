@@ -1402,7 +1402,7 @@ void RenderBlock::computeInitialRegionRangeForBlock()
         LayoutUnit oldHeight =  logicalHeight();
         LayoutUnit oldLogicalTop = logicalTop();
         setLogicalHeight(MAX_LAYOUT_UNIT / 2);
-        computeLogicalHeight();
+        updateLogicalHeight();
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
         setLogicalHeight(oldHeight);
         setLogicalTop(oldLogicalTop);
@@ -1433,7 +1433,7 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
         if (!pageLogicalHeight) {
             // We need to go ahead and set our explicit page height if one exists, so that we can
             // avoid doing two layout passes.
-            computeLogicalHeight();
+            updateLogicalHeight();
             LayoutUnit columnHeight = contentLogicalHeight();
             if (columnHeight > ZERO_LAYOUT_UNIT) {
                 pageLogicalHeight = columnHeight;
@@ -1546,7 +1546,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     // Calculate our new height.
     LayoutUnit oldHeight = logicalHeight();
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
-    computeLogicalHeight();
+    updateLogicalHeight();
     LayoutUnit newHeight = logicalHeight();
     if (oldHeight != newHeight) {
         if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
@@ -2652,7 +2652,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         bool needsBlockDirectionLocationSetBeforeLayout = r->needsLayout() && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout(); 
         if (needsBlockDirectionLocationSetBeforeLayout) {
             if (isHorizontalWritingMode() == r->isHorizontalWritingMode())
-                r->computeLogicalHeight();
+                r->updateLogicalHeight();
             else
                 r->updateLogicalWidth();
             oldLogicalTop = logicalTopForChild(r);
@@ -6057,7 +6057,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
             RenderBox* childBox = toRenderBox(child);
             LayoutUnit oldHeight = childBox->logicalHeight();
             childBox->setLogicalHeight(childBox->borderAndPaddingLogicalHeight());
-            childBox->computeLogicalHeight();
+            childBox->updateLogicalHeight();
             childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = childBox->logicalHeight();
             childBox->setLogicalHeight(oldHeight);
         } else {

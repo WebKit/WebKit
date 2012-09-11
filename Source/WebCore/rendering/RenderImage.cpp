@@ -225,7 +225,7 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
         if (!preferredLogicalWidthsDirty())
             setPreferredLogicalWidthsDirty(true);
         updateLogicalWidth();
-        computeLogicalHeight();
+        updateLogicalHeight();
 
         if (imageSizeChanged || width() != oldwidth || height() != oldheight) {
             shouldRepaint = false;
