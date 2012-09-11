@@ -2535,8 +2535,14 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
 void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& computedValues, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
 {
     if (isReplaced()) {
-        computePositionedLogicalWidthReplaced(computedValues); // FIXME: Patch for regions when we add replaced element support.
-        return;
+        // FIXME: For regions with width auto, we want to compute width using the normal block sizing code.
+        // For now, regions are replaced elements and this code can be removed once the RenderRegion
+        // will inherit from RenderBlock instead of RenderReplaced.
+        // (see https://bugs.webkit.org/show_bug.cgi?id=74132 )
+        if (!isRenderRegion() || (isRenderRegion() && shouldComputeSizeAsReplaced())) {
+            computePositionedLogicalWidthReplaced(computedValues); // FIXME: Patch for regions when we add replaced element support.
+            return;
+        }
     }
 
     // QUESTIONS

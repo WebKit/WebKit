@@ -1,3 +1,42 @@
+2012-09-11  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Auto width is not working for Regions
+        https://bugs.webkit.org/show_bug.cgi?id=74135
+
+        Reviewed by Julien Chaffraix.
+
+        Add tests for width: auto and modify the existing region tests that were having width: auto so that they do not fail after the changes.
+
+        * fast/regions/autowidth-abspos-expected.html: Added.
+        * fast/regions/autowidth-abspos-regionchain-expected.html: Added.
+        * fast/regions/autowidth-abspos-regionchain.html: Added.
+        * fast/regions/autowidth-abspos.html: Added.
+        * fast/regions/autowidth-attachedinvalidregion-expected.txt: Added.
+        * fast/regions/autowidth-attachedinvalidregion.html: Added.
+        * fast/regions/autowidth-float-expected.html: Added.
+        * fast/regions/autowidth-float.html: Added.
+        * fast/regions/autowidth-inlineblock-expected.html: Added.
+        * fast/regions/autowidth-inlineblock.html: Added.
+        * fast/regions/autowidth-nonreplaced-abspos-expected.html: Added.
+        * fast/regions/autowidth-nonreplaced-abspos.html: Added.
+        * fast/regions/autowidth-nonreplacedblock-normalflow-expected.html: Added.
+        * fast/regions/autowidth-nonreplacedblock-normalflow.html: Added.
+        * fast/regions/autowidth-normalflow-expected.html: Added.
+        * fast/regions/autowidth-normalflow-maxwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-maxwidth.html: Added.
+        * fast/regions/autowidth-normalflow-minmaxwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-minmaxwidth.html: Added.
+        * fast/regions/autowidth-normalflow-minwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-minwidth.html: Added.
+        * fast/regions/autowidth-normalflow-vertrl-expected.html: Added.
+        * fast/regions/autowidth-normalflow-vertrl.html: Added.
+        * fast/regions/autowidth-normalflow.html: Added.
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/flows-dependency-dynamic-remove.html:
+        * fast/regions/flows-dependency-same-flow.html:
+        * fast/regions/render-region-renderer-expected.html:
+        * fast/regions/top-overflow-out-of-second-region.html:
+
 2012-09-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
