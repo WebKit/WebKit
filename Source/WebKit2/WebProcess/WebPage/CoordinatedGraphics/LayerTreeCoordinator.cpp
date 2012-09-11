@@ -600,7 +600,7 @@ void LayerTreeCoordinator::renderNextFrame()
 {
     m_waitingForUIProcess = false;
     scheduleLayerFlush();
-    for (int i = 0; i < m_updateAtlases.size(); ++i)
+    for (unsigned i = 0; i < m_updateAtlases.size(); ++i)
         m_updateAtlases[i]->didSwapBuffers();
 }
 
@@ -622,7 +622,7 @@ void LayerTreeCoordinator::purgeBackingStores()
 PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
     OwnPtr<WebCore::GraphicsContext> graphicsContext;
-    for (int i = 0; i < m_updateAtlases.size(); ++i) {
+    for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {
         UpdateAtlas* atlas = m_updateAtlases[i].get();
         if (atlas->flags() == flags) {
             // This will return null if there is no available buffer space.

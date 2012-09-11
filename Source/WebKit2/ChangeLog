@@ -1,3 +1,20 @@
+2012-09-11  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][EFL] Fix compile warnings when enable tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=95342
+
+        Reviewed by Gyuyoung Kim.
+
+        Fixed compile time warning messages when enable tiled backing store.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_accelerated_compositing_mode_enter): Fixed invalid use of 'EINA_SAFETY_ON_NULL_RETURN_VAL' since it used '!' ahead of evasGl value so it is always null.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setChildren): Replaced 'int' i with 'unsigned' because its comparing value is 'size_t'.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::renderNextFrame): Replaced 'int' i with 'unsigned' because its comparing value is 'size_t'.
+        (WebKit::LayerTreeCoordinator::beginContentUpdate): Replaced 'int' i with 'unsigned' because its comparing value is 'size_t'.
+
 2012-09-11  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] WKEinaSharedString needs a function to adopt eina stringshare.
