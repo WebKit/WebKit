@@ -96,6 +96,9 @@ bool providesContextMenuItems(Node* node)
 {
     // This function tries to match the nodes that receive special context-menu items in
     // ContextMenuController::populate(), and should be kept uptodate with those.
+    ASSERT(node->renderer() || node->isShadowRoot());
+    if (!node->renderer())
+        return false;
     if (node->isContentEditable())
         return true;
     if (node->isLink())
@@ -126,7 +129,7 @@ static inline void appendQuadsToSubtargetList(Vector<FloatQuad>& quads, Node* no
 
 static inline void appendBasicSubtargetsForNode(Node* node, SubtargetGeometryList& subtargets)
 {
-    // Since the node is a result of a hit test, we are already ensured it has a renderer.
+    // Node guaranteed to have renderer due to check in node filter.
     ASSERT(node->renderer());
 
     Vector<FloatQuad> quads;
