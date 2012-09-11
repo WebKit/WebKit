@@ -56,7 +56,7 @@ WEBKIT += wtf javascriptcore webcore
 
 CONFIG += plugin rpath
 
-contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 INCLUDEPATH += \
     $$PWD/.. \

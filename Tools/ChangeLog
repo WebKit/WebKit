@@ -1,3 +1,47 @@
+2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add a configure step to the Qt build system
+
+        This allows building the Qt port using just 'qmake WebKit.pro'. Using
+        the build-webkit script is still supported, and will add slightly more
+        logic to the build, such as detecting the need for clean or incremental
+        builds.
+
+        Internally, the build system now uses a new variable, WEBKIT_CONFIG, for
+        all things related to configuring the build, such as use/have/enable flags,
+        and these are translated to defines in default_post. Project files should
+        no longer check contains(DEFINES,...) to detect features, but use the new
+        enable?(), use?(), and have?() functions. The no_webkit1 and no_webkit2
+        options have been translated into WEBKIT_CONFIG options as well, and can
+        be checked using build?().
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (qtFeatureDefaults):
+        (buildQMakeProjects):
+        * Tools.pro:
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/Target.pri:
+        * qmake/.qmake.cache: Added.
+        * qmake/configure.pri: Removed.
+        * qmake/configure.pro: Removed.
+        * qmake/dump-features: Added.
+        * qmake/mkspecs/features/configure.prf: Added.
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/features.pri:
+        * qmake/mkspecs/features/functions.prf:
+        * qmake/mkspecs/features/gprof.prf:
+        * qmake/mkspecs/features/mac/default_pre.prf:
+        * qmake/mkspecs/features/win32/default_pre.prf:
+
 2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement clearApplicationCacheForOrigin

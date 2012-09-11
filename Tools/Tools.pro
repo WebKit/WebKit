@@ -7,21 +7,21 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-!no_webkit1 {
+build?(webkit1) {
     SUBDIRS += QtTestBrowser/QtTestBrowser.pro
-    contains(DEFINES, HAVE_QTTESTLIB=1): SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
+    build?(drt): SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
     SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 }
 
-!no_webkit2 {
+build?(webkit2) {
     # WTR's InjectedBundle depends currently on WK1's DumpRenderTreeSupport
-    !no_webkit1:contains(DEFINES, HAVE_QTQUICK=1):contains(DEFINES, HAVE_QTTESTLIB=1): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
+    build?(webkit1):build?(wtr):have?(QTQUICK): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 
-    contains(DEFINES, HAVE_QTQUICK=1): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
+    have?(QTQUICK): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
     SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro
 }
 
-!win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+!win32:enable?(NETSCAPE_PLUGIN_API) {
     SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }
 
@@ -30,7 +30,7 @@ OTHER_FILES = \
     $$files(Scripts/webkitpy/*.py, true) \
     $$files(Scripts/webkitperl/*.p[l|m], true) \
     qmake/README \
-    qmake/configure.* \
+    qmake/dump-features.pl \
     qmake/qt_webkit.pri \
     qmake/config.tests/README \
     qmake/config.tests/fontconfig/* \

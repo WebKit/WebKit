@@ -295,3 +295,84 @@ defineTest(xlibAvailable) {
         return(false)
     }
 }
+
+defineTest(build?) {
+    contains(WEBKIT_CONFIG, build_$$lower($$1)): return(true)
+    return(false)
+}
+
+defineTest(have?) {
+    contains(WEBKIT_CONFIG, have_$$lower($$1)): return(true)
+    return(false)
+}
+
+defineTest(use?) {
+    contains(WEBKIT_CONFIG, use_$$lower($$1)): return(true)
+    return(false)
+}
+
+defineTest(enable?) {
+    contains(WEBKIT_CONFIG, $$lower($$1)): return(true)
+    return(false)
+}
+
+# Used by configDefines below
+include(features.pri)
+
+# Turn Webkit config into defines
+defineReplace(configDefines) {
+    unset(defines)
+
+    args = $$split(1, |)
+
+    possible_args = enable have use plugin_architecture
+    !isEmpty(args) {
+        for(arg, possible_args): contains(args, $$arg): CONFIG += $$arg
+    } else {
+        CONFIG += $$possible_args
+    }
+
+    for(config, WEBKIT_CONFIG) {
+        match = $$find(config, "^build_")
+        !isEmpty(match) {
+            # We don't translate build_ to defines
+            next()
+        }
+        match = $$find(config, "^have_")
+        !isEmpty(match) {
+            have: defines += $$upper($$config)=1
+            next()
+        }
+        match = $$find(config, "^plugin_architecture_")
+        !isEmpty(match) {
+            plugin_architecture: defines += $$upper($$config)=1
+            next()
+        }
+        match = $$find(config, "^use_")
+        !isEmpty(match) {
+            use: defines += WTF_$$upper($$config)=1
+            next()
+        }
+
+        enable: defines += ENABLE_$$upper($$config)=1
+    }
+
+    # To prevent clashes with Platform.h, we have to explicitly
+    # disable features that are not enabled.
+    for(define, FEATURE_DEFAULTS) {
+        disabledFeature = $$find(define, =0$)
+        isEmpty(disabledFeature): next()
+
+        enabledFeature = $$replace(disabledFeature, =0$, =1)
+        !contains(defines, $$enabledFeature) {
+            defines += $$disabledFeature
+        }
+    }
+
+    return($$defines)
+}
+
+defineReplace(javascriptFeatureDefines) {
+    defines = LANGUAGE_JAVASCRIPT=1 $$configDefines(enable)
+    return($$defines)
+}

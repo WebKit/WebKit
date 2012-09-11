@@ -75,6 +75,6 @@ linux-*: {
     LIBS += -lrt
 }
 
-contains(DEFINES, HAVE_QTQUICK=1): QT += qml quick
+have?(QTQUICK): QT += qml quick
 
-contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
+enable?(GEOLOCATION): QT += location

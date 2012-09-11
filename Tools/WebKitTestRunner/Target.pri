@@ -35,7 +35,7 @@ WEBKIT += wtf javascriptcore webkit2
 
 DEFINES += USE_SYSTEM_MALLOC=1
 
-contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt

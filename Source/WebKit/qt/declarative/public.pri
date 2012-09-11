@@ -26,7 +26,7 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 
 QT += webkit webkit-private widgets quick quick-private
 
-contains(DEFINES, HAVE_QQUICK1=1) {
+have?(QQUICK1) {
     SOURCES += qdeclarativewebview.cpp
     HEADERS += qdeclarativewebview_p.h
 }
@@ -40,7 +40,7 @@ RPATHDIR_RELATIVE_TO_DESTDIR = ../../lib
 
 SOURCES += plugin.cpp
 
-!no_webkit2: {
+build?(webkit2): {
     DEFINES += HAVE_WEBKIT2
     QT += network
 }

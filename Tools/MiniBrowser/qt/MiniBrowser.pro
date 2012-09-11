@@ -29,7 +29,7 @@ HEADERS += \
 TARGET = MiniBrowser
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 
-contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 QT += network gui-private quick quick-private webkit webkit-private
 macx: QT += xml

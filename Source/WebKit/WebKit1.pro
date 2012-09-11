@@ -103,18 +103,18 @@ INCLUDEPATH += \
     $$PWD/qt/Api \
     $$PWD/qt/WebCoreSupport
 
-contains(DEFINES, ENABLE_VIDEO=1) {
-    !contains(DEFINES, WTF_USE_QTKIT=1):!contains(DEFINES, WTF_USE_GSTREAMER=1):contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
+enable?(VIDEO) {
+    !use?(QTKIT):!use?(GSTREAMER):use?(QT_MULTIMEDIA) {
         HEADERS += $$PWD/qt/WebCoreSupport/FullScreenVideoWidget.h
         SOURCES += $$PWD/qt/WebCoreSupport/FullScreenVideoWidget.cpp
     }
 
-    contains(DEFINES, WTF_USE_QTKIT=1) | contains(DEFINES, WTF_USE_GSTREAMER=1) | contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
+    use?(QTKIT) | use?(GSTREAMER) | use?(QT_MULTIMEDIA) {
         HEADERS += $$PWD/qt/WebCoreSupport/FullScreenVideoQt.h
         SOURCES += $$PWD/qt/WebCoreSupport/FullScreenVideoQt.cpp
     }
 
-    contains(DEFINES, WTF_USE_QTKIT=1) {
+    use?(QTKIT) {
         INCLUDEPATH += \
             $$PWD/../WebCore/platform/qt/ \
             $$PWD/../WebCore/platform/mac/ \
@@ -136,7 +136,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     }
 }
 
-contains(DEFINES, ENABLE_ICONDATABASE=1) {
+enable?(ICONDATABASE) {
     HEADERS += \
         $$PWD/../WebCore/loader/icon/IconDatabaseClient.h \
         $$PWD/qt/WebCoreSupport/IconDatabaseClientQt.h
@@ -145,12 +145,12 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
         $$PWD/qt/WebCoreSupport/IconDatabaseClientQt.cpp
 }
 
-contains(DEFINES, ENABLE_GEOLOCATION=1) {
+enable?(GEOLOCATION) {
      HEADERS += \
         $$PWD/qt/WebCoreSupport/GeolocationClientQt.h
      SOURCES += \
         $$PWD/qt/WebCoreSupport/GeolocationClientQt.cpp
 }
 
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
+use?(3D_GRAPHICS): WEBKIT += angle
 

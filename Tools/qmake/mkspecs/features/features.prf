@@ -1,250 +1,153 @@
 # -------------------------------------------------------------------
 # This file does basic 'configure' style checks to determine the
-# set of ENABLE_FOO defines and their values.
+# set of enable/use/have defines and their values.
 #
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-# Since features.prf is currently loaded from .pro/.pri files, not
-# defaults_pre.prf, we have at this point parsed any optional command
-# line arguments to qmake (eg qmake DEFINES+=ENABLE_VIDEO=0), that are
-# intended to override default values (static or dynamic) of the
-# feature defines.
-#
-# This is why the checks below look for !contains(DEFINES, ENABLE_FOO=.)
-# so that the static or dynamic defaults will only be set if the user did
-# not make an explicit choice by passing an argument to qmake/build-webkit.
+defineTest(detectFeatures) {
 
-# ------------- Prepare for feature detection -------------
+    # -------------- Fill in static defaults --------------
 
-## load mobilityconfig if mobility is available
-load(mobilityconfig, true)
+    include(features.pri)
 
-# ---------- Dynamically detect optional features -------------
-#
-# Please note, static feature defaults go in features.pri
-#
-# Do not add new CONFIG options, but use the existing patterns
-# of WTF_USE, ENABLE_, etc, and detect the precense of those
-# defines in the relevant target files. You do not need to have
-# a fallback in your logic for the disabling feature, that's handled
-# by having the feature disabled in features.pri. Nor do you have to
-# unset the opposite value, that's handled automatically for you.
-
-DEFINES += WTF_USE_ICU_UNICODE=1
-DEFINES -= WTF_USE_QT4_UNICODE=1
-
-# We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
-config_fontconfig:!mac {
-    DEFINES += HAVE_FONTCONFIG=1
-}
-
-!contains(DEFINES, HAVE_QTQUICK=.) {
-    haveQtModule(quick): DEFINES += HAVE_QTQUICK=1
-}
-
-!contains(DEFINES, HAVE_QTPRINTSUPPORT=.) {
-    haveQtModule(printsupport): DEFINES += HAVE_QTPRINTSUPPORT=1
-}
-
-!contains(DEFINES, HAVE_QTTESTLIB=.) {
-    haveQtModule(testlib) {
-        DEFINES += HAVE_QTTESTLIB=1
-    } else {
-        message("Missing QtTest module, disabling DumpRenderTree, WebKitTestRunner and tests")
-    }
-}
-
-# We need libxml2 config test to determine to use libxml2 or not
-!contains(DEFINES, WTF_USE_LIBXML2=.) {
-    config_libxml2: DEFINES += WTF_USE_LIBXML2=1
-}
-
-# We need libxslt config test to determine to use libxslt or not
-!contains(DEFINES, ENABLE_XSLT=.) {
-    config_libxslt: DEFINES += ENABLE_XSLT=1
-}
-
-# We need libzlib config test to determine to use enable websocket extension or not
-!contains(DEFINES, WTF_USE_ZLIB=.) {
-    config_libzlib: DEFINES += WTF_USE_ZLIB=1
-}
-
-# Tiled Backing Store support
-!contains(DEFINES, WTF_USE_TILED_BACKING_STORE=.): DEFINES += WTF_USE_TILED_BACKING_STORE=1
-
-# Turn on legacy viewport adaption
-!contains(DEFINES, ENABLE_LEGACY_VIEWPORT_ADAPTION=.): DEFINES += ENABLE_LEGACY_VIEWPORT_ADAPTION=1
-
-# Nescape plugins support (NPAPI)
-!contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
-    xlibAvailable() {
-        DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
-        CONFIG += plugin_backend_xlib
-    } else: unix|win32-*:!embedded:!wince* {
-        DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
-    }
-}
-
-# Netscape plugins support for WebKit2
-!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED=.) {
-    no_webkit2 {
-        DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
-    } else {
-        contains(QT_CONFIG, xcb-xlib) {
-            CONFIG += plugin_backend_xlib
-            DEFINES += PLUGIN_ARCHITECTURE_X11=1 \
-                       PLUGIN_ARCHITECTURE_UNSUPPORTED=0 \
-                       ENABLE_PLUGIN_PROCESS=1
-        } else {
-            DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
+    for(feature, FEATURE_DEFAULTS) {
+        enabledFeature = $$find(feature, =1$)
+        !isEmpty(enabledFeature) {
+        line ~= s/^.+include \"(.*)\"/\\1/
+            enabledFeature ~= s/=1$//
+            enabledFeature ~= s/^ENABLE_//
+            WEBKIT_CONFIG += $$lower($$enabledFeature)
         }
     }
-}
 
-# QStyle detection
-haveQtModule(widgets): DEFINES += HAVE_QSTYLE=1
+    WEBKIT_CONFIG += use_tiled_backing_store
 
-# Enable the USE(3D_GRAPHICS) flag when QtOpenGL is enabled.
-!contains(DEFINES, WTF_USE_3D_GRAPHICS=.):contains(QT_CONFIG, opengl) {
-    # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
-    # Also disable on QNX, see https://bugs.webkit.org/show_bug.cgi?id=93278
-    !win32-*:!qnx {
-        DEFINES += WTF_USE_3D_GRAPHICS=1
+    # ------------- Prepare for feature detection -------------
+
+    # Load mobilityconfig if mobility is available
+    load(mobilityconfig, true)
+
+    # ---------- Dynamically detect optional features -------------
+    #
+    # Please note: static feature defaults go in features.pri
+    #
+
+    haveQtModule(quick): WEBKIT_CONFIG += have_qtquick
+    haveQtModule(printsupport): WEBKIT_CONFIG += have_qtprintsupport
+    haveQtModule(widgets): WEBKIT_CONFIG += have_qstyle
+    haveQtModule(testlib): WEBKIT_CONFIG += have_qttestlib
+
+    config_libxml2: WEBKIT_CONFIG += use_libxml2
+    config_libxslt: WEBKIT_CONFIG += xslt
+    config_libzlib: WEBKIT_CONFIG += use_zlib
+    config_libwebp: WEBKIT_CONFIG += use_webp
+
+    config_libjpeg: WEBKIT_CONFIG += use_libjpeg
+    else: CONFIGURE_WARNINGS += "JPEG library not found, QImageDecoder will decode JPEG images"
+
+    config_libpng: WEBKIT_CONFIG += use_libpng
+    else: CONFIGURE_WARNINGS += "PNG library not found, QImageDecoder will decode PNG images"
+
+    linux-* {
+        config_libXcomposite: WEBKIT_CONFIG += have_xcomposite
+        config_libXrender: WEBKIT_CONFIG += have_xrender
+
+        config_glx:!contains(QT_CONFIG, opengles2): WEBKIT_CONFIG += have_glx
+
+        # We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
+        config_fontconfig: WEBKIT_CONFIG += have_fontconfig
     }
-}
 
-# WebGL support - only enabled if we can use 3D graphics
-!contains(DEFINES, ENABLE_WEBGL=.):contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
-    DEFINES += ENABLE_WEBGL=1
-}
+    # Nescape plugins support (NPAPI)
+    xlibAvailable() {
+        WEBKIT_CONFIG += \
+            netscape_plugin_api \
+            use_plugin_backend_xlib
 
-# CSS Shaders support
-!contains(DEFINES, ENABLE_CSS_SHADERS=.) {
-    # Enable CSS shaders when CSS filters and WebGL are enabled.
-    contains(DEFINES, ENABLE_CSS_FILTERS=1):contains(DEFINES, ENABLE_WEBGL=1): DEFINES += ENABLE_CSS_SHADERS=1
-}
+        # WebKit2
+        WEBKIT_CONFIG += \
+            plugin_architecture_x11 \
+            plugin_process
 
-!contains(DEFINES, ENABLE_XSLT=.) {
-    # Using QtXmlPatterns
-    contains(QT_CONFIG, xmlpatterns): DEFINES += ENABLE_XSLT=1
+    } else: unix|win32-*:!embedded:!wince* {
+        WEBKIT_CONFIG += netscape_plugin_api
+        # WebKit2
+        WEBKIT_CONFIG += plugin_architecture_unsupported
+    } else {
+        WEBKIT_CONFIG += plugin_architecture_unsupported
+    }
 
-    # Or libxml2 -- experimental and only works on Linux so far
-    contains(DEFINES, WTF_USE_LIBXML2=1): DEFINES += ENABLE_XSLT=1
-}
+    # Enable the USE(3D_GRAPHICS) flag when QtOpenGL is enabled.
+    contains(QT_CONFIG, opengl) {
+        # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
+        # Also disable on QNX, see https://bugs.webkit.org/show_bug.cgi?id=93278
+        !win32-*:!qnx {
+            WEBKIT_CONFIG += use_3d_graphics
+        }
+    }
 
-# Geolocation support if QtMobility exists
-!contains(DEFINES, ENABLE_GEOLOCATION=.) {
+    # WebGL support - only enabled if we can use 3D graphics
+    use?(3d_graphics): WEBKIT_CONFIG += webgl
+
+    # Enable CSS shaders when CSS filters and WebGL are enabled
+    enable?(css_filters):enable?(webgl): WEBKIT_CONFIG += css_shaders
+
+    # Geolocation support if QtMobility exists
     contains(MOBILITY_CONFIG, location)|contains(QT_CONFIG, location) {
-       DEFINES += ENABLE_GEOLOCATION=1
+        WEBKIT_CONFIG += geolocation
     }
-}
 
-# orientation support
-haveQtModule(sensors) {
-    !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
-    !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
-}
+    # Orientation support
+    haveQtModule(sensors): WEBKIT_CONFIG += orientation_events device_orientation
 
-# HTML5 Media Support
-!contains(DEFINES, ENABLE_VIDEO=.) {
-    mac:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
+    # HTML5 Media Support
+    mac {
         DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
         DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
         # QTKIT support requires 10.7 or newer
         greaterThan(DARWIN_MAJOR_VERSION, 10) {
-            DEFINES += ENABLE_VIDEO=1
-            DEFINES += WTF_USE_QTKIT=1
+            WEBKIT_CONFIG += video use_qtkit
         }
-    } else: linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
+
+    } else: linux-* {
         !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'): {
-            DEFINES += ENABLE_VIDEO=1
-            DEFINES += WTF_USE_GSTREAMER=1
+            WEBKIT_CONFIG += video use_gstreamer
         } else {
-            root_project_file: message("Missing GLib/Gio/GStreamer, disabling media element support")
+            CONFIGURE_WARNINGS += "Missing GLib/Gio/GStreamer, disabling media element support"
         }
     } else: contains(MOBILITY_CONFIG, multimedia) {
-        DEFINES += ENABLE_VIDEO=1
-        DEFINES += WTF_USE_QT_MULTIMEDIA=1
+        WEBKIT_CONFIG += video use_qt_multimedia
     }
+
+    # Gamepad API Support
+    packagesExist(libudev): WEBKIT_CONFIG += gamepad
+
+    # Support for Graphics Surface
+    mac: WEBKIT_CONFIG += use_graphics_surface
+    linux-*:contains(WEBKIT_CONFIG, have_glx):contains(WEBKIT_CONFIG, have_xcomposite):contains(WEBKIT_CONFIG, have_xrender): WEBKIT_CONFIG += use_graphics_surface
+
+    # Slider Touch is sensible to use when compiling WebKit2
+    enable?(touch_events): WEBKIT_CONFIG += touch_slider
+
+    # ---------------- Sanitize features -------------------
+
+    export(WEBKIT_CONFIG)
+    export(CONFIGURE_WARNINGS)
 }
 
-!contains(DEFINES, ENABLE_FULLSCREEN_API=.) {
-    !no_webkit2: DEFINES += ENABLE_FULLSCREEN_API=1
-}
+defineTest(santizeFeatures) {
+    # Disable SVG fonts if SVG is disabled
+    !enable?(svg): WEBKIT_CONFIG -= svg_fonts
 
-# Gamepad API Support
-linux-*:!contains(DEFINES, ENABLE_GAMEPAD=.) {
-    packagesExist(libudev): DEFINES += ENABLE_GAMEPAD=1
-}
+    # JavaScript debugger requires the inspector
+    !enable?(inspector): WEBKIT_CONFIG -= javascript_debugger inspector_server
 
-# Xcomposite Support
-linux-*:config_libXcomposite: DEFINES += HAVE_XCOMPOSITE=1
+    # Disable animated smooth scrolling if request-animation-frame is disabled
+    !enable?(request_animation_frame): WEBKIT_CONFIG -= smooth_scrolling
 
-# Xrender Support
-haveQt(5):linux-*:config_libXrender: DEFINES += HAVE_XRENDER=1
+    # Fullscreen API relies on WebKit2
+    !build?(webkit2): WEBKIT_CONFIG -= fullscreen_api
 
-# GLX Support
-haveQt(5):linux-*:config_glx:!contains(QT_CONFIG, opengles2): DEFINES += HAVE_GLX=1
-
-# Support for Graphics Surface
-!contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=.) {
-    mac: DEFINES += WTF_USE_GRAPHICS_SURFACE=1
-    # On linux we require GLX, libXcomposite and libXrender to enable graphics surface.
-    linux-*:contains(DEFINES, HAVE_GLX=1):contains(DEFINES, HAVE_XCOMPOSITE=1):contains(DEFINES, HAVE_XRENDER=1): DEFINES += WTF_USE_GRAPHICS_SURFACE=1
-}
-
-# -------------- Fill in static defaults --------------
-#
-# Only applies to features that don't have a dynamic default
-# or have been overriden on the command line.
-
-include(features.pri)
-
-for(feature, FEATURE_DEFAULTS) {
-    anyFeatureDefine = $$replace(feature, =.$, =.)
-    !contains(DEFINES, $$anyFeatureDefine) {
-        DEFINES += $$feature
-    }
-}
-
-# ---------------- Sanitize defines -------------------
-
-# Disable SVG fonts if SVG is disabled
-contains(DEFINES, ENABLE_SVG=0): DEFINES += ENABLE_SVG_FONTS=0
-
-# JavaScript debugger requires the inspector
-contains(DEFINES, ENABLE_INSPECTOR=0) {
-    DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
-    DEFINES += ENABLE_INSPECTOR_SERVER=0
-}
-
-# Disable animated smooth scrolling if request-animation-frame is disabled
-contains(DEFINES, ENABLE_REQUEST_ANIMATION_FRAME=0): DEFINES += ENABLE_SMOOTH_SCROLLING=0
-
-# Remove conflicting defines. The preprocessor would take care of this
-# anyways, but doing it here makes for nicer command lines when building.
-for(define, DEFINES) {
-    parts = $$split(define, =)
-    value = $$member(parts, 1, 1)
-    isEmpty(value): next()
-
-    equals(value, 1): opposite = $$replace(define, =1$, =0)
-    equals(value, 0): opposite = $$replace(define, =0$, =1)
-
-    # Is there a later define that overrides this one?
-    contains(DEFINES, $$opposite): DEFINES -= $$define
-}
-
-contains(DEFINES, ENABLE_GAMEPAD=1) {
-    !packagesExist(libudev) {
-        error("Gamepad API requires libudev to build. Please install libudev development files, or build WebKit without gamepad.")
-    } else:!linux-* {
-        error("Currently the Gamepad API is supported only on Linux, build WebKit without gamepad.")
-    }
-}
-
-# Slider Touch is sensible to use when compiling WebKit2
-haveQt(5):contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
-    DEFINES += ENABLE_TOUCH_SLIDER=1
+    export(WEBKIT_CONFIG)
 }

@@ -12,7 +12,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/qt/WebCoreSupport \
     $$ROOT_WEBKIT_DIR/Source/WTF/wtf/qt
 
-contains(DEFINES, ENABLE_VIDEO=1):contains(DEFINES, WTF_USE_QTKIT=1) {
+enable?(VIDEO):use?(QTKIT) {
     LIBS += -framework Security -framework IOKit
 
     # We can know the Mac OS version by using the Darwin major version
@@ -29,21 +29,21 @@ contains(DEFINES, ENABLE_VIDEO=1):contains(DEFINES, WTF_USE_QTKIT=1) {
     }
 }
 
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1)|contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1) {
+enable?(DEVICE_ORIENTATION)|enable?(ORIENTATION_EVENTS) {
     QT += sensors
 }
 
-contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
+enable?(GEOLOCATION): QT += location
 
 contains(CONFIG, texmap): DEFINES += WTF_USE_TEXTURE_MAPPER=1
 
-plugin_backend_xlib: PKGCONFIG += x11
+use?(PLUGIN_BACKEND_XLIB): PKGCONFIG += x11
 
 QT += network widgets
-contains(DEFINES, HAVE_QTQUICK=1): QT += quick
-contains(DEFINES, HAVE_QTPRINTSUPPORT=1): QT += printsupport
+have?(QTQUICK): QT += quick
+have?(QTPRINTSUPPORT): QT += printsupport
 
-contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
+use?(TEXTURE_MAPPER_GL)|enable?(WEBGL) {
     QT *= opengl
     # Make sure OpenGL libs are after the webcore lib so MinGW can resolve symbols
     win32*:!win32-msvc*: LIBS += $$QMAKE_LIBS_OPENGL

@@ -19,10 +19,10 @@ INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source/WTF
 
 QT = core gui network testlib webkit widgets
-contains(DEFINES, HAVE_QTPRINTSUPPORT=1): QT += printsupport
+have?(QTPRINTSUPPORT): QT += printsupport
 macx: QT += xml
 
-contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 HEADERS += \
     $$PWD/../WorkQueue.h \

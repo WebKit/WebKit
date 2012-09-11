@@ -2053,6 +2053,7 @@ HEADERS += \
     platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/CustomFilterParameter.h \
     platform/graphics/filters/CustomFilterProgram.h \
+    platform/graphics/filters/CustomFilterProgramInfo.h \
     platform/graphics/filters/CustomFilterTransformParameter.h \
     platform/graphics/filters/CustomFilterValidatedProgram.h \
     platform/graphics/filters/FEBlend.h \
@@ -2806,7 +2807,7 @@ SOURCES += \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WidgetQt.cpp
 
-contains(DEFINES, WTF_USE_LIBXML2=1) {
+use?(LIBXML2) {
     HEADERS += xml/parser/XMLDocumentParserScope.h
     SOURCES += \
             xml/parser/XMLDocumentParserLibxml2.cpp \
@@ -2815,7 +2816,7 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
     SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
-contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
+enable?(SMOOTH_SCROLLING) {
     HEADERS += platform/ScrollAnimatorNone.h
     SOURCES += platform/ScrollAnimatorNone.cpp
 }
@@ -2843,7 +2844,7 @@ mac {
     SOURCES += editing/SmartReplaceICU.cpp
 }
 
-contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+enable?(NETSCAPE_PLUGIN_API) {
 
     SOURCES += plugins/npapi.cpp
 
@@ -2881,12 +2882,12 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         plugins/PluginViewNone.cpp
 }
 
-plugin_backend_xlib {
+use?(PLUGIN_BACKEND_XLIB) {
     SOURCES += plugins/qt/QtX11ImageConversion.cpp
     HEADERS += plugins/qt/QtX11ImageConversion.h
 }
 
-contains(DEFINES, ENABLE_SQL_DATABASE=1) {
+enable?(SQL_DATABASE) {
     SOURCES += \
         Modules/webdatabase/ChangeVersionWrapper.cpp \
         Modules/webdatabase/DatabaseTask.cpp \
@@ -2911,7 +2912,7 @@ contains(DEFINES, ENABLE_SQL_DATABASE=1) {
         bindings/js/JSSQLTransactionSyncCustom.cpp
 }
 
-contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
+enable?(INDEXED_DATABASE) {
     HEADERS += \
         bindings/js/IDBBindingUtilities.h \
 
@@ -2971,7 +2972,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         Modules/indexeddb/WorkerContextIndexedDatabase.cpp
 }
 
-contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
+enable?(DATA_TRANSFER_ITEMS) {
     HEADERS += \
         dom/DataTransferItem.h \
         dom/DataTransferItemList.h \
@@ -2985,7 +2986,7 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
         platform/qt/DataTransferItemListQt.cpp
 }
 
-contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
+enable?(FILE_SYSTEM) {
     HEADERS += \
         Modules/filesystem/AsyncFileWriter.h \
         Modules/filesystem/DOMFilePath.h \
@@ -3030,7 +3031,7 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         platform/AsyncFileSystem.cpp
 }
 
-contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
+enable?(MEDIA_SOURCE) {
     HEADERS += \
         Modules/mediasource/MediaSource.h \
         Modules/mediasource/MediaSourceRegistry.h \
@@ -3043,14 +3044,14 @@ contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
         Modules/mediasource/SourceBufferList.cpp
 }
 
-contains(DEFINES, ENABLE_ICONDATABASE=1) {
+enable?(ICONDATABASE) {
     SOURCES += \
         loader/icon/IconDatabase.cpp \
         loader/icon/IconRecord.cpp \
         loader/icon/PageURLRecord.cpp
 }
 
-contains(DEFINES, ENABLE_WORKERS=1) {
+enable?(WORKERS) {
     SOURCES += \
         bindings/js/JSDedicatedWorkerContextCustom.cpp \
         bindings/js/JSWorkerContextBase.cpp \
@@ -3075,7 +3076,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         workers/WorkerScriptLoader.cpp
 }
 
-contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
+enable?(SHARED_WORKERS) {
     SOURCES += \
         bindings/js/JSSharedWorkerCustom.cpp
 
@@ -3086,7 +3087,7 @@ contains(DEFINES, ENABLE_SHARED_WORKERS=1) {
         workers/SharedWorkerThread.cpp
 }
 
-contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
+enable?(INPUT_SPEECH) {
     SOURCES += \
         page/SpeechInput.cpp \
         page/SpeechInputEvent.cpp \
@@ -3095,11 +3096,11 @@ contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
         rendering/RenderInputSpeech.cpp
 }
 
-contains(DEFINES, ENABLE_SCRIPTED_SPEECH=1) {
+enable?(SCRIPTED_SPEECH) {
     SOURCES += # FIXME!
 }
 
-contains(DEFINES, ENABLE_QUOTA=1) {
+enable?(QUOTA) {
     HEADERS += \
         Modules/quota/DOMWindowQuota.idl \
         Modules/quota/StorageInfo.h \
@@ -3112,7 +3113,7 @@ contains(DEFINES, ENABLE_QUOTA=1) {
         Modules/quota/StorageInfo.cpp
 }
 
-contains(DEFINES, ENABLE_GAMEPAD=1) {
+enable?(GAMEPAD) {
     HEADERS += \
         Modules/gamepad/Gamepad.h\
         Modules/gamepad/GamepadList.h \
@@ -3128,7 +3129,7 @@ contains(DEFINES, ENABLE_GAMEPAD=1) {
         platform/qt/GamepadsQt.cpp
 }
 
-contains(DEFINES, WTF_USE_GSTREAMER=1) {
+use?(GSTREAMER) {
     HEADERS += \
             platform/graphics/gstreamer/GRefPtrGStreamer.h \
             platform/graphics/gstreamer/GStreamerUtilities.h \
@@ -3140,7 +3141,7 @@ contains(DEFINES, WTF_USE_GSTREAMER=1) {
             platform/graphics/gstreamer/GStreamerVersioning.cpp
 }
 
-contains(DEFINES, ENABLE_VIDEO=1) {
+enable?(VIDEO) {
     SOURCES += \
         html/HTMLAudioElement.cpp \
         html/HTMLMediaElement.cpp \
@@ -3154,7 +3155,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp
 
-    contains(DEFINES, WTF_USE_QTKIT=1) {
+    use?(QTKIT) {
         INCLUDEPATH += \
             $$SOURCE_DIR/../WebKitLibraries/ \
             $$PWD/platform/mac
@@ -3199,7 +3200,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
 
-    } else: contains(DEFINES, WTF_USE_GSTREAMER=1) {
+    } else: use?(GSTREAMER) {
         HEADERS += \
             platform/graphics/gstreamer/GStreamerGWorld.h \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
@@ -3216,7 +3217,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/PlatformVideoWindowQt.cpp \
             platform/graphics/gstreamer/ImageGStreamerQt.cpp
 
-    } else:contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
+    } else:use?(QT_MULTIMEDIA) {
         HEADERS += \
             platform/graphics/qt/MediaPlayerPrivateQt.h
 
@@ -3225,7 +3226,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     }
 }
 
-contains(DEFINES, ENABLE_WEB_AUDIO=1) {
+enable?(WEB_AUDIO) {
     HEADERS += \
         Modules/webaudio/AsyncAudioDecoder.h \
         Modules/webaudio/AudioBasicInspectorNode.h \
@@ -3394,7 +3395,7 @@ contains(DEFINES, ENABLE_WEB_AUDIO=1) {
         platform/audio/VectorMath.cpp \
         platform/audio/ZeroPole.cpp
 
-    contains(DEFINES, WTF_USE_GSTREAMER=1) {
+    use?(GSTREAMER) {
         HEADERS += \
             platform/audio/gstreamer/AudioDestinationGStreamer.h \
             platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h
@@ -3406,21 +3407,21 @@ contains(DEFINES, ENABLE_WEB_AUDIO=1) {
     }
 }
 
-contains(DEFINES, ENABLE_FULLSCREEN_API=1) {
+enable?(FULLSCREEN_API) {
     SOURCES += \
         rendering/RenderFullScreen.cpp
     HEADERS += \
         rendering/RenderFullScreen.h
 }
 
-contains(DEFINES, ENABLE_XSLT=1) {
+enable?(XSLT) {
     SOURCES += \
         bindings/js/JSXSLTProcessorCustom.cpp
 
     SOURCES += xml/XMLTreeViewer.cpp
     HEADERS += xml/XMLTreeViewer.h
 
-    contains(DEFINES, WTF_USE_LIBXML2=1) {
+    use?(LIBXML2) {
         SOURCES += \
             xml/XSLTProcessor.cpp \
             xml/XSLTProcessorLibxslt.cpp \
@@ -3446,11 +3447,12 @@ contains(DEFINES, ENABLE_XSLT=1) {
     }
 }
 
-contains(DEFINES, ENABLE_FILTERS=1) {
+enable?(FILTERS) {
     SOURCES += \
         platform/graphics/filters/CustomFilterGlobalContext.cpp \
         platform/graphics/filters/CustomFilterOperation.cpp \
         platform/graphics/filters/CustomFilterProgram.cpp \
+        platform/graphics/filters/CustomFilterProgramInfo.cpp \
         platform/graphics/filters/CustomFilterCompiledProgram.cpp \
         platform/graphics/filters/CustomFilterMesh.cpp \
         platform/graphics/filters/CustomFilterMeshGenerator.cpp \
@@ -3485,7 +3487,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/arm/FELightingNEON.cpp \
 }
 
-contains(DEFINES, ENABLE_MATHML=1) {
+enable?(MATHML) {
     SOURCES += \
         mathml/MathMLElement.cpp \
         mathml/MathMLInlineContainerElement.cpp \
@@ -3506,11 +3508,11 @@ contains(DEFINES, ENABLE_MATHML=1) {
         mathml/MathMLAllInOne.cpp
 }
 
-contains(DEFINES, ENABLE_TEXT_AUTOSIZING=1) {
+enable?(TEXT_AUTOSIZING) {
     SOURCES += # FIXME!
 }
 
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+enable?(DEVICE_ORIENTATION) {
     HEADERS += \
         platform/qt/DeviceMotionClientQt.h \
         platform/qt/DeviceMotionProviderQt.h \
@@ -3523,7 +3525,7 @@ contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
         platform/qt/DeviceOrientationProviderQt.cpp
 }
 
-contains(DEFINES, ENABLE_SVG=1) {
+enable?(SVG) {
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
         bindings/js/JSSVGElementInstanceCustom.cpp \
@@ -3760,7 +3762,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGAllInOne.cpp
 }
 
-contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
+enable?(JAVASCRIPT_DEBUGGER) {
     SOURCES += \
         bindings/js/JSJavaScriptCallFrameCustom.cpp \
         bindings/js/ScriptProfiler.cpp \
@@ -3768,7 +3770,7 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
 }
 
 
-contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
+enable?(VIDEO_TRACK) {
     SOURCES += \
         bindings/js/JSTextTrackCueCustom.cpp \
         bindings/js/JSTextTrackCustom.cpp \
@@ -3779,7 +3781,7 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
         bindings/js/JSTextTrackListCustom.cpp
 }
 
-contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
+enable?(WEB_SOCKETS) {
     HEADERS += \
         Modules/websockets/CloseEvent.h \
         Modules/websockets/ThreadableWebSocketChannel.h \
@@ -3818,7 +3820,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     SOURCES += \
         bindings/js/JSWebSocketCustom.cpp
 
-    contains(DEFINES, ENABLE_WORKERS=1) {
+    enable?(WORKERS) {
         HEADERS += \
             Modules/websockets/WorkerThreadableWebSocketChannel.h
 
@@ -3827,7 +3829,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     }
 }
 
-contains(DEFINES, ENABLE_WEBGL=1) {
+enable?(WEBGL) {
     HEADERS += \
         html/canvas/CanvasContextAttributes.h \
         html/canvas/WebGLObject.h \
@@ -3893,7 +3895,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLVertexArrayObjectOES.cpp
 }
 
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
+use?(3D_GRAPHICS) {
     HEADERS += \
         platform/graphics/ANGLEWebKitBridge.h \
         platform/graphics/Extensions3D.h \
@@ -3945,7 +3947,7 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
 }
 
 
-contains(DEFINES, ENABLE_MHTML=1) {
+enable?(MHTML) {
 
     INCLUDEPATH += $$PWD/loader/archive/mhtml
 
@@ -3961,23 +3963,23 @@ contains(DEFINES, ENABLE_MHTML=1) {
         page/PageSerializer.cpp
 }
 
-contains(DEFINES, ENABLE_UNDO_MANAGER=1) {
+enable?(UNDO_MANAGER) {
     SOURCES += \
         editing/UndoManager.cpp
     HEADERS += \
         editing/UndoManager.h
 }
 
-contains(DEFINES, WTF_USE_LIBPNG=1) {
+use?(LIBPNG) {
     SOURCES += platform/image-decoders/ico/ICOImageDecoder.cpp \
                platform/image-decoders/png/PNGImageDecoder.cpp
 }
 
-contains(DEFINES, WTF_USE_LIBJPEG=1) {
+use?(LIBJPEG) {
     SOURCES += platform/image-decoders/jpeg/JPEGImageDecoder.cpp
 }
 
-contains(DEFINES, WTF_USE_WEBP=1) {
+use?(WEBP) {
     HEADERS += platform/image-decoders/webp/WEBPImageDecoder.h
     SOURCES += platform/image-decoders/webp/WEBPImageDecoder.cpp
 }
@@ -4012,12 +4014,12 @@ contains(CONFIG, opengl-shims) {
     DEFINES += QT_OPENGL_SHIMS=1
 }
 
-contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
+use?(GRAPHICS_SURFACE) {
     mac {
         SOURCES += platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp
         INCLUDEPATH += /System/Library/Frameworks/CoreFoundation.framework/Headers
     }
-    contains(DEFINES, HAVE_XCOMPOSITE=1)  {
+    have?(XCOMPOSITE) {
         SOURCES += platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp
     }
 }
@@ -4029,7 +4031,7 @@ ALL_IN_ONE_SOURCES += \
     platform/text/TextAllInOne.cpp \
     rendering/style/StyleAllInOne.cpp
 
-contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
+enable?(XSLT):use?(LIBXML2) {
     ALL_IN_ONE_SOURCES += \
         dom/DOMAllInOne.cpp
 }

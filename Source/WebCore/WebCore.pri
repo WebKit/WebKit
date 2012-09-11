@@ -102,8 +102,8 @@ INCLUDEPATH += \
 
 INCLUDEPATH += $$WEBCORE_GENERATED_SOURCES_DIR
 
-contains(DEFINES, ENABLE_XSLT=1) {
-    contains(DEFINES, WTF_USE_LIBXML2=1) {
+enable?(XSLT) {
+    use?(LIBXML2) {
         mac {
             INCLUDEPATH += /usr/include/libxml2
             LIBS += -lxml2 -lxslt
@@ -115,15 +115,15 @@ contains(DEFINES, ENABLE_XSLT=1) {
     }
 }
 
-contains(DEFINES, WTF_USE_LIBXML2=1) {
+use?(LIBXML2) {
     PKGCONFIG += libxml-2.0
 }
 
-contains(DEFINES, WTF_USE_ZLIB=1) {
+use?(ZLIB) {
     LIBS += -lz
 }
 
-contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
+enable?(NETSCAPE_PLUGIN_API) {
     unix {
         mac {
             INCLUDEPATH += platform/mac
@@ -149,56 +149,56 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     }
 }
 
-contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1)|contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+enable?(ORIENTATION_EVENTS)|enable?(DEVICE_ORIENTATION) {
     QT += sensors
 }
 
-contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {
+use?(QT_MOBILITY_SYSTEMINFO) {
      CONFIG *= mobility
      MOBILITY *= systeminfo
 }
 
-contains(DEFINES, ENABLE_GAMEPAD=1) {
+enable?(GAMEPAD) {
     INCLUDEPATH += \
         $$SOURCE_DIR/platform/linux \
         $$SOURCE_DIR/Modules/gamepad
     PKGCONFIG += libudev
 }
 
-contains(DEFINES, WTF_USE_GSTREAMER=1) {
+use?(GSTREAMER) {
     DEFINES += ENABLE_GLIB_SUPPORT=1
     PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10
 }
 
-contains(DEFINES, ENABLE_VIDEO=1) {
-    contains(DEFINES, WTF_USE_QTKIT=1) {
+enable?(VIDEO) {
+    use?(QTKIT) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/mac
 
         LIBS += -framework AppKit -framework AudioUnit \
                 -framework AudioToolbox -framework CoreAudio \
                 -framework QuartzCore -framework QTKit
 
-    } else:contains(DEFINES, WTF_USE_GSTREAMER=1) {
+    } else:use?(GSTREAMER) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gstreamer
         PKGCONFIG += gstreamer-video-0.10
-    } else:contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
+    } else:use?(QT_MULTIMEDIA) {
         CONFIG   *= mobility
         MOBILITY *= multimedia
     }
 }
 
-contains(DEFINES, ENABLE_WEB_AUDIO=1) {
-    contains(DEFINES, WTF_USE_GSTREAMER=1) {
+enable?(WEB_AUDIO) {
+    use?(GSTREAMER) {
         DEFINES += WTF_USE_WEBAUDIO_GSTREAMER=1
         INCLUDEPATH += $$SOURCE_DIR/platform/audio/gstreamer
         PKGCONFIG += gstreamer-audio-0.10 gstreamer-fft-0.10
     }
 }
 
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
+use?(3D_GRAPHICS) {
     contains(QT_CONFIG, opengles2):!win32: LIBS += -lEGL
     mac: LIBS += -framework IOSurface -framework CoreFoundation
-    linux-*:contains(DEFINES, HAVE_XCOMPOSITE=1): LIBS += -lXcomposite
+    linux-*:have?(XCOMPOSITE): LIBS += -lXcomposite
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
@@ -209,23 +209,9 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
     LIBS += -lsqlite3
 }
 
-# Qt5 allows us to use config tests to check for the presence of these libraries
-config_libjpeg {
-    DEFINES += WTF_USE_LIBJPEG=1
-    LIBS += -ljpeg
-} else {
-    warning("JPEG library not found! QImageDecoder will decode JPEG images.")
-}
-config_libpng {
-    DEFINES += WTF_USE_LIBPNG=1
-    LIBS += -lpng
-} else {
-    warning("PNG library not found! QImageDecoder will decode PNG images.")
-}
-config_libwebp {
-    DEFINES += WTF_USE_WEBP=1
-    LIBS += -lwebp
-}
+use?(libjpeg): LIBS += -ljpeg
+use?(libpng): LIBS += -lpng
+use?(libwebp): LIBS += -lwebp
 
 mac {
     LIBS += -framework Carbon -framework AppKit

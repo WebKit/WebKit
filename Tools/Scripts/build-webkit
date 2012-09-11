@@ -256,7 +256,7 @@ if (isGtk()) {
     push @options, "--install-headers=" . $installHeaders if defined($installHeaders);
     push @options, "--install-libs=" . $installLibs if defined($installLibs);
     push @options, "--makeargs=" . $makeArgs if $makeArgs;
-    push @options, "--qmakearg=CONFIG+=no_webkit2" if $noWebKit2;
+    push @options, "WEBKIT_CONFIG-=build_webkit2" if $noWebKit2;
 
     if (checkForArgumentAndRemoveFromARGV("-2")) {
         print "Note: WebKit2 is now built by default, you don't need to pass -2. Disable using --no-webkit2\n";
@@ -265,7 +265,11 @@ if (isGtk()) {
     @options = (@ARGV, @options);
 
     foreach (@features) {
-        push @options, "DEFINES+=$_->{define}=${$_->{value}}" if $_->{define} && ${$_->{value}} != $_->{default};
+        if ($_->{define} && ${$_->{value}} != $_->{default}) {
+            my $define = lc($_->{define});
+            $define =~ s/^enable_//;
+            push @options, "WEBKIT_CONFIG" . (${$_->{value}} == 1 ? "+" : "-") . "=" . $define;
+        }
     }
 }
 

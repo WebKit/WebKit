@@ -5,6 +5,10 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+# Allow environment tweaks to pre-loaded .qmake.cache content
+env_cache = $$(QMAKE_CACHE_EVAL)
+eval($$env_cache)
+
 load(functions)
 
 # Derived sources often need QMAKE_MOC
@@ -19,7 +23,7 @@ isEmpty(pro_file): CONFIG += recursive_include
 # Resolve root directories for source and build
 ROOT_WEBKIT_DIR = $$replace(PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
-ROOT_BUILD_DIR = $$toSystemPath($$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,))
+ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 
 # We want the QtWebKit API forwarding includes to live in the root build dir.
 MODULE_BASE_DIR = $$ROOT_WEBKIT_DIR
@@ -30,12 +34,6 @@ MODULE_QMAKE_OUTDIR = $$ROOT_BUILD_DIR/Tools/qmake
 
 # Now we're ready to load default_pre from Qt
 load(default_pre)
-
-unix:config_gccdepends {
-    # We have a compiler that supports the -MD option (and neither
-    # teambuilder nor icecream is messing up the .d file output).
-    CONFIG += GNUmake gcc_MD_depends
-}
 
 equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     !recursive_include:CONFIG += root_project_file
@@ -68,6 +66,9 @@ win_cmd_shell {
     QUOTE = "\'"
     DOUBLE_ESCAPED_QUOTE = "\\\'"
 }
+EOL = $$escape_expand(\\n)
+EOC = $$escape_expand(\\n\\t)
+TAB = $$escape_expand(\\t)
 
 MAKEFILE_NOOP_COMMAND = @echo -n
 win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
@@ -76,12 +77,19 @@ win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
 scratchbox: PYTHON = python2.6
 else: PYTHON = python
 
-!haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
-
-!haveQtModule(widgets) {
-    root_project_file: message("WebKit1 requires the QtWidgets module. Disabling WebKit1.")
-    CONFIG += no_webkit1
+# Run configure before making decisions that depend on the result
+root_project_file {
+    load(configure)
+    runConfigure()
 }
+
+unix:config_gccdepends {
+    # We have a compiler that supports the -MD option (and neither
+    # teambuilder nor icecream is messing up the .d file output).
+    CONFIG += GNUmake gcc_MD_depends
+}
+
+!haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
 
 # We use private_tests to detect developer build, since the destdir will
 # always be our webkit build dir. This might change as configure changes.
@@ -90,26 +98,13 @@ contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
 
+# By default we enable "production build", and build-webkit, which is
+# used by bots and developers, will disable it, to enable warnings etc.
+CONFIG += production_build
+
 # Try to locate sqlite3 source (for WebCore)
 SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
 isEmpty(SQLITE3SRCDIR) {
     SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
 }
 
-# --------- Make features available to JSC ------------
-
-## Forward enabled feature macros to JavaScript enabled features macros
-FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
-v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1
-
-for(define, DEFINES) {
-    enabled_feature_define = $$find(define, ^ENABLE_.+=1$)
-    isEmpty(enabled_feature_define): next()
-
-    FEATURE_DEFINES_JAVASCRIPT += $$enabled_feature_define
-}
-
-# Save the base config and defines so we can compute the delta between
-# what features.prf introduced and what was already there.
-BASE_CONFIG = $$CONFIG
-BASE_DEFINES = $$DEFINES

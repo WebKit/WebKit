@@ -10,6 +10,8 @@
 # or include() and a CONFIG += feature.
 CONFIG += config_step
 
+root_project_file: finalizeConfigure()
+
 # Help keep the build tree clean
 MOC_DIR = moc
 RCC_DIR = rcc
@@ -20,6 +22,8 @@ DEFINES += \
     BUILDING_QT__=1
 
 CONFIG(release, debug|release): DEFINES *= NDEBUG
+
+DEFINES += $$configDefines()
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD
@@ -152,7 +156,7 @@ contains(QT, webkit) {
     force_static_libs_as_shared {
         WEBKIT += wtf webcore
         !v8: WEBKIT += javascriptcore
-        !no_webkit2: WEBKIT += webkit2
+        build?(webkit2): WEBKIT += webkit2
     }
 }
 

@@ -9,8 +9,5 @@ CONFIG += debug_and_release
 
 load(default_pre)
 
-debug {
-    root_project_file:message("Building WebKit Debug on mac. Switching to use_all_in_one_files configuration.")
-    CONFIG += use_all_in_one_files
-}
+debug: CONFIG += use_all_in_one_files
 

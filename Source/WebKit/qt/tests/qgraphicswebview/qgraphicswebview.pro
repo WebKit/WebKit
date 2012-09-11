@@ -1,6 +1,6 @@
 include(../tests.pri)
 exists($${TARGET}.qrc):RESOURCES += $${TARGET}.qrc
 
-contains(DEFINES, ENABLE_WEBGL=1) {
+enable?(WEBGL) {
     QT += opengl
 }

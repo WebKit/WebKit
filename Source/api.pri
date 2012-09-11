@@ -68,13 +68,11 @@ macx {
     }
 }
 
-WEBKIT += wtf
+WEBKIT += wtf javascriptcore webcore
 
-WEBKIT += javascriptcore
+build?(webkit1): WEBKIT += webkit1
 
-WEBKIT += webcore
-
-!no_webkit2 {
+build?(webkit2) {
     WEBKIT += webkit2
 
     # Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
@@ -83,9 +81,7 @@ WEBKIT += webcore
     QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
 }
 
-!no_webkit1: WEBKIT += webkit1
-
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
+use?(3D_GRAPHICS): WEBKIT += angle
 
 qnx {
     # see: https://bugs.webkit.org/show_bug.cgi?id=93460

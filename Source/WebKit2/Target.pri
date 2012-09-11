@@ -745,7 +745,7 @@ SOURCES += \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp
 
-contains(DEFINES, HAVE_QTQUICK=1) {
+have?(QTQUICK) {
     QT += qml quick quick-private
 
     HEADERS += \
@@ -822,7 +822,7 @@ contains(DEFINES, HAVE_QTQUICK=1) {
         UIProcess/qt/QtWebIconDatabaseClient.cpp \
         UIProcess/qt/QtWebPageUIClient.cpp
 
-    contains(DEFINES, ENABLE_INPUT_TYPE_COLOR=1) {
+    enable?(INPUT_TYPE_COLOR) {
         HEADERS += \
             UIProcess/qt/WebColorChooserProxyQt.h
         SOURCES += \
@@ -831,7 +831,7 @@ contains(DEFINES, HAVE_QTQUICK=1) {
 }
 
 mac: {
-    contains(DEFINES, WTF_USE_QTKIT=1) {
+    use?(QTKIT) {
         DEFINES += NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
         INCLUDEPATH += \
             $$PWD/../../WebKitLibraries/
@@ -876,7 +876,7 @@ win32 {
 }
 
 
-contains(DEFINES, ENABLE_INSPECTOR_SERVER=1) {
+enable?(INSPECTOR_SERVER) {
     HEADERS += \
         UIProcess/InspectorServer/WebInspectorServer.h \
         UIProcess/InspectorServer/WebSocketServer.h \
@@ -892,7 +892,7 @@ contains(DEFINES, ENABLE_INSPECTOR_SERVER=1) {
         UIProcess/InspectorServer/qt/WebSocketServerQt.cpp
 }
 
-contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
+enable?(TOUCH_EVENTS) {
     HEADERS += \
         Shared/NativeWebTouchEvent.h
     SOURCES += \
@@ -900,11 +900,11 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
 }
 
 
-contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
+enable?(GEOLOCATION): QT += location
 
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
+use?(3D_GRAPHICS): WEBKIT += angle
 
-plugin_backend_xlib {
+use?(PLUGIN_BACKEND_XLIB) {
     DEFINES += XP_UNIX
     PKGCONFIG += x11
     DEFINES += MOZ_X11

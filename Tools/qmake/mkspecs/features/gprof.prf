@@ -5,7 +5,7 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-!contains(CONFIG,no_webkit2): error("WebKit2 is not supported with gprof")
+build?(webkit2): error("WebKit2 is not supported with gprof")
 
 QMAKE_CXXFLAGS += -pg
 QMAKE_LFLAGS += -pg

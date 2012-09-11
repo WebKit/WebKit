@@ -26,7 +26,7 @@ XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
 CSSBISON = $$PWD/css/CSSGrammar.y
 
-contains(DEFINES, ENABLE_XSLT=1) {
+enable?(XSLT) {
     XMLVIEWER_CSS = $$PWD/xml/XMLViewer.css
     XMLVIEWER_JS = $$PWD/xml/XMLViewer.js
 }
@@ -69,7 +69,7 @@ ARRAY_BUFFER_VIEW_CUSTOM_SCRIPT_SOURCE = $$PWD/bindings/v8/custom/V8ArrayBufferV
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
 
-contains(DEFINES, ENABLE_SVG=1) {
+enable?(SVG) {
     EXTRACSSPROPERTIES += $$PWD/css/SVGCSSPropertyNames.in
     EXTRACSSVALUES += $$PWD/css/SVGCSSValueKeywords.in
 }
@@ -479,7 +479,7 @@ IDL_BINDINGS += \
     $$PWD/xml/XPathEvaluator.idl \
     $$PWD/xml/XSLTProcessor.idl
 
-contains(DEFINES, ENABLE_SVG=1) {
+enable?(SVG) {
   IDL_BINDINGS += \
     $$PWD/svg/SVGAElement.idl \
     $$PWD/svg/SVGAltGlyphDefElement.idl \
@@ -626,14 +626,14 @@ contains(DEFINES, ENABLE_SVG=1) {
     $$PWD/svg/SVGZoomEvent.idl
 }
 
-contains(DEFINES, ENABLE_GAMEPAD=1) {
+enable?(GAMEPAD) {
   IDL_BINDINGS += \
     $$PWD/Modules/gamepad/Gamepad.idl \
     $$PWD/Modules/gamepad/GamepadList.idl \
     $$PWD/Modules/gamepad/NavigatorGamepad.idl
 }
 
-contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
+enable?(VIDEO_TRACK) {
   IDL_BINDINGS += \
     $$PWD/html/track/TextTrack.idl \
     $$PWD/html/track/TextTrackCue.idl \
@@ -642,7 +642,7 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
     $$PWD/html/track/TrackEvent.idl \
 }
 
-contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
+enable?(MEDIA_SOURCE) {
   IDL_BINDINGS += \
     $$PWD/Modules/mediasource/MediaSource.idl \
     $$PWD/Modules/mediasource/SourceBuffer.idl \
@@ -653,7 +653,7 @@ mathmlnames.output = MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
 mathmlnames.depends = $$PWD/mathml/mathattrs.in
 mathmlnames.script = $$PWD/dom/make_names.pl
-mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.script --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
+mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.script --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES} $$configDefines()\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
 mathmlnames.extra_sources = MathMLElementFactory.cpp
 GENERATORS += mathmlnames
 
@@ -662,7 +662,7 @@ svgnames.output = SVGNames.cpp
 svgnames.input = SVG_NAMES
 svgnames.depends = $$PWD/svg/svgattrs.in
 svgnames.script = $$PWD/dom/make_names.pl
-svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.script --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
+svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.script --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES} $$configDefines()\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
 svgnames.extra_sources = SVGElementFactory.cpp
     svgnames.extra_sources += JSSVGElementWrapperFactory.cpp
 GENERATORS += svgnames
@@ -678,7 +678,7 @@ GENERATORS += xlinknames
 cssprops.script = $$PWD/css/makeprop.pl
 cssprops.output = CSSPropertyNames.cpp
 cssprops.input = WALDOCSSPROPS
-cssprops.commands = perl -ne \"print $1\" ${QMAKE_FILE_NAME} $${EXTRACSSPROPERTIES} > ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.in && cd ${QMAKE_FUNC_FILE_OUT_PATH} && perl -I$$PWD/bindings/scripts $$cssprops.script --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME} && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssprops.commands = perl -ne \"print $1\" ${QMAKE_FILE_NAME} $${EXTRACSSPROPERTIES} > ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.in && cd ${QMAKE_FUNC_FILE_OUT_PATH} && perl -I$$PWD/bindings/scripts $$cssprops.script --defines \"$$javascriptFeatureDefines()\" --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME} && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.depends = ${QMAKE_FILE_NAME} $${EXTRACSSPROPERTIES} $$cssprops.script
 GENERATORS += cssprops
 
@@ -686,7 +686,7 @@ GENERATORS += cssprops
 cssvalues.script = $$PWD/css/makevalues.pl
 cssvalues.output = CSSValueKeywords.cpp
 cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = perl -ne \"print $1\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.in && cd ${QMAKE_FUNC_FILE_OUT_PATH} && perl -I$$PWD/bindings/scripts $$cssvalues.script --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME} && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssvalues.commands = perl -ne \"print $1\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.in && cd ${QMAKE_FUNC_FILE_OUT_PATH} && perl -I$$PWD/bindings/scripts $$cssvalues.script --defines \"$$javascriptFeatureDefines()\" --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME} && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES} $$cssvalues.script
 cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.h
 GENERATORS += cssvalues
@@ -700,7 +700,6 @@ IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
 preprocessIdls.input = IDL_ATTRIBUTES_FILE
 preprocessIdls.script = $$PREPROCESS_IDLS_SCRIPT
 # FIXME : We need to use only perl at some point.
-EOC = $$escape_expand(\\n\\t)
 win_cmd_shell: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
 else: preprocessIdls.commands = cat /dev/null > $$IDL_FILES_TMP $$EOC
 for(binding, IDL_BINDINGS) {
@@ -709,7 +708,7 @@ for(binding, IDL_BINDINGS) {
     preprocessIdls.commands += echo $$binding>> $$IDL_FILES_TMP$$EOC
 }
 preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
-                               --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
+                               --defines \"$$javascriptFeatureDefines()\" \
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
                                --idlAttributesFile $${IDL_ATTRIBUTES_FILE} \
@@ -729,7 +728,7 @@ win32 {
 generateBindings.input = IDL_BINDINGS
 generateBindings.script = $$PWD/bindings/scripts/generate-bindings.pl
 generateBindings.commands = $$env_export \"SOURCE_ROOT=$$toSystemPath($$PWD)\" && perl -I$$PWD/bindings/scripts $$generateBindings.script \
-                            --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
+                            --defines \"$$javascriptFeatureDefines()\" \
                             --generator JS \
                             --include Modules/filesystem \
                             --include Modules/geolocation \
@@ -838,7 +837,7 @@ htmlnames.output = HTMLNames.cpp
 htmlnames.input = HTML_NAMES
 htmlnames.script = $$PWD/dom/make_names.pl
 htmlnames.depends = $$PWD/html/HTMLAttributeNames.in
-htmlnames.commands = perl -I$$PWD/bindings/scripts $$htmlnames.script --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
+htmlnames.commands = perl -I$$PWD/bindings/scripts $$htmlnames.script --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES} $$configDefines()\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
 htmlnames.extra_sources = HTMLElementFactory.cpp
 htmlnames.extra_sources += JSHTMLElementWrapperFactory.cpp
 GENERATORS += htmlnames
@@ -908,7 +907,7 @@ colordata.clean = ${QMAKE_FILE_OUT}
 colordata.depends = $$PWD/make-hash-tools.pl
 GENERATORS += colordata
 
-contains(DEFINES, ENABLE_XSLT=1) {
+enable?(XSLT) {
     # GENERATOR 8-C:
     xmlviewercss.output = XMLViewerCSS.h
     xmlviewercss.input = XMLVIEWER_CSS
@@ -955,4 +954,3 @@ webkitversion.commands = perl $$webkitversion.script --config $$PWD/../WebKit/ma
 webkitversion.clean = ${QMAKE_FUNC_FILE_OUT_PATH}/WebKitVersion.h
 webkitversion.add_output_to_sources = false
 GENERATORS += webkitversion
-

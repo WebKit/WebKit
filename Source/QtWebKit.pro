@@ -10,10 +10,10 @@ CONFIG += ordered
 api.file = api.pri
 SUBDIRS += api
 
-!no_webkit2 {
+build?(webkit2) {
     webprocess.file = WebKit2/WebProcess.pro
     SUBDIRS += webprocess
-    contains(DEFINES, ENABLE_PLUGIN_PROCESS=1) {
+    enable?(PLUGIN_PROCESS) {
         pluginprocess.file = WebKit2/PluginProcess.pro
         SUBDIRS += pluginprocess
     }
@@ -23,10 +23,10 @@ include(WebKit/qt/docs/docs.pri)
 
 declarative.file = WebKit/qt/declarative/declarative.pro
 declarative.makefile = Makefile.declarative
-contains(DEFINES, HAVE_QTQUICK=1): SUBDIRS += declarative
+have?(QTQUICK): SUBDIRS += declarative
 
-!no_webkit1 {
-    contains(DEFINES, HAVE_QTTESTLIB=1) {
+build?(webkit1) {
+    build?(tests) {
         tests.file = tests.pri
         SUBDIRS += tests
     }
