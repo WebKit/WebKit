@@ -79,6 +79,7 @@ public:
         bool m_originalDialogElementEnabled;
 #endif
         bool m_canStartMedia;
+        bool m_originalMockScrollbarsEnabled;
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;

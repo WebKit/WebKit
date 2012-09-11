@@ -444,11 +444,6 @@ void TestRunner::setFrameFlatteningEnabled(bool enabled)
     DumpRenderTreeSupportQt::setFrameFlatteningEnabled(m_drt->webPage(), enabled);
 }
 
-void TestRunner::setMockScrollbarsEnabled(bool enabled)
-{
-    DumpRenderTreeSupportQt::setMockScrollbarsEnabled(m_drt->webPage(), enabled);
-}
-
 void TestRunner::goBack()
 {
     DumpRenderTreeSupportQt::goBack(m_drt->webPage());

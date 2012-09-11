@@ -1,3 +1,16 @@
+2012-09-11  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        Restore original value of mock scrollbars enabled in InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=87680
+
+        Reviewed by Adam Barth.
+
+        Added backup support for mock scrollbars state in
+        InternalSettings::Backup, and removed support for these
+        from Qt's DumpRenderTree.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules

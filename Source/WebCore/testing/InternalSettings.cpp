@@ -97,6 +97,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
     , m_canStartMedia(page->canStartMedia())
+    , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
 {
 }
 
@@ -129,6 +130,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
     page->setCanStartMedia(m_canStartMedia);
+    settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
 }
 
 InternalSettings* InternalSettings::from(Page* page)

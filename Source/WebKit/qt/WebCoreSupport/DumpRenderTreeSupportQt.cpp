@@ -237,11 +237,6 @@ void DumpRenderTreeSupportQt::setFrameFlatteningEnabled(QWebPage* page, bool ena
     QWebPagePrivate::core(page)->settings()->setFrameFlatteningEnabled(enabled);
 }
 
-void DumpRenderTreeSupportQt::setMockScrollbarsEnabled(QWebPage* page, bool enabled)
-{
-    QWebPagePrivate::core(page)->settings()->setMockScrollbarsEnabled(enabled);
-}
-
 void DumpRenderTreeSupportQt::webPageSetGroupName(QWebPage* page, const QString& groupName)
 {
     page->handle()->page->setGroupName(groupName);
