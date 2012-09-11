@@ -121,11 +121,11 @@
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
+                '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-                '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
@@ -282,8 +282,9 @@
                     'type': 'shared_library',
                     'dependencies': [
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                        '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
+                        '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
+                        '<(chromium_src_dir)/tools/android/md5sum/md5sum.gyp:md5sum',
                     ],
                     'dependencies!': [
                         'ImageDiff',

@@ -31,6 +31,8 @@ import copy
 import logging
 import os
 import re
+import sets
+import subprocess
 import threading
 import time
 
@@ -54,7 +56,6 @@ COMMAND_LINE_FILE = DEVICE_SOURCE_ROOT_DIR + 'chrome-native-tests-command-line'
 # and Chromium's webkit/support/platform_support_android.cc.
 DEVICE_DRT_DIR = DEVICE_SOURCE_ROOT_DIR + 'drt/'
 DEVICE_FORWARDER_PATH = DEVICE_DRT_DIR + 'forwarder'
-DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
@@ -137,6 +138,8 @@ TEST_RESOURCES_TO_PUSH = [
     'compositing/resources/video.mp4',
 ]
 
+MD5SUM_DEVICE_FILE_NAME = 'md5sum_bin'
+MD5SUM_DEVICE_PATH = '/data/local/tmp/' + MD5SUM_DEVICE_FILE_NAME
 
 class ChromiumAndroidPort(chromium.ChromiumPort):
     port_name = 'chromium-android'
@@ -306,6 +309,8 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
 
 class ChromiumAndroidDriver(driver.Driver):
+    _data_already_pushed_for_worker = sets.Set()
+
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._cmd_line = None
@@ -319,10 +324,25 @@ class ChromiumAndroidDriver(driver.Driver):
         self._original_governors = {}
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command = ['adb', '-s', self._device_serial]
+        self._setup_md5sum()
+        if not worker_number in ChromiumAndroidDriver._data_already_pushed_for_worker:
+            self._push_executable()
+            self._push_fonts()
+            self._push_test_resources()
+            ChromiumAndroidDriver._data_already_pushed_for_worker.add(worker_number)
 
     def __del__(self):
         self._teardown_performance()
         super(ChromiumAndroidDriver, self).__del__()
+
+    def _setup_md5sum(self):
+        self._md5sum_path = self._port._build_path_with_configuration(self._port.get_option('configuration'), MD5SUM_DEVICE_FILE_NAME)
+        assert os.path.exists(self._md5sum_path)
+
+        if self._file_exists_on_device(MD5SUM_DEVICE_PATH):
+            return
+        if not self._push_to_device(self._md5sum_path, MD5SUM_DEVICE_PATH):
+            _log.error('Could not push md5sum to device')
 
     def _setup_test(self):
         if self._has_setup:
@@ -340,10 +360,6 @@ class ChromiumAndroidDriver(driver.Driver):
         self._run_adb_command(['shell', 'mkdir', '-p', DEVICE_DRT_DIR])
         self._run_adb_command(['shell', 'chmod', '777', DEVICE_DRT_DIR])
 
-        self._push_executable()
-        self._push_fonts()
-        self._synchronize_datetime()
-
         # Delete the disk cache if any to ensure a clean test run.
         # This is like what's done in ChromiumPort.setup_test_run but on the device.
         self._run_adb_command(['shell', 'rm', '-r', DRT_APP_CACHE_DIR])
@@ -357,29 +373,34 @@ class ChromiumAndroidDriver(driver.Driver):
     def _abort(self, message):
         raise AssertionError('[%s] %s' % (self._device_serial, message))
 
+    @staticmethod
+    def _extract_hashes_from_md5sum_output(md5sum_output):
+        assert md5sum_output
+        return [line.split('  ')[0] for line in md5sum_output]
+
+    def _push_file_if_needed(self, host_file, device_file):
+        assert os.path.exists(host_file)
+        device_hashes = self._extract_hashes_from_md5sum_output(
+                self._port.host.executive.popen(self._adb_command + ['shell', MD5SUM_DEVICE_PATH, device_file],
+                                                stdout=subprocess.PIPE).stdout)
+        host_hashes = self._extract_hashes_from_md5sum_output(
+                self._port.host.executive.popen(args=['%s_host' % self._md5sum_path, host_file],
+                                                stdout=subprocess.PIPE).stdout)
+        if host_hashes and device_hashes == host_hashes:
+            return
+        self._push_to_device(host_file, device_file)
+
     def _push_executable(self):
+        self._push_file_if_needed(self._port._path_to_forwarder(), DEVICE_FORWARDER_PATH)
+        self._push_file_if_needed(self._port._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
+        self._push_file_if_needed(self._port._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
+        self._push_file_if_needed(self._port._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
+        self._push_file_if_needed(self._port._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
+        self._run_adb_command(['uninstall', DRT_APP_PACKAGE])
         drt_host_path = self._port._path_to_driver()
-        forwarder_host_path = self._port._path_to_forwarder()
-        host_stamp = int(float(max(os.stat(drt_host_path).st_mtime,
-                                   os.stat(forwarder_host_path).st_mtime)))
-        device_stamp = int(float(self._run_adb_command([
-            'shell', 'cat %s 2>/dev/null || echo 0' % DEVICE_DRT_STAMP_PATH])))
-        if device_stamp != host_stamp:
-            self._log_debug('Pushing executable')
-            self._push_to_device(forwarder_host_path, DEVICE_FORWARDER_PATH)
-            self._run_adb_command(['uninstall', DRT_APP_PACKAGE])
-            install_result = self._run_adb_command(['install', drt_host_path])
-            if install_result.find('Success') == -1:
-                self._abort('Failed to install %s onto device: %s' % (drt_host_path, install_result))
-            self._push_to_device(self._port._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
-            self._push_to_device(self._port._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
-            self._push_to_device(self._port._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
-            self._push_to_device(self._port._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
-            # Version control of test resources is dependent on executables,
-            # because we will always rebuild executables when resources are
-            # updated.
-            self._push_test_resources()
-            self._run_adb_command(['shell', 'echo %d >%s' % (host_stamp, DEVICE_DRT_STAMP_PATH)])
+        install_result = self._run_adb_command(['install', drt_host_path])
+        if install_result.find('Success') == -1:
+            self._abort('Failed to install %s onto device: %s' % (drt_host_path, install_result))
 
     def _push_fonts(self):
         if not self._check_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION):
@@ -394,18 +415,7 @@ class ChromiumAndroidDriver(driver.Driver):
     def _push_test_resources(self):
         self._log_debug('Pushing test resources')
         for resource in TEST_RESOURCES_TO_PUSH:
-            self._push_to_device(self._port.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
-
-    def _synchronize_datetime(self):
-        # The date/time between host and device may not be synchronized.
-        # We need to make them synchronized, otherwise tests might fail.
-        try:
-            # Get seconds since 1970-01-01 00:00:00 UTC.
-            host_datetime = self._port._executive.run_command(['date', '-u', '+%s'])
-        except:
-            # Reset to 1970-01-01 00:00:00 UTC.
-            host_datetime = 0
-        self._run_adb_command(['shell', 'date -u %s' % (host_datetime)])
+            self._push_file_if_needed(self._port.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
 
     def _check_version(self, dir, version):
         assert(dir.endswith('/'))
@@ -664,8 +674,6 @@ class ChromiumAndroidDriver(driver.Driver):
         while True:
             current_char = self._server_process.read_stdout(deadline, 1)
             if current_char == ' ':
-                if last_char == '#':
+                if last_char in ('#', '$'):
                     return
-                if last_char == '$':
-                    raise AssertionError('Adbd is not running as root')
             last_char = current_char

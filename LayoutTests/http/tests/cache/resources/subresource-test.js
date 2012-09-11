@@ -25,6 +25,22 @@ var consoleDiv = document.createElement('div');
 document.body.appendChild(consoleDiv);
 frame2.onload = function () { loadedFrameCount++; }
 
+function getServerDate()
+{
+    var req = new XMLHttpRequest();
+    var t0 = new Date().getTime();
+    req.open('GET', "/cache/resources/current-time.cgi", false /* blocking */);
+    req.send();
+    var serverToClientTime = (new Date().getTime() - t0) / 2;
+    if (req.status != 200) {
+        console.log("unexpected status code " + req.status + ", expected 200.");
+        return new Date();
+    }
+    return new Date((parseInt(req.responseText) * 1000) + serverToClientTime);
+}
+
+var serverClientTimeDelta = getServerDate().getTime() - new Date().getTime();
+
 function loadTestFrame(frame, testSpec)
 {
     var first = true;
@@ -67,7 +83,7 @@ function nextTest()
 {
     var testSpec = tests[currentTest];
     uniqueId = Math.floor(100000000 * Math.random());
-    now = new Date();
+    now = new Date(new Date().getTime() + serverClientTimeDelta);
     if (!testSpec) {
         if (window.testRunner)
             testRunner.notifyDone();
@@ -80,22 +96,22 @@ function nextTest()
 function testComplete(testSpec)
 {
     var line = document.createElement('div');
-    var result = frame1.contentWindow.randomNumber == frame2.contentWindow.randomNumber ? 'Cached' : 'Uncached';    
+    var result = frame1.contentWindow.randomNumber == frame2.contentWindow.randomNumber ? 'Cached' : 'Uncached';
     var passed = result == testSpec.expectedResult;
 
     if (testSpec.description)
         line.innerHTML += testSpec.description;
     else {
-        for (var header in testSpec.testHeaders) 
+        for (var header in testSpec.testHeaders)
             line.innerHTML += header + ": " + testSpec.testHeaders[header] + "; ";
     }
     if (testSpec.delay)
         line.innerHTML += "[delay=" + testSpec.delay + "s] "
     line.innerHTML += "  (result=" + result + " expected=" + testSpec.expectedResult + ") ";
     line.innerHTML += passed ? "<font color=green>PASS</font> " : "<font color=red>FAIL</font> "
-        
+
     consoleDiv.appendChild(line);
-    
+
     nextTest();
 }
 
@@ -106,5 +122,4 @@ function runTests()
         nextTest();
     else
         setTimeout(runTests, 100);
-
 }

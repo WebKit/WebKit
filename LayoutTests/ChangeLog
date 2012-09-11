@@ -1,3 +1,22 @@
+2012-09-11  Philippe Liard  <pliard@chromium.org>
+
+        Support LayoutTests on non-rooted Android devices.
+        https://bugs.webkit.org/show_bug.cgi?id=95346
+
+        Reviewed by Dirk Pranke.
+
+        http/tests/cache/resources/subresource-test.js was assuming that the
+        client and server clocks are the same which is no longer true since we
+        are getting rid of host/device clock synchronization.
+
+        * http/tests/cache/resources/cache-simulator.cgi:
+        * http/tests/cache/resources/current-time.cgi: Added.
+        * http/tests/cache/resources/subresource-test.js:
+        (getServerDate):
+        (nextTest):
+        (testComplete):
+        (runTests):
+
 2012-09-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] WebKitGtk+ crashes with non-UTF8 HTTP header names

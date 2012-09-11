@@ -1,3 +1,25 @@
+2012-09-11  Philippe Liard  <pliard@chromium.org>
+
+        Support LayoutTests on non-rooted devices for Chromium Android.
+        https://bugs.webkit.org/show_bug.cgi?id=95346
+
+        Reviewed by Dirk Pranke.
+
+        We were requiring root permissions to sync resource files with the
+        device by comparing host and device files' timestamp after we
+        synchronized the device and host clocks.
+        We now rely on md5sum provided by Chromium to handle data files
+        synchronization.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._check_driver_build_up_to_date):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._setup_test):
+        (ChromiumAndroidDriver._push_executable):
+        (ChromiumAndroidDriver._push_test_resources):
+        (ChromiumAndroidDriver._read_prompt):
+
 2012-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix output paths on Windows

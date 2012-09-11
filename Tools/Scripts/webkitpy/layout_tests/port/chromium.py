@@ -405,10 +405,9 @@ class ChromiumPort(Port):
 
                 if (debug_mtime > release_mtime and configuration == 'Release' or
                     release_mtime > debug_mtime and configuration == 'Debug'):
-                    _log.warning('You are not running the most '
-                                 'recent DumpRenderTree binary. You need to '
-                                 'pass --debug or not to select between '
-                                 'Debug and Release.')
+                    most_recent_binary = 'Release' if configuration == 'Debug' else 'Debug'
+                    _log.warning('You are running the %s binary. However the %s binary appears to be more recent. '
+                                 'Please pass --%s.', configuration, most_recent_binary, most_recent_binary.lower())
                     _log.warning('')
             # This will fail if we don't have both a debug and release binary.
             # That's fine because, in this case, we must already be running the
