@@ -541,7 +541,7 @@ void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPt
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::countInternal");
     uint32_t count = 0;
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(objectStore->databaseId(), objectStore->id(), range.get(), IDBCursor::NEXT);
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreKeyCursor(objectStore->databaseId(), objectStore->id(), range.get(), IDBCursor::NEXT);
     if (!backingStoreCursor) {
         callbacks->onSuccess(SerializedScriptValue::numberValue(count));
         return;

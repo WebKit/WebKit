@@ -101,12 +101,12 @@ public:
         virtual PassRefPtr<IDBKey> primaryKey() = 0;
         virtual String value() = 0;
         virtual PassRefPtr<ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
-        virtual int64_t indexDataId() = 0;
         virtual void close() = 0;
         virtual ~Cursor() { };
     };
 
     virtual PassRefPtr<Cursor> openObjectStoreCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) = 0;
+    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) = 0;
     virtual PassRefPtr<Cursor> openIndexKeyCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) = 0;
     virtual PassRefPtr<Cursor> openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) = 0;
 
