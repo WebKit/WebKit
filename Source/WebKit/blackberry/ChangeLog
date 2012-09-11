@@ -1,3 +1,19 @@
+2012-09-11  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Take account for single words that exceed our client character limit
+        https://bugs.webkit.org/show_bug.cgi?id=96389
+
+        Fix to the processing of long single-line text using getRangeForSpellCheckWithFineGranularity.
+        This was failing if a single word was longer than our maximum allowed limit.
+
+        Internally reviewed by Mike Fenton.
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/InputHandler.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::getRangeForSpellCheckWithFineGranularity):
+
 2012-09-11  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] SelectionHandler drops caret change notifications

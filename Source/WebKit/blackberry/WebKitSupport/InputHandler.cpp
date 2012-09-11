@@ -938,14 +938,24 @@ void InputHandler::spellCheckBlock(VisibleSelection& visibleSelection, TextCheck
 PassRefPtr<Range> InputHandler::getRangeForSpellCheckWithFineGranularity(VisiblePosition startPosition, VisiblePosition endPosition)
 {
     VisiblePosition endOfCurrentWord = endOfWord(startPosition);
-    RefPtr<Range> rangeForSpellChecking;
-    while (endOfCurrentWord != endPosition) {
-        rangeForSpellChecking = VisibleSelection(startPosition, endOfCurrentWord).toNormalizedRange();
-        // If we exceed the MaxSpellCheckingStringLength limit, then go back one word and return this range.
-        if (rangeForSpellChecking->text().length() >= MaxSpellCheckingStringLength)
-            return VisibleSelection(startPosition, endOfWord(previousWordPosition(endOfCurrentWord))).toNormalizedRange();
 
-        endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord));
+    // Keep iterating until one of our cases is hit, or we've incremented the starting position right to the end.
+    while (startPosition != endPosition) {
+        // Check the text length within this range.
+        if (VisibleSelection(startPosition, endOfCurrentWord).toNormalizedRange()->text().length() >= MaxSpellCheckingStringLength) {
+            // If this is not the first word, return a Range with end boundary set to the previous word.
+            if (startOfWord(endOfCurrentWord, LeftWordIfOnBoundary) != startPosition)
+                return VisibleSelection(startPosition, endOfWord(previousWordPosition(endOfCurrentWord), LeftWordIfOnBoundary)).toNormalizedRange();
+
+            // Our first word has gone over the character limit. Increment the starting position past an uncheckable word.
+            startPosition = endOfCurrentWord;
+        } else if (endOfCurrentWord == endPosition) {
+            // Return the last segment if the end of our word lies at the end of the range.
+            return VisibleSelection(startPosition, endPosition).toNormalizedRange();
+        } else {
+            // Increment the current word.
+            endOfCurrentWord = endOfWord(nextWordPosition(endOfCurrentWord));
+        }
     }
     return 0;
 }
