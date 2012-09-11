@@ -159,16 +159,8 @@ void FEComponentTransfer::platformApplySoftware()
         return;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
-    for (unsigned i = 0; i < 256; ++i)
-        rValues[i] = gValues[i] = bValues[i] = aValues[i] = i;
+    getValues(rValues, gValues, bValues, aValues);
     unsigned char* tables[] = { rValues, gValues, bValues, aValues };
-    ComponentTransferFunction transferFunction[] = {m_redFunc, m_greenFunc, m_blueFunc, m_alphaFunc};
-    TransferType callEffect[] = {identity, identity, table, discrete, linear, gamma};
-
-    for (unsigned channel = 0; channel < 4; channel++) {
-        ASSERT(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
-        (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
-    }
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     in->copyUnmultipliedImage(pixelArray, drawingRect);
@@ -179,6 +171,20 @@ void FEComponentTransfer::platformApplySoftware()
             unsigned char c = pixelArray->item(pixelOffset + channel);
             pixelArray->set(pixelOffset + channel, tables[channel][c]);
         }
+    }
+}
+
+void FEComponentTransfer::getValues(unsigned char rValues[256], unsigned char gValues[256], unsigned char bValues[256], unsigned char aValues[256])
+{
+    for (unsigned i = 0; i < 256; ++i)
+        rValues[i] = gValues[i] = bValues[i] = aValues[i] = i;
+    unsigned char* tables[] = { rValues, gValues, bValues, aValues };
+    ComponentTransferFunction transferFunction[] = {m_redFunc, m_greenFunc, m_blueFunc, m_alphaFunc};
+    TransferType callEffect[] = {identity, identity, table, discrete, linear, gamma};
+
+    for (unsigned channel = 0; channel < 4; channel++) {
+        ASSERT(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
+        (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
     }
 }
 

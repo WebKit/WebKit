@@ -79,6 +79,9 @@ public:
     void setAlphaFunction(const ComponentTransferFunction&);
 
     virtual void platformApplySoftware();
+#if USE(SKIA)
+    virtual bool platformApplySkia();
+#endif
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
@@ -86,6 +89,8 @@ public:
 private:
     FEComponentTransfer(Filter*, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
                         const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+
+    void getValues(unsigned char rValues[256], unsigned char gValues[256], unsigned char bValues[256], unsigned char aValues[256]);
 
     ComponentTransferFunction m_redFunc;
     ComponentTransferFunction m_greenFunc;

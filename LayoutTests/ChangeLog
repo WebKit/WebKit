@@ -1,3 +1,12 @@
+2012-09-11  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Mark some tests as needing a rebaseline due to SVG filters change.
+        https://bugs.webkit.org/show_bug.cgi?id=95238
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-11  Kevin Ellis  <kevers@chromium.org>
 
         Crash on a long press gesture when touch adjustment is enabled.
