@@ -362,7 +362,21 @@ static bool canScrollInnerFrame(Frame* frame)
 // FIXME: Fix RenderBox::canBeScrolledAndHasScrollableArea method instead.
 static bool canScrollRenderBox(RenderBox* box)
 {
-    if (!box || !box->hasOverflowClip())
+    if (!box)
+        return false;
+
+    // We use this to make non-overflown contents layers to actually
+    // be overscrollable.
+    if (box->layer() && box->layer()->usesCompositedScrolling()
+        && box->layer()->enclosingElement() && box->layer()->enclosingElement()->isElementNode()) {
+        DEFINE_STATIC_LOCAL(QualifiedName, forceOverscrollAttr, (nullAtom, "data-blackberry-force-overscroll", nullAtom));
+
+        Element* element = static_cast<Element*>(box->layer()->enclosingElement());
+        if (element->fastHasAttribute(forceOverscrollAttr))
+            return true;
+    }
+
+    if (!box->hasOverflowClip())
         return false;
 
     if (box->scrollsOverflowX() && (box->scrollWidth() != box->clientWidth())

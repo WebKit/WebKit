@@ -94,6 +94,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
         // Both caches below are self-exclusive.
         if (m_layer->usesCompositedScrolling()) {
+            m_forceContentToBeVerticallyScrollable = true;
             m_supportsCompositedScrolling = true;
             ASSERT(m_layer->backing()->hasScrollingLayer());
             m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingContentsLayer()->platformLayer());

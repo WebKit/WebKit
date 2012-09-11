@@ -1,3 +1,25 @@
+2012-09-10  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] add a way to overscroll non-overflown content
+        https://bugs.webkit.org/show_bug.cgi?id=96331
+        [UxD] Vertical lists should always be scrollable
+        PR #195305
+
+        Reviewed by Yong Li.
+        Internally reviewed by Gen Mak.
+
+        Check if the RenderLayer is composited / hardware acceleratable prior to
+        check if its contents overflows. If that is the case, check if
+        our custom data-blackberry-force-overscroll is present.
+
+        That makes it possible for us to align to UX requirements: settings
+        and CCM panels should be always scrollable.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::canScrollRenderBox):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2012-09-10  Genevieve Mak  <gmak@rim.com>
 
         Change -data-blackberry-webworks-context to -data-webworks-context
