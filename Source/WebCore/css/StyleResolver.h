@@ -207,8 +207,6 @@ public:
     static int legacyFontSize(Document*, int pixelFontSize, bool shouldUseFixedDefaultSize);
 
 public:
-    void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
-
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, RenderStyle*);
 
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
