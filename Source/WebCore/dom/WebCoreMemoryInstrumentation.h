@@ -31,9 +31,8 @@
 #ifndef WebCoreMemoryInstrumentation_h
 #define WebCoreMemoryInstrumentation_h
 
-#include "MemoryInstrumentation.h"
-
 #include <wtf/Forward.h>
+#include <wtf/MemoryInstrumentation.h>
 
 namespace WebCore {
 

@@ -79,6 +79,7 @@ wtf_sources += \
     Source/WTF/wtf/MathExtras.h \
     Source/WTF/wtf/MediaTime.h \
     Source/WTF/wtf/MediaTime.cpp \
+    Source/WTF/wtf/MemoryInstrumentation.h \
     Source/WTF/wtf/MessageQueue.h \
     Source/WTF/wtf/MetaAllocator.cpp \
     Source/WTF/wtf/MetaAllocator.h \

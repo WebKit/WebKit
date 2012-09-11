@@ -31,10 +31,10 @@
 #ifndef MemoryInstrumentationImpl_h
 #define MemoryInstrumentationImpl_h
 
-#include "MemoryInstrumentation.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MemoryInstrumentation.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

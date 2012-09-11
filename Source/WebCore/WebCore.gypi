@@ -3860,7 +3860,6 @@
             'dom/IdTargetObserverRegistry.cpp',
             'dom/IdTargetObserverRegistry.h',
             'dom/KeyboardEvent.cpp',
-            'dom/MemoryInstrumentation.h',
             'dom/MessageChannel.cpp',
             'dom/MessageChannel.h',
             'dom/MessageEvent.cpp',

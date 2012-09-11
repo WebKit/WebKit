@@ -81,6 +81,7 @@ HEADERS += \
     MathExtras.h \
     MD5.h \
     MediaTime.h \
+    MemoryInstrumentation.h \
     MessageQueue.h \
     MetaAllocator.h \
     MetaAllocatorHandle.h \

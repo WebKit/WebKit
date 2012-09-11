@@ -1,3 +1,69 @@
+2012-09-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: move MemoryInstrumentation.h to wtf
+        https://bugs.webkit.org/show_bug.cgi?id=96356
+
+        Reviewed by Yury Semikhatsky.
+
+        It is necessary step because it helps us to remove dependency between platform and WebCore.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MemoryInstrumentation.h: Renamed from Source/WebCore/dom/MemoryInstrumentation.h.
+        (WebCore):
+        (GenericMemoryTypes):
+        (MemoryInstrumentationTraits):
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::~MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::addRootObject):
+        (InstrumentedPointerBase):
+        (WebCore::MemoryInstrumentation::InstrumentedPointerBase::~InstrumentedPointerBase):
+        (InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::InstrumentedPointer::InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::addObject):
+        (WebCore::MemoryInstrumentation::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::addRawBuffer):
+        (WebCore::MemoryInstrumentation::OwningTraits::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::OwningTraits::addObject):
+        (WebCore::MemoryInstrumentationTraits::addInstrumentedObject):
+        (WebCore::MemoryInstrumentationTraits::addObject):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::objectType):
+        (WebCore::MemoryObjectInfo::objectSize):
+        (WebCore::MemoryObjectInfo::memoryInstrumentation):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (MemoryClassInfo):
+        (WebCore::MemoryClassInfo::MemoryClassInfo):
+        (WebCore::MemoryClassInfo::addInstrumentedMember):
+        (WebCore::MemoryClassInfo::addMember):
+        (WebCore::MemoryClassInfo::addHashMap):
+        (WebCore::MemoryClassInfo::addHashSet):
+        (WebCore::MemoryClassInfo::addHashCountedSet):
+        (WebCore::MemoryClassInfo::addInstrumentedHashSet):
+        (WebCore::MemoryClassInfo::addInstrumentedVector):
+        (WebCore::MemoryClassInfo::addInstrumentedVectorPtr):
+        (WebCore::MemoryClassInfo::addInstrumentedMapEntries):
+        (WebCore::MemoryClassInfo::addInstrumentedMapValues):
+        (WebCore::MemoryClassInfo::addListHashSet):
+        (WebCore::MemoryClassInfo::addVector):
+        (WebCore::MemoryClassInfo::addVectorPtr):
+        (WebCore::MemoryClassInfo::addRawBuffer):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        (WebCore::MemoryInstrumentation::addHashMap):
+        (WebCore::MemoryInstrumentation::addHashSet):
+        (WebCore::MemoryInstrumentation::addInstrumentedCollection):
+        (WebCore::MemoryInstrumentation::addInstrumentedMapEntries):
+        (WebCore::MemoryInstrumentation::addInstrumentedMapValues):
+        (WebCore::MemoryInstrumentation::addListHashSet):
+        (WebCore::MemoryInstrumentation::addVector):
+        (WebCore::MemoryInstrumentation::calculateContainerSize):
+        (WebCore::::process):
+
 2012-09-09  Mark Lam  <mark.lam@apple.com>
 
         Fixed ASSERT() and ASSERT_AT() macros so that they can be used in

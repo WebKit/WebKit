@@ -49,6 +49,7 @@
             'wtf/MD5.h',
             'wtf/MainThread.h',
             'wtf/MathExtras.h',
+            'wtf/MemoryInstrumentation.h',
             'wtf/MessageQueue.h',
             'wtf/NonCopyingSort.h',
             'wtf/Noncopyable.h',

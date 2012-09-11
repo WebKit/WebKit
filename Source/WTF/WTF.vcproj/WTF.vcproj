@@ -901,6 +901,10 @@
 			>
 		</File>
 		<File
+		        RelativePath="..\wtf\MemoryInstrumentation.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\MessageQueue.h"
 			>
 		</File>
