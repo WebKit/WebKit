@@ -227,6 +227,7 @@ public:
     virtual float maximumPageScaleFactor() const;
     virtual void saveScrollAndScaleState();
     virtual void restoreScrollAndScaleState();
+    virtual void resetScrollAndScaleState();
     virtual void setIgnoreViewportTagMaximumScale(bool);
 
     virtual float deviceScaleFactor() const;

@@ -257,9 +257,13 @@ public:
     // overwrites the previously saved scroll and scale state.
     virtual void saveScrollAndScaleState() = 0;
 
-    // Restore the previously saved scroll and scale state. After restroing the
+    // Restore the previously saved scroll and scale state. After restoring the
     // state, this function deletes any saved scroll and scale state.
     virtual void restoreScrollAndScaleState() = 0;
+
+    // Reset the scroll and scale state and clobber any previously saved values for
+    // these parameters.
+    virtual void resetScrollAndScaleState() = 0;
 
     // Prevent the web page from setting a maximum scale via the viewport meta
     // tag. This is an accessibility feature that lets folks zoom in to web

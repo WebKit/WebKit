@@ -2928,6 +2928,18 @@ void WebViewImpl::resetSavedScrollAndScaleState()
     m_savedScrollOffset = IntSize();
 }
 
+void WebViewImpl::resetScrollAndScaleState()
+{
+    page()->setPageScaleFactor(0, IntPoint());
+    m_pageScaleFactorIsSet = false;
+
+    // Clobber saved scales and scroll offsets.
+    if (FrameView* view = page()->mainFrame()->document()->view())
+        view->cacheCurrentScrollPosition();
+    resetSavedScrollAndScaleState();
+    page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+}
+
 WebSize WebViewImpl::fixedLayoutSize() const
 {
     if (!page())

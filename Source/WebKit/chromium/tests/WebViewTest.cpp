@@ -422,6 +422,45 @@ TEST_F(WebViewTest, SetCompositionFromExistingText)
     webView->close();
 }
 
+TEST_F(WebViewTest, ResetScrollAndScaleState)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("hello_world.html"));
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "hello_world.html"));
+    webViewImpl->resize(WebSize(640, 480));
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
+
+    // Make the page scale and scroll with the given paremeters.
+    webViewImpl->setPageScaleFactor(2.0f, WebPoint(116, 84));
+    EXPECT_EQ(2.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(116, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(84, webViewImpl->mainFrame()->scrollOffset().height);
+    webViewImpl->page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+
+    // Confirm that restoring the page state restores the parameters.
+    webViewImpl->setPageScaleFactor(1.5f, WebPoint(16, 24));
+    EXPECT_EQ(1.5f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(16, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(24, webViewImpl->mainFrame()->scrollOffset().height);
+    webViewImpl->page()->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
+    EXPECT_EQ(2.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(116, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(84, webViewImpl->mainFrame()->scrollOffset().height);
+    webViewImpl->page()->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+
+    // Confirm that resetting the page state resets both the scale and scroll position, as well
+    // as overwrites the original parameters that were saved to the HistoryController.
+    webViewImpl->resetScrollAndScaleState();
+    EXPECT_EQ(0.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
+    webViewImpl->page()->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
+    EXPECT_EQ(0.0f, webViewImpl->pageScaleFactor());
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
+    EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
+    webViewImpl->close();
+}
+
 class ContentDetectorClient : public WebViewClient {
 public:
     ContentDetectorClient() { reset(); }
