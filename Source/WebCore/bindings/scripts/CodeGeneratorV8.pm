@@ -3358,6 +3358,17 @@ END
     }
 
     push(@implContent, <<END);
+    Document* document = 0;
+    UNUSED_PARAM(document);
+END
+
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+    document = impl->document(); 
+END
+    }
+
+    push(@implContent, <<END);
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -3368,7 +3379,7 @@ END
         context->Enter();
     }
 
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(document, &info, impl.get());
 
     if (!context.IsEmpty())
         context->Exit();
