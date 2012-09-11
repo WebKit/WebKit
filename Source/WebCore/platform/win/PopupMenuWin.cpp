@@ -741,7 +741,7 @@ IntSize PopupMenuWin::contentsSize() const
     return m_windowRect.size();
 }
 
-bool PopupMenuWin::isOnActivePage() const
+bool PopupMenuWin::scrollbarsCanBeActive() const
 {
     return m_showPopup;
 }

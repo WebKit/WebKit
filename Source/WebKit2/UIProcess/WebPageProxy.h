@@ -486,6 +486,9 @@ public:
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
 
+    void setSuppressScrollbarAnimations(bool);
+    bool areScrollbarAnimationsSuppressed() const { return m_suppressScrollbarAnimations; }
+
     bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
     bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
 
@@ -1095,6 +1098,8 @@ private:
 
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
+
+    bool m_suppressScrollbarAnimations;
 
     WebCore::Pagination::Mode m_paginationMode;
     bool m_paginationBehavesLikeColumns;

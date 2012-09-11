@@ -81,6 +81,8 @@ public:
     void contentAreaDidShow() const;
     void contentAreaDidHide() const;
 
+    void finishCurrentScrollAnimations() const;
+
     void didAddVerticalScrollbar(Scrollbar*);
     void willRemoveVerticalScrollbar(Scrollbar*);
     virtual void didAddHorizontalScrollbar(Scrollbar*);
@@ -147,7 +149,7 @@ public:
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
 
-    virtual bool isOnActivePage() const = 0;
+    virtual bool scrollbarsCanBeActive() const = 0;
     
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;

@@ -77,7 +77,7 @@ namespace WebCore {
         virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
         virtual bool isActive() const OVERRIDE;
         virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE;
-        virtual bool isOnActivePage() const OVERRIDE;
+        virtual bool scrollbarsCanBeActive() const OVERRIDE;
         virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
         // Widget public methods:

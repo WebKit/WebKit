@@ -263,7 +263,7 @@ void ScrollbarGroup::scrollbarStyleChanged(int, bool forceUpdate)
         m_verticalScrollbar->scrollbarStyleChanged();
 }
 
-bool ScrollbarGroup::isOnActivePage() const
+bool ScrollbarGroup::scrollbarsCanBeActive() const
 {
     return true;
 }

@@ -2745,14 +2745,22 @@ void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
     page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
 }
 
-bool FrameView::isOnActivePage() const
+bool FrameView::scrollbarsCanBeActive() const
 {
     if (!m_frame)
         return false;
+
     if (m_frame->view() != this)
         return false;
+
+    if (Page* page = m_frame->page()) {
+        if (page->shouldSuppressScrollbarAnimations())
+            return false;
+    }
+
     if (Document* document = m_frame->document())
         return !document->inPageCache();
+
     return false;
 }
 
@@ -2838,7 +2846,7 @@ void FrameView::setAnimatorsAreActive()
     for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
         ScrollableArea* scrollableArea = *it;
 
-        ASSERT(scrollableArea->isOnActivePage());
+        ASSERT(scrollableArea->scrollbarsCanBeActive());
         scrollableArea->scrollAnimator()->setIsActive();
     }
 }
@@ -2857,7 +2865,7 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
     for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
         ScrollableArea* scrollableArea = *it;
 
-        if (!scrollableArea->isOnActivePage())
+        if (!scrollableArea->scrollbarsCanBeActive())
             continue;
 
         scrollableArea->contentAreaWillPaint();

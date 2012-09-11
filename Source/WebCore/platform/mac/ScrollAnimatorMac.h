@@ -112,6 +112,8 @@ private:
     void didEndScrollGesture() const;
     void mayBeginScrollGesture() const;
 
+    virtual void finishCurrentScrollAnimations();
+
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*);
     virtual void didAddHorizontalScrollbar(Scrollbar*);

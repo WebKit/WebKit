@@ -247,6 +247,9 @@ namespace WebCore {
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         void setDeviceScaleFactor(float);
 
+        bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
+        void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
+
         // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
         // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
         // FrameViews in the page cache, but FrameView::pagination() only affects the current
@@ -395,6 +398,8 @@ namespace WebCore {
 
         float m_pageScaleFactor;
         float m_deviceScaleFactor;
+
+        bool m_suppressScrollbarAnimations;
 
         Pagination m_pagination;
 

@@ -144,6 +144,7 @@ Page::Page(PageClients& pageClients)
     , m_mediaVolume(1)
     , m_pageScaleFactor(1)
     , m_deviceScaleFactor(1)
+    , m_suppressScrollbarAnimations(false)
     , m_javaScriptURLsAreAllowed(true)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
@@ -691,6 +692,46 @@ void Page::setDeviceScaleFactor(float scaleFactor)
         frame->editor()->deviceScaleFactorChanged();
 
     pageCache()->markPagesForFullStyleRecalc(this);
+}
+
+void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
+{
+    if (suppressAnimations == m_suppressScrollbarAnimations)
+        return;
+
+    if (!suppressAnimations) {
+        // If animations are not going to be suppressed anymore, then there is nothing to do here but
+        // change the cached value.
+        m_suppressScrollbarAnimations = suppressAnimations;
+        return;
+    }
+
+    // On the other hand, if we are going to start suppressing animations, then we need to make sure we
+    // finish any current scroll animations first.
+    FrameView* view = mainFrame()->view();
+    if (!view)
+        return;
+
+    view->finishCurrentScrollAnimations();
+    
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView)
+            continue;
+
+        const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+        if (!scrollableAreas)
+            continue;
+
+        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+            ScrollableArea* scrollableArea = *it;
+            ASSERT(scrollableArea->scrollbarsCanBeActive());
+
+            scrollableArea->finishCurrentScrollAnimations();
+        }
+    }
+
+    m_suppressScrollbarAnimations = suppressAnimations;
 }
 
 void Page::setPagination(const Pagination& pagination)

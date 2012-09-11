@@ -340,6 +340,16 @@ bool WKPageHasVerticalScrollbar(WKPageRef pageRef)
     return toImpl(pageRef)->hasVerticalScrollbar();
 }
 
+void WKPageSetSuppressScrollbarAnimations(WKPageRef pageRef, bool suppressAnimations)
+{
+    toImpl(pageRef)->setSuppressScrollbarAnimations(suppressAnimations);
+}
+
+bool WKPageAreScrollbarAnimationsSuppressed(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->areScrollbarAnimationsSuppressed();
+}
+
 bool WKPageIsPinnedToLeftSide(WKPageRef pageRef)
 {
     return toImpl(pageRef)->isPinnedToLeftSide();

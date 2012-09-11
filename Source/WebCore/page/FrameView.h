@@ -320,6 +320,8 @@ public:
 
     virtual IntPoint currentMousePosition() const;
 
+    virtual bool scrollbarsCanBeActive() const OVERRIDE;
+
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
 
@@ -410,7 +412,6 @@ private:
     virtual void getTickmarks(Vector<IntRect>&) const OVERRIDE;
     virtual void scrollTo(const IntSize&) OVERRIDE;
     virtual void setVisibleScrollerThumbRect(const IntRect&) OVERRIDE;
-    virtual bool isOnActivePage() const OVERRIDE;
     virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE;
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
     virtual bool scrollAnimatorEnabled() const OVERRIDE;

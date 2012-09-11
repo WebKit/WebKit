@@ -2210,9 +2210,12 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
     return view->frameView()->shouldSuspendScrollAnimations();
 }
 
-bool RenderLayer::isOnActivePage() const
+bool RenderLayer::scrollbarsCanBeActive() const
 {
-    return !m_renderer->document()->inPageCache();
+    RenderView* view = renderer()->view();
+    if (!view)
+        return false;
+    return view->frameView()->scrollbarsCanBeActive();
 }
 
 IntPoint RenderLayer::currentMousePosition() const

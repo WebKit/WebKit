@@ -63,7 +63,7 @@ ScrollableArea* FramelessScrollView::enclosingScrollableArea() const
     return 0;
 }
 
-bool FramelessScrollView::isOnActivePage() const
+bool FramelessScrollView::scrollbarsCanBeActive() const
 {
     return isActive();
 }

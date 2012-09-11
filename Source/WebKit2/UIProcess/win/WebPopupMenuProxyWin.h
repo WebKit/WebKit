@@ -75,7 +75,7 @@ private:
     virtual int visibleWidth() const OVERRIDE;
     virtual WebCore::IntSize contentsSize() const OVERRIDE;
     virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
-    virtual bool isOnActivePage() const OVERRIDE { return true; }
+    virtual bool scrollbarsCanBeActive() const OVERRIDE { return true; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);

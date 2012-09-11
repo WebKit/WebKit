@@ -83,6 +83,8 @@ public:
     virtual void contentAreaDidShow() const { }
     virtual void contentAreaDidHide() const { }
 
+    virtual void finishCurrentScrollAnimations() { }
+
     virtual void didAddVerticalScrollbar(Scrollbar*) { }
     virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
     virtual void didAddHorizontalScrollbar(Scrollbar*) { }

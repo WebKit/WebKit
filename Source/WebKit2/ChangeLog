@@ -1,3 +1,45 @@
+2012-09-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96158
+        Need API to suppress scrollbar animations
+        -and corresponding-
+        <rdar://problem/12210972>
+
+        Reviewed by Sam Weinig.
+
+        Add suppressScrollbarAnimations as a WebCreationParameter.
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+
+        New API. Calls into the web process for the setter but not the 
+        getter.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetSuppressScrollbarAnimations):
+        (WKPageAreScrollbarAnimationsSuppressed):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setSuppressScrollbarAnimations):
+        (WebKit):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        (WebKit::WebPageProxy::areScrollbarAnimationsSuppressed):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Call into WebCore.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSuppressScrollbarAnimations):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
+        This ScrollableArea area function is re-named by this patch in 
+        WebCore.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.mm:
+        (WebKit::BuiltInPDFView::scrollbarsCanBeActive):
+
 2012-09-10  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r127837.

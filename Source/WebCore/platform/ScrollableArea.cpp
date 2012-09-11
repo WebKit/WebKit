@@ -256,6 +256,12 @@ void ScrollableArea::contentAreaDidHide() const
         scrollAnimator->contentAreaDidHide();
 }
 
+void ScrollableArea::finishCurrentScrollAnimations() const
+{
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        scrollAnimator->finishCurrentScrollAnimations();
+}
+
 void ScrollableArea::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->didAddVerticalScrollbar(scrollbar);

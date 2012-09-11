@@ -792,7 +792,7 @@ IntSize BuiltInPDFView::contentsSize() const
     return m_pdfDocumentSize;
 }
 
-bool BuiltInPDFView::isOnActivePage() const
+bool BuiltInPDFView::scrollbarsCanBeActive() const
 {
     return !pluginView()->frame()->document()->inPageCache();
 }

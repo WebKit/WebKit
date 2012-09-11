@@ -1,3 +1,19 @@
+2012-09-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96158
+        Need API to suppress scrollbar animations
+        -and corresponding-
+        <rdar://problem/12210972>
+
+        Reviewed by Sam Weinig.
+
+        ScrollableArea::isOnActivePage() has been re-named to
+        ScrollableArea:: scrollbarsCanBeActive().
+        * WebScrollBar.cpp:
+        (WebScrollBar::scrollbarsCanBeActive):
+        * WebScrollBar.h:
+        (WebScrollBar):
+
 2012-09-10  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Update Windows port accessible role mappings to fix some tests

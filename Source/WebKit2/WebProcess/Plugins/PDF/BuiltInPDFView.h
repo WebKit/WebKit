@@ -139,7 +139,7 @@ private:
     virtual WebCore::IntSize contentsSize() const OVERRIDE;
     virtual WebCore::Scrollbar* horizontalScrollbar() const OVERRIDE { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const OVERRIDE { return m_verticalScrollbar.get(); }
-    virtual bool isOnActivePage() const OVERRIDE;
+    virtual bool scrollbarsCanBeActive() const OVERRIDE;
     virtual bool shouldSuspendScrollAnimations() const OVERRIDE { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.

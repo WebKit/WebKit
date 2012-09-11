@@ -821,9 +821,12 @@ bool RenderListBox::shouldSuspendScrollAnimations() const
     return view->frameView()->shouldSuspendScrollAnimations();
 }
 
-bool RenderListBox::isOnActivePage() const
+bool RenderListBox::scrollbarsCanBeActive() const
 {
-    return !document()->inPageCache();
+    RenderView* view = this->view();
+    if (!view)
+        return false;
+    return view->frameView()->scrollbarsCanBeActive();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const

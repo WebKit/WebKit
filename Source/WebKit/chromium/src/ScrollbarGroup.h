@@ -72,7 +72,7 @@ public:
     virtual WebCore::IntPoint currentMousePosition() const OVERRIDE;
     virtual bool shouldSuspendScrollAnimations() const OVERRIDE;
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
-    virtual bool isOnActivePage() const OVERRIDE;
+    virtual bool scrollbarsCanBeActive() const OVERRIDE;
     virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
 private:

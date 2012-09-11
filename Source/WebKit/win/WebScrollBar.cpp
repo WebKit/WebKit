@@ -300,7 +300,7 @@ WebCore::IntSize WebScrollBar::contentsSize() const
     return m_scrollBar->frameRect().size();
 }
 
-bool WebScrollBar::isOnActivePage() const
+bool WebScrollBar::scrollbarsCanBeActive() const
 {
     return true;
 }

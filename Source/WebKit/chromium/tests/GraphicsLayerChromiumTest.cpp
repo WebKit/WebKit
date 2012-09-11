@@ -133,7 +133,7 @@ public:
     virtual int visibleWidth() const OVERRIDE { return 10; }
     virtual int visibleHeight() const OVERRIDE { return 10; }
     virtual IntSize contentsSize() const OVERRIDE { return IntSize(100, 100); }
-    virtual bool isOnActivePage() const OVERRIDE { return false; }
+    virtual bool scrollbarsCanBeActive() const OVERRIDE { return false; }
     virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE { return 0; }
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE { return IntRect(); }
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE { }

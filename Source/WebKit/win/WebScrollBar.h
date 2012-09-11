@@ -120,7 +120,7 @@ protected:
     virtual int visibleHeight() const OVERRIDE;
     virtual int visibleWidth() const OVERRIDE;
     virtual WebCore::IntSize contentsSize() const OVERRIDE;
-    virtual bool isOnActivePage() const OVERRIDE;
+    virtual bool scrollbarsCanBeActive() const OVERRIDE;
     virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
     // FIXME: We should provide a way to set this value.

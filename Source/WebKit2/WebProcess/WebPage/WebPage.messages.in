@@ -140,6 +140,8 @@ messages -> WebPage {
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)
 
+    SetSuppressScrollbarAnimations(bool suppressAnimations)
+
     SetPaginationMode(uint32_t mode);
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns);
     SetPageLength(double pageLength);

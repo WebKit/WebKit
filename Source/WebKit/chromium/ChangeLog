@@ -1,3 +1,21 @@
+2012-09-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96158
+        Need API to suppress scrollbar animations
+        -and corresponding-
+        <rdar://problem/12210972>
+
+        Reviewed by Sam Weinig.
+
+        ScrollableArea::isOnActivePage() has been re-named to
+        ScrollableArea:: scrollbarsCanBeActive().
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::scrollbarsCanBeActive):
+        * src/ScrollbarGroup.h:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (MockScrollableArea):
+
 2012-09-10  Dan Alcantara  <dfalcantara@chromium.org>
 
         [chromium, android] Reloading a page with a different user agent can cause the page to be zoomed in

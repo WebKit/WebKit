@@ -422,6 +422,9 @@ WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef page);
 WK_EXPORT bool WKPageHasHorizontalScrollbar(WKPageRef page);
 WK_EXPORT bool WKPageHasVerticalScrollbar(WKPageRef page);
 
+WK_EXPORT void WKPageSetSuppressScrollbarAnimations(WKPageRef page, bool suppressAnimations);
+WK_EXPORT bool WKPageAreScrollbarAnimationsSuppressed(WKPageRef page);
+
 WK_EXPORT bool WKPageIsPinnedToLeftSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToRightSide(WKPageRef page);
 
