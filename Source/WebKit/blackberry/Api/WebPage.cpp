@@ -1486,6 +1486,9 @@ void WebPagePrivate::notifyInRegionScrollStopped()
 {
     if (m_inRegionScroller->d->isActive()) {
         enqueueRenderingOfClippedContentOfScrollableAreaAfterInRegionScrolling();
+        // Notify the client side to clear InRegion scrollable areas before we destroy them here.
+        std::vector<Platform::ScrollViewBase*> emptyInRegionScrollableAreas;
+        m_client->notifyInRegionScrollableAreasChanged(emptyInRegionScrollableAreas);
         m_inRegionScroller->d->reset();
     }
 }
@@ -4156,7 +4159,7 @@ void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
 
     m_inRegionScroller->d->calculateInRegionScrollableAreasForPoint(point);
     if (!m_inRegionScroller->d->activeInRegionScrollableAreas().empty())
-        m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->d->activeInRegionScrollableAreas());
+        m_client->notifyInRegionScrollableAreasChanged(m_inRegionScroller->d->activeInRegionScrollableAreas());
 }
 
 void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)

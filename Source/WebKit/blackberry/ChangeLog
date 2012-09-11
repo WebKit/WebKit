@@ -1,3 +1,24 @@
+2012-09-11  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] InRegion scrollable area dangling pointers were accessed in UI thread
+        https://bugs.webkit.org/show_bug.cgi?id=96318
+
+        Reviewed by Antonio Gomes.
+
+        PR: 204066
+        Dangling pointers were accessed in UI thread, as the actual InRegion
+        scrollable areas of WebKit side had been destroyed before that in
+        WebKit thread after UI thread set scrolling to false.
+        Notify the client side to clear InRegion scrollable areas before we
+        destroy them in WebKit side.
+
+        Internally reviewed by Gen Mak and George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStopped):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint):
+        * Api/WebPageClient.h:
+
 2012-09-11  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Suppress keyboard requests while processing spell checking suggestions.
