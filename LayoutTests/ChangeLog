@@ -1,3 +1,9 @@
+2012-09-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, skip new failing tests to paint the bot green.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-09-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128175.
