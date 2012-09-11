@@ -32,6 +32,7 @@ namespace WebCore {
 
 class Localizer {
 public:
+    static PassOwnPtr<Localizer> create(const AtomicString&);
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)

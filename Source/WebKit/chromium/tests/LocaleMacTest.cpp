@@ -221,9 +221,9 @@ TEST_F(LocaleMacTest, decimalSeparator)
 }
 #endif
 
-static void testNumberIsReversible(const String& localeString, const char* original, const char* shouldHave = 0)
+static void testNumberIsReversible(const AtomicString& localeString, const char* original, const char* shouldHave = 0)
 {
-    OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+    OwnPtr<Localizer> locale = Localizer::create(localeString);
     String localized = locale->convertToLocalizedNumber(original);
     if (shouldHave)
         EXPECT_TRUE(localized.contains(shouldHave));
@@ -231,7 +231,7 @@ static void testNumberIsReversible(const String& localeString, const char* origi
     EXPECT_STREQ(original, converted.utf8().data());
 }
 
-void testNumbers(const String& localeString, const char* decimalSeparatorShouldBe = 0)
+void testNumbers(const AtomicString& localeString, const char* decimalSeparatorShouldBe = 0)
 {
     testNumberIsReversible(localeString, "123456789012345678901234567890");
     testNumberIsReversible(localeString, "-123.456", decimalSeparatorShouldBe);

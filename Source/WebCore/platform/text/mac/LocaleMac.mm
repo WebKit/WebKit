@@ -45,6 +45,11 @@ using namespace std;
 
 namespace WebCore {
 
+PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
+{
+    return LocaleMac::create(locale.string());
+}
+
 static NSDateFormatter* createDateTimeFormatter(NSLocale* locale, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
 {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
