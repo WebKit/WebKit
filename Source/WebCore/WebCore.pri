@@ -211,7 +211,7 @@ use?(3D_GRAPHICS) {
 
 use?(libjpeg): LIBS += -ljpeg
 use?(libpng): LIBS += -lpng
-use?(libwebp): LIBS += -lwebp
+use?(webp): LIBS += -lwebp
 
 mac {
     LIBS += -framework Carbon -framework AppKit
