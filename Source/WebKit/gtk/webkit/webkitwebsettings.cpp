@@ -118,7 +118,8 @@ enum {
     PROP_ENABLE_ACCELERATED_COMPOSITING,
     PROP_ENABLE_SMOOTH_SCROLLING,
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
-    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE
+    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
+    PROP_ENABLE_CSS_SHADERS
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -941,6 +942,25 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          TRUE,
                                                          flags));
 
+    /**
+    * WebKitWebSettings:enable-css-shaders
+    *
+    * Enable or disable support for css shaders (css custom filters).
+    * Accelerated compositing needs to be enabled at compile time, but needs
+    * not be enabled at runtime.
+    *
+    * See also https://dvcs.w3.org/hg/FXTF/raw-file/tip/custom/index.html
+    *
+    * Since: 2.0
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_CSS_SHADERS,
+                                    g_param_spec_boolean("enable-css-shaders",
+                                                         _("Enable CSS shaders"),
+                                                         _("Whether to enable css shaders"),
+                                                         FALSE,
+                                                         flags));
+
 }
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
@@ -1119,6 +1139,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_SMOOTH_SCROLLING:
         priv->enableSmoothScrolling = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_CSS_SHADERS:
+        priv->enableCSSShaders = g_value_get_boolean(value);
+        break;
     case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
         priv->mediaPlaybackRequiresUserGesture = g_value_get_boolean(value);
         break;
@@ -1292,6 +1315,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_SMOOTH_SCROLLING:
         g_value_set_boolean(value, priv->enableSmoothScrolling);
+        break;
+    case PROP_ENABLE_CSS_SHADERS:
+        g_value_set_boolean(value, priv->enableCSSShaders);
         break;
     case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
         g_value_set_boolean(value, priv->mediaPlaybackRequiresUserGesture);

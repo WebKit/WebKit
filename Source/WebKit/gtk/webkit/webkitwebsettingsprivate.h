@@ -81,6 +81,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enableWebAudio;
     gboolean enableAcceleratedCompositing;
     gboolean enableSmoothScrolling;
+    gboolean enableCSSShaders;
     gboolean mediaPlaybackRequiresUserGesture;
     gboolean mediaPlaybackAllowsInline;
 };

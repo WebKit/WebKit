@@ -1,3 +1,16 @@
+2012-09-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] allow building with css-shaders
+        https://bugs.webkit.org/show_bug.cgi?id=95603
+
+        Reviewed by Martin Robinson.
+
+        if unstable features and accelerated compositing are turned on, and
+        acceleration backend is opengl, then build CSS Shaders and CSS
+        Filters.
+
+        * configure.ac:
+
 2012-09-11  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Restore original value of mock scrollbars enabled in InternalSettings

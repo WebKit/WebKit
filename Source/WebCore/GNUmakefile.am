@@ -254,6 +254,15 @@ feature_defines_overrides += ENABLE_FULLSCREEN_API=0
 endif # END ENABLE_FULLSCREEN_API
 
 # ----
+# Filters
+# ----
+if ENABLE_CSS_FILTERS
+feature_defines_overrides += ENABLE_CSS_FILTERS=1
+else
+feature_defines_overrides += ENABLE_CSS_FILTERS=0
+endif # END ENABLE_CSS_FILTERS
+
+# ----
 # Track Support
 # ----
 if ENABLE_VIDEO_TRACK
@@ -356,6 +365,14 @@ feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=1
 else
 feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=0
 endif # END ENABLE_CSS_EXCLUSIONS
+
+# Shaders
+# ----
+if ENABLE_CSS_SHADERS
+feature_defines_overrides += ENABLE_CSS_SHADERS=1
+else
+feature_defines_overrides += ENABLE_CSS_SHADERS=0
+endif # END ENABLE_CSS_SHADERS
 
 # ----
 # Geolocation

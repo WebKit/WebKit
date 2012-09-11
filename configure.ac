@@ -964,6 +964,16 @@ AC_ARG_ENABLE(css_regions,
               [],[enable_css_regions="yes"])
 AC_MSG_RESULT([$enable_css_regions])
 
+# Enable css shaders if unstable_features, css_filters and
+# accelerated_compositing are turned on.
+AC_MSG_CHECKING([whether to enable CSS Shaders])
+if test "$enable_unstable_features" = "yes" && test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
+    enable_css_shaders=yes;
+    enable_css_filters=yes;
+fi
+AC_MSG_RESULT([$enable_css_filters])
+AC_MSG_RESULT([$enable_css_shaders])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1276,6 +1286,8 @@ AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = 
 AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])

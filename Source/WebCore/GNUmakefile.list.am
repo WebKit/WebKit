@@ -4384,6 +4384,10 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.h \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
+	Source/WebCore/platform/graphics/gpu/Texture.cpp \
+	Source/WebCore/platform/graphics/gpu/Texture.h \
+	Source/WebCore/platform/graphics/gpu/TilingData.cpp \
+	Source/WebCore/platform/graphics/gpu/TilingData.h \
 	Source/WebCore/platform/graphics/Gradient.cpp \
 	Source/WebCore/platform/graphics/Gradient.h \
 	Source/WebCore/platform/graphics/GraphicsContext.cpp \
