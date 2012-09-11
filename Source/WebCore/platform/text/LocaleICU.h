@@ -32,7 +32,7 @@
 #define LocaleICU_h
 
 #include "DateComponents.h"
-#include "NumberLocalizer.h"
+#include "Localizer.h"
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>
@@ -44,7 +44,7 @@ namespace WebCore {
 
 // We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
 // and LocalizedNumberICUTest.cpp.
-class LocaleICU : public NumberLocalizer {
+class LocaleICU : public Localizer {
 public:
     static PassOwnPtr<LocaleICU> create(const char* localeString);
     static LocaleICU* currentLocale();
@@ -72,7 +72,7 @@ private:
     explicit LocaleICU(const char*);
     String decimalSymbol(UNumberFormatSymbol);
     String decimalTextAttribute(UNumberFormatTextAttribute);
-    virtual void initializeNumberLocalizerData() OVERRIDE;
+    virtual void initializeLocalizerData() OVERRIDE;
 
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
     unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);

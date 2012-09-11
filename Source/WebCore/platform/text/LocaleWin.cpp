@@ -723,7 +723,7 @@ const Vector<String>& LocaleWin::timeAMPMLabels()
 }
 #endif
 
-void LocaleWin::initializeNumberLocalizerData()
+void LocaleWin::initializeLocalizerData()
 {
     if (m_didInitializeNumberData)
         return;
@@ -791,7 +791,7 @@ void LocaleWin::initializeNumberLocalizerData()
         break;
     }
     m_didInitializeNumberData = true;
-    setNumberLocalizerData(symbols, emptyString(), emptyString(), negativePrefix, negativeSuffix);
+    setLocalizerData(symbols, emptyString(), emptyString(), negativePrefix, negativeSuffix);
 }
 
 }

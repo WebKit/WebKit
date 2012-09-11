@@ -29,17 +29,17 @@
  */
 
 #include "config.h"
-#include "NumberLocalizer.h"
+#include "Localizer.h"
 
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-NumberLocalizer::~NumberLocalizer()
+Localizer::~Localizer()
 {
 }
 
-void NumberLocalizer::setNumberLocalizerData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
+void Localizer::setLocalizerData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
 {
     for (size_t i = 0; i < symbols.size(); ++i) {
         ASSERT(!symbols[i].isEmpty());
@@ -50,13 +50,13 @@ void NumberLocalizer::setNumberLocalizerData(const Vector<String, DecimalSymbols
     m_negativePrefix = negativePrefix;
     m_negativeSuffix = negativeSuffix;
     ASSERT(!m_positivePrefix.isEmpty() || !m_positiveSuffix.isEmpty() || !m_negativePrefix.isEmpty() || !m_negativeSuffix.isEmpty());
-    m_hasNumberLocalizerData = true;
+    m_hasLocalizerData = true;
 }
 
-String NumberLocalizer::convertToLocalizedNumber(const String& input)
+String Localizer::convertToLocalizedNumber(const String& input)
 {
-    initializeNumberLocalizerData();
-    if (!m_hasNumberLocalizerData || input.isEmpty())
+    initializeLocalizerData();
+    if (!m_hasLocalizerData || input.isEmpty())
         return input;
 
     unsigned i = 0;
@@ -111,7 +111,7 @@ static bool matches(const String& text, unsigned position, const String& part)
     return true;
 }
 
-bool NumberLocalizer::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
+bool Localizer::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
 {
     startIndex = 0;
     endIndex = input.length();
@@ -139,7 +139,7 @@ bool NumberLocalizer::detectSignAndGetDigitRange(const String& input, bool& isNe
     return true;
 }
 
-unsigned NumberLocalizer::matchedDecimalSymbolIndex(const String& input, unsigned& position)
+unsigned Localizer::matchedDecimalSymbolIndex(const String& input, unsigned& position)
 {
     for (unsigned symbolIndex = 0; symbolIndex < DecimalSymbolsSize; ++symbolIndex) {
         if (m_decimalSymbols[symbolIndex].length() && matches(input, position, m_decimalSymbols[symbolIndex])) {
@@ -150,11 +150,11 @@ unsigned NumberLocalizer::matchedDecimalSymbolIndex(const String& input, unsigne
     return DecimalSymbolsSize;
 }
 
-String NumberLocalizer::convertFromLocalizedNumber(const String& localized)
+String Localizer::convertFromLocalizedNumber(const String& localized)
 {
-    initializeNumberLocalizerData();
+    initializeLocalizerData();
     String input = localized.stripWhiteSpace();
-    if (!m_hasNumberLocalizerData || input.isEmpty())
+    if (!m_hasLocalizerData || input.isEmpty())
         return input;
 
     bool isNegative;
@@ -185,9 +185,9 @@ String NumberLocalizer::convertFromLocalizedNumber(const String& localized)
 }
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-String NumberLocalizer::localizedDecimalSeparator()
+String Localizer::localizedDecimalSeparator()
 {
-    initializeNumberLocalizerData();
+    initializeLocalizerData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
 #endif

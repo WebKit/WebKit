@@ -23,21 +23,21 @@
  * DAMAGE.
  */
 
-#ifndef NumberLocalizer_h
-#define NumberLocalizer_h
+#ifndef Localizer_h
+#define Localizer_h
 
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class NumberLocalizer {
+class Localizer {
 public:
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
     String localizedDecimalSeparator();
 #endif
-    virtual ~NumberLocalizer();
+    virtual ~Localizer();
 
 protected:
     enum {
@@ -47,9 +47,9 @@ protected:
         DecimalSymbolsSize
     };
 
-    NumberLocalizer() : m_hasNumberLocalizerData(false) { }
-    virtual void initializeNumberLocalizerData() = 0;
-    void setNumberLocalizerData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
+    Localizer() : m_hasLocalizerData(false) { }
+    virtual void initializeLocalizerData() = 0;
+    void setLocalizerData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
 
 private:
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
@@ -60,7 +60,7 @@ private:
     String m_positiveSuffix;
     String m_negativePrefix;
     String m_negativeSuffix;
-    bool m_hasNumberLocalizerData;
+    bool m_hasLocalizerData;
 };
 
 }
