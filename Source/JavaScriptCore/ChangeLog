@@ -1,3 +1,10 @@
+2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed build fix after r128065.
+
+        * CMakeLists.txt: Link against WTF for FastMalloc symbols, which
+        are needed when building with SYSTEM_MALLOC off.
+
 2012-09-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove m_classInfo from JSCell
