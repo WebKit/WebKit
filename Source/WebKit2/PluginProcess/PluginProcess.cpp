@@ -73,6 +73,7 @@ PluginProcess& PluginProcess::shared()
 
 PluginProcess::PluginProcess()
     : m_supportsAsynchronousPluginInitialization(false)
+    , m_minimumLifetimeTimer(RunLoop::main(), this, &PluginProcess::minimumLifetimeTimerFired)
 #if PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
@@ -159,6 +160,7 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
 
     m_pluginPath = parameters.pluginPath;
     m_supportsAsynchronousPluginInitialization = parameters.supportsAsynchronousPluginInitialization;
+    setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
 
     platformInitialize(parameters);
@@ -252,6 +254,21 @@ void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, u
     }
 
     m_connection->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
+}
+
+void PluginProcess::setMinimumLifetime(double lifetime)
+{
+    if (lifetime <= 0.0)
+        return;
+    
+    disableTermination();
+    
+    m_minimumLifetimeTimer.startOneShot(lifetime);
+}
+
+void PluginProcess::minimumLifetimeTimerFired()
+{
+    enableTermination();
 }
 
 } // namespace WebKit

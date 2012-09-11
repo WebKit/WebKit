@@ -1,3 +1,40 @@
+2012-09-11  Brady Eidson  <beidson@apple.com>
+
+        We should wait longer before killing the PluginProcess.
+        <rdar://problem/12067728> and https://bugs.webkit.org/show_bug.cgi?id=96407
+
+        Reviewed by Anders Carlsson.
+
+        Currently we kill the PluginProcess 15 seconds after the last plug-in is destroyed.
+        This is short enough that most users will have the process killed many times during browsing sessions,
+        which is painful because relaunching the process is I/O and kernel intensive.
+
+        In an ideal world we could keep it around forever until the system tells us resources are running low.
+
+        In reality we do want to kill it occasionally to get a clean slate from any plug-in leaks.
+
+        A reasonable balance for now is to set a minimum lifetime of 30 minutes on the plug-in process and to 
+        extend the termination timer from 15 seconds to 10 minutes.
+        
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+        (WebKit::PluginProcess::initializePluginProcess):
+        (WebKit::PluginProcess::setMinimumLifetime):
+        (WebKit):
+        (WebKit::PluginProcess::minimumLifetimeTimerFired):
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit):
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+
 2012-09-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Deploy StringBuilder::appendNumber() and StringBuilder::appendLiteral() in more places

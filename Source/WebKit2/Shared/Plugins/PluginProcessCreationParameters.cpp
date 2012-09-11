@@ -41,6 +41,7 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
 {
     encoder->encode(pluginPath);
     encoder->encode(supportsAsynchronousPluginInitialization);
+    encoder->encode(minimumLifetime);
     encoder->encode(terminationTimeout);
 
 #if PLATFORM(MAC)
@@ -54,6 +55,8 @@ bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, 
     if (!decoder->decode(result.pluginPath))
         return false;
     if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
+        return false;
+    if (!decoder->decode(result.minimumLifetime))
         return false;
     if (!decoder->decode(result.terminationTimeout))
         return false;

@@ -47,7 +47,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double shutdownTimeout = 15;
+static const double minimumLifetime = 30 * 60;
+static const double shutdownTimeout = 10 * 60;
 
 PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
 {
@@ -213,6 +214,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
 
     parameters.pluginPath = m_pluginInfo.path;
 
+    parameters.minimumLifetime = minimumLifetime;
     parameters.terminationTimeout = shutdownTimeout;
 
     platformInitializePluginProcess(parameters);
