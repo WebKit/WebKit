@@ -1,3 +1,18 @@
+2012-09-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Deploy StringBuilder::appendNumber() and StringBuilder::appendLiteral() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=96344
+
+        Reviewed by Benjamin Poulain.
+
+        Use StringBuilder::appendNumber() instead of String::number(). Also deploy 
+        StringBuilder::appendLiteral() instead of String::append() in the surrounding code.
+
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::generateHTML):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::generateHTML):
+
 2012-09-11  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] InRegion scrollable area dangling pointers were accessed in UI thread

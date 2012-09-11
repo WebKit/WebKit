@@ -99,18 +99,19 @@ void WebSocketServerConnection::sendWebSocketMessage(const String& message)
 void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const String& statusText, const HTTPHeaderMap& headerFields)
 {
     StringBuilder builder;
-    builder.append("HTTP/1.1 ");
-    builder.append(String::number(statusCode));
-    builder.append(" ");
+    builder.appendLiteral("HTTP/1.1 ");
+    builder.appendNumber(statusCode);
+    builder.append(' ');
     builder.append(statusText);
-    builder.append("\r\n");
+    builder.appendLiteral("\r\n");
     HTTPHeaderMap::const_iterator end = headerFields.end();
     for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it) {
         builder.append(it->first);
-        builder.append(": ");
-        builder.append(it->second + "\r\n");
+        builder.appendLiteral(": ");
+        builder.append(it->second);
+        builder.appendLiteral("\r\n");
     }
-    builder.append("\r\n");
+    builder.appendLiteral("\r\n");
 
     CString header = builder.toString().latin1();
     m_socket->send(header.data(), header.length());

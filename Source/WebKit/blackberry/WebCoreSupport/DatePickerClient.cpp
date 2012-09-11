@@ -50,28 +50,28 @@ DatePickerClient::~DatePickerClient()
 void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::WebKit::WebString& value, const BlackBerry::WebKit::WebString& min, const BlackBerry::WebKit::WebString& max, double step)
 {
     StringBuilder source;
-    source.append("<style>\n");
+    source.appendLiteral("<style>\n");
     // Include CSS file.
     source.append(popupControlBlackBerryCss,
             sizeof(popupControlBlackBerryCss));
-    source.append("</style>\n<style>");
+    source.appendLiteral("</style>\n<style>");
     source.append(timeControlBlackBerryCss,
             sizeof(timeControlBlackBerryCss));
-    source.append("</style></head><body>\n");
-    source.append("<script>\n");
-    source.append("window.addEventListener('load', function () {");
+    source.appendLiteral("</style></head><body>\n"
+                         "<script>\n"
+                         "window.addEventListener('load', function () {");
     switch (type) {
     case BlackBerry::Platform::InputTypeDate:
-        source.append("window.popupcontrol.show(\"Date\", ");
+        source.appendLiteral("window.popupcontrol.show(\"Date\", ");
         break;
     case BlackBerry::Platform::InputTypeTime:
-        source.append("window.popupcontrol.show(\"Time\", ");
+        source.appendLiteral("window.popupcontrol.show(\"Time\", ");
         break;
     case BlackBerry::Platform::InputTypeDateTime:
-        source.append("window.popupcontrol.show(\"DateTime\", ");
+        source.appendLiteral("window.popupcontrol.show(\"DateTime\", ");
         break;
     case BlackBerry::Platform::InputTypeDateTimeLocal:
-        source.append("window.popupcontrol.show(\"DateTimeLocal\", ");
+        source.appendLiteral("window.popupcontrol.show(\"DateTimeLocal\", ");
         break;
     case BlackBerry::Platform::InputTypeMonth:
     case BlackBerry::Platform::InputTypeWeek:
@@ -81,21 +81,21 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     if (!value.isEmpty())
         source.append("\"" + String(value.impl()) + "\", ");
     else
-        source.append("0, ");
+        source.appendLiteral("0, ");
 
     if (!min.isEmpty())
         source.append(String(min.impl()) + ", ");
     else
-        source.append("0, ");
+        source.appendLiteral("0, ");
     if (!max.isEmpty())
         source.append(String(max.impl()) + ", ");
     else
-        source.append("0, ");
+        source.appendLiteral("0, ");
     source.append(String::number(step));
-    source.append("); \n }); \n");
+    source.appendLiteral("); \n }); \n");
     source.append(timeControlBlackBerryJs, sizeof(timeControlBlackBerryJs));
-    source.append("</script>\n");
-    source.append("</body> </html>\n");
+    source.appendLiteral("</script>\n"
+                         "</body> </html>\n");
     m_source = source.toString();
 }
 

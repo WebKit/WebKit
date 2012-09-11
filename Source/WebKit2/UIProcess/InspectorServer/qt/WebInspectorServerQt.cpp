@@ -68,34 +68,36 @@ String WebInspectorServer::inspectorUrlForPageID(int pageId)
     if (pageId <= 0 || serverState() == Closed)
         return String();
     StringBuilder builder;
-    builder.append("http://");
+    builder.appendLiteral("http://");
     builder.append(bindAddress());
-    builder.append(":");
-    builder.append(String::number(port()));
+    builder.append(':');
+    builder.appendNumber(port());
     builder.append(remoteInspectorPagePath());
-    builder.append(String::number(pageId));
+    builder.appendNumber(pageId);
     return builder.toString();
 }
 
 void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
 {
     StringBuilder builder;
-    builder.append("[ ");
+    builder.appendLiteral("[ ");
     ClientMap::iterator end = m_clientMap.end();
     for (ClientMap::iterator it = m_clientMap.begin(); it != end; ++it) {
         WebPageProxy* webPage = it->second->page();
         if (it != m_clientMap.begin())
-            builder.append(", ");
-        builder.append("{ \"id\": " + String::number(it->first));
-        builder.append(", \"title\": \"");
+            builder.appendLiteral(", ");
+        builder.appendLiteral("{ \"id\": ");
+        builder.appendNumber(it->first);
+        builder.appendLiteral(", \"title\": \"");
         builder.append(webPage->pageTitle());
-        builder.append("\", \"url\": \"");
+        builder.appendLiteral("\", \"url\": \"");
         builder.append(webPage->activeURL());
-        builder.append("\", \"inspectorUrl\": \"");
-        builder.append(remoteInspectorPagePath() + String::number(it->first));
-        builder.append("\" }");
+        builder.appendLiteral("\", \"inspectorUrl\": \"");
+        builder.append(remoteInspectorPagePath());
+        builder.appendNumber(it->first);
+        builder.appendLiteral("\" }");
     }
-    builder.append(" ]");
+    builder.appendLiteral(" ]");
     CString cstr = builder.toString().utf8();
     data.append(cstr.data(), cstr.length());
     contentType = "application/json; charset=utf-8";

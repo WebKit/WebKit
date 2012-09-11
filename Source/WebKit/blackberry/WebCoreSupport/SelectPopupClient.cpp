@@ -66,64 +66,70 @@ void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<B
     const int* itemType, bool* selecteds)
 {
     StringBuilder source;
-    source.append("<style>\n");
+    source.appendLiteral("<style>\n");
     // Include CSS file.
     source.append(popupControlBlackBerryCss,
             sizeof(popupControlBlackBerryCss));
-    source.append("</style>\n<style>");
+    source.appendLiteral("</style>\n<style>");
     source.append(selectControlBlackBerryCss,
             sizeof(selectControlBlackBerryCss));
-    source.append("</style></head><body>\n");
-    source.append("<script>\n");
-    source.append("window.addEventListener('load', function () {");
+    source.appendLiteral("</style></head><body>\n"
+                         "<script>\n"
+                         "window.addEventListener('load', function () {");
     if (m_multiple)
-        source.append("window.select.show(true, ");
+        source.appendLiteral("window.select.show(true, ");
     else
-        source.append("window.select.show(false, ");
+        source.appendLiteral("window.select.show(false, ");
     // Add labels.
-    source.append("[");
+    source.append('[');
     for (int i = 0; i < size; i++) {
         source.append("'" + String(labels[i].impl()).replace('\\', "\\\\").replace('\'', "\\'") + "'");
         // Don't append ',' to last element.
         if (i != size - 1)
-            source.append(", ");
+            source.appendLiteral(", ");
     }
-    source.append("], ");
+    source.appendLiteral("], ");
     // Add enables.
-    source.append("[");
+    source.append('[');
     for (int i = 0; i < size; i++) {
-        source.append(enableds[i]? "true" : "false");
+        if (enableds[i])
+            source.appendLiteral("true");
+        else
+            source.appendLiteral("false");
         // Don't append ',' to last element.
         if (i != size - 1)
-            source.append(", ");
+            source.appendLiteral(", ");
     }
-    source.append("], ");
+    source.appendLiteral("], ");
     // Add itemType.
-    source.append("[");
+    source.append('[');
     for (int i = 0; i < size; i++) {
-        source.append(String::number(itemType[i]));
+        source.appendNumber(itemType[i]);
         // Don't append ',' to last element.
         if (i != size - 1)
-            source.append(", ");
+            source.appendLiteral(", ");
     }
-    source.append("], ");
+    source.appendLiteral("], ");
     // Add selecteds
-    source.append("[");
+    source.append('[');
     for (int i = 0; i < size; i++) {
-        source.append(selecteds[i]? "true" : "false");
+        if (selecteds[i])
+            source.appendLiteral("true");
+        else
+            source.appendLiteral("false");
         // Don't append ',' to last element.
         if (i != size - 1)
-            source.append(", ");
+            source.appendLiteral(", ");
     }
-    source.append("] ");
-    source.append(", 'Cancel'");
+    source.appendLiteral("] "
+                         ", 'Cancel'");
     // If multi-select, add OK button for confirm.
     if (m_multiple)
-        source.append(", 'OK'");
-    source.append("); \n }); \n");
+        source.appendLiteral(", 'OK'");
+    source.appendLiteral("); \n }); \n");
     source.append(selectControlBlackBerryJs, sizeof(selectControlBlackBerryJs));
-    source.append("</script>\n");
-    source.append("</body> </html>\n");
+    source.appendLiteral("</script>\n"
+                         "</body> </html>\n");
     m_source = source.toString();
 }
 

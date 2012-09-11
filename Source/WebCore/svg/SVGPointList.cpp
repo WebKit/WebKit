@@ -36,7 +36,7 @@ String SVGPointList::valueAsString() const
     unsigned size = this->size();
     for (unsigned i = 0; i < size; ++i) {
         if (i > 0)
-            builder.append(" "); // FIXME: Shouldn't we use commas to seperate?
+            builder.append(' '); // FIXME: Shouldn't we use commas to seperate?
 
         const FloatPoint& point = at(i);
         builder.append(String::number(point.x()) + ' ' + String::number(point.y()));
