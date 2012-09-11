@@ -1964,7 +1964,7 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle* containingBlockStyle
 void RenderBox::updateLogicalHeight()
 {
     LogicalExtentComputedValues computedValues;
-    computeLogicalHeight(computedValues);
+    computeLogicalHeight(logicalHeight(), logicalTop(), computedValues);
 
     setLogicalHeight(computedValues.m_extent);
     setLogicalTop(computedValues.m_position);
@@ -1972,10 +1972,10 @@ void RenderBox::updateLogicalHeight()
     setMarginAfter(computedValues.m_margins.m_after);
 }
 
-void RenderBox::computeLogicalHeight(LogicalExtentComputedValues& computedValues) const
+void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    computedValues.m_extent = logicalHeight();
-    computedValues.m_position = logicalTop();
+    computedValues.m_extent = logicalHeight;
+    computedValues.m_position = logicalTop;
 
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
     if (isTableCell() || (isInline() && !isReplaced()))
@@ -1999,7 +1999,7 @@ void RenderBox::computeLogicalHeight(LogicalExtentComputedValues& computedValues
         if (isTable()) {
             if (hasPerpendicularContainingBlock) {
                 bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb->style(), style());
-                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), logicalHeight(),
+                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), computedValues.m_extent,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
             }
@@ -2039,7 +2039,7 @@ void RenderBox::computeLogicalHeight(LogicalExtentComputedValues& computedValues
         if (checkMinMaxHeight) {
             heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
             if (heightResult == -1)
-                heightResult = logicalHeight();
+                heightResult = computedValues.m_extent;
             heightResult = constrainLogicalHeightByMinMax(heightResult);
         } else {
             // The only times we don't check min/max height are when a fixed length has
@@ -2930,7 +2930,8 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     computeBlockStaticDistance(logicalTopLength, logicalBottomLength, this, containerBlock);
 
     // Calculate constraint equation values for 'height' case.
-    computePositionedLogicalHeightUsing(MainOrPreferredSize, styleToUse->logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+    LayoutUnit logicalHeight = computedValues.m_extent;
+    computePositionedLogicalHeightUsing(MainOrPreferredSize, styleToUse->logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
                                         logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
                                         computedValues);
 
@@ -2941,7 +2942,7 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     if (!styleToUse->logicalMaxHeight().isUndefined()) {
         LogicalExtentComputedValues maxValues;
 
-        computePositionedLogicalHeightUsing(MaxSize, styleToUse->logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+        computePositionedLogicalHeightUsing(MaxSize, styleToUse->logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
                                             logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
                                             maxValues);
 
@@ -2957,7 +2958,7 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     if (!styleToUse->logicalMinHeight().isZero()) {
         LogicalExtentComputedValues minValues;
 
-        computePositionedLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding,
+        computePositionedLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
                                             logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
                                             minValues);
 
@@ -3012,7 +3013,7 @@ static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const R
 }
 
 void RenderBox::computePositionedLogicalHeightUsing(SizeType heightSizeType, Length logicalHeightLength, const RenderBoxModelObject* containerBlock,
-                                                    LayoutUnit containerLogicalHeight, LayoutUnit bordersPlusPadding,
+                                                    LayoutUnit containerLogicalHeight, LayoutUnit bordersPlusPadding, LayoutUnit logicalHeight,
                                                     Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter,
                                                     LogicalExtentComputedValues& computedValues) const
 {
@@ -3024,7 +3025,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightSizeType, Len
     ASSERT(!(logicalTop.isAuto() && logicalBottom.isAuto()));
 
     LayoutUnit logicalHeightValue;
-    LayoutUnit contentLogicalHeight = logicalHeight() - bordersPlusPadding;
+    LayoutUnit contentLogicalHeight = logicalHeight - bordersPlusPadding;
 
     LayoutUnit logicalTopValue = 0;
 
