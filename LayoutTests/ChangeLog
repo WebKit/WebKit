@@ -1,3 +1,13 @@
+2012-09-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, manually rolling out r128175.
+        The patch is causing crashes in debug builds.
+        http://trac.webkit.org/changeset/128175
+        https://bugs.webkit.org/show_bug.cgi?id=96284
+
+        * http/tests/misc/non-utf8-header-name-expected.txt: Removed.
+        * http/tests/misc/non-utf8-header-name.php: Removed.
+
 2012-09-11  Adam Klein  <adamk@chromium.org>
 
         Unreviewed chromium gardening.
