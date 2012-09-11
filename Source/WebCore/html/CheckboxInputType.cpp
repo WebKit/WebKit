@@ -33,6 +33,7 @@
 #include "CheckboxInputType.h"
 
 #include "HTMLInputElement.h"
+#include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include <wtf/PassOwnPtr.h>

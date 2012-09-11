@@ -39,6 +39,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
+#include "InputTypeNames.h"
 #include "MouseEvent.h"
 #include "RenderObject.h"
 #include "RenderView.h"

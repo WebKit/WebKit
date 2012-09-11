@@ -31,7 +31,7 @@
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "InputType.h"
+#include "InputTypeNames.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PaintInfo.h"

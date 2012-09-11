@@ -35,6 +35,7 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedDate.h"
 #include <wtf/PassOwnPtr.h>

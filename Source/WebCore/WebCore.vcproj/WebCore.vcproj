@@ -63613,6 +63613,14 @@
 			<File
 				RelativePath="..\html\InputType.h"
 				>
+			</File>  
+			<File
+				RelativePath="..\html\InputTypeNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\InputTypeNames.h"
+				>
 			</File>
 			<File
 				RelativePath="..\html\LabelableElement.cpp"

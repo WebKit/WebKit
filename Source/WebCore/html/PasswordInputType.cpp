@@ -34,6 +34,7 @@
 
 #include "FormController.h"
 #include "HTMLInputElement.h"
+#include "InputTypeNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
 

@@ -37,6 +37,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedNumber.h"
 #include "RenderTextControl.h"

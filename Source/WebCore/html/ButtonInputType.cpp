@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ButtonInputType.h"
 
+#include "InputTypeNames.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

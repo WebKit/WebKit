@@ -3434,6 +3434,8 @@ webcore_sources += \
 	Source/WebCore/html/ImageInputType.h \
 	Source/WebCore/html/InputType.cpp \
 	Source/WebCore/html/InputType.h \
+	Source/WebCore/html/InputTypeNames.cpp \
+	Source/WebCore/html/InputTypeNames.h \
 	Source/WebCore/html/LabelableElement.cpp \
 	Source/WebCore/html/LabelableElement.h \
 	Source/WebCore/html/LabelsNodeList.cpp \

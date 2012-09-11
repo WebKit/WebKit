@@ -33,6 +33,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "RenderSearchField.h"
 #include "ShadowRoot.h"

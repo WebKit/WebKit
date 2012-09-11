@@ -34,6 +34,7 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "InputTypeNames.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 

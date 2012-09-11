@@ -26,7 +26,8 @@
 #include "config.h"
 #include "RenderThemeChromiumCommon.h"
 
-#include "InputType.h"
+#include "FractionalLayoutUnit.h"
+#include "InputTypeNames.h"
 
 namespace WebCore {
 

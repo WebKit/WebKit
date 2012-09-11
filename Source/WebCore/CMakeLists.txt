@@ -1420,6 +1420,7 @@ SET(WebCore_SOURCES
     html/ImageDocument.cpp
     html/ImageInputType.cpp
     html/InputType.cpp
+    html/InputTypeNames.cpp
     html/LabelableElement.cpp
     html/LabelsNodeList.cpp
     html/LinkRelAttribute.cpp

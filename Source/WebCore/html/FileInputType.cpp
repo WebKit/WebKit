@@ -35,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "Icon.h"
+#include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"

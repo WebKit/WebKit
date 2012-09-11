@@ -4207,6 +4207,8 @@
             'html/ImageInputType.cpp',
             'html/ImageInputType.h',
             'html/InputType.cpp',
+            'html/InputTypeNames.cpp',
+            'html/InputTypeNames.h',
             'html/LabelableElement.cpp',
             'html/LabelsNodeList.cpp',
             'html/LabelsNodeList.h',

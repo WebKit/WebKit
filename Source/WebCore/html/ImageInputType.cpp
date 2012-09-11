@@ -29,6 +29,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "InputTypeNames.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
 #include <wtf/PassOwnPtr.h>

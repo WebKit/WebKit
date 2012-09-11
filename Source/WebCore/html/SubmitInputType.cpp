@@ -36,6 +36,7 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include <wtf/PassOwnPtr.h>
 

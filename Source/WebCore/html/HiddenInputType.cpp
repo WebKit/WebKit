@@ -36,6 +36,7 @@
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "InputTypeNames.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

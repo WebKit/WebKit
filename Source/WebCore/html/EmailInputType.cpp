@@ -26,6 +26,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
+#include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "RegularExpression.h"
 #include <wtf/PassOwnPtr.h>

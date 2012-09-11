@@ -32,6 +32,7 @@
 #include "URLInputType.h"
 
 #include "HTMLInputElement.h"
+#include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "KURL.h"
 #include <wtf/PassOwnPtr.h>

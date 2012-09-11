@@ -30,11 +30,11 @@
 
 #include "CachedResourceLoader.h"
 #include "Document.h"
-#include "InputType.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLTokenizer.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "InputTypeNames.h"
 #include "LinkRelAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"

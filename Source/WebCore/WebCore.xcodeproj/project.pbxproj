@@ -5774,6 +5774,8 @@
 		C330A22313EC196B0000B45B /* ColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = C330A22113EC196B0000B45B /* ColorChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C33EE5C414FB49610002095A /* BaseClickableWithKeyInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33EE5C214FB49610002095A /* BaseClickableWithKeyInputType.cpp */; };
 		C33EE5C514FB49610002095A /* BaseClickableWithKeyInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = C33EE5C314FB49610002095A /* BaseClickableWithKeyInputType.h */; };
+		C348612315FDE21E007A1CC9 /* InputTypeNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C348612115FDE21E007A1CC9 /* InputTypeNames.cpp */; };
+		C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */ = {isa = PBXBuildFile; fileRef = C348612215FDE21E007A1CC9 /* InputTypeNames.h */; };
 		C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C37CDEBC149EF2030042090D /* ColorChooserClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */; };
 		C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF17A115B0063F00276D39 /* IdTargetObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13097,6 +13099,8 @@
 		C330A22113EC196B0000B45B /* ColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooser.h; sourceTree = "<group>"; };
 		C33EE5C214FB49610002095A /* BaseClickableWithKeyInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseClickableWithKeyInputType.cpp; sourceTree = "<group>"; };
 		C33EE5C314FB49610002095A /* BaseClickableWithKeyInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseClickableWithKeyInputType.h; sourceTree = "<group>"; };
+		C348612115FDE21E007A1CC9 /* InputTypeNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputTypeNames.cpp; sourceTree = "<group>"; };
+		C348612215FDE21E007A1CC9 /* InputTypeNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputTypeNames.h; sourceTree = "<group>"; };
 		C37CDEBC149EF2030042090D /* ColorChooserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooserClient.h; sourceTree = "<group>"; };
 		C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdTargetObserver.cpp; sourceTree = "<group>"; };
 		C3CF17A115B0063F00276D39 /* IdTargetObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdTargetObserver.h; sourceTree = "<group>"; };
@@ -17647,6 +17651,8 @@
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
 				37E3524C12450C6600BAF5D9 /* InputType.h */,
+				C348612115FDE21E007A1CC9 /* InputTypeNames.cpp */,
+				C348612215FDE21E007A1CC9 /* InputTypeNames.h */,
 				450CEBEE15073BBE002BB149 /* LabelableElement.cpp */,
 				450CEBEF15073BBE002BB149 /* LabelableElement.h */,
 				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
@@ -23733,6 +23739,7 @@
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
+				C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,
 				57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */,
 				93309DEC099E64920056E581 /* InsertLineBreakCommand.h in Headers */,
@@ -26930,6 +26937,7 @@
 				A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */,
 				BCEA4859097D93020094C9E4 /* InlineTextBox.cpp in Sources */,
 				37E3524B12450C5200BAF5D9 /* InputType.cpp in Sources */,
+				C348612315FDE21E007A1CC9 /* InputTypeNames.cpp in Sources */,
 				93309DE9099E64920056E581 /* InsertIntoTextNodeCommand.cpp in Sources */,
 				57CF497414EE36D700ECFF14 /* InsertionPoint.cpp in Sources */,
 				93309DEB099E64920056E581 /* InsertLineBreakCommand.cpp in Sources */,

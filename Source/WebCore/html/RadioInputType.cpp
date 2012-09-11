@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"

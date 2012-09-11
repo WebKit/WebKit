@@ -326,36 +326,6 @@ private:
     HTMLInputElement* m_element;
 };
 
-namespace InputTypeNames {
-
-const AtomicString& button();
-const AtomicString& checkbox();
-#if ENABLE(INPUT_TYPE_COLOR)
-const AtomicString& color();
-#endif
-const AtomicString& date();
-const AtomicString& datetime();
-const AtomicString& datetimelocal();
-const AtomicString& email();
-const AtomicString& file();
-const AtomicString& hidden();
-const AtomicString& image();
-const AtomicString& month();
-const AtomicString& number();
-const AtomicString& password();
-const AtomicString& radio();
-const AtomicString& range();
-const AtomicString& reset();
-const AtomicString& search();
-const AtomicString& submit();
-const AtomicString& telephone();
-const AtomicString& text();
-const AtomicString& time();
-const AtomicString& url();
-const AtomicString& week();
-
-} // namespace WebCore::InputTypeNames
-
 } // namespace WebCore
 
 #endif
