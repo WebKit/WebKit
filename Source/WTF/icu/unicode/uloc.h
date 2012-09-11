@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2004, International Business Machines
+*   Copyright (C) 1997-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -256,51 +256,68 @@
 #define ULOC_COUNTRY_CAPACITY 4
 /**
  * Useful constant for the maximum size of the whole locale ID
- * (including the terminating NULL).
+ * (including the terminating NULL and all keywords).
  * @stable ICU 2.0
  */
-#define ULOC_FULLNAME_CAPACITY 56
-
-
-#ifndef U_HIDE_DRAFT_API
+#define ULOC_FULLNAME_CAPACITY 157
 
 /**
  * Useful constant for the maximum size of the script part of a locale ID
  * (including the terminating NULL).
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
 #define ULOC_SCRIPT_CAPACITY 6
 
 /**
  * Useful constant for the maximum size of keywords in a locale
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
 #define ULOC_KEYWORDS_CAPACITY 50
 
 /**
- * Useful constant for the maximum size of keywords in a locale
- * @draft ICU 2.8
+ * Useful constant for the maximum total size of keywords and their values in a locale
+ * @stable ICU 2.8
  */
 #define ULOC_KEYWORD_AND_VALUES_CAPACITY 100
 
 /**
- * Character separating keywords from the locale string
- * different for EBCDIC - TODO
- * @draft ICU 2.8
+ * Invariant character separating keywords from the locale string
+ * @stable ICU 2.8
  */
 #define ULOC_KEYWORD_SEPARATOR '@'
+
 /**
- * Character for assigning value to a keyword
- * @draft ICU 2.8
+  * Unicode code point for '@' separating keywords from the locale string.
+  * @see ULOC_KEYWORD_SEPARATOR
+  * @draft ICU 4.6
+  */
+#define ULOC_KEYWORD_SEPARATOR_UNICODE 0x40
+
+/**
+ * Invariant character for assigning value to a keyword
+ * @stable ICU 2.8
  */
 #define ULOC_KEYWORD_ASSIGN '='
+
 /**
- * Character separating keywords
- * @draft ICU 2.8
+  * Unicode code point for '=' for assigning value to a keyword.
+  * @see ULOC_KEYWORD_ASSIGN
+  * @draft ICU 4.6 
+  */
+#define ULOC_KEYWORD_ASSIGN_UNICODE 0x3D
+
+/**
+ * Invariant character separating keywords
+ * @stable ICU 2.8
  */
 #define ULOC_KEYWORD_ITEM_SEPARATOR ';'
 
-#endif /*U_HIDE_DRAFT_API*/
+/**
+  * Unicode code point for ';' separating keywords
+  * @see ULOC_KEYWORD_ITEM_SEPARATOR
+  * @draft ICU 4.6
+  */
+#define ULOC_KEYWORD_ITEM_SEPARATOR_UNICODE 0x3B
 
 /**
  * Constants for *_getLocale()
@@ -333,7 +350,7 @@ typedef enum {
   ULOC_REQUESTED_LOCALE = 2,
 #endif /* U_HIDE_DEPRECATED_API */
 
-  ULOC_DATA_LOCALE_TYPE_LIMIT
+  ULOC_DATA_LOCALE_TYPE_LIMIT = 3
 } ULocDataLocaleType ;
 
 
@@ -400,9 +417,9 @@ uloc_getLanguage(const char*    localeID,
  * @param err error information if retrieving the language code failed
  * @return the actual buffer size needed for the language code.  If it's greater 
  * than scriptCapacity, the returned language code will be truncated.  
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getScript(const char*    localeID,
          char* script,
          int32_t scriptCapacity,
@@ -420,7 +437,7 @@ uloc_getScript(const char*    localeID,
  * than countryCapacity, the returned country code will be truncated.  
  * @stable ICU 2.0
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getCountry(const char*    localeID,
         char* country,
         int32_t countryCapacity,
@@ -482,9 +499,9 @@ uloc_getName(const char*    localeID,
  * @param err error information if retrieving the full name failed
  * @return the actual buffer size needed for the full name.  If it's greater 
  * than nameCapacity, the returned full name will be truncated.  
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_canonicalize(const char*    localeID,
          char* name,
          int32_t nameCapacity,
@@ -559,9 +576,9 @@ uloc_getDisplayLanguage(const char* locale,
  * @param status error information if retrieving the displayable script code failed
  * @return the actual buffer size needed for the displayable script code.  If it's greater 
  * than scriptCapacity, the returned displayable script code will be truncated.  
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getDisplayScript(const char* locale,
             const char* displayLocale,
             UChar* script,
@@ -653,9 +670,9 @@ uloc_getDisplayVariant(const char* locale,
  *                          Should not be NULL and should not indicate failure on entry.
  * @return the actual buffer size needed for the displayable variant code.  
  * @see #uloc_openKeywords
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getDisplayKeyword(const char* keyword,
                        const char* displayLocale,
                        UChar* dest,
@@ -679,9 +696,9 @@ uloc_getDisplayKeyword(const char* keyword,
  * @param status            error information if retrieving the displayable string failed. 
  *                          Should not be NULL and must not indicate failure on entry.
  * @return the actual buffer size needed for the displayable variant code.  
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getDisplayKeywordValue(   const char* locale,
                                const char* keyword,
                                const char* displayLocale,
@@ -796,9 +813,9 @@ uloc_getParent(const char*    localeID,
  * @param err error information if retrieving the full name failed
  * @return the actual buffer size needed for the full name.  If it's greater 
  * than nameCapacity, the returned full name will be truncated.  
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getBaseName(const char*    localeID,
          char* name,
          int32_t nameCapacity,
@@ -811,9 +828,9 @@ uloc_getBaseName(const char*    localeID,
  * @param localeID the locale to get the variant code with
  * @param status error information if retrieving the keywords failed
  * @return enumeration of keywords or NULL if there are no keywords.
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 uloc_openKeywords(const char* localeID,
                         UErrorCode* status);
 
@@ -826,9 +843,9 @@ uloc_openKeywords(const char* localeID,
  * @param bufferCapacity capacity of receiving buffer
  * @param status containing error code - buffer not big enough.
  * @return the length of keyword value
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_getKeywordValue(const char* localeID,
                      const char* keywordName,
                      char* buffer, int32_t bufferCapacity,
@@ -852,19 +869,56 @@ uloc_getKeywordValue(const char* localeID,
  * @param status containing error code - buffer not big enough.
  * @return the length needed for the buffer
  * @see uloc_getKeywordValue
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_setKeywordValue(const char* keywordName,
                      const char* keywordValue,
                      char* buffer, int32_t bufferCapacity,
                      UErrorCode* status);
 
 /**
+ * enums for the  return value for the character and line orientation
+ * functions.
+ * @stable ICU 4.0
+ */
+typedef enum {
+  ULOC_LAYOUT_LTR   = 0,  /* left-to-right. */
+  ULOC_LAYOUT_RTL    = 1,  /* right-to-left. */
+  ULOC_LAYOUT_TTB    = 2,  /* top-to-bottom. */
+  ULOC_LAYOUT_BTT    = 3,   /* bottom-to-top. */
+  ULOC_LAYOUT_UNKNOWN
+} ULayoutType;
+
+/**
+ * Get the layout character orientation for the specified locale.
+ * 
+ * @param localeId locale name
+ * @param status Error status
+ * @return an enum indicating the layout orientation for characters.
+ * @stable ICU 4.0
+ */
+U_STABLE ULayoutType U_EXPORT2
+uloc_getCharacterOrientation(const char* localeId,
+                             UErrorCode *status);
+
+/**
+ * Get the layout line orientation for the specified locale.
+ * 
+ * @param localeId locale name
+ * @param status Error status
+ * @return an enum indicating the layout orientation for lines.
+ * @stable ICU 4.0
+ */
+U_STABLE ULayoutType U_EXPORT2
+uloc_getLineOrientation(const char* localeId,
+                        UErrorCode *status);
+
+/**
  * enums for the 'outResult' parameter return value
  * @see uloc_acceptLanguageFromHTTP
  * @see uloc_acceptLanguage
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
 typedef enum {
   ULOC_ACCEPT_FAILED   = 0,  /* No exact match was found. */
@@ -876,15 +930,18 @@ typedef enum {
 
 
 /**
- * @param httpAcceptLanguage - "Accept-Language:" header as per HTTP.
+ * Based on a HTTP header from a web browser and a list of available locales,
+ * determine an acceptable locale for the user.
  * @param result - buffer to accept the result locale
  * @param resultAvailable the size of the result buffer.
+ * @param outResult - An out parameter that contains the fallback status
+ * @param httpAcceptLanguage - "Accept-Language:" header as per HTTP.
  * @param availableLocales - list of available locales to match
  * @param status Error status, may be BUFFER_OVERFLOW_ERROR
  * @return length needed for the locale.
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable,
                             UAcceptResult *outResult,
                             const char *httpAcceptLanguage,
@@ -892,26 +949,178 @@ uloc_acceptLanguageFromHTTP(char *result, int32_t resultAvailable,
                             UErrorCode *status);
 
 /**
- * @param acceptList -list of acceptable languages
- * @param acceptListCount - count of acceptList items
+ * Based on a list of available locales,
+ * determine an acceptable locale for the user.
  * @param result - buffer to accept the result locale
  * @param resultAvailable the size of the result buffer.
+ * @param outResult - An out parameter that contains the fallback status
+ * @param acceptList - list of acceptable languages
+ * @param acceptListCount - count of acceptList items
  * @param availableLocales - list of available locales to match
  * @param status Error status, may be BUFFER_OVERFLOW_ERROR
  * @return length needed for the locale.
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 uloc_acceptLanguage(char *result, int32_t resultAvailable, 
                     UAcceptResult *outResult, const char **acceptList,
                     int32_t acceptListCount,
                     UEnumeration* availableLocales,
                     UErrorCode *status);
 
-/*eof*/
 
+/**
+ * Gets the ICU locale ID for the specified Win32 LCID value.
+ *
+ * @param hostID the Win32 LCID to translate
+ * @param locale the output buffer for the ICU locale ID, which will be NUL-terminated
+ *  if there is room.
+ * @param localeCapacity the size of the output buffer
+ * @param status an error is returned if the LCID is unrecognized or the output buffer
+ *  is too small
+ * @return actual the actual size of the locale ID, not including NUL-termination 
+ * @stable ICU 3.8
+ */
+U_STABLE int32_t U_EXPORT2
+uloc_getLocaleForLCID(uint32_t hostID, char *locale, int32_t localeCapacity,
+                    UErrorCode *status);
+
+
+/**
+ * Add the likely subtags for a provided locale ID, per the algorithm described
+ * in the following CLDR technical report:
+ *
+ *   http://www.unicode.org/reports/tr35/#Likely_Subtags
+ *
+ * If localeID is already in the maximal form, or there is no data available
+ * for maximization, it will be copied to the output buffer.  For example,
+ * "und-Zzzz" cannot be maximized, since there is no reasonable maximization.
+ *
+ * Examples:
+ *
+ * "en" maximizes to "en_Latn_US"
+ *
+ * "de" maximizes to "de_Latn_US"
+ *
+ * "sr" maximizes to "sr_Cyrl_RS"
+ *
+ * "sh" maximizes to "sr_Latn_RS" (Note this will not reverse.)
+ *
+ * "zh_Hani" maximizes to "zh_Hans_CN" (Note this will not reverse.)
+ *
+ * @param localeID The locale to maximize
+ * @param maximizedLocaleID The maximized locale
+ * @param maximizedLocaleIDCapacity The capacity of the maximizedLocaleID buffer
+ * @param err Error information if maximizing the locale failed.  If the length
+ * of the localeID and the null-terminator is greater than the maximum allowed size,
+ * or the localeId is not well-formed, the error code is U_ILLEGAL_ARGUMENT_ERROR.
+ * @return The actual buffer size needed for the maximized locale.  If it's
+ * greater than maximizedLocaleIDCapacity, the returned ID will be truncated.
+ * On error, the return value is -1.
+ * @stable ICU 4.0
+ */
+U_STABLE int32_t U_EXPORT2
+uloc_addLikelySubtags(const char*    localeID,
+         char* maximizedLocaleID,
+         int32_t maximizedLocaleIDCapacity,
+         UErrorCode* err);
+
+
+/**
+ * Minimize the subtags for a provided locale ID, per the algorithm described
+ * in the following CLDR technical report:
+ *
+ *   http://www.unicode.org/reports/tr35/#Likely_Subtags
+ *
+ * If localeID is already in the minimal form, or there is no data available
+ * for minimization, it will be copied to the output buffer.  Since the
+ * minimization algorithm relies on proper maximization, see the comments
+ * for uloc_addLikelySubtags for reasons why there might not be any data.
+ *
+ * Examples:
+ *
+ * "en_Latn_US" minimizes to "en"
+ *
+ * "de_Latn_US" minimizes to "de"
+ *
+ * "sr_Cyrl_RS" minimizes to "sr"
+ *
+ * "zh_Hant_TW" minimizes to "zh_TW" (The region is preferred to the
+ * script, and minimizing to "zh" would imply "zh_Hans_CN".)
+ *
+ * @param localeID The locale to minimize
+ * @param minimizedLocaleID The minimized locale
+ * @param minimizedLocaleIDCapacity The capacity of the minimizedLocaleID buffer
+ * @param err Error information if minimizing the locale failed.  If the length
+ * of the localeID and the null-terminator is greater than the maximum allowed size,
+ * or the localeId is not well-formed, the error code is U_ILLEGAL_ARGUMENT_ERROR.
+ * @return The actual buffer size needed for the minimized locale.  If it's
+ * greater than minimizedLocaleIDCapacity, the returned ID will be truncated.
+ * On error, the return value is -1.
+ * @stable ICU 4.0
+ */
+U_STABLE int32_t U_EXPORT2
+uloc_minimizeSubtags(const char*    localeID,
+         char* minimizedLocaleID,
+         int32_t minimizedLocaleIDCapacity,
+         UErrorCode* err);
+
+/** 
+ * Returns a locale ID for the specified BCP47 language tag string.
+ * If the specified language tag contains any ill-formed subtags,
+ * the first such subtag and all following subtags are ignored.
+ * <p> 
+ * This implements the 'Language-Tag' production of BCP47, and so
+ * supports grandfathered (regular and irregular) as well as private
+ * use language tags.  Private use tags are represented as 'x-whatever',
+ * and grandfathered tags are converted to their canonical replacements
+ * where they exist.  Note that a few grandfathered tags have no modern
+ * replacement, these will be converted using the fallback described in
+ * the first paragraph, so some information might be lost.
+ * @param langtag   the input BCP47 language tag.
+ * @param localeID  the output buffer receiving a locale ID for the
+ *                  specified BCP47 language tag.
+ * @param localeIDCapacity  the size of the locale ID output buffer.
+ * @param parsedLength  if not NULL, succsessfully parsed length
+ *                      for the input language tag is set.
+ * @param err       error information if receiving the locald ID
+ *                  failed.
+ * @return          the length of the locale ID.
+ * @draft ICU 4.2
+ */
+U_DRAFT int32_t U_EXPORT2
+uloc_forLanguageTag(const char* langtag,
+                    char* localeID,
+                    int32_t localeIDCapacity,
+                    int32_t* parsedLength,
+                    UErrorCode* err);
+
+/** 
+ * Returns a well-formed language tag for this locale ID. 
+ * <p> 
+ * <b>Note</b>: When <code>strict</code> is FALSE, any locale
+ * fields which do not satisfy the BCP47 syntax requirement will
+ * be omitted from the result.  When <code>strict</code> is
+ * TRUE, this function sets U_ILLEGAL_ARGUMENT_ERROR to the
+ * <code>err</code> if any locale fields do not satisfy the
+ * BCP47 syntax requirement.
+ * @param localeID  the input lcoale ID
+ * @param langtag   the output buffer receiving BCP47 language
+ *                  tag for the locale ID.
+ * @param langtagCapacity   the size of the BCP47 language tag
+ *                          output buffer.
+ * @param strict    boolean value indicating if the function returns
+ *                  an error for an ill-formed input locale ID.
+ * @param err       error information if receiving the language
+ *                  tag failed.
+ * @return          The length of the BCP47 language tag.
+ * @draft ICU 4.2
+ */
+U_DRAFT int32_t U_EXPORT2
+uloc_toLanguageTag(const char* localeID,
+                   char* langtag,
+                   int32_t langtagCapacity,
+                   UBool strict,
+                   UErrorCode* err);
 
 #endif /*_ULOC*/
-
-
-

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 2000-2004, International Business Machines
+*   Copyright (C) 2000-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *
@@ -11,10 +11,13 @@
 *
 *   Created by: Vladimir Weinstein
 *
-*  Contains all the important version numbers for ICU. 
 *  Gets included by utypes.h and Windows .rc files
 */
 
+/**
+ * \file
+ * \brief C API: API for accessing ICU version numbers. 
+ */
 /*===========================================================================*/
 /* Main ICU version information                                              */
 /*===========================================================================*/
@@ -22,71 +25,15 @@
 #ifndef UVERSION_H
 #define UVERSION_H
 
-/** IMPORTANT: When updating version, the following things need to be done:   */
-/** source/common/unicode/uversion.h - this file: update major, minor,        */
-/**        patchlevel, suffix, version, short version constants, namespace,   */
-/**                                                             and copyright */
-/** source/common/common.dsp - update 'Output file name' on the link tab so   */
-/**                   that it contains the new major/minor combination        */
-/** source/i18n/i18n.dsp - same as for the common.dsp                         */
-/** source/layout/layout.dsp - same as for the common.dsp                     */
-/** source/stubdata/stubdata.dsp - same as for the common.dsp                 */
-/** source/extra/ustdio/ustdio.dsp - same as for the common.dsp               */
-/** source/data/makedata.mak - change U_ICUDATA_NAME so that it contains      */
-/**                            the new major/minor combination                */
-/** source/tools/genren/genren.pl - use this script according to the README   */
-/**                    in that folder                                         */
-
 #include "unicode/umachine.h"
 
-/** The standard copyright notice that gets compiled into each library. 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.4
- */
-#define U_COPYRIGHT_STRING \
-  " Copyright (C) 2004, International Business Machines Corporation and others. All Rights Reserved. "
+/* Actual version info lives in uvernum.h */
+#include "unicode/uvernum.h"
 
 /** Maximum length of the copyright string.
  *  @stable ICU 2.4
  */
 #define U_COPYRIGHT_STRING_LENGTH  128
-
-/** The current ICU major version as an integer. 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.4
- */
-#define U_ICU_VERSION_MAJOR_NUM 3
-
-/** The current ICU minor version as an integer. 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.6
- */
-#define U_ICU_VERSION_MINOR_NUM 2
-
-/** The current ICU patchlevel version as an integer.  
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.4
- */
-#define U_ICU_VERSION_PATCHLEVEL_NUM 0
-
-/** Glued version suffix for renamers 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.6
- */
-#define U_ICU_VERSION_SUFFIX _3_2
-
-/** The current ICU library version as a dotted-decimal string. The patchlevel
- *  only appears in this string if it non-zero. 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.4
- */
-#define U_ICU_VERSION "3.2"
-
-/** The current ICU library major/minor version as a string without dots, for library name suffixes. 
- *  This value will change in the subsequent releases of ICU
- *  @stable ICU 2.6
- */
-#define U_ICU_VERSION_SHORT "32"
 
 /** An ICU version consists of up to 4 numbers from 0..255.
  *  @stable ICU 2.4
@@ -104,22 +51,88 @@
 #define U_MAX_VERSION_STRING_LENGTH 20
 
 /** The binary form of a version on ICU APIs is an array of 4 uint8_t.
+ *  To compare two versions, use memcmp(v1,v2,sizeof(UVersionInfo)).
  *  @stable ICU 2.4
  */
 typedef uint8_t UVersionInfo[U_MAX_VERSION_LENGTH];
 
-#if U_HAVE_NAMESPACE && defined(XP_CPLUSPLUS)
-#if U_DISABLE_RENAMING
-#define U_ICU_NAMESPACE icu
-namespace U_ICU_NAMESPACE { }
-#else
-#define U_ICU_NAMESPACE icu_3_2
-namespace U_ICU_NAMESPACE { }
-namespace icu = U_ICU_NAMESPACE;
-#endif
-U_NAMESPACE_USE
-#endif
+/*===========================================================================*/
+/* C++ namespace if supported. Versioned unless versioning is disabled.      */
+/*===========================================================================*/
 
+/**
+ * \def U_NAMESPACE_BEGIN
+ * This is used to begin a declaration of a public ICU C++ API.
+ * When not compiling for C++, it does nothing.
+ * When compiling for C++, it begins an extern "C++" linkage block (to protect
+ * against cases in which an external client includes ICU header files inside
+ * an extern "C" linkage block).
+ * If the C++ compiler supports namespaces, it also begins a namespace block.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_END
+ * This is used to end a declaration of a public ICU C++ API.
+ * When not compiling for C++, it does nothing.
+ * When compiling for C++, it ends the extern "C++" block begun by
+ * U_NAMESPACE_BEGIN.
+ * If the C++ compiler supports namespaces, it also ends the namespace block
+ * begun by U_NAMESPACE_BEGIN.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_USE
+ * This is used to specify that the rest of the code uses the
+ * public ICU C++ API namespace.
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/**
+ * \def U_NAMESPACE_QUALIFIER
+ * This is used to qualify that a function or class is part of
+ * the public ICU C++ API namespace.
+ * If the compiler doesn't support namespaces, this does nothing.
+ * @stable ICU 2.4
+ */
+
+/* Define namespace symbols if the compiler supports it. */
+#ifdef XP_CPLUSPLUS
+#if U_HAVE_NAMESPACE
+#   if U_DISABLE_RENAMING
+#       define U_ICU_NAMESPACE icu
+        namespace U_ICU_NAMESPACE { }
+#   else
+#       define U_ICU_NAMESPACE U_ICU_ENTRY_POINT_RENAME(icu)
+        namespace U_ICU_NAMESPACE { }
+        namespace icu = U_ICU_NAMESPACE;
+#   endif
+
+#   define U_NAMESPACE_BEGIN extern "C++" { namespace U_ICU_NAMESPACE {
+#   define U_NAMESPACE_END } }
+#   define U_NAMESPACE_USE using namespace U_ICU_NAMESPACE;
+#   define U_NAMESPACE_QUALIFIER U_ICU_NAMESPACE::
+
+#   ifndef U_USING_ICU_NAMESPACE
+#       define U_USING_ICU_NAMESPACE 1
+#   endif
+#   if U_USING_ICU_NAMESPACE
+        U_NAMESPACE_USE
+#   endif
+#else
+#   define U_NAMESPACE_BEGIN extern "C++" {
+#   define U_NAMESPACE_END }
+#   define U_NAMESPACE_USE
+#   define U_NAMESPACE_QUALIFIER
+#endif
+#else
+#   define U_NAMESPACE_BEGIN
+#   define U_NAMESPACE_END
+#   define U_NAMESPACE_USE
+#   define U_NAMESPACE_QUALIFIER
+#endif
 
 /*===========================================================================*/
 /* General version helper functions. Definitions in putil.c                  */
@@ -138,6 +151,21 @@ U_NAMESPACE_USE
  */
 U_STABLE void U_EXPORT2
 u_versionFromString(UVersionInfo versionArray, const char *versionString);
+
+/**
+ * Parse a Unicode string with dotted-decimal version information and
+ * fill in a UVersionInfo structure with the result.
+ * Definition of this function lives in putil.c
+ *
+ * @param versionArray The destination structure for the version information.
+ * @param versionString A Unicode string with dotted-decimal version
+ *                      information, with up to four non-negative number
+ *                      fields with values of up to 255 each.
+ * @stable ICU 4.2
+ */
+U_STABLE void U_EXPORT2
+u_versionFromUString(UVersionInfo versionArray, const UChar *versionString);
+
 
 /**
  * Write a string with dotted-decimal version information according
@@ -164,53 +192,4 @@ u_versionToString(UVersionInfo versionArray, char *versionString);
  */
 U_STABLE void U_EXPORT2
 u_getVersion(UVersionInfo versionArray);
-
-
-/*===========================================================================
- * ICU collation framework version information                               
- * Version info that can be obtained from a collator is affected by these    
- * numbers in a secret and magic way. Please use collator version as whole
- *===========================================================================
- */
-
-/** Collation runtime version (sort key generator, strcoll). 
- * If the version is different, sortkeys for the same string could be different 
- * version 2 was in ICU 1.8.1. changed is: compression intervals, French secondary 
- * compression, generating quad level always when strength is quad or more 
- * version 4 - ICU 2.2 - tracking UCA changes, ignore completely ignorables 
- * in contractions, ignore primary ignorables after shifted 
- * version 5 - ICU 2.8 - changed implicit generation code
- * This value may change in the subsequent releases of ICU
- * @stable ICU 2.4
- */
-#define UCOL_RUNTIME_VERSION 5
-
-/** Builder code version. When this is different, same tailoring might result
- * in assigning different collation elements to code points                  
- * version 2 was in ICU 1.8.1. added support for prefixes, tweaked canonical 
- * closure. However, the tailorings should probably get same CEs assigned    
- * version 5 - ICU 2.2 - fixed some bugs, renamed some indirect values.      
- * version 6 - ICU 2.8 - fixed bug in builder that allowed 0xFF in primary values
- * Backward compatible with the old rules. 
- * This value may change in the subsequent releases of ICU
- * @stable ICU 2.4
- */
-#define UCOL_BUILDER_VERSION 6
-
-/** *** Removed *** Instead we use the data we read from FractionalUCA.txt
- * This is the version of FractionalUCA.txt tailoring rules
- * Version 1 was in ICU 1.8.1. Version two contains canonical closure for
- * supplementary code points 
- * Version 4 in ICU 2.2, following UCA=3.1.1d6, UCD=3.2.0 
- * This value may change in the subsequent releases of ICU
- * @stable ICU 2.4
- */
-/*#define UCOL_FRACTIONAL_UCA_VERSION 4*/
-
-/** This is the version of the tailorings 
- *  This value may change in the subsequent releases of ICU
- *  @stable ICU 2.4
- */
-#define UCOL_TAILORINGS_VERSION 1
-
 #endif

@@ -1,3 +1,42 @@
+2012-09-11  Michael Saboff  <msaboff@apple.com>
+
+        Update ICU header files to more recent version
+        https://bugs.webkit.org/show_bug.cgi?id=96422
+
+        Reviewed by Geoff Garen.
+
+        Updated ICU header files to 4.6.1.  Modifications made as part of the merge are:
+        platform.h - Changed ifndef / define / endif for U_HAVE_UINT8_T, U_HAVE_UINT16_T, U_HAVE_UINT32_T,
+            U_HAVE_UINT64_T, U_IS_BIG_ENDIAN and U_ENABLE_TRACING to match the existing platform.h
+        putil.h (line 132) - Changes defined(U_WINDOWS) to defined(WIN32) || defined(OS2) to match existing putil.h
+        ustring.h (line 945) - Wrapped macro argument cs with { (const UChar *)cs } to match existing ustring.h
+        utypes.h (line 545) - Changed defined(U_WINDOWS) to defined(WIN32) to match existing utypes.h
+
+        * icu/unicode/localpointer.h: Added.
+        * icu/unicode/parseerr.h:
+        * icu/unicode/platform.h:
+        * icu/unicode/putil.h:
+        * icu/unicode/uchar.h:
+        * icu/unicode/ucnv.h:
+        * icu/unicode/ucnv_err.h:
+        * icu/unicode/ucol.h:
+        * icu/unicode/uconfig.h:
+        * icu/unicode/uenum.h:
+        * icu/unicode/uiter.h:
+        * icu/unicode/uloc.h:
+        * icu/unicode/umachine.h:
+        * icu/unicode/unorm.h:
+        * icu/unicode/urename.h:
+        * icu/unicode/uscript.h:
+        * icu/unicode/uset.h:
+        * icu/unicode/ustring.h:
+        * icu/unicode/utf.h:
+        * icu/unicode/utf16.h:
+        * icu/unicode/utf8.h:
+        * icu/unicode/utypes.h:
+        * icu/unicode/uvernum.h: Added.
+        * icu/unicode/uversion.h:
+
 2012-09-11  Matt Lilek  <mrl@apple.com>
 
         OS X port should compile with newer versions of clang

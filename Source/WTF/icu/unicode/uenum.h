@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2004, International Business Machines
+*   Copyright (C) 2002-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -18,7 +18,17 @@
 #define __UENUM_H
 
 #include "unicode/utypes.h"
+#include "unicode/localpointer.h"
 
+#if U_SHOW_CPLUSPLUS_API
+#include "unicode/strenum.h"
+#endif
+
+/**
+ * \file
+ * \brief C API: String Enumeration 
+ */
+ 
 /**
  * An enumeration object.
  * For usage in C programs.
@@ -37,6 +47,25 @@ typedef struct UEnumeration UEnumeration;
  */
 U_STABLE void U_EXPORT2
 uenum_close(UEnumeration* en);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUEnumerationPointer
+ * "Smart pointer" class, closes a UEnumeration via uenum_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUEnumerationPointer, UEnumeration, uenum_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Returns the number of elements that the iterator traverses.  If
@@ -125,5 +154,21 @@ uenum_next(UEnumeration* en,
  */
 U_STABLE void U_EXPORT2
 uenum_reset(UEnumeration* en, UErrorCode* status);
+
+#if U_SHOW_CPLUSPLUS_API
+
+/**
+ * Given a StringEnumeration, wrap it in a UEnumeration.  The
+ * StringEnumeration is adopted; after this call, the caller must not
+ * delete it (regardless of error status).
+ * @param adopted the C++ StringEnumeration to be wrapped in a UEnumeration.
+ * @param ec the error code.
+ * @return a UEnumeration wrapping the adopted StringEnumeration.
+ * @draft ICU 4.2
+ */
+U_CAPI UEnumeration* U_EXPORT2
+uenum_openFromStringEnumeration(U_NAMESPACE_QUALIFIER StringEnumeration* adopted, UErrorCode* ec);
+
+#endif
 
 #endif

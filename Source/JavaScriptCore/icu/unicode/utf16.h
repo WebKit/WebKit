@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2004, International Business Machines
+*   Copyright (C) 1999-2010, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -23,7 +23,7 @@
  * and some common definitions.
  *
  * For more information see utf.h and the ICU User Guide Strings chapter
- * (http://oss.software.ibm.com/icu/userguide/).
+ * (http://icu-project.org/userguide/strings.html).
  *
  * <em>Usage:</em>
  * ICU coding guidelines for if() statements should be followed when using these macros.
@@ -81,6 +81,15 @@
  * @stable ICU 2.4
  */
 #define U16_IS_SURROGATE_LEAD(c) (((c)&0x400)==0)
+
+/**
+ * Assuming c is a surrogate code point (U16_IS_SURROGATE(c)),
+ * is it a trail surrogate?
+ * @param c 16-bit code unit
+ * @return TRUE or FALSE
+ * @stable ICU 4.2
+ */
+#define U16_IS_SURROGATE_TRAIL(c) (((c)&0x400)!=0)
 
 /**
  * Helper constant for U16_GET_SUPPLEMENTARY.
@@ -179,7 +188,7 @@
  *
  * @param s const UChar * string
  * @param start starting string offset (usually 0)
- * @param i string offset, start<=i<length
+ * @param i string offset, must be start<=i<length
  * @param length string length
  * @param c output UChar32 variable
  * @see U16_GET_UNSAFE
@@ -194,7 +203,7 @@
                 (c)=U16_GET_SUPPLEMENTARY((c), __c2); \
             } \
         } else { \
-            if((i)-1>=(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+            if((i)>(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
                 (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
             } \
         } \
@@ -243,7 +252,7 @@
  * will be returned as the code point.
  *
  * @param s const UChar * string
- * @param i string offset, i<length
+ * @param i string offset, must be i<length
  * @param length string length
  * @param c output UChar32 variable
  * @see U16_NEXT_UNSAFE
@@ -292,7 +301,7 @@
  * then isError is set to TRUE.
  *
  * @param s const UChar * string buffer
- * @param i string offset, i<length
+ * @param i string offset, must be i<capacity
  * @param capacity size of the string buffer
  * @param c code point to append
  * @param isError output UBool set to TRUE if an error occurs, otherwise not modified
@@ -332,7 +341,7 @@
  * "Safe" macro, handles unpaired surrogates and checks for string boundaries.
  *
  * @param s const UChar * string
- * @param i string offset, i<length
+ * @param i string offset, must be i<length
  * @param length string length
  * @see U16_FWD_1_UNSAFE
  * @stable ICU 2.4
@@ -370,7 +379,7 @@
  * "Safe" macro, handles unpaired surrogates and checks for string boundaries.
  *
  * @param s const UChar * string
- * @param i string offset, i<length
+ * @param i string offset, must be i<length
  * @param length string length
  * @param n number of code points to skip
  * @see U16_FWD_N_UNSAFE
@@ -413,7 +422,7 @@
  *
  * @param s const UChar * string
  * @param start starting string offset (usually 0)
- * @param i string offset, start<=i
+ * @param i string offset, must be start<=i
  * @see U16_SET_CP_START_UNSAFE
  * @stable ICU 2.4
  */
@@ -468,7 +477,7 @@
  *
  * @param s const UChar * string
  * @param start starting string offset (usually 0)
- * @param i string offset, start<=i
+ * @param i string offset, must be start<i
  * @param c output UChar32 variable
  * @see U16_PREV_UNSAFE
  * @stable ICU 2.4
@@ -509,7 +518,7 @@
  *
  * @param s const UChar * string
  * @param start starting string offset (usually 0)
- * @param i string offset, start<=i
+ * @param i string offset, must be start<i
  * @see U16_BACK_1_UNSAFE
  * @stable ICU 2.4
  */
@@ -549,7 +558,7 @@
  *
  * @param s const UChar * string
  * @param start start of string
- * @param i string offset, i<length
+ * @param i string offset, must be start<i
  * @param n number of code points to skip
  * @see U16_BACK_N_UNSAFE
  * @stable ICU 2.4

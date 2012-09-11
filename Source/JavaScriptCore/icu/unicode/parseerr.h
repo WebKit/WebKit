@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1999-2004, International Business Machines
+*   Copyright (C) 1999-2005, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   Date        Name        Description
@@ -14,6 +14,10 @@
 #include "unicode/utypes.h"
 
 
+/**
+ * \file
+ * \brief C API: Parse Error Information
+ */
 /**
  * The capacity of the context strings in UParseError.
  * @stable ICU 2.0

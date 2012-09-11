@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2001-2005 IBM and others. All rights reserved.
+*   Copyright (C) 2001-2010 IBM and others. All rights reserved.
 **********************************************************************
 *   Date        Name        Description
 *  06/28/2001   synwee      Creation.
@@ -11,8 +11,9 @@
 
 #include "unicode/utypes.h"
 
-#if !UCONFIG_NO_COLLATION
+#if !UCONFIG_NO_COLLATION && !UCONFIG_NO_BREAK_ITERATION
 
+#include "unicode/localpointer.h"
 #include "unicode/ucol.h"
 #include "unicode/ucoleitr.h"
 #include "unicode/ubrk.h"
@@ -26,12 +27,12 @@
  * see <tt>ucol.h</tt>. This ensures that language eccentricity can be 
  * handled, e.g. for the German collator, characters &szlig; and SS will be matched 
  * if case is chosen to be ignored. 
- * See the <a href="http://dev.icu-project.org/cgi-bin/viewcvs.cgi/~checkout~/icuhtml/design/collation/ICU_collation_design.htm">
+ * See the <a href="http://source.icu-project.org/repos/icu/icuhtml/trunk/design/collation/ICU_collation_design.htm">
  * "ICU Collation Design Document"</a> for more information.
  * <p> 
  * The algorithm implemented is a modified form of the Boyer Moore's search.
  * For more information  see 
- * <a href="http://icu.sourceforge.net/docs/papers/efficient_text_searching_in_java.html">
+ * <a href="http://icu-project.org/docs/papers/efficient_text_searching_in_java.html">
  * "Efficient Text Searching in Java"</a>, published in <i>Java Report</i> 
  * in February, 1999, for further information on the algorithm.
  * <p>
@@ -115,15 +116,18 @@
  * u_uastrcpy(pattern, patstr);
  *
  * UStringSearch *search = usearch_open(pattern, -1, target, -1, "en_US", 
- *                                  &status);
+ *                                  NULL, &status);
  * if (U_SUCCESS(status)) {
  *     for (int pos = usearch_first(search, &status); 
- *                                      pos != USEARCH_DONE; 
- *                                      pos = usearch_next(search, &status)) {
+ *          pos != USEARCH_DONE; 
+ *          pos = usearch_next(search, &status))
+ *     {
  *         printf("Found match at %d pos, length is %d\n", pos, 
  *                                        usearch_getMatchLength(search));
  *     }
  * }
+ *
+ * usearch_close(search);
  * </code></pre>
  * @stable ICU 2.4
  */
@@ -153,10 +157,17 @@ typedef enum {
     /** Option for overlapping matches */
     USEARCH_OVERLAP,
     /** 
-    Option for canonical matches. option 1 in header documentation.
-    The default value will be USEARCH_OFF
-    */
+     * Option for canonical matches. option 1 in header documentation.
+     * The default value will be USEARCH_OFF
+     */
     USEARCH_CANONICAL_MATCH,
+    /** 
+     * Option to control how collation elements are compared.
+     * The default value will be USEARCH_STANDARD_ELEMENT_COMPARISON.
+     * @stable ICU 4.4
+     */
+    USEARCH_ELEMENT_COMPARISON,
+
     USEARCH_ATTRIBUTE_COUNT
 } USearchAttribute;
 
@@ -164,12 +175,48 @@ typedef enum {
 * @stable ICU 2.4
 */
 typedef enum {
-    /** default value for any USearchAttribute */
+    /** Default value for any USearchAttribute */
     USEARCH_DEFAULT = -1,
-    /** value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
+    /** Value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
     USEARCH_OFF, 
-    /** value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
+    /** Value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
     USEARCH_ON,
+    /** 
+     * Value (default) for USEARCH_ELEMENT_COMPARISON;
+     * standard collation element comparison at the specified collator
+     * strength.
+     * @stable ICU 4.4
+     */
+    USEARCH_STANDARD_ELEMENT_COMPARISON,
+    /** 
+     * Value for USEARCH_ELEMENT_COMPARISON;
+     * collation element comparison is modified to effectively provide
+     * behavior between the specified strength and strength - 1. Collation
+     * elements in the pattern that have the base weight for the specified
+     * strength are treated as "wildcards" that match an element with any
+     * other weight at that collation level in the searched text. For
+     * example, with a secondary-strength English collator, a plain 'e' in
+     * the pattern will match a plain e or an e with any diacritic in the
+     * searched text, but an e with diacritic in the pattern will only
+     * match an e with the same diacritic in the searched text.
+     * @stable ICU 4.4
+     */
+    USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD,
+    /** 
+     * Value for USEARCH_ELEMENT_COMPARISON.
+     * collation element comparison is modified to effectively provide
+     * behavior between the specified strength and strength - 1. Collation
+     * elements in either the pattern or the searched text that have the
+     * base weight for the specified strength are treated as "wildcards"
+     * that match an element with any other weight at that collation level.
+     * For example, with a secondary-strength English collator, a plain 'e'
+     * in the pattern will match a plain e or an e with any diacritic in the
+     * searched text, but an e with diacritic in the pattern will only
+     * match an e with the same diacritic or a plain e in the searched text.
+     * @stable ICU 4.4
+     */
+    USEARCH_ANY_BASE_WEIGHT_IS_WILDCARD,
+
     USEARCH_ATTRIBUTE_VALUE_COUNT
 } USearchAttributeValue;
 
@@ -245,6 +292,25 @@ U_STABLE UStringSearch * U_EXPORT2 usearch_openFromCollator(
 * @stable ICU 2.4
 */
 U_STABLE void U_EXPORT2 usearch_close(UStringSearch *searchiter);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUStringSearchPointer
+ * "Smart pointer" class, closes a UStringSearch via usearch_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUStringSearchPointer, UStringSearch, usearch_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /* get and set methods -------------------------------------------------- */
 
@@ -638,6 +704,126 @@ U_STABLE int32_t U_EXPORT2 usearch_previous(UStringSearch *strsrch,
 */
 U_STABLE void U_EXPORT2 usearch_reset(UStringSearch *strsrch);
 
-#endif /* #if !UCONFIG_NO_COLLATION */
+/**
+  *  Simple forward search for the pattern, starting at a specified index,
+  *     and using using a default set search options.
+  *
+  *  This is an experimental function, and is not an official part of the
+  *      ICU API.
+  *
+  *  The collator options, such as UCOL_STRENGTH and UCOL_NORMALIZTION, are honored.
+  *
+  *  The UStringSearch options USEARCH_CANONICAL_MATCH, USEARCH_OVERLAP and
+  *  any Break Iterator are ignored.
+  *
+  *  Matches obey the following constraints:
+  *
+  *      Characters at the start or end positions of a match that are ignorable
+  *      for collation are not included as part of the match, unless they
+  *      are part of a combining sequence, as described below.
+  *
+  *      A match will not include a partial combining sequence.  Combining
+  *      character sequences  are considered to be  inseperable units,
+  *      and either match the pattern completely, or are considered to not match
+  *      at all.  Thus, for example, an A followed a combining accent mark will 
+  *      not be found when searching for a plain (unaccented) A.   (unless
+  *      the collation strength has been set to ignore all accents).
+  *
+  *      When beginning a search, the initial starting position, startIdx,
+  *      is assumed to be an acceptable match boundary with respect to
+  *      combining characters.  A combining sequence that spans across the
+  *      starting point will not supress a match beginning at startIdx.
+  *
+  *      Characters that expand to multiple collation elements
+  *      (German sharp-S becoming 'ss', or the composed forms of accented
+  *      characters, for example) also must match completely.
+  *      Searching for a single 's' in a string containing only a sharp-s will 
+  *      find no match.
+  *
+  *
+  *  @param strsrch    the UStringSearch struct, which references both
+  *                    the text to be searched  and the pattern being sought.
+  *  @param startIdx   The index into the text to begin the search.
+  *  @param matchStart An out parameter, the starting index of the matched text.
+  *                    This parameter may be NULL.
+  *                    A value of -1 will be returned if no match was found.
+  *  @param matchLimit Out parameter, the index of the first position following the matched text.
+  *                    The matchLimit will be at a suitable position for beginning a subsequent search
+  *                    in the input text.
+  *                    This parameter may be NULL.
+  *                    A value of -1 will be returned if no match was found.
+  *          
+  *  @param status     Report any errors.  Note that no match found is not an error.
+  *  @return           TRUE if a match was found, FALSE otherwise.
+  *
+  *  @internal
+  */
+U_INTERNAL UBool U_EXPORT2 usearch_search(UStringSearch *strsrch,
+                                          int32_t        startIdx,
+                                          int32_t        *matchStart,
+                                          int32_t        *matchLimit,
+                                          UErrorCode     *status);
+
+/**
+  *  Simple backwards search for the pattern, starting at a specified index,
+  *     and using using a default set search options.
+  *
+  *  This is an experimental function, and is not an official part of the
+  *      ICU API.
+  *
+  *  The collator options, such as UCOL_STRENGTH and UCOL_NORMALIZTION, are honored.
+  *
+  *  The UStringSearch options USEARCH_CANONICAL_MATCH, USEARCH_OVERLAP and
+  *  any Break Iterator are ignored.
+  *
+  *  Matches obey the following constraints:
+  *
+  *      Characters at the start or end positions of a match that are ignorable
+  *      for collation are not included as part of the match, unless they
+  *      are part of a combining sequence, as described below.
+  *
+  *      A match will not include a partial combining sequence.  Combining
+  *      character sequences  are considered to be  inseperable units,
+  *      and either match the pattern completely, or are considered to not match
+  *      at all.  Thus, for example, an A followed a combining accent mark will 
+  *      not be found when searching for a plain (unaccented) A.   (unless
+  *      the collation strength has been set to ignore all accents).
+  *
+  *      When beginning a search, the initial starting position, startIdx,
+  *      is assumed to be an acceptable match boundary with respect to
+  *      combining characters.  A combining sequence that spans across the
+  *      starting point will not supress a match beginning at startIdx.
+  *
+  *      Characters that expand to multiple collation elements
+  *      (German sharp-S becoming 'ss', or the composed forms of accented
+  *      characters, for example) also must match completely.
+  *      Searching for a single 's' in a string containing only a sharp-s will 
+  *      find no match.
+  *
+  *
+  *  @param strsrch    the UStringSearch struct, which references both
+  *                    the text to be searched  and the pattern being sought.
+  *  @param startIdx   The index into the text to begin the search.
+  *  @param matchStart An out parameter, the starting index of the matched text.
+  *                    This parameter may be NULL.
+  *                    A value of -1 will be returned if no match was found.
+  *  @param matchLimit Out parameter, the index of the first position following the matched text.
+  *                    The matchLimit will be at a suitable position for beginning a subsequent search
+  *                    in the input text.
+  *                    This parameter may be NULL.
+  *                    A value of -1 will be returned if no match was found.
+  *          
+  *  @param status     Report any errors.  Note that no match found is not an error.
+  *  @return           TRUE if a match was found, FALSE otherwise.
+  *
+  *  @internal
+  */
+U_INTERNAL UBool U_EXPORT2 usearch_searchBackwards(UStringSearch *strsrch,
+                                                   int32_t        startIdx,
+                                                   int32_t        *matchStart,
+                                                   int32_t        *matchLimit,
+                                                   UErrorCode     *status);
+
+#endif /* #if !UCONFIG_NO_COLLATION  && !UCONFIG_NO_BREAK_ITERATION */
 
 #endif

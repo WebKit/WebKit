@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (c) 1996-2005, International Business Machines Corporation and others.
+* Copyright (c) 1996-2010, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -13,6 +13,7 @@
 #if !UCONFIG_NO_COLLATION
 
 #include "unicode/unorm.h"
+#include "unicode/localpointer.h"
 #include "unicode/parseerr.h"
 #include "unicode/uloc.h"
 #include "unicode/uset.h"
@@ -29,11 +30,11 @@
  * <em>Important: </em>The ICU collation service has been reimplemented 
  * in order to achieve better performance and UCA compliance. 
  * For details, see the 
- * <a href="http://icu.sourceforge.net/cvs/icu/~checkout~/icuhtml/design/collation/ICU_collation_design.htm">
+ * <a href="http://source.icu-project.org/repos/icu/icuhtml/trunk/design/collation/ICU_collation_design.htm">
  * collation design document</a>.
  * <p>
  * For more information about the collation service see 
- * <a href="http://icu.sourceforge.net/icu/userguide/Collate_Intro.html">the users guide</a>.
+ * <a href="http://icu-project.org/userguide/Collate_Intro.html">the users guide</a>.
  * <p>
  * Collation service provides correct sorting orders for most locales supported in ICU. 
  * If specific data for a locale is not available, the orders eventually falls back
@@ -41,7 +42,7 @@
  * <p>
  * Sort ordering may be customized by providing your own set of rules. For more on
  * this subject see the 
- * <a href="http://icu.sourceforge.net/icu/userguide/Collate_Customization.html">
+ * <a href="http://icu-project.org/userguide/Collate_Customization.html">
  * Collation customization</a> section of the users guide.
  * <p>
  * @see         UCollationResult
@@ -49,15 +50,6 @@
  * @see         UCollationStrength
  * @see         UCollationElements
  */
-
-/** A collation element iterator.
-*  For usage in C programs.
-*/
-struct collIterate;
-/** structure representing collation element iterator instance 
- * @stable ICU 2.0
- */
-typedef struct collIterate collIterate;
 
 /** A collator.
 *  For usage in C programs.
@@ -140,6 +132,20 @@ typedef enum {
 
 } UColAttributeValue;
 
+/** Enum containing the codes for reordering segments of the collation table that are not script
+ *  codes. These reordering codes are to be used in conjunction with the script codes.
+ *  @internal
+ */
+typedef enum {
+    UCOL_REORDER_CODE_SPACE          = 0x1000,
+    UCOL_REORDER_CODE_FIRST          = UCOL_REORDER_CODE_SPACE,
+    UCOL_REORDER_CODE_PUNCTUATION    = 0x1001,
+    UCOL_REORDER_CODE_SYMBOL         = 0x1002,
+    UCOL_REORDER_CODE_CURRENCY       = 0x1003,
+    UCOL_REORDER_CODE_DIGIT          = 0x1004,
+    UCOL_REORDER_CODE_LIMIT          = 0x1005
+} UColReorderCode;
+
 /**
  * Base letter represents a primary difference.  Set comparison
  * level to UCOL_PRIMARY to ignore secondary and tertiary differences.
@@ -149,7 +155,7 @@ typedef enum {
  * Diacritical differences on the same base letter represent a secondary
  * difference.  Set comparison level to UCOL_SECONDARY to ignore tertiary
  * differences. Use this to set the strength of a Collator object.
- * Example of secondary difference, "ä" >> "a".
+ * Example of secondary difference, "&auml;" >> "a".
  *
  * Uppercase and lowercase versions of the same character represents a
  * tertiary difference.  Set comparison level to UCOL_TERTIARY to include
@@ -159,7 +165,7 @@ typedef enum {
  *
  * Two characters are considered "identical" when they have the same
  * unicode spellings.  UCOL_IDENTICAL.
- * For example, "ä" == "ä".
+ * For example, "&auml;" == "&auml;".
  *
  * UCollationStrength is also used to determine the strength of sort keys 
  * generated from UCollator objects
@@ -173,12 +179,12 @@ typedef UColAttributeValue UCollationStrength;
  * @stable ICU 2.0
  */
 typedef enum {
-     /** Attribute for direction of secondary weights - used in French.\ 
+     /** Attribute for direction of secondary weights - used in French.
       * Acceptable values are UCOL_ON, which results in secondary weights
       * being considered backwards and UCOL_OFF which treats secondary
       * weights in the order they appear.*/
      UCOL_FRENCH_COLLATION, 
-     /** Attribute for handling variable elements.\ 
+     /** Attribute for handling variable elements.
       * Acceptable values are UCOL_NON_IGNORABLE (default)
       * which treats all the codepoints with non-ignorable 
       * primary weights in the same way,
@@ -187,7 +193,7 @@ typedef enum {
       * to be ignored on primary level and moved to the quaternary 
       * level.*/
      UCOL_ALTERNATE_HANDLING, 
-     /** Controls the ordering of upper and lower case letters.\ 
+     /** Controls the ordering of upper and lower case letters.
       * Acceptable values are UCOL_OFF (default), which orders
       * upper and lower case letters in accordance to their tertiary
       * weights, UCOL_UPPER_FIRST which forces upper case letters to 
@@ -195,45 +201,45 @@ typedef enum {
       * the opposite. */
      UCOL_CASE_FIRST, 
      /** Controls whether an extra case level (positioned before the third
-      * level) is generated or not.\ Acceptable values are UCOL_OFF (default), 
+      * level) is generated or not. Acceptable values are UCOL_OFF (default), 
       * when case level is not generated, and UCOL_ON which causes the case
-      * level to be generated.\ Contents of the case level are affected by
-      * the value of UCOL_CASE_FIRST attribute.\ A simple way to ignore 
+      * level to be generated. Contents of the case level are affected by
+      * the value of UCOL_CASE_FIRST attribute. A simple way to ignore 
       * accent differences in a string is to set the strength to UCOL_PRIMARY
       * and enable case level. */
      UCOL_CASE_LEVEL,
      /** Controls whether the normalization check and necessary normalizations
-      * are performed.\ When set to UCOL_OFF (default) no normalization check
-      * is performed.\ The correctness of the result is guaranteed only if the 
-      * input data is in so-called FCD form (see users manual for more info).\ 
-      * When set to UCOL_ON, an incremental check is performed to see whether the input data
-      * is in the FCD form.\ If the data is not in the FCD form, incremental 
-      * NFD normalization is performed. */
+      * are performed. When set to UCOL_OFF (default) no normalization check
+      * is performed. The correctness of the result is guaranteed only if the 
+      * input data is in so-called FCD form (see users manual for more info).
+      * When set to UCOL_ON, an incremental check is performed to see whether
+      * the input data is in the FCD form. If the data is not in the FCD form,
+      * incremental NFD normalization is performed. */
      UCOL_NORMALIZATION_MODE, 
      /** An alias for UCOL_NORMALIZATION_MODE attribute */
      UCOL_DECOMPOSITION_MODE = UCOL_NORMALIZATION_MODE,
-     /** The strength attribute.\ Can be either UCOL_PRIMARY, UCOL_SECONDARY,
-      * UCOL_TERTIARY, UCOL_QUATERNARY or UCOL_IDENTICAL.\ The usual strength
-      * for most locales (except Japanese) is tertiary.\ Quaternary strength 
+     /** The strength attribute. Can be either UCOL_PRIMARY, UCOL_SECONDARY,
+      * UCOL_TERTIARY, UCOL_QUATERNARY or UCOL_IDENTICAL. The usual strength
+      * for most locales (except Japanese) is tertiary. Quaternary strength 
       * is useful when combined with shifted setting for alternate handling
       * attribute and for JIS x 4061 collation, when it is used to distinguish
       * between Katakana  and Hiragana (this is achieved by setting the 
-      * UCOL_HIRAGANA_QUATERNARY mode to on.\ Otherwise, quaternary level
+      * UCOL_HIRAGANA_QUATERNARY mode to on. Otherwise, quaternary level
       * is affected only by the number of non ignorable code points in
-      * the string.\ Identical strength is rarely useful, as it amounts 
+      * the string. Identical strength is rarely useful, as it amounts 
       * to codepoints of the NFD form of the string. */
      UCOL_STRENGTH,  
-     /** when turned on, this attribute 
-      * positions Hiragana before all  
-      * non-ignorables on quaternary level
-      * This is a sneaky way to produce JIS
-      * sort order */     
+     /** When turned on, this attribute positions Hiragana before all  
+      * non-ignorables on quaternary level This is a sneaky way to produce JIS
+      * sort order */
      UCOL_HIRAGANA_QUATERNARY_MODE,
-     /** when turned on, this attribute 
-      * generates a collation key
-      * for the numeric value of substrings
-      * of digits. This is a way to get '100' 
-      * to sort AFTER '2'.*/          
+     /** When turned on, this attribute generates a collation key
+      * for the numeric value of substrings of digits.
+      * This is a way to get '100' to sort AFTER '2'. Note that the longest
+      * digit substring that can be treated as a single collation element is
+      * 254 digits (not counting leading zeros). If a digit substring is
+      * longer than that, the digits beyond the limit will be treated as a
+      * separate digit substring associated with a separate collation element. */
      UCOL_NUMERIC_COLLATION, 
      UCOL_ATTRIBUTE_COUNT
 } UColAttribute;
@@ -286,7 +292,7 @@ ucol_open(const char *loc, UErrorCode *status);
  *                    occurred during parsing. This argument can currently be set
  *                    to NULL, but at users own risk. Please provide a real structure.
  * @param status A pointer to an UErrorCode to receive any errors
- * @return A pointer to a UCollator.\ It is not guaranteed that NULL be returned in case
+ * @return A pointer to a UCollator. It is not guaranteed that NULL be returned in case
  *         of error - please use status argument to check for errors.
  * @see ucol_open
  * @see ucol_safeClone
@@ -305,7 +311,7 @@ ucol_openRules( const UChar        *rules,
  * Open a collator defined by a short form string.
  * The structure and the syntax of the string is defined in the "Naming collators"
  * section of the users guide: 
- * http://icu.sourceforge.net/icu/userguide/Collate_Concepts.html#Naming_Collators
+ * http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
  * Attributes are overriden by the subsequent attributes. So, for "S2_S3", final
  * strength will be 3. 3066bis locale overrides individual locale parts.
  * The call to this function is equivalent to a call to ucol_open, followed by a 
@@ -332,10 +338,10 @@ ucol_openRules( const UChar        *rules,
  * @see ucol_setVariableTop
  * @see ucol_getShortDefinitionString
  * @see ucol_normalizeShortDefinitionString
- * @draft ICU 3.0
+ * @stable ICU 3.0
  *
  */
-U_CAPI UCollator* U_EXPORT2
+U_STABLE UCollator* U_EXPORT2
 ucol_openFromShortString( const char *definition,
                           UBool forceDefaults,
                           UParseError *parseError,
@@ -352,18 +358,33 @@ ucol_openFromShortString( const char *definition,
  * @param status to hold the error code
  * @return the size of the contraction set
  *
- * @draft ICU 3.0
+ * @deprecated ICU 3.4, use ucol_getContractionsAndExpansions instead
  */
-U_CAPI int32_t U_EXPORT2
+U_DEPRECATED int32_t U_EXPORT2
 ucol_getContractions( const UCollator *coll,
                   USet *conts,
                   UErrorCode *status);
 
+/**
+ * Get a set containing the expansions defined by the collator. The set includes
+ * both the UCA expansions and the expansions defined by the tailoring
+ * @param coll collator
+ * @param contractions if not NULL, the set to hold the contractions
+ * @param expansions if not NULL, the set to hold the expansions
+ * @param addPrefixes add the prefix contextual elements to contractions
+ * @param status to hold the error code
+ *
+ * @stable ICU 3.4
+ */
+U_STABLE void U_EXPORT2
+ucol_getContractionsAndExpansions( const UCollator *coll,
+                  USet *contractions, USet *expansions,
+                  UBool addPrefixes, UErrorCode *status);
 
 /** 
  * Close a UCollator.
- * Once closed, a UCollator should not be used.\ Every open collator should
- * be closed.\ Otherwise, a memory leak will result.
+ * Once closed, a UCollator should not be used. Every open collator should
+ * be closed. Otherwise, a memory leak will result.
  * @param coll The UCollator to close.
  * @see ucol_open
  * @see ucol_openRules
@@ -372,6 +393,25 @@ ucol_getContractions( const UCollator *coll,
  */
 U_STABLE void U_EXPORT2 
 ucol_close(UCollator *coll);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUCollatorPointer
+ * "Smart pointer" class, closes a UCollator via ucol_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUCollatorPointer, UCollator, ucol_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Compare two strings.
@@ -496,6 +536,37 @@ ucol_setStrength(UCollator *coll,
                  UCollationStrength strength);
 
 /**
+ * Get the current reordering of scripts (if one has been set).
+ * @param coll The UCollator to query.
+ * @param dest The array to fill with the script ordering.
+ * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the function will only return the length of the result without writing any of the result string (pre-flighting).
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a failure before the function call.
+ * @return The length of the array of the script ordering.
+ * @see ucol_setReorderCodes
+ * @internal 
+ */
+U_INTERNAL int32_t U_EXPORT2 
+ucol_getReorderCodes(const UCollator* coll,
+                    int32_t* dest,
+                    int32_t destCapacity,
+                    UErrorCode *pErrorCode);
+
+/**
+ * Set the ordering of scripts for this collator.
+ * @param coll The UCollator to set.
+ * @param reorderCodes An array of script codes in the new order.
+ * @param reorderCodesLength The length of reorderCodes.
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a failure before the function call.
+ * @see ucol_getReorderCodes
+ * @internal 
+ */
+U_INTERNAL void U_EXPORT2 
+ucol_setReorderCodes(UCollator* coll,
+                    const int32_t* reorderCodes,
+                    int32_t reorderCodesLength,
+                    UErrorCode *pErrorCode);
+
+/**
  * Get the display name for a UCollator.
  * The display name is suitable for presentation to a user.
  * @param objLoc The locale of the collator in question.
@@ -518,13 +589,13 @@ ucol_getDisplayName(    const    char        *objLoc,
  * Get a locale for which collation rules are available.
  * A UCollator in a locale returned by this function will perform the correct
  * collation for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which collation rules are available, or 0 if none.
  * @see ucol_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2 
-ucol_getAvailable(int32_t index);
+ucol_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have collation rules available.
@@ -544,9 +615,9 @@ ucol_countAvailable(void);
  * @param status input-output error code
  * @return a string enumeration over locale strings. The caller is
  * responsible for closing the result.
- * @draft ICU 3.0
+ * @stable ICU 3.0
  */
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 ucol_openAvailableLocales(UErrorCode *status);
 #endif
 
@@ -557,9 +628,9 @@ ucol_openAvailableLocales(UErrorCode *status);
  * @param status input-output error code
  * @return a string enumeration over locale strings. The caller is
  * responsible for closing the result.
- * @draft ICU 3.0
+ * @stable ICU 3.0
  */
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 ucol_getKeywords(UErrorCode *status);
 
 /**
@@ -571,10 +642,32 @@ ucol_getKeywords(UErrorCode *status);
  * @param status input-output error code
  * @return a string enumeration over collation keyword values, or NULL
  * upon error. The caller is responsible for closing the result.
- * @draft ICU 3.0
+ * @stable ICU 3.0
  */
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 ucol_getKeywordValues(const char *keyword, UErrorCode *status);
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "collation" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @stable ICU 4.2
+ */
+U_STABLE UEnumeration* U_EXPORT2
+ucol_getKeywordValuesForLocale(const char* key,
+                               const char* locale,
+                               UBool commonlyUsed,
+                               UErrorCode* status);
 
 /**
  * Return the functionally equivalent locale for the given
@@ -589,7 +682,7 @@ ucol_getKeywordValues(const char *keyword, UErrorCode *status);
  * applications who wish to cache collators, or otherwise reuse
  * collators when possible.  The functional equivalent may change
  * over time.  For more information, please see the <a
- * href="http://icu.sourceforge.net/icu/userguide/locale.html#services">
+ * href="http://icu-project.org/userguide/locale.html#services">
  * Locales and Services</a> section of the ICU User Guide.
  * @param result fillin for the functionally equivalent locale
  * @param resultCapacity capacity of the fillin buffer
@@ -604,9 +697,9 @@ ucol_getKeywordValues(const char *keyword, UErrorCode *status);
  * @return the actual buffer size needed for the locale.  If greater
  * than resultCapacity, the returned full name will be truncated and
  * an error code will be returned.
- * @draft ICU 3.0
+ * @stable ICU 3.0
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_getFunctionalEquivalent(char* result, int32_t resultCapacity,
                              const char* keyword, const char* locale,
                              UBool* isAvailable, UErrorCode* status);
@@ -629,7 +722,7 @@ ucol_getRules(    const    UCollator    *coll,
  *  This string will be normalized.
  *  The structure and the syntax of the string is defined in the "Naming collators"
  *  section of the users guide: 
- *  http://icu.sourceforge.net/icu/userguide/Collate_Concepts.html#Naming_Collators
+ *  http://icu-project.org/userguide/Collate_Concepts.html#Naming_Collators
  *  This API supports preflighting.
  *  @param coll a collator
  *  @param locale a locale that will appear as a collators locale in the resulting
@@ -641,9 +734,9 @@ ucol_getRules(    const    UCollator    *coll,
  *  @return length of the resulting string
  *  @see ucol_openFromShortString
  *  @see ucol_normalizeShortDefinitionString
- *  @draft ICU 3.0
+ *  @stable ICU 3.0
  */
-U_CAPI int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_getShortDefinitionString(const UCollator *coll,
                               const char *locale,
                               char *buffer,
@@ -667,26 +760,33 @@ ucol_getShortDefinitionString(const UCollator *coll,
  *  @see ucol_openFromShortString
  *  @see ucol_getShortDefinitionString
  * 
- *  @draft ICU 3.0
+ *  @stable ICU 3.0
  */
 
-U_CAPI int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_normalizeShortDefinitionString(const char *source,
                                     char *destination,
                                     int32_t capacity,
                                     UParseError *parseError,
                                     UErrorCode *status);
-        
+
 
 /**
  * Get a sort key for a string from a UCollator.
  * Sort keys may be compared using <TT>strcmp</TT>.
+ *
+ * Like ICU functions that write to an output buffer, the buffer contents
+ * is undefined if the buffer capacity (resultLength parameter) is too small.
+ * Unlike ICU functions that write a string to an output buffer,
+ * the terminating zero byte is counted in the sort key length.
  * @param coll The UCollator containing the collation rules.
  * @param source The string to transform.
  * @param sourceLength The length of source, or -1 if null-terminated.
  * @param result A pointer to a buffer to receive the attribute.
  * @param resultLength The maximum size of result.
- * @return The size needed to fully store the sort key..
+ * @return The size needed to fully store the sort key.
+ *      If there was an internal error generating the sort key,
+ *      a zero value is returned.
  * @see ucol_keyHashCode
  * @stable ICU 2.0
  */
@@ -804,9 +904,9 @@ ucol_getVersion(const UCollator* coll, UVersionInfo info);
  * UCA version number (3.1.1, 4.0).
  * @param coll The UCollator to query.
  * @param info the version # information, the result will be filled in
- * @draft ICU 2.8
+ * @stable ICU 2.8
  */
-U_DRAFT void U_EXPORT2
+U_STABLE void U_EXPORT2
 ucol_getUCAVersion(const UCollator* coll, UVersionInfo info);
 
 /** 
@@ -992,9 +1092,9 @@ ucol_getLocale(const UCollator *coll, ULocDataLocaleType type, UErrorCode *statu
  * @return real locale name from which the collation data comes. 
  *         If the collator was instantiated from rules, returns
  *         NULL.
- * @draft ICU 2.8 likely to change in ICU 3.0, based on feedback
+ * @stable ICU 2.8
  */
-U_DRAFT const char * U_EXPORT2
+U_STABLE const char * U_EXPORT2
 ucol_getLocaleByType(const UCollator *coll, ULocDataLocaleType type, UErrorCode *status);
 
 /**
@@ -1009,97 +1109,6 @@ ucol_getLocaleByType(const UCollator *coll, ULocDataLocaleType type, UErrorCode 
  */
 U_STABLE USet * U_EXPORT2
 ucol_getTailoredSet(const UCollator *coll, UErrorCode *status);
-
-/**
- * Returned by ucol_collatorToIdentifier to signify that collator is
- * not encodable as an identifier.
- * @internal ICU 3.0
- */
-#define UCOL_SIT_COLLATOR_NOT_ENCODABLE 0x80000000
-
-/**
- * Get a 31-bit identifier given a collator. 
- * @param coll UCollator
- *  @param locale a locale that will appear as a collators locale in the resulting
- *                short string definition. If NULL, the locale will be harvested 
- *                from the collator.
- * @param status holds error messages
- * @return 31-bit identifier. MSB is used if the collator cannot be encoded. In that
- *         case UCOL_SIT_COLLATOR_NOT_ENCODABLE is returned
- * @see ucol_openFromIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL uint32_t U_EXPORT2
-ucol_collatorToIdentifier(const UCollator *coll,
-                          const char *locale,
-                          UErrorCode *status);
-
-/**
- * Open a collator given a 31-bit identifier
- * @param identifier 31-bit identifier, encoded by calling ucol_collatorToIdentifier
- * @param forceDefaults if FALSE, the settings that are the same as the collator 
- *                   default settings will not be applied (for example, setting
- *                   French secondary on a French collator would not be executed). 
- *                   If TRUE, all the settings will be applied regardless of the 
- *                   collator default value. If the definition
- *                   strings that can be produced from a collator instantiated by 
- *                   calling this API are to be cached, should be set to FALSE.
- * @param status for returning errors
- * @return UCollator object
- * @see ucol_collatorToIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL UCollator* U_EXPORT2
-ucol_openFromIdentifier(uint32_t identifier,
-                        UBool forceDefaults,
-                        UErrorCode *status);
-
-
-/**
- * Calculate the short definition string given an identifier. Supports preflighting.
- * @param identifier 31-bit identifier, encoded by calling ucol_collatorToIdentifier
- * @param buffer buffer to store the result
- * @param capacity buffer capacity
- * @param forceDefaults whether the settings that are the same as the default setting
- *                      should be forced anyway. Setting this argument to FALSE reduces
- *                      the number of different configurations, but decreases performace
- *                      as a collator has to be instantiated.
- * @param status for returning errors
- * @return length of the short definition string
- * @see ucol_collatorToIdentifier
- * @see ucol_openFromIdentifier
- * @see ucol_shortStringToIdentifier
- * @internal ICU 3.0
- */
-U_INTERNAL int32_t U_EXPORT2
-ucol_identifierToShortString(uint32_t identifier,
-                             char *buffer,
-                             int32_t capacity,
-                             UBool forceDefaults,
-                             UErrorCode *status);
-
-/**
- * Calculate the identifier given a short definition string. Supports preflighting.
- * @param definition short string definition
- * @param forceDefaults whether the settings that are the same as the default setting
- *                      should be forced anyway. Setting this argument to FALSE reduces
- *                      the number of different configurations, but decreases performace
- *                      as a collator has to be instantiated.
- * @param status for returning errors
- * @return identifier
- * @see ucol_collatorToIdentifier
- * @see ucol_openFromIdentifier
- * @see ucol_identifierToShortString
- * @internal ICU 3.0
- */
-U_INTERNAL uint32_t U_EXPORT2
-ucol_shortStringToIdentifier(const char *definition,
-                             UBool forceDefaults,
-                             UErrorCode *status);
-
-
 
 /**
  * Universal attribute getter that returns UCOL_DEFAULT if the value is default
@@ -1183,9 +1192,9 @@ ucol_prepareShortStringOpen( const char *definition,
  *  @param status for catching errors
  *  @return size of the image
  *  @see ucol_openBinary
- *  @draft ICU 3.2
+ *  @stable ICU 3.2
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_cloneBinary(const UCollator *coll,
                  uint8_t *buffer, int32_t capacity,
                  UErrorCode *status);
@@ -1205,9 +1214,9 @@ ucol_cloneBinary(const UCollator *coll,
  *  @param status for catching errors
  *  @return newly created collator
  *  @see ucol_cloneBinary
- *  @draft ICU 3.2
+ *  @stable ICU 3.2
  */
-U_DRAFT UCollator* U_EXPORT2
+U_STABLE UCollator* U_EXPORT2
 ucol_openBinary(const uint8_t *bin, int32_t length, 
                 const UCollator *base, 
                 UErrorCode *status);
@@ -1216,4 +1225,3 @@ ucol_openBinary(const uint8_t *bin, int32_t length,
 #endif /* #if !UCONFIG_NO_COLLATION */
 
 #endif
-

@@ -1,6 +1,6 @@
 /*  
 **********************************************************************
-*   Copyright (C) 2002-2004, International Business Machines
+*   Copyright (C) 2002-2009, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  uconfig.h
@@ -15,6 +15,7 @@
 #ifndef __UCONFIG_H__
 #define __UCONFIG_H__
 
+
 /*!
  * \file
  * \brief Switches for excluding parts of ICU library code modules.
@@ -24,8 +25,26 @@
  * The switches are fairly coarse, controlling large modules.
  * Basic services cannot be turned off.
  *
+ * Building with any of these options does not guarantee that the
+ * ICU build process will completely work. It is recommended that
+ * the ICU libraries and data be built using the normal build.
+ * At that time you should remove the data used by those services.
+ * After building the ICU data library, you should rebuild the ICU
+ * libraries with these switches customized to your needs.
+ *
  * @stable ICU 2.4
  */
+
+/**
+ * If this switch is defined, ICU will attempt to load a header file named "uconfig_local.h"
+ * prior to determining default settings for uconfig variables.
+ * 
+ * @internal ICU 4.0
+ * 
+ */
+#if defined(UCONFIG_USE_LOCAL)
+#include "uconfig_local.h"
+#endif
 
 /**
  * \def UCONFIG_ONLY_COLLATION
@@ -34,7 +53,7 @@
  * It does not turn off legacy conversion because that is necessary
  * for ICU to work on EBCDIC platforms (for the default converter).
  * If you want "only collation" and do not build for EBCDIC,
- * then you can #define UCONFIG_NO_LEGACY_CONVERSION 1 as well.
+ * then you can define UCONFIG_NO_LEGACY_CONVERSION 1 as well.
  *
  * @stable ICU 2.4
  */
@@ -59,11 +78,37 @@
 /* common library switches -------------------------------------------------- */
 
 /**
+ * \def UCONFIG_NO_FILE_IO
+ * This switch turns off all file access in the common library
+ * where file access is only used for data loading.
+ * ICU data must then be provided in the form of a data DLL (or with an
+ * equivalent way to link to the data residing in an executable,
+ * as in building a combined library with both the common library's code and
+ * the data), or via udata_setCommonData().
+ * Application data must be provided via udata_setAppData() or by using
+ * "open" functions that take pointers to data, for example ucol_openBinary().
+ *
+ * File access is not used at all in the i18n library.
+ *
+ * File access cannot be turned off for the icuio library or for the ICU
+ * test suites and ICU tools.
+ *
+ * @stable ICU 3.6
+ */
+#ifndef UCONFIG_NO_FILE_IO
+#   define UCONFIG_NO_FILE_IO 0
+#endif
+
+/**
  * \def UCONFIG_NO_CONVERSION
  * ICU will not completely build with this switch turned on.
  * This switch turns off all converters.
  *
- * @draft ICU 3.2
+ * You may want to use this together with U_CHARSET_IS_UTF8 defined to 1
+ * in utypes.h if char* strings in your environment are always in UTF-8.
+ *
+ * @stable ICU 3.2
+ * @see U_CHARSET_IS_UTF8
  */
 #ifndef UCONFIG_NO_CONVERSION
 #   define UCONFIG_NO_CONVERSION 0
@@ -177,10 +222,10 @@
  * \def UCONFIG_NO_SERVICE
  * This switch turns off service registration.
  *
- * @draft ICU 3.2
+ * @stable ICU 3.2
  */
 #ifndef UCONFIG_NO_SERVICE
-#   define UCONFIG_NO_SERVICE 0
+#   define UCONFIG_NO_SERVICE 1
 #endif
 
 #endif
