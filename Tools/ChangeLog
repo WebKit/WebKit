@@ -1,5 +1,14 @@
 2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Fix --qt option to build-webkit
+
+        Reviewed by Ossy.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
+2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Add a configure step to the Qt build system
 
         This allows building the Qt port using just 'qmake WebKit.pro'. Using
