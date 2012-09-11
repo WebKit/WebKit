@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "Geolocation.h"
 #include "V8Binding.h"
+#include "V8Callback.h"
 #include "V8PositionCallback.h"
 #include "V8PositionErrorCallback.h"
 #include "V8Utilities.h"

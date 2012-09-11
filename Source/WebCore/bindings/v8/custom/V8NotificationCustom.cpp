@@ -29,6 +29,7 @@
 #include "V8Notification.h"
 
 #include "ExceptionCode.h"
+#include "V8Callback.h"
 #include "V8NotificationPermissionCallback.h"
 
 namespace WebCore {

@@ -53,15 +53,6 @@ namespace WebCore {
 
     ScriptExecutionContext* getScriptExecutionContext();
 
-    void setTypeMismatchException(v8::Isolate*);
-
-    enum CallbackAllowedValueFlag {
-        CallbackAllowUndefined = 1,
-        CallbackAllowNull = 1 << 1
-    };
-
-    typedef unsigned CallbackAllowedValueFlags;
-
     typedef WTF::Vector<RefPtr<MessagePort>, 1> MessagePortArray;
     typedef WTF::Vector<RefPtr<ArrayBuffer>, 1> ArrayBufferArray;
 
@@ -71,27 +62,6 @@ namespace WebCore {
     // Returns true if the array was filled, or false if the passed value was not of an appropriate type.
     bool extractTransferables(v8::Local<v8::Value>, MessagePortArray&, ArrayBufferArray&, v8::Isolate*); 
     bool getMessagePortArray(v8::Local<v8::Value>, MessagePortArray&, v8::Isolate*);
-
-    // 'FunctionOnly' is assumed for the created callback.
-    template <typename V8CallbackType>
-    PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, bool& succeeded, v8::Isolate* isolate, CallbackAllowedValueFlags acceptedValues = 0)
-    {
-        succeeded = true;
-
-        if (value->IsUndefined() && (acceptedValues & CallbackAllowUndefined))
-            return 0;
-
-        if (value->IsNull() && (acceptedValues & CallbackAllowNull))
-            return 0;
-
-        if (!value->IsFunction()) {
-            succeeded = false;
-            setTypeMismatchException(isolate);
-            return 0;
-        }
-
-        return V8CallbackType::create(value, getScriptExecutionContext());
-    }
 
 } // namespace WebCore
 

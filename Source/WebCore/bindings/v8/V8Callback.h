@@ -31,6 +31,8 @@
 #ifndef V8Callback_h
 #define V8Callback_h
 
+#include "ExceptionCode.h"
+#include "V8Binding.h"
 #include <v8.h>
 
 namespace WebCore {
@@ -39,6 +41,34 @@ class ScriptExecutionContext;
 
 bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
 bool invokeCallback(v8::Persistent<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
+
+enum CallbackAllowedValueFlag {
+    CallbackAllowUndefined = 1,
+    CallbackAllowNull = 1 << 1
+};
+
+typedef unsigned CallbackAllowedValueFlags;
+
+// 'FunctionOnly' is assumed for the created callback.
+template <typename V8CallbackType>
+PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, bool& succeeded, v8::Isolate* isolate, CallbackAllowedValueFlags acceptedValues = 0)
+{
+    succeeded = true;
+
+    if (value->IsUndefined() && (acceptedValues & CallbackAllowUndefined))
+        return 0;
+
+    if (value->IsNull() && (acceptedValues & CallbackAllowNull))
+        return 0;
+
+    if (!value->IsFunction()) {
+        succeeded = false;
+        setDOMException(TYPE_MISMATCH_ERR, isolate);
+        return 0;
+    }
+
+    return V8CallbackType::create(value, getScriptExecutionContext());
+}
 
 } // namespace WebCore
 

@@ -163,9 +163,4 @@ ScriptExecutionContext* getScriptExecutionContext()
     return currentDocument(BindingState::instance());
 }
 
-void setTypeMismatchException(v8::Isolate* isolate)
-{
-    setDOMException(TYPE_MISMATCH_ERR, isolate);
-}
-
 } // namespace WebCore
