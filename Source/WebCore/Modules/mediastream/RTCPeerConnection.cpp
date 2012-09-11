@@ -391,6 +391,11 @@ void RTCPeerConnection::close(ExceptionCode& ec)
     stop();
 }
 
+void RTCPeerConnection::negotiationNeeded()
+{
+    dispatchEvent(Event::create(eventNames().negotationneededEvent, false, false));
+}
+
 void RTCPeerConnection::didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidateDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());

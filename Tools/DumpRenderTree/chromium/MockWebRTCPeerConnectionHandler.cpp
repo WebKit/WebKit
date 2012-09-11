@@ -213,12 +213,14 @@ bool MockWebRTCPeerConnectionHandler::addICECandidate(const WebRTCICECandidate& 
 bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& stream, const WebMediaConstraints&)
 {
     m_client->didAddRemoteStream(stream);
+    m_client->negotiationNeeded();
     return true;
 }
 
 void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescriptor& stream)
 {
     m_client->didRemoveRemoteStream(stream);
+    m_client->negotiationNeeded();
 }
 
 void MockWebRTCPeerConnectionHandler::stop()

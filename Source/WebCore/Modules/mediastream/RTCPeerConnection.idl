@@ -75,6 +75,7 @@ module mediastream {
         void close()
             raises(DOMException);
 
+        attribute EventListener onnegotationneeded;
         attribute EventListener onicecandidate;
         attribute EventListener onopen;
         attribute EventListener onstatechange;

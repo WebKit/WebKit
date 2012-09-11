@@ -1,3 +1,13 @@
+2012-09-11  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: add RTCPeerConnection::onnegotiationneeded
+        https://bugs.webkit.org/show_bug.cgi?id=96097
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded.html: Added.
+
 2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         WTR needs an implementation of applicationCacheDiskUsageForOrigin

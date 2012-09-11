@@ -67,6 +67,7 @@ public:
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
+    virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
     virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;

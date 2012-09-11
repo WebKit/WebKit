@@ -63,6 +63,7 @@ public:
 
     virtual ~RTCPeerConnectionHandlerClient() { }
 
+    virtual void negotiationNeeded() = 0;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) = 0;
     virtual void didChangeReadyState(ReadyState) = 0;
     virtual void didChangeIceState(IceState) = 0;

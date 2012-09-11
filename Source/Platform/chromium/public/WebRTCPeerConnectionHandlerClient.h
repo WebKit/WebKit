@@ -58,6 +58,7 @@ public:
 
     virtual ~WebRTCPeerConnectionHandlerClient() { }
 
+    virtual void negotiationNeeded() = 0;
     virtual void didGenerateICECandidate(const WebRTCICECandidate&) = 0;
     virtual void didChangeReadyState(ReadyState) = 0;
     virtual void didChangeICEState(ICEState) = 0;

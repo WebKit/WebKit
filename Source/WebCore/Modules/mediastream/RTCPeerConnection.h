@@ -86,6 +86,7 @@ public:
 
     void close(ExceptionCode&);
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(negotationneeded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(icecandidate);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
@@ -94,6 +95,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(icechange);
 
     // RTCPeerConnectionHandlerClient
+    virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
     virtual void didChangeReadyState(ReadyState) OVERRIDE;
     virtual void didChangeIceState(IceState) OVERRIDE;

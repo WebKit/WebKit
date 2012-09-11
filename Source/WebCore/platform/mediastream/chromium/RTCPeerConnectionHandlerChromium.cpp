@@ -164,6 +164,11 @@ void RTCPeerConnectionHandlerChromium::stop()
     m_webHandler->stop();
 }
 
+void RTCPeerConnectionHandlerChromium::negotiationNeeded()
+{
+    m_client->negotiationNeeded();
+}
+
 void RTCPeerConnectionHandlerChromium::didGenerateICECandidate(const WebKit::WebRTCICECandidate& iceCandidate)
 {
     m_client->didGenerateIceCandidate(iceCandidate);
