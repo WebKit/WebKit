@@ -3632,5 +3632,3 @@ BUGWK96041 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = 
 BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
 
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
-
-BUGWK128105 : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE PASS

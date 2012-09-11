@@ -2,6 +2,16 @@
 
         Unreviewed chromium gardening.
 
+        Remove bogus rebaseline added in r128105, and remove "flaky"
+        expectation (since tests seems non-flaky).
+
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
+2012-09-11  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed chromium gardening.
+
         Mark compositing/overflow/overflow-scaled-descendant-overflapping as
         failing on cr-mac after r127789 and remove bad rebaselines.
 
