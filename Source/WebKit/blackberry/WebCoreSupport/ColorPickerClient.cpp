@@ -45,24 +45,24 @@ ColorPickerClient::ColorPickerClient(const BlackBerry::WebKit::WebString& value,
 void ColorPickerClient::generateHTML(const BlackBerry::WebKit::WebString& value)
 {
     StringBuilder source;
-    source.append("<style>\n");
+    source.appendLiteral("<style>\n");
     // Include CSS file.
     source.append(popupControlBlackBerryCss,
             sizeof(popupControlBlackBerryCss));
-    source.append("</style>\n<style>");
+    source.appendLiteral("</style>\n<style>");
     source.append(colorControlBlackBerryCss,
             sizeof(colorControlBlackBerryCss));
-    source.append("</style></head><body>\n");
-    source.append("<script>\n");
-    source.append("window.addEventListener('load', function () {");
-    source.append("window.popupcontrol.show(");
+    source.appendLiteral("</style></head><body>\n");
+    source.appendLiteral("<script>\n");
+    source.appendLiteral("window.addEventListener('load', function () {");
+    source.appendLiteral("window.popupcontrol.show(");
     if (!value.isEmpty())
         source.append("\"" + String(value.impl()) + "\"); \n }); \n");
     else
-        source.append("); \n }); \n");
+        source.appendLiteral("); \n }); \n");
     source.append(colorControlBlackBerryJs, sizeof(colorControlBlackBerryJs));
-    source.append("</script>\n");
-    source.append("</body> </html>\n");
+    source.appendLiteral("</script>\n");
+    source.appendLiteral("</body> </html>\n");
     m_source = source.toString();
 }
 
