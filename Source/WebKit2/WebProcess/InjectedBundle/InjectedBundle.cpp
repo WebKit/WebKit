@@ -327,6 +327,12 @@ void InjectedBundle::clearApplicationCache()
     WebApplicationCacheManager::shared().deleteAllEntries();
 }
 
+void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
+    ApplicationCache::deleteCacheForOrigin(origin.get());
+}
+
 void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
 {
     WebApplicationCacheManager::shared().setAppCacheMaximumSize(size);

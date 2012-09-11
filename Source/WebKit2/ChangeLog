@@ -1,3 +1,23 @@
+2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner needs to implement clearApplicationCacheForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=96372
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle C API to clear the application cache for a
+        given origin. This is needed by WebKitTestRunner to
+        implement clearApplicationCacheForOrigin().
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearApplicationCacheForOrigin):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearApplicationCacheForOrigin):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs layoutTestController.setMinimumTimerInterval

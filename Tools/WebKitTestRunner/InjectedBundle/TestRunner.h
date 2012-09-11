@@ -144,6 +144,7 @@ public:
 
     // Application Cache
     void clearAllApplicationCaches();
+    void clearApplicationCacheForOrigin(JSStringRef origin);
     void setAppCacheMaximumSize(uint64_t);
     long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
 

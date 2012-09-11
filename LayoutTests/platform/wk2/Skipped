@@ -203,7 +203,12 @@ fast/images/animated-gif-restored-from-bfcache.html
 fast/text/zero-font-size.html
 
 # WTR needs an implementation of dumpApplicationCacheDelegateCallbacks
+http/tests/appcache/origin-delete.html
+http/tests/appcache/origin-quota.html
+http/tests/appcache/origin-quota-continued-download.html
+http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
 http/tests/appcache/origin-usage.html
+http/tests/appcache/origins-with-appcache.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>
@@ -674,13 +679,6 @@ fast/workers/shared-worker-frame-lifecycle.html
 fast/workers/shared-worker-lifecycle.html
 fast/workers/worker-lifecycle.html
 fast/workers/worker-close-more.html
-
-# WebKitTestRunner needs layoutTestController.clearAllApplicationCaches
-http/tests/appcache/origin-delete.html
-http/tests/appcache/origin-quota.html
-http/tests/appcache/origin-quota-continued-download.html
-http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
-http/tests/appcache/origins-with-appcache.html
 
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html

@@ -302,6 +302,11 @@ void TestRunner::clearAllApplicationCaches()
     WKBundleClearApplicationCache(InjectedBundle::shared().bundle());
 }
 
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
+{
+    WKBundleClearApplicationCacheForOrigin(InjectedBundle::shared().bundle(), toWK(origin).get());
+}
+
 void TestRunner::setAppCacheMaximumSize(uint64_t size)
 {
     WKBundleSetAppCacheMaximumSize(InjectedBundle::shared().bundle(), size);

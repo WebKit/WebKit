@@ -145,6 +145,7 @@ public:
 
     // Application Cache API
     void clearApplicationCache();
+    void clearApplicationCacheForOrigin(const String& origin);
     void setAppCacheMaximumSize(uint64_t);
     uint64_t appCacheUsageForOrigin(const String& origin);
 

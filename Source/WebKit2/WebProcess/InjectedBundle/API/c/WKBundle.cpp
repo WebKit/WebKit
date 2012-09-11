@@ -226,6 +226,11 @@ void WKBundleClearApplicationCache(WKBundleRef bundleRef)
     toImpl(bundleRef)->clearApplicationCache();
 }
 
+void WKBundleClearApplicationCacheForOrigin(WKBundleRef bundleRef, WKStringRef origin)
+{
+    toImpl(bundleRef)->clearApplicationCacheForOrigin(toImpl(origin)->string());
+}
+
 void WKBundleSetAppCacheMaximumSize(WKBundleRef bundleRef, uint64_t size)
 {
     toImpl(bundleRef)->setAppCacheMaximumSize(size);
