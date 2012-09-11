@@ -94,7 +94,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     if (!event->spontaneous() || m_realTouchEventReceived || !m_windowOptions.touchMockingEnabled())
         return QGuiApplication::notify(target, event);
 
-    if (isTouchEvent(event) && static_cast<QTouchEvent*>(event)->deviceType() == QTouchEvent::TouchScreen) {
+    if (isTouchEvent(event)) {
         if (m_pendingFakeTouchEventCount)
             --m_pendingFakeTouchEventCount;
         else

@@ -78,7 +78,7 @@ void View::exposeEvent(QExposeEvent* event)
 {
     if (!m_active) {
         m_active = true;
-        WKPageLoadURL(m_webView->pageRef(), WKURLCreateWithUTF8CString(m_url.toAscii().data()));
+        WKPageLoadURL(m_webView->pageRef(), WKURLCreateWithUTF8CString(m_url.toLocal8Bit().data()));
 
         m_webView->setFocused(true);
         m_webView->setVisible(true);
@@ -131,7 +131,7 @@ int main(int argc, char** argv)
 {
     QGuiApplication app(argc, argv);
 
-    View view(app.arguments().size() > 1 ? app.arguments().at(1) : QString::fromAscii("http://www.google.com"));
+    View view(app.arguments().size() > 1 ? app.arguments().at(1) : QStringLiteral("http://www.google.com"));
     view.show();
     return app.exec();
 }

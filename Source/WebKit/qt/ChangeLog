@@ -1,3 +1,33 @@
+2012-09-11  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix the build with recent Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=96283
+
+        Reviewed by Simon Hausmann.
+
+        We should not use deprecated Qt API because doing that results
+        in build failure since all the deprecated API was disabled
+        in qtbase (https://codereview.qt-project.org/#change,24890).
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::widgetsRenderingThroughCache):
+        (tst_QGraphicsWebView::setPalette):
+        (tst_QGraphicsWebView::compareCanvasToImage):
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::ownership):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::popupFocus):
+        (tst_QWebFrame::inputFieldFocus):
+        (tst_QWebFrame::evaluateWillCauseRepaint):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (Navigation):
+        (PluginCounterPage):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+        (tst_QWebView::focusInputTypes):
+        (tst_QWebView::setPalette):
+        (tst_QWebView::renderingAfterMaxAndBack):
+
 2012-09-09  Emil A Eklund  <eae@chromium.org>
 
         Rename Node::getRect/getPixelSnappedRect and remove ContainerNode::getRect

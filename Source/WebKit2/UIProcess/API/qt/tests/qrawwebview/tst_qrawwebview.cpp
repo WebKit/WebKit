@@ -82,7 +82,7 @@ public:
     void load(const QString& html)
     {
         m_frameLoaded = false;
-        WKPageLoadURL(m_webView->pageRef(), WKURLCreateWithUTF8CString(html.toAscii().data()));
+        WKPageLoadURL(m_webView->pageRef(), WKURLCreateWithUTF8CString(html.toLocal8Bit().data()));
         QVERIFY(::waitForSignal(this, SIGNAL(loaded()), 5000));
     }
 

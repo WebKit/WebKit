@@ -117,7 +117,6 @@ int main(int argc, char* argv[])
 
     WebKit::initializeTestFonts();
 
-    QApplication::setGraphicsSystem("raster");
     QApplication::setStyle(new QWindowsStyle);
     QApplication::setDesktopSettingsAware(false);
 

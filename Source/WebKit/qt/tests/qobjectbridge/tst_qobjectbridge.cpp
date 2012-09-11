@@ -2039,7 +2039,7 @@ void tst_QObjectBridge::ownership()
 {
     // test ownership
     {
-        QWeakPointer<QObject> ptr = new QObject();
+        QPointer<QObject> ptr = new QObject();
         QVERIFY(ptr);
         {
             QWebPage page;
@@ -2049,7 +2049,7 @@ void tst_QObjectBridge::ownership()
         QVERIFY(!ptr);
     }
     {
-        QWeakPointer<QObject> ptr = new QObject();
+        QPointer<QObject> ptr = new QObject();
         QVERIFY(ptr);
         QObject* before = ptr.data();
         {
@@ -2073,7 +2073,7 @@ void tst_QObjectBridge::ownership()
         QCOMPARE(qvariant_cast<QObject*>(v), (QObject *)0);
     }
     {
-        QWeakPointer<QObject> ptr = new QObject();
+        QPointer<QObject> ptr = new QObject();
         QVERIFY(ptr);
         {
             QWebPage page;
@@ -2085,7 +2085,7 @@ void tst_QObjectBridge::ownership()
     }
     {
         QObject* parent = new QObject();
-        QWeakPointer<QObject> child = new QObject(parent);
+        QPointer<QObject> child = new QObject(parent);
         QVERIFY(child);
         {
             QWebPage page;

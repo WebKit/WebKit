@@ -395,7 +395,7 @@ public:
     TestPage(QObject* parent = 0) : QWebPage(parent) {}
 
     struct Navigation {
-        QWeakPointer<QWebFrame> frame;
+        QPointer<QWebFrame> frame;
         QNetworkRequest request;
         NavigationType type;
     };
@@ -893,7 +893,7 @@ void tst_QWebPage::createPluginWithPluginsDisabled()
 class PluginCounterPage : public QWebPage {
 public:
     int m_count;
-    QWeakPointer<QObject> m_widget;
+    QPointer<QObject> m_widget;
     QObject* m_pluginParent;
     PluginCounterPage(QObject* parent = 0)
         : QWebPage(parent)
