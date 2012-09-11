@@ -1,3 +1,25 @@
+2012-09-11  Iain Merrick  <husky@chromium.org>
+
+        [chromium] Fix double call to scrollBegin() when handling scroll gesture
+        https://bugs.webkit.org/show_bug.cgi?id=95322
+
+        Reviewed by James Robinson.
+
+        WebCompositorInputHandlerImpl::handleGestureFling() calls scrollBegin() on its
+        client, then if the result is ScrollStarted, it creates a PlatformGestureCurve
+        object to handle the fling animation. This patch adds a matching scrollEnd()
+        before the animation starts.
+
+        Now using strict mocks in WebCompositorInputHandlerImplTest, which turns all
+        unexpected calls into test failures. This ensures that scrollBegin / scrollEnd
+        happen exactly when we want and at no other times.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebCompositorInputHandlerImplTest):
+        (WebKit::TEST_F):
+
 2012-09-11  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

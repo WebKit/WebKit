@@ -205,6 +205,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(gestureEvent.x, gestureEvent.y), WebInputHandlerClient::ScrollInputTypeGesture);
     switch (scrollStatus) {
     case WebInputHandlerClient::ScrollStatusStarted: {
+        m_inputHandlerClient->scrollEnd();
         m_wheelFlingCurve = PlatformGestureCurveFactory::get()->createCurve(gestureEvent.data.flingStart.sourceDevice, FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
         TRACE_EVENT_ASYNC_BEGIN1("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this, "curve", m_wheelFlingCurve->debugName());
         m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);

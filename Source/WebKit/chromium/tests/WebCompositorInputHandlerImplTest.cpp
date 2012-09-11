@@ -133,9 +133,9 @@ public:
     } while (0)
 
 protected:
-    MockWebInputHandlerClient m_mockInputHandlerClient;
+    testing::StrictMock<MockWebInputHandlerClient> m_mockInputHandlerClient;
     OwnPtr<WebCompositorInputHandlerImpl> m_inputHandler;
-    MockWebCompositorInputHandlerClient m_mockClient;
+    testing::StrictMock<MockWebCompositorInputHandlerClient> m_mockClient;
     WebGestureEvent gesture;
     WebKitTests::WebCompositorInitializer m_initializer;
 
@@ -255,10 +255,11 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingStarted)
 
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
+    EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
 
     gesture.type = WebInputEvent::GestureFlingStart;
     gesture.data.flingStart.velocityX = 10;
-    EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
@@ -328,6 +329,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimates)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->handleInputEvent(gesture);
 
     testing::Mock::VerifyAndClearExpectations(&m_mockInputHandlerClient);
@@ -412,6 +414,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->handleInputEvent(gesture);
 
     testing::Mock::VerifyAndClearExpectations(&m_mockInputHandlerClient);
@@ -491,6 +494,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->handleInputEvent(gesture);
 
     testing::Mock::VerifyAndClearExpectations(&m_mockInputHandlerClient);
