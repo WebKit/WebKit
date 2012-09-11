@@ -1,3 +1,12 @@
+2012-09-11  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a bug where kill-old-processes failed to kill clang++.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/kill-old-processes: Escape the + signs in "clang++"
+        where it is passed as a regular expression to killall.
+
 2012-09-11  Philippe Liard  <pliard@google.com>
 
         Make sure that md5sum is not setup on non-Chromium Android platforms.
