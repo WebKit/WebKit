@@ -1001,9 +1001,9 @@ bool InputHandler::openColorPopup(HTMLInputElement* element)
 
     // Check if popup already exists, close it if does.
     m_webPage->m_page->chrome()->client()->closePagePopup(0);
+
     ColorPickerClient* client = new ColorPickerClient(element->value(), m_webPage, element);
-    m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect());
-    return true;
+    return m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect());
 }
 
 void InputHandler::setInputValue(const WTF::String& value)
