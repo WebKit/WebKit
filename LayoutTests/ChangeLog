@@ -1,5 +1,19 @@
 2012-09-11  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed, rolling out r128075
+        https://bugs.webkit.org/show_bug.cgi?id=96435
+
+        * platform/chromium-mac/platform/chromium/media/controls-video-sizes-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/media/controls-audio-sizes-expected.txt: Removed.
+        * platform/chromium/media/controls-audio-sizes.html: Removed.
+        * platform/chromium/media/controls-video-sizes-expected.txt: Removed.
+        * platform/chromium/media/controls-video-sizes-padding-expected.txt: Removed.
+        * platform/chromium/media/controls-video-sizes-padding.html: Removed.
+        * platform/chromium/media/controls-video-sizes.html: Removed.
+
+2012-09-11  Adam Klein  <adamk@chromium.org>
+
         Unreviewed gardening.
 
         Suppress image failures for gradient-with-scaled-ancestor.html due to
