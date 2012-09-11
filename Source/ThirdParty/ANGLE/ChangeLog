@@ -1,3 +1,19 @@
+2012-09-10  Dean Jackson  <dino@apple.com>
+
+        [Apple] Install plist for Apple Open Source build system
+        https://bugs.webkit.org/show_bug.cgi?id=96345
+
+        Reviewed by Mark Rowe.
+
+        Apple's build system requires a couple of files that describe where
+        the 3rd party Open Source library came from, and what license it
+        uses. These files are copied into /usr/local when the project is
+        being installed.
+
+        * ANGLE.plist: Added.
+        * ANGLE.txt: Added.
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2012-09-06  Andras Becsi  <andras.becsi@nokia.com>
 
         [ANGLE] Fix the build with gcc 4.7

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0915FEC91E0097EBC7 /* ANGLE.plist */; };
+		312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */; };
 		49951C0314B7AAB30060E96E /* length_limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0214B7AAB30060E96E /* length_limits.h */; };
 		49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */; };
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
@@ -108,7 +110,32 @@
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/local/OpenSourceVersions;
+			dstSubfolderSpec = 0;
+			files = (
+				312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		312BDB0D15FECACE0097EBC7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/local/OpenSourceLicenses;
+			dstSubfolderSpec = 0;
+			files = (
+				312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		312BDB0915FEC91E0097EBC7 /* ANGLE.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ANGLE.plist; sourceTree = "<group>"; };
+		312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ANGLE.txt; sourceTree = "<group>"; };
 		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
 		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
@@ -326,6 +353,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		312BDB0715FEC8E60097EBC7 /* misc */ = {
+			isa = PBXGroup;
+			children = (
+				312BDB0915FEC91E0097EBC7 /* ANGLE.plist */,
+				312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */,
+			);
+			name = misc;
+			sourceTree = "<group>";
+		};
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -395,6 +431,7 @@
 		FB39D06E1200ED9200088E69 = {
 			isa = PBXGroup;
 			children = (
+				312BDB0715FEC8E60097EBC7 /* misc */,
 				FB39D2201200F35A00088E69 /* compiler */,
 				FB39D0841200EDEB00088E69 /* Source */,
 				5D7C59C41208C68B001C873E /* Configurations */,
@@ -688,6 +725,8 @@
 				FB39D77B1201110C00088E69 /* Headers */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
+				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
+				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
