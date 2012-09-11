@@ -1,3 +1,25 @@
+2012-09-11  Zhigang Gong  <zhigang.gong@linux.intel.com>
+
+        [EFL][WK2] Add necessary include directory in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=95173
+
+        Unreviewed build fix.
+
+        revision r126694: Move TextureMapperGL to use
+        GraphicsContext3D. modify the TextureMapperGL.h to include
+        GraphicsContext3D.h. And when enable TEXTURE_MAPPER,
+        file WebKit2/Shared/ShareableSurface.cpp will include
+        TextureMapperGL.h then depends on GraphicsContext3D.h
+        thus it need to add ANGLE director. As currently, this
+        problem only affect EFL platform, according to Gyuyoung Kim's
+        suggestion, we add this include dir into EFL private file
+        PlatformEfl.cmake. Otherwise, the build will fail.
+
+        To trigger this problem by using the following command:
+        ./Tools/Scripts/build-webkit --efl --3d-rendering --tiled-backing-store
+
+        * CMakeLists.txt:
+
 2012-09-10  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Build warning : fix warning about extended initializer lists on EWK2UnitTestBase.cpp.
