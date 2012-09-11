@@ -240,7 +240,7 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['root@android:/ # '])
         self.assertEquals(self.driver._read_prompt(time.time() + 1), None)
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['$ '])
-        self.assertRaises(AssertionError, self.driver._read_prompt, time.time() + 1)
+        self.assertEquals(self.driver._read_prompt(time.time() + 1), None)
 
     def test_command_from_driver_input(self):
         driver_input = driver.DriverInput('foo/bar/test.html', 10, 'checksum', True)

@@ -1,3 +1,22 @@
+2012-09-11  Philippe Liard  <pliard@google.com>
+
+        Make sure that md5sum is not setup on non-Chromium Android platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=96393
+
+        Reviewed by Adam Barth.
+
+        Previously md5sum was setup in ChromiumAndroidDriver's constructor
+        which is also invoked on non-Chromium Android platforms. The following patch
+        moves this logic to _startup_test() which is guaranteed to be invoked
+        only on Android.
+
+        This also updates the prompt unit test in chromium_android_unittest.py.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._setup_md5sum_and_push_data_if_needed):
+        (ChromiumAndroidDriver._setup_test):
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules

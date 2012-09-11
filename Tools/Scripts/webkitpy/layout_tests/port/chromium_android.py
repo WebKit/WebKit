@@ -309,8 +309,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
 
 class ChromiumAndroidDriver(driver.Driver):
-    _data_already_pushed_for_worker = sets.Set()
-
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._cmd_line = None
@@ -324,30 +322,28 @@ class ChromiumAndroidDriver(driver.Driver):
         self._original_governors = {}
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command = ['adb', '-s', self._device_serial]
-        self._setup_md5sum()
-        if not worker_number in ChromiumAndroidDriver._data_already_pushed_for_worker:
-            self._push_executable()
-            self._push_fonts()
-            self._push_test_resources()
-            ChromiumAndroidDriver._data_already_pushed_for_worker.add(worker_number)
 
     def __del__(self):
         self._teardown_performance()
         super(ChromiumAndroidDriver, self).__del__()
 
-    def _setup_md5sum(self):
+    def _setup_md5sum_and_push_data_if_needed(self):
         self._md5sum_path = self._port._build_path_with_configuration(self._port.get_option('configuration'), MD5SUM_DEVICE_FILE_NAME)
         assert os.path.exists(self._md5sum_path)
 
-        if self._file_exists_on_device(MD5SUM_DEVICE_PATH):
-            return
-        if not self._push_to_device(self._md5sum_path, MD5SUM_DEVICE_PATH):
-            _log.error('Could not push md5sum to device')
+        if not self._file_exists_on_device(MD5SUM_DEVICE_PATH):
+            if not self._push_to_device(self._md5sum_path, MD5SUM_DEVICE_PATH):
+                _log.error('Could not push md5sum to device')
+
+        self._push_executable()
+        self._push_fonts()
+        self._push_test_resources()
 
     def _setup_test(self):
         if self._has_setup:
             return
 
+        self._setup_md5sum_and_push_data_if_needed()
         self._has_setup = True
         self._run_adb_command(['root'])
         self._setup_performance()
