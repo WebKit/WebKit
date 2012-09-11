@@ -52,6 +52,7 @@ class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class IntRect;
+class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
 
@@ -98,7 +99,7 @@ public:
 
     void didInvalidateLayout(Frame*);
     void willLayout(Frame*);
-    void didLayout();
+    void didLayout(RenderObject*);
 
     void didScheduleStyleRecalculation(Frame*);
     void willRecalculateStyle(Frame*);

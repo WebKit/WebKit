@@ -77,6 +77,8 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createPaintData(const LayoutRect&);
 
+        static void addRectData(InspectorObject*, const LayoutRect&);
+
         static PassRefPtr<InspectorObject> createDecodeImageData(const String& imageType);
 
         static PassRefPtr<InspectorObject> createResizeImageData(bool shouldCache);

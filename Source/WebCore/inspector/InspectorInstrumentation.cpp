@@ -451,13 +451,13 @@ InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(Instrume
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCookie& cookie)
+void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCookie& cookie, RenderObject* root)
 {
     if (!cookie.first)
         return;
 
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didLayout();
+        timelineAgent->didLayout(root);
 
     if (InspectorPageAgent* pageAgent = cookie.first->inspectorPageAgent())
         pageAgent->didLayout();

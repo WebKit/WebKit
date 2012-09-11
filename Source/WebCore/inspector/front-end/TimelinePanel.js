@@ -947,7 +947,8 @@ WebInspector.TimelinePanel.prototype = {
     {
         var anchor = this._getPopoverAnchor(e.target);
 
-        if (anchor && anchor.row && anchor.row._record.type === "Paint")
+        const recordType = WebInspector.TimelineModel.RecordType;
+        if (anchor && anchor.row && (anchor.row._record.type === recordType.Paint || anchor.row._record.type === recordType.Layout))
             this._highlightRect(anchor.row._record);
         else
             this._hideRectHighlight();

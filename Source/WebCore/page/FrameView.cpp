@@ -1252,7 +1252,7 @@ void FrameView::layout(bool allowSubtree)
         m_actionScheduler->resume();
     }
 
-    InspectorInstrumentation::didLayout(cookie);
+    InspectorInstrumentation::didLayout(cookie, root);
 
     m_nestedLayoutCount--;
     if (m_nestedLayoutCount)

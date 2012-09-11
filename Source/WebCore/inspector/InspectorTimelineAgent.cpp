@@ -46,6 +46,8 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "RenderObject.h"
+#include "RenderView.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TimelineRecordFactory.h"
@@ -242,8 +244,14 @@ void InspectorTimelineAgent::willLayout(Frame* frame)
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, frame);
 }
 
-void InspectorTimelineAgent::didLayout()
+void InspectorTimelineAgent::didLayout(RenderObject* root)
 {
+    if (m_recordStack.isEmpty())
+        return;
+    LayoutRect rect = root->frame()->view()->contentsToRootView(root->absoluteBoundingBoxRect());
+    TimelineRecordEntry entry = m_recordStack.last();
+    ASSERT(entry.type == TimelineRecordType::Layout);
+    TimelineRecordFactory::addRectData(entry.data.get(), rect);
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }
 

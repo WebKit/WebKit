@@ -218,6 +218,12 @@ WebInspector.TimelinePresentationModel.createEventDivider = function(recordType,
     return eventDivider;
 }
 
+WebInspector.TimelinePresentationModel._hiddenRecords = { }
+WebInspector.TimelinePresentationModel._hiddenRecords[WebInspector.TimelineModel.RecordType.MarkDOMContent] = 1;
+WebInspector.TimelinePresentationModel._hiddenRecords[WebInspector.TimelineModel.RecordType.MarkLoad] = 1;
+WebInspector.TimelinePresentationModel._hiddenRecords[WebInspector.TimelineModel.RecordType.ScheduleStyleRecalculation] = 1;
+WebInspector.TimelinePresentationModel._hiddenRecords[WebInspector.TimelineModel.RecordType.InvalidateLayout] = 1;
+
 WebInspector.TimelinePresentationModel.prototype = {
     /**
      * @param {WebInspector.TimelinePresentationModel.Filter} filter
@@ -278,13 +284,7 @@ WebInspector.TimelinePresentationModel.prototype = {
     _innerAddRecord: function(record, parentRecord)
     {
         const recordTypes = WebInspector.TimelineModel.RecordType;
-        const hiddenRecords = [
-            recordTypes.MarkDOMContent,
-            recordTypes.MarkLoad,
-            recordTypes.ScheduleStyleRecalculation,
-            recordTypes.InvalidateLayout
-        ];
-        var isHiddenRecord = hiddenRecords.indexOf(record.type) >= 0;
+        var isHiddenRecord = record.type in WebInspector.TimelinePresentationModel._hiddenRecords;
         var connectedToOldRecord = false;
         if (record.type === recordTypes.Time)
             parentRecord = this._rootRecord;
@@ -788,7 +788,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 callSiteStackTraceLabel = WebInspector.UIString("Layout invalidated");
                 if (this.stackTrace) {
                     callStackLabel = WebInspector.UIString("Layout forced");
-                    contentHelper._appendTextRow(WebInspector.UIString("Note"), WebInspector.UIString("Forced synchronous layout is a possible performance bottlenck."));
+                    contentHelper._appendTextRow(WebInspector.UIString("Note"), WebInspector.UIString("Forced synchronous layout is a possible performance bottleneck."));
                 }
                 break;
             case recordTypes.Time:

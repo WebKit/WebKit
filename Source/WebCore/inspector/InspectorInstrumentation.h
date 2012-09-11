@@ -65,6 +65,7 @@ class InspectorTimelineAgent;
 class InstrumentingAgents;
 class KURL;
 class Node;
+class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptArguments;
@@ -144,7 +145,7 @@ public:
     static void didCancelFrame(Page*);
     static void didInvalidateLayout(Frame*);
     static InspectorInstrumentationCookie willLayout(Frame*);
-    static void didLayout(const InspectorInstrumentationCookie&);
+    static void didLayout(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScroll(Page*);
     static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
     static void didLoadXHR(const InspectorInstrumentationCookie&);
@@ -321,7 +322,7 @@ private:
     static void didCancelFrameImpl(InstrumentingAgents*);
     static void didInvalidateLayoutImpl(InstrumentingAgents*, Frame*);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*, Frame*);
-    static void didLayoutImpl(const InspectorInstrumentationCookie&);
+    static void didLayoutImpl(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScrollImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
@@ -833,12 +834,12 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willLayout(Frame
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCookie& cookie, RenderObject* root)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
-        didLayoutImpl(cookie);
+        didLayoutImpl(cookie, root);
 #endif
 }
 
