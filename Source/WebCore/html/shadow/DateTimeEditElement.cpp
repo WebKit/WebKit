@@ -80,7 +80,7 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const Step
 
 bool DateTimeEditBuilder::build(const String& formatString)
 {
-    m_editElement.resetLayout();
+    m_editElement.resetFields();
     return DateTimeFormat::parse(formatString, *this);
 }
 
@@ -282,8 +282,9 @@ DateTimeFieldElement* DateTimeEditElement::focusedField() const
 
 size_t DateTimeEditElement::focusedFieldIndex() const
 {
+    Node* const focusedFieldNode = document()->focusedNode();
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
-        if (m_fields[fieldIndex]->focused())
+        if (m_fields[fieldIndex] == focusedFieldNode)
             return fieldIndex;
     }
     return invalidFieldIndex;
@@ -343,12 +344,11 @@ void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponent
 
     DateTimeEditBuilder builder(*this, stepRange, dateValue);
     const String dateTimeFormat = builder.needSecondField() ? localizedTimeFormatText() : localizedShortTimeFormatText();
-    if (!builder.build(dateTimeFormat) || m_fields.isEmpty())
+    Node* lastChildToBeRemoved = lastChild();
+    if (!builder.build(dateTimeFormat) || m_fields.isEmpty()) {
+        lastChildToBeRemoved = lastChild();
         builder.build(builder.needSecondField() ? "HH:mm:ss" : "HH:mm");
-
-    RefPtr<SpinButtonElement> spinButton = SpinButtonElement::create(document(), *this);
-    m_spinButton = spinButton.get();
-    appendChild(spinButton);
+    }
 
     if (focusedFieldIndex != invalidFieldIndex) {
         for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
@@ -360,6 +360,18 @@ void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponent
         if (DateTimeFieldElement* field = fieldAt(std::min(focusedFieldIndex, m_fields.size() - 1)))
             field->focus();
     }
+
+    if (lastChildToBeRemoved) {
+        for (Node* childNode = firstChild(); childNode; childNode = firstChild()) {
+            removeChild(childNode);
+            if (childNode == lastChildToBeRemoved)
+                break;
+        }
+    }
+
+    RefPtr<SpinButtonElement> spinButton = SpinButtonElement::create(document(), *this);
+    m_spinButton = spinButton.get();
+    appendChild(spinButton);
 }
 
 void DateTimeEditElement::readOnlyStateChanged()
@@ -367,11 +379,9 @@ void DateTimeEditElement::readOnlyStateChanged()
     updateUIState();
 }
 
-void DateTimeEditElement::resetLayout()
+void DateTimeEditElement::resetFields()
 {
     m_fields.shrink(0);
-    m_spinButton = 0;
-    removeChildren();
 }
 
 void DateTimeEditElement::defaultEventHandler(Event* event)

@@ -1,3 +1,19 @@
+2012-09-10  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION (r127226): Calling DateTimeEditElement::layout() in focus handler should not dispatch blur event
+        https://bugs.webkit.org/show_bug.cgi?id=96232
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test for checking layout changing of multiple
+        fields time input UI in focus handler doesn't dispatch blur event.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-state-change-on-focus-or-blur-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-state-change-on-focus-or-blur.html: Added.
+
 2012-09-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Properly expose <legend> elements to ATs

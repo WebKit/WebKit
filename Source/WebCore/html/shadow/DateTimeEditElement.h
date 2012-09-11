@@ -68,7 +68,7 @@ public:
     void focusByOwner();
     void readOnlyStateChanged();
     void removeEditControlOwner() { m_editControlOwner = 0; }
-    void resetLayout();
+    void resetFields();
     void setEmptyValue(const StepRange&, const DateComponents&  dateForReadOnlyField);
     void setValueAsDate(const StepRange&, const DateComponents&);
     double valueAsDouble() const;
