@@ -1,3 +1,18 @@
+2012-09-10  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Build warning : fix warning about extended initializer lists on EWK2UnitTestBase.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=95990
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix build warning about extended initializer lists only available with
+        -std=c++0x or -std=gnu++0x.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::ewk2UnitTestBrowserViewSmartClass):
+        (EWK2UnitTest):
+        (EWK2UnitTest::EWK2UnitTestBase::EWK2UnitTestBase):
+
 2012-09-10  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96158

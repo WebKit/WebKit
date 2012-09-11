@@ -38,10 +38,16 @@ static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo
     *loadFinished = true;
 }
 
+static Ewk_View_Smart_Class ewk2UnitTestBrowserViewSmartClass()
+{
+    static Ewk_View_Smart_Class ewkViewClass = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Browser_View");
+    return ewkViewClass;
+}
+
 EWK2UnitTestBase::EWK2UnitTestBase()
     : m_ecoreEvas(0)
     , m_webView(0)
-    , m_ewkViewClass(EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Browser_View"))
+    , m_ewkViewClass(ewk2UnitTestBrowserViewSmartClass())
 {
     ewk_view_smart_class_set(&m_ewkViewClass);
 }
