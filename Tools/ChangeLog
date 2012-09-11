@@ -1,3 +1,17 @@
+2012-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [QT] Fix build with newer qmake from Qt 5
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Support for "qmake -query QMAKE_MKSPECS" was removed from qmake. Replace
+        it with the use of QT_HOST_DATA/mkspecs.
+        Based on patch by Oswald Buddenhagen <oswald.buddenhagen@nokia.com>.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName):
+        (qtMakeCommand):
+
 2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove Qt 4 syncqt, no longer needed
