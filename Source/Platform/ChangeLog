@@ -1,3 +1,16 @@
+2012-09-11  Zach Kuznia  <zork@chromium.org>
+
+        Fix FilterTypeZoom to properly call canvas->restore()
+        https://bugs.webkit.org/show_bug.cgi?id=96082
+
+        Reviewed by Adrienne Walker.
+
+        Fix zoom filter to properly indicate that it affects pixels.
+
+        * chromium/src/WebFilterOperations.cpp:
+        (WebKit::WebFilterOperations::hasFilterThatMovesPixels):
+        (WebKit::WebFilterOperations::hasFilterThatAffectsOpacity):
+
 2012-09-11  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add RTCPeerConnection::onnegotiationneeded

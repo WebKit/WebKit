@@ -116,6 +116,7 @@ bool WebFilterOperations::hasFilterThatMovesPixels() const
         switch (op.type()) {
         case WebFilterOperation::FilterTypeBlur:
         case WebFilterOperation::FilterTypeDropShadow:
+        case WebFilterOperation::FilterTypeZoom:
             return true;
         default:
             break;
@@ -132,6 +133,7 @@ bool WebFilterOperations::hasFilterThatAffectsOpacity() const
         case WebFilterOperation::FilterTypeOpacity:
         case WebFilterOperation::FilterTypeBlur:
         case WebFilterOperation::FilterTypeDropShadow:
+        case WebFilterOperation::FilterTypeZoom:
             return true;
         case WebFilterOperation::FilterTypeColorMatrix: {
             const SkScalar* matrix = op.matrix();
