@@ -1,3 +1,9 @@
+2012-09-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-09-11  Iain Merrick  <husky@chromium.org>
 
         [chromium] Fix double call to scrollBegin() when handling scroll gesture
