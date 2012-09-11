@@ -317,6 +317,12 @@ long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
     return WKBundleGetAppCacheUsageForOrigin(InjectedBundle::shared().bundle(), toWK(origin).get());
 }
 
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long bytes)
+{
+    WKRetainPtr<WKStringRef> origin(AdoptWK, WKStringCreateWithUTF8CString("http://127.0.0.1:8000"));
+    WKBundleSetApplicationCacheOriginQuota(InjectedBundle::shared().bundle(), origin.get(), bytes);
+}
+
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());

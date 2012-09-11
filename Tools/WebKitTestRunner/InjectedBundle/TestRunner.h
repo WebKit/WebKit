@@ -148,6 +148,7 @@ public:
     void clearApplicationCacheForOrigin(JSStringRef origin);
     void setAppCacheMaximumSize(uint64_t);
     long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
+    void setApplicationCacheOriginQuota(unsigned long long);
 
     // Printing
     bool isPageBoxVisible(int pageIndex);

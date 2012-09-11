@@ -47,6 +47,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
@@ -349,6 +350,12 @@ uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
 {
     RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
     return ApplicationCache::diskUsageForOrigin(origin.get());
+}
+
+void InjectedBundle::setApplicationCacheOriginQuota(const String& originString, uint64_t bytes)
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
+    cacheStorage().storeUpdatedQuotaForOrigin(origin.get(), bytes);
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
