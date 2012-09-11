@@ -112,10 +112,12 @@ if (isQt()) {
     push(@ARGV, "--gtk");
 } elsif (isEfl()) {
     push(@ARGV, "--efl");
+} elsif (isChromiumAndroid()) {
+    push(@ARGV, "--chromium-android");
 } elsif (isChromium()) {
-    push(@ARGV, "--chromium")
+    push(@ARGV, "--chromium");
 } elsif (isWinCairo()) {
-    push(@ARGV, "--wincairo")
+    push(@ARGV, "--wincairo");
 }
 
 my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);

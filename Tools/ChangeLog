@@ -1,3 +1,19 @@
+2012-09-11  Peter Beverloo  <peter@chromium.org>
+
+        Recognize the "--chromium-android" argument in run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=96369
+
+        Reviewed by Jochen Eisinger.
+
+        Chromium for the Android platform cannot determine the platform based on
+        the host itself, so we'll use the --chromium-android argument as the build
+        master passes to run-webkit-tests. Make sure the layout test runner
+        can pick the right port when doing so.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (port_options):
+
 2012-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [QT] Fix build with newer qmake from Qt 5
