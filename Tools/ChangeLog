@@ -1,3 +1,16 @@
+2012-09-11  Peter Beverloo  <peter@chromium.org>
+
+        Don't ignore .pak files when making an archive for Android
+        https://bugs.webkit.org/show_bug.cgi?id=96375
+
+        Reviewed by Jochen Eisinger.
+
+        The .pak files do need to be pushed to the device, which is currently
+        preventing the layout test runner from correctly pushing all files.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2012-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
