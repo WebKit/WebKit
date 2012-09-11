@@ -1,3 +1,16 @@
+2012-09-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix output paths on Windows
+
+        Reviewed by Tor Arne Vestbø.
+
+        BUILD_ROOT_RELATIVE_TO_OUT_PWD was calculated incorrectly Windows, resulting in an incorrect
+        DESTDIR transformation at the end of default_post.prf. The calculation should be baased no qmake
+        paths, which can use drive letters but always use forward slashes. So the use of QMAKE_DIR_SEP is
+        incorrect here and instead for the calculation we should use forward slashes.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-09-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix passing of defines from the build system

@@ -39,12 +39,12 @@ equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     !recursive_include:CONFIG += root_project_file
     BUILD_ROOT_RELATIVE_TO_OUT_PWD = .
 } else {
-    subdir_parts = $$replace(OUT_PWD, ^$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP},)
-    subdir_parts = $$split(subdir_parts, $${QMAKE_DIR_SEP})
+    subdir_parts = $$replace(OUT_PWD, ^$${ROOT_BUILD_DIR}/,)
+    subdir_parts = $$split(subdir_parts, /)
     for(subdir, subdir_parts) {
         BUILD_ROOT_RELATIVE_TO_OUT_PWD += ..
     }
-    BUILD_ROOT_RELATIVE_TO_OUT_PWD = $$join(BUILD_ROOT_RELATIVE_TO_OUT_PWD, $${QMAKE_DIR_SEP})
+    BUILD_ROOT_RELATIVE_TO_OUT_PWD = $$join(BUILD_ROOT_RELATIVE_TO_OUT_PWD, /)
 }
 
 # Try to detect if we're running under Windows cmd.exe or not
