@@ -1,3 +1,16 @@
+2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WTR needs an implementation of applicationCacheDiskUsageForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=87188
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip test cases that require an implementation of
+        applicationCacheDiskUsageForOrigin in WebKitTestRunner.
+
+        * platform/efl/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-11  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Auto width is not working for Regions

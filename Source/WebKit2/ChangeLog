@@ -1,3 +1,23 @@
+2012-09-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WTR needs an implementation of applicationCacheDiskUsageForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=87188
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle private C API to retrieve the application cache
+        usage for a specific security origin. This is needed by
+        WebKitTestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetAppCacheUsageForOrigin):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::appCacheUsageForOrigin):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-11  Zhigang Gong  <zhigang.gong@linux.intel.com>
 
         [EFL][WK2] Add necessary include directory in WebKit2

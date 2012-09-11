@@ -202,17 +202,8 @@ fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
 fast/text/zero-font-size.html
 
-# WTR needs an implementation of applicationCacheDiskUsageForOrigin
-# https://bugs.webkit.org/show_bug.cgi?id=87188
+# WTR needs an implementation of dumpApplicationCacheDelegateCallbacks
 http/tests/appcache/origin-usage.html
-http/tests/canvas/webgl/origin-clean-conformance.html
-http/tests/navigation/ping-cross-origin-from-https.html
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-loader/go-back-to-different-window-size.html
-media/restore-from-page-cache.html
-java/embedding-java-with-object.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>

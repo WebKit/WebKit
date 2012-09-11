@@ -107,6 +107,7 @@ module WTR {
         // Application Cache API
         void clearAllApplicationCaches();
         void setAppCacheMaximumSize(in unsigned long long size);
+        long long applicationCacheDiskUsageForOrigin(in DOMString origin);
 
         // Compositing testing.
         DOMString layerTreeAsText();

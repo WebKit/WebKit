@@ -307,6 +307,11 @@ void TestRunner::setAppCacheMaximumSize(uint64_t size)
     WKBundleSetAppCacheMaximumSize(InjectedBundle::shared().bundle(), size);
 }
 
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+{
+    return WKBundleGetAppCacheUsageForOrigin(InjectedBundle::shared().bundle(), toWK(origin).get());
+}
+
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());

@@ -46,6 +46,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
+#include <WebCore/ApplicationCache.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
@@ -329,6 +330,12 @@ void InjectedBundle::clearApplicationCache()
 void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
 {
     WebApplicationCacheManager::shared().setAppCacheMaximumSize(size);
+}
+
+uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
+    return ApplicationCache::diskUsageForOrigin(origin.get());
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)

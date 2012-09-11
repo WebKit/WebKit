@@ -231,6 +231,11 @@ void WKBundleSetAppCacheMaximumSize(WKBundleRef bundleRef, uint64_t size)
     toImpl(bundleRef)->setAppCacheMaximumSize(size);
 }
 
+uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundleRef, WKStringRef origin)
+{
+    return toImpl(bundleRef)->appCacheUsageForOrigin(toImpl(origin)->string());
+}
+
 int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels)
 {
     return toImpl(bundleRef)->numberOfPages(toImpl(frameRef), pageWidthInPixels, pageHeightInPixels);

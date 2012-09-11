@@ -328,7 +328,6 @@ fast/repaint/text-emphasis-h.html
 fast/replaced/invalid-object-with-fallback.html
 fast/text/midword-break-after-breakable-char.html
 http/tests/navigation/go-back-to-error-page.html
-loader/go-back-to-different-window-size.html
 userscripts/user-script-plugin-document.html
 
 # BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
@@ -741,7 +740,6 @@ http/tests/misc/submit-post-keygen.html
 http/tests/navigation/forward-and-cancel.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/navigation/post-goback-same-url.html
 http/tests/navigation/post-goback2.html
 http/tests/navigation/postredirect-frames.html
