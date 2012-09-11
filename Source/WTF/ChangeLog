@@ -1,3 +1,32 @@
+2012-09-11  Adrienne Walker  <enne@google.com>
+
+        Clang doesn't optimize away undefined OwnPtr copy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=74625
+
+        Reviewed by Anders Carlsson.
+
+        Original patch by Anders Carlsson, with a minor edit.
+
+        The publicly declared-but-not-defined copy constructor is a compiler
+        optimization-dependent landmine. Clang often fails to optimize the use
+        of this function out, leading to internal linkage errors for the missing
+        definition. gcc doesn't have this problem and optimizes that function
+        out, leading to code that inconsistently fails to link across platforms.
+
+        As a partial fix for this problem, on any compiler that supports C++11
+        move semantics, replace the bogus copy constructor with the move
+        constructors.  In the future, if all compilers support this, then the
+        copy constructor can be removed.
+
+        This still leaves other compilers that don't support move semantics
+        like Visual Studio vulnerable to linking inconsistencies.
+
+        * wtf/OwnPtr.h:
+        (OwnPtr):
+        (WTF):
+        (WTF::::OwnPtr):
+        (WTF::=):
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules
