@@ -495,10 +495,10 @@ void RenderThemeEfl::setThemePath(const String& path)
 
 String RenderThemeEfl::themePath() const
 {
-#if !NDEBUG
+#ifndef NDEBUG
     if (m_edje) {
         const char* path;
-        edje_object_file_get(o, &path, 0);
+        edje_object_file_get(m_edje, &path, 0);
         ASSERT(m_themePath == path);
     }
 #endif
