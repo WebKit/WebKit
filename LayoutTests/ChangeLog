@@ -1,3 +1,11 @@
+2012-09-12  Ojan Vafai  <ojan@chromium.org>
+
+        Update some stale expectations.
+        * platform/chromium/TestExpectations:
+        Update to match what the bots are actually seeing.
+        * platform/gtk/TestExpectations:
+        Remove tests that no longer exist.
+
 2012-09-12  Stephanie Lewis  <slewis@apple.com>
 
         fast/events/dispatch-message-string-data.html fails on mac wk2

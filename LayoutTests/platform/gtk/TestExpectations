@@ -473,7 +473,6 @@ BUGWK96534 DEBUG : accessibility/aria-checkbox-checked.html = CRASH
 BUGWK96534 DEBUG : accessibility/aria-combobox.html = CRASH
 BUGWK96534 DEBUG : accessibility/aria-controls-with-tabs.html = CRASH
 BUGWK96534 DEBUG : accessibility/aria-disabled.html = CRASH
-BUGWK96534 DEBUG : accessibility/canvas-fallback-content-2.html = CRASH
 BUGWK96534 DEBUG : accessibility/canvas-accessibilitynodeobject.html = CRASH
 BUGWK96534 DEBUG : accessibility/disabled-controls-not-focusable.html = CRASH
 BUGWK96534 DEBUG : accessibility/removed-anonymous-block-child-causes-crash.html = CRASH
@@ -1323,7 +1322,6 @@ BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
 
-BUGWK96534 RELEASE : accessibility/canvas-fallback-content-2.html = TEXT
 BUGWK96534 RELEASE : platform/gtk/accessibility/caret-browsing-text-focus.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
