@@ -3427,6 +3427,9 @@ BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS
 
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
+// Need baselines after bots cycle
+BUGLEVIW LINUX WIN SNOWLEOPARD : fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html = PASS IMAGE IMAGE+TEXT MISSING
+
 // Following tests need baselines on Win and Linux 
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-color-matrix.html = IMAGE
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.html = IMAGE

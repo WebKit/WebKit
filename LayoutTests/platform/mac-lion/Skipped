@@ -118,6 +118,7 @@ fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
 fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
+fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
 
 # This media test always failed on Lion
 # https://bugs.webkit.org/show_bug.cgi?id=86527 and <rdar://problem/11458493>

@@ -68,7 +68,7 @@ public:
     
     void repaint()
     {
-        m_object->repaintUsingContainer(m_repaintContainer, m_rect);
+        m_object->repaintUsingContainer(m_repaintContainer, enclosingIntRect(m_rect));
     }
 
     LayoutRect rect() const { return m_rect; }
@@ -89,7 +89,7 @@ public:
 
     void repaint()
     {
-        m_object->repaintUsingContainer(m_repaintContainer, m_rects);
+        m_object->repaintUsingContainer(m_repaintContainer, enclosingIntRect(m_rects));
     }
     
     RenderBlock* block() const { return toRenderBlock(m_object); }

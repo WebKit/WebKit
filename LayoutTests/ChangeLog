@@ -1,3 +1,28 @@
+2012-09-12  Levi Weintraub  <leviw@chromium.org>
+
+        Inline repainting can be off-by-one with sub-pixel enabled
+        https://bugs.webkit.org/show_bug.cgi?id=95882
+
+        Reviewed by Eric Seidel.
+
+        Test that we properly repaint selection gaps inside tables with sub-pixel offsets.
+
+        * fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt: Added.
+        * fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html: Added.
+        * platform/chromium-mac/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

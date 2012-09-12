@@ -400,9 +400,9 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         if (flags & CheckForRepaint) {
             if (view && !view->printing()) {
                 if (m_repaintStatus & NeedsFullRepaint) {
-                    renderer()->repaintUsingContainer(repaintContainer, oldRepaintRect);
+                    renderer()->repaintUsingContainer(repaintContainer, pixelSnappedIntRect(oldRepaintRect));
                     if (m_repaintRect != oldRepaintRect)
-                        renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
+                        renderer()->repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
                 } else if (shouldRepaintAfterLayout())
                     renderer()->repaintAfterLayoutIfNeeded(repaintContainer, oldRepaintRect, oldOutlineBox, &m_repaintRect, &m_outlineBox);
             }
@@ -1733,7 +1733,7 @@ void RenderLayer::scrollTo(int x, int y)
 
     // Just schedule a full repaint of our object.
     if (view && !usesCompositedScrolling())
-        renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
+        renderer()->repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
 
     // Schedule the scroll DOM event.
     if (renderer()->node())
@@ -4801,7 +4801,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)
 // Since we're only painting non-composited layers, we know that they all share the same repaintContainer.
 void RenderLayer::repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer)
 {
-    renderer()->repaintUsingContainer(repaintContainer, renderer()->clippedOverflowRectForRepaint(repaintContainer));
+    renderer()->repaintUsingContainer(repaintContainer, pixelSnappedIntRect(renderer()->clippedOverflowRectForRepaint(repaintContainer)));
 
     for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isComposited())
