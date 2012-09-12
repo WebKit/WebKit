@@ -125,10 +125,9 @@ IDBAny* IDBCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, ScriptValue& value, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::update");
-    RefPtr<SerializedScriptValue> value = prpValue;
 
     if (!m_gotValue || isKeyCursor()) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
@@ -142,17 +141,12 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
         ec = IDBDatabaseException::READ_ONLY_ERR;
         return 0;
     }
-    if (value->blobURLs().size() > 0) {
-        // FIXME: Add Blob/File/FileList support
-        ec = IDBDatabaseException::IDB_DATA_CLONE_ERR;
-        return 0;
-    }
 
     RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
     const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
     const bool usesInLineKeys = !keyPath.isNull();
     if (usesInLineKeys) {
-        RefPtr<IDBKey> keyPathKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(value, keyPath);
         if (!keyPathKey || !keyPathKey->isEqual(m_currentPrimaryKey.get())) {
             ec = IDBDatabaseException::DATA_ERR;
             return 0;

@@ -75,7 +75,7 @@ public:
     PassRefPtr<IDBAny> value();
     IDBAny* source() const;
 
-    PassRefPtr<IDBRequest> update(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, ExceptionCode&);
+    PassRefPtr<IDBRequest> update(ScriptExecutionContext*, ScriptValue&, ExceptionCode&);
     void advance(unsigned long, ExceptionCode&);
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);

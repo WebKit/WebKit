@@ -35,6 +35,7 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8IDBKey.h"
+#include "WorldContextHandle.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
@@ -85,10 +86,8 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
     return IDBKey::createInvalid();
 }
 
-namespace {
-
 template<typename T>
-bool getValueFrom(T indexOrName, v8::Handle<v8::Value>& v8Value)
+static bool getValueFrom(T indexOrName, v8::Handle<v8::Value>& v8Value)
 {
     v8::Local<v8::Object> object = v8Value->ToObject();
     if (!object->Has(indexOrName))
@@ -98,41 +97,64 @@ bool getValueFrom(T indexOrName, v8::Handle<v8::Value>& v8Value)
 }
 
 template<typename T>
-bool setValue(v8::Handle<v8::Value>& v8Object, T indexOrName, const v8::Handle<v8::Value>& v8Value)
+static bool setValue(v8::Handle<v8::Value>& v8Object, T indexOrName, const v8::Handle<v8::Value>& v8Value)
 {
     v8::Local<v8::Object> object = v8Object->ToObject();
     return object->Set(indexOrName, v8Value);
 }
 
-bool get(v8::Handle<v8::Value>& object, const String& keyPathElement)
+static bool get(v8::Handle<v8::Value>& object, const String& keyPathElement, v8::Handle<v8::Value>& result)
 {
     if (object->IsString() && keyPathElement == "length") {
         int32_t length = v8::Handle<v8::String>::Cast(object)->Length();
-        object = v8::Number::New(length);
+        result = v8::Number::New(length);
         return true;
     }
-    return object->IsObject() && getValueFrom(v8String(keyPathElement), object);
+    return object->IsObject() && getValueFrom(v8String(keyPathElement), result);
 }
 
-bool set(v8::Handle<v8::Value>& object, const String& keyPathElement, const v8::Handle<v8::Value>& v8Value)
+static bool canSet(v8::Handle<v8::Value>& object, const String& keyPathElement)
 {
-    return object->IsObject() && setValue(object, v8String(keyPathElement), v8Value);
+    return object->IsObject();
 }
 
-v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
+static bool set(v8::Handle<v8::Value>& object, const String& keyPathElement, const v8::Handle<v8::Value>& v8Value)
+{
+    return canSet(object, keyPathElement) && setValue(object, v8String(keyPathElement), v8Value);
+}
+
+static v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
 {
     v8::Handle<v8::Value> currentValue(rootValue);
-
     ASSERT(index <= keyPathElements.size());
     for (size_t i = 0; i < index; ++i) {
-        if (!get(currentValue, keyPathElements[i]))
+        v8::Handle<v8::Value> parentValue(currentValue);
+        if (!get(parentValue, keyPathElements[i], currentValue))
             return v8Undefined();
     }
 
     return currentValue;
 }
 
-v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
+static bool canInjectNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
+{
+    if (!rootValue->IsObject())
+        return false;
+
+    v8::Handle<v8::Value> currentValue(rootValue);
+
+    ASSERT(index <= keyPathElements.size());
+    for (size_t i = 0; i < index; ++i) {
+        v8::Handle<v8::Value> parentValue(currentValue);
+        const String& keyPathElement = keyPathElements[i];
+        if (!get(parentValue, keyPathElement, currentValue))
+            return canSet(parentValue, keyPathElement);
+    }
+    return true;
+}
+
+
+static v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
 {
     v8::Handle<v8::Value> currentValue(rootValue);
 
@@ -140,7 +162,7 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
     for (size_t i = 0; i < index; ++i) {
         v8::Handle<v8::Value> parentValue(currentValue);
         const String& keyPathElement = keyPathElements[i];
-        if (!get(currentValue, keyPathElement)) {
+        if (!get(parentValue, keyPathElement, currentValue)) {
             v8::Handle<v8::Object> object = v8::Object::New();
             if (!set(parentValue, keyPathElement, object))
                 return v8Undefined();
@@ -151,7 +173,41 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
     return currentValue;
 }
 
-} // anonymous namespace
+static PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& value, const String& keyPath)
+{
+    Vector<String> keyPathElements;
+    IDBKeyPathParseError error;
+    IDBParseKeyPath(keyPath, keyPathElements, error);
+    ASSERT(error == IDBKeyPathParseErrorNone);
+
+    v8::Handle<v8::Value> v8Value(value.v8Value());
+    v8::Handle<v8::Value> v8Key(getNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size()));
+    if (v8Key.IsEmpty())
+        return 0;
+    return createIDBKeyFromValue(v8Key);
+}
+
+PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& value, const IDBKeyPath& keyPath)
+{
+    IDB_TRACE("createIDBKeyFromScriptValueAndKeyPath");
+    ASSERT(!keyPath.isNull());
+
+    v8::HandleScope scope;
+    if (keyPath.type() == IDBKeyPath::ArrayType) {
+        IDBKey::KeyArray result;
+        const Vector<String>& array = keyPath.array();
+        for (size_t i = 0; i < array.size(); ++i) {
+            RefPtr<IDBKey> key = createIDBKeyFromScriptValueAndKeyPath(value, array[i]);
+            if (!key)
+                return 0;
+            result.append(key);
+        }
+        return IDBKey::createArray(result);
+    }
+
+    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    return createIDBKeyFromScriptValueAndKeyPath(value, keyPath.string());
+}
 
 static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const String& keyPath)
 {
@@ -172,6 +228,13 @@ static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<S
     return createIDBKeyFromValue(v8Key);
 }
 
+// FIXME: The only reason this exists is because we need a v8::Context and scope inside a timer. Is there a better / more general way to do this?
+ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPtr<SerializedScriptValue> prpValue)
+{
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(toV8Context(scriptContext, UseCurrentWorld));
+    return ScriptValue(prpValue->deserialize());
+}
 
 PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const IDBKeyPath& keyPath)
 {
@@ -221,6 +284,22 @@ PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDB
         return 0;
 
     return SerializedScriptValue::create(v8Value);
+}
+
+bool canInjectIDBKeyIntoScriptValue(const ScriptValue& scriptValue, const IDBKeyPath& keyPath)
+{
+    IDB_TRACE("canInjectIDBKeyIntoScriptValue");
+    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    Vector<String> keyPathElements;
+    IDBKeyPathParseError error;
+    IDBParseKeyPath(keyPath.string(), keyPathElements, error);
+    ASSERT(error == IDBKeyPathParseErrorNone);
+
+    if (!keyPathElements.size())
+        return false;
+
+    v8::Handle<v8::Value> v8Value(scriptValue.v8Value());
+    return canInjectNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1);
 }
 
 } // namespace WebCore

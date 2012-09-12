@@ -39,7 +39,7 @@ module storage {
         readonly attribute IDBKey primaryKey;
         readonly attribute IDBAny source;
 
-        [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
+        [CallWith=ScriptExecutionContext] IDBRequest update(in any value)
             raises (IDBDatabaseException);
         void advance(in unsigned long count)
             raises (IDBDatabaseException);
