@@ -1,3 +1,15 @@
+2012-09-12  Eric Seidel  <eric@webkit.org>
+
+        Sync html5lib tests with latest sources (and sort the tests alphabetically in runner.html)
+        https://bugs.webkit.org/show_bug.cgi?id=96544
+
+        Reviewed by Adam Barth.
+
+        * html5lib/resources/adoption01.dat:
+        * html5lib/resources/domjs-unsafe.dat: Added.
+        * html5lib/resources/scripted/ark.dat: Added.
+        * html5lib/runner.html:
+
 2012-09-12  Adam Klein  <adamk@chromium.org>
 
         Widen CRASH expectations for fast/replaced/border-radius-clip.html

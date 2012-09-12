@@ -192,3 +192,84 @@
 |       <svg svg>
 |         <svg tr>
 |           <svg input>
+
+#data
+<div><a><b><div><div><div><div><div><div><div><div><div><div></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <a>
+|         <b>
+|       <b>
+|         <div>
+|           <a>
+|           <div>
+|             <a>
+|             <div>
+|               <a>
+|               <div>
+|                 <a>
+|                 <div>
+|                   <a>
+|                   <div>
+|                     <a>
+|                     <div>
+|                       <a>
+|                       <div>
+|                         <a>
+|                         <div>
+|                           <div>
+
+#data
+<div><a><b><u><i><code><div></a>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <a>
+|         <b>
+|           <u>
+|             <i>
+|               <code>
+|       <u>
+|         <i>
+|           <code>
+|             <div>
+|               <a>
+
+#data
+<b><b><b><b>x</b></b></b></b>y
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <b>
+|       <b>
+|         <b>
+|           <b>
+|             "x"
+|     "y"
+
+#data
+<p><b><b><b><b><p>x
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <b>
+|         <b>
+|           <b>
+|             <b>
+|     <p>
+|       <b>
+|         <b>
+|           <b>
+|             "x"
