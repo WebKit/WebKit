@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0px; padding: 0px;" onload="runRepaintTest()">
+  <div style="width: 100px; height: 100px;"></div>
+  <svg id="svg1" xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+    <rect width="100" height="100" fill="green"/>
+    <svg id="svg2" x="100" y="100" width="300" height="300">
+      <rect width="100" height="100" fill="green"/>
+      <svg id="svg3" x="100" y="100" width="200" height="200">
+        <rect width="100" height="100" fill="green"/>
+        <svg id="svg4" x="100" y="100" width="100" height="100">
+          <rect width="100" height="100" fill="green"/>
+        </svg>
+      </svg>
+    </svg>
+  </svg>
+
+<script>
+  var zoomCount = 2;
+
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    window.postZoomCallback = executeTest;
+  }
+
+  function ctmToString(ctm) {
+    return [ ctm.a, ctm.b, ctm.c, ctm.d, ctm.e, ctm.f ].join(', ');
+  }
+
+  function executeTest() {
+    CTM1 = ctmToString(document.getElementById('svg1').getScreenCTM());
+    CTM2 = ctmToString(document.getElementById('svg2').getScreenCTM());
+    CTM3 = ctmToString(document.getElementById('svg3').getScreenCTM());
+    CTM4 = ctmToString(document.getElementById('svg4').getScreenCTM());
+
+    description("This test checks getScreenCTM() on zoomed pages.");
+
+    shouldBeEqualToString('CTM1', '1, 0, 0, 1, 0, 100');
+    shouldBeEqualToString('CTM2', '1, 0, 0, 1, 100, 200');
+    shouldBeEqualToString('CTM3', '1, 0, 0, 1, 200, 300');
+    shouldBeEqualToString('CTM4', '1, 0, 0, 1, 300, 400');
+    debug('');
+  }
+
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
+<script src="../resources/testPageZoom.js"></script>
+
+</body>
+</html>

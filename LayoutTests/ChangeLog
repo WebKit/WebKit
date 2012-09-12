@@ -1,3 +1,13 @@
+2012-09-12  Florin Malita  <fmalita@chromium.org>
+
+        getScreenCTM returns different values depending on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=96361
+
+        Reviewed by Dirk Schulze.
+
+        * svg/zoom/page/zoom-get-screen-ctm-expected.txt: Added.
+        * svg/zoom/page/zoom-get-screen-ctm.html: Added.
+
 2012-09-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed gardening. These tests should have been unskipped when fixed.

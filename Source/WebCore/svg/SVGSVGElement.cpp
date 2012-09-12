@@ -438,16 +438,21 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
     } else if (mode == SVGLocatable::ScreenScope) {
         if (RenderObject* renderer = this->renderer()) {
             FloatPoint location;
-            
+            float zoomFactor = 1;
+
             // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
             // to map an element from SVG viewport coordinates to CSS box coordinates.
             // RenderSVGRoot's localToAbsolute method expects CSS box coordinates.
-            if (renderer->isSVGRoot())
+            // We also need to adjust for the zoom level factored into CSS coordinates (bug #96361).
+            if (renderer->isSVGRoot()) {
                 location = toRenderSVGRoot(renderer)->localToBorderBoxTransform().mapPoint(location);
-            
+                zoomFactor = 1 / renderer->style()->effectiveZoom();
+            }
+
             // Translate in our CSS parent coordinate space
             // FIXME: This doesn't work correctly with CSS transforms.
             location = renderer->localToAbsolute(location, false, true);
+            location.scale(zoomFactor, zoomFactor);
 
             // Be careful here! localToBorderBoxTransform() included the x/y offset coming from the viewBoxToViewTransform(),
             // so we have to subtract it here (original cause of bug #27183)
@@ -456,6 +461,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             // Respect scroll offset.
             if (FrameView* view = document()->view()) {
                 LayoutSize scrollOffset = view->scrollOffset();
+                scrollOffset.scale(zoomFactor);
                 transform.translate(-scrollOffset.width(), -scrollOffset.height());
             }
         }
