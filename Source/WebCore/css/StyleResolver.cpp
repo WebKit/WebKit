@@ -380,6 +380,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_sameOriginOnly(false)
     , m_distributedToInsertionPoint(false)
+    , m_hasUnknownPseudoElements(false)
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
@@ -1102,7 +1103,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
 #if ENABLE(STYLE_SCOPED)
                 && (!options.scope || options.scope->treeScope() != treeScope)
 #endif
-                && !m_checker.hasUnknownPseudoElements()) {
+                && !m_hasUnknownPseudoElements) {
 
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
@@ -2400,7 +2401,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
 inline bool StyleResolver::checkSelector(const RuleData& ruleData, const ContainerNode* scope)
 {
     m_dynamicPseudo = NOPSEUDO;
-    m_checker.clearHasUnknownPseudoElements();
+    m_hasUnknownPseudoElements = false;
 
     if (ruleData.hasFastCheckableSelector()) {
         // We know this selector does not include any pseudo elements.
@@ -2423,7 +2424,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
     context.elementStyle = style();
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
-    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo);
+    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo, m_hasUnknownPseudoElements);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_checker.pseudoStyle() != NOPSEUDO && m_checker.pseudoStyle() != m_dynamicPseudo)
@@ -2436,7 +2437,7 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
     if (!regionSelector || !regionElement)
         return false;
 
-    m_checker.clearHasUnknownPseudoElements();
+    m_hasUnknownPseudoElements = false;
     m_checker.setPseudoStyle(NOPSEUDO);
 
     for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
