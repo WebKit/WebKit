@@ -84,6 +84,45 @@ function getFilterParameters(s)
     return paramList;
 }
 
+function customFilterParameterMatch(param1, param2, tolerance)
+{
+    if (param1.type != "parameter") {
+        // Checking for shader uris and other keywords. They need to be exactly the same.
+        return (param1.type == param2.type && param1.value == param2.value);
+    }
+
+    if (param1.name != param2.name || param1.value.length != param2.value.length)
+        return false;
+
+    for (var j = 0; j < param1.value.length; ++j) {
+        var val1 = param1.value[j],
+            val2 = param2.value[j];
+        if (val1.type != val2.type)
+            return false;
+        switch (val1.type) {
+        case "function":
+            if (val1.name != val2.name)
+                return false;
+            for (var t = 0; t < val1.arguments.length; ++t) {
+                if (val1.arguments[t].type != "number" || val2.arguments[t].type != "number")
+                    return false;
+                if (!isCloseEnough(val1.arguments[t].value, val2.arguments[t].value, tolerance))
+                    return false;
+            }
+            break;
+        case "number":
+            if (!isCloseEnough(val1.value, val2.value, tolerance))
+                return false;
+            break;
+        default:
+            console.error("Unsupported parameter type ", val1.type);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function filterParametersMatch(paramList1, paramList2, tolerance)
 {
     if (paramList1.length != paramList2.length)
@@ -93,21 +132,8 @@ function filterParametersMatch(paramList1, paramList2, tolerance)
             param2 = paramList2[i];
         if (typeof param1 == "object") {
             // This is a custom filter parameter.
-            if (param1.type != "parameter") {
-                // Checking for shader uris and other keywords. They need to be exactly the same.
-                if (param1.type != param2.type
-                    || param1.value != param2.value)
-                    return false;
-                continue;
-            }
-            if (param1.name != param2.name
-                || param1.value.length != param2.value.length)
+            if (!customFilterParameterMatch(param1, param2, tolerance))
                 return false;
-            // For now we only support floats.
-            for (var j = 0; j < param1.value.length; ++j) {
-                if (!isCloseEnough(param1.value[j].value, param2.value[j].value, tolerance))
-                    return false;
-            }
             continue;
         }
         var match = isCloseEnough(param1, param2, tolerance);

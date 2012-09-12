@@ -1,3 +1,24 @@
+2012-09-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Implement transform parameter animations for CSS Custom Filters
+        https://bugs.webkit.org/show_bug.cgi?id=94980
+
+        Reviewed by Dean Jackson.
+
+        Based on patch from Joshua Netterfield <jnetterfield@rim.com>.
+
+        Added test transform animations in css3/filters/custom/custom-filter-transform-animation.html.
+
+        * animations/resources/animation-test-helpers.js:
+        (customFilterParameterMatch): Extracted the parameter matching from filterParametersMatch and added function parameters matching.
+        This should work for all functions that have number parameters, ie. arrays, mat4 functions.
+        
+        (filterParametersMatch):
+        * css3/filters/custom/custom-filter-transforms-animation-expected.txt: Added.
+        * css3/filters/custom/custom-filter-transforms-animation.html: Added.
+        * css3/filters/resources/custom-filter-parser.js: Fixed function parsing.
+        (TokenStream.prototype.skip):
+
 2012-09-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: svg:image not accessible

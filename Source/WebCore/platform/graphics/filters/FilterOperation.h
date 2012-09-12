@@ -29,6 +29,7 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "Color.h"
+#include "LayoutTypes.h"
 #include "Length.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -78,7 +79,17 @@ public:
     virtual bool operator==(const FilterOperation&) const = 0;
     bool operator!=(const FilterOperation& o) const { return !(*this == o); }
 
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, bool /*blendToPassthrough*/ = false) { return 0; }
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, bool /*blendToPassthrough*/ = false)
+    { 
+        ASSERT(!blendingNeedsRendererSize());
+        return 0; 
+    }
+
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, const LayoutSize&, bool /*blendToPassthrough*/ = false)
+    { 
+        ASSERT(blendingNeedsRendererSize());
+        return 0; 
+    }
 
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const FilterOperation& o) const { return o.getOperationType() == m_type; }
@@ -89,6 +100,8 @@ public:
     virtual bool affectsOpacity() const { return false; }
     // True if the the value of one pixel can affect the value of another pixel under this operation, such as blur.
     virtual bool movesPixels() const { return false; }
+    // True if the filter needs the size of the box in order to calculate the animations.
+    virtual bool blendingNeedsRendererSize() const { return false; }
 
 protected:
     FilterOperation(OperationType type)

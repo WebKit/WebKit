@@ -46,14 +46,26 @@ public:
     {
         return adoptRef(new CustomFilterTransformParameter(name));
     }
-    
-    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter*, double)
+
+    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter* fromParameter, double progress, const LayoutSize& size)
     {
-        // FIXME: Implement animations support.
-        // https://bugs.webkit.org/show_bug.cgi?id=94980
-        return this;
+        if (!fromParameter || !isSameType(*fromParameter))
+            return this;
+
+        const CustomFilterTransformParameter* fromTransformParameter = static_cast<const CustomFilterTransformParameter*>(fromParameter);
+        const TransformOperations& from = fromTransformParameter->operations();
+        const TransformOperations& to = operations();
+        if (from == to)
+            return this;
+       
+        RefPtr<CustomFilterTransformParameter> result = CustomFilterTransformParameter::create(name());
+        if (from.size() && to.size())
+            result->setOperations(to.blend(from, progress, size));
+        else
+            result->setOperations(progress > 0.5 ? to : from);
+        return result;
     }
-    
+
     virtual bool operator==(const CustomFilterParameter& o) const
     {
         if (!isSameType(o))

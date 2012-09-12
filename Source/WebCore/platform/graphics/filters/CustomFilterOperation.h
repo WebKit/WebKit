@@ -33,6 +33,7 @@
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
+#include "LayoutTypes.h"
 
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,8 @@ class CustomFilterParameter;
 typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
 
 bool customFilterParametersEqual(const CustomFilterParameterList&, const CustomFilterParameterList&);
-void blendCustomFilterParameters(const CustomFilterParameterList& listFrom, const CustomFilterParameterList& listTo, double progress, CustomFilterParameterList& resultList);
+void blendCustomFilterParameters(const CustomFilterParameterList& listFrom, const CustomFilterParameterList& listTo, 
+                                 double progress, const LayoutSize&, CustomFilterParameterList& resultList);
 
 class CustomFilterOperation : public FilterOperation {
 public:
@@ -79,8 +81,9 @@ public:
     
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
+    virtual bool blendingNeedsRendererSize() const { return true; }
     
-    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, const LayoutSize&, bool blendToPassthrough = false);
 private:
     virtual bool operator==(const FilterOperation& o) const
     {

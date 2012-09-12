@@ -120,44 +120,22 @@ static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const 
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
 {
-    TransformOperations result;
-
-    // If we have a transform function list, use that to do a per-function animation. Otherwise do a Matrix animation
-    if (anim->isTransformFunctionListValid()) {
-        unsigned fromSize = from.operations().size();
-        unsigned toSize = to.operations().size();
-        unsigned size = max(fromSize, toSize);
-        for (unsigned i = 0; i < size; i++) {
-            RefPtr<TransformOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
-            RefPtr<TransformOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-            RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : PassRefPtr<TransformOperation>(0));
-            if (blendedOp)
-                result.operations().append(blendedOp);
-            else {
-                RefPtr<TransformOperation> identityOp = IdentityTransformOperation::create();
-                if (progress > 0.5)
-                    result.operations().append(toOp ? toOp : identityOp);
-                else
-                    result.operations().append(fromOp ? fromOp : identityOp);
-            }
-        }
-    } else {
-        // Convert the TransformOperations into matrices
-        LayoutSize size = anim->renderer()->isBox() ? toRenderBox(anim->renderer())->borderBoxRect().size() : LayoutSize();
-        TransformationMatrix fromT;
-        TransformationMatrix toT;
-        from.apply(size, fromT);
-        to.apply(size, toT);
-
-        toT.blend(fromT, progress);
-
-        // Append the result
-        result.operations().append(Matrix3DTransformOperation::create(toT));
-    }
-    return result;
+    if (anim->isTransformFunctionListValid())
+        return to.blendByMatchingOperations(from, progress);
+    return to.blendByUsingMatrixInterpolation(from, progress, anim->renderer()->isBox() ? toRenderBox(anim->renderer())->borderBoxRect().size() : LayoutSize());
 }
 
 #if ENABLE(CSS_FILTERS)
+static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* anim, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
+{
+    ASSERT(toOp);
+    if (toOp->blendingNeedsRendererSize()) {
+        LayoutSize size = anim->renderer()->isBox() ? toRenderBox(anim->renderer())->borderBoxRect().size() : LayoutSize();
+        return toOp->blend(fromOp, progress, size, blendToPassthrough);
+    }
+    return toOp->blend(fromOp, progress, blendToPassthrough);
+}
+
 static inline FilterOperations blendFunc(const AnimationBase* anim, const FilterOperations& from, const FilterOperations& to, double progress)
 {
     FilterOperations result;
@@ -170,7 +148,7 @@ static inline FilterOperations blendFunc(const AnimationBase* anim, const Filter
         for (size_t i = 0; i < size; i++) {
             RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
             RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-            RefPtr<FilterOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : PassRefPtr<FilterOperation>(0));
+            RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(anim, fromOp.get(), toOp.get(), progress) : (fromOp ? blendFunc(anim, 0, fromOp.get(), progress, true) : 0);
             if (blendedOp)
                 result.operations().append(blendedOp);
             else {

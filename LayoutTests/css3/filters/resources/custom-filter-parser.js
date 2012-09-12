@@ -86,7 +86,7 @@ TokenStream.prototype.ahead = function()
 // Skips the current token only if it matches the "typeMatcher". Otherwise it throws an error.
 TokenStream.prototype.skip = function(typeMatcher)
 {
-    if (!typeMatcher || this.ahead().isA(typeMatcher)) {
+    if (!typeMatcher || this.current().isA(typeMatcher)) {
         var token = this.current();
         ++this.tokenIndex;
         return token;

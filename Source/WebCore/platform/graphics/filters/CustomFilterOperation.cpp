@@ -64,7 +64,8 @@ static bool checkCustomFilterParametersOrder(const CustomFilterParameterList& pa
 }
 #endif
 
-void blendCustomFilterParameters(const CustomFilterParameterList& fromList, const CustomFilterParameterList& toList, double progress, CustomFilterParameterList& resultList)
+void blendCustomFilterParameters(const CustomFilterParameterList& fromList, const CustomFilterParameterList& toList, 
+                                 double progress, const LayoutSize& size, CustomFilterParameterList& resultList)
 {
     // This method expects both lists to be sorted by parameter name and the result list is also sorted.
     ASSERT(checkCustomFilterParametersOrder(fromList));
@@ -74,7 +75,7 @@ void blendCustomFilterParameters(const CustomFilterParameterList& fromList, cons
         CustomFilterParameter* paramFrom = fromList.at(fromListIndex).get();
         CustomFilterParameter* paramTo = toList.at(toListIndex).get();
         if (paramFrom->name() == paramTo->name()) {
-            resultList.append(paramTo->blend(paramFrom, progress));
+            resultList.append(paramTo->blend(paramFrom, progress, size));
             ++fromListIndex;
             ++toListIndex;
             continue;
@@ -111,7 +112,7 @@ CustomFilterOperation::~CustomFilterOperation()
 {
 }
 
-PassRefPtr<FilterOperation> CustomFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+PassRefPtr<FilterOperation> CustomFilterOperation::blend(const FilterOperation* from, double progress, const LayoutSize& size, bool blendToPassthrough)
 {
     // FIXME: There's no way to decide what is the "passthrough filter" for shaders using the current CSS Syntax.
     // https://bugs.webkit.org/show_bug.cgi?id=84903
@@ -128,7 +129,7 @@ PassRefPtr<FilterOperation> CustomFilterOperation::blend(const FilterOperation* 
         return this;
     
     CustomFilterParameterList animatedParameters;
-    blendCustomFilterParameters(fromOp->m_parameters, m_parameters, progress, animatedParameters);
+    blendCustomFilterParameters(fromOp->m_parameters, m_parameters, progress, size, animatedParameters);
     return CustomFilterOperation::create(m_program, animatedParameters, m_meshRows, m_meshColumns, m_meshBoxType, m_meshType);
 }
 

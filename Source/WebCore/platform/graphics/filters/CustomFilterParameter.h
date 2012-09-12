@@ -56,7 +56,7 @@ public:
     
     bool isSameType(const CustomFilterParameter& other) const { return parameterType() == other.parameterType(); }
     
-    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter*, double progress) = 0;
+    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter*, double progress, const LayoutSize&) = 0;
     virtual bool operator==(const CustomFilterParameter&) const = 0;
     bool operator!=(const CustomFilterParameter& o) const { return !(*this == o); }
 protected:

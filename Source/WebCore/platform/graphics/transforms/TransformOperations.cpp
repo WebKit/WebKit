@@ -23,6 +23,10 @@
 #include "TransformOperations.h"
 
 #include "IdentityTransformOperation.h"
+#include "Matrix3DTransformOperation.h"
+#include <algorithm>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -59,6 +63,60 @@ bool TransformOperations::operationsMatch(const TransformOperations& other) cons
             return false;
     }
     return true;
+}
+
+TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const double& progress) const
+{
+    TransformOperations result;
+
+    unsigned fromSize = from.operations().size();
+    unsigned toSize = operations().size();
+    unsigned size = max(fromSize, toSize);
+    for (unsigned i = 0; i < size; i++) {
+        RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : 0;
+        RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : 0;
+        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? fromOperation->blend(0, progress, true) : 0);
+        if (blendedOperation)
+            result.operations().append(blendedOperation);
+        else {
+            RefPtr<TransformOperation> identityOperation = IdentityTransformOperation::create();
+            if (progress > 0.5)
+                result.operations().append(toOperation ? toOperation : identityOperation);
+            else
+                result.operations().append(fromOperation ? fromOperation : identityOperation);
+        }
+    }
+
+    return result;
+}
+
+TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const TransformOperations& from, double progress, const LayoutSize& size) const
+{
+    TransformOperations result;
+
+    // Convert the TransformOperations into matrices
+    TransformationMatrix fromTransform;
+    TransformationMatrix toTransform;
+    from.apply(size, fromTransform);
+    apply(size, toTransform);
+
+    toTransform.blend(fromTransform, progress);
+
+    // Append the result
+    result.operations().append(Matrix3DTransformOperation::create(toTransform));
+
+    return result;
+}
+
+TransformOperations TransformOperations::blend(const TransformOperations& from, double progress, const LayoutSize& size) const
+{
+    if (from == *this)
+        return *this;
+
+    if (from.size() && from.operationsMatch(*this))
+        return blendByMatchingOperations(from, progress);
+
+    return blendByUsingMatrixInterpolation(from, progress, size);
 }
 
 } // namespace WebCore

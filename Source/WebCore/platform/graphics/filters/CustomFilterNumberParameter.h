@@ -48,7 +48,7 @@ public:
 
     void addValue(double value) { m_data.append(value); }
     
-    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter* from, double progress)
+    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter* from, double progress, const LayoutSize&)
     {
         if (!from || !isSameType(*from))
             return this;

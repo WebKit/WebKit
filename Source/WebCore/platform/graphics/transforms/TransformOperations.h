@@ -25,6 +25,7 @@
 #ifndef TransformOperations_h
 #define TransformOperations_h
 
+#include "LayoutTypes.h"
 #include "TransformOperation.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -70,6 +71,10 @@ public:
 
     size_t size() const { return m_operations.size(); }
     const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
+
+    TransformOperations blendByMatchingOperations(const TransformOperations& from, const double& progress) const;
+    TransformOperations blendByUsingMatrixInterpolation(const TransformOperations& from, double progress, const LayoutSize&) const;
+    TransformOperations blend(const TransformOperations& from, double progress, const LayoutSize&) const;
 
 private:
     Vector<RefPtr<TransformOperation> > m_operations;
