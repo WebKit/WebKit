@@ -1,3 +1,17 @@
+2012-09-12  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitdirs: fix uname version handling for cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=96436
+
+        Reviewed by Jon Honeycutt.
+
+        Newer versions of cygwin embed an additional version string
+        inside parentheses, so you get "1.7.16(0.249/5/3)" instead of "1.7.16".
+        Update the code to handle that.
+
+        * Scripts/webkitdirs.pm:
+        (setupAppleWinEnv):
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r128338): Broke Windows build

@@ -1600,9 +1600,9 @@ sub setupAppleWinEnv()
 
         # FIXME: We should remove this explicit version check for cygwin once we stop supporting Cygwin 1.7.9 or older versions. 
         # https://bugs.webkit.org/show_bug.cgi?id=85791
-        my $currentCygwinVersion = version->parse(`uname -r`);
-        my $firstCygwinVersionWithoutTTYSupport = version->parse("1.7.10");
-        if ($currentCygwinVersion < $firstCygwinVersionWithoutTTYSupport) {
+        my $uname_version = (POSIX::uname())[2];
+        $uname_version =~ s/\(.*\)//;  # Remove the trailing cygwin version, if any.
+        if (version->parse($uname_version) < version->parse("1.7.10")) {
             # Setting the environment variable 'CYGWIN' to 'tty' makes cygwin enable extra support (i.e., termios)
             # for UNIX-like ttys in the Windows console
             $variablesToSet{CYGWIN} = "tty" unless $ENV{CYGWIN};
