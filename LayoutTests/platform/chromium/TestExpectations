@@ -2653,6 +2653,8 @@ BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = 
 // Swidth DRT to high DPI output mode, which temporarily breaks IMAGE
 BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-icon-hidpi.html = IMAGE
 BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
+BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-icon-hidpi.html = IMAGE
+BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
 
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
@@ -3618,6 +3620,7 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 BUGWK96441 WIN DEBUG : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
+BUGWK96441 : platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
 
 BUGWK96041 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = PASS TEXT
 

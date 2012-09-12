@@ -226,6 +226,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
+    settings->setApplyDefaultDeviceScaleFactorInCompositor(forceCompositingMode);
 
     // Fixed values.
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();

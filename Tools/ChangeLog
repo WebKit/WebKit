@@ -1,3 +1,18 @@
+2012-09-12  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Add a virtual test suite for fast/hidpi
+        https://bugs.webkit.org/show_bug.cgi?id=90192
+
+        Reviewed by Dirk Pranke.
+
+        Add a virtual test suite to make sure the pixel tests in fast/hidpi give the same result
+        on the hardware accelerated path as the software path.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-09-12  Adam Klein  <adamk@chromium.org>
 
         [chromium] Add content_browsertests to the flakiness dashboard
