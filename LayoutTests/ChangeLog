@@ -1,3 +1,10 @@
+2012-09-12  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updated test expectations following r128346.
+
+        * platform/chromium-linux/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+
 2012-09-12  Adam Klein  <adamk@chromium.org>
 
         Unreviewed gardening.
