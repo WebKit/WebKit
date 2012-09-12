@@ -24,6 +24,12 @@
 #include "Credential.h"
 #include "SQLiteDatabase.h"
 
+namespace BlackBerry {
+namespace Platform {
+class CertMgrWrapper;
+}
+}
+
 namespace WebCore {
 
 class KURL;
@@ -53,6 +59,8 @@ private:
     String encryptedString(const String& plainText) const;
     String decryptedString(const String& cipherText) const;
 
+    BlackBerry::Platform::CertMgrWrapper* certMgrWrapper();
+
     SQLiteDatabase m_database;
     SQLiteStatement* m_addLoginStatement;
     SQLiteStatement* m_updateLoginStatement;
@@ -65,7 +73,7 @@ private:
     SQLiteStatement* m_getNeverRememberStatement;
     SQLiteStatement* m_removeNeverRememberStatement;
 
-    bool m_usingCertManager;
+    BlackBerry::Platform::CertMgrWrapper* m_certMgrWrapper;
 };
 
 CredentialBackingStore& credentialBackingStore();

@@ -69,12 +69,14 @@ CredentialBackingStore::CredentialBackingStore()
     , m_hasNeverRememberStatement(0)
     , m_getNeverRememberStatement(0)
     , m_removeNeverRememberStatement(0)
-    , m_usingCertManager(BlackBerry::Platform::CertMgrWrapper::instance()->isReady())
+    , m_certMgrWrapper(0)
 {
 }
 
 CredentialBackingStore::~CredentialBackingStore()
 {
+    delete m_certMgrWrapper;
+    m_certMgrWrapper = 0;
     delete m_addLoginStatement;
     m_addLoginStatement = 0;
     delete m_updateLoginStatement;
@@ -184,17 +186,17 @@ bool CredentialBackingStore::addLogin(const KURL& url, const ProtectionSpace& pr
     m_addLoginStatement->bindText(5, protectionSpace.realm());
     m_addLoginStatement->bindInt(6, static_cast<int>(protectionSpace.authenticationScheme()));
     m_addLoginStatement->bindText(7, credential.user());
-    m_addLoginStatement->bindBlob(8, m_usingCertManager ? "" : encryptedString(credential.password()));
+    m_addLoginStatement->bindBlob(8, certMgrWrapper()->isReady() ? "" : encryptedString(credential.password()));
 
     int result = m_addLoginStatement->step();
     m_addLoginStatement->reset();
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultDone, false,
         "Failed to add login info into table logins - %i", result);
 
-    if (!m_usingCertManager)
+    if (!certMgrWrapper()->isReady())
         return true;
     unsigned hash = hashCredentialInfo(url.string(), protectionSpace, credential.user());
-    return BlackBerry::Platform::CertMgrWrapper::instance()->savePassword(hash, encryptedString(credential.password()).latin1().data());
+    return certMgrWrapper()->savePassword(hash, encryptedString(credential.password()).latin1().data());
 }
 
 bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace& protectionSpace, const Credential& credential)
@@ -206,7 +208,7 @@ bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace&
         return false;
 
     m_updateLoginStatement->bindText(1, credential.user());
-    m_updateLoginStatement->bindBlob(2, m_usingCertManager ? "" : encryptedString(credential.password()));
+    m_updateLoginStatement->bindBlob(2, certMgrWrapper()->isReady() ? "" : encryptedString(credential.password()));
     m_updateLoginStatement->bindText(3, url.string());
     m_updateLoginStatement->bindText(4, protectionSpace.host());
     m_updateLoginStatement->bindInt(5, protectionSpace.port());
@@ -219,10 +221,10 @@ bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace&
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultDone, false,
         "Failed to update login info in table logins - %i", result);
 
-    if (!m_usingCertManager)
+    if (!certMgrWrapper()->isReady())
         return true;
     unsigned hash = hashCredentialInfo(url.string(), protectionSpace, credential.user());
-    return BlackBerry::Platform::CertMgrWrapper::instance()->savePassword(hash, encryptedString(credential.password()).latin1().data());
+    return certMgrWrapper()->savePassword(hash, encryptedString(credential.password()).latin1().data());
 }
 
 bool CredentialBackingStore::hasLogin(const KURL& url, const ProtectionSpace& protectionSpace)
@@ -267,18 +269,18 @@ Credential CredentialBackingStore::getLogin(const ProtectionSpace& protectionSpa
 
     int result = m_getLoginStatement->step();
     String username = m_getLoginStatement->getColumnText(0);
-    String password = m_usingCertManager ? "" : m_getLoginStatement->getColumnBlobAsString(1);
+    String password = certMgrWrapper()->isReady() ? "" : m_getLoginStatement->getColumnBlobAsString(1);
     String url = m_getLoginStatement->getColumnText(2);
     m_getLoginStatement->reset();
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultRow, Credential(),
         "Failed to execute select login info from table logins in getLogin - %i", result);
 
-    if (!m_usingCertManager)
+    if (!certMgrWrapper()->isReady())
         return Credential(username, decryptedString(password), CredentialPersistencePermanent);
 
     unsigned hash = hashCredentialInfo(url, protectionSpace, username);
     std::string passwordBlob;
-    if (!BlackBerry::Platform::CertMgrWrapper::instance()->getPassword(hash, passwordBlob))
+    if (!certMgrWrapper()->getPassword(hash, passwordBlob))
         return Credential();
     return Credential(username, decryptedString(passwordBlob.c_str()), CredentialPersistencePermanent);
 }
@@ -295,7 +297,7 @@ Credential CredentialBackingStore::getLogin(const KURL& url)
 
     int result = m_getLoginByURLStatement->step();
     String username = m_getLoginByURLStatement->getColumnText(0);
-    String password = m_usingCertManager ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
+    String password = certMgrWrapper()->isReady() ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
     String host = m_getLoginByURLStatement->getColumnText(2);
     int port = m_getLoginByURLStatement->getColumnInt(3);
     int serviceType = m_getLoginByURLStatement->getColumnInt(4);
@@ -305,14 +307,14 @@ Credential CredentialBackingStore::getLogin(const KURL& url)
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultRow, Credential(),
         "Failed to execute select login info from table logins in getLoginByURL - %i", result);
 
-    if (!m_usingCertManager)
+    if (!certMgrWrapper()->isReady())
         return Credential(username, decryptedString(password), CredentialPersistencePermanent);
 
     ProtectionSpace protectionSpace(host, port, static_cast<ProtectionSpaceServerType>(serviceType),
                                     realm, static_cast<ProtectionSpaceAuthenticationScheme>(authenticationScheme));
     unsigned hash = hashCredentialInfo(url, protectionSpace, username);
     std::string passwordBlob;
-    if (!BlackBerry::Platform::CertMgrWrapper::instance()->getPassword(hash, passwordBlob))
+    if (!certMgrWrapper()->getPassword(hash, passwordBlob))
         return Credential();
     return Credential(username, decryptedString(passwordBlob.c_str()), CredentialPersistencePermanent);
 }
@@ -468,6 +470,15 @@ String CredentialBackingStore::decryptedString(const String& cipherText) const
     BlackBerry::Platform::Encryptor::decryptString(std::string(cipherText.latin1().data()), &plainText);
     return String(plainText.c_str());
 }
+
+BlackBerry::Platform::CertMgrWrapper* CredentialBackingStore::certMgrWrapper()
+{
+    if (!m_certMgrWrapper)
+        m_certMgrWrapper = new BlackBerry::Platform::CertMgrWrapper();
+
+    return m_certMgrWrapper;
+}
+
 
 } // namespace WebCore
 
