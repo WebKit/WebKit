@@ -1,3 +1,17 @@
+2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to build with "make release" and "make debug" on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96488
+
+        Reviewed by Tor Arne Vestbø.
+
+        A "make debug" is passed through recursively and currently it aborts at Makefile.DerivedSources
+        because there are no such targets. We want the generated sources to be independent from release
+        or debug build configurations, so it is sufficient to provide fake debug and release targets that
+        redirect to the same general-purpose target (first) of creating the derived sources.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-09-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL] Make DumpRenderTree smarter at finding the fonts

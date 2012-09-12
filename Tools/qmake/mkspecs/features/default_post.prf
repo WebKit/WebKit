@@ -68,6 +68,13 @@ contains(TEMPLATE, derived) {
 
     CONFIG -= debug_and_release
 
+    fake_debug.target = debug
+    fake_debug.depends = first
+    QMAKE_EXTRA_TARGETS += fake_debug
+    fake_release.target = release
+    fake_release.depends = first
+    QMAKE_EXTRA_TARGETS += fake_release
+
     for(generator, GENERATORS) {
         eval($${generator}.CONFIG = target_predeps no_link)
         eval($${generator}.dependency_type = TYPE_C)
