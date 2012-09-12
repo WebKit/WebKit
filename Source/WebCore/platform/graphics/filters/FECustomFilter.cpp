@@ -329,6 +329,9 @@ void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
     m_context->useProgram(m_compiledProgram->program());
     
     if (m_compiledProgram->samplerLocation() != -1) {
+        // We should be binding the DOM element texture sampler only if the author is using the CSS mix function.
+        ASSERT(m_validatedProgram->programInfo().programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
+
         m_context->activeTexture(GraphicsContext3D::TEXTURE0);
         m_context->uniform1i(m_compiledProgram->samplerLocation(), 0);
 #if !PLATFORM(BLACKBERRY)

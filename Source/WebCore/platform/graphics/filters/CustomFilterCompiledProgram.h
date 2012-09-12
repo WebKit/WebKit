@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
+#include "CustomFilterProgramInfo.h"
 #include "GraphicsContext3D.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -42,9 +43,9 @@ class CustomFilterGlobalContext;
 
 class CustomFilterCompiledProgram: public RefCounted<CustomFilterCompiledProgram> {
 public:
-    static PassRefPtr<CustomFilterCompiledProgram> create(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader)
+    static PassRefPtr<CustomFilterCompiledProgram> create(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader, CustomFilterProgramType programType)
     {
-        return adoptRef(new CustomFilterCompiledProgram(context, validatedVertexShader, validatedFragmentShader));
+        return adoptRef(new CustomFilterCompiledProgram(context, validatedVertexShader, validatedFragmentShader, programType));
     }
     
     ~CustomFilterCompiledProgram();
@@ -73,11 +74,11 @@ public:
     
     Platform3DObject program() const { return m_program; }
 private:
-    CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D>, const String& validatedVertexShader, const String& validatedFragmentShader);
+    CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D>, const String& validatedVertexShader, const String& validatedFragmentShader, CustomFilterProgramType);
     
     Platform3DObject compileShader(GC3Denum shaderType, const String& shaderString);
     Platform3DObject linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader);
-    void initializeParameterLocations();
+    void initializeParameterLocations(CustomFilterProgramType);
     
     RefPtr<GraphicsContext3D> m_context;
     Platform3DObject m_program;

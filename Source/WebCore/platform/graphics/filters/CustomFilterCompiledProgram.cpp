@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader)
+CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader, CustomFilterProgramType programType)
     : m_context(context)
     , m_program(0)
     , m_positionAttribLocation(-1)
@@ -73,7 +73,7 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsCont
     if (!m_program)
         return;
     
-    initializeParameterLocations();
+    initializeParameterLocations(programType);
     
     m_isInitialized = true;
 }
@@ -117,7 +117,7 @@ Platform3DObject CustomFilterCompiledProgram::linkProgram(Platform3DObject verte
     return program;
 }
 
-void CustomFilterCompiledProgram::initializeParameterLocations()
+void CustomFilterCompiledProgram::initializeParameterLocations(CustomFilterProgramType programType)
 {
     m_positionAttribLocation = m_context->getAttribLocation(m_program, "a_position");
     m_texAttribLocation = m_context->getAttribLocation(m_program, "a_texCoord");
@@ -129,12 +129,16 @@ void CustomFilterCompiledProgram::initializeParameterLocations()
     m_projectionMatrixLocation = m_context->getUniformLocation(m_program, "u_projectionMatrix");
     m_samplerSizeLocation = m_context->getUniformLocation(m_program, "u_textureSize");
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "u_contentTexture");
-    m_internalTexCoordAttribLocation = m_context->getAttribLocation(m_program, "css_a_texCoord");
-    m_samplerLocation = m_context->getUniformLocation(m_program, "css_u_texture");
-    // FIXME: Remove texture access via u_texture and change the tests to use blending and compositing.
-    // https://bugs.webkit.org/show_bug.cgi?id=93871
-    if (m_samplerLocation == -1)
-        m_samplerLocation = m_context->getUniformLocation(m_program, "u_texture");
+    if (programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE) {
+        // When the author uses the CSS mix function in a custom filter, we add internal symbols to the shader code.
+        // One of them, css_u_texture, references the texture of the element.
+        m_samplerLocation = m_context->getUniformLocation(m_program, "css_u_texture");
+        m_internalTexCoordAttribLocation = m_context->getAttribLocation(m_program, "css_a_texCoord");
+
+        // These internal symbols should have been added to the validated shaders.
+        ASSERT(m_samplerLocation != -1);
+        ASSERT(m_internalTexCoordAttribLocation != -1);
+    }
 }
 
 int CustomFilterCompiledProgram::uniformLocationByName(const String& name)

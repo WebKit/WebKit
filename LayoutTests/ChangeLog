@@ -1,3 +1,28 @@
+2012-09-12  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Remove direct texture access via u_texture
+        https://bugs.webkit.org/show_bug.cgi?id=93871
+
+        Reviewed by Dean Jackson.
+
+        Add tests to verify that the "u_texture" sampler is no longer accessible to author shader
+        code because it was removed. These tests also verify that shaders with unbound samplers do
+        not execute.
+
+        Add tests to verify that the internal "css_u_texture" sampler is not accessible to author
+        shader code. These tests check that this is true whether or not the author is using the CSS
+        mix function and whether or not the author attempts to define css_u_texture is his or her
+        shader.
+
+        * css3/filters/custom/custom-filter-no-element-texture-access-expected.html: Added.
+        * css3/filters/custom/custom-filter-no-element-texture-access.html: Added.
+        * css3/filters/resources/sample-defined-css-u-texture-mix.fs: Added.
+        * css3/filters/resources/sample-defined-css-u-texture.fs: Added.
+        * css3/filters/resources/sample-u-texture-mix.fs: Added.
+        * css3/filters/resources/sample-u-texture.fs: Added.
+        * css3/filters/resources/sample-undefined-css-u-texture-mix.fs: Added.
+        * css3/filters/resources/sample-undefined-css-u-texture.fs: Added.
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks

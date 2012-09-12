@@ -85,12 +85,29 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
     // Shaders referenced from the CSS mix function use a different validator than regular WebGL shaders. See CustomFilterGlobalContext.h for more details.
     ANGLEWebKitBridge* validator = programInfo.mixSettings().enabled ? m_globalContext->mixShaderValidator() : m_globalContext->webglShaderValidator();
     String vertexShaderLog, fragmentShaderLog;
-    bool vertexShaderValid = validator->validateShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog);
-    bool fragmentShaderValid = validator->validateShaderSource(originalFragmentShader.utf8().data(), SHADER_TYPE_FRAGMENT, m_validatedFragmentShader, fragmentShaderLog);
+    bool vertexShaderValid = validator->validateShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog, SH_ATTRIBUTES_UNIFORMS);
+    bool fragmentShaderValid = validator->validateShaderSource(originalFragmentShader.utf8().data(), SHADER_TYPE_FRAGMENT, m_validatedFragmentShader, fragmentShaderLog, SH_ATTRIBUTES_UNIFORMS);
     if (!vertexShaderValid || !fragmentShaderValid) {
         // FIXME: Report the validation errors.
         // https://bugs.webkit.org/show_bug.cgi?id=74416
         return;
+    }
+
+    // Validate the author's samplers.
+    Vector<ANGLEShaderSymbol> uniforms;
+    if (!validator->getUniforms(SH_VERTEX_SHADER, uniforms))
+        return;
+    if (!validator->getUniforms(SH_FRAGMENT_SHADER, uniforms))
+        return;
+    for (Vector<ANGLEShaderSymbol>::iterator it = uniforms.begin(); it != uniforms.end(); ++it) {
+        if (it->isSampler()) {
+            // FIXME: For now, we restrict shaders with any sampler defined.
+            // When we implement texture parameters, we will allow shaders whose samplers are bound to valid textures.
+            // We must not allow OpenGL to give unbound samplers a default value of 0 because that references the DOM element texture,
+            // which should be inaccessible to the author's shader code.
+            // https://bugs.webkit.org/show_bug.cgi?id=96230
+            return;
+        }
     }
 
     // We need to add texture access, blending, and compositing code to shaders that are referenced from the CSS mix function.
@@ -106,7 +123,7 @@ PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledPr
 {
     ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
     if (!m_compiledProgram)
-        m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader);
+        m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader, m_programInfo.programType());
     return m_compiledProgram;
 }
 
