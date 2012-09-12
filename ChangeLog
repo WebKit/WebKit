@@ -1,3 +1,12 @@
+2012-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Supply feature defines to CodeGeneratorTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=96273
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/WebKitFeatures.cmake: Generated FEATURE_DEFINES_WITH_SPACE_SEPARATOR.
+
 2012-09-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [Gtk] allow building with css-shaders

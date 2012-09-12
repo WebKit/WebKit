@@ -314,10 +314,7 @@ INSTALL(FILES ${WEBDOM_IDL_HEADERS} DESTINATION usr/include/browser/webkit/dom)
 # Create DOM C++ code given an IDL input
 # We define a new list of feature defines that is prefixed with LANGUAGE_CPP=1 so as to avoid the
 # warning "missing whitespace after the macro name" when inlining "LANGUAGE_CPP=1 ${FEATURE_DEFINES}".
-SET(FEATURE_DEFINES_WEBCORE "LANGUAGE_CPP=1")
-FOREACH (_feature ${FEATURE_DEFINES})
-    SET(FEATURE_DEFINES_WEBCORE "${FEATURE_DEFINES_WEBCORE} ${_feature}")
-ENDFOREACH ()
+SET(FEATURE_DEFINES_WEBCORE "LANGUAGE_CPP=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
 # FIXME: We need to add the IDLs for SQL storage and Web Workers. See PR #123484.
 SET(WebCore_NO_CPP_IDL_FILES

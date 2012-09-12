@@ -157,6 +157,7 @@ MACRO (WEBKIT_OPTION_END)
 
         IF (${_name})
             LIST(APPEND FEATURE_DEFINES ${_name})
+            SET(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${_name}")
             SET(_MESSAGE "${_MESSAGE} ON")
         ELSE ()
             SET(_MESSAGE "${_MESSAGE} OFF")

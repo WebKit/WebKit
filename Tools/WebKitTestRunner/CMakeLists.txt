@@ -68,7 +68,7 @@ GENERATE_BINDINGS(WebKitTestRunnerInjectedBundle_SOURCES
     "${WebKitTestRunnerInjectedBundle_IDL_FILES}"
     "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
     "--include=${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
-    ""
+    "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
     ${DERIVED_SOURCES_DIR}/InjectedBundle JS TestRunner
     )
 
