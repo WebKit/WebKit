@@ -98,6 +98,7 @@ class IntSize;
 class MediaPlayer;
 struct MediaPlayerFactory;
 class TimeRanges;
+class HostWindow;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 struct GraphicsDeviceAdapter;
@@ -189,6 +190,15 @@ public:
     virtual String mediaPlayerReferrer() const { return String(); }
     virtual String mediaPlayerUserAgent() const { return String(); }
     virtual CORSMode mediaPlayerCORSMode() const { return Unspecified; }
+    virtual void mediaPlayerExitFullscreen() { }
+    virtual bool mediaPlayerIsVideo() const { return false; }
+    virtual LayoutRect mediaPlayerContentBoxRect() const { return LayoutRect(); }
+    virtual void mediaPlayerSetSize(const IntSize&) { }
+    virtual void mediaPlayerPause() { }
+    virtual void mediaPlayerPlay() { }
+    virtual bool mediaPlayerIsPaused() const { return true; }
+    virtual HostWindow* mediaPlayerHostWindow() { return 0; }
+    virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
 };
 
 class MediaPlayerSupportsTypeClient {
