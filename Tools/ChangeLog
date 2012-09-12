@@ -1,3 +1,16 @@
+2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Regression(r128338): Broke Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=96537
+
+        Unreviewed build fix.
+
+        Fix Apple-Win build by allocating array dynamically
+        since its size is not constant.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::stringArrayToJS):
+
 2012-09-12  Alex Sakhartchouk  <alexst@chromium.org>
 
         [chromium] Add a virtual test suite for fast/hidpi
