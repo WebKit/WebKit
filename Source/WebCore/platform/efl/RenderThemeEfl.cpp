@@ -163,7 +163,7 @@ void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) co
 }
 
 RenderThemeEfl::ThemePartCacheEntry::ThemePartCacheEntry()
-    : ee(0), o(0), surface(0)
+    : surface(0)
 {
 }
 
@@ -171,10 +171,6 @@ RenderThemeEfl::ThemePartCacheEntry::~ThemePartCacheEntry()
 {
     if (surface)
         cairo_surface_destroy(surface);
-    if (o)
-        evas_object_del(o);
-    if (ee)
-        ecore_evas_free(ee);
 }
 
 static cairo_surface_t* createCairoSurfaceFor(Ecore_Evas* ee)
@@ -219,27 +215,27 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create
 
     OwnPtr<ThemePartCacheEntry*> entry = adoptPtr(new ThemePartCacheEntry);
 
-    entry->ee = ecore_evas_buffer_new(size.width(), size.height());
-    if (!entry->ee) {
+    entry->m_canvas = adoptPtr(ecore_evas_buffer_new(size.width(), size.height()));
+    if (!entry->canvas()) {
         EINA_LOG_ERR("ecore_evas_buffer_new(%d, %d) failed.", size.width(), size.height());
         return 0;
     }
 
     // By default EFL creates buffers without alpha.
-    ecore_evas_alpha_set(entry->ee, EINA_TRUE);
+    ecore_evas_alpha_set(entry->canvas(), EINA_TRUE);
 
-    entry->o = edje_object_add(ecore_evas_get(entry->ee));
-    ASSERT(entry->o);
+    entry->m_edje = adoptPtr(edje_object_add(ecore_evas_get(entry->canvas())));
+    ASSERT(entry->edje());
 
-    if (!setSourceGroupForEdjeObject(entry->o, themePath, toEdjeGroup(type)))
+    if (!setSourceGroupForEdjeObject(entry->edje(), themePath, toEdjeGroup(type)))
         return 0;
 
-    entry->surface = createCairoSurfaceFor(entry->ee);
+    entry->surface = createCairoSurfaceFor(entry->canvas());
     if (!entry->surface)
         return 0;
 
-    evas_object_resize(entry->o, size.width(), size.height());
-    evas_object_show(entry->o);
+    evas_object_resize(entry->edje(), size.width(), size.height());
+    evas_object_show(entry->edje());
 
     entry->type = type;
     entry->size = size;
@@ -255,17 +251,17 @@ void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormTyp
         cairo_surface_finish(surface);
 
         size = newSize;
-        ecore_evas_resize(ee, newSize.width(), newSize.height());
-        evas_object_resize(o, newSize.width(), newSize.height());
+        ecore_evas_resize(canvas(), newSize.width(), newSize.height());
+        evas_object_resize(edje(), newSize.width(), newSize.height());
 
-        surface = createCairoSurfaceFor(ee);
+        surface = createCairoSurfaceFor(canvas());
         if (!surface) {
             type = FormTypeLast; // Invalidate;
             return;
         }
     }
 
-    if (!setSourceGroupForEdjeObject(o, themePath, toEdjeGroup(newType))) {
+    if (!setSourceGroupForEdjeObject(edje(), themePath, toEdjeGroup(newType))) {
         type = FormTypeLast; // Invalidate.
         return;
     }
@@ -351,7 +347,7 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
 bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
 {
     loadThemeIfNeeded();
-    _ASSERT_ON_RELEASE_RETURN_VAL(m_edje, false, "Could not paint native HTML part due to missing theme.");
+    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
 
     ThemePartCacheEntry* entry;
     Eina_List* updates;
@@ -361,7 +357,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     if (!entry)
         return false;
 
-    applyEdjeStateFromForm(entry->o, controlStatesForRenderer(object));
+    applyEdjeStateFromForm(entry->edje(), controlStatesForRenderer(object));
 
     cairo = info.context->platformContext()->cr();
     ASSERT(cairo);
@@ -390,7 +386,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
             msg->val[0] = 0;
 
         msg->val[1] = (input->valueAsNumber() - input->minimum()) / valueRange;
-        edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(entry->edje(), EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
         RenderProgress* renderProgress = toRenderProgress(object);
@@ -407,13 +403,13 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         else
             msg->val[0] = 0;
         msg->val[1] = value;
-        edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(entry->edje(), EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #endif
     }
 
-    edje_object_calc_force(entry->o);
-    edje_object_message_signal_process(entry->o);
-    updates = evas_render_updates(ecore_evas_get(entry->ee));
+    edje_object_calc_force(entry->edje());
+    edje_object_message_signal_process(entry->edje());
+    updates = evas_render_updates(ecore_evas_get(entry->canvas()));
     evas_render_updates_free(updates);
 
     cairo_save(cairo);
@@ -464,14 +460,14 @@ static void fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Colo
 
 void RenderThemeEfl::setColorFromThemeClass(const char* colorClass)
 {
-    ASSERT(m_edje);
+    ASSERT(edje());
 
     if (!strcmp("webkit/selection/active", colorClass))
-        fillColorsFromEdjeClass(m_edje, colorClass, &m_activeSelectionForegroundColor, &m_activeSelectionBackgroundColor);
+        fillColorsFromEdjeClass(edje(), colorClass, &m_activeSelectionForegroundColor, &m_activeSelectionBackgroundColor);
     else if (!strcmp("webkit/selection/inactive", colorClass))
-        fillColorsFromEdjeClass(m_edje, colorClass, &m_inactiveSelectionForegroundColor, &m_inactiveSelectionBackgroundColor);
+        fillColorsFromEdjeClass(edje(), colorClass, &m_inactiveSelectionForegroundColor, &m_inactiveSelectionBackgroundColor);
     else if (!strcmp("webkit/focus_ring", colorClass)) {
-        fillColorsFromEdjeClass(m_edje, colorClass, &m_focusRingColor);
+        fillColorsFromEdjeClass(edje(), colorClass, &m_focusRingColor);
         // platformFocusRingColor() is only used for the default theme (without page)
         // The following is ugly, but no other way to do it unless we change it to use page themes as much as possible.
         RenderTheme::setCustomFocusRingColor(m_focusRingColor);
@@ -496,9 +492,9 @@ void RenderThemeEfl::setThemePath(const String& path)
 String RenderThemeEfl::themePath() const
 {
 #ifndef NDEBUG
-    if (m_edje) {
+    if (edje()) {
         const char* path;
-        edje_object_file_get(m_edje, &path, 0);
+        edje_object_file_get(edje(), &path, 0);
         ASSERT(m_themePath == path);
     }
 #endif
@@ -509,32 +505,28 @@ bool RenderThemeEfl::loadTheme()
 {
     ASSERT(!m_themePath.isEmpty());
 
-    if (!m_canvas) {
-        m_canvas = ecore_evas_buffer_new(1, 1);
-        _ASSERT_ON_RELEASE_RETURN_VAL(m_canvas, false,
+    if (!canvas()) {
+        m_canvas = adoptPtr(ecore_evas_buffer_new(1, 1));
+        _ASSERT_ON_RELEASE_RETURN_VAL(canvas(), false,
                 "Could not create canvas required by theme, things will not work properly.");
     }
 
-    Evas_Object* o = edje_object_add(ecore_evas_get(m_canvas));
+    OwnPtr<Evas_Object> o = adoptPtr(edje_object_add(ecore_evas_get(canvas())));
     _ASSERT_ON_RELEASE_RETURN_VAL(o, false, "Could not create new base Edje object.");
 
-    if (!setSourceGroupForEdjeObject(o, m_themePath, "webkit/base")) {
-        evas_object_del(o);
+    if (!setSourceGroupForEdjeObject(o.get(), m_themePath, "webkit/base"))
         return false; // Keep current theme.
-    }
 
     // Get rid of existing theme.
-    if (m_edje) {
+    if (edje())
         flushThemePartCache();
-        evas_object_del(m_edje);
-    }
 
     // Set new loaded theme, and apply it.
-    m_edje = o;
+    m_edje.swap(o);
 
-    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/selection/active", applyColorCallback, this);
-    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/selection/inactive", applyColorCallback, this);
-    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/focus_ring", applyColorCallback, this);
+    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/active", applyColorCallback, this);
+    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/inactive", applyColorCallback, this);
+    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/focus_ring", applyColorCallback, this);
 
     applyPartDescriptionsFrom(m_themePath);
 
@@ -611,19 +603,17 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* object, ThemePartDesc* de
 
 void RenderThemeEfl::applyPartDescriptionsFrom(const String& themePath)
 {
-    Evas_Object* temp = edje_object_add(ecore_evas_get(m_canvas));
+    OwnPtr<Evas_Object> temp = adoptPtr(edje_object_add(ecore_evas_get(canvas())));
     _ASSERT_ON_RELEASE_RETURN(temp, "Could not create Edje object.");
 
     for (size_t i = 0; i < FormTypeLast; i++) {
         FormType type = static_cast<FormType>(i);
         m_partDescs[i].type = type;
-        if (!setSourceGroupForEdjeObject(temp, themePath, toEdjeGroup(type)))
+        if (!setSourceGroupForEdjeObject(temp.get(), themePath, toEdjeGroup(type)))
             applyPartDescriptionFallback(m_partDescs + i);
         else
-            applyPartDescription(temp, m_partDescs + i);
+            applyPartDescription(temp.get(), m_partDescs + i);
     }
-
-    evas_object_del(temp);
 }
 
 RenderThemeEfl::RenderThemeEfl(Page* page)
@@ -639,20 +629,12 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_mediaPanelColor(220, 220, 195) // light tannish color.
     , m_mediaSliderColor(Color::white)
 #endif
-    , m_canvas(0)
-    , m_edje(0)
 {
 }
 
 RenderThemeEfl::~RenderThemeEfl()
 {
     flushThemePartCache();
-
-    if (m_canvas) {
-        if (m_edje)
-            evas_object_del(m_edje);
-        ecore_evas_free(m_canvas);
-    }
 }
 
 static bool supportsFocus(ControlPart appearance)
@@ -1067,30 +1049,30 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& inf
 bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElementType mediaElementType, const IntRect& rect)
 {
     loadThemeIfNeeded();
-    _ASSERT_ON_RELEASE_RETURN_VAL(m_edje, false, "Could not paint native HTML part due to missing theme.");
+    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
 
     ThemePartCacheEntry* entry = getThemePartFromCache(formType, rect.size());
     _ASSERT_ON_RELEASE_RETURN_VAL(entry, false, "Could not paint native HTML part due to missing theme part.");
 
     if (mediaElementType == MediaPlayButton)
-        edje_object_signal_emit(entry->o, "play", "");
+        edje_object_signal_emit(entry->edje(), "play", "");
     else if (mediaElementType == MediaPauseButton)
-        edje_object_signal_emit(entry->o, "pause", "");
+        edje_object_signal_emit(entry->edje(), "pause", "");
     else if (mediaElementType == MediaMuteButton)
-        edje_object_signal_emit(entry->o, "mute", "");
+        edje_object_signal_emit(entry->edje(), "mute", "");
     else if (mediaElementType == MediaUnMuteButton)
-        edje_object_signal_emit(entry->o, "sound", "");
+        edje_object_signal_emit(entry->edje(), "sound", "");
     else if (mediaElementType == MediaSeekForwardButton)
-        edje_object_signal_emit(entry->o, "seekforward", "");
+        edje_object_signal_emit(entry->edje(), "seekforward", "");
     else if (mediaElementType == MediaSeekBackButton)
-        edje_object_signal_emit(entry->o, "seekbackward", "");
+        edje_object_signal_emit(entry->edje(), "seekbackward", "");
     else if (mediaElementType == MediaEnterFullscreenButton)
-        edje_object_signal_emit(entry->o, "fullscreen", "");
+        edje_object_signal_emit(entry->edje(), "fullscreen", "");
 #if ENABLE(VIDEO_TRACK)
     else if (mediaElementType == MediaShowClosedCaptionsButton)
-        edje_object_signal_emit(entry->o, "show_captions", "");
+        edje_object_signal_emit(entry->edje(), "show_captions", "");
     else if (mediaElementType == MediaHideClosedCaptionsButton)
-        edje_object_signal_emit(entry->o, "hide_captions", "");
+        edje_object_signal_emit(entry->edje(), "hide_captions", "");
 #endif
     else
         return false;

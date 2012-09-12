@@ -222,6 +222,9 @@ private:
         return m_edje || (!m_themePath.isEmpty() && const_cast<RenderThemeEfl*>(this)->loadTheme());
     }
 
+    ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
+    ALWAYS_INLINE Evas_Object* edje() { return m_edje.get(); }
+
     void applyPartDescriptionsFrom(const String& themePath);
 
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
@@ -245,8 +248,9 @@ private:
 #endif
 
     String m_themePath;
-    Ecore_Evas* m_canvas;
-    Evas_Object* m_edje;
+    // Order so that the canvas gets destroyed at last.
+    OwnPtr<Ecore_Evas> m_canvas;
+    OwnPtr<Evas_Object> m_edje;
 
     struct ThemePartDesc {
         FormType type;
@@ -263,11 +267,17 @@ private:
         static ThemePartCacheEntry* create(const String& themePath, FormType, const IntSize&);
         void reuse(const String& themePath, FormType, const IntSize& = IntSize());
 
+        ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
+        ALWAYS_INLINE Evas_Object* edje() { return m_edje.get(); }
+
         FormType type;
         IntSize size;
-        Ecore_Evas* ee;
-        Evas_Object* o;
         cairo_surface_t* surface;
+
+    private:
+        // Order so that the canvas gets destroyed at last.
+        OwnPtr<Ecore_Evas> m_canvas;
+        OwnPtr<Evas_Object> m_edje;
     };
 
     struct ThemePartDesc m_partDescs[FormTypeLast];
