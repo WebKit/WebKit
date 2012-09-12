@@ -714,6 +714,28 @@ public:
 #ifdef STRING_STATS
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
+
+    template<typename MemoryObjectInfo>
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        size_t selfSize = sizeof(StringImpl);
+
+        // Count size used by internal buffer but skip strings that were constructed from literals.
+        if ((m_hashAndFlags & BufferInternal) && !hasTerminatingNullCharacter())
+            // Three cases are covered here:
+            // 1) a normal 8-bit string with internal storage (BufferInternal)
+            // 2) a normal 16-bit string with internal storage (BufferInternal)
+            // 3) empty unique string with length = 0 (BufferInternal)
+            selfSize += m_length * (m_hashAndFlags & s_hashFlag8BitBuffer ? sizeof(LChar) : sizeof(UChar));
+
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this, 0, selfSize);
+
+        if (m_hashAndFlags & BufferSubstring)
+            info.addInstrumentedMember(m_substringBuffer);
+        else if (m_hashAndFlags & s_hashFlagHas16BitShadow) // Substring never has its own shadow.
+            info.addRawBuffer(m_copyData16, (m_length + (hasTerminatingNullCharacter() ? 1 : 0)) * sizeof(UChar));
+    }
+
 private:
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
     static const unsigned s_copyCharsInlineCutOff = 20;

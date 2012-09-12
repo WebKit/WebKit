@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-MemoryObjectType GenericMemoryTypes::Undefined = 0;
-
 MemoryObjectType WebCoreMemoryTypes::Page = "Page";
 MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
 MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
@@ -57,32 +55,6 @@ MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "MemoryCache.SVG";
 MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader";
 MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
 
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    MemoryInstrumentationTraits::addInstrumentedObject<const String>(instrumentation, string, ownerObjectType, owningType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (!string || instrumentation->visited(string))
-        return;
-    if (owningType == byPointer)
-        instrumentation->countObjectSize(ownerObjectType, sizeof(String));
-    instrumentation->addInstrumentedObject(string->impl(), ownerObjectType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<StringImpl>(MemoryInstrumentation* instrumentation, const StringImpl* const& stringImpl, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    MemoryInstrumentationTraits::addInstrumentedObject<const StringImpl>(instrumentation, stringImpl, ownerObjectType, owningType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const StringImpl>(MemoryInstrumentation* instrumentation, const StringImpl* const& stringImpl, MemoryObjectType ownerObjectType, MemoryOwningType)
-{
-    if (!stringImpl || instrumentation->visited(stringImpl))
-        return;
-    instrumentation->countObjectSize(ownerObjectType, stringImpl->sizeInBytes());
-}
-
 template<> void MemoryInstrumentationTraits::addInstrumentedObject<KURL>(MemoryInstrumentation* instrumentation, const KURL* const& url, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
     MemoryInstrumentationTraits::addInstrumentedObject<const KURL>(instrumentation, url, ownerObjectType, owningType);
@@ -97,16 +69,6 @@ template<> void MemoryInstrumentationTraits::addInstrumentedObject<const KURL>(M
     instrumentation->addInstrumentedObject(url->string(), ownerObjectType);
     if (url->innerURL())
         instrumentation->addInstrumentedObject(url->innerURL(), ownerObjectType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<AtomicString>(MemoryInstrumentation* instrumentation, const AtomicString* const& atomicString, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    MemoryInstrumentationTraits::addInstrumentedObject<const AtomicString>(instrumentation, atomicString, ownerObjectType, owningType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const AtomicString>(MemoryInstrumentation* instrumentation, const AtomicString* const& atomicString, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    MemoryInstrumentationTraits::addInstrumentedObject<const String>(instrumentation, reinterpret_cast<const String* const>(atomicString), ownerObjectType, owningType);
 }
 
 } // namespace WebCore
