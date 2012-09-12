@@ -4,6 +4,17 @@
 
         Unreviewed build fix.
 
+        Removed temporarily added function signature.
+
+        * icu/unicode/unistr.h:
+        (UnicodeString::extract):
+
+2012-09-12  Michael Saboff  <msaboff@apple.com>
+
+        Build fixed for http://trac.webkit.org/changeset/128243
+
+        Unreviewed build fix.
+
         Change UnicodeString::extract for gcc based on ICU fix described in
         http://bugs.icu-project.org/trac/ticket/8197.
 

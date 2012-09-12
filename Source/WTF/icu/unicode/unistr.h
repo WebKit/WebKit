@@ -4089,11 +4089,6 @@ UnicodeString::extract(int32_t start,
   // Removed #if defined(__GNUC__) per ICU defect http://bugs.icu-project.org/trac/ticket/8197
   return extract(start, _length, dst, dst!=0 ? 0xffffffff : 0, codepage);
 }
-extract(int32_t start,
-        int32_t startLength,
-        char *target,
-        uint32_t targetLength,
-        const char *codepage)
 #endif
 
 inline void
