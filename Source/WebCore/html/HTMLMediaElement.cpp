@@ -4415,6 +4415,11 @@ bool HTMLMediaElement::mediaPlayerIsPaused() const
     return paused();
 }
 
+bool HTMLMediaElement::mediaPlayerIsLooping() const
+{
+    return loop();
+}
+
 HostWindow* HTMLMediaElement::mediaPlayerHostWindow()
 {
     return mediaPlayerOwningDocument()->view()->hostWindow();

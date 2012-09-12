@@ -211,6 +211,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_seekTime(0)
     , m_changingRate(false)
     , m_endTime(numeric_limits<float>::infinity())
+    , m_isEndReached(false)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_isStreaming(false)
@@ -333,6 +334,17 @@ void MediaPlayerPrivateGStreamer::commitLoad()
 
 float MediaPlayerPrivateGStreamer::playbackPosition() const
 {
+    if (m_isEndReached) {
+        // Position queries on a null pipeline return 0. If we're at
+        // the end of the stream the pipeline is null but we want to
+        // report either the seek time or the duration because this is
+        // what the Media element spec expects us to do.
+        if (m_seeking)
+            return m_seekTime;
+        if (m_mediaDuration)
+            return m_mediaDuration;
+    }
+
     float ret = 0.0f;
 
     GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
@@ -365,13 +377,15 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     GstState pending;
 
     gst_element_get_state(m_playBin, &currentState, &pending, 0);
-    if (currentState != newState && pending != newState) {
-        GstStateChangeReturn ret = gst_element_set_state(m_playBin, newState);
-        GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
-        if (currentState != pausedOrPlaying && ret == GST_STATE_CHANGE_FAILURE) {
-            loadingFailed(MediaPlayer::Empty);
-            return false;
-        }
+    LOG_MEDIA_MESSAGE("Current state: %s, pending: %s", gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
+    if (currentState == newState || pending == newState)
+        return true;
+
+    GstStateChangeReturn setStateResult = gst_element_set_state(m_playBin, newState);
+    GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
+    if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE) {
+        loadingFailed(MediaPlayer::Empty);
+        return false;
     }
     return true;
 }
@@ -379,6 +393,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
     m_isEndReached = false;
+    m_seeking = false;
 
     if (m_delayingLoad) {
         m_delayingLoad = false;
@@ -388,12 +403,17 @@ void MediaPlayerPrivateGStreamer::prepareToPlay()
 
 void MediaPlayerPrivateGStreamer::play()
 {
-    if (changePipelineState(GST_STATE_PLAYING))
+    if (changePipelineState(GST_STATE_PLAYING)) {
+        m_isEndReached = false;
         LOG_MEDIA_MESSAGE("Play");
+    }
 }
 
 void MediaPlayerPrivateGStreamer::pause()
 {
+    if (m_isEndReached)
+        return;
+
     if (changePipelineState(GST_STATE_PAUSED))
         LOG_MEDIA_MESSAGE("Pause");
 }
@@ -457,14 +477,16 @@ float MediaPlayerPrivateGStreamer::currentTime() const
 
 void MediaPlayerPrivateGStreamer::seek(float time)
 {
-    // Avoid useless seeking.
-    if (time == playbackPosition())
-        return;
-
     if (!m_playBin)
         return;
 
     if (m_errorOccured)
+        return;
+
+    LOG_MEDIA_MESSAGE("Seek attempt to %f secs", time);
+
+    // Avoid useless seeking.
+    if (time == currentTime())
         return;
 
     // Extract the integer part of the time (seconds) and the
@@ -494,6 +516,11 @@ void MediaPlayerPrivateGStreamer::seek(float time)
 
 bool MediaPlayerPrivateGStreamer::paused() const
 {
+    if (m_isEndReached) {
+        LOG_MEDIA_MESSAGE("Ignoring pause at EOS");
+        return true;
+    }
+
     GstState state;
     gst_element_get_state(m_playBin, &state, 0, 0);
     return state == GST_STATE_PAUSED;
@@ -1134,8 +1161,9 @@ void MediaPlayerPrivateGStreamer::updateStates()
             // Cache the duration without emiting the durationchange
             // event because it's taken care of by the media element
             // in this precise case.
-            cacheDuration();
-        } else if (maxTimeLoaded() == duration()) {
+            if (!m_isEndReached)
+                cacheDuration();
+        } else if ((state == GST_STATE_NULL) || (maxTimeLoaded() == duration())) {
             m_networkState = MediaPlayer::Loaded;
             m_readyState = MediaPlayer::HaveEnoughData;
         } else {
@@ -1399,19 +1427,23 @@ void MediaPlayerPrivateGStreamer::timeChanged()
 
 void MediaPlayerPrivateGStreamer::didEnd()
 {
-    // EOS was reached but the position is not always 0 in case of
-    // reverse playback. So to not confuse the HTMLMediaElement, we
-    // synchronize position and duration values.
+    // Synchronize position and duration values to not confuse the
+    // HTMLMediaElement. In some cases like reverse playback the
+    // position is not always reported as 0 for instance.
     float now = currentTime();
-    if (now > 0 && m_playbackRate < 0) {
-        m_mediaDuration = now;
+    if (now > 0 && now <= duration() && m_mediaDuration != now) {
         m_mediaDurationKnown = true;
+        m_mediaDuration = now;
         m_player->durationChanged();
     }
 
     m_isEndReached = true;
-
     timeChanged();
+
+    if (!m_player->mediaPlayerClient()->mediaPlayerIsLooping()) {
+        m_paused = true;
+        gst_element_set_state(m_playBin, GST_STATE_NULL);
+    }
 }
 
 void MediaPlayerPrivateGStreamer::cacheDuration()
