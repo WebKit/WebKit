@@ -1474,6 +1474,7 @@
               # com.google.Chrome[] objc[]: Class ScrollbarPrefsObserver is implemented in both .../Google Chrome.app/Contents/Versions/.../Google Chrome Helper.app/Contents/MacOS/../../../Google Chrome Framework.framework/Google Chrome Framework and /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore. One of the two will be used. Which one is undefined.
               'WebCascadeList=ChromiumWebCoreObjCWebCascadeList',
               'WebCoreFlippedView=ChromiumWebCoreObjCWebCoreFlippedView',
+              'WebCoreTextFieldCell=ChromiumWebCoreObjCWebCoreTextFieldCell',
               'WebScrollbarPrefsObserver=ChromiumWebCoreObjCWebScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
@@ -1492,7 +1493,7 @@
                 'postbuild_name': 'Check Objective-C Rename',
                 'variables': {
                   'class_whitelist_regex':
-                      'ChromiumWebCoreObjC|TCMVisibleView|RTCMFlippedView|WebCoreTextFieldCell',
+                      'ChromiumWebCoreObjC|TCMVisibleView|RTCMFlippedView',
                   'category_whitelist_regex':
                       'TCMInterposing|ScrollAnimatorChromiumMacExt',
                 },
