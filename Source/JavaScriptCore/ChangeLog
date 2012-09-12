@@ -1,3 +1,39 @@
+2012-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Don't allocate a backing store just for a function's name
+        https://bugs.webkit.org/show_bug.cgi?id=96468
+
+        Reviewed by Oliver Hunt.
+
+        Treat function.name like function.length etc., and use a custom getter.
+        This saves space in closures.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        * debugger/DebuggerCallFrame.h:
+        (DebuggerCallFrame): Updated for interface change.
+
+        * runtime/Executable.h:
+        (JSC::JSFunction::JSFunction): Do a little inlining.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation): Gone now. That's the point of the patch.
+
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        (JSC::JSFunction::nameGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::getOwnPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty): Added custom accessors for .name
+        just like .length and others.
+
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::create):
+        (JSFunction): Updated for interface changes.
+
 2012-09-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         IncrementalSweeper should not sweep/free Zapped blocks

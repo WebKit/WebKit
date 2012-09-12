@@ -36,18 +36,18 @@
 
 namespace JSC {
 
-const String* DebuggerCallFrame::functionName() const
+String DebuggerCallFrame::functionName() const
 {
     if (!m_callFrame->codeBlock())
-        return 0;
+        return String();
 
     if (!m_callFrame->callee())
-        return 0;
+        return String();
 
     JSObject* function = m_callFrame->callee();
     if (!function || !function->inherits(&JSFunction::s_info))
-        return 0;
-    return &jsCast<JSFunction*>(function)->name(m_callFrame);
+        return String();
+    return jsCast<JSFunction*>(function)->name(m_callFrame);
 }
     
 String DebuggerCallFrame::calculatedFunctionName() const

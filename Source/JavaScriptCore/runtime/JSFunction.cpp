@@ -84,13 +84,6 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
 {
 }
 
-JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
-    : Base(exec->globalData(), scope->globalObject()->functionStructure())
-    , m_executable(exec->globalData(), this, executable)
-    , m_scope(exec->globalData(), this, scope)
-{
-}
-
 void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
 {
     Base::finishCreation(exec->globalData());
@@ -98,20 +91,6 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
     m_executable.set(exec->globalData(), this, executable);
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
-}
-
-void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
-{
-    JSGlobalData& globalData = exec->globalData();
-    Base::finishCreation(globalData);
-    ASSERT(inherits(&s_info));
-
-    // Switching the structure here is only safe if we currently have the function structure!
-    ASSERT(structure() == scope->globalObject()->functionStructure());
-    setStructureAndReallocateStorageIfNecessary(
-        globalData,
-        scope->globalObject()->namedFunctionStructure());
-    putDirectOffset(globalData, scope->globalObject()->functionNameOffset(), executable->nameValue());
 }
 
 Structure* JSFunction::cacheInheritorID(ExecState* exec)
@@ -124,12 +103,12 @@ Structure* JSFunction::cacheInheritorID(ExecState* exec)
     return m_cachedInheritorID.get();
 }
 
-const String& JSFunction::name(ExecState* exec)
+String JSFunction::name(ExecState* exec)
 {
-    return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
+    return get(exec, exec->globalData().propertyNames->name).toWTFString(exec);
 }
 
-const String JSFunction::displayName(ExecState* exec)
+String JSFunction::displayName(ExecState* exec)
 {
     JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
@@ -213,6 +192,13 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
     return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
+JSValue JSFunction::nameGetter(ExecState*, JSValue slotBase, PropertyName)
+{
+    JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
+    ASSERT(!thisObj->isHostFunction());
+    return thisObj->jsExecutable()->nameValue();
+}
+
 bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
@@ -248,6 +234,11 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName 
 
     if (propertyName == exec->propertyNames().length) {
         slot.setCacheableCustom(thisObject, lengthGetter);
+        return true;
+    }
+
+    if (propertyName == exec->propertyNames().name) {
+        slot.setCacheableCustom(thisObject, nameGetter);
         return true;
     }
 
@@ -299,6 +290,11 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
         return true;
     }
     
+    if (propertyName == exec->propertyNames().name) {
+        descriptor.setDescriptor(thisObject->jsExecutable()->nameValue(), ReadOnly | DontEnum | DontDelete);
+        return true;
+    }
+
     if (propertyName == exec->propertyNames().caller) {
         if (thisObject->jsExecutable()->isStrictMode()) {
             bool result = Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
@@ -327,6 +323,7 @@ void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
         propertyNames.add(exec->propertyNames().arguments);
         propertyNames.add(exec->propertyNames().caller);
         propertyNames.add(exec->propertyNames().length);
+        propertyNames.add(exec->propertyNames().name);
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -356,7 +353,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         Base::put(thisObject, exec, propertyName, value, slot);
         return;
     }
-    if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length || propertyName == exec->propertyNames().caller) {
+    if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length || propertyName == exec->propertyNames().name || propertyName == exec->propertyNames().caller) {
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
@@ -371,6 +368,7 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
     if (!thisObject->isHostFunction() && !exec->globalData().isInDefineOwnProperty()
         && (propertyName == exec->propertyNames().arguments
             || propertyName == exec->propertyNames().length
+            || propertyName == exec->propertyNames().name
             || propertyName == exec->propertyNames().prototype
             || propertyName == exec->propertyNames().caller))
         return false;
@@ -409,6 +407,8 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), exec->interpreter()->retrieveCallerFromVMCode(exec, thisObject));
     } else if (propertyName == exec->propertyNames().length)
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), jsNumber(thisObject->jsExecutable()->parameterCount()));
+    else if (propertyName == exec->propertyNames().name)
+        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), thisObject->jsExecutable()->nameValue());
     else
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
      
