@@ -55,12 +55,12 @@ v8::Handle<v8::String> V8HiddenPropertyName::name() \
 
 V8_HIDDEN_PROPERTIES(V8_DEFINE_HIDDEN_PROPERTY);
 
-v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* name, V8HiddenPropertyCreationType type)
+v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* name, unsigned length, V8HiddenPropertyCreationType type)
 {
-    ASSERT(name && strlen(name));
+    ASSERT(length);
     Vector<char, 64> prefixedName;
     prefixedName.append(V8_HIDDEN_PROPERTY_PREFIX, sizeof(V8_HIDDEN_PROPERTY_PREFIX) - 1);
-    prefixedName.append(name, strlen(name));
+    prefixedName.append(name, length);
     switch (type) {
     case NewSymbol:
         return v8::String::NewSymbol(prefixedName.data(), static_cast<int>(prefixedName.size()));

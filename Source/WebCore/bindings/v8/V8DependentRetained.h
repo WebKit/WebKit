@@ -76,13 +76,10 @@ public:
 private:
     static v8::Handle<v8::String> createPropertyName()
     {
-        static const char* prefix = "V8DependentRetained";
-        NumberToStringBuffer buffer;
-        Vector<char, 64> name;
-        const char* id = numberToString(V8PerIsolateData::current()->nextDependentRetainedId(), buffer);
-        name.append(prefix, sizeof(prefix) - 1);
-        name.append(id, strlen(id) + 1);
-        return V8HiddenPropertyName::hiddenReferenceName(name.data(), NewString);
+        StringBuilder name;
+        name.appendLiteral("V8DependentRetained");
+        name.append(String::numberToStringECMAScript(V8PerIsolateData::current()->nextDependentRetainedId()));
+        return V8HiddenPropertyName::hiddenReferenceName(reinterpret_cast<const char*>(name.characters8()), name.length(), NewString);
     }
 
     static void ownerWeakCallback(v8::Persistent<v8::Value> object, void* parameter)

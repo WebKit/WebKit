@@ -118,7 +118,8 @@ V8PerContextData* V8DOMWrapper::perContextData(WorkerContext*)
 
 void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
-    parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name), child);
+    ASSERT(name);
+    parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name, strlen(name)), child);
 }
 
 WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)

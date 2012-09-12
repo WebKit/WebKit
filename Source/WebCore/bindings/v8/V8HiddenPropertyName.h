@@ -60,7 +60,7 @@ namespace WebCore {
         V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
 #undef V8_DECLARE_PROPERTY
 
-        static v8::Handle<v8::String> hiddenReferenceName(const char*, V8HiddenPropertyCreationType = NewSymbol);
+        static v8::Handle<v8::String> hiddenReferenceName(const char*, unsigned, V8HiddenPropertyCreationType = NewSymbol);
 
     private:
         static v8::Persistent<v8::String> createString(const char* key);
