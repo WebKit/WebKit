@@ -1,3 +1,10 @@
+2012-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Mac build fix: Commit a file I forgot.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame functionName]):
+
 2012-09-11  Michael Saboff  <msaboff@apple.com>
 
         Build fixed for http://trac.webkit.org/changeset/128243

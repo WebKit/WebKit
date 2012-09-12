@@ -203,8 +203,8 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    const String* functionName = _private->debuggerCallFrame->functionName();
-    return functionName ? nsStringNilIfEmpty(*functionName) : nil;
+    String functionName = _private->debuggerCallFrame->functionName();
+    return nsStringNilIfEmpty(functionName);
 }
 
 // Returns the pending exception for this frame (nil if none).
