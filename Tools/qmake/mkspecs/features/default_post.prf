@@ -75,6 +75,17 @@ contains(TEMPLATE, derived) {
     fake_release.depends = first
     QMAKE_EXTRA_TARGETS += fake_release
 
+    # A lot of our code generators require GNU tools, readily available
+    # on Linux and Mac OS X. On Windows we do have a convenience copy in
+    # Qt5's top-level repository, so let's add that to the PATH if we can
+    # find it.
+    win32 {
+        GNUTOOLS=$$[QT_HOST_DATA]/../gnuwin32/bin
+        exists($$GNUTOOLS/gperf.exe) {
+            GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS);%PATH%$$escape_expand(\\\"))"
+        }
+    }
+
     for(generator, GENERATORS) {
         eval($${generator}.CONFIG = target_predeps no_link)
         eval($${generator}.dependency_type = TYPE_C)
@@ -85,6 +96,11 @@ contains(TEMPLATE, derived) {
 
         script = $$eval($${generator}.script)
         eval($${generator}.depends += $$script)
+
+        commands = $$eval($${generator}.commands)
+        !isEmpty(commands):!isEmpty(GNUTOOLS) {
+            eval($${generator}.commands = $${GNUTOOLS} && $$val_escape($${generator}.commands))
+        }
 
         !isEmpty($${generator}.input) {
             # Compiler-style generator

@@ -1,3 +1,27 @@
+2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build on Windows requires bison/flex in PATH
+        https://bugs.webkit.org/show_bug.cgi?id=96358
+
+        Reviewed by Tor Arne Vestbø.
+
+        The build requires flex, bison, etc. and they need to be in the PATH when building. On Mac OS X
+        and Linux that is rarely a problem given how easily available the tools are. On Windows however
+        a separate installation of various GNU tools is required as the operating system doesn't come with
+        them. To make the development more convenient, Qt 5 provides a copy of the most essential tools in
+        the gnuwin32 directory of the qt5.git top-level repository.
+
+        This patch tries to detect the presence of those tools and prepends them to the PATH if found.
+
+        This is required in preparation for the elimination of qt5/qtwebkit.pri, which currently expands
+        PATH before calling build-webkit. It it also required for the upcoming introduction of win_flex
+        as dependency over flex, which can be done with less hassle when qt5's gnuwin32 directory has been
+        updated with the new tool.
+
+        * Scripts/webkitdirs.pm:
+        (checkRequiredSystemConfig):
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-09-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Update build-jsc after r128174

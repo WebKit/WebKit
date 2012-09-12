@@ -31,7 +31,7 @@ anglebison_decl.variable_out = GENERATED_FILES
 GENERATORS += anglebison_decl
 
 anglebison_impl.input = ANGLE_BISON_SOURCES
-anglebison_impl.commands = $$escape_expand(\\n)
+anglebison_impl.commands = $$MAKEFILE_NOOP_COMMAND
 anglebison_impl.depends = $$GENERATED_SOURCES_DESTDIR/${QMAKE_FILE_BASE}_tab.h
 anglebison_impl.output = ${QMAKE_FILE_BASE}_tab.cpp
 GENERATORS += anglebison_impl
