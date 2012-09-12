@@ -1,3 +1,17 @@
+2012-09-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Teach addStrictSubdirOrderBetween to handle more than two targets
+
+        By hard-coding the names of the targets we defined we ended up just
+        redefining the previous target when using addStrictSubdirOrderBetween
+        more than once in a single project file.
+
+        We now embed the two base targets into the target names.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-12  Philippe Liard  <pliard@google.com>
 
         Depend on {base,net} GYP targets rather than {base,net}_java.
