@@ -622,7 +622,7 @@ bool AccessibilityNodeObject::isMultiSelectable() const
     if (equalIgnoringCase(ariaMultiSelectable, "false"))
         return false;
     
-    return node() && toHTMLSelectElement(node())->multiple();
+    return node() && node()->hasTagName(selectTag) && toHTMLSelectElement(node())->multiple();
 }
 
 bool AccessibilityNodeObject::isReadOnly() const
