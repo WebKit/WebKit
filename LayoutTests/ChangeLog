@@ -1,3 +1,15 @@
+2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding baseline for an accessibility test introduced in r128227.
+
+        Adding a text mismatch failure expectation for fast/events/popup-blocking-timers.html
+        that started failing after the test was refactored in r128270.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/img-fallsback-to-title-expected.txt: Added.
+
 2012-09-12  Florin Malita  <fmalita@chromium.org>
 
         getScreenCTM returns different values depending on zoom

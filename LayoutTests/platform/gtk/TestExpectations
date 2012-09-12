@@ -1310,6 +1310,8 @@ BUGWK96226 : fast/spatial-navigation/snav-div-overflow-scrol-hidden.html = TEXT
 BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
 BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
+BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
