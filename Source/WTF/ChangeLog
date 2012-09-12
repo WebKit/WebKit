@@ -1,3 +1,18 @@
+2012-09-11  Michael Saboff  <msaboff@apple.com>
+
+        Element::classAttributeChanged should use characters8/16 to find first non-whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=96446
+
+        Reviewed by Benjamin Poulain.
+
+        Added bit size related string accessors to AtomicString to support change.
+
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        (WTF::AtomicString::is8Bit):
+        (WTF::AtomicString::characters8):
+        (WTF::AtomicString::characters16):
+
 2012-09-12  Michael Saboff  <msaboff@apple.com>
 
         Build fixed for http://trac.webkit.org/changeset/128243

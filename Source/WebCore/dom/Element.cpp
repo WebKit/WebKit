@@ -755,17 +755,36 @@ void Element::parseAttribute(const Attribute& attribute)
         classAttributeChanged(attribute.value());
 }
 
-void Element::classAttributeChanged(const AtomicString& newClassString)
+template <typename CharacterType>
+static inline bool classStringHasClassName(const CharacterType* characters, unsigned length)
 {
-    const UChar* characters = newClassString.characters();
-    unsigned length = newClassString.length();
-    unsigned i;
-    for (i = 0; i < length; ++i) {
+    ASSERT(length > 0);
+
+    unsigned i = 0;
+    do {
         if (isNotHTMLSpace(characters[i]))
             break;
-    }
-    bool hasClass = i < length;
-    if (hasClass) {
+        ++i;
+    } while (i < length);
+
+    return i < length;
+}
+
+static inline bool classStringHasClassName(const AtomicString& newClassString)
+{
+    unsigned length = newClassString.length();
+
+    if (!length)
+        return false;
+
+    if (newClassString.is8Bit())
+        return classStringHasClassName(newClassString.characters8(), length);
+    return classStringHasClassName(newClassString.characters16(), length);
+}
+
+void Element::classAttributeChanged(const AtomicString& newClassString)
+{
+    if (classStringHasClassName(newClassString)) {
         const bool shouldFoldCase = document()->inQuirksMode();
         ensureAttributeData()->setClass(newClassString, shouldFoldCase);
     } else if (attributeData())

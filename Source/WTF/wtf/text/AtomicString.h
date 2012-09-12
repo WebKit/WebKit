@@ -86,8 +86,11 @@ public:
     const String& string() const { return m_string; };
 
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }
-    
+
+    bool is8Bit() const { return m_string.is8Bit(); }
     const UChar* characters() const { return m_string.characters(); }
+    const LChar* characters8() const { return m_string.characters8(); }
+    const UChar* characters16() const { return m_string.characters16(); }
     unsigned length() const { return m_string.length(); }
     
     UChar operator[](unsigned int i) const { return m_string[i]; }
