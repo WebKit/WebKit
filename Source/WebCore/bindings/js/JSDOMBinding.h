@@ -422,7 +422,7 @@ enum ParameterDefaultPolicy {
             return jsEmptyString(exec);
 
         if (stringImpl->length() == 1) {
-            UChar singleCharacter = (*stringImpl)[0];
+            UChar singleCharacter = (*stringImpl)[0u];
             if (singleCharacter <= JSC::maxSingleCharacterString) {
                 JSC::JSGlobalData* globalData = &exec->globalData();
                 return globalData->smallStrings.singleCharacterString(globalData, static_cast<unsigned char>(singleCharacter));
