@@ -149,5 +149,8 @@ defineTest(santizeFeatures) {
     # Fullscreen API relies on WebKit2
     !build?(webkit2): WEBKIT_CONFIG -= fullscreen_api
 
+    # WK2's plugin process code requires NPAPI
+    !enable?(netscape_plugin_api): WEBKIT_CONFIG -= plugin_process
+
     export(WEBKIT_CONFIG)
 }
