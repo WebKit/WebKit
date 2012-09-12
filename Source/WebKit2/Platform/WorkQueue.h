@@ -187,6 +187,21 @@ private:
     HashMap<int, Vector<EventSource*> > m_eventSources;
     typedef HashMap<int, Vector<EventSource*> >::iterator EventSourceIterator; 
 #elif PLATFORM(EFL)
+    class TimerWorkItem {
+    public:
+        static PassOwnPtr<TimerWorkItem> create(Function<void()>, double expireTime);
+        void dispatch() { m_function(); }
+        double expireTime() const { return m_expireTime; }
+        bool expired(double currentTime) const { return currentTime >= m_expireTime; }
+
+    protected:
+        TimerWorkItem(Function<void()>, double expireTime);
+
+    private:
+        Function<void()> m_function;
+        double m_expireTime;
+    };
+
     fd_set m_fileDescriptorSet;
     int m_maxFileDescriptor;
     int m_readFromPipeDescriptor;
@@ -199,13 +214,17 @@ private:
     int m_socketDescriptor;
     Function<void()> m_socketEventHandler;
 
-    HashMap<int, OwnPtr<Ecore_Timer> > m_timers;
+    Vector<OwnPtr<TimerWorkItem> > m_timerWorkItems;
+    Mutex m_timerWorkItemsLock;
 
     void sendMessageToThread(const char*);
     static void* workQueueThread(WorkQueue*);
     void performWork();
     void performFileDescriptorWork();
-    static bool timerFired(void*);
+    static double getCurrentTime();
+    struct timeval* getNextTimeOut();
+    void performTimerWork();
+    void insertTimerWorkItem(PassOwnPtr<TimerWorkItem>);
 #endif
 };
 

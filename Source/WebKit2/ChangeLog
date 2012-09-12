@@ -1,3 +1,35 @@
+2012-09-12  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] WorkQueue::dispatchAfterDelay() doesn't work properly.
+        https://bugs.webkit.org/show_bug.cgi?id=91179
+
+        Reviewed by Gyuyoung Kim.
+
+        When UI Process is crashed and WebProcess's ecore main loop is very
+        busy or lockup also, watchdocCallback() function in the
+        ChildProcess.cpp doesn't triggered. And this is because of that
+        WorkQueue::dispatchAfterDelay() function uses ecore timer for getting
+        timer event.
+
+        For removing the dependency between the dispatchAfterDelay() and ecore
+        main loop, new timer event mechanism is added to WorkQueue main loop.
+
+        * Platform/WorkQueue.h:
+        (TimerWorkItem):
+        (WorkQueue::TimerWorkItem::dispatch):
+        (WorkQueue::TimerWorkItem::expireTime):
+        (WorkQueue::TimerWorkItem::expired):
+        (WorkQueue):
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::TimerWorkItem::create):
+        (WorkQueue::TimerWorkItem::TimerWorkItem):
+        (WorkQueue::performFileDescriptorWork):
+        (WorkQueue::getCurrentTime):
+        (WorkQueue::getNextTimeOut):
+        (WorkQueue::performTimerWork):
+        (WorkQueue::workQueueThread):
+        (WorkQueue::dispatchAfterDelay):
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
