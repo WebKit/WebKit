@@ -226,6 +226,67 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> SelectorProfile::toInspectorObject
     return result.release();
 }
 
+class UpdateRegionLayoutTask {
+public:
+    UpdateRegionLayoutTask(InspectorCSSAgent*);
+    void scheduleFor(WebKitNamedFlow*, int documentNodeId);
+    void unschedule(WebKitNamedFlow*);
+    void reset();
+    void onTimer(Timer<UpdateRegionLayoutTask>*);
+
+private:
+    InspectorCSSAgent* m_cssAgent;
+    Timer<UpdateRegionLayoutTask> m_timer;
+    HashMap<WebKitNamedFlow*, int> m_namedFlows;
+};
+
+UpdateRegionLayoutTask::UpdateRegionLayoutTask(InspectorCSSAgent* cssAgent)
+    : m_cssAgent(cssAgent)
+    , m_timer(this, &UpdateRegionLayoutTask::onTimer)
+{
+}
+
+void UpdateRegionLayoutTask::scheduleFor(WebKitNamedFlow* namedFlow, int documentNodeId)
+{
+    m_namedFlows.add(namedFlow, documentNodeId);
+
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void UpdateRegionLayoutTask::unschedule(WebKitNamedFlow* namedFlow)
+{
+    m_namedFlows.remove(namedFlow);
+}
+
+void UpdateRegionLayoutTask::reset()
+{
+    m_timer.stop();
+    m_namedFlows.clear();
+}
+
+void UpdateRegionLayoutTask::onTimer(Timer<UpdateRegionLayoutTask>*)
+{
+    // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
+    Vector<std::pair<WebKitNamedFlow*, int> > namedFlows;
+
+    for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)
+        namedFlows.append(std::make_pair(it->first, it->second));
+
+    for (unsigned i = 0, size = namedFlows.size(); i < size; ++i) {
+        WebKitNamedFlow* namedFlow = namedFlows.at(i).first;
+        int documentNodeId = namedFlows.at(i).second;
+
+        if (m_namedFlows.contains(namedFlow)) {
+            m_cssAgent->regionLayoutUpdated(namedFlow, documentNodeId);
+            m_namedFlows.remove(namedFlow);
+        }
+    }
+
+    if (!m_namedFlows.isEmpty() && !m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
 public:
@@ -518,6 +579,8 @@ void InspectorCSSAgent::reset()
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
     m_namedFlowCollectionsRequested.clear();
+    if (m_updateRegionLayoutTask)
+        m_updateRegionLayoutTask->reset();
     resetPseudoStates();
 }
 
@@ -537,22 +600,48 @@ void InspectorCSSAgent::mediaQueryResultChanged()
         m_frontend->mediaQueryResultChanged();
 }
 
-void InspectorCSSAgent::didCreateNamedFlow(Document* document, const AtomicString& name)
+void InspectorCSSAgent::didCreateNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
 {
-    int nodeId = m_domAgent->boundNodeId(document);
-    if (!nodeId || !m_namedFlowCollectionsRequested.contains(nodeId))
+    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    if (!documentNodeId)
         return;
 
-    m_frontend->namedFlowCreated(nodeId, name.string());
+    ErrorString errorString;
+    m_frontend->namedFlowCreated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
-void InspectorCSSAgent::didRemoveNamedFlow(Document* document, const AtomicString& name)
+void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
 {
-    int nodeId = m_domAgent->boundNodeId(document);
-    if (!nodeId || !m_namedFlowCollectionsRequested.contains(nodeId))
+    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    if (!documentNodeId)
         return;
 
-    m_frontend->namedFlowRemoved(nodeId, name.string());
+    if (m_updateRegionLayoutTask)
+        m_updateRegionLayoutTask->unschedule(namedFlow);
+
+    m_frontend->namedFlowRemoved(documentNodeId, namedFlow->name().string());
+}
+
+void InspectorCSSAgent::didUpdateRegionLayout(Document* document, WebKitNamedFlow* namedFlow)
+{
+    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    if (!documentNodeId)
+        return;
+
+    if (!m_updateRegionLayoutTask)
+        m_updateRegionLayoutTask = adoptPtr(new UpdateRegionLayoutTask(this));
+    m_updateRegionLayoutTask->scheduleFor(namedFlow, documentNodeId);
+}
+
+void InspectorCSSAgent::regionLayoutUpdated(WebKitNamedFlow* namedFlow, int documentNodeId)
+{
+    if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
+        return;
+
+    ErrorString errorString;
+    RefPtr<WebKitNamedFlow> protector(namedFlow);
+
+    m_frontend->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
@@ -828,30 +917,14 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int doc
         return;
 
     m_namedFlowCollectionsRequested.add(documentNodeId);
+
     Vector<RefPtr<WebKitNamedFlow> > namedFlowsVector = document->namedFlows()->namedFlows();
     RefPtr<TypeBuilder::Array<TypeBuilder::CSS::NamedFlow> > namedFlows = TypeBuilder::Array<TypeBuilder::CSS::NamedFlow>::create();
-
 
     for (Vector<RefPtr<WebKitNamedFlow> >::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)
         namedFlows->addItem(buildObjectForNamedFlow(errorString, it->get(), documentNodeId));
 
     result = namedFlows.release();
-}
-
-void InspectorCSSAgent::getFlowByName(ErrorString* errorString, int documentNodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result)
-{
-    Document* document = m_domAgent->assertDocument(errorString, documentNodeId);
-    if (!document)
-        return;
-
-    WebKitNamedFlow* webkitNamedFlow = document->namedFlows()->flowByName(flowName);
-    if (!webkitNamedFlow) {
-        *errorString = "No target CSS Named Flow found";
-        return;
-    }
-
-    RefPtr<WebKitNamedFlow> protector(webkitNamedFlow);
-    result = buildObjectForNamedFlow(errorString, webkitNamedFlow, documentNodeId);
 }
 
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)
@@ -931,6 +1004,15 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
         return 0;
     }
     return toElement(node);
+}
+
+int InspectorCSSAgent::documentNodeWithRequestedFlowsId(Document* document)
+{
+    int documentNodeId = m_domAgent->boundNodeId(document);
+    if (!documentNodeId || !m_namedFlowCollectionsRequested.contains(documentNodeId))
+        return 0;
+
+    return documentNodeId;
 }
 
 void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, TypeBuilder::Array<TypeBuilder::CSS::CSSStyleSheetHeader>* result)
