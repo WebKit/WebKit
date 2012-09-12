@@ -175,14 +175,14 @@ protected:
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
 
-    bool m_hasValidRegions;
-    bool m_regionsInvalidated;
-    bool m_regionsHaveUniformLogicalWidth;
-    bool m_regionsHaveUniformLogicalHeight;
-    bool m_overset;
-    bool m_hasRegionsWithStyling;
-    bool m_dispatchRegionLayoutUpdateEvent;
-    bool m_pageLogicalHeightChanged;
+    bool m_hasValidRegions : 1;
+    bool m_regionsInvalidated : 1;
+    bool m_regionsHaveUniformLogicalWidth : 1;
+    bool m_regionsHaveUniformLogicalHeight : 1;
+    bool m_overset : 1;
+    bool m_hasRegionsWithStyling : 1;
+    bool m_dispatchRegionLayoutUpdateEvent : 1;
+    bool m_pageLogicalHeightChanged : 1;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
