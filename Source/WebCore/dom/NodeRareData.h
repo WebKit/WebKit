@@ -186,9 +186,6 @@ public:
         , m_tabIndexWasSetExplicitly(false)
         , m_isFocused(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
-#if ENABLE(STYLE_SCOPED)
-        , m_numberOfScopedHTMLStyleChildren(0)
-#endif
     {
     }
 
@@ -311,30 +308,6 @@ public:
     }
 #endif
 
-#if ENABLE(STYLE_SCOPED)
-    void registerScopedHTMLStyleChild()
-    {
-        ++m_numberOfScopedHTMLStyleChildren;
-    }
-
-    void unregisterScopedHTMLStyleChild()
-    {
-        ASSERT(m_numberOfScopedHTMLStyleChildren > 0);
-        if (m_numberOfScopedHTMLStyleChildren > 0)
-            --m_numberOfScopedHTMLStyleChildren;
-    }
-
-    bool hasScopedHTMLStyleChild() const
-    {
-        return m_numberOfScopedHTMLStyleChildren;
-    }
-
-    size_t numberOfScopedHTMLStyleChildren() const
-    {
-        return m_numberOfScopedHTMLStyleChildren;
-    }
-#endif
-
     bool isFocused() const { return m_isFocused; }
     void setFocused(bool focused) { m_isFocused = focused; }
 
@@ -363,10 +336,6 @@ private:
     mutable RefPtr<DOMSettableTokenList> m_itemProp;
     mutable RefPtr<DOMSettableTokenList> m_itemRef;
     mutable RefPtr<DOMSettableTokenList> m_itemType;
-#endif
-
-#if ENABLE(STYLE_SCOPED)
-    size_t m_numberOfScopedHTMLStyleChildren;
 #endif
 };
 

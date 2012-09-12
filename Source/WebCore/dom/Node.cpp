@@ -2535,40 +2535,6 @@ void Node::notifyMutationObserversNodeWillDetach()
 }
 #endif // ENABLE(MUTATION_OBSERVERS)
 
-#if ENABLE(STYLE_SCOPED)
-bool Node::hasScopedHTMLStyleChild() const
-{
-    return hasRareData() && rareData()->hasScopedHTMLStyleChild();
-}
-
-size_t Node::numberOfScopedHTMLStyleChildren() const
-{
-    return hasRareData() ? rareData()->numberOfScopedHTMLStyleChildren() : 0;
-}
-
-void Node::registerScopedHTMLStyleChild()
-{
-    ensureRareData()->registerScopedHTMLStyleChild();
-}
-
-void Node::unregisterScopedHTMLStyleChild()
-{
-    ASSERT(hasRareData());
-    if (hasRareData())
-        rareData()->unregisterScopedHTMLStyleChild();
-}
-#else
-bool Node::hasScopedHTMLStyleChild() const
-{
-    return 0;
-}
-
-size_t Node::numberOfScopedHTMLStyleChildren() const
-{
-    return 0;
-}
-#endif
-
 void Node::handleLocalEvents(Event* event)
 {
     if (!hasRareData() || !rareData()->eventTargetData())

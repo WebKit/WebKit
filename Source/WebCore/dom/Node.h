@@ -349,6 +349,9 @@ public:
     void setHasAttrList() { setFlag(HasAttrListFlag); }
     void clearHasAttrList() { clearFlag(HasAttrListFlag); }
 
+    bool hasScopedHTMLStyleChild() const { return getFlag(HasScopedHTMLStyleChildFlag); }
+    void setHasScopedHTMLStyleChild(bool flag) { setFlag(flag, HasScopedHTMLStyleChildFlag); }
+
     enum ShouldSetAttached {
         SetAttached,
         DoNotSetAttached
@@ -658,11 +661,8 @@ public:
     void notifyMutationObserversNodeWillDetach();
 #endif // ENABLE(MUTATION_OBSERVERS)
 
-#if ENABLE(STYLE_SCOPED)
     void registerScopedHTMLStyleChild();
     void unregisterScopedHTMLStyleChild();
-#endif
-    bool hasScopedHTMLStyleChild() const;
     size_t numberOfScopedHTMLStyleChildren() const;
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
@@ -710,10 +710,11 @@ private:
 #endif
         InNamedFlowFlag = 1 << 26,
         HasAttrListFlag = 1 << 27,
-        HasCustomCallbacksFlag = 1 << 28
+        HasCustomCallbacksFlag = 1 << 28,
+        HasScopedHTMLStyleChildFlag = 1 << 29
     };
 
-    // 4 bits remaining
+    // 3 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 

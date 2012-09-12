@@ -45,6 +45,7 @@ public:
     bool scoped() const;
     void setScoped(bool);
     Element* scopingElement() const;
+    bool isRegisteredAsScoped() const;
 #endif
 
     using StyleElement::sheet;
