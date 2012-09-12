@@ -1,3 +1,17 @@
+2012-09-11  Taiju Tsuiki  <tzik@chromium.org>
+
+        WebFrameImpl::client() needs NULL check in WebWorkerClientImpl::openFileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=96354
+
+        Reviewed by Kent Tamura.
+
+        Ensure non-NULL before using WebFrameImpl::client().
+
+        Test: fast/filesystem/workers/detached-frame-crash.html
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::openFileSystem):
+
 2012-09-11  Keishi Hattori  <keishi@webkit.org>
 
         Create Localizer factory method for LocaleICU
