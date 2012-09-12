@@ -4,6 +4,7 @@
         var newWindow;
         var intervalId;
         var firstIntervalExecution = true;
+        var clickNumber = 0;
         
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -13,57 +14,59 @@
         }
     
         function clickHandler() {
-            newWindow = window.open("about:blank");
-            self.focus();
-            debug("Test calling window.open() directly. A popup should be allowed.");
-            shouldBeNonNull("newWindow");
-                        
-            setTimeout(function() {
+            clickNumber++;
+            if (clickNumber == 1) {
                 newWindow = window.open("about:blank");
                 self.focus();
-                debug("Test calling window.open() with a 0 ms delay. A popup should be allowed.")
+                debug("Test calling window.open() directly. A popup should be allowed.");
                 shouldBeNonNull("newWindow");
-            }, 0);
-            
-            setTimeout(function() {
-                newWindow = window.open("about:blank");
-                self.focus();
-                debug("Test calling window.open() with a 1000 ms delay. A popup should be allowed.")
-                shouldBeNonNull("newWindow");
-            }, 1000);
-            
-            setTimeout(function() {
-                newWindow = window.open("about:blank");
-                self.focus();
-                debug("Test calling window.open() with a 1001 ms delay. A popup should not be allowed.")
-                shouldBeUndefined("newWindow");
-                
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, 1001);
-            
-            intervalId = setInterval(function() {
-                debug("Test calling window.open() in a 100 ms interval. A popup should only be allowed on the first execution of the interval.");
-                newWindow = window.open("about:blank");
-                self.focus();
-                if (firstIntervalExecution) {
-                    shouldBeNonNull("newWindow");
-                    firstIntervalExecution = false;
-                } else {
-                    shouldBeUndefined("newWindow");
-                    clearInterval(intervalId);
-                }
-            }, 100);
-            
-            setTimeout(function() {
+            } else if (clickNumber == 2) {
                 setTimeout(function() {
                     newWindow = window.open("about:blank");
                     self.focus();
-                    debug("Test calling window.open() in a nested call to setTimeout(). A popup should not be allowed.")
-                    shouldBeUndefined("newWindow");
+                    debug("Test calling window.open() with a 0 ms delay. A popup should be allowed.")
+                    shouldBeNonNull("newWindow");
                 }, 0);
-            }, 300);
-            
+            } else if (clickNumber == 3) {
+                intervalId = setInterval(function() {
+                    debug("Test calling window.open() in a 100 ms interval. A popup should only be allowed on the first execution of the interval.");
+                    newWindow = window.open("about:blank");
+                    self.focus();
+                    if (firstIntervalExecution) {
+                        shouldBeNonNull("newWindow");
+                        firstIntervalExecution = false;
+                    } else {
+                        shouldBeUndefined("newWindow");
+                        clearInterval(intervalId);
+                    }
+                }, 100);
+            } else if (clickNumber == 4) {
+                setTimeout(function() {
+                    setTimeout(function() {
+                        newWindow = window.open("about:blank");
+                        self.focus();
+                        debug("Test calling window.open() in a nested call to setTimeout(). A popup should not be allowed.")
+                        shouldBeUndefined("newWindow");
+                    }, 0);
+                }, 300);
+            } else if (clickNumber == 5) {
+                setTimeout(function() {
+                    newWindow = window.open("about:blank");
+                    self.focus();
+                    debug("Test calling window.open() with a 1000 ms delay. A popup should be allowed.")
+                    shouldBeNonNull("newWindow");
+                }, 1000);
+            } else if (clickNumber == 6) {
+                setTimeout(function() {
+                    newWindow = window.open("about:blank");
+                    self.focus();
+                    debug("Test calling window.open() with a 1001 ms delay. A popup should not be allowed.")
+                    shouldBeUndefined("newWindow");
+
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 1001);
+            }
             if (window.eventSender)
                 eventSender.leapForward(1001);
         }
@@ -73,14 +76,16 @@
             var buttonX = button.offsetLeft + button.offsetWidth / 2;
             var buttonY = button.offsetTop + button.offsetHeight / 2;
             if (window.eventSender) {
-                eventSender.mouseMoveTo(buttonX, buttonY);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                for (var i = 0; i < 6; i++) { 
+                    eventSender.mouseMoveTo(buttonX, buttonY);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
             }
         }        
     </script>
 </head>
 <body onload="clickButton()">
-    <button id="test" onclick="clickHandler()">Click Here</button>
+    <button id="test" onclick="clickHandler()">Click Here (6 times)</button>
     <div id="console"></div>
 </body>

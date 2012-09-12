@@ -1,3 +1,16 @@
+2012-09-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Change fast/events/popup-blocking-timers.html to generate a user action for each popup
+        https://bugs.webkit.org/show_bug.cgi?id=96475
+
+        Reviewed by Adam Barth.
+
+        The chromium port only allows one user gesture gated action per user
+        gesture.
+
+        * fast/events/popup-blocking-timers-expected.txt:
+        * fast/events/popup-blocking-timers.html:
+
 2012-09-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

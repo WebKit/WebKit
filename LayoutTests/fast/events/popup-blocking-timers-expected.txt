@@ -1,4 +1,4 @@
-Click Here
+Click Here (6 times)
 Test calling window.open() directly. A popup should be allowed.
 PASS newWindow is non-null.
 Test calling window.open() with a 0 ms delay. A popup should be allowed.
