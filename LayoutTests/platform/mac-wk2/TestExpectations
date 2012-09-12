@@ -4,3 +4,5 @@
 // All spatial navigation tests fail on Mac WK2
 BUGWK96438 SKIP : fast/spatial-navigation = PASS
 
+BUGWK96652 : fast/events/dispatch-message-string-data.html = TEXT
+

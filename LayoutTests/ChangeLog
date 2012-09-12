@@ -1,3 +1,14 @@
+2012-09-12  Stephanie Lewis  <slewis@apple.com>
+
+        fast/events/dispatch-message-string-data.html fails on mac wk2
+        https://bugs.webkit.org/show_bug.cgi?id=96552
+
+        Unreviewed.
+
+        Add to TestExpectations.
+
+        * platform/mac-wk2/TestExpectations:
+
 2012-09-12  Levi Weintraub  <leviw@chromium.org>
 
         More unreviewed gardening after r128346.
