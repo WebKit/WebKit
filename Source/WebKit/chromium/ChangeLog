@@ -1,3 +1,23 @@
+2012-09-12  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] Remove unused WebGestureEvent fields
+        https://bugs.webkit.org/show_bug.cgi?id=95496
+
+        Reviewed by Adam Barth.
+
+        Remove the no-longer used fields from WebGestureEvent, now that
+        chromium has been updated to use the per-event-type fields instead.
+        This depends on crrev.com/156346 in chromium.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * public/android/WebInputEventFactory.h:
+        * src/WebInputEvent.cpp:
+        (SameSizeAsWebGestureEvent):
+        * src/android/WebInputEventFactory.cpp:
+        (WebKit):
+        (WebKit::WebInputEventFactory::gestureEvent):
+
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128351.

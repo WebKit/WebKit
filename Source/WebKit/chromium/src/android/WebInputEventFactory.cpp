@@ -148,12 +148,21 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(MouseWheelDirectionType
 
 // WebGestureEvent ------------------------------------------------------------
 
+// FIXME: remove this obsolete version
 WebGestureEvent WebInputEventFactory::gestureEvent(WebInputEvent::Type type,
                                                    double timeStampSeconds,
                                                    int x,
                                                    int y,
-                                                   float deltaX,
-                                                   float deltaY,
+                                                   float,
+                                                   float,
+                                                   int modifiers) {
+    return gestureEvent(type, timeStampSeconds, x, y, modifiers);
+}
+
+WebGestureEvent WebInputEventFactory::gestureEvent(WebInputEvent::Type type,
+                                                   double timeStampSeconds,
+                                                   int x,
+                                                   int y,
                                                    int modifiers)
 {
     WebGestureEvent result;
@@ -161,8 +170,6 @@ WebGestureEvent WebInputEventFactory::gestureEvent(WebInputEvent::Type type,
     result.type = type;
     result.x = x;
     result.y = y;
-    result.deltaX = deltaX;
-    result.deltaY = deltaY;
     result.timeStampSeconds = timeStampSeconds;
     result.modifiers = modifiers;
 

@@ -81,6 +81,11 @@ public:
                                                       float deltaY,
                                                       int modifiers);
 
+    WEBKIT_EXPORT static WebGestureEvent gestureEvent(WebInputEvent::Type,
+                                                      double timeStampSeconds,
+                                                      int x,
+                                                      int y,
+                                                      int modifiers);
 };
 
 } // namespace WebKit
