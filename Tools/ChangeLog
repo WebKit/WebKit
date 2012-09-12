@@ -1,3 +1,22 @@
+2012-09-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL] Make DumpRenderTree smarter at finding the fonts
+        http://webkit.org/b/96281
+
+        Reviewed by Gyuyoung Kim.
+
+        Respect WEBKITOUTPUTDIR and expand the font dir from it.
+        Use CString consistently.
+
+        * DumpRenderTree/efl/FontManagement.cpp:
+        (buildPath):
+        (getCoreFontFiles):
+        (addFontDirectory):
+        (addFontFiles):
+        (getCustomBuildDir):
+        (getPlatformFontsPath):
+        (addFontsToEnvironment):
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks

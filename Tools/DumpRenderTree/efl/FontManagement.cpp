@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 ProFUSION Embedded Systems
  * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,49 +32,88 @@
 #include <fontconfig/fontconfig.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringBuilder.h>
 
-static Vector<String> getFontFiles()
+static CString buildPath(const char* base, const char* first, ...)
 {
-    Vector<String> fontFilePaths;
+    va_list ap;
+    StringBuilder result;
+    result.append(base);
+
+    if (const char* current = first) {
+        va_start(ap, first);
+        do {
+            result.append('/');
+            result.append(current);
+        } while ((current = va_arg(ap, const char*)));
+        va_end(ap);
+    }
+
+    return result.toString().utf8();
+}
+
+static Vector<CString> getCoreFontFiles()
+{
+    Vector<CString> fontFilePaths;
 
     // Ahem is used by many layout tests.
-    fontFilePaths.append(String(FONTS_CONF_DIR "/AHEM____.TTF"));
+    fontFilePaths.append(CString(FONTS_CONF_DIR "/AHEM____.TTF"));
     // A font with no valid Fontconfig encoding to test https://bugs.webkit.org/show_bug.cgi?id=47452
-    fontFilePaths.append(String(FONTS_CONF_DIR "/FontWithNoValidEncoding.fon"));
+    fontFilePaths.append(CString(FONTS_CONF_DIR "/FontWithNoValidEncoding.fon"));
 
     for (int i = 1; i <= 9; i++) {
-        char fontPath[PATH_MAX];
-        snprintf(fontPath, PATH_MAX - 1,
-                 FONTS_CONF_DIR "/../../fonts/WebKitWeightWatcher%i00.ttf", i);
-
-        fontFilePaths.append(String(fontPath));
+        char fontPath[EINA_PATH_MAX];
+        snprintf(fontPath, EINA_PATH_MAX - 1, FONTS_CONF_DIR "/../../fonts/WebKitWeightWatcher%i00.ttf", i);
+        fontFilePaths.append(CString(fontPath));
     }
 
     return fontFilePaths;
 }
 
-static bool addFontDirectory(const CString& fontDirectory, FcConfig* config)
+static void addFontDirectory(const CString& fontDirectory, FcConfig* config)
 {
-    const char* path = fontDirectory.data();
-
-    if (!ecore_file_is_dir(path)
-        || !FcConfigAppFontAddDir(config, reinterpret_cast<const FcChar8*>(path))) {
-        fprintf(stderr, "Could not add font directory %s!\n", path);
-        return false;
-    }
-    return true;
+    const char* fontPath = fontDirectory.data();
+    if (!fontPath || !FcConfigAppFontAddDir(config, reinterpret_cast<const FcChar8*>(fontPath)))
+        fprintf(stderr, "Could not add font directory %s!\n", fontPath);
 }
 
-static void addFontFiles(const Vector<String>& fontFiles, FcConfig* config)
+static void addFontFiles(const Vector<CString>& fontFiles, FcConfig* config)
 {
-    for (Vector<String>::const_iterator it = fontFiles.begin(); it != fontFiles.end(); ++it) {
-        const CString currentFile = (*it).utf8();
-        const char* path = currentFile.data();
-
-        if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(path)))
-            fprintf(stderr, "Could not load font at %s!\n", path);
+    Vector<CString>::const_iterator it, end = fontFiles.end();
+    for (it = fontFiles.begin(); it != end; ++it) {
+        const char* filePath = (*it).data();
+        if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(filePath)))
+            fprintf(stderr, "Could not load font at %s!\n", filePath);
     }
+}
+
+static CString getCustomBuildDir()
+{
+    if (const char* userChosenBuildDir = getenv("WEBKITOUTPUTDIR")) {
+        if (ecore_file_is_dir(userChosenBuildDir))
+            return userChosenBuildDir;
+        fprintf(stderr, "WEBKITOUTPUTDIR set to '%s', but path doesn't exist.\n", userChosenBuildDir);
+    }
+
+    return CString();
+}
+
+static CString getPlatformFontsPath()
+{
+    CString customBuildDir = getCustomBuildDir();
+    if (!customBuildDir.isNull()) {
+        CString fontsPath = buildPath(customBuildDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", 0);
+        if (!ecore_file_exists(fontsPath.data()))
+            fprintf(stderr, "WEBKITOUTPUTDIR set to '%s', but could not local test fonts.\n", customBuildDir.data());
+        return fontsPath;
+    }
+
+    CString fontsPath = CString(DOWNLOADED_FONTS_DIR);
+    if (ecore_file_exists(fontsPath.data()))
+        return fontsPath;
+
+    fprintf(stderr, "Could not locate tests fonts, try setting WEBKITOUTPUTDIR.\n");
+    return CString();
 }
 
 void addFontsToEnvironment()
@@ -89,14 +129,8 @@ void addFontsToEnvironment()
         exit(1);
     }
 
-    if (!addFontDirectory(DOWNLOADED_FONTS_DIR, config)) {
-        fprintf(stderr, "None of the font directories could be added. Either install them "
-                        "or file a bug at http://bugs.webkit.org if they are installed in "
-                        "another location.\n");
-        exit(1);
-    }
-
-    addFontFiles(getFontFiles(), config);
+    addFontFiles(getCoreFontFiles(), config);
+    addFontDirectory(getPlatformFontsPath(), config);
 
     if (!FcConfigSetCurrent(config)) {
         fprintf(stderr, "Could not set the current font configuration!\n");
