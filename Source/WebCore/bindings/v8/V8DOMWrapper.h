@@ -129,10 +129,6 @@ namespace WebCore {
             DOMNodeMapping& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
             return domNodeMap.get(node);
         }
-    private:
-#if ENABLE(WORKERS)
-        static V8PerContextData* perContextData(WorkerContext*);
-#endif
     };
 
     template<typename T>

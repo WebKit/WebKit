@@ -77,8 +77,6 @@ namespace WebCore {
         // Returns a local handle of the context.
         v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context); }
 
-        V8PerContextData* perContextData() { return m_perContextData.get(); }
-
     private:
         void initIsolate();
         bool initializeIfNeeded();

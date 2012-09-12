@@ -86,15 +86,6 @@ v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr
     return wrapperHandle;
 }
 
-#if ENABLE(WORKERS)
-V8PerContextData* V8DOMWrapper::perContextData(WorkerContext*)
-{
-    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
-    return proxy ? proxy->perContextData() : 0;
-}
-#endif
-
 void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
     ASSERT(name);
