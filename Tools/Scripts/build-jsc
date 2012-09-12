@@ -66,7 +66,7 @@ if (isQt()) {
     my @projects = ("WTF", "JavaScriptCore");
     # Pick up the --no-webkit2 option from BUILD_WEBKIT_ARGS if it is needed
     push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
-    push @ARGV, "--qmakearg=CONFIG+=no_webkit2" if checkForArgumentAndRemoveFromARGV("--no-webkit2");
+    push @ARGV, "WEBKIT_CONFIG-=build_webkit2" if checkForArgumentAndRemoveFromARGV("--no-webkit2");
     my $result = buildQMakeProjects(\@projects, 0, @ARGV);
     exit exitStatus($result);
 } elsif (cmakeBasedPortName()) {

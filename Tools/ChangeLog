@@ -1,5 +1,13 @@
 2012-09-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Update build-jsc after r128174
+
+        Reviewed by Ossy.
+
+        * Scripts/build-jsc:
+
+2012-09-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Teach addStrictSubdirOrderBetween to handle more than two targets
 
         By hard-coding the names of the targets we defined we ended up just
