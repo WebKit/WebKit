@@ -190,7 +190,7 @@ test('realModifiers', 3, function() {
     equal(realModifiers('BUGFOO'), '');
 });
 
-test('allTestsWithSamePlatformAndBuildType', 13, function() {
+test('allTestsWithSamePlatformAndBuildType', 14, function() {
     // FIXME: test that allTestsWithSamePlatformAndBuildType actually returns the right set of tests.
     for (var i = 0; i < PLATFORMS.length; i++)
         ok(g_allTestsByPlatformAndBuildType[PLATFORMS[i]]);

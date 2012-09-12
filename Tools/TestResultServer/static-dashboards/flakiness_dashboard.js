@@ -40,7 +40,7 @@ var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
 // instead of matching the values we use in the TestExpectations file.
-var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX', 'EFL'];
+var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'ANDROID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX', 'EFL'];
 var PLATFORM_UNIONS = {
     'MAC': ['SNOWLEOPARD', 'LION'],
     'WIN': ['XP', 'WIN7'],
@@ -285,6 +285,8 @@ function chromiumPlatform(builderNameUpperCase)
         return 'XP';
     if (stringContains(builderNameUpperCase, 'LINUX'))
         return 'LUCID';
+    if (stringContains(builderNameUpperCase, 'ANDROID'))
+        return 'ANDROID';
     // The interactive bot is XP, but doesn't have an OS in it's name.
     if (stringContains(builderNameUpperCase, 'INTERACTIVE'))
         return 'XP';

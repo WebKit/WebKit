@@ -1,3 +1,17 @@
+2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Flakiness dashboard doesn't recognize new Chromium Android test builder
+        https://bugs.webkit.org/show_bug.cgi?id=96523
+
+        Reviewed by Ojan Vafai.
+
+        Properly return 'ANDROID' as the Chromium platform for Android builders.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (chromiumPlatform):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
 2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build on Windows requires bison/flex in PATH
