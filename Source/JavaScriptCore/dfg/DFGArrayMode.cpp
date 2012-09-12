@@ -51,6 +51,11 @@ Array::Mode fromObserved(ArrayModes modes, bool makeSafe)
     }
 }
 
+Array::Mode fromStructure(Structure* structure, bool makeSafe)
+{
+    return fromObserved(arrayModeFromStructure(structure), makeSafe);
+}
+
 Array::Mode refineArrayMode(Array::Mode arrayMode, SpeculatedType base, SpeculatedType index)
 {
     if (!base || !index) {
@@ -64,17 +69,8 @@ Array::Mode refineArrayMode(Array::Mode arrayMode, SpeculatedType base, Speculat
     if (!isInt32Speculation(index) || !isCellSpeculation(base))
         return Array::Generic;
     
-    // Pass through any array modes that would have been decided by the array profile, since
-    // the predictions of the inputs will not tell us anything useful that we didn't already
-    // get from the array profile.
-    switch (arrayMode) {
-    case Array::ForceExit:
-    case Array::JSArray:
-    case Array::JSArrayOutOfBounds:
+    if (arrayMode != Array::Undecided)
         return arrayMode;
-    default:
-        break;
-    }
     
     if (isStringSpeculation(base))
         return Array::String;
