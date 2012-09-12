@@ -431,6 +431,7 @@ private:
     virtual void mediaPlayerPause() OVERRIDE;
     virtual void mediaPlayerPlay() OVERRIDE;
     virtual bool mediaPlayerIsPaused() const OVERRIDE;
+    virtual bool mediaPlayerIsLooping() const OVERRIDE;
     virtual HostWindow* mediaPlayerHostWindow() OVERRIDE;
     virtual IntRect mediaPlayerWindowClipRect() OVERRIDE;
 

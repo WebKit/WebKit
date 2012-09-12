@@ -200,6 +200,7 @@ public:
     virtual void mediaPlayerPause() { }
     virtual void mediaPlayerPlay() { }
     virtual bool mediaPlayerIsPaused() const { return true; }
+    virtual bool mediaPlayerIsLooping() const { return false; }
     virtual HostWindow* mediaPlayerHostWindow() { return 0; }
     virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
 };
