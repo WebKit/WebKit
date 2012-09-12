@@ -2403,8 +2403,7 @@ BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS TEXT
 
 // Looks like some uninitialized memory at the bottom.
-BUGWK60103 LINUX ANDROID DEBUG : fast/replaced/border-radius-clip.html = IMAGE CRASH
-BUGWK60103 LINUX ANDROID RELEASE : fast/replaced/border-radius-clip.html = IMAGE
+BUGWK60103 LINUX ANDROID : fast/replaced/border-radius-clip.html = IMAGE CRASH
 BUGWK60103 WIN : fast/replaced/border-radius-clip.html = IMAGE
 BUGWK60103 MAC : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 

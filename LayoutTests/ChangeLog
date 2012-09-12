@@ -1,3 +1,11 @@
+2012-09-12  Adam Klein  <adamk@chromium.org>
+
+        Widen CRASH expectations for fast/replaced/border-radius-clip.html
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-12  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updated test expectations following r128346.
