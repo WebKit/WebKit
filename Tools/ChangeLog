@@ -1,3 +1,19 @@
+2012-09-12  Philippe Liard  <pliard@google.com>
+
+        Depend on {base,net} GYP targets rather than {base,net}_java.
+        https://bugs.webkit.org/show_bug.cgi?id=95690
+
+        Reviewed by Adam Barth.
+
+        {base,net}_java became 'private' targets on the Chromium side that
+        clients should not depend on (see
+        https://chromiumcodereview.appspot.com/10913083/).
+        This removes a bunch of trailing white spaces additionally in
+        TestWebkitAPI.gyp (which includes non-trailing white space changes).
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix the build with ENABLE_NETSCAPE_PLUGIN_API=0

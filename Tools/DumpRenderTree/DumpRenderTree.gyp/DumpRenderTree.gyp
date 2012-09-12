@@ -452,9 +452,9 @@
                 'target_name': 'DumpRenderTree_apk',
                 'type': 'none',
                 'dependencies': [
-                    '<(chromium_src_dir)/base/base.gyp:base_java',
-                    '<(chromium_src_dir)/net/net.gyp:net_java',
+                    '<(chromium_src_dir)/base/base.gyp:base',
                     '<(chromium_src_dir)/media/media.gyp:media_java',
+                    '<(chromium_src_dir)/net/net.gyp:net',
                     'DumpRenderTree',
                 ],
                 'variables': {
