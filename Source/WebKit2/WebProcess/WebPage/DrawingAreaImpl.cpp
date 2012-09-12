@@ -259,6 +259,18 @@ void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
     m_isPaintingEnabled = paintingEnabled;
 }
 
+void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
+{
+    // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
+    // is enabled on Mac so that scrollbars are always in their own layers.
+#if PLATFORM(MAC)
+    if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
+        m_webPage->corePage()->settings()->setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
+    else
+#endif
+        m_webPage->corePage()->settings()->setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
+}
+
 void DrawingAreaImpl::layerHostDidFlushLayers()
 {
     ASSERT(m_layerTreeHost);

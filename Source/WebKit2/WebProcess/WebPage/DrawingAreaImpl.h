@@ -66,6 +66,7 @@ private:
     virtual bool pageOverlayShouldApplyFadeWhenPainting() const;
 
     virtual void setPaintingEnabled(bool);
+    virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
 
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void scheduleCompositingLayerSync();

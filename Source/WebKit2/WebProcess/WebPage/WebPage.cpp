@@ -2081,15 +2081,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
     settings->setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
 
-    // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
-    // is enabled on Mac so that scrollbars are always in their own layers.
-#if PLATFORM(MAC)
-    if (settings->acceleratedDrawingEnabled())
-        settings->setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
-    else
-#endif
-        settings->setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
-
 #if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 #endif
@@ -2134,7 +2125,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)
-        m_drawingArea->updatePreferences();
+        m_drawingArea->updatePreferences(store);
 }
 
 #if ENABLE(INSPECTOR)

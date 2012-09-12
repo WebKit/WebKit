@@ -49,6 +49,7 @@ struct ColorSpaceData;
 class LayerTreeHost;
 class WebPage;
 struct WebPageCreationParameters;
+struct WebPreferencesStore;
 
 #if PLATFORM(WIN)
 struct WindowGeometry;
@@ -83,7 +84,7 @@ public:
     virtual void pageCustomRepresentationChanged() { }
 
     virtual void setPaintingEnabled(bool) { }
-    virtual void updatePreferences() { }
+    virtual void updatePreferences(const WebPreferencesStore&) { }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;

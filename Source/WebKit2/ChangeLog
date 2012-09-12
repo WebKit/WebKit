@@ -1,3 +1,33 @@
+2012-09-11  Anders Carlsson  <andersca@apple.com>
+
+        Accelerated compositing should always be forced when using the tiled drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=96449
+
+        Reviewed by Andy Estes.
+
+        There's code in WebPage::updatePreferences that will turn off accelerated compositing unless accelerated drawing is enabled.
+        This should only be done in the non-tiled model, so move the code to DrawingAreaImpl::updatePreferences.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updatePreferences):
+        This now takes a WebPreferencesStore.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+        Move code here from WebPage::updatePreferences.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pass the WebPreferencesStore to DrawingArea::updatePreferences.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Remove call to updatePreferences, it's going to be called by the WebPage object later.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        This now takes a WebPreferencesStore.
+
 2012-09-11  Brady Eidson  <beidson@apple.com>
 
         Get rid of the PluginProcessShim for 64-bit plug-ins

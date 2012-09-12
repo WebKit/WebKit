@@ -71,11 +71,10 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!parameters.isVisible)
 {
-    Page* page = webPage->corePage();
+    Page* page = m_webPage->corePage();
 
-    // FIXME: It's weird that we're mucking around with the settings here.
-    page->settings()->setForceCompositingMode(true);
     page->settings()->setScrollingCoordinatorEnabled(true);
+    page->settings()->setForceCompositingMode(true);
 
     WebProcess::shared().eventDispatcher().addScrollingTreeForPage(webPage);
 
@@ -92,8 +91,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
-
-    updatePreferences();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
@@ -206,7 +203,7 @@ void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(const IntRect& re
     scheduleCompositingLayerSync();
 }
 
-void TiledCoreAnimationDrawingArea::updatePreferences()
+void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
     bool showDebugBorders = m_webPage->corePage()->settings()->showDebugBorders();
 

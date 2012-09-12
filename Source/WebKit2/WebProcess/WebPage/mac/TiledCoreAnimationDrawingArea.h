@@ -64,7 +64,7 @@ private:
     virtual void didInstallPageOverlay() OVERRIDE;
     virtual void didUninstallPageOverlay() OVERRIDE;
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
-    virtual void updatePreferences() OVERRIDE;
+    virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
 
