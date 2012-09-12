@@ -2060,8 +2060,8 @@ BUGCR58936 : fast/js/numeric-escapes-in-string-literals.html = TEXT
 // content of <video> elements.
 BUGWK91205 SKIP : media/nodesFromRect-shadowContent.html = TEXT
 
-BUGWK48459 LINUX ANDROID WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGWK48459 LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
+BUGWK96470 LINUX ANDROID WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
+BUGWK96470 LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.

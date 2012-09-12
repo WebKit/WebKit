@@ -1,3 +1,11 @@
+2012-09-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        Assign new bug for fast/text/international/vertical-text-*.html
+
+        * platform/chromium/TestExpectations:
+
 2012-09-11  Taiju Tsuiki  <tzik@chromium.org>
 
         WebFrameImpl::client() needs NULL check in WebWorkerClientImpl::openFileSystem
