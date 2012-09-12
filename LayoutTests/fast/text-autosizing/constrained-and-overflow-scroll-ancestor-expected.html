@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style type="text/css">
+html { font-size: 16px; }
+body { width: 800px; margin: 0; }
+::-webkit-scrollbar {
+    /* Keeps the text size multiplier a round number. */
+    width: 0px;
+}
+</style>
+
+</head>
+<body>
+
+<div style="max-height: 500px; overflow-y: scroll">
+    <div>
+        <div style="font-size: 2.5rem">
+            This text should be autosized to 40px computed font-size, since the grandparent's overflow-y:scroll means the available height is unconstrained (despite the grandparent also having a max-height).
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

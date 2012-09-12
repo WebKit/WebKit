@@ -1,3 +1,42 @@
+2012-09-12  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Don't autosize text in constrained height elements.
+        https://bugs.webkit.org/show_bug.cgi?id=96143
+
+        Reviewed by Julien Chaffraix.
+
+        Added tests with various kinds, orders and nestings of constrained
+        height, overflow-y and positioned elements.
+
+        * fast/text-autosizing/constrained-and-overflow-auto-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-auto-ancestor.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-hidden-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-hidden-ancestor.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-paged-x-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-paged-x-ancestor.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-scroll-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-and-overflow-scroll-ancestor.html: Added.
+        * fast/text-autosizing/constrained-height-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-height-ancestor.html: Added.
+        * fast/text-autosizing/constrained-maxheight-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-maxheight-ancestor.html: Added.
+        * fast/text-autosizing/constrained-maxheight-expected.html: Added.
+        * fast/text-autosizing/constrained-maxheight.html: Added.
+        * fast/text-autosizing/constrained-percent-maxheight-expected.html: Added.
+        * fast/text-autosizing/constrained-percent-maxheight.html: Added.
+        * fast/text-autosizing/constrained-percent-of-viewport-maxheight-expected.html: Added.
+        * fast/text-autosizing/constrained-percent-of-viewport-maxheight.html: Added.
+        * fast/text-autosizing/constrained-then-overflow-ancestors-expected.html: Added.
+        * fast/text-autosizing/constrained-then-overflow-ancestors.html: Added.
+        * fast/text-autosizing/constrained-then-overflow-then-positioned-ancestors-expected.html: Added.
+        * fast/text-autosizing/constrained-then-overflow-then-positioned-ancestors.html: Added.
+        * fast/text-autosizing/constrained-then-position-absolute-ancestors-expected.html: Added.
+        * fast/text-autosizing/constrained-then-position-absolute-ancestors.html: Added.
+        * fast/text-autosizing/constrained-then-position-fixed-ancestors-expected.html: Added.
+        * fast/text-autosizing/constrained-then-position-fixed-ancestors.html: Added.
+        * fast/text-autosizing/constrained-within-overflow-ancestor-expected.html: Added.
+        * fast/text-autosizing/constrained-within-overflow-ancestor.html: Added.
+
 2012-09-12  Adam Klein  <adamk@chromium.org>
 
         Mark new test fast/filesystem/workers/detached-frame-crash.html

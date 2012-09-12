@@ -77,8 +77,26 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     return true;
 }
 
+static bool contentHeightIsConstrained(const RenderBox* box)
+{
+    // FIXME: Propagate constrainedness down the tree, to avoid inefficiently walking back up from each box.
+    // FIXME: This code needs to take into account vertical writing modes.
+    // FIXME: Consider additional heuristics, such as ignoring fixed heights if the content is already overflowing before autosizing kicks in.
+    for (const RenderBox* container = box; container; container = container->containingBlock()) {
+        RenderStyle* style = container->style();
+        if (style->overflowY() >= OSCROLL)
+            return false;
+        if (style->height().isSpecified() || style->maxHeight().isSpecified())
+            return true;
+    }
+    return false;
+}
+
 void TextAutosizer::processBox(RenderBox* box, const IntSize& windowSize, const IntSize& layoutSize)
 {
+    if (contentHeightIsConstrained(box))
+        return;
+
     int logicalWindowWidth = box->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
     int logicalLayoutWidth = box->isHorizontalWritingMode() ? layoutSize.width() : layoutSize.height();
     // Ignore box width in excess of the layout width, to avoid extreme multipliers.

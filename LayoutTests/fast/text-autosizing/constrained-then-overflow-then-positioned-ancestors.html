@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style type="text/css">
+html { font-size: 16px; }
+body { width: 800px; margin: 0; }
+</style>
+
+<script type="text/javascript">
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<div style="max-height: 500px; position: relative">
+    <div style="overflow-y: auto">
+        <div style="position: absolute">
+            This text should not be autosized (its computed font-size should remain 16px), as unlike constrained-then-overflow-ancestors.html, this block's position:absolute means that its containing block is its position:relative grandparent (skipping its position:static parent with overflow-y:auto), so it does get constrained by the max-height on its grandparent (the parent has no effect).
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
