@@ -1,3 +1,12 @@
+2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed trivial build fix for Qt/Windows after bug #96358.
+
+        As pointed out by Kevin, we should inject the "set PATH=..." statement
+        to add the GnuWin32 directory only if that directory actually exists.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-09-12  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Memory leaks in TestControllerEfl

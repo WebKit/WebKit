@@ -80,9 +80,9 @@ contains(TEMPLATE, derived) {
     # Qt5's top-level repository, so let's add that to the PATH if we can
     # find it.
     win32 {
-        GNUTOOLS=$$[QT_HOST_DATA]/../gnuwin32/bin
-        exists($$GNUTOOLS/gperf.exe) {
-            GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS);%PATH%$$escape_expand(\\\"))"
+        GNUTOOLS_DIR=$$[QT_HOST_DATA]/../gnuwin32/bin
+        exists($$GNUTOOLS_DIR/gperf.exe) {
+            GNUTOOLS = "(set $$escape_expand(\\\")PATH=$$toSystemPath($$GNUTOOLS_DIR);%PATH%$$escape_expand(\\\"))"
         }
     }
 
