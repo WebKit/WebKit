@@ -1,3 +1,20 @@
+2012-09-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Persistent handle referenced from ScriptWrappable is double counted
+        https://bugs.webkit.org/show_bug.cgi?id=96483
+
+        Reviewed by Alexander Pavlov.
+
+        * wtf/MemoryInstrumentation.h:
+        (WebCore::MemoryClassInfo::addWeakPointer): this method is expected to be
+        used on fields that are pointers to objects which are parts of bigger memory
+        blocks (field of another object, element in an array, object allocated in a
+        memory arena etc.). We don't want to count such objects' memory separately
+        from their owners but in order to be able to validates the memory instrumentation
+        with clang plugin we need to make sure all fields in instrumented objects
+        are reported.
+        (MemoryClassInfo):
+
 2012-09-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI move String* instrumentation to wtf.
