@@ -81,6 +81,7 @@ public:
     virtual void setNeedsRedrawOnImplThread() OVERRIDE;
     virtual void setNeedsCommitOnImplThread() OVERRIDE;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE;
+    virtual void releaseContentsTexturesOnImplThread() OVERRIDE;
 
     // CCSchedulerClient implementation
     virtual bool hasMoreResourceUpdates() const OVERRIDE;
@@ -106,7 +107,7 @@ private:
 
         double monotonicFrameBeginTime;
         OwnPtr<CCScrollAndScaleSet> scrollInfo;
-        bool contentsTexturesWereDeleted;
+        CCPrioritizedTextureManager::BackingVector evictedContentsTexturesBackings;
         size_t memoryAllocationLimitBytes;
     };
     OwnPtr<BeginFrameAndCommitState> m_pendingBeginFrameRequest;
@@ -127,7 +128,7 @@ private:
         IntRect rect;
     };
     void forceBeginFrameOnImplThread(CCCompletionEvent*);
-    void beginFrameCompleteOnImplThread(CCCompletionEvent*, PassOwnPtr<CCTextureUpdateQueue>, bool contentsTexturesWereDeleted);
+    void beginFrameCompleteOnImplThread(CCCompletionEvent*, PassOwnPtr<CCTextureUpdateQueue>);
     void beginFrameAbortedOnImplThread();
     void requestReadbackOnImplThread(ReadbackRequest*);
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);

@@ -1,3 +1,15 @@
+2012-09-12  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] Evict textures through the texture manager instead of the resource provider
+        https://bugs.webkit.org/show_bug.cgi?id=96463
+
+        Reviewed by James Robinson.
+
+        Update layer tree host impl test to include the extra interface functions
+        added to CCLayerTreeHostImplClient.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-09-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI move String* instrumentation to wtf.

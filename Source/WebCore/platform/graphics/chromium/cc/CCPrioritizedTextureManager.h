@@ -53,6 +53,8 @@ public:
     }
     ~CCPrioritizedTextureManager();
 
+    typedef Vector<CCPrioritizedTexture::Backing*> BackingVector;
+
     // FIXME (http://crbug.com/137094): This 64MB default is a straggler from the
     // old texture manager and is just to give us a default memory allocation before
     // we get a callback from the GPU memory manager. We should probaby either:
@@ -74,12 +76,18 @@ public:
     void prioritizeTextures();
     void clearPriorities();
 
+    void reduceMemoryOnImplThread(size_t limitBytes, CCResourceProvider*);
+    void getEvictedBackings(BackingVector& evictedBackings);
+    void unlinkEvictedBackings(const BackingVector& evictedBackings);
+    // Deletes all evicted backings, unlinking them from their owning textures if needed.
+    // Returns true if this function to unlinked any backings from their owning texture while
+    // destroying them.
+    bool deleteEvictedBackings();
+
     bool requestLate(CCPrioritizedTexture*);
 
     void reduceMemory(CCResourceProvider*);
     void clearAllMemory(CCResourceProvider*);
-    void unlinkAllBackings();
-    void deleteAllUnlinkedBackings();
 
     void acquireBackingTextureIfNeeded(CCPrioritizedTexture*, CCResourceProvider*);
 
@@ -89,6 +97,11 @@ public:
 
 private:
     friend class CCPrioritizedTextureTest;
+
+    enum EvictionPriorityPolicy {
+        RespectManagerPriorityCutoff,
+        DoNotRespectManagerPriorityCutoff,
+    };
 
     // Compare textures. Highest priority first.
     static inline bool compareTextures(CCPrioritizedTexture* a, CCPrioritizedTexture* b)
@@ -116,9 +129,9 @@ private:
     CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize, int pool);
 
     void updateBackingsPriorities();
-    void reduceMemory(size_t limit, CCResourceProvider*);
+    void evictBackingsToReduceMemory(size_t limitBytes, EvictionPriorityPolicy, CCResourceProvider*);
     CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, CCResourceProvider*);
-    void destroyBacking(CCPrioritizedTexture::Backing*, CCResourceProvider*);
+    void evictBackingResource(CCPrioritizedTexture::Backing*, CCResourceProvider*);
 
 #if !ASSERT_DISABLED
     void assertInvariants();
@@ -134,10 +147,10 @@ private:
     typedef HashSet<CCPrioritizedTexture*> TextureSet;
     typedef ListHashSet<CCPrioritizedTexture::Backing*> BackingSet;
     typedef Vector<CCPrioritizedTexture*> TextureVector;
-    typedef Vector<CCPrioritizedTexture::Backing*> BackingVector;
 
     TextureSet m_textures;
     BackingSet m_backings;
+    BackingVector m_evictedBackings;
 
     TextureVector m_tempTextureVector;
     BackingVector m_tempBackingVector;

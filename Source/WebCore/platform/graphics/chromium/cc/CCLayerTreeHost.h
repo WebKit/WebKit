@@ -211,8 +211,19 @@ public:
 
     CCPrioritizedTextureManager* contentsTextureManager() const;
 
-    void unlinkAllContentTextures();
-    void deleteUnlinkedTextures();
+    // Delete contents textures' backing resources until they use only bytesLimit bytes. This may
+    // be called on the impl thread while the main thread is running.
+    void reduceContentsTexturesMemoryOnImplThread(size_t bytesLimit, CCResourceProvider*);
+    // Retrieve the list of all contents textures' backings that have been evicted, to pass to the
+    // main thread to unlink them from their owning textures.
+    void getEvictedContentTexturesBackings(CCPrioritizedTextureManager::BackingVector&);
+    // Unlink the list of contents textures' backings from their owning textures on the main thread
+    // before updating layers.
+    void unlinkEvictedContentTexturesBackings(const CCPrioritizedTextureManager::BackingVector&);
+    // Deletes all evicted backings, unlinking them from their owning textures if needed.
+    // Returns true if this function had to unlink any backings from their owning texture when
+    // destroying them. If this was the case, the impl layer tree may contain invalid resources.
+    bool deleteEvictedContentTexturesBackings();
 
     bool visible() const { return m_visible; }
     void setVisible(bool);

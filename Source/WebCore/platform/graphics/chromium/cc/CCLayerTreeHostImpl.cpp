@@ -521,8 +521,8 @@ void CCLayerTreeHostImpl::releaseContentsTextures()
 {
     if (m_contentsTexturesPurged)
         return;
-    m_resourceProvider->deleteOwnedResources(CCRenderer::ContentPool);
-    m_contentsTexturesPurged = true;
+    m_client->releaseContentsTexturesOnImplThread();
+    setContentsTexturesPurged();
     m_client->setNeedsCommitOnImplThread();
     m_client->onCanDrawStateChanged(canDraw());
 }
@@ -731,6 +731,12 @@ bool CCLayerTreeHostImpl::initializeRenderer(PassOwnPtr<CCGraphicsContext> conte
     m_client->onCanDrawStateChanged(canDraw());
 
     return m_renderer;
+}
+
+void CCLayerTreeHostImpl::setContentsTexturesPurged()
+{
+    m_contentsTexturesPurged = true;
+    m_client->onCanDrawStateChanged(canDraw());
 }
 
 void CCLayerTreeHostImpl::resetContentsTexturesPurged()
