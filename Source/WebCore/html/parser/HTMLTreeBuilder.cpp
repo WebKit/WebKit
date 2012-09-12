@@ -1420,74 +1420,81 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
     static const int outerIterationLimit = 8;
     static const int innerIterationLimit = 3;
 
+    // 1, 2, 3 and 16 are covered by the for() loop.
     for (int i = 0; i < outerIterationLimit; ++i) {
-        // 1.
+        // 4.
         Element* formattingElement = m_tree.activeFormattingElements()->closestElementInScopeWithName(token->name());
-        if (!formattingElement || ((m_tree.openElements()->contains(formattingElement)) && !m_tree.openElements()->inScope(formattingElement))) {
+        // 4.a
+        if (!formattingElement)
+            return processAnyOtherEndTagForInBody(token);
+        // 4.c
+        if ((m_tree.openElements()->contains(formattingElement)) && !m_tree.openElements()->inScope(formattingElement)) {
             parseError(token);
             notImplemented(); // Check the stack of open elements for a more specific parse error.
             return;
         }
+        // 4.b
         HTMLElementStack::ElementRecord* formattingElementRecord = m_tree.openElements()->find(formattingElement);
         if (!formattingElementRecord) {
             parseError(token);
             m_tree.activeFormattingElements()->remove(formattingElement);
             return;
         }
+        // 4.d
         if (formattingElement != m_tree.currentElement())
             parseError(token);
-        // 2.
+        // 5.
         HTMLElementStack::ElementRecord* furthestBlock = m_tree.openElements()->furthestBlockForFormattingElement(formattingElement);
-        // 3.
+        // 6.
         if (!furthestBlock) {
             m_tree.openElements()->popUntilPopped(formattingElement);
             m_tree.activeFormattingElements()->remove(formattingElement);
             return;
         }
-        // 4.
+        // 7.
         ASSERT(furthestBlock->isAbove(formattingElementRecord));
         RefPtr<HTMLStackItem> commonAncestor = formattingElementRecord->next()->stackItem();
-        // 5.
+        // 8.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements()->bookmarkFor(formattingElement);
-        // 6.
+        // 9.
         HTMLElementStack::ElementRecord* node = furthestBlock;
         HTMLElementStack::ElementRecord* nextNode = node->next();
         HTMLElementStack::ElementRecord* lastNode = furthestBlock;
+        // 9.1, 9.2, 9.3 and 9.11 are covered by the for() loop.
         for (int i = 0; i < innerIterationLimit; ++i) {
-            // 6.1
+            // 9.4
             node = nextNode;
             ASSERT(node);
-            nextNode = node->next(); // Save node->next() for the next iteration in case node is deleted in 6.2.
-            // 6.2
+            nextNode = node->next(); // Save node->next() for the next iteration in case node is deleted in 9.5.
+            // 9.5
             if (!m_tree.activeFormattingElements()->contains(node->element())) {
                 m_tree.openElements()->remove(node->element());
                 node = 0;
                 continue;
             }
-            // 6.3
+            // 9.6
             if (node == formattingElementRecord)
                 break;
-            // 6.5
+            // 9.7
             RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(node->stackItem().get());
 
             HTMLFormattingElementList::Entry* nodeEntry = m_tree.activeFormattingElements()->find(node->element());
             nodeEntry->replaceElement(newItem);
             node->replaceElement(newItem.release());
-            // 6.4 -- Intentionally out of order to handle the case where node
-            // was replaced in 6.5.
-            // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10096
+
+            // 9.8
             if (lastNode == furthestBlock)
                 bookmark.moveToAfter(nodeEntry);
-            // 6.6
+            // 9.9
             if (ContainerNode* parent = lastNode->element()->parentNode())
                 parent->parserRemoveChild(lastNode->element());
             node->element()->parserAddChild(lastNode->element());
             if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
                 lastNode->element()->lazyAttach();
-            // 6.7
+            // 9.10
             lastNode = node;
         }
-        // 7
+        // 10.
         if (ContainerNode* parent = lastNode->element()->parentNode())
             parent->parserRemoveChild(lastNode->element());
         if (commonAncestor->causesFosterParenting())
@@ -1499,24 +1506,25 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
                 lastNode->element()->lazyAttach();
         }
-        // 8
+        // 11.
         RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem().get());
-        // 9
+        // 12.
         newItem->element()->takeAllChildrenFrom(furthestBlock->element());
-        // 10
+        // 13.
         Element* furthestBlockElement = furthestBlock->element();
         // FIXME: All this creation / parserAddChild / attach business should
-        //        be in HTMLConstructionSite.  My guess is that steps 8--12
+        //        be in HTMLConstructionSite. My guess is that steps 11--15
         //        should all be in some HTMLConstructionSite function.
         furthestBlockElement->parserAddChild(newItem->element());
+        // FIXME: Why is this attach logic necessary? Style resolve should attach us if needed.
         if (furthestBlockElement->attached() && !newItem->element()->attached()) {
             // Notice that newItem->element() might already be attached if, for example, one of the reparented
             // children is a style element, which attaches itself automatically.
             newItem->element()->attach();
         }
-        // 11
+        // 14.
         m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);
-        // 12
+        // 15.
         m_tree.openElements()->remove(formattingElement);
         m_tree.openElements()->insertAbove(newItem, furthestBlock);
     }
