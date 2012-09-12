@@ -222,8 +222,8 @@ private:
         return m_edje || (!m_themePath.isEmpty() && const_cast<RenderThemeEfl*>(this)->loadTheme());
     }
 
-    ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
-    ALWAYS_INLINE Evas_Object* edje() { return m_edje.get(); }
+    ALWAYS_INLINE Ecore_Evas* canvas() const { return m_canvas.get(); }
+    ALWAYS_INLINE Evas_Object* edje() const { return m_edje.get(); }
 
     void applyPartDescriptionsFrom(const String& themePath);
 
