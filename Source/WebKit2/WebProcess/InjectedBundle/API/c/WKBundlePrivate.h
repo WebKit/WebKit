@@ -100,6 +100,7 @@ WK_EXPORT void WKBundleSetAppCacheMaximumSize(WKBundleRef bundle, uint64_t size)
 WK_EXPORT uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundle, WKStringRef origin);
 WK_EXPORT void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundle, WKStringRef origin, uint64_t bytes);
 WK_EXPORT void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundle, WKStringRef origin);
+WK_EXPORT WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundle);
 
 // Garbage collection API
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);

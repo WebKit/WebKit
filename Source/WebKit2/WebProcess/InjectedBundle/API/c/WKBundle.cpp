@@ -25,11 +25,12 @@
 
 #include "config.h"
 #include "WKBundle.h"
-#include "WKBundlePrivate.h"
 
+#include "ImmutableArray.h"
 #include "InjectedBundle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WKBundlePrivate.h"
 
 using namespace WebKit;
 
@@ -254,6 +255,12 @@ void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef o
 void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin)
 {
     toImpl(bundleRef)->resetApplicationCacheOriginQuota(toImpl(origin)->string());
+}
+
+WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
+{
+    RefPtr<ImmutableArray> origins = toImpl(bundleRef)->originsWithApplicationCache();
+    return toAPI(origins.release().leakRef());
 }
 
 void WKBundleSetMinimumTimerInterval(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, double seconds)

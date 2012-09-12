@@ -202,9 +202,6 @@ fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
 fast/text/zero-font-size.html
 
-# WTR needs an implementation of originsWithApplicationCache
-http/tests/appcache/origins-with-appcache.html
-
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>
 http/tests/webarchive/cross-origin-stylesheet-crash.html

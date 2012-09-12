@@ -115,6 +115,7 @@ module WTR {
         void clearApplicationCacheForOrigin(in DOMString name);
         void setApplicationCacheOriginQuota(in unsigned long long bytes);
         void disallowIncreaseForApplicationCacheQuota();
+        object originsWithApplicationCache();
 
         // Compositing testing.
         DOMString layerTreeAsText();

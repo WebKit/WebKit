@@ -1,5 +1,25 @@
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][WKTR] TestRunner needs to implement originsWithApplicationCache
+        https://bugs.webkit.org/show_bug.cgi?id=96496
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle C API to retrieve security origins with
+        an application cache. This is needed by WebKitTestRunner
+        to support originsWithApplicationCache.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleCopyOriginsWithApplicationCache):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::originsWithApplicationCache):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
+2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
         https://bugs.webkit.org/show_bug.cgi?id=96374
 

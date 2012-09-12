@@ -152,6 +152,7 @@ public:
     void setApplicationCacheOriginQuota(unsigned long long);
     void disallowIncreaseForApplicationCacheQuota();
     bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
+    JSValueRef originsWithApplicationCache();
 
     // Printing
     bool isPageBoxVisible(int pageIndex);

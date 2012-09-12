@@ -365,6 +365,20 @@ void InjectedBundle::resetApplicationCacheOriginQuota(const String& originString
     cacheStorage().storeUpdatedQuotaForOrigin(origin.get(), cacheStorage().defaultOriginQuota());
 }
 
+PassRefPtr<ImmutableArray> InjectedBundle::originsWithApplicationCache()
+{
+    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
+    cacheStorage().getOriginsWithCache(origins);
+    Vector< RefPtr<APIObject> > originsVector;
+
+    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator it = origins.begin();
+    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator end = origins.end();
+    for ( ; it != end; ++it)
+        originsVector.append(WebString::create((*it)->databaseIdentifier()));
+
+    return ImmutableArray::adopt(originsVector);
+}
+
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
 {
     Frame* coreFrame = frame ? frame->coreFrame() : 0;

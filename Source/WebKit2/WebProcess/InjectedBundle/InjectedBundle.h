@@ -151,6 +151,7 @@ public:
     uint64_t appCacheUsageForOrigin(const String& origin);
     void setApplicationCacheOriginQuota(const String& origin, uint64_t);
     void resetApplicationCacheOriginQuota(const String& origin);
+    PassRefPtr<ImmutableArray> originsWithApplicationCache();
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();

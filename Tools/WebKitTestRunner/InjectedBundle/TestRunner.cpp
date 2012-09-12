@@ -330,6 +330,30 @@ void TestRunner::disallowIncreaseForApplicationCacheQuota()
     m_disallowIncreaseForApplicationCacheQuota = true;
 }
 
+static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
+{
+    const size_t count = WKArrayGetSize(strings);
+
+    JSValueRef jsStringsArray[count];
+    for (size_t i = 0; i < count; ++i) {
+        WKStringRef stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
+        JSRetainPtr<JSStringRef> stringJS = toJS(stringRef);
+        jsStringsArray[i] = JSValueMakeString(context, stringJS.get());
+    }
+
+    return JSObjectMakeArray(context, count, jsStringsArray, 0);
+}
+
+JSValueRef TestRunner::originsWithApplicationCache()
+{
+    WKRetainPtr<WKArrayRef> origins(AdoptWK, WKBundleCopyOriginsWithApplicationCache(InjectedBundle::shared().bundle()));
+
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    return stringArrayToJS(context, origins.get());
+}
+
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());
