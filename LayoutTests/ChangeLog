@@ -1,3 +1,15 @@
+2012-09-12  Adam Barth  <abarth@webkit.org>
+
+        [v8] document.getCSSCanvasContext doesn't need to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=96560
+
+        Reviewed by Eric Seidel.
+
+        Test that document.getCSSCanvasContext returns null for a bogus canvas type.
+
+        * fast/canvas/canvas-css-crazy-expected.txt: Added.
+        * fast/canvas/canvas-css-crazy.html: Added.
+
 2012-09-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: The |source| property of IDBFactory.open() request should be null

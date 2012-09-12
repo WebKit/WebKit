@@ -82,6 +82,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp
     bindings/v8/custom/V8CSSValueCustom.cpp
     bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp
+    bindings/v8/custom/V8CanvasRenderingContextCustom.cpp
     bindings/v8/custom/V8ClipboardCustom.cpp
     bindings/v8/custom/V8ConsoleCustom.cpp
     bindings/v8/custom/V8CoordinatesCustom.cpp

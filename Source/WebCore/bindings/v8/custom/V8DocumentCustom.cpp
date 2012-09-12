@@ -95,28 +95,6 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.Document.getCSSCanvasContext");
-    v8::Handle<v8::Object> holder = args.Holder();
-    Document* imp = V8Document::toNative(holder);
-    String contextId = toWebCoreString(args[0]);
-    String name = toWebCoreString(args[1]);
-    int width = toInt32(args[2]);
-    int height = toInt32(args[3]);
-    CanvasRenderingContext* result = imp->getCSSCanvasContext(contextId, name, width, height);
-    if (!result)
-        return v8::Undefined();
-    if (result->is2d())
-        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder(), args.GetIsolate());
-#if ENABLE(WEBGL)
-    else if (result->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(result), args.Holder(), args.GetIsolate());
-#endif // ENABLE(WEBGL)
-    ASSERT_NOT_REACHED();
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> toV8(Document* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
