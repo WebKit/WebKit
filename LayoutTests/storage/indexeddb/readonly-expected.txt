@@ -17,7 +17,7 @@ request.error = {}
 PASS request.error is still null
 trying to set readonly property request.source
 request.source = this
-PASS request.source is still [object IDBFactory]
+PASS request.source is still null
 trying to set readonly property request.transaction
 request.transaction = this
 PASS request.transaction is still null

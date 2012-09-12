@@ -27,7 +27,7 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is DOMException.INVALID_STATE_ERR
 PASS [Worker] ename is 'InvalidStateError'
 PASS [Worker] 'source' in request is true
-PASS [Worker] request.source is indexedDB
+PASS [Worker] request.source is null
 PASS [Worker] 'transaction' in request is true
 PASS [Worker] request.transaction is null
 PASS [Worker] 'readyState' in request is true
@@ -45,7 +45,7 @@ PASS [Worker] event.target.webkitErrorMessage is undefined.
 PASS [Worker] 'error' in event.target is true
 PASS [Worker] event.target.error is null
 PASS [Worker] 'source' in event.target is true
-PASS [Worker] request.source is indexedDB
+PASS [Worker] request.source is null
 PASS [Worker] 'transaction' in event.target is true
 PASS [Worker] event.target.transaction is null
 PASS [Worker] 'readyState' in request is true

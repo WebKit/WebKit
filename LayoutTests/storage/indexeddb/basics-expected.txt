@@ -26,7 +26,7 @@ PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
 PASS 'source' in request is true
-PASS request.source is indexedDB
+PASS request.source is null
 PASS 'transaction' in request is true
 PASS request.transaction is null
 PASS 'readyState' in request is true
@@ -44,7 +44,7 @@ PASS event.target.webkitErrorMessage is undefined.
 PASS 'error' in event.target is true
 PASS event.target.error is null
 PASS 'source' in event.target is true
-PASS request.source is indexedDB
+PASS request.source is null
 PASS 'transaction' in event.target is true
 PASS event.target.transaction is null
 PASS 'readyState' in request is true

@@ -1,3 +1,22 @@
+2012-09-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: The |source| property of IDBFactory.open() request should be null
+        https://bugs.webkit.org/show_bug.cgi?id=96551
+
+        Reviewed by Tony Chang.
+
+        Already tested for in several places, so just update expectations/assertions.
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/mozilla/event-source-expected.txt:
+        * storage/indexeddb/mozilla/resources/event-source.js: Updated assertion.
+        (openSuccess):
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/resources/basics.js: Updated assertion.
+        (test):
+        (openCallback):
+
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128353.

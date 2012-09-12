@@ -17,7 +17,7 @@ function test()
     evalAndExpectException("request.webkitErrorMessage", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'source' in request");
-    shouldBe("request.source", "indexedDB");
+    shouldBeNull("request.source");
     shouldBeTrue("'transaction' in request");
     shouldBeNull("request.transaction");
     shouldBeTrue("'readyState' in request");
@@ -42,7 +42,7 @@ function openCallback(evt)
     shouldBeTrue("'error' in event.target");
     shouldBeNull("event.target.error");
     shouldBeTrue("'source' in event.target");
-    shouldBe("request.source", "indexedDB");
+    shouldBeNull("request.source");
     shouldBeTrue("'transaction' in event.target");
     shouldBeNull("event.target.transaction");
     shouldBeTrue("'readyState' in request");

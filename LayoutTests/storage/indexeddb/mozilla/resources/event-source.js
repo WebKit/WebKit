@@ -24,7 +24,7 @@ function test()
 function openSuccess()
 {
     source = evalAndLog("source = event.target.source;");
-    shouldBe("source", "indexedDB");
+    shouldBeNull("source");
 
     db = evalAndLog("db = event.target.result");
     request = evalAndLog("request = db.setVersion('1')");

@@ -7,7 +7,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 indexedDB.open(name)
 source = event.target.source;
-PASS source is indexedDB
+PASS source is null
 db = event.target.result
 request = db.setVersion('1')
 source = event.target.source;
