@@ -1,3 +1,17 @@
+2012-09-12  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Memory leaks in TestControllerEfl
+        https://bugs.webkit.org/show_bug.cgi?id=96525
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix memory leaks in EFL's TestRunner code by adopting an allocation
+        of WKString created with WKStringCreateWithUTF8CString().
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks

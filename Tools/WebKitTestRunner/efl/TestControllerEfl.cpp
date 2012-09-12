@@ -85,13 +85,13 @@ static const char* getEnvironmentVariableOrExit(const char* variableName)
 void TestController::initializeInjectedBundlePath()
 {
     const char* bundlePath = getEnvironmentVariableOrExit("TEST_RUNNER_INJECTED_BUNDLE_FILENAME");
-    m_injectedBundlePath = WKStringCreateWithUTF8CString(bundlePath);
+    m_injectedBundlePath.adopt(WKStringCreateWithUTF8CString(bundlePath));
 }
 
 void TestController::initializeTestPluginDirectory()
 {
     const char* pluginPath = getEnvironmentVariableOrExit("TEST_RUNNER_PLUGIN_PATH");
-    m_testPluginDirectory = WKStringCreateWithUTF8CString(pluginPath);
+    m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(pluginPath));
 }
 
 void TestController::platformInitializeContext()
