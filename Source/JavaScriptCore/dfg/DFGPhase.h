@@ -95,13 +95,6 @@ bool runPhase(Graph& graph)
     return runAndLog(phase);
 }
 
-template<typename PhaseType, typename ArgumentType1>
-bool runPhase(Graph& graph, ArgumentType1 arg1)
-{
-    PhaseType phase(graph, arg1);
-    return runAndLog(phase);
-}
-
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

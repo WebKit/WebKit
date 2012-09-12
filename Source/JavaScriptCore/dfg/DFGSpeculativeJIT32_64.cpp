@@ -2339,6 +2339,11 @@ void SpeculativeJIT::compile(Node& node)
         compileGetByValOnString(node);
         break;
     }
+        
+    case CheckArray: {
+        checkArray(node);
+        break;
+    }
 
     case GetByVal: {
         switch (node.arrayMode()) {
@@ -2436,6 +2441,7 @@ void SpeculativeJIT::compile(Node& node)
         Edge child1 = m_jit.graph().varArgChild(node, 0);
         Edge child2 = m_jit.graph().varArgChild(node, 1);
         Edge child3 = m_jit.graph().varArgChild(node, 2);
+        Edge child4 = m_jit.graph().varArgChild(node, 3);
         
         Array::Mode arrayMode = modeForPut(node.arrayMode());
         bool alreadyHandled = false;
@@ -2479,8 +2485,6 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
 
-        speculateArray(arrayMode, child1, baseReg);
-
         switch (arrayMode) {
         case Array::JSArray:
         case Array::JSArrayOutOfBounds: {
@@ -2497,13 +2501,11 @@ void SpeculativeJIT::compile(Node& node)
                 GPRReg scratchReg = scratch.gpr();
                 writeBarrier(baseReg, valueTagReg, child3, WriteBarrierForPropertyAccess, scratchReg);
             }
+            
+            StorageOperand storage(this, child4);
+            GPRReg storageReg = storage.gpr();
 
             if (node.op() == PutByValAlias) {
-                // Get the array storage.
-                GPRTemporary storage(this);
-                GPRReg storageReg = storage.gpr();
-                m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-                
                 // Store the value to the array.
                 GPRReg propertyReg = property.gpr();
                 m_jit.store32(value.tagGPR(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
@@ -2520,12 +2522,8 @@ void SpeculativeJIT::compile(Node& node)
             base.use();
             property.use();
             value.use();
+            storage.use();
             
-            // Get the array storage.
-            GPRTemporary storage(this);
-            GPRReg storageReg = storage.gpr();
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-
             // Check if we're writing to a hole; if so increment m_numValuesInVector.
             MacroAssembler::Jump notHoleValue = m_jit.branch32(MacroAssembler::NotEqual, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
             m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
@@ -2654,6 +2652,8 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ArrayPush: {
+        ASSERT(modeIsJSArray(node.arrayMode()));
+        
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());
         GPRTemporary storageLength(this);
@@ -2663,17 +2663,14 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg valuePayloadGPR = value.payloadGPR();
         GPRReg storageLengthGPR = storageLength.gpr();
         
-        {
+        if (Heap::isWriteBarrierEnabled()) {
             GPRTemporary scratch(this);
             writeBarrier(baseGPR, valueTagGPR, node.child2(), WriteBarrierForPropertyAccess, scratch.gpr(), storageLengthGPR);
         }
 
-        speculateArray(Array::JSArray, node.child1(), baseGPR);
-        
-        GPRTemporary storage(this);
+        StorageOperand storage(this, node.child3());
         GPRReg storageGPR = storage.gpr();
 
-        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
         m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
         
         // Refuse to handle bizarre lengths.
@@ -2696,10 +2693,12 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case ArrayPop: {
+        ASSERT(modeIsJSArray(node.arrayMode()));
+        
         SpeculateCellOperand base(this, node.child1());
+        StorageOperand storage(this, node.child2());
         GPRTemporary valueTag(this);
         GPRTemporary valuePayload(this);
-        GPRTemporary storage(this);
         GPRTemporary storageLength(this);
         
         GPRReg baseGPR = base.gpr();
@@ -2708,9 +2707,6 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg storageGPR = storage.gpr();
         GPRReg storageLengthGPR = storageLength.gpr();
         
-        speculateArray(Array::JSArray, node.child1(), baseGPR);
-        
-        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
         m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
         
         JITCompiler::JumpList setUndefinedCases;

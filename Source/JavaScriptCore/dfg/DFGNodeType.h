@@ -138,7 +138,8 @@ namespace JSC { namespace DFG {
     macro(AllocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(ReallocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(GetPropertyStorage, NodeResultStorage) \
-    macro(GetIndexedPropertyStorage, NodeMustGenerate | NodeResultStorage) \
+    macro(CheckArray, NodeMustGenerate) \
+    macro(GetIndexedPropertyStorage, NodeResultStorage) \
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(GetArrayLength, NodeResultInt32) \

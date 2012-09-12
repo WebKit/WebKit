@@ -99,6 +99,8 @@ public:
                 case PutByVal:
                 case PutByValAlias:
                 case GetArrayLength:
+                case CheckArray:
+                case GetIndexedPropertyStorage:
                 case Phantom:
                     // Don't count these uses.
                     break;
