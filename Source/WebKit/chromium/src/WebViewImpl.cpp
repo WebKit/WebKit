@@ -1741,28 +1741,11 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
 {
     ASSERT(m_layerTreeView);
 
-    PlatformContextSkia context(canvas);
-
-    // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
-    GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
-    int bitmapHeight = canvas->getDevice()->accessBitmap(false).height();
-
-    // Compute rect to sample from inverted GPU buffer.
-    IntRect invertRect(rect.x(), bitmapHeight - rect.maxY(), rect.width(), rect.height());
-
-    OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
-    RefPtr<Uint8ClampedArray> pixelArray(Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4));
-    if (imageBuffer && pixelArray) {
-        m_layerTreeView->compositeAndReadback(pixelArray->data(), invertRect);
-        imageBuffer->putByteArray(Premultiplied, pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
-        gc.save();
-        gc.translate(IntSize(0, bitmapHeight));
-        gc.scale(FloatSize(1.0f, -1.0f));
-        // Use invertRect in next line, so that transform above inverts it back to
-        // desired destination rect.
-        gc.drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, invertRect.location());
-        gc.restore();
-    }
+    SkBitmap target;
+    target.setConfig(SkBitmap::kARGB_8888_Config, rect.width(), rect.height(), rect.width() * 4);
+    target.allocPixels();
+    m_layerTreeView->compositeAndReadback(target.getPixels(), rect);
+    canvas->writePixels(target, rect.x(), rect.y());
 }
 #endif
 

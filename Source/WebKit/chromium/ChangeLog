@@ -1,3 +1,22 @@
+2012-09-12  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Flip Y and swizzle inside compositeAndReadback implementation
+        https://bugs.webkit.org/show_bug.cgi?id=96458
+
+        Reviewed by James Robinson.
+
+        Currently, compositeAndReadback API assumes a GL-style texture
+        and is converted to the normal software format in WebViewImpl.
+        For the software implementation, this API would result in two
+        redundant conversions.  This patch makes the conversion inside
+        CCRendererGL instead.  I rolled my own for loop as I didn't find the
+        appropriate function within raw Skia.
+
+        No new tests (covered by existing layout tests).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+
 2012-09-11  Taiju Tsuiki  <tzik@chromium.org>
 
         WebFrameImpl::client() needs NULL check in WebWorkerClientImpl::openFileSystem

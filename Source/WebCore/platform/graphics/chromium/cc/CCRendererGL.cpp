@@ -1160,7 +1160,7 @@ void CCRendererGL::getFramebufferPixels(void *pixels, const IntRect& rect)
         GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
         GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
         // Copy the contents of the current (IOSurface-backed) framebuffer into a temporary texture.
-        GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 0, 0, rect.maxX(), rect.maxY(), 0));
+        GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 0, 0, viewportSize().width(), viewportSize().height(), 0));
         temporaryFBO = m_context->createFramebuffer();
         // Attach this texture to an FBO, and perform the readback from that FBO.
         GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, temporaryFBO));
@@ -1169,8 +1169,25 @@ void CCRendererGL::getFramebufferPixels(void *pixels, const IntRect& rect)
         ASSERT(m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
     }
 
-    GLC(m_context, m_context->readPixels(rect.x(), rect.y(), rect.width(), rect.height(),
-                                     GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
+    OwnPtr<uint8_t> srcPixels = adoptPtr(new uint8_t[rect.width() * rect.height() * 4]);
+    GLC(m_context, m_context->readPixels(rect.x(), viewportSize().height() - rect.maxY(), rect.width(), rect.height(),
+                                     GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, srcPixels.get()));
+
+    uint8_t* destPixels = static_cast<uint8_t*>(pixels);
+    size_t rowBytes = rect.width() * 4;
+    int numRows = rect.height();
+    size_t totalBytes = numRows * rowBytes;
+    for (size_t destY = 0; destY < totalBytes; destY += rowBytes) {
+        // Flip Y axis.
+        size_t srcY = totalBytes - destY - rowBytes;
+        // Swizzle BGRA -> RGBA.
+        for (size_t x = 0; x < rowBytes; x += 4) {
+            destPixels[destY + (x+0)] = srcPixels.get()[srcY + (x+2)];
+            destPixels[destY + (x+1)] = srcPixels.get()[srcY + (x+1)];
+            destPixels[destY + (x+2)] = srcPixels.get()[srcY + (x+0)];
+            destPixels[destY + (x+3)] = srcPixels.get()[srcY + (x+3)];
+        }
+    }
 
     if (doWorkaround) {
         // Clean up.
