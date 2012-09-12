@@ -173,7 +173,10 @@ if os.path.exists(pkg_config_path):
         saw_webkit1_warnings = generate_doc(generator)
     else:
         print "Rebasing WebKit1 documentation..."
-        generator.rebase_installed_docs()
+        try:
+            generator.rebase_installed_docs()
+        except Exception,e:
+            print "Rebase did not happen, likely no documentation is present."
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
 pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
@@ -184,6 +187,9 @@ if os.path.exists(pkg_config_path):
         saw_webkit2_warnings = generate_doc(generator)
     else:
         print "\nRebasing WebKit2 documentation..."
-        generator.rebase_installed_docs()
+        try:
+            generator.rebase_installed_docs()
+        except Exception,e:
+            print "Rebase did not happen, likely no documentation is present."
 
 sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)

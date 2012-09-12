@@ -1,3 +1,15 @@
+2012-09-12  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] We attempt to rebase documentation even if it's not present
+        https://bugs.webkit.org/show_bug.cgi?id=96553
+
+        Reviewed by Martin Robinson.
+
+        Do not make the documentation rebase step fatal. This allows make
+        install to succeed when there's no documentation generated.
+
+        * gtk/generate-gtkdoc:
+
 2012-09-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Respect WEBKITOUTPUTDIR when running EFL tests
