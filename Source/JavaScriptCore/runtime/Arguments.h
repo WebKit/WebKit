@@ -110,7 +110,6 @@ namespace JSC {
             d->activation.set(globalData, this, activation);
             d->registers = &activation->registerAt(0);
         }
-        void setRegisters(WriteBarrierBase<Unknown>* registers) { d->registers = registers; }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
         { 

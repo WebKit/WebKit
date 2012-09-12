@@ -182,6 +182,7 @@ namespace JSC {
         friend class CopiedSpace;
         friend class SlotVisitor;
         template<typename T> friend void* allocateCell(Heap&);
+        template<typename T> friend void* allocateCell(Heap&, size_t);
 
         void* allocateWithDestructor(size_t);
         void* allocateWithoutDestructor(size_t);

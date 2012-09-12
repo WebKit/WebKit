@@ -261,9 +261,9 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
-        BytecodeGenerator(ProgramNode*, JSScope*, SymbolTable*, ProgramCodeBlock*, CompilationKind);
-        BytecodeGenerator(FunctionBodyNode*, JSScope*, SymbolTable*, CodeBlock*, CompilationKind);
-        BytecodeGenerator(EvalNode*, JSScope*, SymbolTable*, EvalCodeBlock*, CompilationKind);
+        BytecodeGenerator(ProgramNode*, JSScope*, SharedSymbolTable*, ProgramCodeBlock*, CompilationKind);
+        BytecodeGenerator(FunctionBodyNode*, JSScope*, SharedSymbolTable*, CodeBlock*, CompilationKind);
+        BytecodeGenerator(EvalNode*, JSScope*, SharedSymbolTable*, EvalCodeBlock*, CompilationKind);
 
         ~BytecodeGenerator();
         
@@ -654,7 +654,7 @@ namespace JSC {
     public:
         Vector<Instruction>& instructions() { return m_instructions; }
 
-        SymbolTable& symbolTable() { return *m_symbolTable; }
+        SharedSymbolTable& symbolTable() { return *m_symbolTable; }
 #if ENABLE(BYTECODE_COMMENTS)
         Vector<Comment>& comments() { return m_comments; }
 #endif
@@ -697,7 +697,7 @@ namespace JSC {
         bool m_shouldEmitRichSourceInfo;
 
         Strong<JSScope> m_scope;
-        SymbolTable* m_symbolTable;
+        SharedSymbolTable* m_symbolTable;
 
 #if ENABLE(BYTECODE_COMMENTS)
         Vector<Comment> m_comments;

@@ -340,13 +340,45 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, StructureFlags), &s_info);
         }
 
+        bool usesNonStrictEval() { return m_usesNonStrictEval; }
+        void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }
+
+        enum CaptureMode {
+            SomeOfTheThings,
+            AllOfTheThings
+        };
+
+        CaptureMode captureMode() { return m_captureMode; }
+        void setCaptureMode(CaptureMode captureMode) { m_captureMode = captureMode; }
+
+        int captureStart() { return m_captureStart; }
+        void setCaptureStart(int captureStart) { m_captureStart = captureStart; }
+
+        int captureEnd() { return m_captureEnd; }
+        void setCaptureEnd(int captureEnd) { m_captureEnd = captureEnd; }
+
+        int parameterCountIncludingThis() { return m_parameterCountIncludingThis; }
+        void setParameterCountIncludingThis(int parameterCountIncludingThis) { m_parameterCountIncludingThis = parameterCountIncludingThis; }
+
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
         SharedSymbolTable(JSGlobalData& globalData)
             : JSCell(globalData, globalData.sharedSymbolTableStructure.get())
+            , m_parameterCountIncludingThis(0)
+            , m_usesNonStrictEval(false)
+            , m_captureMode(SomeOfTheThings)
+            , m_captureStart(0)
+            , m_captureEnd(0)
         {
         }
+
+        int m_parameterCountIncludingThis;
+        bool m_usesNonStrictEval;
+
+        CaptureMode m_captureMode;
+        int m_captureStart;
+        int m_captureEnd;
     };
     
 } // namespace JSC

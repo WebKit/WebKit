@@ -190,8 +190,8 @@ namespace JSC  {
         // Access to arguments.
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[RegisterFile::ArgumentCount].payload(); }
-        static int argumentOffset(size_t argument) { return s_firstArgumentOffset - argument; }
-        static int argumentOffsetIncludingThis(size_t argument) { return s_thisArgumentOffset - argument; }
+        static int argumentOffset(int argument) { return s_firstArgumentOffset - argument; }
+        static int argumentOffsetIncludingThis(int argument) { return s_thisArgumentOffset - argument; }
 
         JSValue argument(size_t argument)
         {

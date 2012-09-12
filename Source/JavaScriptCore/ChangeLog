@@ -1,3 +1,116 @@
+2012-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        JSActivation should inline allocate its registers, and eliminate
+        'arguments' registers in the common case
+        https://bugs.webkit.org/show_bug.cgi?id=96427
+
+        Reviewed by Filip Pizlo.
+
+        This cuts the size class for simple closures down to 64 bytes.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Set the usesNonStrictEval
+        flag, which is new. Use a more specific test for whether a function
+        uses 'arguments', so we can avoid allocating, initializing, and tearing
+        off those registers in the common case. Distinguish between capturing
+        arguments and not, so we can avoid allocating space for arguments in
+        the torn-off object.
+
+        We can make this even more general in the future, with some bytecode
+        generator refactoring.
+
+        (JSC::BytecodeGenerator::resolve): Updated for new interface.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::symbolTable): Updated some types.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::isValidAllocation): Allow large allocations, now that they
+        are both supported and used.
+
+        * heap/Heap.h:
+        (Heap): Added a new form of allocateCell that specifies the full size
+        of the allocation, to allow for extra space on the end.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::argumentOffset):
+        (JSC::ExecState::argumentOffsetIncludingThis):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame): Refactored this code to be more
+        specific about tearing off 'arguments' vs activations. This is something
+        I forgot in my last patch, and it is required now that we can have
+        acitvations without 'arguments' registers.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::setRegisters): No need for setRegisters anymore because
+        the activation object's storage doesn't change.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation): Initialize our storage manually because
+        it's not declared to the C++ compiler.
+
+        (JSC::JSActivation::visitChildren): No copyAndAppend because our storage
+        is not out-of-line anymore.
+
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        (JSC::JSActivation::getOwnPropertySlot):
+        (JSC::JSActivation::getOwnPropertyDescriptor):
+        (JSC::JSActivation::argumentsGetter): Refactored isTornOff() testing to
+        avoid using a data member and to avoid hard-coding any offset assumptions.
+
+        * runtime/JSActivation.h:
+        (JSC):
+        (JSActivation):
+        (JSC::JSActivation::create):
+        (JSC::JSActivation::isDynamicScope):
+        (JSC::JSActivation::captureStart):
+        (JSC::JSActivation::storageSize):
+        (JSC::JSActivation::storageSizeInBytes):
+        (JSC::JSActivation::registerOffset):
+        (JSC::JSActivation::tearOff):
+        (JSC::JSActivation::isTornOff):
+        (JSC::JSActivation::storage):
+        (JSC::JSActivation::allocationSize):
+        (JSC::JSActivation::isValid): New helper functions for doing the math
+        on our inline storage. Note that in the "AllOfTheThings" tear-off case,
+        the number of things is not known at compile time, so we store the
+        number in the argument count register. We can't just copy the raw contents
+        of the register beacuse we need a value that is safe for precise marking,
+        and the value in the register file has an invalid tag.
+
+        * runtime/JSCell.h:
+        (JSC::allocateCell): New function for allocating with extra storage
+        on the end.
+
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::finishCreation):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        (JSVariableObject): Make it easier for subclasses to use their symbol
+        tables during construction, by passing the table as a constructor argument.
+
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::usesNonStrictEval):
+        (JSC::SharedSymbolTable::setUsesNonStrictEval):
+        (SharedSymbolTable):
+        (JSC::SharedSymbolTable::captureMode):
+        (JSC::SharedSymbolTable::setCaptureMode):
+        (JSC::SharedSymbolTable::captureStart):
+        (JSC::SharedSymbolTable::setCaptureStart):
+        (JSC::SharedSymbolTable::captureEnd):
+        (JSC::SharedSymbolTable::setCaptureEnd):
+        (JSC::SharedSymbolTable::parameterCountIncludingThis):
+        (JSC::SharedSymbolTable::setParameterCountIncludingThis):
+        (JSC::SharedSymbolTable::SharedSymbolTable): Added data members to more
+        precisely describe what kind of capture is in play, and to avoid having
+        data members in the activation. We expect N activations per symbol table,
+        so this can be a big savings in heavy closure usage.
+
 2012-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Fix build break with LLINT on 32bit machine after r128219

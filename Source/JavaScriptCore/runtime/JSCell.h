@@ -64,6 +64,7 @@ namespace JSC {
         friend class JSValue;
         friend class MarkedBlock;
         template<typename T> friend void* allocateCell(Heap&);
+        template<typename T> friend void* allocateCell(Heap&, size_t);
 
     public:
         static const unsigned StructureFlags = 0;
@@ -332,6 +333,25 @@ namespace JSC {
         else {
             ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
             result = static_cast<JSCell*>(heap.allocateWithoutDestructor(sizeof(T)));
+        }
+        result->clearStructure();
+        return result;
+    }
+    
+    template<typename T>
+    void* allocateCell(Heap& heap, size_t size)
+    {
+        ASSERT(size >= sizeof(T));
+#if ENABLE(GC_VALIDATION)
+        ASSERT(!heap.globalData()->isInitializingObject());
+        heap.globalData()->setInitializingObjectClass(&T::s_info);
+#endif
+        JSCell* result = 0;
+        if (NeedsDestructor<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithDestructor(size));
+        else {
+            ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
+            result = static_cast<JSCell*>(heap.allocateWithoutDestructor(size));
         }
         result->clearStructure();
         return result;

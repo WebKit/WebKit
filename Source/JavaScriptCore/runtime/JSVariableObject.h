@@ -60,17 +60,12 @@ namespace JSC {
             JSGlobalData& globalData,
             Structure* structure,
             Register* registers,
-            JSScope* scope
+            JSScope* scope,
+            SharedSymbolTable* symbolTable = 0
         )
-            : Base(globalData, structure, scope)
+            : Base(globalData, structure, scope, symbolTable)
             , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
         {
-        }
-
-        void finishCreation(JSGlobalData& globalData, SharedSymbolTable* symbolTable = 0)
-        {
-            Base::finishCreation(globalData, symbolTable);
-            COMPILE_ASSERT(sizeof(WriteBarrierBase<Unknown>) == sizeof(Register), Register_should_be_same_size_as_WriteBarrierBase);
         }
 
         WriteBarrierBase<Unknown>* m_registers; // "r" in the register file.

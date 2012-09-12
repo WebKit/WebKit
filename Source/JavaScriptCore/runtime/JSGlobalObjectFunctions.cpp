@@ -27,6 +27,7 @@
 
 #include "CallFrame.h"
 #include "Interpreter.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"

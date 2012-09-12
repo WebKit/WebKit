@@ -801,12 +801,9 @@ void Heap::didAllocate(size_t bytes)
     m_bytesAllocated += bytes;
 }
 
-bool Heap::isValidAllocation(size_t bytes)
+bool Heap::isValidAllocation(size_t)
 {
     if (!isValidThreadState(m_globalData))
-        return false;
-
-    if (bytes > MarkedSpace::maxCellSize)
         return false;
 
     if (m_operationInProgress != NoOperation)

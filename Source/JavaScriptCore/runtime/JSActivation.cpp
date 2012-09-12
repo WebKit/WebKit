@@ -41,28 +41,6 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
 const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSActivation) };
 
-JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
-    : Base(
-        callFrame->globalData(),
-        callFrame->lexicalGlobalObject()->activationStructure(),
-        callFrame->registers(),
-        callFrame->scope()
-    )
-    , m_registerArray(callFrame->globalData(), this, 0)
-    , m_numCapturedArgs(max(callFrame->argumentCount(), functionExecutable->parameterCount()))
-    , m_numCapturedVars(functionExecutable->capturedVariableCount())
-    , m_isTornOff(false)
-    , m_requiresDynamicChecks(functionExecutable->usesEval() && !functionExecutable->isStrictMode())
-    , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
-{
-}
-
-void JSActivation::finishCreation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
-{
-    Base::finishCreation(callFrame->globalData(), functionExecutable->symbolTable());
-    ASSERT(inherits(&s_info));
-}
-
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(cell);
@@ -72,18 +50,11 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     // No need to mark our registers if they're still in the RegisterFile.
-    PropertyStorage registerArray = thisObject->m_registerArray.get();
-    if (!registerArray)
+    if (!thisObject->isTornOff())
         return;
 
-    visitor.copyAndAppend(bitwise_cast<void**>(&registerArray), thisObject->registerArraySizeInBytes(), reinterpret_cast<JSValue*>(registerArray), thisObject->registerArraySize());
-    thisObject->m_registerArray.set(registerArray, StorageBarrier::Unchecked);
-    thisObject->m_registers = registerArray + thisObject->registerOffset();
-
-    // Update the arguments object, since it points at our buffer.
-    CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(thisObject->m_registers));
-    if (JSValue v = callFrame->uncheckedR(unmodifiedArgumentsRegister(thisObject->m_argumentsRegister)).jsValue())
-        jsCast<Arguments*>(v)->setRegisters(thisObject->m_registers);
+    for (size_t i = 0; i < thisObject->storageSize(); ++i)
+        visitor.append(&thisObject->storage()[i]);
 }
 
 inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
@@ -93,7 +64,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot
         return false;
 
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
+    if (isTornOff() && !isValid(entry))
         return false;
 
     slot.setValue(registerAt(entry.getIndex()).get());
@@ -107,7 +78,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertyDesc
         return false;
 
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
+    if (isTornOff() && !isValid(entry))
         return false;
 
     descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes());
@@ -129,7 +100,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     }
 
     // Defend against the inspector asking for a var after it has been optimized out.
-    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
+    if (isTornOff() && !isValid(entry))
         return false;
 
     registerAt(entry.getIndex()).set(globalData, this, value);
@@ -140,14 +111,14 @@ void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
 {
     JSActivation* thisObject = jsCast<JSActivation*>(object);
 
-    if (mode == IncludeDontEnumProperties)
+    if (mode == IncludeDontEnumProperties && !thisObject->isTornOff())
         propertyNames.add(exec->propertyNames().arguments);
 
     SymbolTable::const_iterator end = thisObject->symbolTable()->end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
         if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
             continue;
-        if (it->second.getIndex() >= thisObject->m_numCapturedVars)
+        if (!thisObject->isValid(it->second))
             continue;
         propertyNames.add(Identifier(exec, it->first.get()));
     }
@@ -164,7 +135,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
         return false;
     SymbolTableEntry& entry = iter->second;
     ASSERT(!entry.isNull());
-    if (entry.getIndex() >= m_numCapturedVars)
+    if (!isValid(entry))
         return false;
 
     entry.setAttributes(attributes);
@@ -178,7 +149,7 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyNam
 
     if (propertyName == exec->propertyNames().arguments) {
         // Defend against the inspector asking for the arguments object after it has been optimized out.
-        if (!thisObject->m_isTornOff) {
+        if (!thisObject->isTornOff()) {
             slot.setCustom(thisObject, thisObject->getArgumentsGetter());
             return true;
         }
@@ -205,7 +176,7 @@ bool JSActivation::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, P
 
     if (propertyName == exec->propertyNames().arguments) {
         // Defend against the inspector asking for the arguments object after it has been optimized out.
-        if (!thisObject->m_isTornOff) {
+        if (!thisObject->isTornOff()) {
             PropertySlot slot;
             JSActivation::getOwnPropertySlot(thisObject, exec, propertyName, slot);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontEnum);
@@ -265,9 +236,12 @@ JSObject* JSActivation::toThisObject(JSCell*, ExecState* exec)
 
 JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName)
 {
-    JSActivation* activation = asActivation(slotBase);
+    JSActivation* activation = jsCast<JSActivation*>(slotBase);
+    if (activation->isTornOff())
+        return jsUndefined();
+
     CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(activation->m_registers));
-    int argumentsRegister = activation->m_argumentsRegister;
+    int argumentsRegister = callFrame->codeBlock()->argumentsRegister();
     if (JSValue arguments = callFrame->uncheckedR(argumentsRegister).jsValue())
         return arguments;
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);

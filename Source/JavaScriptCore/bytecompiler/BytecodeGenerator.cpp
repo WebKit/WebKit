@@ -260,7 +260,7 @@ void BytecodeGenerator::preserveLastVar()
         m_lastVar = &m_calleeRegisters.last();
 }
 
-BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock, CompilationKind compilationKind)
+BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, SharedSymbolTable* symbolTable, ProgramCodeBlock* codeBlock, CompilationKind compilationKind)
     : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
     , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
     , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
@@ -295,13 +295,15 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
 
+    codeBlock->setGlobalData(m_globalData);
+    symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());    
+    m_codeBlock->setNumParameters(1); // Allocate space for "this"
+
     prependComment("entering Program block");
     emitOpcode(op_enter);
-    codeBlock->setGlobalData(m_globalData);
 
     // FIXME: Move code that modifies the global object to Interpreter::execute.
     
-    m_codeBlock->setNumParameters(1); // Allocate space for "this"
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
     
     if (compilationKind == OptimizingCompilation)
@@ -342,7 +344,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* scope, SymbolTable* symbolTable, CodeBlock* codeBlock, CompilationKind)
+BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* scope, SharedSymbolTable* symbolTable, CodeBlock* codeBlock, CompilationKind)
     : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
     , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
     , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
@@ -378,7 +380,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         m_codeBlock->setNeedsFullScopeChain(true);
 
     codeBlock->setGlobalData(m_globalData);
-    
+    symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
+    symbolTable->setParameterCountIncludingThis(functionBody->parameters()->size() + 1);
+
     prependComment("entering Function block");
     emitOpcode(op_enter);
     if (m_codeBlock->needsFullScopeChain()) {
@@ -388,7 +392,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         m_codeBlock->setActivationRegister(m_activationRegister->index());
     }
 
-    if (m_codeBlock->needsFullScopeChain() || functionBody->usesArguments()) {
+    if (functionBody->usesArguments() || codeBlock->usesEval() || m_shouldEmitDebugHooks) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
         RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
 
@@ -417,6 +421,25 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
         }
+    }
+
+    bool capturesAnyArgument = codeBlock->usesArguments() || codeBlock->usesEval() || m_shouldEmitDebugHooks; // May reify arguments object.
+    if (!capturesAnyArgument && functionBody->hasCapturedVariables()) {
+        FunctionParameters& parameters = *functionBody->parameters();
+        for (size_t i = 0; i < parameters.size(); ++i) {
+            if (!functionBody->captures(parameters[i]))
+                continue;
+            capturesAnyArgument = true;
+            break;
+        }
+    }
+
+    if (capturesAnyArgument) {
+        symbolTable->setCaptureMode(SharedSymbolTable::AllOfTheThings);
+        symbolTable->setCaptureStart(-CallFrame::offsetFor(symbolTable->parameterCountIncludingThis()));
+    } else {
+        symbolTable->setCaptureMode(SharedSymbolTable::SomeOfTheThings);
+        symbolTable->setCaptureStart(m_codeBlock->m_numVars);
     }
 
     RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.
@@ -484,8 +507,10 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
             addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
     }
 
-    if (m_shouldEmitDebugHooks)
+    if (m_shouldEmitDebugHooks || codeBlock->usesEval())
         codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+
+    symbolTable->setCaptureEnd(codeBlock->m_numCapturedVars);
 
     FunctionParameters& parameters = *functionBody->parameters();
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
@@ -514,7 +539,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
+BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SharedSymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
     : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
     , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
     , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
@@ -549,10 +574,12 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolT
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);
 
+    codeBlock->setGlobalData(m_globalData);
+    symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());    
+    m_codeBlock->setNumParameters(1);
+
     prependComment("entering Eval block");
     emitOpcode(op_enter);
-    codeBlock->setGlobalData(m_globalData);
-    m_codeBlock->setNumParameters(1);
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
@@ -1355,7 +1382,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
             }
 #if !ASSERT_DISABLED
             if (JSActivation* activation = jsDynamicCast<JSActivation*>(currentVariableObject))
-                ASSERT(activation->isValidScopedLookup(entry.getIndex()));
+                ASSERT(activation->isValid(entry));
 #endif
             return ResolveResult::lexicalResolve(entry.getIndex(), depth, flags);
         }

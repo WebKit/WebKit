@@ -463,23 +463,20 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->lastLine(), 0);
     }
 
-    // If this call frame created an activation or an 'arguments' object, tear it off.
-    if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
-        if (!callFrame->uncheckedR(oldCodeBlock->activationRegister()).jsValue()) {
-            oldCodeBlock->createActivation(callFrame);
-            scope = callFrame->scope();
-        }
-        while (!scope->inherits(&JSActivation::s_info))
-            scope = scope->next();
+    JSValue activation;
+    if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsActivation()) {
+        activation = callFrame->uncheckedR(oldCodeBlock->activationRegister()).jsValue();
+        if (activation)
+            jsCast<JSActivation*>(activation)->tearOff(*scope->globalData());
+    }
 
-        callFrame->setScope(scope);
-        JSActivation* activation = asActivation(scope);
-        activation->tearOff(*scope->globalData());
-        if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
-            asArguments(arguments)->didTearOffActivation(callFrame->globalData(), activation);
-    } else if (oldCodeBlock->usesArguments() && !oldCodeBlock->isStrictMode()) {
-        if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
-            asArguments(arguments)->tearOff(callFrame);
+    if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->usesArguments()) {
+        if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
+            if (activation)
+                jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame->globalData(), jsCast<JSActivation*>(activation));
+            else
+                jsCast<Arguments*>(arguments)->tearOff(callFrame);
+        }
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
