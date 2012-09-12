@@ -119,6 +119,7 @@ var TEST_TYPES = [
     'browser_tests',
     'cacheinvalidation_unittests',
     'compositor_unittests',
+    'content_browsertests',
     'content_unittests',
     'courgette_unittests',
     'crypto_unittests',
