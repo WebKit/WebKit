@@ -1,3 +1,23 @@
+2012-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12275537> REGRESSION(r127384): Non-existent directories are no longer created for sandbox paths
+        https://bugs.webkit.org/show_bug.cgi?id=96442
+
+        Reviewed by Darin Adler.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        Added a function for read-write configuration directories. It matches
+        appendReadwriteSandboxDirectory() function behavior from WebProcessMac.mm.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Use the new function for directories that need to be created if they don't exist.
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement originsWithApplicationCache

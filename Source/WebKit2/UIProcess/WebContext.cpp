@@ -319,15 +319,15 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     if (!parameters.applicationCacheDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.applicationCacheDirectory, parameters.applicationCacheDirectoryExtensionHandle);
 
     parameters.databaseDirectory = databaseDirectory();
     if (!parameters.databaseDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.databaseDirectory, SandboxExtension::ReadWrite, parameters.databaseDirectoryExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.databaseDirectory, parameters.databaseDirectoryExtensionHandle);
 
     parameters.localStorageDirectory = localStorageDirectory();
     if (!parameters.localStorageDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.localStorageDirectory, SandboxExtension::ReadWrite, parameters.localStorageDirectoryExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
 
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;

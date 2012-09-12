@@ -90,7 +90,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
         cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
 
     parameters.nsURLCachePath = [(NSString *)cachePath.get() stringByStandardizingPath];
-    SandboxExtension::createHandle(parameters.nsURLCachePath, SandboxExtension::ReadWrite, parameters.nsURLCachePathExtensionHandle);
+    SandboxExtension::createHandleForReadWriteDirectory(parameters.nsURLCachePath, parameters.nsURLCachePathExtensionHandle);
     ASSERT(!parameters.nsURLCachePath.isEmpty());
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];

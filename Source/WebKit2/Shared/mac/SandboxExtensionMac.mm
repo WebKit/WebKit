@@ -219,7 +219,20 @@ void SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     CString standardizedPath = resolveSymlinksInPath([[(NSString *)path stringByStandardizingPath] fileSystemRepresentation]);
     handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
 }
-    
+
+void SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
+{
+    NSError *error = nil;
+    NSString *nsPath = path;
+
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        return;
+    }
+
+    SandboxExtension::createHandle(path, SandboxExtension::ReadWrite, handle);
+}
+
 String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
