@@ -47,7 +47,6 @@ module WTR {
         void dumpResourceLoadCallbacks();
         void dumpResourceResponseMIMETypes();
         void dumpWillCacheResponse();
-        void dumpApplicationCacheDelegateCallbacks();
 
         // Special options.
         void keepWebHistory();
@@ -114,7 +113,6 @@ module WTR {
         long long applicationCacheDiskUsageForOrigin(in DOMString origin);
         void clearApplicationCacheForOrigin(in DOMString name);
         void setApplicationCacheOriginQuota(in unsigned long long bytes);
-        void disallowIncreaseForApplicationCacheQuota();
 
         // Compositing testing.
         DOMString layerTreeAsText();

@@ -150,7 +150,6 @@ public:
     void setAppCacheMaximumSize(uint64_t);
     uint64_t appCacheUsageForOrigin(const String& origin);
     void setApplicationCacheOriginQuota(const String& origin, uint64_t);
-    void resetApplicationCacheOriginQuota(const String& origin);
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();

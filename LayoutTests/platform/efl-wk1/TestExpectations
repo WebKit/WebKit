@@ -47,12 +47,6 @@ BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 // Custom font loading delaying text drawing on Canvas
 BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
-// EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
-BUGWK86460 : http/tests/appcache/origin-usage.html = TEXT
-
-// EFL's TestRunner does not implement originsWithApplicationCache
-BUGWK86498 : http/tests/appcache/origins-with-appcache.html = TEXT
-
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
 BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT

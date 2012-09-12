@@ -1,3 +1,16 @@
+2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128280.
+        http://trac.webkit.org/changeset/128280
+        https://bugs.webkit.org/show_bug.cgi?id=96498
+
+        it broke compilation on windows debug bot (Requested by loislo
+        on #webkit).
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-12  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: Add "regionLayoutUpdate" event

@@ -124,13 +124,11 @@ private:
     static void willRunJavaScriptAlert(WKBundlePageRef, WKStringRef message, WKBundleFrameRef frame, const void* clientInfo);
     static void willRunJavaScriptConfirm(WKBundlePageRef, WKStringRef message, WKBundleFrameRef frame, const void* clientInfo);
     static void willRunJavaScriptPrompt(WKBundlePageRef, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void* clientInfo);
-    static void didReachApplicationCacheOriginQuota(WKBundlePageRef, WKSecurityOriginRef, int64_t totalBytesNeeded, const void* clientInfo);
     void willAddMessageToConsole(WKStringRef message, uint32_t lineNumber);
     void willSetStatusbarText(WKStringRef statusbarText);
     void willRunJavaScriptAlert(WKStringRef message, WKBundleFrameRef);
     void willRunJavaScriptConfirm(WKStringRef message, WKBundleFrameRef);
     void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
-    void didReachApplicationCacheOriginQuota(WKSecurityOriginRef, int64_t totalBytesNeeded);
 
 #if ENABLE(FULLSCREEN_API)
     // Full Screen client

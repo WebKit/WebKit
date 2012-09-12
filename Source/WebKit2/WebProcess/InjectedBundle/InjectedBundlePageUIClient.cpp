@@ -28,9 +28,8 @@
 
 #include "InjectedBundleHitTestResult.h"
 #include "WKAPICast.h"
-#include "WKBundleAPICast.h"
 #include "WebGraphicsContext.h"
-#include "WebSecurityOrigin.h"
+#include "WKBundleAPICast.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -145,14 +144,6 @@ WKBundlePageUIElementVisibility InjectedBundlePageUIClient::toolbarsAreVisible(W
         return WKBundlePageUIElementVisibilityUnknown;
     
     return m_client.toolbarsAreVisible(toAPI(page), m_client.clientInfo);
-}
-
-void InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota(WebPage* page, WebSecurityOrigin* origin, int64_t totalBytesNeeded)
-{
-    if (!m_client.didReachApplicationCacheOriginQuota)
-        return;
-
-    m_client.didReachApplicationCacheOriginQuota(toAPI(page), toAPI(origin), totalBytesNeeded, m_client.clientInfo);
 }
 
 } // namespace WebKit

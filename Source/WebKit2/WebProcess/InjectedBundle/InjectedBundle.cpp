@@ -359,12 +359,6 @@ void InjectedBundle::setApplicationCacheOriginQuota(const String& originString, 
     cacheStorage().storeUpdatedQuotaForOrigin(origin.get(), bytes);
 }
 
-void InjectedBundle::resetApplicationCacheOriginQuota(const String& originString)
-{
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    cacheStorage().storeUpdatedQuotaForOrigin(origin.get(), cacheStorage().defaultOriginQuota());
-}
-
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
 {
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
