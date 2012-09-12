@@ -65926,6 +65926,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDependentRetained.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDedicatedWorkerContextCustom.cpp"
 					>
 					<FileConfiguration
