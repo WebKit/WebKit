@@ -179,7 +179,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this);
+        MemoryClassInfo info(memoryObjectInfo, this, GenericMemoryTypes::Undefined);
     }
     int m_data;
 };
@@ -245,9 +245,8 @@ TEST(MemoryInstrumentationTest, visitStrings)
     VisitedObjects visitedObjects;
     MemoryInstrumentationImpl impl(visitedObjects);
     StringOwnerInstrumented stringOwnerInstrumented;
-    stringOwnerInstrumented.m_name.characters(); // Force 16bit shadow creation.
     impl.addRootObject(stringOwnerInstrumented);
-    EXPECT_EQ(sizeof(StringImpl) + stringOwnerInstrumented.m_name.length() * 2, impl.reportedSizeForAllTypes());
+    EXPECT_EQ(stringOwnerInstrumented.m_name.impl()->sizeInBytes(), impl.reportedSizeForAllTypes());
     EXPECT_EQ(2, visitedObjects.size());
 }
 

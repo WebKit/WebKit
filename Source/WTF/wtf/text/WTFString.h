@@ -455,13 +455,6 @@ public:
         return (*m_impl)[index];
     }
 
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_impl);
-    }
-
 private:
     RefPtr<StringImpl> m_impl;
 };
