@@ -344,22 +344,22 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
-void InspectorTimelineAgent::willChangeXHRReadyState(const String& url, int readyState, Frame* frame)
+void InspectorTimelineAgent::willDispatchXHRReadyStateChangeEvent(const String& url, int readyState, Frame* frame)
 {
     pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange, false, frame);
 }
 
-void InspectorTimelineAgent::didChangeXHRReadyState()
+void InspectorTimelineAgent::didDispatchXHRReadyStateChangeEvent()
 {
     didCompleteCurrentRecord(TimelineRecordType::XHRReadyStateChange);
 }
 
-void InspectorTimelineAgent::willLoadXHR(const String& url, Frame* frame)
+void InspectorTimelineAgent::willDispatchXHRLoadEvent(const String& url, Frame* frame)
 {
     pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad, true, frame);
 }
 
-void InspectorTimelineAgent::didLoadXHR()
+void InspectorTimelineAgent::didDispatchXHRLoadEvent()
 {
     didCompleteCurrentRecord(TimelineRecordType::XHRLoad);
 }

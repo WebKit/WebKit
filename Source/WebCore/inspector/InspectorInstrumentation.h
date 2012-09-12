@@ -128,8 +128,8 @@ public:
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
     static void didCallFunction(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willChangeXHRReadyState(ScriptExecutionContext*, XMLHttpRequest* request);
-    static void didChangeXHRReadyState(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext*, XMLHttpRequest*);
+    static void didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEvent(Document*, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors);
     static void didDispatchEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willHandleEvent(ScriptExecutionContext*, Event*);
@@ -147,8 +147,8 @@ public:
     static InspectorInstrumentationCookie willLayout(Frame*);
     static void didLayout(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScroll(Page*);
-    static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
-    static void didLoadXHR(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willDispatchXHRLoadEvent(ScriptExecutionContext*, XMLHttpRequest*);
+    static void didDispatchXHRLoadEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaint(Frame*, GraphicsContext*, const LayoutRect&);
     static void didPaint(const InspectorInstrumentationCookie&);
     static void willComposite(Page*);
@@ -305,8 +305,8 @@ private:
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents*, const String& scriptName, int scriptLine, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
-    static void didChangeXHRReadyStateImpl(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
+    static void didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, DOMWindow*, Node*, const Vector<EventContext>& ancestors, Document*);
     static InspectorInstrumentationCookie willHandleEventImpl(InstrumentingAgents*, Event*);
     static void didHandleEventImpl(const InspectorInstrumentationCookie&);
@@ -324,8 +324,8 @@ private:
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*, Frame*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScrollImpl(InstrumentingAgents*);
-    static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
-    static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willDispatchXHRLoadEventImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
+    static void didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&, Frame*);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static void willCompositeImpl(InstrumentingAgents*);
@@ -674,22 +674,22 @@ inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumenta
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willChangeXHRReadyState(ScriptExecutionContext* context, XMLHttpRequest* request)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext* context, XMLHttpRequest* request)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willChangeXHRReadyStateImpl(instrumentingAgents, request, context);
+        return willDispatchXHRReadyStateChangeEventImpl(instrumentingAgents, request, context);
 #endif
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didChangeXHRReadyState(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
-        didChangeXHRReadyStateImpl(cookie);
+        didDispatchXHRReadyStateChangeEventImpl(cookie);
 #endif
 }
 
@@ -852,22 +852,22 @@ inline void InspectorInstrumentation::didScroll(Page* page)
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHR(ScriptExecutionContext* context, XMLHttpRequest* request)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRLoadEvent(ScriptExecutionContext* context, XMLHttpRequest* request)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willLoadXHRImpl(instrumentingAgents, request, context);
+        return willDispatchXHRLoadEventImpl(instrumentingAgents, request, context);
 #endif
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didLoadXHR(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didDispatchXHRLoadEvent(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
-        didLoadXHRImpl(cookie);
+        didDispatchXHRLoadEventImpl(cookie);
 #endif
 }
 

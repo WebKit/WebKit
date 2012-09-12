@@ -121,10 +121,10 @@ public:
     void willFireTimer(int timerId, Frame*);
     void didFireTimer();
 
-    void willChangeXHRReadyState(const String&, int, Frame*);
-    void didChangeXHRReadyState();
-    void willLoadXHR(const String&, Frame*);
-    void didLoadXHR();
+    void willDispatchXHRReadyStateChangeEvent(const String&, int, Frame*);
+    void didDispatchXHRReadyStateChangeEvent();
+    void willDispatchXHRLoadEvent(const String&, Frame*);
+    void didDispatchXHRLoadEvent();
 
     void willEvaluateScript(const String&, int, Frame*);
     void didEvaluateScript();

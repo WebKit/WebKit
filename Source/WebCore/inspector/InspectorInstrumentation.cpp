@@ -319,21 +319,21 @@ void InspectorInstrumentation::didCallFunctionImpl(const InspectorInstrumentatio
         timelineAgent->didCallFunction();
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willChangeXHRReadyStateImpl(InstrumentingAgents* instrumentingAgents, XMLHttpRequest* request, ScriptExecutionContext* context)
+InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents* instrumentingAgents, XMLHttpRequest* request, ScriptExecutionContext* context)
 {
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
     if (timelineAgent && request->hasEventListeners(eventNames().readystatechangeEvent)) {
-        timelineAgent->willChangeXHRReadyState(request->url().string(), request->readyState(), frameForScriptExecutionContext(context));
+        timelineAgent->willDispatchXHRReadyStateChangeEvent(request->url().string(), request->readyState(), frameForScriptExecutionContext(context));
         timelineAgentId = timelineAgent->id();
     }
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::didChangeXHRReadyStateImpl(const InspectorInstrumentationCookie& cookie)
+void InspectorInstrumentation::didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie& cookie)
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didChangeXHRReadyState();
+        timelineAgent->didDispatchXHRReadyStateChangeEvent();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents* instrumentingAgents, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors, Document* document)
@@ -463,21 +463,21 @@ void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCooki
         pageAgent->didLayout();
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHRImpl(InstrumentingAgents* instrumentingAgents, XMLHttpRequest* request, ScriptExecutionContext* context)
+InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRLoadEventImpl(InstrumentingAgents* instrumentingAgents, XMLHttpRequest* request, ScriptExecutionContext* context)
 {
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
     if (timelineAgent && request->hasEventListeners(eventNames().loadEvent)) {
-        timelineAgent->willLoadXHR(request->url(), frameForScriptExecutionContext(context));
+        timelineAgent->willDispatchXHRLoadEvent(request->url(), frameForScriptExecutionContext(context));
         timelineAgentId = timelineAgent->id();
     }
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::didLoadXHRImpl(const InspectorInstrumentationCookie& cookie)
+void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie& cookie)
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didLoadXHR();
+        timelineAgent->didDispatchXHRLoadEvent();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, GraphicsContext* context, const LayoutRect& rect, Frame* frame)
