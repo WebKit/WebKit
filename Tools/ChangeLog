@@ -1,5 +1,17 @@
 2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix Qt/Windows build with Python3
+        https://bugs.webkit.org/show_bug.cgi?id=96473
+
+        Reviewed by Csaba Osztrogonác.
+
+        In Python 3 print is a real function, so we must use parentheses around
+        the function parameters. This is backwards compatible with Python 2.
+
+        * Scripts/generate-win32-export-forwards:
+
+2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Unreviewed trivial build fix for Qt/Windows after bug #96358.
 
         As pointed out by Kevin, we should inject the "set PATH=..." statement

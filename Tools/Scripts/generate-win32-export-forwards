@@ -45,7 +45,7 @@ for lib in libraries:
         if match:
             symbols.add(match.group("symbol"))
 
-print "Forwarding %s symbols from %s" % (len(symbols), " ".join(libraries))
+print("Forwarding %s symbols from %s" % (len(symbols), " ".join(libraries)))
 
 exportFile = open(outputFileName, "w")
 for symbol in symbols:
