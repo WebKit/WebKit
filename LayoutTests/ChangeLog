@@ -1,3 +1,10 @@
+2012-09-12  Levi Weintraub  <leviw@chromium.org>
+
+        More unreviewed gardening after r128346.
+
+        * platform/chromium-win-xp/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+
 2012-09-12  Eric Seidel  <eric@webkit.org>
 
         Sync html5lib tests with latest sources (and sort the tests alphabetically in runner.html)
