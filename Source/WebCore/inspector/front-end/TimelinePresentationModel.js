@@ -226,11 +226,21 @@ WebInspector.TimelinePresentationModel._hiddenRecords[WebInspector.TimelineModel
 
 WebInspector.TimelinePresentationModel.prototype = {
     /**
-     * @param {WebInspector.TimelinePresentationModel.Filter} filter
+     * @param {!WebInspector.TimelinePresentationModel.Filter} filter
      */
     addFilter: function(filter)
     {
         this._filters.push(filter);
+    },
+
+    /**
+     * @param {!WebInspector.TimelinePresentationModel.Filter} filter
+     */
+    removeFilter: function(filter)
+    {
+        var index = this._filters.indexOf(filter);
+        if (index !== -1)
+            this._filters.splice(index, 1);
     },
 
     rootRecord: function()
@@ -1112,7 +1122,8 @@ WebInspector.TimelinePresentationModel.Filter = function()
 
 WebInspector.TimelinePresentationModel.Filter.prototype = {
     /**
-     * @param {WebInspector.TimelinePresentationModel.Record} record
+     * @param {!WebInspector.TimelinePresentationModel.Record} record
+     * @return {boolean}
      */
     accept: function(record) { return false; }
 }

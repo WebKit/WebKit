@@ -31,7 +31,6 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @implements {WebInspector.TimelinePresentationModel.Filter}
  * @param {WebInspector.TimelineModel} model
  */
 WebInspector.TimelineOverviewPane = function(model)
@@ -272,14 +271,6 @@ WebInspector.TimelineOverviewPane.prototype = {
         if (this._frameOverview)
             this._frameOverview.reset();
         this._update();
-    },
-
-    /**
-     * @param {WebInspector.TimelinePresentationModel.Record} record
-     */
-    accept: function(record)
-    {
-        return record.lastChildEndTime >= this._windowStartTime && record.startTime <= this._windowEndTime;
     },
 
     windowStartTime: function()
@@ -1232,3 +1223,24 @@ WebInspector.TimelineFrameOverview.prototype = {
 }
 
 WebInspector.TimelineFrameOverview.prototype.__proto__ = WebInspector.View.prototype;
+
+/**
+ * @param {WebInspector.TimelineOverviewPane} pane
+ * @constructor
+ * @implements {WebInspector.TimelinePresentationModel.Filter}
+ */
+WebInspector.TimelineWindowFilter = function(pane)
+{
+    this._pane = pane;
+}
+
+WebInspector.TimelineWindowFilter.prototype = {
+    /**
+     * @param {!WebInspector.TimelinePresentationModel.Record} record
+     * @return {boolean}
+     */
+    accept: function(record)
+    {
+        return record.lastChildEndTime >= this._pane._windowStartTime && record.startTime <= this._pane._windowEndTime;
+    }
+}

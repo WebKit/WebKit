@@ -631,7 +631,7 @@ function createSearchRegex(query, caseSensitive, isRegex)
 /**
  * @param {string} query
  * @param {string=} flags
- * @return {RegExp}
+ * @return {!RegExp}
  */
 function createPlainTextSearchRegex(query, flags)
 {
