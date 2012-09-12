@@ -27,6 +27,8 @@
 #ifndef  RedirectedXCompositeWindow_h
 #define  RedirectedXCompositeWindow_h
 
+#if USE(GLX)
+
 #include "GLContextGLX.h"
 #include "IntSize.h"
 #include "RefPtrCairo.h"
@@ -67,5 +69,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(GLX)
 
 #endif // RedirectedXCompositeWindow_h

@@ -36,7 +36,7 @@ namespace WebKit {
 
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
-    , m_syncTimerCallbackId(0)
+    , m_layerFlushTimerCallbackId(0)
     , m_rootGraphicsLayer(0)
     , m_rootLayerEmbedder(0)
 {
@@ -44,8 +44,8 @@ AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webV
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
-    if (m_syncTimerCallbackId)
-        g_source_remove(m_syncTimerCallbackId);
+    if (m_layerFlushTimerCallbackId)
+        g_source_remove(m_layerFlushTimerCallbackId);
 }
 
 bool AcceleratedCompositingContext::enabled()
@@ -59,7 +59,7 @@ bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect
     return false;
 }
 
-void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graphicsLayer)
+void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     if (!graphicsLayer) {
         gtk_container_remove(GTK_CONTAINER(m_webView), m_rootLayerEmbedder);
@@ -86,7 +86,7 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
     }
 }
 
-void AcceleratedCompositingContext::scheduleRootLayerRepaint(const IntRect& rect)
+void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
     if (!m_rootGraphicsLayer)
         return;
@@ -112,34 +112,34 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
 }
 
-static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)
+static gboolean flushAndRenderLayersCallback(AcceleratedCompositingContext* context)
 {
-    context->syncLayersTimeout();
+    context->flushAndRenderLayers();
     return FALSE;
 }
 
-void AcceleratedCompositingContext::markForSync()
+void AcceleratedCompositingContext::scheduleLayerFlush()
 {
-    if (m_syncTimerCallbackId)
+    if (m_layerFlushTimerCallbackId)
         return;
 
     // We use a GLib timer because otherwise GTK+ event handling during
     // dragging can starve WebCore timers, which have a lower priority.
-    m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
+    m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(flushAndRenderLayersCallback), this, 0);
 }
 
-void AcceleratedCompositingContext::syncLayersNow()
+bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 
-    core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    return core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
-void AcceleratedCompositingContext::syncLayersTimeout()
+void AcceleratedCompositingContext::flushAndRenderLayers()
 {
-    m_syncTimerCallbackId = 0;
-    syncLayersNow();
+    m_layerFlushTimerCallbackId = 0;
+    flushPendingLayerChanges();
     if (!m_rootGraphicsLayer)
         return;
 

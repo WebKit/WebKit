@@ -1,3 +1,25 @@
+2012-09-12  Siraj Razick  <siraj.razick@collabora.co.uk>
+
+        [GTK] Update AcceleratedCompositingContextClutter to match AcceleratedCompositingContext.h API update
+        https://bugs.webkit.org/show_bug.cgi?id=96165
+
+        Reviewed by Martin Robinson.
+
+        Due to the refactoring done in bug #90085 AcceleratedCompositingContext API changed, as a result
+        AcceleratedCompositingContextClutter doesn't compile anymore. This patch is to update the
+        AcceleratedCompositingContextClutter implementations to match the API update, and Make webkit
+        AC backend compile again.
+
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::~AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer):
+        (WebKit::AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay):
+        (WebKit::flushAndRenderLayersCallback):
+        (WebKit::AcceleratedCompositingContext::scheduleLayerFlush):
+        (WebKit::AcceleratedCompositingContext::flushPendingLayerChanges):
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers):
+
 2012-09-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [Gtk] allow building with css-shaders

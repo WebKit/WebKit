@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RedirectedXCompositeWindow.h"
 
+#if USE(GLX)
 #include "GLContextGLX.h"
 #include <GL/glx.h>
 #include <X11/extensions/Xcomposite.h>
@@ -214,3 +215,5 @@ cairo_surface_t* RedirectedXCompositeWindow::cairoSurfaceForWidget(GtkWidget* wi
 }
 
 } // namespace WebCore
+
+#endif // USE(GLX)
