@@ -1779,10 +1779,8 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                                       const WebFindOptions& options,
                                       bool reset)
 {
-    if (!shouldScopeMatches(searchText)) {
-        increaseMatchCount(0, identifier);
+    if (!shouldScopeMatches(searchText))
         return;
-    }
 
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
@@ -1958,14 +1956,6 @@ void WebFrameImpl::cancelPendingScopingEffort()
 {
     deleteAllValues(m_deferredScopingWork);
     m_deferredScopingWork.clear();
-
-    // Clear the active match, for two reasons:
-    // We just finished the find 'session' and we don't want future (potentially
-    // unrelated) find 'sessions' operations to start at the same place.
-    // The WebFrameImpl could get reused and the m_activeMatch could end up pointing
-    // to a document that is no longer valid. Keeping an invalid reference around
-    // is just asking for trouble.
-    m_activeMatch = 0;
 
     m_activeMatchIndexInCurrentFrame = -1;
 }
@@ -2532,6 +2522,14 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         // a link focused, which is weird).
         frame()->selection()->setSelection(m_activeMatch.get());
         frame()->document()->setFocusedNode(0);
+
+        // Finally clear the active match, for two reasons:
+        // We just finished the find 'session' and we don't want future (potentially
+        // unrelated) find 'sessions' operations to start at the same place.
+        // The WebFrameImpl could get reused and the m_activeMatch could end up pointing
+        // to a document that is no longer valid. Keeping an invalid reference around
+        // is just asking for trouble.
+        m_activeMatch = 0;
     }
 }
 
@@ -2614,9 +2612,9 @@ int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const
 
 bool WebFrameImpl::shouldScopeMatches(const String& searchText)
 {
-    // Don't scope if we can't find a frame or a view.
+    // Don't scope if we can't find a frame or a view or if the frame is not visible.
     // The user may have closed the tab/application, so abort.
-    if (!frame() || !frame()->view())
+    if (!frame() || !frame()->view() || !hasVisibleContent())
         return false;
 
     ASSERT(frame()->document() && frame()->view());
