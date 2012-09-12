@@ -158,19 +158,36 @@ function test()
 
     function overrideAndDumpData(width, height, callback)
     {
-        function selectCallback()
+        function finalCallback()
         {
             InspectorTest.addResult("Main style:");
             InspectorTest.dumpSelectedElementStyles(true, false, true);
             callback();
         }
 
+        var gotSizes;
+        var gotStyles;
+        function stylesCallback()
+        {
+            if (gotSizes)
+                return finalCallback();
+            gotStyles = true;
+        }
+
+        function sizesCallback()
+        {
+            gotSizes = true;
+            if (gotStyles)
+                finalCallback();
+        }
+
         function applyCallback()
         {
-            getAndDumpSizes(selectCallback);
+            getAndDumpSizes(sizesCallback);
         }
 
         InspectorTest.addResult("Override: " + width + "x" + height);
+        InspectorTest.waitForStyles("main", stylesCallback);
         applyOverride(width, height, applyCallback);
     }
 
@@ -182,7 +199,8 @@ function test()
             InspectorTest.addResult("Screen from page: " + result.screen);
             InspectorTest.addResult("Window from page: " + result.inner);
             InspectorTest.addResult("Body from page: " + result.body);
-            callback();
+            if (callback)
+                callback();
         }
 
         InspectorTest.evaluateInPage("getSizes()", getSizesCallback);

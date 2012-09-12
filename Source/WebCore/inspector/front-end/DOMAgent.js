@@ -794,7 +794,6 @@ WebInspector.DOMAgent.Events = {
     DocumentUpdated: "DocumentUpdated",
     ChildNodeCountUpdated: "ChildNodeCountUpdated",
     InspectElementRequested: "InspectElementRequested",
-    StyleInvalidated: "StyleInvalidated",
     UndoRedoRequested: "UndoRedoRequested",
     UndoRedoCompleted: "UndoRedoCompleted"
 }
@@ -916,12 +915,9 @@ WebInspector.DOMAgent.prototype = {
         var node = this._idToDOMNode[nodeId];
         if (!node)
             return;
-        var issueStyleInvalidated = name === "style" && value !== node.getAttribute("style");
 
         node._setAttribute(name, value);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: name });
-        if (issueStyleInvalidated)
-          this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node)
     },
 
     /**
@@ -965,10 +961,8 @@ WebInspector.DOMAgent.prototype = {
             }
             var node = this._idToDOMNode[nodeId];
             if (node) {
-                if (node._setAttributesPayload(attributes)) {
+                if (node._setAttributesPayload(attributes))
                     this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: "style" });
-                    this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node);
-                }
             }
         }
 
@@ -1080,7 +1074,7 @@ WebInspector.DOMAgent.prototype = {
         var node = this._idToDOMNode[nodeId];
         parent._removeChild(node);
         this._unbind(node);
-        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node: node, parent: parent});
     },
 
     /**

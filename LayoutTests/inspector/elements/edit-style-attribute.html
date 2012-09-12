@@ -31,11 +31,11 @@ function test()
         {
             InspectorTest.evaluateInPage("testSetNewValue()");
 
-            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, listener);
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
             function listener(event)
             {
-                InspectorTest.addResult("WebInspector.DOMAgent.Events.StyleInvalidated should be issued");
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, listener);
+                InspectorTest.addResult("WebInspector.DOMAgent.Events.AttrModified should be issued");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
                 next();
             }
         },
@@ -44,18 +44,18 @@ function test()
         {
             InspectorTest.evaluateInPage("testSetSameValue()");
 
-            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, listener);
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
             function listener(event)
             {
-                InspectorTest.addResult("WebInspector.DOMAgent.Events.StyleInvalidated should not be issued");
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, listener);
+                InspectorTest.addResult("WebInspector.DOMAgent.Events.AttrModified should not be issued");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
             }
 
             InspectorTest.addSniffer(WebInspector.DOMNode.prototype, "_setAttributesPayload", callback);
             function callback()
             {
                 InspectorTest.addResult("WebInspector.DOMNode.prototype._setAttributesPayload should be called");
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, listener);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
                 next();
             }
         }

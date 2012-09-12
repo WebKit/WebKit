@@ -4,7 +4,7 @@ Tests that style modification generates attribute updated event only when attrib
 Running: testSetUp
 
 Running: testSetNewValue
-WebInspector.DOMAgent.Events.StyleInvalidated should be issued
+WebInspector.DOMAgent.Events.AttrModified should be issued
 
 Running: testSetSameValue
 WebInspector.DOMNode.prototype._setAttributesPayload should be called

@@ -812,10 +812,14 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!listItemElement)
             return;
 
-        if (document.body.offsetWidth <= 0) {
-            // The stylesheet hasn't loaded yet or the window is closed,
-            // so we can't calculate what is need. Return early.
-            return;
+        if (!this._readyToUpdateSelection) {
+            if (document.body.offsetWidth > 0)
+                this._readyToUpdateSelection = true;
+            else {
+                // The stylesheet hasn't loaded yet or the window is closed,
+                // so we can't calculate what we need. Return early.
+                return;
+            }
         }
 
         if (!this.selectionElement) {

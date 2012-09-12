@@ -1,3 +1,15 @@
+2012-09-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Elements] Sidebar panes not updated on style changes due to "class" attribute modifications
+        https://bugs.webkit.org/show_bug.cgi?id=95722
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/elements/edit-style-attribute.html: Renamed events on which to listen.
+        * inspector/styles/override-screen-size.html: Drive-by: fixed race condition that was resulting in this test's failures.
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * inspector/styles/styles-update-from-js.html: Added test cases for style updates on ancestor and sibling attributes' changes.
+
 2012-09-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening, skip a new failing test to paint the bot green.

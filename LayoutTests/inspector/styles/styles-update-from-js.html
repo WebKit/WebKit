@@ -1,5 +1,15 @@
 <html>
 <head>
+<style>
+.red div:first-child {
+    background-color: red;
+}
+
+div[foo="bar"] + div {
+    background-color: blue;
+}
+
+</style>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
@@ -18,6 +28,16 @@ function modifyParsedAttributes()
     var style = document.getElementById("container").style;
     style.border = "2px dashed green";
     style.borderWidth = "3px";
+}
+
+function modifyContainerClass()
+{
+    document.getElementById("container").className = "red";
+}
+
+function modifyChildAttr()
+{
+    document.getElementById("child").setAttribute("foo", "bar");
 }
 
 function test()
@@ -44,36 +64,59 @@ function test()
         {
             waitAndDumpAttributeAndStyles(next);
             InspectorTest.evaluateInPage("modifyParsedAttributes()");
+        },
+
+        function testSetViaAncestorClass(next)
+        {
+            InspectorTest.selectNodeAndWaitForStyles("child", callback);
+
+            function callback()
+            {
+                waitAndDumpAttributeAndStyles(next, "child");
+                InspectorTest.evaluateInPage("modifyContainerClass()");
+            }
+        },
+
+        function testSetViaSiblingAttr(next)
+        {
+            InspectorTest.selectNodeAndWaitForStyles("childSibling", callback);
+
+            function callback()
+            {
+                waitAndDumpAttributeAndStyles(next, "childSibling");
+                InspectorTest.evaluateInPage("modifyChildAttr()");
+            }
         }
     ]);
 
-    function waitAndDumpAttributeAndStyles(next)
+    function waitAndDumpAttributeAndStyles(next, id)
     {
+        id = id || "container";
         function callback()
         {
-            dumpAttributeAndStyles();
+            dumpAttributeAndStyles(id);
             next();
         }
-        InspectorTest.waitForStyles("container", callback);
+        InspectorTest.waitForStyles(id, callback);
     }
 
-    function dumpAttributeAndStyles()
+    function dumpAttributeAndStyles(id)
     {
-        var treeElement = findNodeTreeElement()
+        var treeElement = findNodeTreeElement(id);
         if (!treeElement) {
-            InspectorTest.addResult("'container' tree element not found");
+            InspectorTest.addResult("'" + id + "' tree element not found");
             return;
         }
         InspectorTest.addResult(treeElement.listItemElement.textContent.replace(/\u200b/g, ""));
-        InspectorTest.dumpSelectedElementStyles(true, true);
+        InspectorTest.dumpSelectedElementStyles(true);
     }
 
-    function findNodeTreeElement()
+    function findNodeTreeElement(id)
     {
         WebInspector.panels.elements.treeOutline._updateModifiedNodes();
-        var expandedNode = InspectorTest.expandedNodeWithId("container");
+        var expandedNode = InspectorTest.expandedNodeWithId(id);
         if (!expandedNode) {
-            InspectorTest.addResult("'container' node not found");
+            InspectorTest.addResult("'" + id + "' node not found");
             InspectorTest.completeTest();
         }
         return WebInspector.panels.elements.treeOutline.findTreeElement(expandedNode);
@@ -84,10 +127,10 @@ function test()
 
 <body onload="runTest()">
 <p>
-Tests that changes to an inline style from JavaScript are reflected in the Styles pane and Elements tree.
+Tests that changes to an inline style and ancestor/sibling className from JavaScript are reflected in the Styles pane and Elements tree.
 </p>
 
-<div id="container" style="font-weight:bold"></div>
+<div id="container" style="font-weight:bold"><div id="child"></div><div id="childSibling"></div></div>
 
 </body>
 </html>
