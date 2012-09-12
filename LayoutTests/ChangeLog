@@ -1,3 +1,16 @@
+2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128353.
+        http://trac.webkit.org/changeset/128353
+        https://bugs.webkit.org/show_bug.cgi?id=96565
+
+        Re-land change that broke tests on Chromium. Tests are now
+        disabled, will rebaseline after this rolls. (Requested by
+        dmazzoni on #webkit).
+
+        * accessibility/canvas-fallback-content-2-expected.txt: Added.
+        * accessibility/canvas-fallback-content-2.html: Added.
+
 2012-09-12  Ojan Vafai  <ojan@chromium.org>
 
         Update some stale expectations.

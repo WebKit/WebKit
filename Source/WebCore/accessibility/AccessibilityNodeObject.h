@@ -68,8 +68,71 @@ public:
 
     virtual bool canvasHasFallbackContent() const;
 
+    virtual bool isAnchor() const;
+    virtual bool isControl() const;
+    virtual bool isFieldset() const;
+    virtual bool isGroup() const;
+    virtual bool isHeading() const;
+    virtual bool isHovered() const;
+    virtual bool isImage() const;
+    virtual bool isImageButton() const;
+    virtual bool isInputImage() const;
+    virtual bool isLink() const;
+    virtual bool isMenu() const;
+    virtual bool isMenuBar() const;
+    virtual bool isMenuButton() const;
+    virtual bool isMenuItem() const;
+    virtual bool isMenuRelated() const;
+    virtual bool isMultiSelectable() const;
+    virtual bool isNativeCheckboxOrRadio() const;
+    virtual bool isNativeImage() const;
+    virtual bool isNativeTextControl() const;
+    virtual bool isPasswordField() const;
+    virtual bool isProgressIndicator() const;
+    virtual bool isSearchField() const;
+    virtual bool isSlider() const;
+    virtual bool isWebArea() const;
+
+    virtual bool isChecked() const;
+    virtual bool isEnabled() const;
+    virtual bool isIndeterminate() const;
+    virtual bool isPressed() const;
+    virtual bool isReadOnly() const;
+    virtual bool isRequired() const;
+
+    void setNode(Node*);
+    virtual Node* node() const { return m_node; }
+    virtual Document* document() const;
+
     virtual bool canSetFocusAttribute() const;
-    
+    virtual int headingLevel() const;
+
+    virtual String valueDescription() const;
+    virtual float valueForRange() const;
+    virtual float maxValueForRange() const;
+    virtual float minValueForRange() const;
+    virtual float stepValueForRange() const;
+
+    virtual AccessibilityObject* selectedRadioButton();
+    virtual AccessibilityObject* selectedTabItem();
+    virtual AccessibilityButtonState checkboxOrRadioValue() const;
+
+    virtual unsigned hierarchicalLevel() const;
+    virtual String textUnderElement() const;
+    virtual String accessibilityDescription() const;
+    virtual String helpText() const;
+    virtual String title() const;
+    virtual String text() const;
+    virtual String stringValue() const;
+    virtual String ariaLabeledByAttribute() const;
+
+    virtual Element* actionElement() const;
+    Element* mouseButtonListener() const;
+    virtual Element* anchorElement() const;
+    AccessibilityObject* menuForMenuButton() const;
+   
+    virtual void changeValueByPercent(float percentChange);
+ 
     virtual AccessibilityObject* firstChild() const;
     virtual AccessibilityObject* lastChild() const;
     virtual AccessibilityObject* previousSibling() const;
@@ -77,13 +140,12 @@ public:
     virtual AccessibilityObject* parentObject() const;
     virtual AccessibilityObject* parentObjectIfExists() const;
 
-    void setNode(Node*);
-    virtual Node* node() const { return m_node; }
-    virtual Document* document() const;
-
     virtual void detach();
     virtual void childrenChanged();
     virtual void updateAccessibilityRole();
+
+    virtual void increment();
+    virtual void decrement();
 
     virtual LayoutRect elementRect() const;
 
@@ -96,11 +158,26 @@ protected:
 
     virtual AccessibilityRole determineAccessibilityRole();
     virtual void addChildren();
+    virtual bool canHaveChildren() const;
     virtual bool accessibilityIsIgnored() const;
     AccessibilityRole ariaRoleAttribute() const;
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
     bool hasContentEditableAttributeSet() const;
+    bool isDescendantOfBarrenParent() const;
+    void alterSliderValue(bool increase);
+    void changeValueByStep(bool increase);
+    bool isARIARange() const;
+    bool isGenericFocusableElement() const;
+    HTMLLabelElement* labelForElement(Element*) const;
+    String ariaAccessibilityDescription() const;
+    void ariaLabeledByElements(Vector<Element*>& elements) const;
+    String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
+    void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
+
+    Element* menuElementForMenuButton() const;
+    Element* menuItemElementForMenu() const;
+    AccessibilityObject* menuButtonForMenu() const;
 
 private:
     Node* m_node;
