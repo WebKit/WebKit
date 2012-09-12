@@ -1,5 +1,11 @@
 2012-09-11  Geoffrey Garen  <ggaren@apple.com>
 
+        First step to fixing the Windows build: Remove old symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-09-11  Geoffrey Garen  <ggaren@apple.com>
+
         Don't allocate a backing store just for a function's name
         https://bugs.webkit.org/show_bug.cgi?id=96468
 

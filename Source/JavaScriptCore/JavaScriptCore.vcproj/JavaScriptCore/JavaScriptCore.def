@@ -163,7 +163,6 @@ EXPORTS
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?deleteAllCompiledCode@Heap@JSC@@QAEXXZ
-    ?displayName@JSFunction@JSC@@QAE?BVString@WTF@@PAVExecState@2@@Z
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
     ?dumpAllOptions@Options@JSC@@SAXPAU_iobuf@@@Z
     ?dumpCallFrame@Interpreter@JSC@@QAEXPAVExecState@2@@Z
@@ -253,7 +252,6 @@ EXPORTS
     ?monotonicallyIncreasingTime@WTF@@YANXZ
     ?monthFromDayInYear@WTF@@YAHH_N@Z
     ?msToYear@WTF@@YAHN@Z
-    ?name@JSFunction@JSC@@QAEABVString@WTF@@PAVExecState@2@@Z
     ?neuter@ArrayBufferView@WTF@@MAEXXZ
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ
