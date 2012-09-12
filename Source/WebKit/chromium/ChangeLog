@@ -1,3 +1,21 @@
+2012-09-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix search tickmarks not disappearing when compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=96536
+
+        Reviewed by James Robinson.
+
+        view->invalidateRect() on the root frame just invalidates the
+        contents, since WebViewImpl doesn't know anything about scrollbar
+        layers. This causes an "InvalidateAll" to not actually invalidate the
+        scrollbars.
+
+        To fix this, make WebFrameImpl explicitly invalidate the
+        scrollbars when required.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::invalidateArea):
+
 2012-09-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Fix cases where find-in-page doesn't send a final update

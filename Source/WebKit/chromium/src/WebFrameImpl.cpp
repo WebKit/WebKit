@@ -2573,13 +2573,13 @@ void WebFrameImpl::invalidateArea(AreaToInvalidate area)
             contentArea.move(-frameRect.x(), -frameRect.y());
             view->invalidateRect(contentArea);
         }
+    }
 
-        if ((area & InvalidateScrollbar) == InvalidateScrollbar) {
-            // Invalidate the vertical scroll bar region for the view.
-            Scrollbar* scrollbar = view->verticalScrollbar();
-            if (scrollbar)
-                scrollbar->invalidate();
-        }
+    if ((area & InvalidateScrollbar) == InvalidateScrollbar) {
+        // Invalidate the vertical scroll bar region for the view.
+        Scrollbar* scrollbar = view->verticalScrollbar();
+        if (scrollbar)
+            scrollbar->invalidate();
     }
 }
 
