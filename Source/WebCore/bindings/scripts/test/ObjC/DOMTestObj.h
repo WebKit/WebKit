@@ -38,6 +38,7 @@
 @class DOMTestObjectBConstructor;
 @class DOMTestObjectCConstructor;
 @class DOMa;
+@class DOMany;
 @class DOMb;
 @class DOMbool;
 @class DOMd;
@@ -104,6 +105,7 @@ enum {
 @property(retain) DOMTestObjectAConstructor *conditionalAttr4;
 @property(retain) DOMTestObjectBConstructor *conditionalAttr5;
 @property(retain) DOMTestObjectCConstructor *conditionalAttr6;
+@property(retain) DOMany *anyAttribute;
 @property(readonly, retain) DOMDocument *contentDocument;
 @property(retain) DOMSVGPoint *mutablePoint;
 @property(retain) DOMSVGPoint *immutablePoint;

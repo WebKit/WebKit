@@ -29,6 +29,7 @@
 #include "SVGPoint.h"
 #include "TestObj.h"
 #include "WebKitDOMBinding.h"
+#include "any.h"
 #include "bool.h"
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMDictionary.h"
@@ -44,6 +45,8 @@
 #include "webkit/WebKitDOMTestObjPrivate.h"
 #include "webkit/WebKitDOMa.h"
 #include "webkit/WebKitDOMaPrivate.h"
+#include "webkit/WebKitDOMany.h"
+#include "webkit/WebKitDOManyPrivate.h"
 #include "webkit/WebKitDOMb.h"
 #include "webkit/WebKitDOMbPrivate.h"
 #include "webkit/WebKitDOMbool.h"
@@ -134,6 +137,7 @@ enum {
     PROP_CONDITIONAL_ATTR1,
     PROP_CONDITIONAL_ATTR2,
     PROP_CONDITIONAL_ATTR3,
+    PROP_ANY_ATTRIBUTE,
     PROP_CONTENT_DOCUMENT,
     PROP_MUTABLE_POINT,
     PROP_IMMUTABLE_POINT,
@@ -481,6 +485,11 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
+    case PROP_ANY_ATTRIBUTE: {
+        RefPtr<WebCore::any> ptr = coreSelf->anyAttribute();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
     case PROP_CONTENT_DOCUMENT: {
         RefPtr<WebCore::Document> ptr = coreSelf->contentDocument();
         g_value_set_object(value, WebKit::kit(ptr.get()));
@@ -823,6 +832,13 @@ G_MAXLONG, /* max */
                                                            G_MINLONG, /* min */
 G_MAXLONG, /* max */
 0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_ANY_ATTRIBUTE,
+                                    g_param_spec_object("any-attribute", /* name */
+                                                           "test_obj_any-attribute", /* short description */
+                                                           "read-write  WebKitDOMany* TestObj.any-attribute", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_ANY, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_CONTENT_DOCUMENT,
@@ -2238,6 +2254,32 @@ webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value)
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMany*
+webkit_dom_test_obj_get_any_attribute(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::any> gobjectResult = WTF::getPtr(item->anyAttribute());
+    WebKitDOMany* result = WebKit::kit(gobjectResult.get());
+    return result;
+}
+
+void
+webkit_dom_test_obj_set_any_attribute(WebKitDOMTestObj* self, WebKitDOMany* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::any* convertedValue = 0;
+    if (value) {
+        convertedValue = WebKit::core(value);
+        g_return_if_fail(convertedValue);
+    }
+    item->setAnyAttribute(convertedValue);
 }
 
 WebKitDOMDocument*

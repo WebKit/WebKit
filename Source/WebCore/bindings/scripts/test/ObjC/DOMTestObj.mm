@@ -45,6 +45,7 @@
 #import "DOMTestObjectBConstructorInternal.h"
 #import "DOMTestObjectCConstructorInternal.h"
 #import "DOMaInternal.h"
+#import "DOManyInternal.h"
 #import "DOMbInternal.h"
 #import "DOMboolInternal.h"
 #import "DOMdInternal.h"
@@ -69,6 +70,7 @@
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import "a.h"
+#import "any.h"
 #import "b.h"
 #import "bool.h"
 #import "d.h"
@@ -622,6 +624,20 @@
     IMPL->setConditionalAttr6(core(newConditionalAttr6));
 }
 #endif
+
+- (DOMany *)anyAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->anyAttribute()));
+}
+
+- (void)setAnyAttribute:(DOMany *)newAnyAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newAnyAttribute);
+
+    IMPL->setAnyAttribute(core(newAnyAttribute));
+}
 
 - (DOMDocument *)contentDocument
 {

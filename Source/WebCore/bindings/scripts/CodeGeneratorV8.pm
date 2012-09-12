@@ -3659,7 +3659,7 @@ sub GetNativeType
     # EventTarget can be passed as a parameter.
     return "Node*" if $type eq "EventTarget" and $isParameter;
     return "double" if $type eq "Date";
-    return "ScriptValue" if $type eq "DOMObject";
+    return "ScriptValue" if $type eq "DOMObject" or $type eq "any";
     return "Dictionary" if $type eq "Dictionary";
 
     return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
@@ -3758,7 +3758,7 @@ sub JSValueToNative
         return "Dictionary($value, $getIsolate)";
     }
 
-    if ($type eq "DOMObject") {
+    if ($type eq "DOMObject" or $type eq "any") {
         AddToImplIncludes("ScriptValue.h");
         return "ScriptValue($value)";
     }
@@ -3819,7 +3819,7 @@ sub GetV8HeaderName
     return "V8Event.h" if $type eq "DOMTimeStamp";
     return "EventListener.h" if $type eq "EventListener";
     return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
-    return "ScriptValue.h" if $type eq "DOMObject";
+    return "ScriptValue.h" if $type eq "DOMObject" or $type eq "any";
     return "V8DOMStringList.h" if $type eq "DOMString[]";
     return "V8${type}.h";
 }
@@ -3917,6 +3917,7 @@ my %non_wrapper_types = (
     'MediaQueryListListener' => 1,
     'NodeFilter' => 1,
     'SerializedScriptValue' => 1,
+    'any' => 1,
     'boolean' => 1,
     'double' => 1,
     'float' => 1,

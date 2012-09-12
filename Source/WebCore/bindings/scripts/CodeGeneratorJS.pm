@@ -248,7 +248,7 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->SkipIncludeHeader($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array" or $type eq "DOMTimeStamp") {
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "any" or $type eq "Array" or $type eq "DOMTimeStamp") {
     } elsif ($type =~ /SVGPathSeg/) {
         my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -2939,6 +2939,7 @@ my %nativeType = (
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "IDBKey" => "PassRefPtr<IDBKey>",
     "Dictionary" => "Dictionary",
+    "any" => "ScriptValue",
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
@@ -3054,7 +3055,7 @@ sub JSValueToNative
         return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";
     }
 
-    if ($type eq "DOMObject") {
+    if ($type eq "DOMObject" or $type eq "any") {
         return "exec->globalData(), $value";
     }
 
@@ -3068,7 +3069,7 @@ sub JSValueToNative
         return "MediaQueryListListener::create(ScriptValue(exec->globalData(), " . $value ."))";
     }
 
-    if ($type eq "SerializedScriptValue" or $type eq "any") {
+    if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "SerializedScriptValue::create(exec, $value, 0, 0)";
     }
@@ -3183,7 +3184,7 @@ sub NativeToJSValue
         return "jsArray(exec, $thisValue->globalObject(), $value)";
     }
 
-    if ($type eq "DOMObject") {
+    if ($type eq "DOMObject" or $type eq "any") {
         if ($implClassName eq "Document") {
             AddToImplIncludes("JSCanvasRenderingContext2D.h", $conditional);
         } else {

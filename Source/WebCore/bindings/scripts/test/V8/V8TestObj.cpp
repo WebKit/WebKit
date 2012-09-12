@@ -37,6 +37,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
+#include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8DOMStringList.h"
@@ -49,7 +50,6 @@
 #include "V8TestCallback.h"
 #include "V8TestSubObj.h"
 #include "V8a.h"
-#include "V8any.h"
 #include "V8b.h"
 #include "V8bool.h"
 #include "V8d.h"
@@ -801,28 +801,30 @@ static v8::Handle<v8::Value> cachedAttribute1AttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestObj.cachedAttribute1._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    RefPtr<any> result = imp->cachedAttribute1();
-    v8::Handle<v8::Value> wrapper = result.get() ? getDOMObjectMap(info.GetIsolate()).get(result.get()) : v8Undefined();
-    if (wrapper.IsEmpty()) {
-        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
-        if (!wrapper.IsEmpty())
-            V8DOMWrapper::setNamedHiddenReference(info.Holder(), "cachedAttribute1", wrapper);
-    }
-    return wrapper;
+    return imp->cachedAttribute1().v8Value();
 }
 
 static v8::Handle<v8::Value> cachedAttribute2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.cachedAttribute2._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    RefPtr<any> result = imp->cachedAttribute2();
-    v8::Handle<v8::Value> wrapper = result.get() ? getDOMObjectMap(info.GetIsolate()).get(result.get()) : v8Undefined();
-    if (wrapper.IsEmpty()) {
-        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
-        if (!wrapper.IsEmpty())
-            V8DOMWrapper::setNamedHiddenReference(info.Holder(), "cachedAttribute2", wrapper);
-    }
-    return wrapper;
+    return imp->cachedAttribute2().v8Value();
+}
+
+static v8::Handle<v8::Value> anyAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.anyAttribute._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return imp->anyAttribute().v8Value();
+}
+
+static void anyAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.anyAttribute._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    ScriptValue v = ScriptValue(value);
+    imp->setAnyAttribute(WTF::getPtr(v));
+    return;
 }
 
 static v8::Handle<v8::Value> enabledAtRuntimeAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -2003,6 +2005,8 @@ static const V8DOMConfiguration::BatchedAttribute TestObjAttrs[] = {
     {"cachedAttribute1", TestObjV8Internal::cachedAttribute1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'cachedAttribute2' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
     {"cachedAttribute2", TestObjV8Internal::cachedAttribute2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'anyAttribute' (Type: 'attribute' ExtAttr: '')
+    {"anyAttribute", TestObjV8Internal::anyAttributeAttrGetter, TestObjV8Internal::anyAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'floatArray' (Type: 'attribute' ExtAttr: '')
     {"floatArray", TestObjV8Internal::floatArrayAttrGetter, TestObjV8Internal::floatArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'doubleArray' (Type: 'attribute' ExtAttr: '')
