@@ -1,3 +1,20 @@
+2012-09-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        IncrementalSweeper should not sweep/free Zapped blocks
+        https://bugs.webkit.org/show_bug.cgi?id=96464
+
+        Reviewed by Filip Pizlo.
+
+        This is not beneficial in terms of performance because there isn't any way a block can emerge
+        in the Zapped state from a call to Heap::collect() unless we run an eager sweep on it, in which 
+        case we've already run all the destructors we possibly can. This also causes bugs since we don't 
+        take zapped-ness into account when determining whether or not a block is empty to free it. The 
+        incremental sweeper can then accidentally free blocks that it thinks are empty but are in fact 
+        zapped with still-live objects in them.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::needsSweeping): It is only valid to sweep a block if it is in the Marked state.
+
 2012-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         JSActivation should inline allocate its registers, and eliminate
