@@ -202,12 +202,7 @@ fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
 fast/text/zero-font-size.html
 
-# WTR needs an implementation of dumpApplicationCacheDelegateCallbacks
-http/tests/appcache/origin-delete.html
-http/tests/appcache/origin-quota.html
-http/tests/appcache/origin-quota-continued-download.html
-http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
-http/tests/appcache/origin-usage.html
+# WTR needs an implementation of originsWithApplicationCache
 http/tests/appcache/origins-with-appcache.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive

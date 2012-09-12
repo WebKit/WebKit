@@ -103,12 +103,6 @@ fast/parser/pre-html5-parser-quirks.html
 # Fallback resource wasn't used for a redirect to a resource with another origin
 http/tests/appcache/fallback.html
 
-# EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
-http/tests/appcache/origin-usage.html
-
-# EFL's LayoutTestController does not implement originsWithApplicationCache
-http/tests/appcache/origins-with-appcache.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html

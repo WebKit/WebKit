@@ -192,6 +192,7 @@ EXPORTS
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
+        ?number@String@WTF@@SA?AV12@_J@Z
         ?number@String@WTF@@SA?AV12@_K@Z
         ?number@String@WTF@@SA?AV12@H@Z
         ?number@String@WTF@@SA?AV12@I@Z

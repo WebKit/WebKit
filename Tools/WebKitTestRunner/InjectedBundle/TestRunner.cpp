@@ -80,6 +80,8 @@ TestRunner::TestRunner()
     , m_dumpResourceLoadCallbacks(false)
     , m_dumpResourceResponseMIMETypes(false)
     , m_dumpWillCacheResponse(false)
+    , m_dumpApplicationCacheDelegateCallbacks(false)
+    , m_disallowIncreaseForApplicationCacheQuota(false)
     , m_waitToDump(false)
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
@@ -321,6 +323,11 @@ void TestRunner::setApplicationCacheOriginQuota(unsigned long long bytes)
 {
     WKRetainPtr<WKStringRef> origin(AdoptWK, WKStringCreateWithUTF8CString("http://127.0.0.1:8000"));
     WKBundleSetApplicationCacheOriginQuota(InjectedBundle::shared().bundle(), origin.get(), bytes);
+}
+
+void TestRunner::disallowIncreaseForApplicationCacheQuota()
+{
+    m_disallowIncreaseForApplicationCacheQuota = true;
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
