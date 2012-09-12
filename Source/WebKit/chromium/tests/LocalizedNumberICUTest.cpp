@@ -36,13 +36,13 @@
 
 using namespace WebCore;
 
-void testNumberIsReversible(const char* localeString, const char* original, const char* shouldHave = 0)
+void testNumberIsReversible(const AtomicString& locale, const char* original, const char* shouldHave = 0)
 {
-    OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
-    String localized = locale->convertToLocalizedNumber(original);
+    OwnPtr<Localizer> localizer = Localizer::create(locale);
+    String localized = localizer->convertToLocalizedNumber(original);
     if (shouldHave)
         EXPECT_TRUE(localized.contains(shouldHave));
-    String converted = locale->convertFromLocalizedNumber(localized);
+    String converted = localizer->convertFromLocalizedNumber(localized);
     EXPECT_EQ(original, converted);
 }
 
@@ -82,10 +82,10 @@ TEST(LocalizedNumberICUTest, Reversible)
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
 
-static String testDecimalSeparator(const char* localeString)
+static String testDecimalSeparator(const AtomicString& locale)
 {
-    OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
-    return locale->localizedDecimalSeparator();
+    OwnPtr<Localizer> localizer = Localizer::create(locale);
+    return localizer->localizedDecimalSeparator();
 }
 
 TEST(LocalizedNumberICUTest, localizedDecimalSeparator)

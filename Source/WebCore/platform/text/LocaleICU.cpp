@@ -42,6 +42,11 @@ using namespace std;
 
 namespace WebCore {
 
+PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
+{
+    return LocaleICU::create(locale.string().utf8().data());
+}
+
 LocaleICU::LocaleICU(const char* locale)
     : m_locale(locale)
     , m_numberFormat(0)

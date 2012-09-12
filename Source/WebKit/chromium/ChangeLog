@@ -1,3 +1,14 @@
+2012-09-11  Keishi Hattori  <keishi@webkit.org>
+
+        Create Localizer factory method for LocaleICU
+        https://bugs.webkit.org/show_bug.cgi?id=96363
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocalizedNumberICUTest.cpp:
+        (testNumberIsReversible):
+        (testDecimalSeparator):
+
 2012-09-11  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] Make prioritized texture manager not touch backings array on the main thread
