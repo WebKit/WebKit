@@ -86,27 +86,6 @@ v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr
     return wrapperHandle;
 }
 
-v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, DOMWindow* window)
-{
-    Frame* frame = window->frame();
-    if (!frame)
-        return v8::Local<v8::Function>();
-
-    if (V8PerContextData* contextData = perContextDataForCurrentWorld(frame))
-        return contextData->constructorForType(type);
-
-    return v8::Local<v8::Function>();
-}
-
-#if ENABLE(WORKERS)
-v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, WorkerContext*)
-{
-    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
-    return proxy ? proxy->perContextData()->constructorForType(type) : v8::Local<v8::Function>();
-}
-#endif
-
 #if ENABLE(WORKERS)
 V8PerContextData* V8DOMWrapper::perContextData(WorkerContext*)
 {
@@ -150,7 +129,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Document* document, Wrap
     if (document && document->frame())
         perContextData = perContextDataForCurrentWorld(document->frame());
     else
-        perContextData = V8PerContextData::current();
+        perContextData = V8PerContextData::from(v8::Context::GetCurrent());
 
     v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 

@@ -1039,8 +1039,11 @@ static v8::Handle<v8::Value> TestObjConstructorGetter(v8::Local<v8::String> name
     INC_STATS("DOM.TestObj.constructors._get");
     v8::Handle<v8::Value> data = info.Data();
     ASSERT(data->IsExternal() || data->IsNumber());
-    WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
-    return v8Undefined();}
+    V8PerContextData* perContextData = V8PerContextData::from(info.Holder()->CreationContext());
+    if (!perContextData)
+        return v8Undefined();
+    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data));
+}
 
 static void TestObjReplaceableAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {

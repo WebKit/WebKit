@@ -804,25 +804,10 @@ static v8::Handle<v8::Value> ${implClassName}ConstructorGetter(v8::Local<v8::Str
     INC_STATS(\"DOM.$implClassName.constructors._get\");
     v8::Handle<v8::Value> data = info.Data();
     ASSERT(data->IsExternal() || data->IsNumber());
-    WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
-END
-
-    if ($implClassName eq "DOMWindow") {
-        push(@implContentDecls, <<END);
-    // Get the proxy corresponding to the DOMWindow if possible to
-    // make sure that the constructor function is constructed in the
-    // context of the DOMWindow and not in the context of the caller.
-    return V8DOMWrapper::constructorForType(type, V8DOMWindow::toNative(info.Holder()));
-END
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@implContentDecls, <<END);
-    return V8DOMWrapper::constructorForType(type, V8WorkerContext::toNative(info.Holder()));
-END
-    } else {
-        push(@implContentDecls, "    return v8Undefined();");
-    }
-
-    push(@implContentDecls, <<END);
+    V8PerContextData* perContextData = V8PerContextData::from(info.Holder()->CreationContext());
+    if (!perContextData)
+        return v8Undefined();
+    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data));
 }
 
 END

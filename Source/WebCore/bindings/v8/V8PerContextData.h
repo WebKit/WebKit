@@ -53,7 +53,7 @@ public:
 
     bool init();
 
-    static V8PerContextData* current();
+    static V8PerContextData* from(v8::Handle<v8::Context>);
 
     // To create JS Wrapper objects, we create a cache of a 'boiler plate'
     // object, and then simply Clone that object each time we need a new one.

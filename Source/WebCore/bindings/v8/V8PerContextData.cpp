@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-V8PerContextData* V8PerContextData::current()
+V8PerContextData* V8PerContextData::from(v8::Handle<v8::Context> context)
 {
-    v8::Handle<v8::Value> wrappedPerContextData = toInnerGlobalObject(v8::Context::GetCurrent())->GetHiddenValue(V8HiddenPropertyName::perContextData());
+    v8::Handle<v8::Value> wrappedPerContextData = toInnerGlobalObject(context)->GetHiddenValue(V8HiddenPropertyName::perContextData());
     if (wrappedPerContextData.IsEmpty())
         return 0;
     return static_cast<V8PerContextData*>(v8::External::Unwrap(wrappedPerContextData));
