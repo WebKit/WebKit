@@ -308,7 +308,7 @@ private:
 
         WebCore::RunLoop::Timer<Timer> m_timer;
     };
-    typedef HashMap<unsigned, Timer*> TimerMap;
+    typedef HashMap<unsigned, OwnPtr<Timer> > TimerMap;
     TimerMap m_timers;
     unsigned m_nextTimerID;
 

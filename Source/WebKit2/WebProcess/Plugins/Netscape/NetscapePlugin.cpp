@@ -375,21 +375,15 @@ uint32_t NetscapePlugin::scheduleTimer(unsigned interval, bool repeat, void (*ti
     
     // FIXME: Based on the plug-in visibility, figure out if we should throttle the timer, or if we should start it at all.
     timer->start();
-    m_timers.set(timerID, timer.leakPtr());
+    m_timers.set(timerID, timer.release());
 
     return timerID;
 }
 
 void NetscapePlugin::unscheduleTimer(unsigned timerID)
 {
-    TimerMap::iterator it = m_timers.find(timerID);
-    if (it == m_timers.end())
-        return;
-
-    OwnPtr<Timer> timer = adoptPtr(it->second);
-    m_timers.remove(it);
-
-    timer->stop();
+    if (OwnPtr<Timer> timer = m_timers.take(timerID))
+        timer->stop();
 }
 
 double NetscapePlugin::contentsScaleFactor()
@@ -687,7 +681,6 @@ void NetscapePlugin::destroy()
 
     platformDestroy();
 
-    deleteAllValues(m_timers);
     m_timers.clear();
 }
     
