@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<style>
+.container {
+    position: relative;
+    height: 100px;
+    width: 100px;
+    border: 2px solid orange;
+}
+.flexbox {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+}
+.flexbox > :nth-child(1) {
+    background-color: lightblue;
+}
+.flexbox > :nth-child(2) {
+    background-color: lightgreen;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<div class="container">
+    <div data-expected-height=100 class="flexbox">
+        <div data-expected-height=30 data-expected-width=80 style="height: 30px"></div>
+        <div data-expected-height=50 data-expected-width=80 style="-webkit-flex: 1"></div>
+    </div>
+</div>
+
+<div class="container">
+    <div style="-webkit-flex-wrap: wrap" class="flexbox">
+        <div data-expected-height=50 data-expected-width=40 style="height: 50px"></div>
+        <div data-expected-height=80 data-expected-width=40 style="-webkit-flex: 1 50px"></div>
+    </div>
+</div>
+</body>
+</html>

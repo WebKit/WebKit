@@ -1,3 +1,15 @@
+2012-09-12  Tony Chang  <tony@chromium.org>
+
+        flex item sized incorrectly in a column flexbox with height set via top/bottom
+        https://bugs.webkit.org/show_bug.cgi?id=94855
+
+        Reviewed by Ojan Vafai.
+
+        Test where the height of a column flexbox is set via top and bottom.
+
+        * css3/flexbox/columns-height-set-via-top-bottom-expected.txt: Added.
+        * css3/flexbox/columns-height-set-via-top-bottom.html: Added.
+
 2012-09-12  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Implement transform parameter animations for CSS Custom Filters
