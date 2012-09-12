@@ -1,3 +1,16 @@
+2012-09-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Respect WEBKITOUTPUTDIR when running EFL tests
+        https://bugs.webkit.org/show_bug.cgi?id=96528
+
+        Reviewed by Dirk Pranke.
+
+        Expose user set WEBKITOUTPUTDIR to the web process.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver._start): Add WEBKITOUTPUTDIR to the environment
+        of the web process and its potential jhbuild wrapper.
+
 2012-09-12  Dirk Pranke  <dpranke@chromium.org>
 
         webkitdirs: fix uname version handling for cygwin

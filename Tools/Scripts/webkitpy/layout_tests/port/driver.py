@@ -33,6 +33,7 @@ import re
 import shlex
 import sys
 import time
+import os
 
 from webkitpy.common.system import path
 
@@ -276,6 +277,8 @@ class Driver(object):
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
+        if 'WEBKITOUTPUTDIR' in os.environ:
+            environment['WEBKITOUTPUTDIR'] = os.environ['WEBKITOUTPUTDIR']
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
