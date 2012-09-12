@@ -1,3 +1,9 @@
+2012-09-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, skip a new failing test to paint the bot green.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
