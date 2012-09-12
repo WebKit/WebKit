@@ -1,3 +1,18 @@
+2012-09-12  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Test incremental layout
+        https://bugs.webkit.org/show_bug.cgi?id=91879
+
+        Reviewed by Julien Chaffraix.
+
+        Adding tests to make sure that text and shape can be set dynamically, and that
+        content will still layout while respecting shape-inside.
+
+        * fast/exclusions/shape-inside/shape-inside-dynamic-shape-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-dynamic-shape.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-dynamic-text-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-dynamic-text.html: Added.
+
 2012-09-12  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Remove direct texture access via u_texture

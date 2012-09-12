@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+    window.onload = function() {
+        var node = document.createTextNode("This text should be contained by the blue square.");
+        document.getElementById("shape-inside").appendChild(node);
+    };
+</script>
+<style>
+    #shape-inside {
+        width: 200px;
+        height: 200px;
+        -webkit-shape-inside: rectangle(10px, 10px, 180px, 180px);
+        position: relative;
+    }
+    #border {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 180px;
+        height: 180px;
+        border: 2px solid blue;
+    }
+</style>
+</head>
+<body>
+    <div id="shape-inside">
+        <div id="border"></div>
+    </div>
+    Test that text set through javascript should layout within the shape inside.
+</body>
+</html>
