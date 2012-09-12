@@ -2,6 +2,14 @@
 
         Unreviewed gardening.
 
+        Mark seek-to-end-after-duration-change.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-12  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed gardening.
+
         Mark some new hidpi tests as failing after r128348.
 
         * platform/chromium/TestExpectations:
