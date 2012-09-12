@@ -641,6 +641,7 @@ _llint_op_new_func_exp:
 
 _llint_op_call:
     traceExecution()
+    arrayProfileForCall()
     doCall(_llint_slow_path_call)
 
 

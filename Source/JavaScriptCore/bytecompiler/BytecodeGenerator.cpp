@@ -1925,6 +1925,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     emitExpressionInfo(divot, startOffset, endOffset);
 
     // Emit call.
+    ArrayProfile* arrayProfile = newArrayProfile();
     emitOpcode(opcodeID);
     instructions().append(func->index()); // func
     instructions().append(callArguments.argumentCountIncludingThis()); // argCount
@@ -1934,7 +1935,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 #else
     instructions().append(0);
 #endif
-    instructions().append(0);
+    instructions().append(arrayProfile);
     if (dst != ignoredResult()) {
         ValueProfile* profile = emitProfiledOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
