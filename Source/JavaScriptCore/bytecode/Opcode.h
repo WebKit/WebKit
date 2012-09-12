@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-    #define FOR_EACH_OPCODE_ID(macro) \
+    #define FOR_EACH_CORE_OPCODE_ID_WITH_EXTENSION(macro, extension__) \
         macro(op_enter, 1) \
         macro(op_create_activation, 2) \
         macro(op_init_lazy_reg, 2) \
@@ -200,9 +200,19 @@ namespace JSC {
         macro(op_profile_will_call, 2) \
         macro(op_profile_did_call, 2) \
         \
-        FOR_EACH_LLINT_OPCODE_EXTENSION(macro) \
+        extension__ \
         \
         macro(op_end, 2) // end must be the last opcode in the list
+
+    #define FOR_EACH_CORE_OPCODE_ID(macro) \
+        FOR_EACH_CORE_OPCODE_ID_WITH_EXTENSION(macro, /* No extension */ )
+
+    #define FOR_EACH_OPCODE_ID(macro) \
+        FOR_EACH_CORE_OPCODE_ID_WITH_EXTENSION( \
+            macro, \
+            FOR_EACH_LLINT_OPCODE_EXTENSION(macro) \
+        )
+
 
     #define OPCODE_ID_ENUM(opcode, length) opcode,
         typedef enum { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) } OpcodeID;

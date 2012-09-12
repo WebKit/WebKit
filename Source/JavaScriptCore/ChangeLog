@@ -1,3 +1,16 @@
+2012-09-12  Mark Lam  <mark.lam@apple.com>
+
+        Refactor Opcodes to distinguish between core and extension opcodes.
+        https://bugs.webkit.org/show_bug.cgi?id=96466.
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/Opcode.h:
+        (JSC): Added FOR_EACH_CORE_OPCODE_ID() macro.
+        * llint/LowLevelInterpreter.h:
+        (JSC): Auto-generate llint opcode aliases using the
+            FOR_EACH_CORE_OPCODE_ID() macro.
+
 2012-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         Second step to fixing the Windows build: Add new symbols.

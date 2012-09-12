@@ -36,39 +36,16 @@
 
 namespace JSC {
 
-// The following is a minimal set of alias for the opcode names. This is needed
+// The following is a set of alias for the opcode names. This is needed
 // because there is code (e.g. in GetByIdStatus.cpp and PutByIdStatus.cpp)
 // which refers to the opcodes expecting them to be prefixed with "llint_".
 // In the CLoop implementation, the 2 are equivalent. Hence, we set up this
 // alias here.
-//
-// Note: we don't just do this for all opcodes because we only need a few,
-// and currently, FOR_EACH_OPCODE_ID() includes the llint and JIT opcode
-// extensions which we definitely don't want to add an alias for. With some
-// minor refactoring, we can use FOR_EACH_OPCODE_ID() to automatically
-// generate a llint_ alias for all opcodes, but that is not needed at this
-// time.
 
-const OpcodeID llint_op_call = op_call;
-const OpcodeID llint_op_call_eval = op_call_eval;
-const OpcodeID llint_op_call_varargs = op_call_varargs;
-const OpcodeID llint_op_construct = op_construct;
-const OpcodeID llint_op_catch = op_catch;
-const OpcodeID llint_op_get_by_id = op_get_by_id;
-const OpcodeID llint_op_get_by_id_out_of_line = op_get_by_id_out_of_line;
-const OpcodeID llint_op_put_by_id = op_put_by_id;
-const OpcodeID llint_op_put_by_id_out_of_line = op_put_by_id_out_of_line;
-
-const OpcodeID llint_op_put_by_id_transition_direct =
-    op_put_by_id_transition_direct;
-const OpcodeID llint_op_put_by_id_transition_direct_out_of_line =
-    op_put_by_id_transition_direct_out_of_line;
-const OpcodeID llint_op_put_by_id_transition_normal =
-    op_put_by_id_transition_normal;
-const OpcodeID llint_op_put_by_id_transition_normal_out_of_line =
-    op_put_by_id_transition_normal_out_of_line;
-
-const OpcodeID llint_op_method_check = op_method_check;
+#define LLINT_OPCODE_ALIAS(opcode, length) \
+    const OpcodeID llint_##opcode = opcode;
+FOR_EACH_CORE_OPCODE_ID(LLINT_OPCODE_ALIAS)
+#undef LLINT_OPCODE_ALIAS
 
 } // namespace JSC
 
