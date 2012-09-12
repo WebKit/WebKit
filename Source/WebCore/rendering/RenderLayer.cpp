@@ -1573,7 +1573,7 @@ bool RenderLayer::usesCompositedScrolling() const
     if (!scrollsOverflow() || !allowsScrolling())
         return false;
 
-#if ENABLE(OVERFLOW_SCROLLING)
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     return renderer()->style()->useTouchOverflowScrolling();
 #else
     return false;

@@ -829,7 +829,7 @@ no-limit
 manual
 // auto
 
-#if defined(ENABLE_OVERFLOW_SCROLLING) && ENABLE_OVERFLOW_SCROLLING
+#if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 // -webkit-overflow-scrolling
 // auto
 touch

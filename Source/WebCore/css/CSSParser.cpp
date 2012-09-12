@@ -834,7 +834,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueSpace)
             return true;
         break;
-#if ENABLE(OVERFLOW_SCROLLING)
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
         if (valueID == CSSValueAuto || valueID == CSSValueTouch)
             return true;
@@ -1012,7 +1012,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeStyle:
     case CSSPropertyWebkitNbspMode:
-#if ENABLE(OVERFLOW_SCROLLING)
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
     case CSSPropertyWebkitPrintColorAdjust:
@@ -2872,7 +2872,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeStyle:
     case CSSPropertyWebkitNbspMode:
-#if ENABLE(OVERFLOW_SCROLLING)
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
     case CSSPropertyWebkitPrintColorAdjust:

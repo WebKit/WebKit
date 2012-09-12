@@ -1,3 +1,15 @@
+2012-09-12  Sami Kyostila  <skyostil@google.com>
+
+        Rename OVERFLOW_SCROLLING as ACCELERATED_OVERFLOW_SCROLLING
+        https://bugs.webkit.org/show_bug.cgi?id=96251
+
+        Reviewed by Simon Fraser.
+
+        Rename OVERFLOW_SCROLLING as ACCELERATED_OVERFLOW_SCROLLING to better describe
+        the feature it controls.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-12  Levi Weintraub  <leviw@chromium.org>
 
         Inline repainting can be off-by-one with sub-pixel enabled
