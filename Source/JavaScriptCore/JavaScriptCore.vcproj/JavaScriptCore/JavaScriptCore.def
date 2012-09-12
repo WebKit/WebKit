@@ -162,6 +162,7 @@ EXPORTS
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
+    ?displayName@JSFunction@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?deleteAllCompiledCode@Heap@JSC@@QAEXXZ
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
     ?dumpAllOptions@Options@JSC@@SAXPAU_iobuf@@@Z
@@ -252,6 +253,7 @@ EXPORTS
     ?monotonicallyIncreasingTime@WTF@@YANXZ
     ?monthFromDayInYear@WTF@@YAHH_N@Z
     ?msToYear@WTF@@YAHN@Z
+    ?name@JSFunction@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?neuter@ArrayBufferView@WTF@@MAEXXZ
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ

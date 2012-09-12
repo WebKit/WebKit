@@ -1,5 +1,11 @@
 2012-09-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Second step to fixing the Windows build: Add new symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-09-11  Geoffrey Garen  <ggaren@apple.com>
+
         First step to fixing the Windows build: Remove old symbols.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
