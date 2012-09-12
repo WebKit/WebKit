@@ -3620,4 +3620,6 @@ BUGWK96041 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = 
 
 BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
 
+BUGWK96524 WIN LINUX DEBUG : fast/filesystem/workers/detached-frame-crash.html = PASS CRASH
+
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
