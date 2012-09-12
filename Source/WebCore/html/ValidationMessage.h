@@ -39,27 +39,28 @@
 
 namespace WebCore {
 
-class FormAssociatedElement;
 class HTMLElement;
+class HTMLFormControlElement;
 class Node;
 
 class ValidationMessage {
     WTF_MAKE_NONCOPYABLE(ValidationMessage);
 public:
-    static PassOwnPtr<ValidationMessage> create(FormAssociatedElement*);
+    static PassOwnPtr<ValidationMessage> create(HTMLFormControlElement*);
     ~ValidationMessage();
-    String message() const { return m_message; }
-    void setMessage(const String&);
+    void updateValidationMessage(const String&);
     void requestToHideMessage();
+    bool isVisible() const;
     bool shadowTreeContains(Node*) const;
 
 private:
-    ValidationMessage(FormAssociatedElement*);
+    ValidationMessage(HTMLFormControlElement*);
+    void setMessage(const String&);
     void setMessageDOMAndStartTimer(Timer<ValidationMessage>* = 0);
     void buildBubbleTree(Timer<ValidationMessage>*);
     void deleteBubbleTree(Timer<ValidationMessage>* = 0);
 
-    FormAssociatedElement* m_element;
+    HTMLFormControlElement* m_element;
     String m_message;
     OwnPtr<Timer<ValidationMessage> > m_timer;
     RefPtr<HTMLElement> m_bubble;

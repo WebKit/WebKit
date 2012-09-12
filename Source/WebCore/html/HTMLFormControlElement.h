@@ -148,7 +148,6 @@ private:
     virtual HTMLFormElement* virtualForm() const;
     virtual bool isDefaultButtonForForm() const;
     virtual bool isValidFormControlElement();
-    String visibleValidationMessage() const;
     void updateAncestorDisabledState() const;
 
     OwnPtr<ValidationMessage> m_validationMessage;
