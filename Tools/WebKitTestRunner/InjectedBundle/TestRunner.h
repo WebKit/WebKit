@@ -203,6 +203,8 @@ public:
     
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool value) { m_globalFlag = value; }
+
+    unsigned workerThreadCount();
     
     void addChromeInputField(JSValueRef);
     void removeChromeInputField(JSValueRef);

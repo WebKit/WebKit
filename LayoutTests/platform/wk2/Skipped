@@ -673,13 +673,6 @@ http/tests/misc/link-rel-icon-beforeload.html
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl
 
-# WebKitTestRunner needs layoutTestController.workerThreadCount
-fast/workers/dedicated-worker-lifecycle.html
-fast/workers/shared-worker-frame-lifecycle.html
-fast/workers/shared-worker-lifecycle.html
-fast/workers/worker-lifecycle.html
-fast/workers/worker-close-more.html
-
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html
 

@@ -1,3 +1,21 @@
+2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] WebKitTestRunner needs TestRunner.workerThreadCount
+        https://bugs.webkit.org/show_bug.cgi?id=96388
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added WKBundleGetWorkerThreadCount() function to Injected Bundle private API.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetWorkerThreadCount):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::workerThreadCount): Returns count of worker threads.
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-12  Darin Adler  <darin@apple.com>
 
         Make NetscapePlugin::m_timers use HashMap<OwnPtr> instead of deleteAllValues

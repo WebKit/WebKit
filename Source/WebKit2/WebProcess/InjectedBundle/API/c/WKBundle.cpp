@@ -286,6 +286,12 @@ void WKBundleSetPageVisibilityState(WKBundleRef bundleRef, WKBundlePageRef pageR
     toImpl(bundleRef)->setPageVisibilityState(toImpl(pageRef), state, isInitialState);
 }
 
+size_t WKBundleGetWorkerThreadCount(WKBundleRef)
+{
+    // Actually do not need argument here, keeping it however for consistency.
+    return InjectedBundle::workerThreadCount();
+}
+
 void WKBundleSetUserStyleSheetLocation(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef location)
 {
     toImpl(bundleRef)->setUserStyleSheetLocation(toImpl(pageGroupRef), toImpl(location)->string());

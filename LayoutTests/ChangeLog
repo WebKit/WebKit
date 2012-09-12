@@ -1,3 +1,14 @@
+2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] WebKitTestRunner needs TestRunner.workerThreadCount
+        https://bugs.webkit.org/show_bug.cgi?id=96388
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped corresponding tests.
+
+        * platform/wk2/Skipped:
+
 2012-09-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Only allow one user-gesture gated action per user action.

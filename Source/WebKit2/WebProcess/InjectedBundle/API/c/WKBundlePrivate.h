@@ -109,6 +109,8 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSetPageVisibilityState(WKBundleRef bundle, WKBundlePageRef page, int state, bool isInitialState);
 
+WK_EXPORT size_t WKBundleGetWorkerThreadCount(WKBundleRef bundle);
+
 #ifdef __cplusplus
 }
 #endif

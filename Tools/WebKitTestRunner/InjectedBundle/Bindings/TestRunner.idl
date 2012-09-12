@@ -80,6 +80,7 @@ module WTR {
 
         // Special DOM variables.
         attribute boolean globalFlag;
+        readonly attribute unsigned long workerThreadCount;
 
         // Repaint testing.
         void testRepaint();

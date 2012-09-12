@@ -171,6 +171,8 @@ public:
 
     void setPageVisibilityState(WebPage*, int state, bool isInitialState);
 
+    static size_t workerThreadCount();
+
 private:
     explicit InjectedBundle(const String&);
 

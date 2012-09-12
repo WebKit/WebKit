@@ -67,6 +67,7 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <WebCore/WorkerThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -567,6 +568,15 @@ void InjectedBundle::setPageVisibilityState(WebPage* page, int state, bool isIni
 {
 #if ENABLE(PAGE_VISIBILITY_API)
     page->corePage()->setVisibilityState(static_cast<PageVisibilityState>(state), isInitialState);
+#endif
+}
+
+size_t InjectedBundle::workerThreadCount()
+{
+#if ENABLE(WORKERS)
+    return WebCore::WorkerThread::workerThreadCount();
+#else
+    return 0;
 #endif
 }
 
