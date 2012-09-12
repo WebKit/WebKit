@@ -53,6 +53,7 @@ protected:
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void didNotifySubtreeInsertions(ContainerNode*) OVERRIDE;
     virtual void attach();
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
 private:
     virtual bool supportsFocus() const;

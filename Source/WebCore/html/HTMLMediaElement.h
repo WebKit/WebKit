@@ -86,6 +86,7 @@ public:
 
     void createShadowSubtree();
     virtual void willAddAuthorShadowRoot() OVERRIDE;
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool isVideo() const = 0;
     virtual bool hasVideo() const { return false; }

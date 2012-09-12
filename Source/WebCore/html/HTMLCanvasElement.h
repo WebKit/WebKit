@@ -143,6 +143,7 @@ private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void attach();
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     void reset();
 

@@ -24,15 +24,15 @@ var elementsToSuccess = [
     document.createElement('span'),
     document.createElement('a'),
     document.createElement('section'),
-    document.createElement('audio'),
-    document.createElement('video'),
-    document.createElement('select'),
     document.createElement('textarea')
 ];
 
 var elementsToFail = [
     document.createElement('input'),
-    document.getElementById('tref')
+    document.getElementById('tref'),
+    document.createElement('audio'),
+    document.createElement('video'),
+    document.createElement('select')
 ];
 
 for (var i = 0; i < elementsToSuccess.length; ++i) {

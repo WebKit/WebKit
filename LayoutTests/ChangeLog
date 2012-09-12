@@ -1,3 +1,20 @@
+2012-09-12  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] Unpolished elements should reject author shadows
+        https://bugs.webkit.org/show_bug.cgi?id=96404
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added setAuthorShadowDOMForAnyElementEnabled() calls to make tests works.
+        - UPdated shadow-disable.html to capture the disabled elements.
+
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-disable.html:
+        * fast/dom/shadow/shadowdom-for-fieldset-without-shadow.html:
+        * fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html:
+        * fast/dom/shadow/shadowdom-for-media.html:
+        * platform/chromium/TestExpectations:
+
 2012-09-12  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Refactor most AccessibilityRenderObject code into AccessibilityNodeObject

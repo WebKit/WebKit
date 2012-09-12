@@ -30,6 +30,8 @@ function test()
 {
     if (window.testRunner)
         testRunner.dumpAsText();
+    if (window.internals)
+        window.internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
     for (var i = 0; i < elems.length; ++i) {
         var host = document.getElementById(elems[i]);

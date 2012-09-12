@@ -17,6 +17,9 @@ function addShadowDOM(host) {
     return shadowRoot;
 }
 
+if (window.internals)
+    window.internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var shadowRootForVideoWithControls = addShadowDOM(videoWithControls);
 var oldestShadowRootForVideoWithControls = internals.oldestShadowRoot(videoWithControls);
 var youngerShadowRootForVideoWithControls = internals.youngerShadowRoot(oldestShadowRootForVideoWithControls);
