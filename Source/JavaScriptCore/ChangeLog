@@ -1,3 +1,12 @@
+2012-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Fix build break with LLINT on 32bit machine after r128219
+        https://bugs.webkit.org/show_bug.cgi?id=96461
+
+        Unreviewed build fix.
+
+        * llint/LowLevelInterpreter32_64.asm: Fixed typo.
+
 2012-09-11  Michael Saboff  <msaboff@apple.com>
 
         Build fixed for http://trac.webkit.org/changeset/128243

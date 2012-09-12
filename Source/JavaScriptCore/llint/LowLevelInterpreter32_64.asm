@@ -1172,7 +1172,7 @@ _llint_op_get_array_length:
     traceExecution()
     loadi 8[PC], t0
     loadp 16[PC], t1
-    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlot)
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlow)
     loadp JSCell::m_structure[t3], t2
     if VALUE_PROFILER
         storep t2, ArrayProfile::m_lastSeenStructure[t1]
