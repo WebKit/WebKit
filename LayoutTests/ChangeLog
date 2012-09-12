@@ -1,3 +1,16 @@
+2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128318 and r128332.
+        http://trac.webkit.org/changeset/128318
+        http://trac.webkit.org/changeset/128332
+        https://bugs.webkit.org/show_bug.cgi?id=96547
+
+        Caused accessibility test failures on snow leopard (Requested
+        by jamesr_ on #webkit).
+
+        * accessibility/canvas-fallback-content-2-expected.txt: Removed.
+        * accessibility/canvas-fallback-content-2.html: Removed.
+
 2012-09-12  Alex Sakhartchouk  <alexst@chromium.org>
 
         [chromium] Add a virtual test suite for fast/hidpi

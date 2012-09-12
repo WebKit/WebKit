@@ -66,16 +66,44 @@ public:
 
     virtual void init();
     
+    virtual bool isAnchor() const;
     virtual bool isAttachment() const;
+    virtual bool isHeading() const;
+    virtual bool isLink() const;
+    virtual bool isImageButton() const;
+    virtual bool isImage() const;
+    virtual bool isNativeImage() const;
+    virtual bool isPasswordField() const;
+    virtual bool isNativeTextControl() const;
+    virtual bool isSearchField() const;
+    virtual bool isWebArea() const;
     virtual bool isFileUploadButton() const;
+    virtual bool isInputImage() const;
+    virtual bool isProgressIndicator() const;
+    virtual bool isSlider() const;
+    virtual bool isMenuRelated() const;
+    virtual bool isMenu() const;
+    virtual bool isMenuBar() const;
+    virtual bool isMenuButton() const;
+    virtual bool isMenuItem() const;
+    virtual bool isControl() const;
+    virtual bool isFieldset() const;
+    virtual bool isGroup() const;
 
+    virtual bool isEnabled() const;
     virtual bool isSelected() const;
     virtual bool isFocused() const;
+    virtual bool isChecked() const;
+    virtual bool isHovered() const;
+    virtual bool isIndeterminate() const;
     virtual bool isLoaded() const;
+    virtual bool isMultiSelectable() const;
     virtual bool isOffScreen() const;
+    virtual bool isPressed() const;
     virtual bool isReadOnly() const;
     virtual bool isUnvisited() const;
     virtual bool isVisited() const;        
+    virtual bool isRequired() const;
     virtual bool isLinked() const;
     virtual bool hasBoldFont() const;
     virtual bool hasItalicFont() const;
@@ -95,6 +123,15 @@ public:
     AccessibilityObjectInclusion accessibilityIsIgnoredBase() const;
     virtual bool accessibilityIsIgnored() const;
     
+    virtual int headingLevel() const;
+    virtual AccessibilityButtonState checkboxOrRadioValue() const;
+    virtual String valueDescription() const;
+    virtual float valueForRange() const;
+    virtual float maxValueForRange() const;
+    virtual float minValueForRange() const;
+    virtual float stepValueForRange() const;
+    virtual AccessibilityObject* selectedRadioButton();
+    virtual AccessibilityObject* selectedTabItem();
     virtual int layoutCount() const;
     virtual double estimatedLoadingProgress() const;
     
@@ -119,8 +156,12 @@ public:
     // Should be called on the root accessibility object to kick off a hit test.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
 
+    virtual Element* actionElement() const;
+    Element* mouseButtonListener() const;
     FrameView* frameViewIfRenderView() const;
     virtual Element* anchorElement() const;
+    AccessibilityObject* menuForMenuButton() const;
+    AccessibilityObject* menuButtonForMenu() const;
     
     virtual LayoutRect boundingBoxRect() const;
     virtual LayoutRect elementRect() const;
@@ -143,6 +184,8 @@ public:
     virtual PlainTextRange selectedTextRange() const;
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;
+    virtual String ariaLabeledByAttribute() const;
+    virtual String title() const;
     virtual String ariaDescribedByAttribute() const;
     virtual String accessibilityDescription() const;
     virtual String helpText() const;
@@ -156,6 +199,7 @@ public:
     virtual Widget* widgetForAttachmentView() const;
     virtual void getDocumentLinks(AccessibilityChildrenVector&);
     virtual FrameView* documentFrameView() const;
+    virtual unsigned hierarchicalLevel() const;
 
     virtual void clearChildren();
     virtual void updateChildrenIfNecessary();
@@ -164,7 +208,10 @@ public:
     virtual void setSelectedTextRange(const PlainTextRange&);
     virtual void setValue(const String&);
     virtual void setSelectedRows(AccessibilityChildrenVector&);
+    virtual void changeValueByPercent(float percentChange);
     virtual AccessibilityOrientation orientation() const;
+    virtual void increment();
+    virtual void decrement();
     
     virtual void detach();
     virtual void contentChanged();
@@ -216,6 +263,7 @@ protected:
     RenderObject* m_renderer;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
+    void ariaLabeledByElements(Vector<Element*>& elements) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
     ScrollableArea* getScrollableAreaIfScrollable() const;
     void scrollTo(const IntPoint&) const;
@@ -228,6 +276,7 @@ private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool ariaIsHidden() const;
+    bool isDescendantOfBarrenParent() const;
     bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
@@ -236,7 +285,13 @@ private:
     bool nodeIsTextControl(const Node*) const;
     virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
 
+    Element* menuElementForMenuButton() const;
+    Element* menuItemElementForMenu() const;
+
     bool isTabItemSelected() const;
+    void alterSliderValue(bool increase);
+    void changeValueByStep(bool increase);
+    bool isNativeCheckboxOrRadio() const;
     LayoutRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     AccessibilityObject* internalLinkElement() const;
@@ -246,6 +301,8 @@ private:
     RenderObject* renderParentObject() const;
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
+    bool isGenericFocusableElement() const;
+    bool isARIARange() const;
 
     void addTextFieldChildren();
     void addImageMapChildren();
@@ -260,6 +317,9 @@ private:
     bool elementAttributeValue(const QualifiedName&) const;
     void setElementAttributeValue(const QualifiedName&, bool);
     
+    String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
+    void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
+    String ariaAccessibilityDescription() const;
     String webAreaAccessibilityDescription() const;
 
     virtual ESpeak speakProperty() const;
