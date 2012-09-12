@@ -197,8 +197,11 @@ enable?(WEB_AUDIO) {
 
 use?(3D_GRAPHICS) {
     contains(QT_CONFIG, opengles2):!win32: LIBS += -lEGL
+}
+
+use?(graphics_surface) {
     mac: LIBS += -framework IOSurface -framework CoreFoundation
-    linux-*:have?(XCOMPOSITE): LIBS += -lXcomposite
+    linux-*: LIBS += -lXcomposite -lXrender
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
