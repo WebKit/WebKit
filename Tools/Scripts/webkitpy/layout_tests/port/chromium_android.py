@@ -31,7 +31,6 @@ import copy
 import logging
 import os
 import re
-import sets
 import subprocess
 import threading
 import time
