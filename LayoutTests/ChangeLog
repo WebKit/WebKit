@@ -1,5 +1,17 @@
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r128221.
+        http://trac.webkit.org/changeset/128221
+        https://bugs.webkit.org/show_bug.cgi?id=96504
+
+        The rollout was incorrect. (Requested by zdobersek on
+        #webkit).
+
+        * http/tests/misc/non-utf8-header-name-expected.txt: Added.
+        * http/tests/misc/non-utf8-header-name.php: Added.
+
+2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r128280.
         http://trac.webkit.org/changeset/128280
         https://bugs.webkit.org/show_bug.cgi?id=96498
