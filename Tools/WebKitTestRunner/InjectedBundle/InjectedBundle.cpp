@@ -242,11 +242,17 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);
     WKBundleSetMinimumTimerInterval(m_bundle, m_pageGroup, 0.010); // 10 milliseconds (DOMTimer::s_minDefaultTimerInterval)
     WKBundleSetSpatialNavigationEnabled(m_bundle, m_pageGroup, false);
+    WKBundleSetAllowFileAccessFromFileURLs(m_bundle, m_pageGroup, true);
+    WKBundleSetPluginsEnabled(m_bundle, m_pageGroup, true);
+    WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
     m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
     m_testRunner->setUserStyleSheetEnabled(false);
+    m_testRunner->setXSSAuditorEnabled(false);
+    m_testRunner->setCloseRemainingWindowsWhenComplete(false);
+    m_testRunner->setAcceptsEditing(true);
 
     page()->prepare();
 

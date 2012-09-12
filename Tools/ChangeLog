@@ -1,3 +1,21 @@
+2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] Some of TestRunner special options are not reset before testing
+        https://bugs.webkit.org/show_bug.cgi?id=96384
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now values of the following special options are reset:
+        void setAcceptsEditing(in boolean value);
+        void setCloseRemainingWindowsWhenComplete(in boolean value);
+        void setXSSAuditorEnabled(in boolean value);
+        void setAllowFileAccessFromFileURLs(in boolean value);
+        void setPluginsEnabled(in boolean value);
+        void setPopupBlockingEnabled(in boolean value);
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2012-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Supply feature defines to CodeGeneratorTestRunner.
