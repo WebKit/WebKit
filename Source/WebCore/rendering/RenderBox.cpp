@@ -2127,7 +2127,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
     // only at explicit containers.
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
-    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto()) {
+    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto() && isHorizontalWritingMode() == cb->isHorizontalWritingMode()) {
         if (!document()->inQuirksMode() && !cb->isAnonymousBlock())
             break;
         skippedAutoHeightContainingBlock = true;
@@ -2145,10 +2145,12 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 
     bool includeBorderPadding = isTable();
 
-    // Table cells violate what the CSS spec says to do with heights.  Basically we
-    // don't care if the cell specified a height or not.  We just always make ourselves
-    // be a percentage of the cell's current content height.
-    if (cb->isTableCell()) {
+    if (isHorizontalWritingMode() != cb->isHorizontalWritingMode())
+        availableHeight = cb->contentLogicalWidth();
+    else if (cb->isTableCell()) {
+        // Table cells violate what the CSS spec says to do with heights. Basically we
+        // don't care if the cell specified a height or not. We just always make ourselves
+        // be a percentage of the cell's current content height.
         if (!skippedAutoHeightContainingBlock) {
             if (!cb->hasOverrideHeight()) {
                 // Normally we would let the cell size intrinsically, but scrolling overflow has to be
@@ -2336,6 +2338,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
         return overrideLogicalContentHeight();
 
     if (h.isPercent() && isOutOfFlowPositioned()) {
+        // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
         LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(containingBlock());
         return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
     }
@@ -2355,6 +2358,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
         return adjustContentBoxLogicalHeightForBoxSizing(newHeight);
     }
 
+    // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
     return containingBlock()->availableLogicalHeight();
 }
 

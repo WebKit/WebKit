@@ -1,3 +1,15 @@
+2012-09-12  Ojan Vafai  <ojan@chromium.org>
+
+        percentage widths rendered wrong in vertical writing mode with orthogonal parent
+        https://bugs.webkit.org/show_bug.cgi?id=96308
+
+        Reviewed by Tony Chang.
+
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-expected.txt: Added.
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Added.
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html: Added.
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes.html: Added.
+
 2012-09-12  Adam Barth  <abarth@webkit.org>
 
         [v8] document.getCSSCanvasContext doesn't need to be custom
