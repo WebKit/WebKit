@@ -1,3 +1,13 @@
+2012-09-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Consume a user gesture when creating a new view.
+        https://bugs.webkit.org/show_bug.cgi?id=96373
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createView):
+
 2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] Some of TestRunner special options are not reset before testing

@@ -194,16 +194,6 @@ public:
             || type == TouchCancel;
     }
 
-    // Returns true if the WebInputEvent |type| should be handled as user gesture.
-    static bool isUserGestureEventType(int type)
-    {
-        return isKeyboardEventType(type)
-            || type == MouseDown
-            || type == MouseUp
-            || type == TouchStart
-            || type == TouchEnd;
-    }
-
     // Returns true if the WebInputEvent is a gesture event.
     static bool isGestureEventType(int type)
     {

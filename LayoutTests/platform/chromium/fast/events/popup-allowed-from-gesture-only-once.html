@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html> 
+    <body>
+        <p>
+            Test that only a single popup is allowed in response to a single
+            user action. The test passes if only one popup is created.
+        </p>
+        <button id="button" onclick="popup()">Click Here</button>
+        <div id="console"></div>
+        <script>
+            function popup() {
+                window.open("about:blank", "window1");
+                window.open("about:blank", "window2");
+                if (window.testRunner) {
+                    if (testRunner.windowCount() == windowCount + 1)
+                        document.getElementById("console").innerText = "PASSED";
+                    else
+                        document.getElementById("console").innerText = "FAILED";
+                    testRunner.notifyDone();
+                }
+            }
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
+                windowCount = testRunner.windowCount();
+
+                var button = document.getElementById("button");
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+        </script>
+    </body>
+  </html>

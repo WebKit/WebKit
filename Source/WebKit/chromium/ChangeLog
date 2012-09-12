@@ -1,3 +1,20 @@
+2012-09-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] consumable user gesture count off for input events
+        https://bugs.webkit.org/show_bug.cgi?id=96373
+
+        Reviewed by Adam Barth.
+
+        Don't create a UserGestureIndicator in the chromium layer, as it will
+        already be created by webcore's event handler. Creating multiple
+        UserGestureIndicator objects for the same object would allow to execute
+        multiple user-gesture-gated actions per user gesture such as opening a
+        new window.
+
+        * public/WebInputEvent.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2012-09-12  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Flip Y and swizzle inside compositeAndReadback implementation
