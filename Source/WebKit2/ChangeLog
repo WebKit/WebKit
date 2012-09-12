@@ -1,3 +1,43 @@
+2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=96374
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle C API to reset the application cache quota
+        for a given origin.
+
+        Add new reachedApplicationCacheOriginQuota callback
+        to WKBundlePageUIClient which is called from
+        WebChromeClient::reachedApplicationCacheOriginQuota().
+
+        Those are needed by WebKitTestRunner to dump
+        information about the application cache callbacks
+        if instructed to.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetApplicationCacheOriginQuota):
+        (WKBundleResetApplicationCacheOriginQuota):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::resetApplicationCacheOriginQuota):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        (WebKit):
+        (InjectedBundlePageUIClient):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+
 2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] WebKitTestRunner needs TestRunner.workerThreadCount

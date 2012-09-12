@@ -82,6 +82,7 @@ public:
     void dumpResourceLoadCallbacks() { m_dumpResourceLoadCallbacks = true; }
     void dumpResourceResponseMIMETypes() { m_dumpResourceResponseMIMETypes = true; }
     void dumpWillCacheResponse() { m_dumpWillCacheResponse = true; }
+    void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
 
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
@@ -149,6 +150,8 @@ public:
     void setAppCacheMaximumSize(uint64_t);
     long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
     void setApplicationCacheOriginQuota(unsigned long long);
+    void disallowIncreaseForApplicationCacheQuota();
+    bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
 
     // Printing
     bool isPageBoxVisible(int pageIndex);
@@ -171,6 +174,7 @@ public:
     bool shouldDumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     bool shouldDumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
     bool shouldDumpWillCacheResponse() const { return m_dumpWillCacheResponse; }
+    bool shouldDumpApplicationCacheDelegateCallbacks() const { return m_dumpApplicationCacheDelegateCallbacks; }
 
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
     bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
@@ -267,6 +271,8 @@ private:
     bool m_dumpResourceLoadCallbacks;
     bool m_dumpResourceResponseMIMETypes;
     bool m_dumpWillCacheResponse;
+    bool m_dumpApplicationCacheDelegateCallbacks;
+    bool m_disallowIncreaseForApplicationCacheQuota;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

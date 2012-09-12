@@ -1,3 +1,37 @@
+2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=96374
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement support for dumpApplicationCacheDelegateCallbacks
+        and disallowIncreaseForApplicationCacheQuota in
+        WebKitTestRunner and properly dump the information
+        expected by the tests.
+
+        If the application cache quota is reached for a given
+        security origin, WebKitTestRunner will reset the quota
+        to its default value, unless intructed not to via
+        disallowIncreaseForApplicationCacheQuota().
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::didReachApplicationCacheOriginQuota):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        (WTR::TestRunner::disallowIncreaseForApplicationCacheQuota):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpApplicationCacheDelegateCallbacks):
+        (TestRunner):
+        (WTR::TestRunner::shouldDisallowIncreaseForApplicationCacheQuota):
+        (WTR::TestRunner::shouldDumpApplicationCacheDelegateCallbacks):
+
 2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] WebKitTestRunner needs TestRunner.workerThreadCount

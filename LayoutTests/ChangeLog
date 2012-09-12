@@ -1,3 +1,18 @@
+2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner needs to implement dumpApplicationCacheDelegateCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=96374
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip test cases that are passing now that WebKitTestRunner
+        implements dumpApplicationCacheDelegateCallbacks and
+        disallowIncreaseForApplicationCacheQuota.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] WebKitTestRunner needs TestRunner.workerThreadCount

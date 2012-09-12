@@ -42,6 +42,7 @@ namespace WebKit {
 class APIObject;
 class WebFrame;
 class WebPage;
+class WebSecurityOrigin;
 
 class InjectedBundlePageUIClient : public APIClient<WKBundlePageUIClient, kWKBundlePageUIClientCurrentVersion> {
 public:
@@ -64,6 +65,8 @@ public:
     WKBundlePageUIElementVisibility statusBarIsVisible(WebPage*);
     WKBundlePageUIElementVisibility menuBarIsVisible(WebPage*);
     WKBundlePageUIElementVisibility toolbarsAreVisible(WebPage*);
+
+    void didReachApplicationCacheOriginQuota(WebPage*, WebSecurityOrigin*, int64_t totalBytesNeeded);
 };
 
 } // namespace WebKit

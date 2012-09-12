@@ -41,6 +41,8 @@
 #include <WebKit2/WKBundleNavigationAction.h>
 #include <WebKit2/WKBundleNodeHandlePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
+#include <WebKit2/WKBundlePrivate.h>
+#include <WebKit2/WKSecurityOrigin.h>
 #include <WebKit2/WKURLRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -349,6 +351,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*statusBarIsVisible*/
         0, /*menuBarIsVisible*/
         0, /*toolbarsAreVisible*/
+        didReachApplicationCacheOriginQuota,
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 
@@ -1318,6 +1321,11 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKBundlePageRef page, WKStringR
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willRunJavaScriptPrompt(message, defaultValue, frame);
 }
 
+void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKBundlePageRef page, WKSecurityOriginRef origin, int64_t totalBytesNeeded, const void* clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReachApplicationCacheOriginQuota(origin, totalBytesNeeded);
+}
+
 static WTF::String lastFileURLPathComponent(const WTF::String& path)
 {
     size_t pos = path.find("file://");
@@ -1400,6 +1408,34 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRe
     InjectedBundle::shared().stringBuilder()->append(", default text: ");
     InjectedBundle::shared().stringBuilder()->append(toWTFString(defaultValue));
     InjectedBundle::shared().stringBuilder()->append("\n");
+}
+
+void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKSecurityOriginRef origin, int64_t totalBytesNeeded)
+{
+    if (!InjectedBundle::shared().testRunner()->shouldDumpApplicationCacheDelegateCallbacks())
+        return;
+
+    // For example, numbers from 30000 - 39999 will output as 30000.
+    // Rounding up or down does not really matter for these tests. It's
+    // sufficient to just get a range of 10000 to determine if we were
+    // above or below a threshold.
+    int64_t truncatedSpaceNeeded = (totalBytesNeeded / 10000) * 10000;
+
+    InjectedBundle::shared().stringBuilder()->appendLiteral("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin))));
+    InjectedBundle::shared().stringBuilder()->appendLiteral(", ");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKSecurityOriginCopyHost(origin))));
+    InjectedBundle::shared().stringBuilder()->appendLiteral(", ");
+    InjectedBundle::shared().stringBuilder()->append(WTF::String::number(WKSecurityOriginGetPort(origin)));
+    InjectedBundle::shared().stringBuilder()->appendLiteral("} totalSpaceNeeded:~");
+    InjectedBundle::shared().stringBuilder()->append(WTF::String::number(truncatedSpaceNeeded));
+    InjectedBundle::shared().stringBuilder()->append('\n');
+
+    if (InjectedBundle::shared().testRunner()->shouldDisallowIncreaseForApplicationCacheQuota())
+        return;
+
+    // Reset default application cache quota.
+    WKBundleResetApplicationCacheOriginQuota(InjectedBundle::shared().bundle(), adoptWK(WKSecurityOriginCopyToString(origin)).get());
 }
 
 // Editor Client Callbacks

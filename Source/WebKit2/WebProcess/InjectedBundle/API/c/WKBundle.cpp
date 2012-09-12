@@ -248,7 +248,12 @@ uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundleRef, WKStringRef or
 
 void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin, uint64_t bytes)
 {
-    return toImpl(bundleRef)->setApplicationCacheOriginQuota(toImpl(origin)->string(), bytes);
+    toImpl(bundleRef)->setApplicationCacheOriginQuota(toImpl(origin)->string(), bytes);
+}
+
+void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin)
+{
+    toImpl(bundleRef)->resetApplicationCacheOriginQuota(toImpl(origin)->string());
 }
 
 void WKBundleSetMinimumTimerInterval(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, double seconds)

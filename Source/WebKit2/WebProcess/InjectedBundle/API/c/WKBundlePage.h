@@ -236,6 +236,7 @@ typedef bool (*WKBundlePageShouldRubberBandInDirectionCallback)(WKBundlePageRef 
 typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
+typedef void (*WKBundlePageReachedAppCacheOriginQuotaCallback)(WKBundlePageRef page, WKSecurityOriginRef origin, int64_t totalBytesNeeded, const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -254,10 +255,13 @@ struct WKBundlePageUIClient {
     WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
     WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
     WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;
+
+    // Version 1.
+    WKBundlePageReachedAppCacheOriginQuotaCallback                      didReachApplicationCacheOriginQuota;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
-enum { kWKBundlePageUIClientCurrentVersion = 0 };
+enum { kWKBundlePageUIClientCurrentVersion = 1 };
 
 // Editor client
 typedef bool (*WKBundlePageShouldBeginEditingCallback)(WKBundlePageRef page, WKBundleRangeHandleRef range, const void* clientInfo);
