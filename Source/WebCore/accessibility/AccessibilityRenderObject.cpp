@@ -2356,11 +2356,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return LegendRole;
     if (m_renderer->isText())
         return StaticTextRole;
-    if (cssBox && cssBox->isImage()) {
+    if ((cssBox && cssBox->isImage()) || m_renderer->isSVGImage()) {
         if (node && node->hasTagName(inputTag))
             return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
         return ImageRole;
     }
+    
     if (node && node->hasTagName(canvasTag))
         return CanvasRole;
 

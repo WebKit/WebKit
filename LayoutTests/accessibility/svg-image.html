@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<img id="realimage" tabindex="0" alt="TestImage" width="100" height="100">
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<image tabindex="0" id="svgimage" alt="TestImage" x="20" y="20" width="298" height="65" xlink:href="resources/cake.png"/>
+
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that SVG images are accessible elements and they have the same attributes as real images.");
+
+    if (window.accessibilityController) {
+        document.getElementById("realimage").focus();
+        var realImage = accessibilityController.focusedElement;
+
+        document.getElementById("svgimage").focus();
+        var svgImage = accessibilityController.focusedElement;
+        shouldBe("svgImage.role", "realImage.role");
+        shouldBe("svgImage.description", "realImage.description");
+       
+        debug("SVG Image Role: " + svgImage.role);
+        debug("SVG Image Description: " + svgImage.description);
+    }
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

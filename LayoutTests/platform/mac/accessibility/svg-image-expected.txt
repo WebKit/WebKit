@@ -1,0 +1,14 @@
+
+This tests that SVG images are accessible elements and they have the same attributes as real images.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgImage.role is realImage.role
+PASS svgImage.description is realImage.description
+SVG Image Role: AXRole: AXImage
+SVG Image Description: AXDescription: TestImage
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
