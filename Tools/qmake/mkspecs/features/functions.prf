@@ -375,3 +375,12 @@ defineReplace(javascriptFeatureDefines) {
     defines = LANGUAGE_JAVASCRIPT=1 $$configDefines(enable)
     return($$defines)
 }
+
+defineReplace(setEnvironmentVariable) {
+  variable = $$1
+  value = $$2
+  win32 {
+      return((set \"$$variable=$$value\"))
+  }
+  return(export \"$$variable=$$value\")
+}

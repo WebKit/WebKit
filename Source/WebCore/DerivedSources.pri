@@ -721,35 +721,35 @@ GENERATORS += preprocessIdls
 # GENERATOR 1: Generate .h and .cpp from IDLs
 generateBindings.input = IDL_BINDINGS
 generateBindings.script = $$PWD/bindings/scripts/generate-bindings.pl
-generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.script \
+generateBindings.commands = $$setEnvironmentVariable(SOURCE_ROOT, $$toSystemPath($$PWD)) && perl -I$$PWD/bindings/scripts $$generateBindings.script \
                             --defines \"$$javascriptFeatureDefines()\" \
                             --generator JS \
-                            --include $$PWD/Modules/filesystem \
-                            --include $$PWD/Modules/geolocation \
-                            --include $$PWD/Modules/indexeddb \
-                            --include $$PWD/Modules/mediasource \
-                            --include $$PWD/Modules/notifications \
-                            --include $$PWD/Modules/quota \
-                            --include $$PWD/Modules/webaudio \
-                            --include $$PWD/Modules/webdatabase \
-                            --include $$PWD/Modules/websockets \
-                            --include $$PWD/css \
-                            --include $$PWD/dom \
-                            --include $$PWD/editing \
-                            --include $$PWD/fileapi \
-                            --include $$PWD/html \
-                            --include $$PWD/html/canvas \
-                            --include $$PWD/html/shadow \
-                            --include $$PWD/html/track \
-                            --include $$PWD/inspector \
-                            --include $$PWD/loader/appcache \
-                            --include $$PWD/page \
-                            --include $$PWD/plugins \
-                            --include $$PWD/storage \
-                            --include $$PWD/svg \
-                            --include $$PWD/testing \
-                            --include $$PWD/workers \
-                            --include $$PWD/xml \
+                            --include Modules/filesystem \
+                            --include Modules/geolocation \
+                            --include Modules/indexeddb \
+                            --include Modules/mediasource \
+                            --include Modules/notifications \
+                            --include Modules/quota \
+                            --include Modules/webaudio \
+                            --include Modules/webdatabase \
+                            --include Modules/websockets \
+                            --include css \
+                            --include dom \
+                            --include editing \
+                            --include fileapi \
+                            --include html \
+                            --include html/canvas \
+                            --include html/shadow \
+                            --include html/track \
+                            --include inspector \
+                            --include loader/appcache \
+                            --include page \
+                            --include plugins \
+                            --include storage \
+                            --include svg \
+                            --include testing \
+                            --include workers \
+                            --include xml \
                             --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} \
                             --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
                             --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
