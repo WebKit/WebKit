@@ -1,3 +1,19 @@
+2012-09-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Refactor most AccessibilityRenderObject code into AccessibilityNodeObject
+        https://bugs.webkit.org/show_bug.cgi?id=96323
+
+        Reviewed by Chris Fleizach.
+
+        New test that compares accessibility attributes of lots of elements
+        inside and outside of canvas fallback content, to make sure they're
+        the same. Designed to be cross-platform because it just asserts the
+        attributes are the same in both contexts, rather than expecting specific
+        values.
+
+        * accessibility/canvas-fallback-content-2-expected.txt: Added.
+        * accessibility/canvas-fallback-content-2.html: Added.
+
 2012-09-12  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Don't autosize text in constrained height elements.
