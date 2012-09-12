@@ -30,8 +30,10 @@
 #define DOMNamedFlowCollection_h
 
 #include "NamedFlowCollection.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,9 +42,9 @@ class WebKitNamedFlow;
 
 class DOMNamedFlowCollection : public RefCounted<DOMNamedFlowCollection> {
 public:
-    static PassRefPtr<DOMNamedFlowCollection> create(NamedFlowCollection::NamedFlowSet& set)
+    static PassRefPtr<DOMNamedFlowCollection> create(const Vector<WebKitNamedFlow*>& namedFlows)
     {
-        return adoptRef(new DOMNamedFlowCollection(set));
+        return adoptRef(new DOMNamedFlowCollection(namedFlows));
     }
 
     unsigned long length() const;
@@ -52,8 +54,12 @@ public:
     bool hasNamedItem(const AtomicString& name) const;
 
 private:
-    explicit DOMNamedFlowCollection(NamedFlowCollection::NamedFlowSet&);
-    NamedFlowCollection::NamedFlowSet m_namedFlows;
+    struct DOMNamedFlowHashFunctions;
+    struct DOMNamedFlowHashTranslator;
+
+    typedef ListHashSet<RefPtr<WebKitNamedFlow>, 1, DOMNamedFlowHashFunctions> DOMNamedFlowSet;
+    explicit DOMNamedFlowCollection(const Vector<WebKitNamedFlow*>&);
+    DOMNamedFlowSet m_namedFlows;
 };
 
 } // namespace WebCore

@@ -60,12 +60,11 @@ public:
 
     PassRefPtr<DOMNamedFlowCollection> createCSSOMSnapshot();
 
+private:
     struct NamedFlowHashFunctions;
     struct NamedFlowHashTranslator;
 
     typedef ListHashSet<WebKitNamedFlow*, 1, NamedFlowHashFunctions> NamedFlowSet;
-
-private:
 
     explicit NamedFlowCollection(Document*);
 
@@ -73,19 +72,6 @@ private:
     NamedFlowSet m_namedFlows;
 };
 
-// The HashFunctions object used by the HashSet to compare between NamedFlows.
-// It is safe to set safeToCompareToEmptyOrDeleted because the HashSet will never contain null pointers or deleted values.
-struct NamedFlowCollection::NamedFlowHashFunctions {
-    static unsigned hash(WebKitNamedFlow* key) { return DefaultHash<String>::Hash::hash(key->name()); }
-    static bool equal(WebKitNamedFlow* a, WebKitNamedFlow* b) { return a->name() == b->name(); }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-// The HashTranslator is used to lookup a NamedFlow in the set using a name.
-struct NamedFlowCollection::NamedFlowHashTranslator {
-    static unsigned hash(const String& key) { return DefaultHash<String>::Hash::hash(key); }
-    static bool equal(WebKitNamedFlow* a, const String& b) { return a->name() == b; }
-};
 } // namespace WebCore
 
 #endif // NamedFlowCollection_h

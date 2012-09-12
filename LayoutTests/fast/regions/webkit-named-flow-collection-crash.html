@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #content { -webkit-flow-into: flow; }
+            #container { -webkit-flow-from: flow; width: 100px; height: 100px;}
+        </style>
+    </head>
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+    <body>
+        <div id="content"></div>
+        <div id="container"></div>
+        <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        var namedFlowCollection = document.webkitGetNamedFlows();
+        document.body.removeChild(document.getElementById("content"));
+        document.body.removeChild(document.getElementById("container"));
+        
+        // Force a re-layout event, which forces the deletion of the underlying NamedFlow.
+        document.body.offsetTop;
+        
+        var namedFlow = namedFlowCollection.flow;
+        if (namedFlow.name == "flow")
+            document.body.innerText = "PASS";
+        else
+            document.body.innerText = "FAIL";
+        </script>
+    <script src="../../fast/js/resources/js-test-post.js"></script> 
+    </body>
+</html>
