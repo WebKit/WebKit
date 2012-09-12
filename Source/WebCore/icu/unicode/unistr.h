@@ -4086,15 +4086,9 @@ UnicodeString::extract(int32_t start,
 
 {
   // This dstSize value will be checked explicitly
-#if defined(__GNUC__)
-  // Ticket #7039: Clip length to the maximum valid length to the end of addressable memory given the starting address
-  // This is only an issue when using GCC and certain optimizations are turned on.
-  return extract(start, _length, dst, dst!=0 ? ((dst >= (char*)((size_t)-1) - UINT32_MAX) ? (((char*)UINT32_MAX) - dst) : UINT32_MAX) : 0, codepage);
-#else
+  // Removed #if defined(__GNUC__) per ICU defect http://bugs.icu-project.org/trac/ticket/8197
   return extract(start, _length, dst, dst!=0 ? 0xffffffff : 0, codepage);
-#endif
 }
-
 #endif
 
 inline void
