@@ -1,3 +1,12 @@
+2012-09-12  Lucas Forschler  <lforschler@apple.com>
+
+        Remove unused bot, apple-xserve-1.
+        https://bugs.webkit.org/show_bug.cgi?id=96570
+        
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-09-12  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] We attempt to rebase documentation even if it's not present

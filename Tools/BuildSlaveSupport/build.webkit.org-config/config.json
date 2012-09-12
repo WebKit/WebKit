@@ -10,7 +10,6 @@
                     { "name": "apple-macpro-5", "platform": "mac-lion" },	
                     { "name": "apple-macpro-6", "platform": "mac-lion" },
                     { "name": "apple-macpro-8", "platform": "mac-lion" },	
-                    { "name": "apple-xserve-1", "platform": "mac-lion" },
                     { "name": "apple-xserve-2", "platform": "mac-lion" },
                     { "name": "apple-xserve-3", "platform": "mac-lion" },
                     { "name": "apple-xserve-10", "platform": "mac-lion" },
@@ -105,7 +104,7 @@
                     },
                     { "name": "Apple Lion Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "lion-debug-tests-wk2",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-8", "apple-xserve-1"]
+                      "slavenames": ["apple-macpro-8"]
                     },
                     { "name": "Apple Lion Release WK1 (Tests)", "type": "Test", "builddir": "lion-release-tests-wk1",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
