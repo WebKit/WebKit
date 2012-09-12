@@ -118,7 +118,6 @@ public:
 
     // JavaScript ---------------------------------------------------------
     static void notifyJSOutOfMemory(Frame*);
-    static bool allowScriptDespiteSettings(const KURL& documentURL);
 
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
