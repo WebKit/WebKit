@@ -3628,4 +3628,7 @@ BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
 
 BUGWK96524 WIN LINUX DEBUG : fast/filesystem/workers/detached-frame-crash.html = PASS CRASH
 
+BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html = IMAGE
+BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html = IMAGE
+
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
