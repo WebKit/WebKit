@@ -469,6 +469,17 @@ BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
 
+BUGWK96534 DEBUG : accessibility/aria-checkbox-checked.html = CRASH
+BUGWK96534 DEBUG : accessibility/aria-combobox.html = CRASH
+BUGWK96534 DEBUG : accessibility/aria-controls-with-tabs.html = CRASH
+BUGWK96534 DEBUG : accessibility/aria-disabled.html = CRASH
+BUGWK96534 DEBUG : accessibility/canvas-fallback-content-2.html = CRASH
+BUGWK96534 DEBUG : accessibility/canvas-accessibilitynodeobject.html = CRASH
+BUGWK96534 DEBUG : accessibility/disabled-controls-not-focusable.html = CRASH
+BUGWK96534 DEBUG : accessibility/removed-anonymous-block-child-causes-crash.html = CRASH
+BUGWK96534 DEBUG : accessibility/table-with-empty-thead-causes-crash.html = CRASH
+BUGWK96534 DEBUG : platform/gtk/accessibility/caret-browsing-text-focus.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1261,7 +1272,7 @@ BUGWK91319 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 // Failing after r123379 on EFL and GTK.
 BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
-BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
+BUGWK92100 RELEASE : accessibility/canvas-accessibilitynodeobject.html = TEXT
 
 // These tests depend on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
@@ -1311,6 +1322,9 @@ BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
 BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
+
+BUGWK96534 RELEASE : accessibility/canvas-fallback-content-2.html = TEXT
+BUGWK96534 RELEASE : platform/gtk/accessibility/caret-browsing-text-focus.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

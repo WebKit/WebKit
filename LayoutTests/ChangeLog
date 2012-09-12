@@ -1,3 +1,12 @@
+2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding crash or other failure expectations for plenty of accessibility
+        tests as required after r128318.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs to implement originsWithApplicationCache
