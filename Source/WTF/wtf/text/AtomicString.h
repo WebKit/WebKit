@@ -154,6 +154,14 @@ public:
 #ifndef NDEBUG
     void show() const;
 #endif
+
+    template<typename MemoryObjectInfo>
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
+        info.addInstrumentedMember(m_string);
+    }
+    
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
     AtomicString(ASCIILiteral);

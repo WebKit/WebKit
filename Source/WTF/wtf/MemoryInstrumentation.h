@@ -43,11 +43,6 @@ class MemoryInstrumentation;
 
 typedef const char* MemoryObjectType;
 
-class GenericMemoryTypes {
-public:
-    static MemoryObjectType Undefined;
-};
-
 enum MemoryOwningType {
     byPointer,
     byReference
@@ -65,7 +60,7 @@ public:
 
     template <typename T> void addRootObject(const T& t)
     {
-        addInstrumentedObject(t, GenericMemoryTypes::Undefined);
+        addInstrumentedObject(t, 0);
         processDeferredInstrumentedPointers();
     }
 
@@ -184,7 +179,7 @@ private:
     {
         if (!m_objectSize) {
             m_objectSize = actualSize ? actualSize : sizeof(T);
-            if (objectType != GenericMemoryTypes::Undefined)
+            if (!objectType)
                 m_objectType = objectType;
         }
     }
@@ -197,7 +192,7 @@ private:
 class MemoryClassInfo {
 public:
     template<typename T>
-    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryObjectType objectType = GenericMemoryTypes::Undefined, size_t actualSize = 0)
+    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryObjectType objectType = 0, size_t actualSize = 0)
         : m_memoryObjectInfo(memoryObjectInfo)
         , m_memoryInstrumentation(memoryObjectInfo->memoryInstrumentation())
     {

@@ -1,3 +1,18 @@
+2012-09-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI move String* instrumentation to wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=96405
+
+        Reviewed by Yury Semikhatsky.
+
+        This instrumentation is solving the problem with substrings and removes traits based code which is hard to upstream.
+
+        Tested by webkit_unit_tests.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedUndefined::reportMemoryUsage):
+        (WebCore::TEST):
+
 2012-09-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] consumable user gesture count off for input events
