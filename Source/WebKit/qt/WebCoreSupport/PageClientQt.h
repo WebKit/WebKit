@@ -101,7 +101,8 @@ public:
 
 #if USE(3D_GRAPHICS)
     virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
-                                                 PlatformGraphicsSurface3D*);
+                                                 PlatformGraphicsSurface3D*,
+                                                 QObject**);
 #endif
 
     QWidget* view;
@@ -209,7 +210,8 @@ public:
 
 #if USE(3D_GRAPHICS)
     virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
-                                                 PlatformGraphicsSurface3D*);
+                                                 PlatformGraphicsSurface3D*,
+                                                 QObject**);
 #endif
 
 #if USE(TILED_BACKING_STORE)

@@ -36,11 +36,13 @@
 #include <QWindow>
 
 static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformGraphicsContext3D* context,
-                                                      PlatformGraphicsSurface3D* surface)
+                                                      PlatformGraphicsSurface3D* surface, QObject** surfaceOwner)
 {
 #ifdef QT_OPENGL_LIB
     *context = 0;
     *surface = 0;
+    if (surfaceOwner)
+        *surfaceOwner = 0;
     QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(widget);
     if (!scrollArea)
         return;
@@ -52,6 +54,8 @@ static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformG
     if (glWidget->isValid()) {
         // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
         glWidget->setGeometry(0, 0, 0, 0);
+        if (surfaceOwner)
+            *surfaceOwner = glWidget;
         *surface = glWidget->windowHandle();
         *context = glWidget->context()->contextHandle();
     } else {
@@ -235,9 +239,10 @@ void PageClientQWidget::setWidgetVisible(Widget* widget, bool visible)
 
 #if USE(3D_GRAPHICS)
 void PageClientQWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context,
-                                                        PlatformGraphicsSurface3D* surface)
+                                                        PlatformGraphicsSurface3D* surface,
+                                                        QObject** surfaceOwner)
 {
-    createPlatformGraphicsContext3DFromWidget(view, context, surface);
+    createPlatformGraphicsContext3DFromWidget(view, context, surface, surfaceOwner);
 }
 #endif
 
@@ -424,9 +429,10 @@ QRectF PageClientQGraphicsWidget::windowRect() const
 
 #if USE(3D_GRAPHICS)
 void PageClientQGraphicsWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context,
-                                                                PlatformGraphicsSurface3D* surface)
+                                                                PlatformGraphicsSurface3D* surface,
+                                                                QObject** surfaceOwner)
 {
-    createPlatformGraphicsContext3DFromWidget(ownerWidget(), context, surface);
+    createPlatformGraphicsContext3DFromWidget(ownerWidget(), context, surface, surfaceOwner);
 }
 #endif
 

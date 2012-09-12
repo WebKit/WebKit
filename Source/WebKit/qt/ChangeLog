@@ -1,3 +1,22 @@
+2012-09-12  Roland Takacs  <rtakacs@inf.u-szeged.hu>
+
+        [Qt] Segmentation fault when closing QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=95003
+
+        Reviewed by Simon Hausmann.
+
+        Defined a new QObject* variable that points to the QGLWidget that was created
+        in 'createPlatformGraphicsContext3DFromWidget'.
+        It is neccessary for deallocating it.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget):
+        (WebCore::PageClientQWidget::createPlatformGraphicsContext3D):
+        (WebCore::PageClientQGraphicsWidget::createPlatformGraphicsContext3D):
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2012-09-12  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Add module identifier directive to the qmldir files

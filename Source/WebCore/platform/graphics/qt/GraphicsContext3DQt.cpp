@@ -84,6 +84,7 @@ public:
     HostWindow* m_hostWindow;
     PlatformGraphicsSurface3D m_surface;
     PlatformGraphicsContext3D m_platformContext;
+    QObject* m_surfaceOwner;
 #if USE(GRAPHICS_SURFACE)
     GraphicsSurface::Flags m_surfaceFlags;
     RefPtr<GraphicsSurface> m_graphicsSurface;
@@ -111,11 +112,12 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     , m_hostWindow(hostWindow)
     , m_surface(0)
     , m_platformContext(0)
+    , m_surfaceOwner(0)
 {
     if (m_hostWindow && m_hostWindow->platformPageClient()) {
         // This is the WebKit1 code path.
         QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
-        webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface);
+        webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface, &m_surfaceOwner);
         if (!m_surface)
             return;
 
@@ -137,6 +139,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     window->setGeometry(-10, -10, 1, 1);
     window->create();
     m_surface = window;
+    m_surfaceOwner = window;
 
     m_platformContext = new QOpenGLContext(window);
     if (!m_platformContext->create())
@@ -208,12 +211,8 @@ void GraphicsContext3DPrivate::initializeANGLE()
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
-    if (m_hostWindow) {
-        delete m_surface;
-        m_surface = 0;
-        // Platform context is assumed to be owned by surface.
-        m_platformContext = 0;
-    }
+    delete m_surfaceOwner;
+    m_surfaceOwner = 0;
 }
 
 static inline quint32 swapBgrToRgb(quint32 pixel)
