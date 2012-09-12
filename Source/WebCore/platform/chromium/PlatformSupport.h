@@ -110,9 +110,6 @@ public:
     static void getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale, FontFamily*);
 #endif
 
-    // Forms --------------------------------------------------------------
-    static void notifyFormStateChanged(const Document*);
-
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
 
