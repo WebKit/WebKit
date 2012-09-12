@@ -42,6 +42,7 @@ CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBy
     , m_memoryAboveCutoffBytes(0)
     , m_memoryAvailableBytes(0)
     , m_pool(pool)
+    , m_needsUpdateBackingsPrioritites(false)
 {
 }
 
@@ -61,18 +62,12 @@ void CCPrioritizedTextureManager::prioritizeTextures()
     TRACE_EVENT0("cc", "CCPrioritizedTextureManager::prioritizeTextures");
     ASSERT(CCProxy::isMainThread());
 
-#if !ASSERT_DISABLED
-    assertInvariants();
-#endif
-
     // Sorting textures in this function could be replaced by a slightly
     // modified O(n) quick-select to partition textures rather than
     // sort them (if performance of the sort becomes an issue).
 
     TextureVector& sortedTextures = m_tempTextureVector;
-    BackingVector& sortedBackings = m_tempBackingVector;
     sortedTextures.clear();
-    sortedBackings.clear();
 
     // Copy all textures into a vector and sort them.
     for (TextureSet::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
@@ -116,24 +111,44 @@ void CCPrioritizedTextureManager::prioritizeTextures()
         if (isAbovePriorityCutoff && !(*it)->isSelfManaged())
             m_memoryAboveCutoffBytes += (*it)->bytes();
     }
-    ASSERT(m_memoryAboveCutoffBytes <= m_memoryAvailableBytes);
+    sortedTextures.clear();
 
-    // Put backings in eviction/recycling order.
-    for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it)
+    m_needsUpdateBackingsPrioritites = true;
+
+    ASSERT(m_memoryAboveCutoffBytes <= m_memoryAvailableBytes);
+    ASSERT(memoryAboveCutoffBytes() <= maxMemoryLimitBytes());
+}
+
+void CCPrioritizedTextureManager::updateBackingsPriorities()
+{
+    TRACE_EVENT0("cc", "CCPrioritizedTextureManager::updateBackingsPriorities");
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
+
+    if (!m_needsUpdateBackingsPrioritites)
+        return;
+
+#if !ASSERT_DISABLED
+    assertInvariants();
+#endif
+
+    // Update backings' priorities and put backings in eviction/recycling order.
+    BackingVector& sortedBackings = m_tempBackingVector;
+    sortedBackings.clear();
+    for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it) {
+        (*it)->updatePriority();
         sortedBackings.append(*it);
+    }
     std::sort(sortedBackings.begin(), sortedBackings.end(), compareBackings);
 
     for (BackingVector::iterator it = sortedBackings.begin(); it != sortedBackings.end(); ++it) {
         m_backings.remove(*it);
         m_backings.add(*it);
     }
-
-    sortedTextures.clear();
     sortedBackings.clear();
+    m_needsUpdateBackingsPrioritites = false;
 
 #if !ASSERT_DISABLED
     assertInvariants();
-    ASSERT(memoryAboveCutoffBytes() <= maxMemoryLimitBytes());
 #endif
 }
 
@@ -166,10 +181,7 @@ bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
 
     m_memoryAboveCutoffBytes = newMemoryBytes;
     texture->setAbovePriorityCutoff(true);
-    if (texture->backing()) {
-        m_backings.remove(texture->backing());
-        m_backings.add(texture->backing());
-    }
+    m_needsUpdateBackingsPrioritites = true;
     return true;
 }
 
@@ -181,12 +193,15 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
     if (texture->backing() || !texture->isAbovePriorityCutoff())
         return;
 
+    // Make sure that the backings list is up to date and sorted before traversing it.
+    updateBackingsPriorities();
+
     // Find a backing below, by either recycling or allocating.
     CCPrioritizedTexture::Backing* backing = 0;
 
     // First try to recycle
     for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it) {
-        if ((*it)->owner() && (*it)->owner()->isAbovePriorityCutoff())
+        if ((*it)->hadOwnerAtLastPriorityUpdate() && (*it)->wasAbovePriorityCutoffAtLastPriorityUpdate())
             break;
         if ((*it)->size() == texture->size() && (*it)->format() == texture->format()) {
             backing = (*it);
@@ -206,6 +221,9 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
     texture->link(backing);
     m_backings.remove(backing);
     m_backings.add(backing);
+
+    // Update the backing's priority from its new owner.
+    backing->updatePriority();
 }
 
 void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProvider* resourceProvider)
@@ -217,7 +235,7 @@ void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProv
     // or until all backings remaining are above the cutoff.
     while (memoryUseBytes() > limitBytes && m_backings.size() > 0) {
         BackingSet::iterator it = m_backings.begin();
-        if ((*it)->owner() && (*it)->owner()->isAbovePriorityCutoff())
+        if ((*it)->hadOwnerAtLastPriorityUpdate() && (*it)->wasAbovePriorityCutoffAtLastPriorityUpdate())
             break;
         destroyBacking((*it), resourceProvider);
     }
@@ -226,6 +244,10 @@ void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProv
 void CCPrioritizedTextureManager::reduceMemory(CCResourceProvider* resourceProvider)
 {
     ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
+
+    // Make sure that the backings list is up to date and sorted before traversing it.
+    updateBackingsPriorities();
+
     reduceMemory(m_memoryAvailableBytes, resourceProvider);
     ASSERT(memoryUseBytes() <= maxMemoryLimitBytes());
 
@@ -308,10 +330,8 @@ void CCPrioritizedTextureManager::returnBackingTexture(CCPrioritizedTexture* tex
 {
     ASSERT(CCProxy::isMainThread() || (CCProxy::isImplThread() && CCProxy::isMainThreadBlocked()));
     if (texture->backing()) {
-        // Move the backing texture to the front for eviction/recycling and unlink it.
-        m_backings.remove(texture->backing());
-        m_backings.insertBefore(m_backings.begin(), texture->backing());
         texture->unlink();
+        m_needsUpdateBackingsPrioritites = true;
     }
 }
 
@@ -329,6 +349,7 @@ CCPrioritizedTexture::Backing* CCPrioritizedTextureManager::createBacking(IntSiz
 
 void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* backing, CCResourceProvider* resourceProvider)
 {
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
     ASSERT(backing);
     ASSERT(!backing->owner() || !backing->owner()->isAbovePriorityCutoff());
     ASSERT(!backing->owner() || !backing->owner()->isSelfManaged());
@@ -344,11 +365,10 @@ void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* 
     delete backing;
 }
 
-
 #if !ASSERT_DISABLED
 void CCPrioritizedTextureManager::assertInvariants()
 {
-    ASSERT(CCProxy::isMainThread());
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
 
     // If we hit any of these asserts, there is a bug in this class. To see
     // where the bug is, call this function at the beginning and end of
@@ -371,15 +391,21 @@ void CCPrioritizedTextureManager::assertInvariants()
     // At all times, backings that can be evicted must always come before
     // backings that can't be evicted in the backing texture list (otherwise
     // reduceMemory will not find all textures available for eviction/recycling).
-    bool reachedProtected = false;
+    bool reachedOwned = false;
+    bool reachedAboveCutoff = false;
     for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it) {
-        if ((*it)->owner() && (*it)->owner()->isAbovePriorityCutoff())
-            reachedProtected = true;
-        if (reachedProtected)
-            ASSERT((*it)->owner() && (*it)->owner()->isAbovePriorityCutoff());
+        if ((*it)->hadOwnerAtLastPriorityUpdate())
+            reachedOwned = true;
+        if ((*it)->wasAbovePriorityCutoffAtLastPriorityUpdate())
+            reachedAboveCutoff = true;
+        if (reachedOwned)
+            ASSERT((*it)->hadOwnerAtLastPriorityUpdate());
+        if (reachedAboveCutoff) {
+            ASSERT((*it)->hadOwnerAtLastPriorityUpdate() && (*it)->wasAbovePriorityCutoffAtLastPriorityUpdate());
+            ASSERT(reachedOwned);
+        }
     }
 }
 #endif
-
 
 } // namespace WebCore

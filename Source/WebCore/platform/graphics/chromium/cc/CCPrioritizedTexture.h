@@ -100,18 +100,26 @@ public:
 
 private:
     friend class CCPrioritizedTextureManager;
+    friend class CCPrioritizedTextureTest;
 
     class Backing : public CCTexture {
         WTF_MAKE_NONCOPYABLE(Backing);
     public:
-        Backing(unsigned id, IntSize size, GC3Denum format)
-            : CCTexture(id, size, format), m_owner(0) { }
-        ~Backing() { ASSERT(!m_owner); }
+        Backing(unsigned id, IntSize, GC3Denum format);
+        ~Backing();
+        void updatePriority();
 
         CCPrioritizedTexture* owner() { return m_owner; }
+        bool hadOwnerAtLastPriorityUpdate() const { return m_ownerExistedAtLastPriorityUpdate; }
+        bool requestPriorityAtLastPriorityUpdate() const { return m_priorityAtLastPriorityUpdate; }
+        bool wasAbovePriorityCutoffAtLastPriorityUpdate() const { return m_wasAbovePriorityCutoffAtLastPriorityUpdate; }
+
     private:
         friend class CCPrioritizedTexture;
         CCPrioritizedTexture* m_owner;
+        int m_priorityAtLastPriorityUpdate;
+        bool m_ownerExistedAtLastPriorityUpdate;
+        bool m_wasAbovePriorityCutoffAtLastPriorityUpdate;
     };
 
     CCPrioritizedTexture(CCPrioritizedTextureManager*, IntSize, GC3Denum format);
@@ -128,7 +136,7 @@ private:
     GC3Denum m_format;
     size_t m_bytes;
 
-    size_t m_priority;
+    int m_priority;
     bool m_isAbovePriorityCutoff;
     bool m_isSelfManaged;
 

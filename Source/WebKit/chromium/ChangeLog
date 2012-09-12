@@ -1,3 +1,34 @@
+2012-09-11  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] Make prioritized texture manager not touch backings array on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=96114
+
+        Reviewed by James Robinson.
+
+        Take a snapshot of the textures' priorities from the main thread,
+        and save it in their backings for access by the impl thread.
+        Update functions that access the sorted backings array to use the
+        snapshotted values instead of the values that the main thread may
+        have computed for the next frame.
+
+        Make the main thread not touch the m_backings array.  Split
+        prioritizeTextures into a updateBackingsPriorities function.
+        In places where the main thread would have touched m_backings,
+        set a flag specifying that m_backings needs to be re-sorted
+        before any function that requires it be sorted by priority be
+        executed.
+
+        Update the two functions that require sorted order (acquireBacking
+        and reduceMemory) to sort the backings array (if needed) before
+        traversing it.
+
+        Updated tests to set correct thread during asserts. Add a test to
+        verify that requestLate is correctly incorporated into the backing
+        sorting.
+
+        * tests/CCPrioritizedTextureTest.cpp:
+        (WTF::CCPrioritizedTextureTest::validateTexture):
+
 2012-09-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

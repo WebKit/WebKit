@@ -28,6 +28,7 @@
 
 #include "CCPrioritizedTextureManager.h"
 #include "CCPriorityCalculator.h"
+#include "CCProxy.h"
 #include <algorithm>
 
 using namespace std;
@@ -137,6 +138,34 @@ void CCPrioritizedTexture::setToSelfManagedMemoryPlaceholder(size_t bytes)
     setDimensions(IntSize(), GraphicsContext3D::RGBA);
     setIsSelfManaged(true);
     m_bytes = bytes;
+}
+
+CCPrioritizedTexture::Backing::Backing(unsigned id, IntSize size, GC3Denum format)
+    : CCTexture(id, size, format)
+    , m_owner(0)
+    , m_priorityAtLastPriorityUpdate(CCPriorityCalculator::lowestPriority())
+    , m_ownerExistedAtLastPriorityUpdate(false)
+    , m_wasAbovePriorityCutoffAtLastPriorityUpdate(false)
+{
+}
+
+CCPrioritizedTexture::Backing::~Backing()
+{
+    ASSERT(!m_owner);
+}
+
+void CCPrioritizedTexture::Backing::updatePriority()
+{
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
+    if (m_owner) {
+        m_ownerExistedAtLastPriorityUpdate = true;
+        m_priorityAtLastPriorityUpdate = m_owner->requestPriority();
+        m_wasAbovePriorityCutoffAtLastPriorityUpdate = m_owner->isAbovePriorityCutoff();
+    } else {
+        m_ownerExistedAtLastPriorityUpdate = false;
+        m_priorityAtLastPriorityUpdate = CCPriorityCalculator::lowestPriority();
+        m_wasAbovePriorityCutoffAtLastPriorityUpdate = false;
+    }
 }
 
 } // namespace WebCore

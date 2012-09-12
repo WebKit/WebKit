@@ -87,11 +87,9 @@ public:
     void unregisterTexture(CCPrioritizedTexture*);
     void returnBackingTexture(CCPrioritizedTexture*);
 
-#if !ASSERT_DISABLED
-    void assertInvariants();
-#endif
-
 private:
+    friend class CCPrioritizedTextureTest;
+
     // Compare textures. Highest priority first.
     static inline bool compareTextures(CCPrioritizedTexture* a, CCPrioritizedTexture* b)
     {
@@ -102,19 +100,29 @@ private:
     // Compare backings. Lowest priority first.
     static inline bool compareBackings(CCPrioritizedTexture::Backing* a, CCPrioritizedTexture::Backing* b)
     {
-        int priorityA = a->owner() ? a->owner()->requestPriority() : CCPriorityCalculator::lowestPriority();
-        int priorityB = b->owner() ? b->owner()->requestPriority() : CCPriorityCalculator::lowestPriority();
-        if (priorityA == priorityB)
-            return a < b;
-        return CCPriorityCalculator::priorityIsLower(priorityA, priorityB);
+        int priorityA = a->requestPriorityAtLastPriorityUpdate();
+        int priorityB = b->requestPriorityAtLastPriorityUpdate();
+        if (priorityA != priorityB)
+            return CCPriorityCalculator::priorityIsLower(priorityA, priorityB);
+        bool aboveCutoffA = a->wasAbovePriorityCutoffAtLastPriorityUpdate();
+        bool aboveCutoffB = b->wasAbovePriorityCutoffAtLastPriorityUpdate();
+        if (!aboveCutoffA && aboveCutoffB)
+            return true;
+        if (aboveCutoffA && !aboveCutoffB)
+            return false;
+        return a < b;
     }
 
     CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize, int pool);
 
+    void updateBackingsPriorities();
     void reduceMemory(size_t limit, CCResourceProvider*);
-
     CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, CCResourceProvider*);
     void destroyBacking(CCPrioritizedTexture::Backing*, CCResourceProvider*);
+
+#if !ASSERT_DISABLED
+    void assertInvariants();
+#endif
 
     size_t m_maxMemoryLimitBytes;
     unsigned m_priorityCutoff;
@@ -133,6 +141,10 @@ private:
 
     TextureVector m_tempTextureVector;
     BackingVector m_tempBackingVector;
+
+    // Set by the main thread when it adjust priorities in such a way that
+    // the m_backings array's view of priorities is now out of date.
+    bool m_needsUpdateBackingsPrioritites;
 };
 
 } // WebCore
