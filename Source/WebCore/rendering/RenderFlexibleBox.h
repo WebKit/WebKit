@@ -85,7 +85,7 @@ private:
     LayoutUnit crossAxisExtent() const;
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
-    LayoutUnit mainAxisContentExtent();
+    LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
     LayoutUnit computeMainAxisExtentForChild(RenderBox* child, SizeType, const Length& size);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
@@ -122,10 +122,8 @@ private:
 
     LayoutUnit computeChildMarginValue(Length margin, RenderView*);
     void computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet&);
-    LayoutUnit lineBreakLength();
     LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize);
     bool computeNextFlexLine(OrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalFlexGrow, float& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent);
-    LayoutUnit computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent);
 
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalFlexGrow, float& totalWeightedFlexShrink, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void freezeViolations(const WTF::Vector<Violation>&, LayoutUnit& availableFreeSpace, float& totalFlexGrow, float& totalWeightedFlexShrink, InflexibleFlexItemSize&);

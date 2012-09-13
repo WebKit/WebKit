@@ -393,11 +393,11 @@ LayoutUnit RenderFlexibleBox::crossAxisContentExtent() const
     return isHorizontalFlow() ? contentHeight() : contentWidth();
 }
 
-LayoutUnit RenderFlexibleBox::mainAxisContentExtent()
+LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHeight)
 {
     if (isColumnFlow()) {
         LogicalExtentComputedValues computedValues;
-        computeLogicalHeight(logicalHeight(), logicalTop(), computedValues);
+        computeLogicalHeight(contentLogicalHeight, logicalTop(), computedValues);
         return std::max(LayoutUnit(0), computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
     }
     return contentLogicalWidth();
@@ -611,21 +611,6 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
     return std::max(LayoutUnit(0), computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis));
 }
 
-LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
-{
-    LayoutUnit contentExtent = 0;
-    if (!isColumnFlow())
-        contentExtent = mainAxisContentExtent();
-    else {
-        // FIXME: Refactor to avoid similar code in mainAxisContentExtent().
-        LogicalExtentComputedValues computedValues;
-        computeLogicalHeight(preferredMainAxisExtent, logicalTop(), computedValues);
-        contentExtent = computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight();
-    }
-
-    return contentExtent - preferredMainAxisExtent;
-}
-
 void RenderFlexibleBox::layoutFlexItems(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
     OrderedFlexItemList orderedChildren;
@@ -636,7 +621,7 @@ void RenderFlexibleBox::layoutFlexItems(OrderIterator& iterator, WTF::Vector<Lin
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     while (computeNextFlexLine(iterator, orderedChildren, preferredMainAxisExtent, totalFlexGrow, totalWeightedFlexShrink, minMaxAppliedMainAxisExtent)) {
-        LayoutUnit availableFreeSpace = computeAvailableFreeSpace(preferredMainAxisExtent);
+        LayoutUnit availableFreeSpace = mainAxisContentExtent(preferredMainAxisExtent) - preferredMainAxisExtent;
         FlexSign flexSign = (minMaxAppliedMainAxisExtent < preferredMainAxisExtent + availableFreeSpace) ? PositiveFlexibility : NegativeFlexibility;
         InflexibleFlexItemSize inflexibleItems;
         WTF::Vector<LayoutUnit> childSizes;
@@ -790,17 +775,6 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Ord
     }
 }
 
-LayoutUnit RenderFlexibleBox::lineBreakLength()
-{
-    if (!isColumnFlow())
-        return mainAxisContentExtent();
-
-    // FIXME: Refactor to avoid similar code in mainAxisContentExtent().
-    LogicalExtentComputedValues computedValues;
-    computeLogicalHeight(MAX_LAYOUT_UNIT, logicalTop(), computedValues);
-    return computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight();
-}
-
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, LayoutUnit childSize)
 {
     // FIXME: Support intrinsic min/max lengths.
@@ -832,7 +806,7 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlex
     if (!iterator.currentChild())
         return false;
 
-    LayoutUnit lineBreak = lineBreakLength();
+    LayoutUnit lineBreakLength = mainAxisContentExtent(MAX_LAYOUT_UNIT);
 
     for (RenderBox* child = iterator.currentChild(); child; child = iterator.next()) {
         if (child->isOutOfFlowPositioned()) {
@@ -844,7 +818,7 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlex
         LayoutUnit childMainAxisMarginBoxExtent = mainAxisBorderAndPaddingExtentForChild(child) + childMainAxisExtent;
         childMainAxisMarginBoxExtent += isHorizontalFlow() ? child->marginWidth() : child->marginHeight();
 
-        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreak && orderedChildren.size() > 0)
+        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreakLength && orderedChildren.size() > 0)
             break;
         orderedChildren.append(child);
         preferredMainAxisExtent += childMainAxisMarginBoxExtent;
