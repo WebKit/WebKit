@@ -3,11 +3,12 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
+<style>
+html { font-size: 16px; }
 body { width: 800px; margin: 0; }
 </style>
 
-<script type="text/javascript">
+<script>
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
@@ -20,7 +21,7 @@ if (window.internals) {
 <body>
 
 <div>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    This text should all be autosized to 40px computed font-size; the span below shouldn't affect this.
     <span>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </span>

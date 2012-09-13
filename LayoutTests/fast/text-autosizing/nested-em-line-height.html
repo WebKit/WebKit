@@ -3,11 +3,12 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
+<style>
+html { font-size: 16px; }
 body { width: 800px; margin: 0; }
 </style>
 
-<script type="text/javascript">
+<script>
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
@@ -20,7 +21,7 @@ if (window.internals) {
 <body>
 
 <div style="line-height: 1em">
-	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	When this text is autosized to 40px, the line heights of the nested inline elements below should increase in strict proportion.
 	<b>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</b>
 	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 	<b><i>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</i></b>

@@ -1,3 +1,31 @@
+2012-09-13  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add explanations to tests.
+        https://bugs.webkit.org/show_bug.cgi?id=96673
+
+        Reviewed by Julien Chaffraix.
+
+        Replaces some of the lorem ipsum filler text in Text Autosizing tests
+        with explanations of why the result is expected (and other minor tweaks
+        to tests).
+
+        * fast/text-autosizing/font-scale-factor-expected.html:
+        * fast/text-autosizing/font-scale-factor.html:
+        * fast/text-autosizing/narrow-iframe-expected.html:
+        * fast/text-autosizing/narrow-iframe-flattened-expected.html:
+        * fast/text-autosizing/narrow-iframe-flattened.html:
+        * fast/text-autosizing/narrow-iframe.html:
+        * fast/text-autosizing/nested-em-line-height-expected.html:
+        * fast/text-autosizing/nested-em-line-height.html:
+        * fast/text-autosizing/simple-paragraph-expected.html:
+        * fast/text-autosizing/simple-paragraph.html:
+        * fast/text-autosizing/span-child-expected.html:
+        * fast/text-autosizing/span-child.html:
+        * fast/text-autosizing/various-font-sizes-expected.html:
+        * fast/text-autosizing/various-font-sizes.html:
+        * fast/text-autosizing/wide-block-expected.html:
+        * fast/text-autosizing/wide-block.html:
+
 2012-09-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.callShouldCloseOnWebView

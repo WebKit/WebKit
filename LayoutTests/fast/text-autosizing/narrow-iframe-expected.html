@@ -3,15 +3,16 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
-body { width: 800px; margin: 0; overflow-y: hidden; }
+<style>
+body { width: 800px; margin: 0; }
 </style>
 
 </head>
 <body>
 
-<iframe style="width: 50%; height: 50%; border: 0" src='data:text/html,
-<html><body style="margin: 0; overflow-y: hidden"><div style="width: 1600px; font-size: 1.25rem">
+<iframe style="width: 50%; height: 300px; border: 0" src='data:text/html,
+<html style="font-size: 16px"><body style="margin: 0; overflow-y: hidden"><div style="width: 1600px; font-size: 1.25rem">
+This text should be autosized to just 20px computed font size, i.e. scaled up by 1.25x, since although this block is 1600px wide, it is in a 400px wide iframe, and min(1600, 400, 800) / 320 = 1.25.<br>
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 </div></body></html>'>
 
