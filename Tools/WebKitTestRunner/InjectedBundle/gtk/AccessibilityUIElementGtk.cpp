@@ -166,9 +166,10 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIE
 
 int AccessibilityUIElement::childrenCount()
 {
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildren(children);
-    return children.size();
+    if (!m_element)
+        return 0;
+
+    return atk_object_get_n_accessible_children(ATK_OBJECT(m_element));
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)

@@ -1,3 +1,17 @@
+2012-09-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] "Infinite" loop in AccessibilityUIElementGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=96632
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix this by using atk_object_get_n_accessible_children instead of
+        calling getChildren() from childCount.
+
+        * WebKitTestRunner/InjectedBundle/gtk/AccessibilityUIElementGtk.cpp:
+        (WTR::AccessibilityUIElement::childrenCount): Avoid the infinite
+        loop by using atk_object_get_n_accessible_children().
+
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][Win] Enable USE(3D_GRAPHICS)
