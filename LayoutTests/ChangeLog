@@ -1,3 +1,14 @@
+2012-09-13  Stephanie Lewis  <slewis@apple.com>
+
+        fast/table/bad-replaced-sizing-preferred-logical-widths.html is failing on Mac, Chromium-Mac, GTK, EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=96594.
+
+        Unreviewed.
+
+        Update TestExpectations.
+
+        * platform/mac/TestExpectations:
+
 2012-09-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
