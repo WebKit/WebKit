@@ -1,3 +1,53 @@
+2012-09-13  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Consolidate two-phase connection to avoid race conditions
+        https://bugs.webkit.org/show_bug.cgi?id=90411
+
+        Reviewed by Tony Chang.
+
+        API plumbing for simplified single-phase connection opening, and tests updated
+        to exercise the new APIs.
+
+        * public/WebIDBDatabase.h:
+        (WebIDBDatabase): Just a FIXME to remove the old second-phase hookup API.
+        * public/WebIDBFactory.h:
+        (WebKit):
+        (WebIDBFactory):
+        (WebKit::WebIDBFactory::open): New overload that takes db-callbacks.
+        * src/IDBCallbacksProxy.cpp: The db-callbacks plumbing is needed earlier.
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        (WebKit::IDBCallbacksProxy::onUpgradeNeeded):
+        (WebKit):
+        (WebKit::IDBCallbacksProxy::setDatabaseCallbacks): Needs to hold on to
+        the db-callbacks and hook it up when the onSuccess callback comes through.
+        * src/IDBCallbacksProxy.h:
+        (WebKit):
+        (IDBCallbacksProxy):
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::open):
+        * src/IDBFactoryBackendProxy.h:
+        (IDBFactoryBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::close):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBFactoryImpl.h:
+        (WebIDBFactoryImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (FakeIDBDatabaseCallbacks):
+        (WebCore::FakeIDBDatabaseCallbacks::create):
+        (WebCore::FakeIDBDatabaseCallbacks::~FakeIDBDatabaseCallbacks):
+        (WebCore::FakeIDBDatabaseCallbacks::FakeIDBDatabaseCallbacks):
+        (WebCore):
+        (WebCore::TEST): Updated connection sequence.
+        * tests/IDBDatabaseBackendTest.cpp: Ditto.
+
 2012-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

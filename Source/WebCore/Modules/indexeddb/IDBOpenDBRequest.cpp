@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabase.h"
+#include "IDBDatabaseCallbacksImpl.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTracing.h"
 #include "IDBUpgradeNeededEvent.h"
@@ -36,15 +37,16 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, int64_t version)
+PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t version)
 {
-    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, source, version)));
+    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, source, callbacks, version)));
     request->suspendIfNeeded();
     return request.release();
 }
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, int64_t version)
+IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t version)
     : IDBRequest(context, source, IDBTransactionBackendInterface::NormalTask, 0)
+    , m_databaseCallbacks(callbacks)
     , m_version(version)
 {
     ASSERT(!m_result);
@@ -72,9 +74,13 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
     if (!shouldEnqueueEvent())
         return;
 
+    ASSERT(m_databaseCallbacks);
+
     RefPtr<IDBDatabaseBackendInterface> databaseBackend = prpDatabaseBackend;
     RefPtr<IDBTransactionBackendInterface> transactionBackend = prpTransactionBackend;
-    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), databaseBackend);
+    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), databaseBackend, m_databaseCallbacks);
+    m_databaseCallbacks->connect(idbDatabase.get());
+    m_databaseCallbacks = 0;
 
     RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), transactionBackend, IDBTransaction::VERSION_CHANGE, idbDatabase.get(), this);
     transactionBackend->setCallbacks(frontend.get());
@@ -98,11 +104,14 @@ void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend
     if (m_result) {
         idbDatabase = m_result->idbDatabase();
         ASSERT(idbDatabase);
+        ASSERT(!m_databaseCallbacks);
     } else {
-        idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
+        ASSERT(m_databaseCallbacks);
+        idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend, m_databaseCallbacks);
+        m_databaseCallbacks->connect(idbDatabase.get());
+        m_databaseCallbacks = 0;
         m_result = IDBAny::create(idbDatabase.get());
     }
-    idbDatabase->registerFrontendCallbacks();
     enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 

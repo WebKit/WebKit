@@ -172,23 +172,10 @@ private:
     String m_securityOrigin;
 };
 
-class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
-public:
-    virtual ~ExecutableWithDatabase() { };
-    void start(IDBFactoryBackendInterface*, SecurityOrigin*, ScriptExecutionContext*, const String& databaseName);
-    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
-};
-
 class DatabaseConnection {
 public:
     DatabaseConnection()
         : m_idbDatabaseCallbacks(InspectorIDBDatabaseCallbacks::create()) { }
-
-    void connect(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
-    {
-        m_idbDatabase = idbDatabase;
-        m_idbDatabase->registerFrontendCallbacks(m_idbDatabaseCallbacks);
-    }
 
     ~DatabaseConnection()
     {
@@ -196,9 +183,22 @@ public:
             m_idbDatabase->close(m_idbDatabaseCallbacks);
     }
 
+    void connect(PassRefPtr<IDBDatabaseBackendInterface> database) { m_idbDatabase = database; }
+    PassRefPtr<IDBDatabaseCallbacks> callbacks() { return m_idbDatabaseCallbacks; }
+
 private:
     RefPtr<IDBDatabaseBackendInterface> m_idbDatabase;
     RefPtr<IDBDatabaseCallbacks> m_idbDatabaseCallbacks;
+};
+
+class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
+public:
+    virtual ~ExecutableWithDatabase() { };
+    void start(IDBFactoryBackendInterface*, SecurityOrigin*, ScriptExecutionContext*, const String& databaseName);
+    void connect(PassRefPtr<IDBDatabaseBackendInterface> database) { m_connection.connect(database); }
+    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
+private:
+    DatabaseConnection m_connection;
 };
 
 class OpenDatabaseCallback : public InspectorIDBCallback {
@@ -213,6 +213,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
         RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
+        m_executableWithDatabase->connect(idbDatabase);
         m_executableWithDatabase->execute(idbDatabase);
     }
 
@@ -225,7 +226,7 @@ private:
 void ExecutableWithDatabase::start(IDBFactoryBackendInterface* idbFactory, SecurityOrigin* securityOrigin, ScriptExecutionContext* context, const String& databaseName)
 {
     RefPtr<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    idbFactory->open(databaseName, IDBDatabaseMetadata::NoIntVersion, callback.get(), securityOrigin, context, String());
+    idbFactory->open(databaseName, IDBDatabaseMetadata::NoIntVersion, callback, m_connection.callbacks(), securityOrigin, context, String());
 }
 
 static PassRefPtr<IDBTransactionBackendInterface> transactionForDatabase(IDBDatabaseBackendInterface* idbDatabase, const String& objectStoreName)
@@ -296,7 +297,6 @@ public:
     virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
         RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
-        m_connection.connect(idbDatabase);
         if (!m_requestCallback->isActive())
             return;
 
@@ -339,7 +339,6 @@ private:
     DatabaseLoaderCallback(PassRefPtr<RequestDatabaseCallback> requestCallback)
         : m_requestCallback(requestCallback) { }
     RefPtr<RequestDatabaseCallback> m_requestCallback;
-    DatabaseConnection m_connection;
 };
 
 static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
@@ -555,7 +554,6 @@ public:
     virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
         RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
-        m_connection.connect(idbDatabase);
         if (!m_requestCallback->isActive())
             return;
 
@@ -597,7 +595,6 @@ private:
     RefPtr<IDBKeyRange> m_idbKeyRange;
     int m_skipCount;
     unsigned m_pageSize;
-    DatabaseConnection m_connection;
 };
 
 } // namespace

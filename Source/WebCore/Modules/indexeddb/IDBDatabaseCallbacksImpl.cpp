@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseCallbacksImpl> IDBDatabaseCallbacksImpl::create(IDBDatabase* database)
+PassRefPtr<IDBDatabaseCallbacksImpl> IDBDatabaseCallbacksImpl::create()
 {
-    return adoptRef(new IDBDatabaseCallbacksImpl(database));
+    return adoptRef(new IDBDatabaseCallbacksImpl());
 }
 
-IDBDatabaseCallbacksImpl::IDBDatabaseCallbacksImpl(IDBDatabase* database)
-    : m_database(database)
+IDBDatabaseCallbacksImpl::IDBDatabaseCallbacksImpl()
+    : m_database(0)
 {
 }
 
@@ -64,10 +64,11 @@ void IDBDatabaseCallbacksImpl::onVersionChange(int64_t oldVersion, int64_t newVe
         m_database->onVersionChange(oldVersion, newVersion);
 }
 
-void IDBDatabaseCallbacksImpl::unregisterDatabase(IDBDatabase* database)
+void IDBDatabaseCallbacksImpl::connect(IDBDatabase* database)
 {
-    ASSERT_UNUSED(database, database == m_database);
-    m_database = 0;
+    ASSERT(!m_database);
+    ASSERT(database);
+    m_database = database;
 }
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "IDBBackingStore.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseCallbacksProxy.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBFakeBackingStore.h"
 #include "IDBIndexBackendImpl.h"
@@ -40,9 +41,10 @@
 #if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
+using WebKit::IDBDatabaseCallbacksProxy;
 using WebKit::WebIDBDatabase;
-using WebKit::WebIDBDatabaseCallbacksImpl;
 using WebKit::WebIDBDatabaseImpl;
+using WebKit::WebIDBDatabaseCallbacksImpl;
 
 namespace {
 
@@ -122,19 +124,15 @@ TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
     EXPECT_GT(backingStore->refCount(), 1);
 
     RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
-    db->openConnection(request1);
-
     RefPtr<FakeIDBDatabaseCallbacks> connection1 = FakeIDBDatabaseCallbacks::create();
-    db->registerFrontendCallbacks(connection1);
+    db->openConnection(request1, connection1);
 
     RefPtr<MockIDBCallbacks> request2 = MockIDBCallbacks::create();
-    db->openConnection(request2);
+    RefPtr<FakeIDBDatabaseCallbacks> connection2 = FakeIDBDatabaseCallbacks::create();
+    db->openConnection(request2, connection2);
 
     db->close(connection1);
     EXPECT_GT(backingStore->refCount(), 1);
-
-    RefPtr<FakeIDBDatabaseCallbacks> connection2 = FakeIDBDatabaseCallbacks::create();
-    db->registerFrontendCallbacks(connection2);
 
     db->close(connection2);
     EXPECT_TRUE(backingStore->hasOneRef());
@@ -149,7 +147,7 @@ public:
 
     ~MockIDBDatabaseBackendProxy()
     {
-        EXPECT_TRUE(m_wasRegisterFrontendCallbacksCalled);
+        EXPECT_TRUE(m_wasCloseCalled);
     }
 
     virtual IDBDatabaseMetadata metadata() const { return IDBDatabaseMetadata(); }
@@ -163,19 +161,12 @@ public:
         m_wasCloseCalled = true;
         m_webDatabase.close();
     }
-    virtual void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks> connection)
-    {
-        m_wasRegisterFrontendCallbacksCalled = true;
-        m_webDatabase.open(new WebIDBDatabaseCallbacksImpl(connection));
-    }
 
 private:
     MockIDBDatabaseBackendProxy(WebIDBDatabaseImpl& webDatabase)
-        : m_wasRegisterFrontendCallbacksCalled(false)
-        , m_wasCloseCalled(false)
+        : m_wasCloseCalled(false)
         , m_webDatabase(webDatabase) { }
 
-    bool m_wasRegisterFrontendCallbacksCalled;
     bool m_wasCloseCalled;
 
     WebIDBDatabaseImpl& m_webDatabase;
@@ -191,18 +182,19 @@ TEST(IDBDatabaseBackendTest, ForcedClose)
     RefPtr<IDBDatabaseBackendImpl> backend = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
     EXPECT_GT(backingStore->refCount(), 1);
 
-    WebIDBDatabaseImpl webDatabase(backend);
-
-    RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
-    backend->openConnection(request1);
+    RefPtr<FakeIDBDatabaseCallbacks> connection = FakeIDBDatabaseCallbacks::create();
+    RefPtr<IDBDatabaseCallbacksProxy> connectionProxy = IDBDatabaseCallbacksProxy::create(adoptPtr(new WebIDBDatabaseCallbacksImpl(connection)));
+    WebIDBDatabaseImpl webDatabase(backend, connectionProxy);
 
     RefPtr<MockIDBDatabaseBackendProxy> proxy = MockIDBDatabaseBackendProxy::create(webDatabase);
+    RefPtr<MockIDBCallbacks> request = MockIDBCallbacks::create();
+    backend->openConnection(request, connectionProxy);
 
     ScriptExecutionContext* context = 0;
-    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(context, proxy);
-    idbDatabase->registerFrontendCallbacks();
+    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(context, proxy, connection);
 
     webDatabase.forceClose();
+
     EXPECT_TRUE(backingStore->hasOneRef());
 }
 
