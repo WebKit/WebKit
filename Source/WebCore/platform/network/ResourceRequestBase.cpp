@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ResourceRequestBase.h"
 
+#include "PlatformMemoryInstrumentation.h"
 #include "ResourceRequest.h"
-#include "WebCoreMemoryInstrumentation.h"
 
 using namespace std;
 
@@ -446,7 +446,7 @@ bool ResourceRequestBase::isConditional() const
 
 void ResourceRequestBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
     info.addInstrumentedMember(m_url);
     info.addInstrumentedMember(m_firstPartyForCookies);
     info.addInstrumentedMember(m_httpMethod);

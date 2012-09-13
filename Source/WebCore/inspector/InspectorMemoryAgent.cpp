@@ -481,6 +481,7 @@ public:
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > domChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
         totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::DOM);
+        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Image);
         totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::CSS);
         totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Binding);
         totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Loader);

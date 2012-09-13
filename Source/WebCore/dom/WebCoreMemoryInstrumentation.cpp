@@ -37,7 +37,6 @@ MemoryObjectType WebCoreMemoryTypes::Page = "Page";
 MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
 MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
 MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
-MemoryObjectType WebCoreMemoryTypes::Loader = "Page.Loader";
 
 MemoryObjectType WebCoreMemoryTypes::MemoryCache = "MemoryCache";
 MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";

@@ -28611,6 +28611,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PlatformMemoryInstrumentation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PlatformMemoryInstrumentation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\PlatformMenuDescription.h"
 				>
 			</File>

@@ -1768,6 +1768,7 @@ SET(WebCore_SOURCES
     platform/MemoryPressureHandler.cpp
     platform/PlatformEvent.cpp
     platform/PlatformInstrumentation.cpp
+    platform/PlatformMemoryInstrumentation.cpp
     platform/RunLoop.cpp
     platform/RuntimeApplicationChecks.cpp
     platform/ScrollAnimator.cpp

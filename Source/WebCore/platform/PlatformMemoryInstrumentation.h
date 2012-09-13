@@ -28,36 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreMemoryInstrumentation_h
-#define WebCoreMemoryInstrumentation_h
+#ifndef PlatformMemoryInstrumentation_h
+#define PlatformMemoryInstrumentation_h
 
-#include "PlatformMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentation.h>
 
 namespace WebCore {
 
 using WTF::MemoryClassInfo;
 using WTF::MemoryObjectType;
 
-class WebCoreMemoryTypes : public PlatformMemoryTypes {
+class PlatformMemoryTypes {
 public:
-    static MemoryObjectType Page;
-    static MemoryObjectType DOM;
-    static MemoryObjectType CSS;
-    static MemoryObjectType Binding;
-
-    static MemoryObjectType MemoryCache;
-    static MemoryObjectType MemoryCacheStructures;
-    static MemoryObjectType CachedResource;
-    static MemoryObjectType CachedResourceRaw;
-    static MemoryObjectType CachedResourceCSS;
-    static MemoryObjectType CachedResourceFont;
-    static MemoryObjectType CachedResourceImage;
-    static MemoryObjectType CachedResourceScript;
-    static MemoryObjectType CachedResourceSVG;
-    static MemoryObjectType CachedResourceShader;
-    static MemoryObjectType CachedResourceXSLT;
+    static MemoryObjectType Image;
+    static MemoryObjectType Loader;
 };
 
 } // namespace WebCore
 
-#endif // !defined(WebCoreMemoryInstrumentation_h)
+#endif // !defined(PlatformMemoryInstrumentation_h)

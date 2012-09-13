@@ -34,8 +34,8 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "SharedBuffer.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -200,7 +200,7 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 
 void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     info.addInstrumentedMember(m_data);
     info.addMember(m_imageObserver);
 }

@@ -27,8 +27,8 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include "PlatformMemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>

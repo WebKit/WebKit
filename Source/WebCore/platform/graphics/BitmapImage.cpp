@@ -31,8 +31,8 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "Timer.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -574,7 +574,7 @@ Color BitmapImage::solidColor() const
 
 void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     Image::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_source);
     info.addMember(m_frameTimer);

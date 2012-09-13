@@ -28,8 +28,8 @@
 #include "KURL.h"
 
 #include "DecodeEscapeSequences.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "TextEncoding.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <stdio.h>
 #include <wtf/HashMap.h>
 #if !USE(WTFURL)

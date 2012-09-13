@@ -1451,6 +1451,7 @@
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
 		4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DD11B532EC0021FD86 /* EditingBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F1D118915FF361B0026E908 /* PlatformMemoryInstrumentation.cpp */; };
 		4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F2D205212EAE7B3005C2874 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F2D205512EAE7B3005C2874 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F2D205312EAE7B3005C2874 /* InspectorAgent.cpp */; };
 		4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */; };
@@ -1461,6 +1462,7 @@
 		4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */; };
 		4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */; };
 		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1D118A15FF361B0026E908 /* PlatformMemoryInstrumentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F8565E91530356E00FAE776 /* MemoryInstrumentationImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8565E71530356E00FAE776 /* MemoryInstrumentationImpl.cpp */; };
 		4F8565EA1530356E00FAE776 /* MemoryInstrumentationImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F8565E81530356E00FAE776 /* MemoryInstrumentationImpl.h */; };
 		4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3B908125CD12100300BAD /* InspectorState.cpp */; };
@@ -8622,6 +8624,8 @@
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
 		4F1534DD11B532EC0021FD86 /* EditingBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehavior.h; sourceTree = "<group>"; };
 		4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehaviorTypes.h; sourceTree = "<group>"; };
+		4F1D118915FF361B0026E908 /* PlatformMemoryInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformMemoryInstrumentation.cpp; sourceTree = "<group>"; };
+		4F1D118A15FF361B0026E908 /* PlatformMemoryInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformMemoryInstrumentation.h; sourceTree = "<group>"; };
 		4F2D205212EAE7B3005C2874 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
 		4F2D205312EAE7B3005C2874 /* InspectorAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgent.cpp; sourceTree = "<group>"; };
 		4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValues.cpp; sourceTree = "<group>"; };
@@ -20838,6 +20842,8 @@
 				49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */,
 				49182B5115DCE6F000548418 /* PlatformInstrumentation.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
+				4F1D118915FF361B0026E908 /* PlatformMemoryInstrumentation.cpp */,
+				4F1D118A15FF361B0026E908 /* PlatformMemoryInstrumentation.h */,
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
@@ -25554,6 +25560,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28651,6 +28658,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

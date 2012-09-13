@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Length.h"
+#include "PlatformMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<G
 
 void GeneratorGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     GeneratedImage::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_generator);
     info.addMember(m_cachedImageBuffer);

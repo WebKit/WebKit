@@ -1046,6 +1046,7 @@ SOURCES += \
     platform/text/RegularExpression.cpp \
     platform/PlatformEvent.cpp \
     platform/PlatformInstrumentation.cpp \
+    platform/PlatformMemoryInstrumentation.cpp \
     platform/RuntimeApplicationChecks.cpp \
     platform/RunLoop.cpp \
     platform/SchemeRegistry.cpp \
@@ -2216,6 +2217,7 @@ HEADERS += \
     platform/network/qt/DnsPrefetchHelper.h \
     platform/network/qt/NetworkStateNotifierPrivate.h \
     platform/PlatformExportMacros.h \
+    platform/PlatformMemoryInstrumentation.h \
     platform/PlatformTouchEvent.h \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \

@@ -4494,6 +4494,8 @@
             'platform/MIMETypeRegistry.cpp',
             'platform/Pasteboard.h',
             'platform/PlatformGestureCurve.h',
+            'platform/PlatformMemoryInstrumentation.cpp',
+            'platform/PlatformMemoryInstrumentation.h',
             'platform/PlatformStrategies.cpp',
             'platform/PlatformTouchEvent.h',
             'platform/PlatformTouchPoint.h',

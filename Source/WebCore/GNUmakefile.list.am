@@ -4689,6 +4689,8 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformGestureCurve.h \
 	Source/WebCore/platform/PlatformGestureEvent.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
+	Source/WebCore/platform/PlatformMemoryInstrumentation.cpp \
+	Source/WebCore/platform/PlatformMemoryInstrumentation.h \
 	Source/WebCore/platform/PlatformMenuDescription.h \
 	Source/WebCore/platform/PlatformMouseEvent.h \
 	Source/WebCore/platform/PlatformPasteboard.h \

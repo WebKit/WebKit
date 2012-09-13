@@ -41,8 +41,8 @@
 #include <algorithm>
 
 #include "NotImplemented.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "TextEncoding.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
