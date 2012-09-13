@@ -1,3 +1,10 @@
+2012-09-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/TestExpectations:
+        sandboxed-iframe-navigation-parent.html is slow on Lion too.
+
 2012-09-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][Qt][WK2] Implement shared undo controller for EFL and Qt port.
