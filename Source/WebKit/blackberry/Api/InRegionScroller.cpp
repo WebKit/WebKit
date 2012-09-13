@@ -375,6 +375,9 @@ bool InRegionScrollerPrivate::canScrollRenderBox(RenderBox* box)
     if (!box->hasOverflowClip())
         return false;
 
+    if (box->scrollHeight() == box->clientHeight() && box->scrollWidth() == box->clientWidth())
+        return false;
+
     if (box->scrollsOverflowX() && (box->scrollWidth() != box->clientWidth())
         || box->scrollsOverflowY() && (box->scrollHeight() != box->clientHeight()))
         return true;

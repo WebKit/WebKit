@@ -1,3 +1,19 @@
+2012-09-13  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Missing conditions in InRegionScrollerPrivate::canScrollRenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=96660
+
+        Reviewed by Antonio Gomes.
+
+        PR: 207884
+        According to RenderBox::canBeScrolledAndHasScrollableArea(), we should
+        bail out early in InRegionScrollerPrivate::canScrollRenderBox() if the
+        RenderBox's scroll height equals the client height and the scroll width
+        equals the client width. Otherwise, we will miss the conditions.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::canScrollRenderBox):
+
 2012-09-13  Jessica Cao  <jecao@rim.com>
 
         [BlackBerry] Page Popup for Month is non-functional.
