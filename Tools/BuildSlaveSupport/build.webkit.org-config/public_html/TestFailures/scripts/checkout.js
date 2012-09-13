@@ -66,15 +66,6 @@ checkout.isAvailable = function(callback)
     });
 };
 
-checkout.updateExpectations = function(failureInfoList, callback, checkoutUnavailable)
-{
-    callIfCheckoutAvailable(function() {
-        net.post(config.kLocalServerURL + '/updateexpectations', JSON.stringify(failureInfoList), function() {
-            callback();
-        });
-    }, checkoutUnavailable);
-};
-
 checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {

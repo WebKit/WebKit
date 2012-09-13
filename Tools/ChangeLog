@@ -1,3 +1,25 @@
+2012-09-12  Dirk Pranke  <dpranke@chromium.org>
+
+        remove unused testexpectations editing code from webkitpy, garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=96562
+
+        Reviewed by Adam Barth.
+
+        This code was prototyped but never fully realized. Removing
+        until it reanimates :).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor.py: Removed.
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py: Removed.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (BuildCoverageExtrapolator.extrapolate_test_configurations):
+        (GardeningHTTPRequestHandler._run_webkit_patch):
+        (GardeningHTTPRequestHandler.ping):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (BuildCoverageExtrapolatorTest.test_extrapolate):
+        (GardeningServerTest.test_rebaseline_new_port):
+
 2012-09-12  Lucas Forschler  <lforschler@apple.com>
 
         Remove unused bot, apple-xserve-1.

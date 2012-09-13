@@ -31,31 +31,6 @@ test("subversionURLForTest", 1, function() {
     equals(checkout.subversionURLForTest("path/to/test.html"), "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/path/to/test.html");
 });
 
-test("updateExpectations", 4, function() {
-    var simulator = new NetworkSimulator();
-
-    // FIXME: This leaks state into g_haveSeenCheckoutAvailable, which is global.
-    simulator.ajax = function(options) { options.success.call(); },
-
-    simulator.post = function(url, data, callback)
-    {
-        equals(url, 'http://127.0.0.1:8127/updateexpectations');
-        equals(data, '[{"builderName":"WebKit Linux","testName":"another/test.svg"}]');
-        simulator.scheduleCallback(callback);
-    };
-
-    simulator.runTest(function() {
-        checkout.updateExpectations([{
-            'builderName': 'WebKit Linux',
-            'testName': 'another/test.svg',
-        }], function() {
-            ok(true);
-        }, function() {
-            ok(false);
-        });
-    });
-});
-
 test("rebaseline", 3, function() {
     var simulator = new NetworkSimulator();
 
