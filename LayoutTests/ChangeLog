@@ -1,3 +1,11 @@
+2012-09-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=96308
+
+        * platform/chromium-mac/fast/table/height-percent-test-vertical-expected.png:
+        Rebaseline for http://trac.webkit.org/changeset/128375.
+
 2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
