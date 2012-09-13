@@ -1,3 +1,29 @@
+2012-09-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename forEachCell to forEachLiveCell
+        https://bugs.webkit.org/show_bug.cgi?id=96685
+
+        Reviewed by Oliver Hunt.
+
+        forEachCell actually only iterates over live cells. We should rename it to 
+        reflect what it actually does. This is also helpful because we want to add a new 
+        forEachCell that actually does iterate each and every cell in a MarkedBlock 
+        regardless of whether or not it is live.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * heap/Heap.cpp:
+        (JSC::Heap::globalObjectCount):
+        (JSC::Heap::objectTypeCounts):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::forEachLiveCell):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::forEachLiveCell):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::releaseExecutableMemory):
+
 2012-09-13  Filip Pizlo  <fpizlo@apple.com>
 
         [Qt][Win] REGRESSION(r128400): It broke the build

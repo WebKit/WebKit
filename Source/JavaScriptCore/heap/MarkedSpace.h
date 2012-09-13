@@ -93,8 +93,8 @@ public:
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
     
-    template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachCell();
+    template<typename Functor> typename Functor::ReturnType forEachLiveCell(Functor&);
+    template<typename Functor> typename Functor::ReturnType forEachLiveCell();
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
     
@@ -140,20 +140,20 @@ private:
     MarkedBlockSet m_blocks;
 };
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachCell(Functor& functor)
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(Functor& functor)
 {
     canonicalizeCellLivenessData();
 
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
-        (*it)->forEachCell(functor);
+        (*it)->forEachLiveCell(functor);
     return functor.returnValue();
 }
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachCell()
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell()
 {
     Functor functor;
-    return forEachCell(functor);
+    return forEachLiveCell(functor);
 }
 
 inline MarkedAllocator& MarkedSpace::firstAllocator()

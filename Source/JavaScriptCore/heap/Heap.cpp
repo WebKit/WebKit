@@ -618,7 +618,7 @@ size_t Heap::protectedGlobalObjectCount()
 
 size_t Heap::globalObjectCount()
 {
-    return m_objectSpace.forEachCell<CountIfGlobalObject>();
+    return m_objectSpace.forEachLiveCell<CountIfGlobalObject>();
 }
 
 size_t Heap::protectedObjectCount()
@@ -633,7 +633,7 @@ PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
 
 PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 {
-    return m_objectSpace.forEachCell<RecordType>();
+    return m_objectSpace.forEachLiveCell<RecordType>();
 }
 
 void Heap::deleteAllCompiledCode()

@@ -185,7 +185,7 @@ namespace JSC {
         template <int size> inline void gatherDirtyCellsWithSize(DirtyCellVector&);
 #endif
 
-        template <typename Functor> void forEachCell(Functor&);
+        template <typename Functor> void forEachLiveCell(Functor&);
         template <typename Functor> void forEachDeadCell(Functor&);
 
     private:
@@ -407,7 +407,7 @@ namespace JSC {
         return isLive(static_cast<const JSCell*>(p));
     }
 
-    template <typename Functor> inline void MarkedBlock::forEachCell(Functor& functor)
+    template <typename Functor> inline void MarkedBlock::forEachLiveCell(Functor& functor)
     {
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
             JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);

@@ -459,7 +459,7 @@ void JSGlobalData::releaseExecutableMemory()
                 recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
                 
         }
-        heap.objectSpace().forEachCell<StackPreservingRecompiler>(recompiler);
+        heap.objectSpace().forEachLiveCell<StackPreservingRecompiler>(recompiler);
     }
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();
