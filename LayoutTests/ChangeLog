@@ -1,3 +1,15 @@
+2012-09-12  David Grogan  <dgrogan@chromium.org>
+
+        Fix indexeddb/basics-shared-workers-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=96591
+
+        Reviewed by Kent Tamura.
+
+        Needed to pass IndexedDBLayoutTest.BasicTests in content_browsertests
+        after 128370.
+
+        * storage/indexeddb/basics-shared-workers-expected.txt:
+
 2012-09-12  Stephanie Lewis  <slewis@apple.com>
 
         fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html fails on Mac.
