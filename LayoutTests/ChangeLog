@@ -1,3 +1,28 @@
+2012-09-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][Qt][WK2] Implement shared undo controller for EFL and Qt port.
+        https://bugs.webkit.org/show_bug.cgi?id=92504
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip the editing/undo category now that the tests are passing. Also add
+        missing expected results.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/efl/editing/undo/4063751-expected.txt: Added.
+        * platform/efl/editing/undo/5378473-expected.txt: Added.
+        * platform/efl/editing/undo/redo-typing-001-expected.txt: Added.
+        * platform/efl/editing/undo/undo-combined-delete-boundary-expected.txt: Added.
+        * platform/efl/editing/undo/undo-combined-delete-expected.txt: Added.
+        * platform/efl/editing/undo/undo-delete-boundary-expected.txt: Added.
+        * platform/efl/editing/undo/undo-delete-expected.txt: Added.
+        * platform/efl/editing/undo/undo-forward-delete-boundary-expected.txt: Added.
+        * platform/efl/editing/undo/undo-forward-delete-expected.txt: Added.
+        * platform/efl/editing/undo/undo-misspellings-expected.txt: Added.
+        * platform/efl/editing/undo/undo-typing-001-expected.txt: Added.
+
 2012-09-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] We should have tests for preserving/resetting values of input type "time" after browser navigation

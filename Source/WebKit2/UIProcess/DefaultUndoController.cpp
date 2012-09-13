@@ -1,6 +1,7 @@
 /*
-    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,15 +20,14 @@
 */
 
 #include "config.h"
-#include "QtWebUndoController.h"
+#include "DefaultUndoController.h"
 
 #include "WebEditCommandProxy.h"
-#include <QtGlobal>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-void QtWebUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
+void DefaultUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
     if (undoOrRedo == WebPageProxy::Undo)
         m_undoStack.append(command);
@@ -35,21 +35,21 @@ void QtWebUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> co
         m_redoStack.append(command);
 }
 
-void QtWebUndoController::clearAllEditCommands()
+void DefaultUndoController::clearAllEditCommands()
 {
     m_undoStack.clear();
     m_redoStack.clear();
 }
 
-bool QtWebUndoController::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+bool DefaultUndoController::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
     if (undoOrRedo == WebPageProxy::Undo)
         return !m_undoStack.isEmpty();
-    else
-        return !m_redoStack.isEmpty();
+
+    return !m_redoStack.isEmpty();
 }
 
-void QtWebUndoController::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+void DefaultUndoController::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
     RefPtr<WebEditCommandProxy> command;
     if (undoOrRedo == WebPageProxy::Undo) {

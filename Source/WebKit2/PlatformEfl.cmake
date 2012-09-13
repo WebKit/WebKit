@@ -24,6 +24,8 @@ LIST(APPEND WebKit2_SOURCES
     Shared/soup/PlatformCertificateInfo.cpp
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
+    UIProcess/DefaultUndoController.cpp
+
     UIProcess/API/C/efl/WKView.cpp
     
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp

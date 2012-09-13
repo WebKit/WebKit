@@ -1,3 +1,40 @@
+2012-09-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][Qt][WK2] Implement shared undo controller for EFL and Qt port.
+        https://bugs.webkit.org/show_bug.cgi?id=92504
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EFL port needs an undo controller similiar to one from Qt port. Instead of
+        duplicating the code existing class was renamed and moved to UIProcess
+        directory.
+
+        * PlatformEfl.cmake:
+        * Target.pri:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/DefaultUndoController.cpp: Renamed from Source/WebKit2/UIProcess/qt/QtWebUndoController.cpp.
+        (WebKit):
+        (WebKit::DefaultUndoController::registerEditCommand):
+        (WebKit::DefaultUndoController::clearAllEditCommands):
+        (WebKit::DefaultUndoController::canUndoRedo):
+        (WebKit::DefaultUndoController::executeUndoRedo):
+        * UIProcess/DefaultUndoController.h: Renamed from Source/WebKit2/UIProcess/qt/QtWebUndoController.h.
+        (WebKit):
+        (DefaultUndoController):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::initialize):
+        * UIProcess/qt/QtPageClient.h:
+        (WebKit):
+        (QtPageClient):
+
 2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make _ref() functions return the object

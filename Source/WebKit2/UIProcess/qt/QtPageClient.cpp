@@ -21,10 +21,10 @@
 #include "config.h"
 #include "QtPageClient.h"
 
+#include "DefaultUndoController.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebUndoController.h"
 #include "ShareableBitmap.h"
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "WebColorChooserProxyQt.h"
@@ -56,7 +56,7 @@ QtPageClient::~QtPageClient()
 {
 }
 
-void QtPageClient::initialize(QQuickWebView* webView, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
+void QtPageClient::initialize(QQuickWebView* webView, QtWebPageEventHandler* eventHandler, DefaultUndoController* undoController)
 {
     m_webView = webView;
     m_eventHandler = eventHandler;

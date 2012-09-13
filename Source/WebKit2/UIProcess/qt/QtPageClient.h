@@ -31,7 +31,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class LayerTreeContext;
 class QtWebPageEventHandler;
-class QtWebUndoController;
+class DefaultUndoController;
 class ShareableBitmap;
 
 class QtPageClient : public PageClient {
@@ -39,7 +39,7 @@ public:
     QtPageClient();
     ~QtPageClient();
 
-    void initialize(QQuickWebView*, QtWebPageEventHandler*, WebKit::QtWebUndoController*);
+    void initialize(QQuickWebView*, QtWebPageEventHandler*, WebKit::DefaultUndoController*);
 
     // QQuickWebView.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
@@ -74,7 +74,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void toolTipChanged(const String&, const String&);
 
-    // QtWebUndoController
+    // DefaultUndoController
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
@@ -109,7 +109,7 @@ public:
 private:
     QQuickWebView* m_webView;
     QtWebPageEventHandler* m_eventHandler;
-    QtWebUndoController* m_undoController;
+    DefaultUndoController* m_undoController;
 };
 
 } // namespace WebKit

@@ -21,11 +21,12 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
+#include "DefaultUndoController.h"
 #include "PageViewportController.h"
 #include "PageViewportControllerClient.h"
 #include "QtPageClient.h"
 #include "QtWebPageUIClient.h"
-#include "QtWebUndoController.h"
+
 #include "qquickwebview_p.h"
 #include "qquickwebpage_p.h"
 #include <QtCore/QElapsedTimer>
@@ -160,7 +161,7 @@ protected:
     RefPtr<WebKit::WebPageProxy> webPageProxy;
 
     WebKit::QtPageClient pageClient;
-    WebKit::QtWebUndoController undoController;
+    WebKit::DefaultUndoController undoController;
     OwnPtr<QWebNavigationHistory> navigationHistory;
     OwnPtr<QWebPreferences> preferences;
 

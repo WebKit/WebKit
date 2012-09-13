@@ -26,6 +26,7 @@
 #ifndef PageClientImpl_h
 #define PageClientImpl_h
 
+#include "DefaultUndoController.h"
 #include "PageClient.h"
 #include <Evas.h>
 
@@ -115,6 +116,7 @@ private:
 
 private:
     Evas_Object* m_viewWidget;
+    DefaultUndoController m_undoController;
 };
 
 } // namespace WebKit

@@ -1,6 +1,7 @@
 /*
-    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,27 +19,27 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QtWebUndoController_h
-#define QtWebUndoController_h
+#ifndef DefaultUndoController_h
+#define DefaultUndoController_h
 
 #include "WebEditCommandProxy.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
 
-class QtWebUndoController {
+class DefaultUndoController {
 public:
-    // Page Client.
-    void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
+    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
-    bool canUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
-    void executeUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
+    bool canUndoRedo(WebPageProxy::UndoOrRedo);
+    void executeUndoRedo(WebPageProxy::UndoOrRedo);
 
-    typedef Vector<RefPtr<WebKit::WebEditCommandProxy> > CommandVector;
+private:
+    typedef Vector<RefPtr<WebEditCommandProxy> > CommandVector;
     CommandVector m_undoStack;
     CommandVector m_redoStack;
 };
 
 } // namespace WebKit
 
-#endif // QtWebUndoController_h
+#endif // DefaultUndoController_h

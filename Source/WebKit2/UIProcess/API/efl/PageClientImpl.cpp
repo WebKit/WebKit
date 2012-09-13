@@ -139,25 +139,24 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
     notImplemented();
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
+    m_undoController.registerEditCommand(command, undoOrRedo);
 }
 
 void PageClientImpl::clearAllEditCommands()
 {
-    notImplemented();
+    m_undoController.clearAllEditCommands();
 }
 
-bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo)
+bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
-    return false;
+    return m_undoController.canUndoRedo(undoOrRedo);
 }
 
-void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
+void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    notImplemented();
+    m_undoController.executeUndoRedo(undoOrRedo);
 }
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& viewRect)

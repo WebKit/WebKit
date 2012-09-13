@@ -200,6 +200,7 @@ HEADERS += \
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h \
     UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h \
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.h \
+    UIProcess/DefaultUndoController.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/DrawingAreaProxyImpl.h \
     UIProcess/FindIndicator.h \
@@ -541,6 +542,7 @@ SOURCES += \
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp \
     UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp \
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp \
+    UIProcess/DefaultUndoController.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
@@ -611,7 +613,6 @@ SOURCES += \
     UIProcess/WebVibrationProvider.cpp \
     UIProcess/WebVibrationProxy.cpp \
     UIProcess/qt/QtWebContext.cpp \
-    UIProcess/qt/QtWebUndoController.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebFullScreenManagerProxyQt.cpp \
@@ -782,7 +783,6 @@ have?(QTQUICK) {
         UIProcess/qt/QtWebPagePolicyClient.h \
         UIProcess/qt/QtWebPageSGNode.h \
         UIProcess/qt/QtWebPageUIClient.h \
-        UIProcess/qt/QtWebUndoController.h \
         UIProcess/qt/QtWebIconDatabaseClient.h \
         UIProcess/qt/WebContextMenuProxyQt.h \
         UIProcess/qt/WebGeolocationProviderQt.h \

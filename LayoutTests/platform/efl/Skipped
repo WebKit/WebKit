@@ -95,7 +95,6 @@ editing/pasteboard
 editing/selection
 editing/spelling
 editing/style
-editing/undo
 
 # EFL's LayoutTestController overridePreference does not implement WebKitUsePreHTML5ParserQuirks preference
 fast/parser/pre-html5-parser-quirks.html
