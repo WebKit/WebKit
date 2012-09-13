@@ -31,14 +31,12 @@
 #ifndef WebCoreMemoryInstrumentation_h
 #define WebCoreMemoryInstrumentation_h
 
-#include <wtf/Forward.h>
 #include <wtf/MemoryInstrumentation.h>
 
 namespace WebCore {
 
 using WTF::MemoryClassInfo;
 using WTF::MemoryObjectType;
-class KURL;
 
 class WebCoreMemoryTypes {
 public:
@@ -62,17 +60,5 @@ public:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-// Explicit specializations for some types.
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
-
-// Link time guards with no body.
-template<> void MemoryInstrumentationTraits::addObject<WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
-template<> void MemoryInstrumentationTraits::addObject<const WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
-
-}
 
 #endif // !defined(WebCoreMemoryInstrumentation_h)

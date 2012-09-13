@@ -40,6 +40,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -228,27 +229,50 @@ TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
     EXPECT_EQ(2, visitedObjects.size());
 }
 
-class StringOwnerInstrumented {
+template<typename T>
+class InstrumentedOwner {
 public:
-    StringOwnerInstrumented() : m_name("string") { }
+    template<typename V>
+    InstrumentedOwner(const V& value) : m_value(value) { }
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_name);
+        info.addInstrumentedMember(m_value);
     }
 
-    String m_name;
+    T m_value;
 };
 
 TEST(MemoryInstrumentationTest, visitStrings)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
-    StringOwnerInstrumented stringOwnerInstrumented;
-    stringOwnerInstrumented.m_name.characters(); // Force 16bit shadow creation.
-    impl.addRootObject(stringOwnerInstrumented);
-    EXPECT_EQ(sizeof(StringImpl) + stringOwnerInstrumented.m_name.length() * 2, impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentedOwner<String> stringInstrumentedOwner("String");
+        stringInstrumentedOwner.m_value.characters(); // Force 16bit shadow creation.
+        impl.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 2, impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
+
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentedOwner<AtomicString> atomicStringInstrumentedOwner("AtomicString");
+        atomicStringInstrumentedOwner.m_value.string().characters(); // Force 16bit shadow creation.
+        impl.addRootObject(atomicStringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 2, impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
+
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentedOwner<CString> cStringInstrumentedOwner("CString");
+        impl.addRootObject(cStringInstrumentedOwner);
+        EXPECT_EQ(sizeof(WTF::CStringBuffer) + cStringInstrumentedOwner.m_value.length(), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(1, visitedObjects.size());
+    }
 }
 
 } // namespace

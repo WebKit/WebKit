@@ -27,6 +27,7 @@
 #define KURL_h
 
 #include "KURLWTFURLImpl.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -224,6 +225,8 @@ public:
 #ifndef NDEBUG
     void print() const;
 #endif
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     void invalidate();

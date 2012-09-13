@@ -29,6 +29,7 @@
 
 #include "DecodeEscapeSequences.h"
 #include "TextEncoding.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <stdio.h>
 #include <wtf/HashMap.h>
 #if !USE(WTFURL)
@@ -1914,6 +1915,18 @@ String mimeTypeFromDataURL(const String& url)
         return "text/plain"; // Data URLs with no MIME type are considered text/plain.
     }
     return "";
+}
+
+void KURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+#if USE(GOOGLEURL)
+    info.addInstrumentedMember(m_url);
+#elif USE(WTFURL)
+    info.addInstrumentedMember(m_urlImpl);
+#else // !USE(GOOGLEURL)
+    info.addInstrumentedMember(m_string);
+#endif
 }
 
 }

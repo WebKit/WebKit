@@ -21,8 +21,7 @@
 #ifndef QualifiedName_h
 #define QualifiedName_h
 
-#include "WebCoreMemoryInstrumentation.h"
-
+#include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -50,14 +49,8 @@ public:
         const AtomicString m_namespace;
         mutable AtomicString m_localNameUpper;
 
-        void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-        {
-            MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-            info.addInstrumentedMember(m_prefix);
-            info.addInstrumentedMember(m_localName);
-            info.addInstrumentedMember(m_namespace);
-            info.addInstrumentedMember(m_localNameUpper);
-        }
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
             : m_prefix(prefix)
@@ -101,11 +94,8 @@ public:
     // Init routine for globals
     static void init();
     
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_impl);
-    }
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     void ref() const { m_impl->ref(); }
     void deref();

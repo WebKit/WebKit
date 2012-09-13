@@ -41,6 +41,13 @@ public:
     WTF::ParsedURL m_parsedURL;
     String m_invalidUrlString;
 
+    template<typename MemoruObjectInfo>
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
+    {
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
+        info.addInstrumentedMember(m_parsedURL);
+        info.addInstrumentedMember(m_invalidUrlString);
+    }
     PassRefPtr<KURLWTFURLImpl> copy() const;
 };
 

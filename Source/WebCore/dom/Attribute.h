@@ -26,6 +26,7 @@
 #define Attribute_h
 
 #include "QualifiedName.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

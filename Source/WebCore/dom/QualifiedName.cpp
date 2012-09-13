@@ -27,6 +27,7 @@
 
 #include "QualifiedName.h"
 #include "HTMLNames.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -139,6 +140,22 @@ const AtomicString& QualifiedName::localNameUpper() const
     if (!m_impl->m_localNameUpper)
         m_impl->m_localNameUpper = m_impl->m_localName.upper();
     return m_impl->m_localNameUpper;
+}
+
+void QualifiedName::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    info.addInstrumentedMember(m_impl);
+}
+
+
+void QualifiedName::QualifiedNameImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    info.addInstrumentedMember(m_prefix);
+    info.addInstrumentedMember(m_localName);
+    info.addInstrumentedMember(m_namespace);
+    info.addInstrumentedMember(m_localNameUpper);
 }
 
 void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace)

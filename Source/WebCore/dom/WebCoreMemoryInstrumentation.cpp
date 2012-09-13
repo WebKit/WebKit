@@ -31,10 +31,6 @@
 #include "config.h"
 #include "WebCoreMemoryInstrumentation.h"
 
-#include "KURL.h"
-#include <wtf/text/StringImpl.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 MemoryObjectType WebCoreMemoryTypes::Page = "Page";
@@ -56,23 +52,3 @@ MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader"
 MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<WebCore::KURL>(MemoryInstrumentation* instrumentation, const WebCore::KURL* const& url, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    MemoryInstrumentationTraits::addInstrumentedObject<const WebCore::KURL>(instrumentation, url, ownerObjectType, owningType);
-}
-
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const WebCore::KURL>(MemoryInstrumentation* instrumentation, const WebCore::KURL* const& url, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (!url || instrumentation->visited(url))
-        return;
-    if (owningType == byPointer)
-        instrumentation->countObjectSize(ownerObjectType, sizeof(WebCore::KURL));
-    instrumentation->addInstrumentedObject(url->string(), ownerObjectType);
-    if (url->innerURL())
-        instrumentation->addInstrumentedObject(url->innerURL(), ownerObjectType);
-}
-
-}
