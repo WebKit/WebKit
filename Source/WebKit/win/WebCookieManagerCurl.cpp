@@ -29,8 +29,6 @@
 
 #include "NotImplemented.h"
 
-using namespace WebCore;
-
 // IWebCookieManager -------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebCookieManager::cookieStorage( 

@@ -1,3 +1,10 @@
+2012-09-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * WebCookieManagerCurl.cpp: Remove unused 'using WebCore'
+        declaration that prevented the build from completing.
+
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127876.
