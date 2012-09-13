@@ -1,3 +1,21 @@
+2012-09-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [Chromium] REGRESSION(r127457): Context menu on textarea is displayed in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=96593
+
+        Reviewed by Adam Barth.
+
+        After r127457, the HitTestResult stored in ContextMenuController is in window coordinates.
+        Trying to convert it again to window coordinates will result in adding the containing frame's
+        position twice, thus the wrong placing.
+
+        Chromium Mac wasn't impacted by the regression and I manually checked that the fix doesn't impact Mac.
+
+        Unfortunately, no test as I don't think we have a way of testing context menu position.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-09-13  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] alter fling animation parameters.
