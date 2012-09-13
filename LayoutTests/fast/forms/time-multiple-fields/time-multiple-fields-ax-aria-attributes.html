@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id=test type="time" value="12:34:56.789">
+<script>
+description('This test checks aria-help attribute of fields in multiple fields time input UI.');
+
+function enableAccessibility()
+{
+    if (!window.accessibilityController) {
+        debug("Please run inside DumpRenderTree.");
+        return;
+    }
+}
+
+function focusedFieldValueDescription()
+{
+    if (!window.accessibilityController)
+        return;
+    var element = accessibilityController.focusedElement
+    return element.helpText + ", " +  element.valueDescription + ", " + element.minValue + ", " + element.maxValue;
+}
+
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+
+var testInput = document.getElementById("test");
+
+enableAccessibility();
+testInput.focus();
+
+debug('Non-empty value');
+testInput.focus();
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: 12, 1, 12');
+keyDown('\t');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: 34, 0, 59');
+keyDown('\t');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: 56, 0, 59');
+keyDown('\t');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: 789, 0, 999');
+keyDown('\t');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: PM, 1, 2');
+
+debug('Empty value');
+keyDown('\b');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: blank, 1, 2');
+keyDown('\t', ['shiftKey']);
+keyDown('\b');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: blank, 0, 999');
+keyDown('\t', ['shiftKey']);
+keyDown('\b');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: blank, 0, 59');
+keyDown('\t', ['shiftKey']);
+keyDown('\b');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: blank, 0, 59');
+keyDown('\t', ['shiftKey']);
+keyDown('\b');
+shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: blank, 1, 12');
+
+debug('');
+testInput.parentNode.removeChild(testInput);
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

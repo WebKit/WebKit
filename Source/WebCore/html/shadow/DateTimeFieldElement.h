@@ -77,7 +77,9 @@ protected:
     virtual void didFocus();
     void focusOnNextField();
     virtual void handleKeyboardEvent(KeyboardEvent*) = 0;
-    void initialize(const AtomicString&);
+    void initialize(const AtomicString& shadowPseudoId, const String& axHelpText);
+    virtual int maximum() const = 0;
+    virtual int minimum() const = 0;
     virtual double unitInMillisecond() const = 0;
     void updateVisibleValue(EventBehavior);
 

@@ -65,6 +65,8 @@ private:
     // DateTimeFieldElement functions.
     virtual void didBlur() OVERRIDE FINAL;
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
+    virtual int maximum() const OVERRIDE FINAL;
+    virtual int minimum() const OVERRIDE FINAL;
     virtual void setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior) OVERRIDE FINAL;
     virtual void stepDown() OVERRIDE FINAL;
     virtual void stepUp() OVERRIDE FINAL;

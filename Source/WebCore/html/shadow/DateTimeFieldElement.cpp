@@ -30,8 +30,10 @@
 #include "DateComponents.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "LocalizedStrings.h"
 #include "RenderObject.h"
 #include "Text.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -45,6 +47,8 @@ DateTimeFieldElement::DateTimeFieldElement(Document* document, FieldOwner& field
     : HTMLElement(spanTag, document)
     , m_fieldOwner(&fieldOwner)
 {
+    // On accessibility, DateTimeFieldElement acts like spin button.
+    setAttribute(roleAttr, "spinbutton");
 }
 
 void DateTimeFieldElement::defaultEventHandler(Event* event)
@@ -129,8 +133,11 @@ void DateTimeFieldElement::focusOnNextField()
     m_fieldOwner->focusOnNextField(*this);
 }
 
-void DateTimeFieldElement::initialize(const AtomicString& shadowPseudoId)
+void DateTimeFieldElement::initialize(const AtomicString& shadowPseudoId, const String& axHelpText)
 {
+    setAttribute(aria_helpAttr, axHelpText);
+    setAttribute(aria_valueminAttr, String::number(minimum()));
+    setAttribute(aria_valuemaxAttr, String::number(maximum()));
     setShadowPseudoId(shadowPseudoId);
     appendChild(Text::create(document(), visibleValue()));
 }
@@ -172,6 +179,8 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
         return;
 
     textNode->replaceWholeText(newVisibleValue, ASSERT_NO_EXCEPTION);
+    setAttribute(aria_valuetextAttr, hasValue() ? newVisibleValue : AXDateTimeFieldEmptyValueText());
+    setAttribute(aria_valuenowAttr, newVisibleValue);
 
     if (eventBehavior == DispatchEvent && m_fieldOwner)
         m_fieldOwner->fieldValueChanged();

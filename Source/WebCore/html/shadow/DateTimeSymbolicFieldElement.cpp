@@ -95,6 +95,16 @@ bool DateTimeSymbolicFieldElement::hasValue() const
     return m_selectedIndex >= 0;
 }
 
+int DateTimeSymbolicFieldElement::maximum() const
+{
+    return static_cast<int>(m_symbols.size());
+}
+
+int DateTimeSymbolicFieldElement::minimum() const
+{
+    return 1;
+}
+
 void DateTimeSymbolicFieldElement::setEmptyValue(const DateComponents&, EventBehavior eventBehavior)
 {
     m_selectedIndex = invalidIndex;

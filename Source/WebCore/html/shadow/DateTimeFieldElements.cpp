@@ -28,6 +28,7 @@
 #include "DateTimeFieldElements.h"
 
 #include "DateComponents.h"
+#include "LocalizedStrings.h"
 #include <wtf/DateMath.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ PassRefPtr<DateTimeAMPMFieldElement> DateTimeAMPMFieldElement::create(Document* 
 {
     DEFINE_STATIC_LOCAL(AtomicString, ampmPsuedoId, ("-webkit-datetime-edit-ampm-field"));
     RefPtr<DateTimeAMPMFieldElement> field = adoptRef(new DateTimeAMPMFieldElement(document, fieldOwner, ampmLabels));
-    field->initialize(ampmPsuedoId);
+    field->initialize(ampmPsuedoId, AXAMPMFieldText());
     return field.release();
 }
 
@@ -68,7 +69,7 @@ PassRefPtr<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document* 
 {
     DEFINE_STATIC_LOCAL(AtomicString, hourPsuedoId, ("-webkit-datetime-edit-hour-field"));
     RefPtr<DateTimeHourFieldElement> field = adoptRef(new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
-    field->initialize(hourPsuedoId);
+    field->initialize(hourPsuedoId, AXHourFieldText());
     return field.release();
 }
 
@@ -104,7 +105,7 @@ PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::cre
 {
     DEFINE_STATIC_LOCAL(AtomicString, millisecondPsuedoId, ("-webkit-datetime-edit-millisecond-field"));
     RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner));
-    field->initialize(millisecondPsuedoId);
+    field->initialize(millisecondPsuedoId, AXMillisecondFieldText());
     return field.release();
 }
 
@@ -129,7 +130,7 @@ PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Docume
 {
     DEFINE_STATIC_LOCAL(AtomicString, minutePsuedoId, ("-webkit-datetime-edit-minute-field"));
     RefPtr<DateTimeMinuteFieldElement> field = adoptRef(new DateTimeMinuteFieldElement(document, fieldOwner));
-    field->initialize(minutePsuedoId);
+    field->initialize(minutePsuedoId, AXMinuteFieldText());
     return field.release();
 }
 
@@ -154,7 +155,7 @@ PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Docume
 {
     DEFINE_STATIC_LOCAL(AtomicString, secondPsuedoId, ("-webkit-datetime-edit-second-field"));
     RefPtr<DateTimeSecondFieldElement> field = adoptRef(new DateTimeSecondFieldElement(document, fieldOwner));
-    field->initialize(secondPsuedoId);
+    field->initialize(secondPsuedoId, AXSecondFieldText());
     return field.release();
 }
 

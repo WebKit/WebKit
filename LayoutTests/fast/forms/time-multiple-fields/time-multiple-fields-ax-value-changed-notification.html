@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id=test type="time" value="12:34:56.789">
+<script>
+description('This test checks value changed accessibility notifications.');
+
+function enableAccessibility()
+{
+    if (!window.accessibilityController) {
+        debug("Please run inside DumpRenderTree.");
+        return;
+    }
+
+    accessibilityController.addNotificationListener(function (element, notification) {
+        if (notification == 'FocusedUIElementChanged' || notification == 'ValueChanged') {
+            debug(notification + ' ' + element.helpText + '=' + element.valueDescription);
+        }
+    });
+}
+
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+
+var testInput = document.getElementById("test");
+
+enableAccessibility();
+testInput.focus();
+keyDown('\t');
+keyDown('4');
+keyDown('upArrow');
+
+window.jsTestIsAsync = true;
+
+window.setTimeout(function () {
+    debug('');
+    testInput.parentNode.removeChild(testInput);
+    finishJSTest();
+}, 1);
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

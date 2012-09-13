@@ -1,3 +1,21 @@
+2012-09-12  Yoshifumi Inoue  <yosin@chromium.org>
+
+        New time input needs accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=96032
+
+        Reviewed by Chris Fleizach.
+
+        This patch adds two tests for checking accessibility functionalities
+        in multiple fields time input UI.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-ax-aria-attributes-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-ax-aria-attributes.html: Added to check ARIA attributes used in multiple fields time input UI.
+        * fast/forms/time-multiple-fields/time-multiple-fields-ax-value-changed-notification-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-ax-value-changed-notification.html: Added to check accessibility notification supports in multiple fields time input UI.
+
 2012-09-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

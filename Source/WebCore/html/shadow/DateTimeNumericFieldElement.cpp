@@ -111,6 +111,16 @@ bool DateTimeNumericFieldElement::hasValue() const
     return m_hasValue;
 }
 
+int DateTimeNumericFieldElement::maximum() const
+{
+    return m_range.maximum;
+}
+
+int DateTimeNumericFieldElement::minimum() const
+{
+    return m_range.minimum;
+}
+
 void DateTimeNumericFieldElement::setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior eventBehavior)
 {
     m_lastDigitCharTime = 0;
