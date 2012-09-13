@@ -1507,16 +1507,8 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
         }
 
         if (o->hasOverflowClip()) {
-            // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
-            // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
-            // anyway if its size does change.
             RenderBox* boxParent = toRenderBox(o);
-
-            LayoutRect repaintRect(rect);
-            repaintRect.move(-boxParent->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
-
-            LayoutRect boxRect(LayoutPoint(), boxParent->cachedSizeForOverflowClip());
-            rect = intersection(repaintRect, boxRect);
+            boxParent->applyCachedClipAndScrollOffsetForRepaint(rect);
             if (rect.isEmpty())
                 return;
         }

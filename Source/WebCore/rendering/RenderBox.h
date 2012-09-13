@@ -509,6 +509,7 @@ public:
 
     IntSize scrolledContentOffset() const;
     LayoutSize cachedSizeForOverflowClip() const;
+    void applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const;
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
