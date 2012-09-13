@@ -202,7 +202,11 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     if (m_hasFilterThatMovesPixels)
         operations.getOutsets(m_topOutset, m_rightOutset, m_bottomOutset, m_leftOutset);
-    m_effects.clear();
+    
+    // Keep the old effects on the stack until we've created the new effects.
+    // New FECustomFilters can reuse cached resources from old FECustomFilters.
+    FilterEffectList oldEffects;
+    m_effects.swap(oldEffects);
 
     RefPtr<FilterEffect> previousEffect = m_sourceGraphic;
     for (size_t i = 0; i < operations.operations().size(); ++i) {
