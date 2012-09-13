@@ -1,5 +1,11 @@
 2012-09-13  James Robinson  <jamesr@chromium.org>
 
+        PlatformGestureCurveTest compile fix pt 2
+
+        * tests/PlatformGestureCurveTest.cpp:
+
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
         Fix compile warning/error on windows - literal that isn't exactly representable as a float needs "f" suffix.
 
         * tests/PlatformGestureCurveTest.cpp:

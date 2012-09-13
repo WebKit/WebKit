@@ -101,7 +101,7 @@ TEST(PlatformGestureCurve, flingCurveTouch)
     MockPlatformGestureCurveTarget target;
     // Explicitly parametrized to make test non-brittle in face of
     // parameter changes.
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0), -5.70762e+03, 1.72e+02, 3.7e+00, 1.3), &target);
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0), -5.70762e+03f, 1.72e+02f, 3.7e+00f, 1.3f), &target);
 
     // Note: the expectations below are dependent on the curve parameters hard
     // coded into the create call above.
