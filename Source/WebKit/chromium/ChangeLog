@@ -1,3 +1,9 @@
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
+        Fix compile warning/error on windows - literal that isn't exactly representable as a float needs "f" suffix.
+
+        * tests/PlatformGestureCurveTest.cpp:
+
 2012-09-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [Chromium] REGRESSION(r127457): Context menu on textarea is displayed in the wrong place
