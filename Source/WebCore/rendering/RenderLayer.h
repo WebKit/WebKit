@@ -563,8 +563,6 @@ public:
     typedef unsigned CalculateLayerBoundsFlags;
     static IntRect calculateLayerBounds(const RenderLayer*, const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags);
     
-    void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
-
     // WARNING: This method returns the offset for the parent as this is what updateLayerPositions expects.
     LayoutPoint computeOffsetFromRoot(bool& hasLayerOffset) const;
 

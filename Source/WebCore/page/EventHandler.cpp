@@ -2624,7 +2624,7 @@ bool EventHandler::sendContextMenuEventForKey()
     HitTestResult result(position);
     result.setInnerNode(targetNode);
     HitTestRequest request(HitTestRequest::Active);
-    doc->renderView()->layer()->updateHoverActiveState(request, result);
+    doc->updateHoverActiveState(request, result);
     doc->updateStyleIfNeeded();
    
     // The contextmenu event is a mouse event even when invoked using the keyboard.

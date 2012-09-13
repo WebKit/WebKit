@@ -3472,9 +3472,6 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     if (node && !result.URLElement())
         result.setURLElement(static_cast<Element*>(node->enclosingLinkEventParentOrSelf()));
 
-    // Next set up the correct :hover/:active state along the new chain.
-    updateHoverActiveState(request, result);
-    
     // Now return whether we were inside this layer (this will always be true for the root
     // layer).
     return insideLayer;
@@ -4504,118 +4501,6 @@ void RenderLayer::setParent(RenderLayer* parent)
     if (m_parent && !renderer()->documentBeingDestroyed())
         compositor()->layerWasAdded(m_parent, this);
 #endif
-}
-
-static RenderObject* commonAncestor(RenderObject* obj1, RenderObject* obj2)
-{
-    if (!obj1 || !obj2)
-        return 0;
-
-    for (RenderObject* currObj1 = obj1; currObj1; currObj1 = currObj1->hoverAncestor())
-        for (RenderObject* currObj2 = obj2; currObj2; currObj2 = currObj2->hoverAncestor())
-            if (currObj1 == currObj2)
-                return currObj1;
-
-    return 0;
-}
-
-void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestResult& result)
-{
-    // We don't update :hover/:active state when the result is marked as readOnly.
-    if (request.readOnly())
-        return;
-
-    Document* doc = renderer()->document();
-
-    Node* activeNode = doc->activeNode();
-    if (activeNode && !request.active()) {
-        // We are clearing the :active chain because the mouse has been released.
-        for (RenderObject* curr = activeNode->renderer(); curr; curr = curr->parent()) {
-            if (curr->node() && !curr->isText()) {
-                curr->node()->setActive(false);
-                curr->node()->clearInActiveChain();
-            }
-        }
-        doc->setActiveNode(0);
-    } else {
-        Node* newActiveNode = result.innerNode();
-        if (!activeNode && newActiveNode && request.active() && !request.touchMove()) {
-            // We are setting the :active chain and freezing it. If future moves happen, they
-            // will need to reference this chain.
-            for (RenderObject* curr = newActiveNode->renderer(); curr; curr = curr->parent()) {
-                if (curr->node() && !curr->isText())
-                    curr->node()->setInActiveChain();
-            }
-            doc->setActiveNode(newActiveNode);
-        }
-    }
-    // If the mouse has just been pressed, set :active on the chain. Those (and only those)
-    // nodes should remain :active until the mouse is released.
-    bool allowActiveChanges = !activeNode && doc->activeNode();
-
-    // If the mouse is down and if this is a mouse move event, we want to restrict changes in 
-    // :hover/:active to only apply to elements that are in the :active chain that we froze
-    // at the time the mouse went down.
-    bool mustBeInActiveChain = request.active() && request.move();
-
-    RefPtr<Node> oldHoverNode = doc->hoverNode();
-    // Clear the :hover chain when the touch gesture is over.
-    if (request.touchRelease()) {
-        if (oldHoverNode) {
-            for (RenderObject* curr = oldHoverNode->renderer(); curr; curr = curr->parent()) {
-                if (curr->node() && !curr->isText())
-                    curr->node()->setHovered(false);
-            }
-            doc->setHoverNode(0);
-        }
-        // A touch release can not set new hover or active target.
-        return;
-    }
-
-    // Check to see if the hovered node has changed.
-    // If it hasn't, we do not need to do anything.
-    Node* newHoverNode = result.innerNode();
-    if (newHoverNode && !newHoverNode->renderer())
-        newHoverNode = result.innerNonSharedNode();
-
-    // Update our current hover node.
-    doc->setHoverNode(newHoverNode);
-
-    // We have two different objects.  Fetch their renderers.
-    RenderObject* oldHoverObj = oldHoverNode ? oldHoverNode->renderer() : 0;
-    RenderObject* newHoverObj = newHoverNode ? newHoverNode->renderer() : 0;
-    
-    // Locate the common ancestor render object for the two renderers.
-    RenderObject* ancestor = commonAncestor(oldHoverObj, newHoverObj);
-
-    Vector<RefPtr<Node>, 32> nodesToRemoveFromChain;
-    Vector<RefPtr<Node>, 32> nodesToAddToChain;
-
-    if (oldHoverObj != newHoverObj) {
-        // The old hover path only needs to be cleared up to (and not including) the common ancestor;
-        for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-            if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
-                nodesToRemoveFromChain.append(curr->node());
-        }
-    }
-
-    // Now set the hover state for our new object up to the root.
-    for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
-        if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
-            nodesToAddToChain.append(curr->node());
-    }
-
-    size_t removeCount = nodesToRemoveFromChain.size();
-    for (size_t i = 0; i < removeCount; ++i) {
-        nodesToRemoveFromChain[i]->setHovered(false);
-    }
-
-    size_t addCount = nodesToAddToChain.size();
-    for (size_t i = 0; i < addCount; ++i) {
-        if (allowActiveChanges)
-            nodesToAddToChain[i]->setActive(true);
-        nodesToAddToChain[i]->setHovered(true);
-    }
 }
 
 // Helper for the sorting of layers by z-index.

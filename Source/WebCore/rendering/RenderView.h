@@ -48,6 +48,7 @@ public:
     virtual ~RenderView();
 
     bool hitTest(const HitTestRequest&, HitTestResult&);
+    bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
 
     virtual const char* renderName() const OVERRIDE { return "RenderView"; }
 

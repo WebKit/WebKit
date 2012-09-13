@@ -118,7 +118,7 @@ bool RenderFrameBase::nodeAtPoint(const HitTestRequest& request, HitTestResult& 
             HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
             HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
 
-            bool isInsideChildFrame = childRoot->layer()->hitTest(newHitTestRequest, newHitTestLocation, result);
+            bool isInsideChildFrame = childRoot->hitTest(newHitTestRequest, newHitTestLocation, result);
             if (isInsideChildFrame)
                 return true;
 
