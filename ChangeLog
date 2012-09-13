@@ -1,3 +1,15 @@
+2012-09-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake] Remove some redundant warning flags and enable a few more warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=96654
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/cmake/WebKitHelpers.cmake: Remove a few warning flags
+        which are already enabled by -Wall and -Wextra, remove -W which
+        looks useless and also enable a few more warnings by removing
+        their -Wno-foo counterparts which were present.
+
 2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Ensure that QT is finalized before loading qt_module.prf
