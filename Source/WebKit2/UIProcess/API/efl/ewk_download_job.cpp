@@ -76,11 +76,13 @@ struct _Ewk_Download_Job {
     }
 };
 
-void ewk_download_job_ref(Ewk_Download_Job* download)
+Ewk_Download_Job* ewk_download_job_ref(Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN(download);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
     ++download->__ref;
+
+    return download;
 }
 
 void ewk_download_job_unref(Ewk_Download_Job* download)
@@ -221,8 +223,7 @@ void ewk_download_job_response_set(Ewk_Download_Job* download, Ewk_Url_Response*
     EINA_SAFETY_ON_NULL_RETURN(download);
     EINA_SAFETY_ON_NULL_RETURN(response);
 
-    ewk_url_response_ref(response);
-    download->response = response;
+    download->response = ewk_url_response_ref(response);
 }
 
 /**

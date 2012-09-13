@@ -44,8 +44,10 @@ typedef struct _Ewk_Url_Response Ewk_Url_Response;
  * Increases the reference count of the given object.
  *
  * @param response the URL response object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_url_response_ref(Ewk_Url_Response *response);
+EAPI Ewk_Url_Response *ewk_url_response_ref(Ewk_Url_Response *response);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

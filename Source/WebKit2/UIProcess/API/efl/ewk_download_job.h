@@ -70,8 +70,10 @@ typedef enum _Ewk_Download_Job_State Ewk_Download_Job_State;
  * Increases the reference count of the given object.
  *
  * @param download the download object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_download_job_ref(Ewk_Download_Job *download);
+EAPI Ewk_Download_Job *ewk_download_job_ref(Ewk_Download_Job *download);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

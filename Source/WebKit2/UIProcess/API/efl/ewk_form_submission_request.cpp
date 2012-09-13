@@ -65,10 +65,12 @@ struct _Ewk_Form_Submission_Request {
     }
 };
 
-void ewk_form_submission_request_ref(Ewk_Form_Submission_Request* request)
+Ewk_Form_Submission_Request* ewk_form_submission_request_ref(Ewk_Form_Submission_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN(request);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
     ++request->__ref;
+
+    return request;
 }
 
 void ewk_form_submission_request_unref(Ewk_Form_Submission_Request* request)

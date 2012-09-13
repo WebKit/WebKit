@@ -44,8 +44,10 @@ typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
  * Increases the reference count of the given object.
  *
  * @param service the intent service object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_intent_service_ref(Ewk_Intent_Service *service);
+EAPI Ewk_Intent_Service *ewk_intent_service_ref(Ewk_Intent_Service *service);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

@@ -65,10 +65,12 @@ struct _Ewk_Back_Forward_List_Item {
     }                                                                      \
     WKBackForwardListItemRef wkItem_ = (item)->wkItem.get()
 
-void ewk_back_forward_list_item_ref(Ewk_Back_Forward_List_Item* item)
+Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_ref(Ewk_Back_Forward_List_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN(item);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
     ++item->__ref;
+
+    return item;
 }
 
 void ewk_back_forward_list_item_unref(Ewk_Back_Forward_List_Item* item)

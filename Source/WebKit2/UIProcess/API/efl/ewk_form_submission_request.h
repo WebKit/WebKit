@@ -47,8 +47,10 @@ typedef struct _Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
  * Increases the reference count of the given object.
  *
  * @param request the request object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_form_submission_request_ref(Ewk_Form_Submission_Request *request);
+EAPI Ewk_Form_Submission_Request *ewk_form_submission_request_ref(Ewk_Form_Submission_Request *request);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

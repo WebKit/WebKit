@@ -60,10 +60,12 @@ struct _Ewk_Url_Request {
     }
 };
 
-void ewk_url_request_ref(Ewk_Url_Request* request)
+Ewk_Url_Request* ewk_url_request_ref(Ewk_Url_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN(request);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
     ++request->__ref;
+
+    return request;
 }
 
 void ewk_url_request_unref(Ewk_Url_Request* request)

@@ -73,11 +73,13 @@ struct _Ewk_Navigation_Policy_Decision {
     }
 };
 
-void ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
+Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN(decision);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
 
     ++decision->__ref;
+
+    return decision;
 }
 
 void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision* decision)

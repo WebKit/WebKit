@@ -151,8 +151,7 @@ void ewk_context_download_job_add(Ewk_Context* ewkContext, Ewk_Download_Job* ewk
     if (ewkContext->downloadJobs.contains(downloadId))
         return;
 
-    ewk_download_job_ref(ewkDownload);
-    ewkContext->downloadJobs.add(downloadId, ewkDownload);
+    ewkContext->downloadJobs.add(downloadId, ewk_download_job_ref(ewkDownload));
 }
 
 /**

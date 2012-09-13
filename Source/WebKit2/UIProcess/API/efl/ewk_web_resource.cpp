@@ -47,11 +47,13 @@ struct _Ewk_Web_Resource {
     }
 };
 
-void ewk_web_resource_ref(Ewk_Web_Resource* resource)
+Ewk_Web_Resource* ewk_web_resource_ref(Ewk_Web_Resource* resource)
 {
-    EINA_SAFETY_ON_NULL_RETURN(resource);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
 
     ++resource->__ref;
+
+    return resource;
 }
 
 void ewk_web_resource_unref(Ewk_Web_Resource* resource)

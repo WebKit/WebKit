@@ -889,8 +889,7 @@ void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIde
     Ewk_Web_Resource_Request resourceRequest = {resource, request, 0};
 
     // Keep the resource internally to reuse it later.
-    ewk_web_resource_ref(resource);
-    priv->loadingResourcesMap.add(resourceIdentifier, resource);
+    priv->loadingResourcesMap.add(resourceIdentifier, ewk_web_resource_ref(resource));
 
     evas_object_smart_callback_call(ewkView, "resource,request,new", &resourceRequest);
 }

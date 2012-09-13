@@ -67,12 +67,14 @@ struct _Ewk_Intent_Service {
     }
 };
 
-void ewk_intent_service_ref(Ewk_Intent_Service* service)
+Ewk_Intent_Service* ewk_intent_service_ref(Ewk_Intent_Service* service)
 {
 #if ENABLE(WEB_INTENTS_TAG)
-    EINA_SAFETY_ON_NULL_RETURN(service);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
     ++service->__ref;
 #endif
+
+    return service;
 }
 
 void ewk_intent_service_unref(Ewk_Intent_Service* service)

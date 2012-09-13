@@ -58,10 +58,12 @@ struct _Ewk_Url_Response {
     }
 };
 
-void ewk_url_response_ref(Ewk_Url_Response* response)
+Ewk_Url_Response* ewk_url_response_ref(Ewk_Url_Response* response)
 {
-    EINA_SAFETY_ON_NULL_RETURN(response);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
     ++response->__ref;
+
+    return response;
 }
 
 void ewk_url_response_unref(Ewk_Url_Response* response)

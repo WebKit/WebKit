@@ -44,8 +44,10 @@ typedef struct _Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
  * Increases the reference count of the given object.
  *
  * @param request the URL scheme request object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_url_scheme_request_ref(Ewk_Url_Scheme_Request *request);
+EAPI Ewk_Url_Scheme_Request *ewk_url_scheme_request_ref(Ewk_Url_Scheme_Request *request);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

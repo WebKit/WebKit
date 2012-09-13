@@ -79,12 +79,14 @@ struct _Ewk_Intent {
     }                                                          \
     WKIntentDataRef wkIntent_ = (intent)->wkIntent.get()
 
-void ewk_intent_ref(Ewk_Intent* intent)
+Ewk_Intent* ewk_intent_ref(Ewk_Intent* intent)
 {
 #if ENABLE(WEB_INTENTS)
-    EINA_SAFETY_ON_NULL_RETURN(intent);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
     ++intent->__ref;
 #endif
+
+    return intent;
 }
 
 void ewk_intent_unref(Ewk_Intent* intent)

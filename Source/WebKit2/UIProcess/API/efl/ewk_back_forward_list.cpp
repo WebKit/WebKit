@@ -95,8 +95,7 @@ static inline Eina_List* createEinaList(const Ewk_Back_Forward_List* list, WKArr
     for (size_t i = 0; i < count; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
         Ewk_Back_Forward_List_Item* item = addItemToWrapperCache(list, wkItem);
-        ewk_back_forward_list_item_ref(item);
-        result = eina_list_append(result, item);
+        result = eina_list_append(result, ewk_back_forward_list_item_ref(item));
     }
 
     return result;

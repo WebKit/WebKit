@@ -44,8 +44,10 @@ typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
  * Increases the reference count of the given object.
  *
  * @param resource the resource object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_web_resource_ref(Ewk_Web_Resource *resource);
+EAPI Ewk_Web_Resource *ewk_web_resource_ref(Ewk_Web_Resource *resource);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

@@ -1,3 +1,55 @@
+2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make _ref() functions return the object
+        https://bugs.webkit.org/show_bug.cgi?id=96604
+
+        Reviewed by Gyuyoung Kim.
+
+        Make _ref() functions return the ref'd object to
+        make them more convenient to use. Also fix their
+        usage to make use of the newly returned value.
+
+        This change is consistent with eina_stringshare_ref()
+        in EFL and g_object_ref() in glib.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (createEinaList):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (ewk_back_forward_list_item_ref):
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_download_job_add):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_ref):
+        (ewk_download_job_response_set):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (ewk_form_submission_request_ref):
+        * UIProcess/API/efl/ewk_form_submission_request.h:
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_ref):
+        * UIProcess/API/efl/ewk_intent.h:
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (ewk_intent_service_ref):
+        * UIProcess/API/efl/ewk_intent_service.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (ewk_navigation_policy_decision_ref):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (ewk_url_request_ref):
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (ewk_url_response_ref):
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (ewk_url_scheme_request_ref):
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_resource_load_initiated):
+        * UIProcess/API/efl/ewk_web_resource.cpp:
+        (ewk_web_resource_ref):
+        * UIProcess/API/efl/ewk_web_resource.h:
+
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127876.

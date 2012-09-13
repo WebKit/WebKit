@@ -44,8 +44,10 @@ typedef struct _Ewk_Back_Forward_List_Item Ewk_Back_Forward_List_Item;
  * Increases the reference count of the given object.
  *
  * @param item the back-forward list item instance to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_back_forward_list_item_ref(Ewk_Back_Forward_List_Item *item);
+EAPI Ewk_Back_Forward_List_Item *ewk_back_forward_list_item_ref(Ewk_Back_Forward_List_Item *item);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.

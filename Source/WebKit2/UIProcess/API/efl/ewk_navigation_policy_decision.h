@@ -70,8 +70,10 @@ typedef enum {
  * Increases the reference count of the given object.
  *
  * @param decision the policy decision object to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI void ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision *decision);
+EAPI Ewk_Navigation_Policy_Decision *ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision *decision);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.
