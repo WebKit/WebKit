@@ -1,3 +1,35 @@
+2012-09-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WK2] LayerTreeCoordinator should release unused UpdatedAtlases
+        https://bugs.webkit.org/show_bug.cgi?id=95072
+
+        Reviewed by Jocelyn Turcotte.
+
+        Release graphic buffers that haven't been used for a while in order to save memory.
+        This way we can give back memory to the system when no user interaction happens
+        after a period of time, for example when we are in the background.
+
+        * Shared/ShareableBitmap.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::beginContentUpdate):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::scheduleReleaseInactiveAtlases):
+        (WebKit::LayerTreeCoordinator::releaseInactiveAtlasesTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::didSwapBuffers):
+        Don't call buildLayoutIfNeeded here. It's enought to call it in beginPaintingOnAvailableBuffer
+        and this way we can track whether this atlas is used with m_areaAllocator.
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/UpdateAtlas.h:
+        (WebKit::UpdateAtlas::addTimeInactive):
+        (WebKit::UpdateAtlas::isInactive):
+        (WebKit::UpdateAtlas::isInUse):
+        (UpdateAtlas):
+
 2012-09-13  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt][WK2] fast/forms/access-key-for-all-elements.html fails

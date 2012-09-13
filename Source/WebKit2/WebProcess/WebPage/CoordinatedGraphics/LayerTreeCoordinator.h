@@ -113,6 +113,11 @@ private:
     void didPerformScheduledLayerFlush();
     void syncDisplayState();
 
+    void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
+
+    void scheduleReleaseInactiveAtlases();
+    void releaseInactiveAtlasesTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
+
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     // The layer which contains all non-composited content.
@@ -137,8 +142,8 @@ private:
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;
     bool m_shouldSyncRootLayer;
-    void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
     WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
+    WebCore::Timer<LayerTreeCoordinator> m_releaseInactiveAtlasesTimer;
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
 };

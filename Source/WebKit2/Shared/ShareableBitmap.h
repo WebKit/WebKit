@@ -60,6 +60,7 @@ namespace WebKit {
 class ShareableBitmap : public RefCounted<ShareableBitmap> {
 public:
     enum Flag {
+        NoFlags = 0,
         SupportsAlpha = 1 << 0,
     };
     typedef unsigned Flags;

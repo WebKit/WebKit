@@ -78,6 +78,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_shouldSyncFrame(false)
     , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeCoordinator::layerFlushTimerFired)
+    , m_releaseInactiveAtlasesTimer(this, &LayerTreeCoordinator::releaseInactiveAtlasesTimerFired)
     , m_layerFlushSchedulingEnabled(true)
     , m_forceRepaintAsyncCallbackID(0)
 {
@@ -634,7 +635,41 @@ PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(co
 
     static const int ScratchBufferDimension = 1024; // Should be a power of two.
     m_updateAtlases.append(adoptPtr(new UpdateAtlas(ScratchBufferDimension, flags)));
+    scheduleReleaseInactiveAtlases();
     return m_updateAtlases.last()->beginPaintingOnAvailableBuffer(handle, size, offset);
+}
+
+const double ReleaseInactiveAtlasesTimerInterval = 0.5;
+
+void LayerTreeCoordinator::scheduleReleaseInactiveAtlases()
+{
+    if (!m_releaseInactiveAtlasesTimer.isActive())
+        m_releaseInactiveAtlasesTimer.startRepeating(ReleaseInactiveAtlasesTimerInterval);
+}
+
+void LayerTreeCoordinator::releaseInactiveAtlasesTimerFired(Timer<LayerTreeCoordinator>*)
+{
+    // We always want to keep one atlas for non-composited content.
+    OwnPtr<UpdateAtlas> atlasToKeepAnyway;
+    bool foundActiveAtlasForNonCompositedContent = false;
+    for (int i = m_updateAtlases.size() - 1;  i >= 0; --i) {
+        UpdateAtlas* atlas = m_updateAtlases[i].get();
+        if (!atlas->isInUse())
+            atlas->addTimeInactive(ReleaseInactiveAtlasesTimerInterval);
+        bool usableForNonCompositedContent = atlas->flags() == ShareableBitmap::NoFlags;
+        if (atlas->isInactive()) {
+            if (!foundActiveAtlasForNonCompositedContent && !atlasToKeepAnyway && usableForNonCompositedContent)
+                atlasToKeepAnyway = m_updateAtlases[i].release();
+            m_updateAtlases.remove(i);
+        } else if (usableForNonCompositedContent)
+            foundActiveAtlasForNonCompositedContent = true;
+    }
+
+    if (!foundActiveAtlasForNonCompositedContent && atlasToKeepAnyway)
+        m_updateAtlases.append(atlasToKeepAnyway.release());
+
+    if (m_updateAtlases.size() <= 1)
+        m_releaseInactiveAtlasesTimer.stop();
 }
 
 } // namespace WebKit

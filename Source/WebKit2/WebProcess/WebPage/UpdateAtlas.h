@@ -44,6 +44,18 @@ public:
     void didSwapBuffers();
     ShareableBitmap::Flags flags() const { return m_flags; }
 
+    void addTimeInactive(double seconds)
+    {
+        ASSERT(!isInUse());
+        m_inactivityInSeconds += seconds;
+    }
+    bool isInactive() const
+    {
+        const double inactiveSecondsTolerance = 3;
+        return m_inactivityInSeconds > inactiveSecondsTolerance;
+    }
+    bool isInUse() const { return m_areaAllocator; }
+
 private:
     void buildLayoutIfNeeded();
 
@@ -51,6 +63,7 @@ private:
     OwnPtr<GeneralAreaAllocator> m_areaAllocator;
     ShareableBitmap::Flags m_flags;
     RefPtr<ShareableSurface> m_surface;
+    double m_inactivityInSeconds;
 };
 
 }
