@@ -216,7 +216,7 @@ my @features = (
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
 
     { option => "download-attribute", desc => "Toggle Download Attribute support",
-      define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value => \$downloadAttributeSupport },
+      define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isBlackBerry() || isEfl()), value => \$downloadAttributeSupport },
 
     { option => "file-system", desc => "Toggle File System support",
       define => "ENABLE_FILE_SYSTEM", default => isBlackBerry(), value => \$fileSystemSupport },

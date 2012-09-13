@@ -1,3 +1,13 @@
+2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=96462
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl/Skipped: Unskip test cases related to download attributes.
+        * platform/efl-wk2/TestExpectations: Add test cases related to download attributes because they are still failed for WK2
+
 2012-09-12  Stephanie Lewis  <slewis@apple.com>
 
         css3/filters/custom/filter-fallback-to-software.html fails on Debug WK2.

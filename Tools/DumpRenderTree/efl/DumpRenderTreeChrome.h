@@ -141,6 +141,8 @@ private:
 
     static void onFrameIntentNew(void*, Evas_Object*, void*);
     static void onFrameIntentServiceRegistration(void*, Evas_Object*, void*);
+
+    static void onDownloadRequest(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h

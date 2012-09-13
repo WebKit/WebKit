@@ -299,6 +299,7 @@ typedef struct _Ewk_Download Ewk_Download;
 /// Contains Download data.
 struct _Ewk_Download {
     const char *url; /**< URL of resource. */
+    const char *suggested_name; /**< suggested name from download attributes */
     /* to be extended */
 };
 

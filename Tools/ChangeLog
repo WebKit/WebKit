@@ -1,3 +1,20 @@
+2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=96462
+
+        Reviewed by Gyuyoung Kim.
+
+        Enable DOWNLOAD_ATTRIBUTE feature for EFL port,
+        and add "download,request" callback to the DumpRenderTree for EFL.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onDownloadRequest):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-09-12  Stephanie Lewis  <slewis@apple.com>
 
         Reduce parallism on the wk2 testers.

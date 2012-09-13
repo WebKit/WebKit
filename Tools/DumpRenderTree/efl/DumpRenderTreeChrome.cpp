@@ -98,6 +98,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
 
     ewk_view_theme_set(view, DATA_DIR"/default.edj");
 
+    evas_object_smart_callback_add(view, "download,request", onDownloadRequest, 0);
     evas_object_smart_callback_add(view, "load,resource,failed", onResourceLoadFailed, 0);
     evas_object_smart_callback_add(view, "load,resource,finished", onResourceLoadFinished, 0);
     evas_object_smart_callback_add(view, "load,started", onLoadStarted, 0);
@@ -889,4 +890,20 @@ void DumpRenderTreeChrome::onFrameIntentServiceRegistration(void*, Evas_Object*,
            serviceInfo->title,
            serviceInfo->href,
            serviceInfo->disposition);
+}
+
+void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInfo)
+{
+    // In case of "download,request", the URL need to be downloaded, not opened on the current view.
+    // Because there is no download agent for the DumpRenderTree,
+    // create a new view and load the URL on that view just for a test.
+    Evas_Object* newView = browser->createView();
+    if (!newView)
+        return;
+
+    Ewk_Download* download = static_cast<Ewk_Download*>(eventInfo);
+    ewk_view_theme_set(newView, DATA_DIR"/default.edj");
+    ewk_view_uri_set(newView, download->url);
+ 
+    browser->m_extraViews.append(newView);
 }

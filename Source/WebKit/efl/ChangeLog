@@ -1,3 +1,18 @@
+2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=96462
+
+        Reviewed by Gyuyoung Kim.
+
+        Add suggested_name field on _Ewk_Download and set it on startDownload
+        to get suggested name passed as a download attribute.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::download):
+        (WebCore::FrameLoaderClientEfl::startDownload):
+        * ewk/ewk_view.h:
+
 2012-09-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Create a toggle button for closed captions

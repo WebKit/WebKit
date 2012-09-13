@@ -1,3 +1,12 @@
+2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Support download attribute feature
+        https://bugs.webkit.org/show_bug.cgi?id=96462
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake: Enable DOWNLOAD_ATTRIBUTE feature.
+
 2012-09-12  Sami Kyostila  <skyostil@google.com>
 
         Rename OVERFLOW_SCROLLING as ACCELERATED_OVERFLOW_SCROLLING

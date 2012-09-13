@@ -144,12 +144,6 @@ http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
 
-# The EFL port has no support for DOWNLOAD_ATTRIBUTE (turning it on in CMake does not work well with the current implementation of FrameLoaderClientEfl::startDownload())
-fast/dom/HTMLAnchorElement/anchor-download-unset.html
-fast/dom/HTMLAnchorElement/anchor-download.html
-fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
-fast/dom/HTMLAnchorElement/anchor-nodownload.html
-
 # The EFL port has no support for plugins
 fast/dom/Window/Plug-ins.html
 fast/frames/sandboxed-iframe-about-blank.html

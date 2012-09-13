@@ -872,6 +872,7 @@ void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& requ
     Ewk_Download download;
 
     download.url = url.data();
+    download.suggested_name = 0;
     ewk_view_download_request(m_view, &download);
 }
 
@@ -949,15 +950,17 @@ void FrameLoaderClientEfl::setMainDocumentError(DocumentLoader* loader, const Re
     m_hasSentResponseToPlugin = false;
 }
 
-void FrameLoaderClientEfl::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
+void FrameLoaderClientEfl::startDownload(const ResourceRequest& request, const String& suggestedName)
 {
     if (!m_view)
         return;
 
     CString url = request.url().string().utf8();
+    CString suggestedNameString = suggestedName.utf8();
     Ewk_Download download;
 
     download.url = url.data();
+    download.suggested_name = suggestedNameString.data();
     ewk_view_download_request(m_view, &download);
 }
 
