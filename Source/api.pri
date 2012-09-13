@@ -27,7 +27,7 @@ CONFIG += force_independent
 
 BASE_TARGET = $$TARGET
 
-load(qt_module_config)
+load(qt_module)
 
 # Make sure the module config doesn't override our preferred build config.
 debug_and_release:if(!debug|!release) {

@@ -1,3 +1,11 @@
+2012-09-13  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fllow rename of qt_module_config.prf to qt_module.prf
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri:
+
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] syncqt isn't re-run when WebKit1.pro changes and we're building with --no-webkit2
