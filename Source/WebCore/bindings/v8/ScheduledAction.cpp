@@ -42,6 +42,7 @@
 
 #include "ScriptController.h"
 #include "V8Binding.h"
+#include "V8GCController.h"
 #include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -112,6 +113,8 @@ void ScheduledAction::execute(WorkerContext* worker)
     V8RecursionScope recursionScope(worker);
 
     if (!m_function.isEmpty()) {
+        V8GCController::checkMemoryUsage();
+
         v8::HandleScope handleScope;
 
         v8::Handle<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());

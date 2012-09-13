@@ -205,6 +205,8 @@ bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
 
 ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState* state)
 {
+    V8GCController::checkMemoryUsage();
+
     v8::HandleScope hs;
 
     if (!initializeIfNeeded())

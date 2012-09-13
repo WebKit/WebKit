@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
+#include "V8GCController.h"
 #include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -86,6 +87,8 @@ void V8WorkerContextEventListener::handleEvent(ScriptExecutionContext* context, 
 
 v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
+    V8GCController::checkMemoryUsage();
+
     v8::Local<v8::Function> handlerFunction = getListenerFunction(context);
     v8::Local<v8::Object> receiver = getReceiverObject(context, event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())

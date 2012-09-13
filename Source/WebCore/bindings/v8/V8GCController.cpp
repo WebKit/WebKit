@@ -416,7 +416,15 @@ public:
     }
 };
 
-int V8GCController::workingSetEstimateMB = 0;
+#if PLATFORM(CHROMIUM)
+static int workingSetEstimateMB = 0;
+
+static Mutex& workingSetEstimateMBMutex()
+{
+    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
+    return mutex;
+}
+#endif
 
 void V8GCController::gcEpilogue()
 {
@@ -429,7 +437,13 @@ void V8GCController::gcEpilogue()
     GCEpilogueVisitor<Node, SpecialCaseEpilogueNodeHandler, &DOMDataStore::weakNodeCallback> epilogueNodeVisitor;
     visitActiveDOMNodes(&epilogueNodeVisitor);
 
-    workingSetEstimateMB = MemoryUsageSupport::actualMemoryUsageMB();
+#if PLATFORM(CHROMIUM)
+    // The GC can happen on multiple threads in case of dedicated workers which run in-process.
+    {
+        MutexLocker locker(workingSetEstimateMBMutex());
+        workingSetEstimateMB = MemoryUsageSupport::actualMemoryUsageMB();
+    }
+#endif
 
 #ifndef NDEBUG
     // Check all survivals are weak.
@@ -452,7 +466,13 @@ void V8GCController::checkMemoryUsage()
     const int highMemoryUsageMB = MemoryUsageSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = MemoryUsageSupport::highUsageDeltaMB();
     int memoryUsageMB = MemoryUsageSupport::memoryUsageMB();
-    if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMB) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMB + highUsageDeltaMB))
+    int workingSetEstimateMBCopy;
+    {
+        MutexLocker locker(workingSetEstimateMBMutex());
+        workingSetEstimateMBCopy = workingSetEstimateMB;
+    }
+
+    if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMBCopy) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMBCopy + highUsageDeltaMB))
         v8::V8::LowMemoryNotification();
 #endif
 }

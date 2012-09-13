@@ -43,9 +43,6 @@ public:
     static void checkMemoryUsage();
     static void hintForCollectGarbage();
     static void collectGarbage();
-
-private:
-    static int workingSetEstimateMB;
 };
 
 }
