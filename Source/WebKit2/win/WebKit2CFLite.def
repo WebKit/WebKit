@@ -118,7 +118,6 @@ EXPORTS
         ?detachThread@WTF@@YAXI@Z
         ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
-        ?iconURLs@Document@WebCore@@QAEABV?$Vector@UIconURL@WebCore@@$0A@@WTF@@XZ
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
@@ -148,9 +147,6 @@ EXPORTS
         ??1ClientRectList@WebCore@@QAE@XZ
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
-        ??1ContextDestructionObserver@WebCore@@MAE@XZ
-        ?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ
-        ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
 	?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ
@@ -215,11 +211,12 @@ EXPORTS
         ?setCanStartMedia@Page@WebCore@@QAEX_N@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z
-        ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
+        ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
+        ?mockScrollbarsEnabled@Settings@WebCore@@SA_NXZ
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
@@ -256,6 +253,9 @@ EXPORTS
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?utf8@String@WTF@@QBE?AVCString@2@_N@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
+        ??1ContextDestructionObserver@WebCore@@MAE@XZ
+        ?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ
+        ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N00@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
         ?restrictScaleFactorToInitialScaleIfNotUserScalable@WebCore@@YAXAAUViewportAttributes@1@@Z
@@ -269,10 +269,10 @@ EXPORTS
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
         ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
         ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
-	??1ContextDestructionObserver@WebCore@@MAE@XZ
         ?jsStringWithCacheSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?registerURLSchemeAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
         ?removeURLSchemeRegisteredAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
+        ?iconURLs@Document@WebCore@@QAEABV?$Vector@UIconURL@WebCore@@$0A@@WTF@@XZ
         ?numberOfPages@PrintContext@WebCore@@SAHPAVFrame@2@ABVFloatSize@2@@Z
         ?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@PBDH@Z
         ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z
