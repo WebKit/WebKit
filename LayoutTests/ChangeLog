@@ -1,3 +1,14 @@
+2012-09-13  Ojan Vafai  <ojan@chromium.org>
+
+        fast/table/bad-replaced-sizing-preferred-logical-widths.html is failing on Mac, Chromium-Mac, GTK, EFL
+        https://bugs.webkit.org/show_bug.cgi?id=96594
+
+        Reviewed by Tony Chang.
+
+        Remove the text so that this test gets metrics the same across platforms.
+
+        * fast/table/bad-replaced-sizing-preferred-logical-widths.html:
+
 2012-09-13  James Robinson  <jamesr@chromium.org>
 
         Unreviewed gardening. Fix lint error in my last TestExpectations patch - whoops!
