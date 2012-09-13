@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
+#include "RenderWidget.h"
 #include "RootInlineBox.h"
 #include "UndoManager.h"
 #include <wtf/CurrentTime.h>
@@ -418,13 +419,15 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         return false;
     }
 
+    RenderWidget::suspendWidgetHierarchyUpdates();
+
     Node* prev = child->previousSibling();
     Node* next = child->nextSibling();
     removeBetween(prev, next, child.get());
-
     childrenChanged(false, prev, next, -1);
-
     ChildNodeRemovalNotifier(this).notify(child.get());
+
+    RenderWidget::resumeWidgetHierarchyUpdates();
     dispatchSubtreeModifiedEvent();
 
     return child;
@@ -494,6 +497,7 @@ void ContainerNode::removeChildren()
     // and remove... e.g. stop loading frames, fire unload events.
     willRemoveChildren(protect.get());
 
+    RenderWidget::suspendWidgetHierarchyUpdates();
     forbidEventDispatch();
     Vector<RefPtr<Node>, 10> removedChildren;
     removedChildren.reserveInitialCapacity(childNodeCount());
@@ -535,6 +539,8 @@ void ContainerNode::removeChildren()
         ChildNodeRemovalNotifier(this).notify(removedChildren[i].get());
 
     allowEventDispatch();
+    RenderWidget::resumeWidgetHierarchyUpdates();
+
     dispatchSubtreeModifiedEvent();
 }
 
