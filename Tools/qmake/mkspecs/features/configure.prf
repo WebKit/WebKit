@@ -54,8 +54,8 @@ defineTest(runConfigure) {
         WEBKIT_CONFIG -= build_webkit1
     }
 
-    # WebKit2 not supported on Windows yet
-    win32*: WEBKIT_CONFIG -= build_webkit2
+    # WebKit2 requires OpenGL TextureMapper, which requires 3D Graphics
+    !use?(3d_graphics): WEBKIT_CONFIG -= build_webkit2
 
     export(CONFIG)
     export(WEBKIT_CONFIG)

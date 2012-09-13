@@ -1,3 +1,16 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make WebKit2 work on Windows with Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=76776
+
+        Reviewed by Tor Arne Vestbø.
+
+        WebKit2 should compile with Qt on Windows now, so enable it. This patch in fact corrects
+        the check to disable WebKit when we don't have USE_3D_GRAPHICS available, because we need
+        that for the GL TextureMapper (it's only built when that feature is set).
+
+        * qmake/mkspecs/features/configure.prf:
+
 2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Ensure that QT is finalized before loading qt_module.prf
