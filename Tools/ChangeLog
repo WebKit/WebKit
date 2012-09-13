@@ -1,5 +1,23 @@
 2012-09-12  Dirk Pranke  <dpranke@chromium.org>
 
+        refactor TestExpectations tokenization slightly in preparation for the new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=96564
+
+        Reviewed by Ojan Vafai.
+
+        This change changes how we will tokenize/lex the
+        TestExpectations files, in preparation for supporting both the
+        old syntax and the new one. This change by itself should be a
+        no-op.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._tokenize_line):
+        (TestExpectationParser):
+        (TestExpectationParser._tokenize_line_using_old_format):
+        (TestExpectationParser._tokenize_line_using_new_format):
+
+2012-09-12  Dirk Pranke  <dpranke@chromium.org>
+
         remove unused testexpectations editing code from webkitpy, garden-o-matic
         https://bugs.webkit.org/show_bug.cgi?id=96562
 

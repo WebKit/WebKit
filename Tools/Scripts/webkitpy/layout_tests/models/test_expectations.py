@@ -207,6 +207,11 @@ class TestExpectationParser(object):
 
     @classmethod
     def _tokenize_line(cls, filename, expectation_string, line_number):
+        # FIXME: Add in support for the new format as well.
+        return cls._tokenize_line_using_old_format(filename, expectation_string, line_number)
+
+    @classmethod
+    def _tokenize_line_using_old_format(cls, filename, expectation_string, line_number):
         """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance.
 
         The format of a test expectation line is:
@@ -244,6 +249,11 @@ class TestExpectationParser(object):
             expectation_line.expectations = cls._split_space_separated(test_and_expectation[1])
 
         return expectation_line
+
+    @classmethod
+    def _tokenize_line_using_new_format(cls, filename, expectation_string, line_number):
+        # FIXME: implement :).
+        raise NotImplementedError
 
     @classmethod
     def _split_space_separated(cls, space_separated_string):
