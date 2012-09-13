@@ -232,6 +232,10 @@
                         r"|Source/WebCore/svg/graphics/filters"
                         r"|Source/WebCore/svg/graphics/.*Filter.*",
         },
+        "SVG": {
+            "filename": r"Source/WebCore/svg"
+                        r"|Source/WebCore/rendering/svg",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -269,6 +273,7 @@
         "SecurityCritical": [ "abarth@webkit.org" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
+        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
         "TextureMapper" : [ "noam.rosenthal@nokia.com" ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],

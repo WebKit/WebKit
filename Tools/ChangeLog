@@ -1,3 +1,13 @@
+2012-09-13  Stephen Chenney  <schenney@chromium.org>
+
+        Add an SVG entry to the watchlist
+
+        Unreviewed config change.
+
+        * Scripts/webkitpy/common/config/watchlist:
+        - Created a new SVG watchlist label covering WebCore/svg and WebCore/rendering/svg
+        - Added myself and pdr as watchers
+
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make WebKit2 work on Windows with Qt 5
