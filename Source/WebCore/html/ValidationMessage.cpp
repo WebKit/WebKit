@@ -46,6 +46,7 @@
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "ValidationMessageClient.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -60,6 +61,11 @@ ALWAYS_INLINE ValidationMessage::ValidationMessage(HTMLFormControlElement* eleme
 
 ValidationMessage::~ValidationMessage()
 {
+    if (ValidationMessageClient* client = validationMessageClient()) {
+        client->hideValidationMessage(*m_element);
+        return;
+    }
+
     deleteBubbleTree();
 }
 
@@ -68,16 +74,25 @@ PassOwnPtr<ValidationMessage> ValidationMessage::create(HTMLFormControlElement* 
     return adoptPtr(new ValidationMessage(element));
 }
 
+ValidationMessageClient* ValidationMessage::validationMessageClient() const
+{
+    if (Page* page = m_element->document()->page())
+        return page->validationMessageClient();
+    return 0;
+}
+
 void ValidationMessage::updateValidationMessage(const String& message)
 {
     String updatedMessage = message;
-    // HTML5 specification doesn't ask UA to show the title attribute value
-    // with the validationMessage. However, this behavior is same as Opera
-    // and the specification describes such behavior as an example.
-    const AtomicString& title = m_element->fastGetAttribute(titleAttr);
-    if (!updatedMessage.isEmpty() && !title.isEmpty()) {
-        updatedMessage.append('\n');
-        updatedMessage.append(title);
+    if (!validationMessageClient()) {
+        // HTML5 specification doesn't ask UA to show the title attribute value
+        // with the validationMessage. However, this behavior is same as Opera
+        // and the specification describes such behavior as an example.
+        const AtomicString& title = m_element->fastGetAttribute(titleAttr);
+        if (!updatedMessage.isEmpty() && !title.isEmpty()) {
+            updatedMessage.append('\n');
+            updatedMessage.append(title);
+        }
     }
 
     if (updatedMessage.isEmpty()) {
@@ -89,6 +104,11 @@ void ValidationMessage::updateValidationMessage(const String& message)
 
 void ValidationMessage::setMessage(const String& message)
 {
+    if (ValidationMessageClient* client = validationMessageClient()) {
+        client->showValidationMessage(*m_element, message);
+        return;
+    }
+
     // Don't modify the DOM tree in this context.
     // If so, an assertion in Node::isFocusable() fails.
     ASSERT(!message.isEmpty());
@@ -102,6 +122,7 @@ void ValidationMessage::setMessage(const String& message)
 
 void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
 {
+    ASSERT(!validationMessageClient());
     ASSERT(m_messageHeading);
     ASSERT(m_messageBody);
     m_messageHeading->removeAllChildren();
@@ -153,6 +174,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
 
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
+    ASSERT(!validationMessageClient());
     ShadowRoot* shadowRoot = m_element->ensureUserAgentShadowRoot();
 
     Document* doc = m_element->document();
@@ -199,6 +221,11 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 
 void ValidationMessage::requestToHideMessage()
 {
+    if (ValidationMessageClient* client = validationMessageClient()) {
+        client->hideValidationMessage(*m_element);
+        return;
+    }
+
     // We must not modify the DOM tree in this context by the same reason as setMessage().
     m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
     m_timer->startOneShot(0);
@@ -206,13 +233,14 @@ void ValidationMessage::requestToHideMessage()
 
 bool ValidationMessage::shadowTreeContains(Node* node) const
 {
-    if (!m_bubble)
+    if (validationMessageClient() || !m_bubble)
         return false;
     return m_bubble->treeScope() == node->treeScope();
 }
 
 void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
 {
+    ASSERT(!validationMessageClient());
     if (m_bubble) {
         m_messageHeading = 0;
         m_messageBody = 0;
@@ -224,6 +252,8 @@ void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
 
 bool ValidationMessage::isVisible() const
 {
+    if (ValidationMessageClient* client = validationMessageClient())
+        return client->isValidationMessageVisible(*m_element);
     return !m_message.isEmpty();
 }
 

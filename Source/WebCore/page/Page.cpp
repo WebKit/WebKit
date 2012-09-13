@@ -133,6 +133,7 @@ Page::Page(PageClients& pageClients)
     , m_backForwardController(BackForwardController::create(this, pageClients.backForwardClient))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
+    , m_validationMessageClient(pageClients.validationMessageClient)
     , m_frameCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
@@ -1227,6 +1228,7 @@ Page::PageClients::PageClients()
     , editorClient(0)
     , dragClient(0)
     , inspectorClient(0)
+    , validationMessageClient(0)
 {
 }
 

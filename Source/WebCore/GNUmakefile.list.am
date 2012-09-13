@@ -4069,6 +4069,7 @@ webcore_sources += \
 	Source/WebCore/page/UserScriptTypes.h \
 	Source/WebCore/page/UserStyleSheet.h \
 	Source/WebCore/page/UserStyleSheetTypes.h \
+	Source/WebCore/page/ValidationMessageClient.h \
 	Source/WebCore/page/WebCoreKeyboardUIMode.h \
 	Source/WebCore/page/WebKitAnimation.h \
 	Source/WebCore/page/WebKitAnimation.cpp \

@@ -6229,6 +6229,7 @@
 		F508246E1548D96200A119AB /* MockPagePopupDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F508246C1548D96200A119AB /* MockPagePopupDriver.cpp */; };
 		F508246F1548D96200A119AB /* MockPagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F508246D1548D96200A119AB /* MockPagePopupDriver.h */; };
 		F5122C901547FA1B0028A93B /* PagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */; };
+		F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F513A3E915FF4841001526DB /* ValidationMessageClient.h */; };
 		F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = F5142C68123F12B000F5BD4C /* LocalizedNumber.h */; };
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
 		F544F78815CFB2A800AF33A8 /* Localizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* Localizer.cpp */; };
@@ -13618,6 +13619,7 @@
 		F508246C1548D96200A119AB /* MockPagePopupDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MockPagePopupDriver.cpp; path = testing/MockPagePopupDriver.cpp; sourceTree = SOURCE_ROOT; };
 		F508246D1548D96200A119AB /* MockPagePopupDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockPagePopupDriver.h; path = testing/MockPagePopupDriver.h; sourceTree = SOURCE_ROOT; };
 		F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PagePopupDriver.h; sourceTree = "<group>"; };
+		F513A3E915FF4841001526DB /* ValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidationMessageClient.h; sourceTree = "<group>"; };
 		F5142C68123F12B000F5BD4C /* LocalizedNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedNumber.h; sourceTree = "<group>"; };
 		F523D23B02DE4396018635CA /* HTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23C02DE4396018635CA /* HTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -15910,6 +15912,7 @@
 				BCA2B08A10505BCD0043BD1C /* UserScriptTypes.h */,
 				BC8BF150105813BF00A40A07 /* UserStyleSheet.h */,
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
+				F513A3E915FF4841001526DB /* ValidationMessageClient.h */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */,
 				319E69AD13299BBD004AC91A /* WebKitAnimation.h */,
@@ -25376,6 +25379,7 @@
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
 				2E3BBF081162DA1100B9409A /* UUID.h in Headers */,
 				F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */,
+				F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */,
 				15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */,
 				FD3160AF12B026F700C1A359 /* VectorMath.h in Headers */,
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,

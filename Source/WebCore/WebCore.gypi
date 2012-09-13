@@ -261,6 +261,7 @@
             'page/UserScriptTypes.h',
             'page/UserStyleSheet.h',
             'page/UserStyleSheetTypes.h',
+            'page/ValidationMessageClient.h',
             'page/WebCoreKeyboardUIMode.h',
             'page/WindowFeatures.h',
             'page/WindowFocusAllowedIndicator.h',

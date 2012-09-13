@@ -460,10 +460,7 @@ namespace WebCore {
         void setQuantizedMemoryInfoEnabled(bool flag) { m_quantizedMemoryInfoEnabled = flag; }
         bool quantizedMemoryInfoEnabled() const { return m_quantizedMemoryInfoEnabled; }
 
-        // This setting will be removed when an HTML5 compatibility issue is
-        // resolved and WebKit implementation of interactive validation is
-        // completed. See http://webkit.org/b/40520, http://webkit.org/b/40747,
-        // and http://webkit.org/b/40908
+        // This feature requires an implementation of ValidationMessageClient.
         void setInteractiveFormValidationEnabled(bool flag) { m_interactiveFormValidation = flag; }
         bool interactiveFormValidationEnabled() const { return m_interactiveFormValidation; }
 

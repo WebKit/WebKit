@@ -2012,6 +2012,7 @@ HEADERS += \
     page/SpeechInputResult.h \
     page/SpeechInputResultList.h \
     page/TouchAdjustment.h \
+    page/ValidationMessageClient.h \
     page/WebKitAnimation.h \
     page/WebKitAnimationList.h \
     page/WindowFeatures.h \

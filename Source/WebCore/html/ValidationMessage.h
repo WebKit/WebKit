@@ -42,7 +42,10 @@ namespace WebCore {
 class HTMLElement;
 class HTMLFormControlElement;
 class Node;
+class ValidationMessageClient;
 
+// FIXME: We should remove the code for !validationMessageClient() when all
+// ports supporting interactive validation switch to ValidationMessageClient.
 class ValidationMessage {
     WTF_MAKE_NONCOPYABLE(ValidationMessage);
 public:
@@ -55,6 +58,7 @@ public:
 
 private:
     ValidationMessage(HTMLFormControlElement*);
+    ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
     void setMessageDOMAndStartTimer(Timer<ValidationMessage>* = 0);
     void buildBubbleTree(Timer<ValidationMessage>*);

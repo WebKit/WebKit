@@ -85,6 +85,7 @@ namespace WebCore {
     class ScrollingCoordinator;
     class Settings;
     class StorageNamespace;
+    class ValidationMessageClient;
 
     typedef uint64_t LinkHash;
 
@@ -124,6 +125,7 @@ namespace WebCore {
             DragClient* dragClient;
             InspectorClient* inspectorClient;
             RefPtr<BackForwardList> backForwardClient;
+            ValidationMessageClient* validationMessageClient;
         };
 
         explicit Page(PageClients&);
@@ -186,6 +188,7 @@ namespace WebCore {
 #if ENABLE(POINTER_LOCK)
         PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
 #endif
+        ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient; }
 
         ScrollingCoordinator* scrollingCoordinator();
 
@@ -382,6 +385,7 @@ namespace WebCore {
         RefPtr<RenderTheme> m_theme;
 
         EditorClient* m_editorClient;
+        ValidationMessageClient* m_validationMessageClient;
 
         int m_frameCount;
         String m_groupName;
