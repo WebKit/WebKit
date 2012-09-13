@@ -1,5 +1,19 @@
 2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Ensure that QT is finalized before loading qt_module.prf
+
+        As qt_module.prf does dependency tracking based on the content of the
+        QT variable. The intermediate WebKit modules modify the variable in
+        their .pri files, so we have to ensure we've loaded all the modules
+        before loading qt_module.
+
+        Reviewed by Tor Arne Vestbø.
+        Patch by Oswald Buddenhagen <oswald.buddenhagen@nokia.com> on 2012-09-13
+
+        * Source/api.pri:
+
+2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Make sure LIBS, PKGCONFIG, and QT, do not affect QtWebKit's prl file
 
         Unless it's actually a dependency of the public QtWebKit API.

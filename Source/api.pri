@@ -4,13 +4,30 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+# Use Qt5's module system
+load(qt_build_config)
+
 TEMPLATE = lib
 TARGET = QtWebKit
 
 WEBKIT_DESTDIR = $${ROOT_BUILD_DIR}/lib
 
-# Use Qt5's module system
-load(qt_build_config)
+WEBKIT += wtf javascriptcore webcore
+
+build?(webkit1): WEBKIT += webkit1
+build?(webkit2): WEBKIT += webkit2
+
+# Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
+# file, which in turn runs syncqt to update the forwarding headers.
+build?(webkit1): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
+build?(webkit2): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
+
+use?(3D_GRAPHICS): WEBKIT += angle
+
+# We load the relevant modules here, so that the effects of each module
+# on the QT variable can be picked up when we later load(qt_module).
+load(webkit_modules)
+
 MODULE = webkit
 MODULE_PRI = ../Tools/qmake/qt_webkit.pri
 
@@ -72,18 +89,6 @@ macx {
         QMAKE_EXTRA_TARGETS += change_install_name default_install_target
     }
 }
-
-WEBKIT += wtf javascriptcore webcore
-
-build?(webkit1): WEBKIT += webkit1
-build?(webkit2): WEBKIT += webkit2
-
-# Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
-# file, which in turn runs syncqt to update the forwarding headers.
-build?(webkit1): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
-build?(webkit2): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
-
-use?(3D_GRAPHICS): WEBKIT += angle
 
 qnx {
     # see: https://bugs.webkit.org/show_bug.cgi?id=93460

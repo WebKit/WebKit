@@ -183,16 +183,6 @@ contains(QT, webkit) {
     }
 }
 
-# Reorder libraries so that the link and include order is correct,
-# and make sure the case matches the original case.
-libraries = WebKit1 WebKit2 WebCore ANGLE JavaScriptCore WTF
-for(library, libraries) {
-    contains(WEBKIT, $$lower($$library)) {
-        WEBKIT -= $$lower($$library)
-        WEBKIT *= $$library
-    }
-}
-
 defineTest(needToLink) {
     # The main dynamic library always needs to link in the intermediate libraries
     contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): return(true)
@@ -213,33 +203,17 @@ defineTest(needToLink) {
     return(false)
 }
 
-for(library, WEBKIT) {
-    # Juggle LIBS to keep the static link order correct
-    existing_libs = $$LIBS
-    unset(LIBS)
+# Make sure we have loaded the relevant modules, so the include paths,
+# etc, are correct, and we can use WEBKIT.foo.dependent_libs below.
+load(webkit_modules)
 
-    # We definitly need include paths and such (this will set
-    # SOURCE_DIR to the right path so we can use it below).
-    library_identifier = $$lower($$library)
-    include(../modules/$${library_identifier}.prf)
-
-    # More juggling
-    dependent_libs = $$LIBS
-    unset(LIBS)
-
-    # But we might also need to link against it
-    needToLink() {
+# We might need to link against the WebKit intermediate libraries
+needToLink() {
+    for(library, WEBKIT) {
+        library_identifier = $$lower($$library)
         linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
-        LIBS += $$dependent_libs
+        LIBS += $$eval(WEBKIT.$${library_identifier}.dependent_libs)
     }
-
-    # Anything not linking dynamically to QtWebKit should make sure to have its export
-    # macros syncrhonized with the code that it will be linked with statically.
-    !contains(QT, webkit) {
-        DEFINES += STATICALLY_LINKED_WITH_$$library
-    }
-
-    LIBS = $$existing_libs $$LIBS
 }
 
 # Sanitize PKGCONFIG and LIBS, as we don't want any of these libraries
