@@ -128,6 +128,7 @@ public:
     static void resetTrackedRepaints(WebKitWebFrame*);
 
     static void clearMemoryCache();
+    static void clearApplicationCache();
 
 private:
     static bool s_drtRun;

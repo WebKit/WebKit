@@ -770,6 +770,7 @@ static void runTest(const string& inputLine)
 
     WebCoreTestSupport::resetInternalsObject(webkit_web_frame_get_global_context(mainFrame));
     DumpRenderTreeSupportGtk::clearMemoryCache();
+    DumpRenderTreeSupportGtk::clearApplicationCache();
 
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");

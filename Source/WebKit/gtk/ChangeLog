@@ -1,3 +1,18 @@
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Clear application cache between tests in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=96543
+
+        Reviewed by Philippe Normand.
+
+        Add a method to the DumpRenderTreeSupportGtk class that upon calling
+        clears the application cache and vacuums the database file.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::clearApplicationCache):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-09-12  Siraj Razick  <siraj.razick@collabora.co.uk>
 
         [GTK] Update AcceleratedCompositingContextClutter to match AcceleratedCompositingContext.h API update
