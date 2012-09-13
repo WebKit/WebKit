@@ -1,5 +1,17 @@
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Add configuration for production builds
+        https://bugs.webkit.org/show_bug.cgi?id=96607
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add configuration tweaks for production builds, to ease memory pressure with the GNU toolchain
+        and enable all-in-one-files optimizations.
+
+        * qmake/mkspecs/features/production_build.prf: Added.
+
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] GStreamer detection does not work when cross-compiling
         https://bugs.webkit.org/show_bug.cgi?id=96608
 
