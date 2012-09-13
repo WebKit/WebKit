@@ -86,7 +86,7 @@ String UserAgentQt::standardUserAgent(const String &applicationNameForUserAgent,
 #ifdef Q_OS_AIX
             "AIX"
 #elif defined Q_OS_WIN32
-            windowsVersionForUAString()
+            windowsVersionForUAString().latin1().data()
 #elif defined Q_OS_DARWIN
 #ifdef __i386__ || __x86_64__
             "Intel Mac OS X"
