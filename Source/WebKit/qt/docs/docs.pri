@@ -1,9 +1,4 @@
-QDOC = $$QT.core.bins/qdoc
-
-$$unixstyle {
-} else {
-    QDOC = $$replace(QDOC, "qdoc", "qdoc3.exe")
-}
+qtPrepareTool(QDOC, qdoc)
 
 QDOC = SRCDIR=$$PWD/../../.. OUTPUT_DIR=$${ROOT_BUILD_DIR} $$QDOC
 
