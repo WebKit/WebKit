@@ -1,5 +1,11 @@
 2012-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another typo fix. Apparently, I "fixed" the wrong line in the previous commit.
+
+        * coding/coding-style.html:
+
+2012-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo per Darin's comment.
 
         * coding/coding-style.html:
