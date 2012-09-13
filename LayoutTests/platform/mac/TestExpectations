@@ -355,6 +355,10 @@ BUGWK95501 SKIP : http/tests/security/inactive-document-with-empty-security-orig
 // (r128375) new test fails on Mac
 BUGWK96583 : fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html = TEXT
 
+BUG_OJAN : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
+BUG_OJAN : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
+BUG_OJAN : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE
+
 // New test added in r128389
 BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
 

@@ -2130,9 +2130,12 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
     // only at explicit containers.
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
-    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto() && isHorizontalWritingMode() == cb->isHorizontalWritingMode()) {
+    LayoutUnit rootMarginBorderPaddingHeight = 0;
+    while (!cb->isRenderView() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto() && isHorizontalWritingMode() == cb->isHorizontalWritingMode()) {
         if (!document()->inQuirksMode() && !cb->isAnonymousBlock())
             break;
+        if (cb->isBody() || cb->isRoot())
+            rootMarginBorderPaddingHeight += cb->marginBefore() + cb->marginAfter() + cb->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
         cb = cb->containingBlock();
         cb->addPercentHeightDescendant(const_cast<RenderBox*>(this));
@@ -2182,7 +2185,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
             availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
         }
-    } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isOutOfFlowPositionedWithSpecifiedHeight) {
+    } else if (cb->isRenderView() || isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
         LayoutUnit oldHeight = cb->logicalHeight();
@@ -2193,6 +2196,8 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 
     if (availableHeight == -1)
         return availableHeight;
+
+    availableHeight -= rootMarginBorderPaddingHeight;
 
     LayoutUnit result = valueForLength(height, availableHeight);
     if (includeBorderPadding) {

@@ -1,5 +1,27 @@
 2012-09-13  Ojan Vafai  <ojan@chromium.org>
 
+        percentage heights in quirks mode with auto-sized body are computed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=96426
+
+        Reviewed by Tony Chang.
+
+        * fast/css/percentage-height-auto-sized-body-quirks-expected.txt: Added.
+        * fast/css/percentage-height-auto-sized-body-quirks.html: Added.
+        Verified that this matches IE9, FF15 and Opera12.
+
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt:
+        * platform/chromium-linux/fast/table/height-percent-test-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-win/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug19526-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/mac/fast/table/height-percent-test-expected.txt:
+        Verified that all the changes match FF15.
+
+2012-09-13  Ojan Vafai  <ojan@chromium.org>
+
         fast/table/bad-replaced-sizing-preferred-logical-widths.html is failing on Mac, Chromium-Mac, GTK, EFL
         https://bugs.webkit.org/show_bug.cgi?id=96594
 
