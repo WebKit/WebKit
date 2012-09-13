@@ -99,10 +99,12 @@ TEST(PlatformGestureCurve, flingCurveTouch)
 {
     double initialVelocity = 5000;
     MockPlatformGestureCurveTarget target;
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::createForTouchPad(FloatPoint(initialVelocity, 0)), &target);
+    // Explicitly parametrized to make test non-brittle in face of
+    // parameter changes.
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0), -5.70762e+03, 1.72e+02, 3.7e+00, 1.3), &target);
 
-    // Note: the expectations below are dependent on the value of sigma hard-coded in the curve parameters.
-    //       If the parameters change, then the tests values/expectations will need to be updated.
+    // Note: the expectations below are dependent on the curve parameters hard
+    // coded into the create call above.
     EXPECT_TRUE(animation->animate(0));
     EXPECT_TRUE(animation->animate(0.25));
     EXPECT_TRUE(animation->animate(0.45)); // Use non-uniform tick spacing.
