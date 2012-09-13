@@ -33,10 +33,10 @@
  */
 #undef DEBUG_MEM_LEAKS
 
-const int defaultTileWidth = 256;
-const int defaultTileHeigth = 256;
+static const int defaultTileWidth = 256;
+static const int defaultTileHeigth = 256;
 
-const float zoomStepMinimum = 0.01;
+static const float zoomStepMinimum = 0.01;
 
 #define TILE_SIZE_AT_ZOOM(SIZE, ZOOM) ((int)roundf((SIZE) * (ZOOM)))
 #define TILE_ZOOM_AT_SIZE(SIZE, ORIG_TILE) ((float)(SIZE) / (float)(ORIG_TILE))
@@ -55,11 +55,11 @@ struct _Ewk_Tile_Stats {
     unsigned int misses;     /**< number of times it became dirty but not
                               * repainted at all since it was not visible.
                               */
-    Eina_Bool full_update : 1; /**< tile requires full size update */
+    bool full_update : 1; /**< tile requires full size update */
 };
 
 struct _Ewk_Tile {
-    Eina_Tiler *updates;    /**< updated/dirty areas */
+    Eina_Tiler* updates;    /**< updated/dirty areas */
     Ewk_Tile_Stats stats;       /**< tile usage statistics */
     unsigned long column, row; /**< tile tile position */
     Evas_Coord x, y;        /**< tile coordinate position */
@@ -73,42 +73,42 @@ struct _Ewk_Tile {
                                    * alignement!
                                    */
     int visible;                  /**< visibility counter of this tile */
-    Evas_Object *image;           /**< Evas Image, the tile to be rendered */
+    Evas_Object* image;           /**< Evas Image, the tile to be rendered */
 };
 
 /* view */
-Evas_Object *ewk_tiled_backing_store_add(Evas *e);
+Evas_Object* ewk_tiled_backing_store_add(Evas* e);
 
-void ewk_tiled_backing_store_render_cb_set(Evas_Object *o, Eina_Bool (*cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *area), const void *data);
+void ewk_tiled_backing_store_render_cb_set(Evas_Object* o, bool (*cb)(void* data, Ewk_Tile* t, const Eina_Rectangle* area), const void* data);
 
-Eina_Bool ewk_tiled_backing_store_scroll_full_offset_set(Evas_Object *o, Evas_Coord x, Evas_Coord y);
-Eina_Bool ewk_tiled_backing_store_scroll_full_offset_add(Evas_Object *o, Evas_Coord dx, Evas_Coord dy);
-Eina_Bool ewk_tiled_backing_store_scroll_inner_offset_add(Evas_Object *o, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+bool ewk_tiled_backing_store_scroll_full_offset_set(Evas_Object* o, Evas_Coord x, Evas_Coord y);
+bool ewk_tiled_backing_store_scroll_full_offset_add(Evas_Object* o, Evas_Coord dx, Evas_Coord dy);
+bool ewk_tiled_backing_store_scroll_inner_offset_add(Evas_Object* o, Evas_Coord dx, Evas_Coord dy, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
-Eina_Bool ewk_tiled_backing_store_zoom_set(Evas_Object *o, float *zoom, Evas_Coord cx, Evas_Coord cy, Evas_Coord *offx, Evas_Coord *offy);
-Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
-void ewk_tiled_backing_store_fix_offsets(Evas_Object *o, Evas_Coord w, Evas_Coord h);
-void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale);
-void ewk_tiled_backing_store_alpha_set(Evas_Object *o, Eina_Bool has_alpha);
-Eina_Bool ewk_tiled_backing_store_update(Evas_Object *o, const Eina_Rectangle *update);
-void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object *o, void*(*cb)(void *data, Evas_Object *o), const void *data);
-void ewk_tiled_backing_store_updates_process_post_set(Evas_Object *o, void*(*cb)(void *data, void *pre_data, Evas_Object *o), const void *data);
-void ewk_tiled_backing_store_updates_process(Evas_Object *o);
-void ewk_tiled_backing_store_updates_clear(Evas_Object *o);
-void ewk_tiled_backing_store_contents_resize(Evas_Object *o, Evas_Coord width, Evas_Coord height);
-void ewk_tiled_backing_store_disabled_update_set(Evas_Object *o, Eina_Bool value);
-void ewk_tiled_backing_store_flush(Evas_Object *o);
-void ewk_tiled_backing_store_enable_scale_set(Evas_Object *o, Eina_Bool value);
+bool ewk_tiled_backing_store_zoom_set(Evas_Object* o, float* zoom, Evas_Coord cx, Evas_Coord cy, Evas_Coord* offx, Evas_Coord* offy);
+bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coord cy);
+void ewk_tiled_backing_store_fix_offsets(Evas_Object* o, Evas_Coord w, Evas_Coord h);
+void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object* o, bool smooth_scale);
+void ewk_tiled_backing_store_alpha_set(Evas_Object* o, bool has_alpha);
+bool ewk_tiled_backing_store_update(Evas_Object* o, const Eina_Rectangle* update);
+void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object* o, void* (*cb)(void* data, Evas_Object* o), const void* data);
+void ewk_tiled_backing_store_updates_process_post_set(Evas_Object* o, void* (*cb)(void* data, void* pre_data, Evas_Object* o), const void* data);
+void ewk_tiled_backing_store_updates_process(Evas_Object* o);
+void ewk_tiled_backing_store_updates_clear(Evas_Object* o);
+void ewk_tiled_backing_store_contents_resize(Evas_Object* o, Evas_Coord width, Evas_Coord height);
+void ewk_tiled_backing_store_disabled_update_set(Evas_Object* o, bool value);
+void ewk_tiled_backing_store_flush(Evas_Object* o);
+void ewk_tiled_backing_store_enable_scale_set(Evas_Object* o, bool value);
 
-Ewk_Tile_Unused_Cache *ewk_tiled_backing_store_tile_unused_cache_get(const Evas_Object *o);
-void ewk_tiled_backing_store_tile_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *tuc);
+Ewk_Tile_Unused_Cache* ewk_tiled_backing_store_tile_unused_cache_get(const Evas_Object* o);
+void ewk_tiled_backing_store_tile_unused_cache_set(Evas_Object* o, Ewk_Tile_Unused_Cache* tuc);
 
-Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
-Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object *o, unsigned int n, float zoom);
-Eina_Bool ewk_tiled_backing_store_pre_render_spiral_queue(Evas_Object *o, Eina_Rectangle* view_rect, Eina_Rectangle *render_rect, int max_memory, float zoom);
-void ewk_tiled_backing_store_pre_render_cancel(Evas_Object *o);
+bool ewk_tiled_backing_store_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
+bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object* o, unsigned int n, float zoom);
+bool ewk_tiled_backing_store_pre_render_spiral_queue(Evas_Object* o, Eina_Rectangle* view_rect, Eina_Rectangle* render_rect, int max_memory, float zoom);
+void ewk_tiled_backing_store_pre_render_cancel(Evas_Object* o);
 
-Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object *o);
-Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object *o);
+bool ewk_tiled_backing_store_disable_render(Evas_Object* o);
+bool ewk_tiled_backing_store_enable_render(Evas_Object* o);
 
 #endif // ewk_tiled_backing_store_h

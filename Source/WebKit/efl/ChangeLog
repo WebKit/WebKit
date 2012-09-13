@@ -1,3 +1,92 @@
+2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Remove a lot of C'ism from Ewk_Tiled_Backing_Store
+        https://bugs.webkit.org/show_bug.cgi?id=96631
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove a lot of C'ism from Ewk_Tiled_Backing_Store and
+        fix coding style.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_Ewk_Tiled_Backing_Store_Item):
+        (_Ewk_Tiled_Backing_Store_Data):
+        (_ewk_tiled_backing_store_updates_process):
+        (_ewk_tiled_backing_store_flush):
+        (_ewk_tiled_backing_store_tile_new):
+        (_ewk_tiled_backing_store_item_resize):
+        (_ewk_tiled_backing_store_tile_associate):
+        (_ewk_tiled_backing_store_tile_dissociate):
+        (_ewk_tiled_backing_store_tile_dissociate_all):
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_del):
+        (_ewk_tiled_backing_store_pre_render_request_first):
+        (_ewk_tiled_backing_store_pre_render_request_clear):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_process_idler_start):
+        (_ewk_tiled_backing_store_disable_render):
+        (_ewk_tiled_backing_store_enable_render):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_smooth_scale_set):
+        (_ewk_tiled_backing_store_changed):
+        (_ewk_tiled_backing_store_view_cols_end_del):
+        (_ewk_tiled_backing_store_view_cols_end_add):
+        (_ewk_tiled_backing_store_view_row_del):
+        (_ewk_tiled_backing_store_view_rows_range_del):
+        (_ewk_tiled_backing_store_view_rows_all_del):
+        (_ewk_tiled_backing_store_smart_member_del):
+        (_ewk_tiled_backing_store_smart_member_add):
+        (_ewk_tiled_backing_store_mem_dbg):
+        (_ewk_tiled_backing_store_sig_usr):
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_smart_del):
+        (_ewk_tiled_backing_store_smart_show):
+        (_ewk_tiled_backing_store_smart_hide):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_smart_calculate_size):
+        (_ewk_tiled_backing_store_view_dbg):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_wrap_right):
+        (_ewk_tiled_backing_store_view_refill):
+        (_ewk_tiled_backing_store_view_pos_apply):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate_pos):
+        (_ewk_tiled_backing_store_fill_renderers):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (ewk_tiled_backing_store_render_cb_set):
+        (ewk_tiled_backing_store_tile_unused_cache_get):
+        (_ewk_tiled_backing_store_scroll_full_offset_set_internal):
+        (ewk_tiled_backing_store_scroll_full_offset_set):
+        (ewk_tiled_backing_store_scroll_full_offset_add):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_set):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_zoom_weak_smooth_scale_set):
+        (ewk_tiled_backing_store_alpha_set):
+        (ewk_tiled_backing_store_update):
+        (ewk_tiled_backing_store_updates_process_pre_set):
+        (ewk_tiled_backing_store_updates_process_post_set):
+        (ewk_tiled_backing_store_disabled_update_set):
+        (ewk_tiled_backing_store_flush):
+        (ewk_tiled_backing_store_pre_render_tile_add):
+        (ewk_tiled_backing_store_pre_render_spiral_queue):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        (ewk_tiled_backing_store_pre_render_cancel):
+        (ewk_tiled_backing_store_disable_render):
+        (ewk_tiled_backing_store_enable_render):
+        * ewk/ewk_tiled_backing_store_private.h:
+        (_Ewk_Tile_Stats):
+        (_Ewk_Tile):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_render_cb):
+        (_ewk_view_tiled_smart_backing_store_add):
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][DRT] Implement LayoutTestController::layerTreeAsText
