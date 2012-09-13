@@ -2227,6 +2227,7 @@ HEADERS += \
     platform/qt/QWebPageClient.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/RenderThemeQtMobile.h \
+    platform/qt/UserAgentQt.h \
     platform/ScrollableArea.h \
     platform/ScrollAnimator.h \
     platform/Scrollbar.h \
@@ -2785,6 +2786,7 @@ SOURCES += \
     platform/qt/RunLoopQt.cpp \
     platform/qt/SharedBufferQt.cpp \
     platform/qt/ThirdPartyCookiesQt.cpp \
+    platform/qt/UserAgentQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformDataQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \

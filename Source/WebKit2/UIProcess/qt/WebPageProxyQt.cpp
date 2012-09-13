@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +28,8 @@
 #include "WebPageProxy.h"
 
 #include "PageClient.h"
+#include "UserAgentQt.h"
+#include "WebKitVersion.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Editor.h>
@@ -44,8 +47,7 @@ namespace WebKit {
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    // FIXME: This should not be hard coded.
-    return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6) AppleWebKit/531.4 (KHTML, like Gecko) Version/4.0.3 Safari/531.4";
+    return UserAgentQt::standardUserAgent(applicationNameForUserAgent, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
 }
 
 void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)

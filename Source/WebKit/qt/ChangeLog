@@ -1,3 +1,19 @@
+2012-09-13  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt][WK2] fast/forms/access-key-for-all-elements.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=73917
+
+        Reviewed by Simon Hausmann.
+
+        Access-key tests were failing due to hardcoded Mac OS X in the
+        Qt WK2 user agent string. This commit moves the WK1 implementation
+        to a shared one to be used by both versions.
+
+        Change QWebPage to use the shared user agent implementation.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2012-09-13  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Fix qdoc executable preparation

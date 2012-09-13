@@ -46,7 +46,6 @@ editing/selection/select-out-of-editable.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/layer-hit-test-crash.html
 fast/encoding/mailto-always-utf-8.html
-fast/events/access-key-self-destruct.html
 fast/events/context-no-deselect.html
 fast/events/context-onmousedown-event.html
 fast/events/contextmenu-scrolled-page-with-frame.html
@@ -62,12 +61,9 @@ fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
-fast/forms/access-key.html
 fast/forms/focus-change-on-keypress.html
-fast/forms/focus-selection-textarea.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/legend-access-key.html
-fast/forms/select-accesskey.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 
 svg/custom/use-events-crash.svg
@@ -211,10 +207,6 @@ svg/as-object/svg-embedded-in-html-in-iframe.html
 # https://bugs.webkit.org/show_bug.cgi?id=70935
 fast/transforms/scrollIntoView-transformed.html
 
-# [Qt][WK2] fast/forms/access-key-for-all-elements.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=73917
-fast/forms/access-key-for-all-elements.html
-
 # [Qt][WK2] css3/unicode-bidi-isolate-aharon-failing.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=74505
 css3/unicode-bidi-isolate-aharon-failing.html
@@ -235,7 +227,6 @@ svg/custom/getscreenctm-in-scrollable-div-area.xhtml
 # Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 editing/selection/click-in-margins-inside-editable-div.html
 fast/block/basic/020.html
-fast/dom/access-key-iframe.html
 fast/history/visited-link-background-color.html
 fast/layers/layer-visibility-sublayer.html
 fast/layers/layer-visibility.html

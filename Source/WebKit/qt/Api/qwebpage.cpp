@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008, 2009 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008, 2009, 2012 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
     Copyright (C) 2007 Apple Inc.
 
@@ -113,7 +113,9 @@
 #include "SystemInfo.h"
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
+#include "UserAgentQt.h"
 #include "WebEventConversion.h"
+#include "WebKitVersion.h"
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
 
@@ -3784,158 +3786,7 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 */
 QString QWebPage::userAgentForUrl(const QUrl&) const
 {
-    // splitting the string in three and user QStringBuilder is better than using QString::arg()
-    static QString firstPart;
-    static QString secondPart;
-    static QString thirdPart;
-
-    if (firstPart.isNull() || secondPart.isNull() || thirdPart.isNull()) {
-        QString firstPartTemp;
-        firstPartTemp.reserve(150);
-        firstPartTemp += QString::fromLatin1("Mozilla/5.0 ("
-
-    // Platform
-#ifdef Q_WS_MAC
-        "Macintosh; "
-#elif defined Q_WS_QWS
-        "QtEmbedded; "
-#elif defined Q_WS_WIN
-        // Nothing
-#elif defined Q_WS_X11
-        "X11; "
-#else
-        "Unknown; "
-#endif
-    );
-
-#if defined(QT_NO_OPENSSL)
-        // No SSL support
-        firstPartTemp += QString::fromLatin1("N; ");
-#endif
-
-        // Operating system
-#ifdef Q_OS_AIX
-        firstPartTemp += QString::fromLatin1("AIX");
-#elif defined Q_OS_WIN32
-        firstPartTemp += windowsVersionForUAString();
-#elif defined Q_OS_DARWIN
-#ifdef __i386__ || __x86_64__
-        firstPartTemp += QString::fromLatin1("Intel Mac OS X");
-#else
-        firstPartTemp += QString::fromLatin1("PPC Mac OS X");
-#endif
-
-#elif defined Q_OS_BSDI
-        firstPartTemp += QString::fromLatin1("BSD");
-#elif defined Q_OS_BSD4
-        firstPartTemp += QString::fromLatin1("BSD Four");
-#elif defined Q_OS_CYGWIN
-        firstPartTemp += QString::fromLatin1("Cygwin");
-#elif defined Q_OS_DGUX
-        firstPartTemp += QString::fromLatin1("DG/UX");
-#elif defined Q_OS_DYNIX
-        firstPartTemp += QString::fromLatin1("DYNIX/ptx");
-#elif defined Q_OS_FREEBSD
-        firstPartTemp += QString::fromLatin1("FreeBSD");
-#elif defined Q_OS_HPUX
-        firstPartTemp += QString::fromLatin1("HP-UX");
-#elif defined Q_OS_HURD
-        firstPartTemp += QString::fromLatin1("GNU Hurd");
-#elif defined Q_OS_IRIX
-        firstPartTemp += QString::fromLatin1("SGI Irix");
-#elif defined Q_OS_LINUX
-
-#if defined(__x86_64__)
-        firstPartTemp += QString::fromLatin1("Linux x86_64");
-#elif defined(__i386__)
-        firstPartTemp += QString::fromLatin1("Linux i686");
-#else
-        firstPartTemp += QString::fromLatin1("Linux");
-#endif
-
-#elif defined Q_OS_LYNX
-        firstPartTemp += QString::fromLatin1("LynxOS");
-#elif defined Q_OS_NETBSD
-        firstPartTemp += QString::fromLatin1("NetBSD");
-#elif defined Q_OS_OS2
-        firstPartTemp += QString::fromLatin1("OS/2");
-#elif defined Q_OS_OPENBSD
-        firstPartTemp += QString::fromLatin1("OpenBSD");
-#elif defined Q_OS_OS2EMX
-        firstPartTemp += QString::fromLatin1("OS/2");
-#elif defined Q_OS_OSF
-        firstPartTemp += QString::fromLatin1("HP Tru64 UNIX");
-#elif defined Q_OS_QNX6
-        firstPartTemp += QString::fromLatin1("QNX RTP Six");
-#elif defined Q_OS_QNX
-        firstPartTemp += QString::fromLatin1("QNX");
-#elif defined Q_OS_RELIANT
-        firstPartTemp += QString::fromLatin1("Reliant UNIX");
-#elif defined Q_OS_SCO
-        firstPartTemp += QString::fromLatin1("SCO OpenServer");
-#elif defined Q_OS_SOLARIS
-        firstPartTemp += QString::fromLatin1("Sun Solaris");
-#elif defined Q_OS_ULTRIX
-        firstPartTemp += QString::fromLatin1("DEC Ultrix");
-#elif defined Q_OS_UNIX
-        firstPartTemp += QString::fromLatin1("UNIX BSD/SYSV system");
-#elif defined Q_OS_UNIXWARE
-        firstPartTemp += QString::fromLatin1("UnixWare Seven, Open UNIX Eight");
-#else
-        firstPartTemp += QString::fromLatin1("Unknown");
-#endif
-
-#if USE(QT_MOBILITY_SYSTEMINFO)
-        // adding Model Number
-        QtMobility::QSystemDeviceInfo systemDeviceInfo;
-
-        QString model = systemDeviceInfo.model();
-        if (!model.isEmpty()) {
-            if (!firstPartTemp.endsWith("; "))
-                firstPartTemp += QString::fromLatin1("; ");
-            firstPartTemp += systemDeviceInfo.model();
-        }
-#endif
-        firstPartTemp.squeeze();
-        firstPart = firstPartTemp;
-
-        QString secondPartTemp;
-        secondPartTemp.reserve(150);
-        secondPartTemp += QString::fromLatin1(") ");
-
-        // webkit/qt version
-        secondPartTemp += QString::fromLatin1("AppleWebKit/");
-        secondPartTemp += qWebKitVersion();
-        secondPartTemp += QString::fromLatin1(" (KHTML, like Gecko) ");
-
-
-        // Application name split the third part
-        secondPartTemp.squeeze();
-        secondPart = secondPartTemp;
-
-        QString thirdPartTemp;
-        thirdPartTemp.reserve(150);
-        thirdPartTemp += QLatin1String(" Safari/");
-        thirdPartTemp += qWebKitVersion();
-        thirdPartTemp.squeeze();
-        thirdPart = thirdPartTemp;
-        Q_ASSERT(!firstPart.isNull());
-        Q_ASSERT(!secondPart.isNull());
-        Q_ASSERT(!thirdPart.isNull());
-    }
-
-    // Application name/version
-    QString appName = QCoreApplication::applicationName();
-    if (!appName.isEmpty()) {
-        QString appVer = QCoreApplication::applicationVersion();
-        if (!appVer.isEmpty())
-            appName.append(QLatin1Char('/') + appVer);
-    } else {
-        // Qt version
-        appName = QString::fromLatin1("Qt/") + QString::fromLatin1(qVersion());
-    }
-
-    return firstPart + secondPart + appName + thirdPart;
+    return UserAgentQt::standardUserAgent("", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
 }
 
 
