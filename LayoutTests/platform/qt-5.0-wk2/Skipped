@@ -505,3 +505,7 @@ fast/spatial-navigation/snav-media-elements.html
 # [Qt][WK2] REGRESSION(r128270): It made fast/events/popup-blocking-timers.html flakey
 # https://bugs.webkit.org/show_bug.cgi?id=96480
 fast/events/popup-blocking-timers.html
+
+# [Qt][WK2] New fast/forms/number/number-spinbutton-click-in-iframe.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=96634
+fast/forms/number/number-spinbutton-click-in-iframe.html
