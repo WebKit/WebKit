@@ -1,3 +1,11 @@
+2012-09-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=96594
+
+        * platform/chromium/TestExpectations:
+        fast/table/bad-replaced-sizing-preferred-logical-widths.html fails on Mac.
+
 2012-09-12  David Grogan  <dgrogan@chromium.org>
 
         Fix indexeddb/basics-shared-workers-expected.txt
