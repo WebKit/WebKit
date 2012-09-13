@@ -278,6 +278,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormT
     end = m_partCache.end();
     for (size_t i = 0; it != end; i++, it++) {
         ThemePartCacheEntry* entry = *it;
+        ASSERT(entry);
         if (entry->size == size) {
             if (entry->type == type)
                 return entry;
@@ -287,7 +288,8 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormT
 
     if (m_partCache.size() < RENDER_THEME_EFL_PART_CACHE_MAX) {
         ThemePartCacheEntry* entry = ThemePartCacheEntry::create(themePath(), type, size);
-        m_partCache.prepend(entry);
+        if (entry) // Can be '0', if creation fails. Do not store it in this case.
+            m_partCache.prepend(entry);
         return entry;
     }
 
@@ -296,6 +298,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormT
 
     if (lastWithRequestedSize != notFound && lastWithRequestedSize != 1) {
         ThemePartCacheEntry* entry = m_partCache.at(lastWithRequestedSize);
+        ASSERT(entry);
         entry->reuse(themePath(), type);
         m_partCache.remove(lastWithRequestedSize);
         m_partCache.prepend(entry);
@@ -303,6 +306,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormT
     }
 
     ThemePartCacheEntry* entry = m_partCache.last();
+    ASSERT(entry);
     entry->reuse(themePath(), type, size);
     m_partCache.removeLast();
     m_partCache.prepend(entry);
