@@ -1,6 +1,14 @@
 2012-09-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=96628
+
+        * platform/chromium/TestExpectations:
+        calculate-order.html is flaky on Lion.
+
+2012-09-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
 
         * platform/chromium/TestExpectations:
         sandboxed-iframe-navigation-parent.html is slow on Lion too.
