@@ -297,7 +297,6 @@
 		A8A4726B151A825A004123FF /* CheckedBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedBoolean.h; sourceTree = "<group>"; };
 		A8A47270151A825A004123FF /* Compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compiler.h; sourceTree = "<group>"; };
 		A8A47271151A825A004123FF /* Complex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Complex.h; sourceTree = "<group>"; };
-		A8A47272151A825A004123FF /* CONTRIBUTORS.pthreads-win32 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "CONTRIBUTORS.pthreads-win32"; sourceTree = "<group>"; };
 		A8A47273151A825A004123FF /* CryptographicallyRandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicallyRandomNumber.cpp; sourceTree = "<group>"; };
 		A8A47274151A825A004123FF /* CryptographicallyRandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicallyRandomNumber.h; sourceTree = "<group>"; };
 		A8A47275151A825A004123FF /* CurrentTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentTime.cpp; sourceTree = "<group>"; };
@@ -593,7 +592,6 @@
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				A8A47270151A825A004123FF /* Compiler.h */,
 				A8A47271151A825A004123FF /* Complex.h */,
-				A8A47272151A825A004123FF /* CONTRIBUTORS.pthreads-win32 */,
 				A8A47273151A825A004123FF /* CryptographicallyRandomNumber.cpp */,
 				A8A47274151A825A004123FF /* CryptographicallyRandomNumber.h */,
 				A8A47275151A825A004123FF /* CurrentTime.cpp */,

@@ -1,3 +1,10 @@
+2012-09-12  Dan Bernstein  <mitz@apple.com>
+
+        Removed a reference to a file that doesn’t participate in any target.
+
+        * WTF.xcodeproj/project.pbxproj: Removed the reference to
+        CONTRIBUTORS.pthreads-win32.
+
 2012-09-11  Michael Saboff  <msaboff@apple.com>
 
         Element::classAttributeChanged should use characters8/16 to find first non-whitespace
