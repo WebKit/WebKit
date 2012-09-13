@@ -53,7 +53,7 @@ void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)
 {
     if (!object)
-        return jsUndefined();
+        return jsNull();
 
 #if ENABLE(WEBGL)
     if (object->is3d())
