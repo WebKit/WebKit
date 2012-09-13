@@ -22,14 +22,19 @@
 // When appropriate, open a bug for flaky tests with the test diff and information
 // about which bots the test fails on.
 
-// 5. TESTS TIMING OUT
+// 5. SLOW TESTS
+// These tests are assigned the SLOW modifier to prevent them timing out as they
+// otherwise pass, but take a long time to complete due to the nature of test,
+// debug configuration or some other performance-affecting factor.
+
+// 6. TESTS TIMING OUT
 // Please open a bug for each test timing out with any important information.
 
-// 6. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
+// 7. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
 // Tests with different results (of which at least one is failure) on 32-bit and 64-bit builders.
 // These tests are essentially marked as flaky, but are noted as failing only on specific architecture.
 
-// 7. TESTS FAILING
+// 8. TESTS FAILING
 // Each test should (eventually) have a bug. Missing DRT features also go here.
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -361,7 +366,7 @@ BUGWK73528 SKIP : networkinformation/event-after-navigation.html = TEXT
 
 // Touch adjustment not enabled
 BUGWK78801 : touchadjustment = TEXT
-BUGWK78801 SKIP : touchadjustment/iframe.html = TEXT
+BUGWK78801 SKIP : touchadjustment/iframe.html = TIMEOUT
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
@@ -499,8 +504,6 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-grid.html = TEXT PASS
 BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PASS
 BUGWK87363 : fast/frames/flattening/iframe-tiny.html = PASS TEXT
 
-BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
-
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
 
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
@@ -550,8 +553,6 @@ BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html = PASS T
 
 BUGWK49179 : animations/stop-animation-on-suspend.html = PASS TEXT
 
-BUGWK78819 : fast/workers/shared-worker-load-error.html = PASS TEXT
-
 BUGWK61121 : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 BUGWK88061 : fast/replaced/border-radius-clip.html = PASS TEXT
@@ -575,8 +576,56 @@ BUGWK95430 : fast/layers/scroll-no-visible-content-but-visible-descendant.html =
 //////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////
+// Slow tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// These tests are slow due to the implementation of EventSender.leapForward.
+BUGWKGTK SLOW : editing/pasteboard/dataTransfer-setData-getData.html = PASS
+BUGWKGTK SLOW : editing/pasteboard/drop-text-events.html = PASS
+BUGWKGTK SLOW : editing/selection/click-left-of-rtl-wrapping-text.html = PASS
+BUGWKGTK SLOW : editing/selection/doubleclick-beside-cr-span.html = PASS
+BUGWKGTK SLOW : editing/selection/hit-test-on-text-with-line-height.html = PASS
+BUGWKGTK SLOW : editing/selection/rtl-move-selection-right-left.html = PASS
+BUGWKGTK SLOW : fast/events/drag-and-drop.html = PASS
+BUGWKGTK SLOW : fast/events/dropzone-001.html = PASS
+BUGWKGTK SLOW : fast/forms/search-disabled-readonly.html = PASS
+
+// These tests expose possible peformance issues.
+BUGWKGTK SLOW : editing/selection/caret-at-bidi-boundary.html = PASS
+BUGWKGTK SLOW : fast/canvas/canvas-largedraws.html = PASS
+BUGWKGTK SLOW : fast/events/dispatch-message-string-data.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/array-sort-modifying-tostring.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-float32array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-float64array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-int32array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-int8array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-uint16array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-uint32array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-uint8array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-uint8clampedarray.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+BUGWKGTK DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUGWKGTK DEBUG SLOW : jquery/manipulation.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html = PASS
+BUGWKGTK DEBUG SLOW : sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html = PASS
+BUGWKGTK SLOW : tables/mozilla/other/slashlogo.html = PASS
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of slow tests
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
 // Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////
+
 BUGWK46644 : fast/text/large-text-composed-char-dos.html = TIMEOUT
 
 BUGWK68979 SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
@@ -584,6 +633,29 @@ BUGWK68979 SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIME
 BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT
 
 BUGWKGTK DEBUG : fast/css/user-drag-none.html = TIMEOUT
+
+BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = TIMEOUT
+BUGWK61118 : fullscreen/full-screen-element-stack.html = TIMEOUT
+BUGWK61118 : fullscreen/full-screen-restrictions.html = TIMEOUT
+
+BUGWK85700 : fullscreen/non-ancestor-iframe.html = TIMEOUT
+
+BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TIMEOUT
+
+BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
+
+BUGWK72698 : media/audio-garbage-collect.html = TIMEOUT
+
+// EventSender::dumpFilenameBeingDragged not implemented.
+BUGWK61826 : fast/events/drag-image-filename.html = TIMEOUT
+
+BUGWKGTK : accessibility/aria-invalid.html = TIMEOUT
+
+BUGWK73003 : editing/spelling/spellcheck-async.html = TIMEOUT
+BUGWK73003 : editing/spelling/spellcheck-paste.html = TIMEOUT
+BUGWK50740 : editing/spelling/spellcheck-queue.html = TIMEOUT
+
+BUGWK78819 : fast/workers/shared-worker-load-error.html = TIMEOUT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
@@ -624,7 +696,6 @@ BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
 BUGWKGTK : accessibility/aria-hidden.html = TEXT
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = TEXT
-BUGWKGTK : accessibility/aria-invalid.html = TEXT
 BUGWKGTK : accessibility/aria-labelledby-overrides-label.html = TEXT
 BUGWKGTK : accessibility/aria-link-supports-press.html = TEXT
 BUGWKGTK : accessibility/aria-presentational-role.html = TEXT
@@ -717,7 +788,7 @@ BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callb
 BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
 
 BUGWKGTK SKIP : http/tests/media/video-play-stall-seek.html = TEXT
-BUGWKGTK : http/tests/media/video-play-stall.html = TEXT
+BUGWKGTK SLOW : http/tests/media/video-play-stall.html = TEXT
 
 BUGWKGTK : http/tests/misc/acid3.html = TEXT
 BUGWKGTK : http/tests/misc/policy-delegate-called-twice.html = TEXT
@@ -959,9 +1030,6 @@ BUGWK20011 SKIP : printing/setPrinting.html = TEXT
 BUGWK20011 SKIP : printing/single-line-must-not-be-split-into-two-pages.html = TEXT
 BUGWK20011 SKIP : printing/width-overflow.html = TEXT
 
-// EventSender::dumpFilenameBeingDragged not implemented.
-BUGWK61826 : fast/events/drag-image-filename.html = TEXT
-
 // Tests that fail because they assume a certain number of mouse
 // movements during drags or fail only in Xvfb
 BUGWKGTK : http/tests/local/drag-over-remote-content.html = TEXT
@@ -1011,7 +1079,6 @@ BUGWKGTK : fast/frames/meta-refresh-user-gesture.html = TEXT
 // Rounding color problems inside pixman
 BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
-BUGWK50740 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = TEXT
 
@@ -1045,10 +1112,6 @@ BUGWK58741 : fast/text/zero-width-characters-complex-script.html = TEXT
 
 // HTTP 204 (No Content) should be ignored
 BUGWK60206 : http/tests/navigation/response204.html = TEXT
-
-BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = TEXT
-BUGWK61118 : fullscreen/full-screen-element-stack.html = TEXT
-BUGWK61118 : fullscreen/full-screen-restrictions.html = TEXT
 
 BUGWK61630 : fast/events/dropzone-005.html = TEXT
 
@@ -1098,8 +1161,6 @@ BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEX
 BUGWK72248 : editing/spelling/spelling-unified-emulation.html = TEXT
 
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
-
-BUGWK73003 : editing/spelling/spellcheck-async.html = TEXT
 
 BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = TEXT
 BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = TEXT
@@ -1181,8 +1242,6 @@ BUGWK87951 : fast/dom/Window/mozilla-focus-blur.html = TEXT
 
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
-
-BUGWK85700 : fullscreen/non-ancestor-iframe.html = TEXT
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
@@ -1300,10 +1359,6 @@ BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 BUGWK95428 : media/video-controls-captions.html = TEXT
 
 BUGWK95429 : svg/custom/clamped-masking-clipping.svg = IMAGE
-
-BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TEXT
-
-BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 
 BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 

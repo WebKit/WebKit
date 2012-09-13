@@ -1,3 +1,25 @@
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK][NRWT] Lower timeout value to 6 seconds (12 for debug configuration)
+        https://bugs.webkit.org/show_bug.cgi?id=96506
+
+        Reviewed by Dirk Pranke.
+
+        Lower the timeout value to 6 seconds for release configuration and 12 seconds
+        for debug configuration. These are the same values the Chromium port uses.
+
+        Currently the value is lowered only for the DumpRenderTree, WebKitTestRunner (and
+        the layout tests under WebKit2 generally) requires more attention and gardening
+        than what the current effort produces.
+
+        The unit test is updated as well to test these changes.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_default_timeout_ms):
+        (GtkPortTest.assertLinesEqual):
+
 2012-09-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add SVN mirror handling feature to build.webkit.org

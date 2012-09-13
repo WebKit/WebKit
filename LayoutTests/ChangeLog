@@ -1,3 +1,20 @@
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK][NRWT] Lower timeout value to 6 seconds (12 for debug configuration)
+        https://bugs.webkit.org/show_bug.cgi?id=96506
+
+        Reviewed by Dirk Pranke.
+
+        Create a new section for slow tests. Tests listed here pass (or at least
+        work as expected or reliably) but require more than 6 or 12 seconds to run.
+
+        More tests are added into the timeout section. These are primarily tests
+        that used to take half a minute to run just to be interrupted by the watchdog
+        in DumpRenderTree and were then reported as text mismatch failures. Now they
+        will be timing out which is (arguably) a more proper way for them to fail.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-13  Stephanie Lewis  <slewis@apple.com>
 
         fast/table/bad-replaced-sizing-preferred-logical-widths.html is failing on Mac, Chromium-Mac, GTK, EFL.
