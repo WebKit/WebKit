@@ -1,3 +1,25 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build of Qt WTR/MiniBrowser with MSVC and nmake
+        https://bugs.webkit.org/show_bug.cgi?id=96633
+
+        Reviewed by Csaba Osztrogonác.
+
+        WTR and MiniBrowser both have DRT in their include path (for the shared font stuff). Batch
+        builds with MSVC and nmake result in nmake picking up main.cpp from the wrong directory.
+        It's the usual problem and the usual solution is to rename one of the conflicting files.
+        This patch chooses to rename DRT instead of WTR and MBR.
+
+        Fixed include order at the same time to match style guide.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp: Renamed from Tools/DumpRenderTree/qt/main.cpp.
+        (messageHandler):
+        (isOption):
+        (takeOptionValue):
+        (printUsage):
+        (main):
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         The Script run-launcher should support -2 in combination with --efl

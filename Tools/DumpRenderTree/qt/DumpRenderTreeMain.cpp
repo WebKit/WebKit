@@ -31,30 +31,30 @@
 
 #include "QtInitializeTestFonts.h"
 
-#include <wtf/AlwaysInline.h>
-
-#include <qstringlist.h>
 #include <qapplication.h>
-#include <qurl.h>
-#include <qdir.h>
 #include <qdebug.h>
+#include <qdir.h>
 #include <qfont.h>
-#include <qwebdatabase.h>
+#include <qstringlist.h>
 #include <qtimer.h>
+#include <qurl.h>
+#include <qwebdatabase.h>
 #include <qwindowsstyle.h>
+
+#include <wtf/AlwaysInline.h>
+#include <wtf/ExportMacros.h>
 
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
 #endif
 
 #ifdef Q_OS_WIN
-#include <io.h>
 #include <fcntl.h>
+#include <io.h>
 #endif
 
 #include <limits.h>
 
-#include <wtf/ExportMacros.h>
 #include <wtf/Assertions.h>
 
 void messageHandler(QtMsgType type, const char *message)

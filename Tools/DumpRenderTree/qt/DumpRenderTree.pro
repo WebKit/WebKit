@@ -47,7 +47,7 @@ SOURCES += \
     GCControllerQt.cpp \
     QtInitializeTestFonts.cpp \
     testplugin.cpp \
-    main.cpp
+    DumpRenderTreeMain.cpp
 
 wince*: {
     INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat $$WCECOMPAT/include
