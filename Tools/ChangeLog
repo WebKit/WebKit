@@ -1,5 +1,11 @@
 2012-09-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more unreviewed trivial fix after r128399.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Fix URLs of the SVN mirror server.
+
+2012-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix after r128399.
 
         * BuildSlaveSupport/wait-for-SVN-server.py: Renamed from Tools/BuildSlaveSupport/build.webkit.org-config/wait-for-SVN-server.py.
