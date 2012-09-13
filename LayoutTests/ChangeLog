@@ -1,3 +1,9 @@
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening - upstream some skia_test_expectations.txt entries.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-13  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add explanations to tests.

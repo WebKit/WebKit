@@ -3631,3 +3631,9 @@ BUGWK96628 LION : fast/frames/calculate-order.html = PASS TEXT
 BUGWK96550 : http/tests/media/media-source/seek-to-end-after-duration-change.html = PASS TIMEOUT
 BUGWK96594 MAC : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
+
+BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR139863 WIN : fast/canvas/fillText-shadow.html = TEXT
+BUGCR139863 WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
+BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
+
