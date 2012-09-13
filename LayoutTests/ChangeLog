@@ -1,3 +1,17 @@
+2012-09-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        REGRESSION: hit test doesn't take iframe scroll position into account
+        https://bugs.webkit.org/show_bug.cgi?id=96541
+
+        Reviewed by Antonio Gomes.
+        Test written by Rick Byers.
+
+        Test that scroll position is taken into account in hit testing.
+
+        * fast/events/touch/resources/touch-inside-iframe-scrolled2.html: Added.
+        * fast/events/touch/touch-inside-iframe-scrolled-expected.txt: Added.
+        * fast/events/touch/touch-inside-iframe-scrolled.html: Added.
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][DRT] Implement LayoutTestController::layerTreeAsText

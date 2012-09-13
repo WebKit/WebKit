@@ -114,7 +114,8 @@ bool RenderFrameBase::nodeAtPoint(const HitTestRequest& request, HitTestResult& 
 
         if (childRoot) {
             LayoutPoint adjustedLocation = accumulatedOffset + location();
-            HitTestLocation newHitTestLocation(locationInContainer, -toLayoutSize(adjustedLocation));
+            LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - childFrameView->scrollOffset();
+            HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
             HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
 
             bool isInsideChildFrame = childRoot->layer()->hitTest(newHitTestRequest, newHitTestLocation, result);
