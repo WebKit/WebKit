@@ -64,7 +64,6 @@ class FloatPoint;
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
-class MemoryObjectInfo;
 class SharedBuffer;
 struct Length;
 

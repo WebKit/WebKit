@@ -1,3 +1,18 @@
+2012-09-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: migrate core instrumentation code to WTF namespace
+        https://bugs.webkit.org/show_bug.cgi?id=96511
+
+        Reviewed by Yury Semikhatsky.
+
+        After moving core NMI code to WTF namespace I removed forward declarations
+        of MemoryObjectInfo and MemoryInstrumentation from WebCore headers and add
+        forward declaration into wtf/Forward.h
+
+        * wtf/Forward.h:
+        (WTF):
+        * wtf/MemoryInstrumentation.h:
+
 2012-09-12  Dan Bernstein  <mitz@apple.com>
 
         Removed a reference to a file that doesn’t participate in any target.

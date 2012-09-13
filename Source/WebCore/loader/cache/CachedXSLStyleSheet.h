@@ -32,7 +32,6 @@
 namespace WebCore {
 
     class CachedResourceLoader;
-    class MemoryObjectInfo;
     class TextResourceDecoder;
 
 #if ENABLE(XSLT)

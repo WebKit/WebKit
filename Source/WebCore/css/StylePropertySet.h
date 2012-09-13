@@ -34,7 +34,6 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleDeclaration;
 class KURL;
-class MemoryObjectInfo;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 class StylePropertyShorthand;

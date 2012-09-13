@@ -55,7 +55,6 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class MainResourceLoader;
-    class MemoryObjectInfo;
     class Page;
     class ResourceLoader;
     class SchedulePair;

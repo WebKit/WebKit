@@ -31,7 +31,6 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleRule;
 class CSSStyleSheet;
-class MemoryObjectInfo;
 class StylePropertySet;
 
 class StyleRuleBase : public WTF::RefCountedBase {

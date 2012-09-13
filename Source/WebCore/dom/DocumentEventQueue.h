@@ -28,6 +28,7 @@
 #define DocumentEventQueue_h
 
 #include "EventQueue.h"
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
@@ -38,7 +39,6 @@ namespace WebCore {
 
 class Event;
 class DocumentEventQueueTimer;
-class MemoryObjectInfo;
 class Node;
 class ScriptExecutionContext;
 

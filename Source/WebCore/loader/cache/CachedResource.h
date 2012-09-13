@@ -47,7 +47,6 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class Frame;
 class InspectorResource;
-class MemoryObjectInfo;
 class PurgeableBuffer;
 class SecurityOrigin;
 class SubresourceLoader;

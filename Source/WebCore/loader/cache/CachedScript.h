@@ -37,7 +37,6 @@ namespace JSC {
 namespace WebCore {
 
     class CachedResourceLoader;
-    class MemoryObjectInfo;
     class TextResourceDecoder;
 
     class CachedScript : public CachedResource {

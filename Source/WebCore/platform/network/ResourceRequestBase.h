@@ -44,7 +44,6 @@ namespace WebCore {
         ReturnCacheDataDontLoad  // results of a post - allow stale data and only use cache
     };
 
-    class MemoryObjectInfo;
     class ResourceRequest;
     struct CrossThreadResourceRequestData;
 

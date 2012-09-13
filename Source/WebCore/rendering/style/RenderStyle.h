@@ -110,7 +110,6 @@ class CursorList;
 class Font;
 class FontMetrics;
 class IntRect;
-class MemoryObjectInfo;
 class Pair;
 class ShadowData;
 class StyleImage;

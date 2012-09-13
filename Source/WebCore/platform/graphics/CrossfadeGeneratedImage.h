@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class CSSCrossfadeValue;
-class MemoryObjectInfo;
 
 class CrossfadeGeneratedImage : public GeneratedImage {
 public:

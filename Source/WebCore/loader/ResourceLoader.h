@@ -44,7 +44,6 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class KURL;
-    class MemoryObjectInfo;
     class ResourceHandle;
     class SharedBuffer;
     

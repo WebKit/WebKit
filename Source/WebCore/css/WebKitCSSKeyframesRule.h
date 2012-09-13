@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class CSSRuleList;
-class MemoryObjectInfo;
 class StyleKeyframe;
 class WebKitCSSKeyframeRule;
 

@@ -66,7 +66,6 @@ namespace WebCore {
     class FrameDestructionObserver;
     class FrameView;
     class HTMLTableCellElement;
-    class MemoryObjectInfo;
     class RegularExpression;
     class RenderPart;
     class TiledBackingStore;

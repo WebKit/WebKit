@@ -32,16 +32,19 @@
 #define MemoryInstrumentationImpl_h
 
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentation.h>
 #include <wtf/Vector.h>
 
+using WTF::MemoryObjectType;
+
 namespace WebCore {
 
 typedef HashSet<const void*> VisitedObjects;
 
-class MemoryInstrumentationImpl : public MemoryInstrumentation {
+class MemoryInstrumentationImpl : public WTF::MemoryInstrumentation {
 public:
     explicit MemoryInstrumentationImpl(VisitedObjects&);
 

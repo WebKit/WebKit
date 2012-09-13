@@ -52,7 +52,6 @@ class Document;
 class Frame;
 class ImageLoader;
 class KURL;
-class MemoryObjectInfo;
 
 // The CachedResourceLoader manages the loading of scripts/images/stylesheets for a single document.
 class CachedResourceLoader {

@@ -35,7 +35,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WTF {
 
 class MemoryClassInfo;
 class MemoryObjectInfo;
@@ -356,6 +356,6 @@ void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentatio
     memoryInstrumentation->countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #endif // !defined(MemoryInstrumentation_h)

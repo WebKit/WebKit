@@ -30,7 +30,6 @@ namespace WebCore {
 class CSSProperty;
 class CSSStyleSheet;
 class CSSValue;
-class MemoryObjectInfo;
 class StylePropertySet;
 class StyledElement;
 

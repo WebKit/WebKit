@@ -47,7 +47,6 @@ namespace WebCore {
 
     class DOMData;
     class DOMDataStore;
-    class MemoryObjectInfo;
 
     typedef WTF::Vector<DOMDataStore*> DOMDataList;
 

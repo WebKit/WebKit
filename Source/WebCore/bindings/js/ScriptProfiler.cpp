@@ -38,6 +38,7 @@
 #include "ScriptObject.h"
 #include "ScriptState.h"
 #include <profiler/Profiler.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

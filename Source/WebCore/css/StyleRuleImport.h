@@ -31,7 +31,6 @@ namespace WebCore {
 
 class CachedCSSStyleSheet;
 class MediaQuerySet;
-class MemoryObjectInfo;
 class StyleSheetContents;
 
 class StyleRuleImport : public StyleRuleBase, public CachedStyleSheetClient {

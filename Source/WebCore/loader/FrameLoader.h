@@ -61,7 +61,6 @@ class FormState;
 class FormSubmission;
 class FrameLoaderClient;
 class FrameNetworkingContext;
-class MemoryObjectInfo;
 class NavigationAction;
 class NetworkingContext;
 class Page;

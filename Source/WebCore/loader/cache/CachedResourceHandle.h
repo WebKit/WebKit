@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
-
     class CachedResourceHandleBase {
     public:
         ~CachedResourceHandleBase() { if (m_resource) m_resource->unregisterHandle(this); }

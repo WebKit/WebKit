@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
-
 class CSSProperty {
 public:
     CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)

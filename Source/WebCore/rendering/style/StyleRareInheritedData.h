@@ -39,7 +39,6 @@
 namespace WebCore {
 
 class CursorList;
-class MemoryObjectInfo;
 class QuotesData;
 class ShadowData;
 

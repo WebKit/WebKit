@@ -37,8 +37,6 @@ class Clipboard;
 class EventTarget;
 class EventDispatcher;
 class HTMLIFrameElement;
-class MemoryInstrumentation;
-class MemoryObjectInfo;
 
 struct EventInit {
     EventInit();

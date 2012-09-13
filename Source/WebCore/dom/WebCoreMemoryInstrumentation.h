@@ -36,15 +36,9 @@
 
 namespace WebCore {
 
+using WTF::MemoryClassInfo;
+using WTF::MemoryObjectType;
 class KURL;
-
-// Explicit specializations for some types.
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<KURL>(MemoryInstrumentation*, const KURL* const&, MemoryObjectType, MemoryOwningType);
-template<> void MemoryInstrumentationTraits::addInstrumentedObject<const KURL>(MemoryInstrumentation*, const KURL* const&, MemoryObjectType, MemoryOwningType);
-
-// Link time guards with no body.
-template<> void MemoryInstrumentationTraits::addObject<KURL>(MemoryInstrumentation*, const KURL* const&, MemoryObjectType, MemoryOwningType);
-template<> void MemoryInstrumentationTraits::addObject<const KURL>(MemoryInstrumentation*, const KURL* const&, MemoryObjectType, MemoryOwningType);
 
 class WebCoreMemoryTypes {
 public:
@@ -68,5 +62,17 @@ public:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+// Explicit specializations for some types.
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<const WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
+
+// Link time guards with no body.
+template<> void MemoryInstrumentationTraits::addObject<WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
+template<> void MemoryInstrumentationTraits::addObject<const WebCore::KURL>(MemoryInstrumentation*, const WebCore::KURL* const&, MemoryObjectType, MemoryOwningType);
+
+}
 
 #endif // !defined(WebCoreMemoryInstrumentation_h)

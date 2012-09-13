@@ -66,7 +66,6 @@ class KURL;
 class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;
-class MemoryObjectInfo;
 class Node;
 class RenderRegion;
 class RuleData;

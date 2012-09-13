@@ -39,7 +39,6 @@
 namespace WebCore {
 
 class AnimationList;
-class MemoryObjectInfo;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 #if ENABLE(CSS_FILTERS)

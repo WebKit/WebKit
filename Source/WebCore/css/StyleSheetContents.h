@@ -34,7 +34,6 @@ namespace WebCore {
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
-class MemoryObjectInfo;
 class Node;
 class SecurityOrigin;
 class StyleRuleBase;

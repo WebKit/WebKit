@@ -28,6 +28,7 @@
 
 #include "ScopedPersistent.h"
 #include <v8.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 class DOMDataStore;
 class GCEventData;
 class IntegerCache;
-class MemoryObjectInfo;
 class StringCache;
 class V8HiddenPropertyName;
 struct WrapperTypeInfo;

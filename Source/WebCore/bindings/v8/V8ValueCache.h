@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class ExternalStringVisitor;
-class MemoryObjectInfo;
 
 class StringCache {
 public:

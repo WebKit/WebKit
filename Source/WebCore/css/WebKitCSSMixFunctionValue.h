@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
-
 class WebKitCSSMixFunctionValue : public CSSValueList {
 public:
     static PassRefPtr<WebKitCSSMixFunctionValue> create()

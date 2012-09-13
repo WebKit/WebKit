@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
 class ResourceResponse;
 struct CrossThreadResourceResponseData;
 

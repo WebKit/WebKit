@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
 class StyleSheetContents;
     
 // FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).

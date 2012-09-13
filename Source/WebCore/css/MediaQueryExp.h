@@ -37,7 +37,6 @@
 
 namespace WebCore {
 class CSSParserValueList;
-class MemoryObjectInfo;
 
 class MediaQueryExp {
     WTF_MAKE_FAST_ALLOCATED;

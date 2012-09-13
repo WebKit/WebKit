@@ -39,7 +39,6 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
 class KURL;
-class MemoryObjectInfo;
 class ScriptExecutionContext;
 class SecurityOrigin;
 struct SecurityOriginHash;

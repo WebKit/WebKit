@@ -39,7 +39,6 @@
 namespace WebCore {
     class DOMDataStore;
     class Node;
-    class MemoryObjectInfo;
 
     template <class KeyType, class ValueType> class AbstractWeakReferenceMap {
     public:

@@ -36,7 +36,6 @@
 
 namespace WebCore {
 class MediaQueryExp;
-class MemoryObjectInfo;
 
 class MediaQuery {
     WTF_MAKE_FAST_ALLOCATED;

@@ -43,7 +43,6 @@ OBJC_CLASS NSData;
 
 namespace WebCore {
     
-class MemoryObjectInfo;
 class PurgeableBuffer;
 
 class SharedBuffer : public RefCounted<SharedBuffer> {

@@ -30,7 +30,6 @@
 namespace WebCore {
 
 class CSSStyleSheet;
-class MemoryObjectInfo;
 class StyleRuleBase;
 struct CSSParserContext;
 typedef int ExceptionCode;

@@ -32,7 +32,6 @@
 namespace WebCore {
 
     class CachedResourceClient;
-    class MemoryObjectInfo;
     class SharedBuffer;
     class StyleSheetContents;
     class TextResourceDecoder;

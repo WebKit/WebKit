@@ -30,7 +30,6 @@ namespace WebCore {
 
 class Document;
 class FormDataList;
-class MemoryObjectInfo;
 class TextEncoding;
 
 class FormDataElement {

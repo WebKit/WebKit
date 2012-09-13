@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-    class MemoryObjectInfo;
-
     class SubstituteData {
     public:
         SubstituteData() { }

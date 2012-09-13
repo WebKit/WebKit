@@ -29,7 +29,6 @@
 namespace WebCore {
 class CachedRawResourceCallback;
 class CachedRawResourceClient;
-class MemoryObjectInfo;
 
 class CachedRawResource : public CachedResource {
 public:

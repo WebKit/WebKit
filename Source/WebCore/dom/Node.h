@@ -66,7 +66,6 @@ class Frame;
 class HTMLInputElement;
 class IntRect;
 class KeyboardEvent;
-class MemoryObjectInfo;
 class NSResolver;
 class NamedNodeMap;
 class NameNodeList;

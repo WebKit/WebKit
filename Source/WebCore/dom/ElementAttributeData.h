@@ -36,7 +36,6 @@ namespace WebCore {
 class Attr;
 class Element;
 class ImmutableElementAttributeData;
-class MemoryObjectInfo;
 class MutableElementAttributeData;
 
 enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute, InSynchronizationOfLazyAttribute };

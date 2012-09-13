@@ -34,7 +34,6 @@ class CSSRule;
 class CSSStyleSheet;
 class MediaList;
 class MediaQuery;
-class MemoryObjectInfo;
 
 class MediaQuerySet : public RefCounted<MediaQuerySet> {
 public:

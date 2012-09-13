@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class MemoryObjectInfo;
 class TextResourceDecoder;
 
 class CachedShader : public CachedResource {

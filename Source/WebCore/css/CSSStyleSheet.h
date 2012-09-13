@@ -39,7 +39,6 @@ class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
 class MediaQuerySet;
-class MemoryObjectInfo;
 class SecurityOrigin;
 class StyleSheetContents;
 

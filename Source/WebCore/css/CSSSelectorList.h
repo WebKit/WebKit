@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class CSSParserSelector;
-class MemoryObjectInfo;
 
 class CSSSelectorList {
     WTF_MAKE_FAST_ALLOCATED;
