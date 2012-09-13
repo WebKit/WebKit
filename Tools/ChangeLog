@@ -1,3 +1,30 @@
+2012-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests output cryptic error when the config file is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=96453
+
+        Reviewed by Tony Chang.
+
+        Add a special error message when a configuration file is missing.
+
+        Also update the help message of --source-json-path to signify the fact it specifies
+        the configuration file on performance tests bots.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._generate_and_show_results):
+        (PerfTestsRunner._merge_slave_config_json):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (_test_run_with_json_output): Make upload to fail by default and assert the result
+        in the function so that we can return logs instead.
+        (_test_run_with_json_output.mock_upload_json):
+        (test_run_with_json_output):
+        (test_run_with_description):
+        (test_run_respects_no_results):
+        (test_run_with_slave_config_json):
+        (test_run_with_bad_slave_config_json):
+        (test_run_with_multiple_repositories):
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Evas_Object* is a ref'ed structure, so tread it as such

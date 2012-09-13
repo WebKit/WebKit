@@ -100,8 +100,8 @@ class PerfTestsRunner(object):
                 help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path",
                 help="Path to generate a JSON file at; may contain previous results if it already exists."),
-            optparse.make_option("--source-json-path",
-                help="Only used on bots. Path to a JSON file to be merged into the JSON file when --output-json-path is present."),
+            optparse.make_option("--source-json-path",  # FIXME: Rename it to signify the fact it's a slave configuration.
+                help="Only used on bots. Path to a slave configuration file."),
             optparse.make_option("--description",
                 help="Add a description to the output JSON file if one is generated"),
             optparse.make_option("--no-show-results", action="store_false", default=True, dest="show_results",
@@ -180,7 +180,7 @@ class PerfTestsRunner(object):
         output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
         if options.source_json_path:
-            output = self._merge_source_json(options.source_json_path, output)
+            output = self._merge_slave_config_json(options.source_json_path, output)
             if not output:
                 return self.EXIT_CODE_BAD_SOURCE_JSON
 
@@ -215,13 +215,17 @@ class PerfTestsRunner(object):
 
         return contents
 
-    def _merge_source_json(self, source_json_path, output):
+    def _merge_slave_config_json(self, slave_config_json_path, output):
+        if not self._host.filesystem.isfile(slave_config_json_path):
+            _log.error("Missing slave configuration JSON file: %s" % slave_config_json_path)
+            return None
+
         try:
-            source_json_file = self._host.filesystem.open_text_file_for_reading(source_json_path)
-            source_json = json.load(source_json_file)
-            return dict(source_json.items() + output.items())
+            slave_config_json = self._host.filesystem.open_text_file_for_reading(slave_config_json_path)
+            slave_config = json.load(slave_config_json)
+            return dict(slave_config.items() + output.items())
         except Exception, error:
-            _log.error("Failed to merge source JSON file %s: %s" % (source_json_path, error))
+            _log.error("Failed to merge slave configuration JSON file %s: %s" % (slave_config_json_path, error))
         return None
 
     def _merge_outputs(self, output_json_path, output):
