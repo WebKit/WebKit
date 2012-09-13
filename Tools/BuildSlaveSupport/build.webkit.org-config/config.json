@@ -200,35 +200,42 @@
                     {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
                       "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "slavenames": ["szeged-linux-1"]
                     },
                     {
                       "name": "Qt Linux Release minimal", "type": "Build", "builddir": "qt-linux-release-minimal",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-2"]
                     },
                     {
                       "name": "Qt Linux 64-bit Release (Perf)", "type": "BuildAndPerfTest", "builddir": "qt-linux-64-release-perf-tests",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "platform": "qt-5.0-wk1", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["szeged-linux-3"]
                     },
                     {
                       "name": "Qt Linux 64-bit Release (WebKit2 Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "qt-linux-64-release-wk2-perf-tests",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "platform": "qt-5.0-wk2", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["szeged-linux-5"]
                     },
                     {
                       "name": "Qt Linux ARMv7 Release", "type": "Build", "builddir": "qt-linux-armv7-release",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu:3389/",
                       "platform": "qt-arm", "configuration": "release", "architectures": ["armv7"],
                       "slavenames": ["szeged-linux-4"]
                     },
                     {
                       "name": "Qt Windows 32-bit Release", "type": "Build", "builddir": "qt-windows-32bit-release",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "platform": "qt-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-windows-1"]
                     },
                     {
                       "name": "Qt Windows 32-bit Debug", "type": "Build", "builddir": "qt-windows-32bit-debug",
+                      "SVNMirror": "svn://rain.inf.u-szeged.hu/",
                       "platform": "qt-win", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["szeged-windows-2"]
                     },

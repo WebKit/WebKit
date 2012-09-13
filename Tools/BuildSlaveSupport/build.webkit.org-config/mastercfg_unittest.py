@@ -332,6 +332,31 @@ Tests that timed out:
 """)
 
 
+class SVNMirrorTest(unittest.TestCase):
+    def setUp(self):
+        self.config = json.load(open('config.json'))
+
+    def get_SVNMirrorFromConfig(self, builderName):
+        SVNMirror = None
+        for builder in self.config['builders']:
+            if builder['name'] == builderName:
+                SVNMirror = builder.pop('SVNMirror', 'http://svn.webkit.org/repository/webkit/')
+        return SVNMirror
+
+    def test_CheckOutSource(self):
+        # SVN mirror feature isn't unittestable now with source.oldsource.SVN(==source.SVN) , only with source.svn.SVN(==SVN)
+        # https://bugs.webkit.org/show_bug.cgi?id=85887
+        if issubclass(CheckOutSource, source.SVN):
+            return
+
+        # Compare CheckOutSource.baseURL with SVNMirror (or with the default URL) in config.json for all builders
+        for builder in c['builders']:
+            for buildStepFactory, kwargs in builder['factory'].steps:
+                if str(buildStepFactory).split('.')[-1] == 'CheckOutSource':
+                        CheckOutSourceInstance = buildStepFactory(**kwargs)
+                        self.assertEquals(CheckOutSourceInstance.baseURL, self.get_SVNMirrorFromConfig(builder['name']))
+
+
 class BuildStepsConstructorTest(unittest.TestCase):
     # "Passing a BuildStep subclass to factory.addStep is deprecated. Please pass a BuildStep instance instead.  Support will be dropped in v0.8.7."
     # It checks if all builder's all buildsteps can be insantiated after migration.

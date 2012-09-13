@@ -1,3 +1,35 @@
+2012-09-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add SVN mirror handling feature to build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=85887
+
+        Reviewed by Dirk Pranke.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add SVN mirrors for Qt buildslaves hosted in Szeged.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ConfigureBuild.__init__): Add SVNMirror property to be able to watch which slaves use which mirror on build.webkit.org.
+        (ConfigureBuild.start):
+        (CheckOutSource.__init__): Set baseURL to the SVNMirror or the default http://svn.webkit.org/repository/webkit/
+        (WaitForSVNServer): Add new buildstep for waiting the SVNMirror to be in sync with http://svn.webkit.org/repository/webkit/
+        (Factory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (BuildAndPerfTestFactory.__init__):
+        (BuildAndPerfTestWebKit2Factory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestWebKit2Factory.__init__):
+        (loadBuilderConfig): Use kwargs instead of args to be able to add the optional SVNMirror factory argument.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (SVNMirrorTest):
+        (SVNMirrorTest.setUp): Load config.json once at startup.
+        (SVNMirrorTest.get_SVNMirrorFromConfig): Get the SVNMirror from config.json for a given buildslave.
+        (SVNMirrorTest.test_CheckOutSource): Compare CheckOutSource.baseURL with SVNMirror in config.json for all builders
+        * BuildSlaveSupport/build.webkit.org-config/wait-for-SVN-server.py: Added.
+        (getLatestSVNRevision): Get the latest SVN revison from the given server.
+        (waitForSVNRevision): Wait until the given SVN revision is committed to the given server. It doesn't wait if the
+                              SVN revision is empty (force build triggered without revision) or the server is unavailable.
+
 2012-09-12  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][WTR] Set waitUntilDone watchdog timer value equal to WK1.
