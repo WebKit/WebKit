@@ -1,3 +1,15 @@
+2012-09-13  Tony Chang  <tony@chromium.org>
+
+        Flexitem margins should be based on content width, not width
+        https://bugs.webkit.org/show_bug.cgi?id=96674
+
+        Reviewed by Ojan Vafai.
+
+        Add a test case where contentWidth != width.
+
+        * css3/flexbox/percent-margins-expected.txt:
+        * css3/flexbox/percent-margins.html:
+
 2012-09-13  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Properties of IDBKeyRange should default to undefined

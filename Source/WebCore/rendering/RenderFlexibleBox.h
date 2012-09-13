@@ -86,7 +86,7 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent();
-    LayoutUnit computeMainAxisExtentForChild(RenderBox* child, SizeType, const Length& size, LayoutUnit maximumValue);
+    LayoutUnit computeMainAxisExtentForChild(RenderBox* child, SizeType, const Length& size);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
@@ -120,10 +120,10 @@ private:
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
     LayoutUnit marginBoxAscentForChild(RenderBox*);
 
-    LayoutUnit computeMarginValue(Length margin, LayoutUnit availableSize, RenderView*);
+    LayoutUnit computeChildMarginValue(Length margin, RenderView*);
     void computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet&);
     LayoutUnit lineBreakLength();
-    LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize, LayoutUnit flexboxAvailableContentExtent);
+    LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize);
     bool computeNextFlexLine(OrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalFlexGrow, float& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent);
     LayoutUnit computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent);
 
