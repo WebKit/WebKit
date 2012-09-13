@@ -1055,7 +1055,3 @@ BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
 
 // Fails after r128389.
 BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
-
-// Fails after r128274.
-BUGWK96619 : fast/overflow/overflow-height-float-not-removed-crash.html = CRASH
-

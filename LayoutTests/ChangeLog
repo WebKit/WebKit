@@ -1,3 +1,15 @@
+2012-09-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r128375, r128431
+        https://bugs.webkit.org/show_bug.cgi?id=96630
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations: Unskip fast/overflow/overflow-height-float-not-removed-crash.html.
+        * platform/efl/fast/table/height-percent-test-vertical-expected.png: Rebase.
+        * platform/efl/fast/table/height-percent-test-vertical-expected.txt: Ditto.
+        * platform/efl/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Added. Rebase.
+
 2012-09-13  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt][WK2] New fast/forms/number/number-spinbutton-click-in-iframe.html fails
