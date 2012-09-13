@@ -24,6 +24,7 @@
 
 #include <QCoreApplication>
 
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #if defined Q_OS_WIN32
 #include <SystemInfo.h>
