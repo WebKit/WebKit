@@ -242,6 +242,19 @@ for(library, WEBKIT) {
     LIBS = $$existing_libs $$LIBS
 }
 
+# Sanitize PKGCONFIG and LIBS, as we don't want any of these libraries
+# to end up in as public API dependenices in the QtWebKit prl file.
+PKGCONFIG_PRIVATE *= $$PKGCONFIG
+unset(PKGCONFIG)
+LIBS_PRIVATE = $$LIBS
+unset(LIBS)
+
+# We do have a limited subset of Qt modules as dependencies for using
+# the public QtWebKit API. The rest of the modules go into QT_PRIVATE.
+QT_PRIVATE *= $$QT
+QT = $$QT_API_DEPENDS
+QT_PRIVATE -= $$QT
+
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {
     # The root WebKit project file is the only one that allows
     # you to pass a set of subtargets on the comand line.

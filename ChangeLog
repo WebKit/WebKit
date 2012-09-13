@@ -1,3 +1,25 @@
+2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure LIBS, PKGCONFIG, and QT, do not affect QtWebKit's prl file
+
+        Unless it's actually a dependency of the public QtWebKit API.
+
+        We could replace every occurance of LIBS, PKGCONFIG, and QT, in the pri
+        files with their _PRIVATE equivivalent, but that's likely to break when
+        someone adds a new QT/LIBS/PKGCONFIG += foo line somewhere. Instead we
+        clean up the variables in default_post.
+
+        This means that the CONFIG -= explicitlib in linkAgainstLibrary() is no
+        longer needed, as it was a workaround for the intermediate libraries ending
+        up in the prl file. And, since CONFIG -= staticlib was there to support
+        the explicitlib option, we can remove that too (as well as the exception
+        for gprof, since it would be empty). If gprof needs tweaks to always link
+        statically they should go in gprof.prf.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2012-09-13  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Fllow rename of qt_module_config.prf to qt_module.prf

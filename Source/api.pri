@@ -14,6 +14,11 @@ load(qt_build_config)
 MODULE = webkit
 MODULE_PRI = ../Tools/qmake/qt_webkit.pri
 
+# This is the canonical list of dependencies for the public API of
+# the QtWebKit library, and will end up in the library's prl file.
+QT_API_DEPENDS = core gui network
+build?(webkit1): QT_API_DEPENDS += widgets
+
 # ---------------- Custom developer-build handling -------------------
 #
 # The assumption for Qt developer builds is that the module file
