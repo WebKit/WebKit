@@ -1,3 +1,11 @@
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening for r128516/r128517:
+          remove the now-unnecessary cr-mac expectations for fast/writing-mode test.
+          fix baseline for fast/table/bad-replaced-sizing-preferred-logical-widths.html
+
+        * platform/chromium-mac/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Removed.
+
 2012-09-13  Tom Sepez  <tsepez@chromium.org>
 
         ASSERT(!eventDispatchForbidden()) firest when removed plugin re-inserted as part of readyStateChange.

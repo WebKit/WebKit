@@ -4,4 +4,4 @@ This test checks that a replaced element inside an auto-table layout properly co
 
 
 PASS
-dolor sit amet...
+
