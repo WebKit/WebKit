@@ -46,7 +46,7 @@ static v8::Handle<v8::Value> nameAttrGetter(v8::Local<v8::String> name, const v8
 
 } // namespace TestExceptionV8Internal
 
-static const V8DOMConfiguration::BatchedAttribute TestExceptionAttrs[] = {
+static const V8DOMConfiguration::BatchedAttribute V8TestExceptionAttrs[] = {
     // Attribute 'name' (Type: 'readonly attribute' ExtAttr: '')
     {"name", TestExceptionV8Internal::nameAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
@@ -57,7 +57,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8:
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestException", v8::Persistent<v8::FunctionTemplate>(), V8TestException::internalFieldCount,
-        TestExceptionAttrs, WTF_ARRAY_LENGTH(TestExceptionAttrs),
+        V8TestExceptionAttrs, WTF_ARRAY_LENGTH(V8TestExceptionAttrs),
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     

@@ -76,7 +76,7 @@ v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Handle<v8::Object> creationCo
     return wrapper;
 }
 
-static const V8DOMConfiguration::BatchedCallback Float64ArrayCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback V8Float64ArrayCallbacks[] = {
     {"set", Float64ArrayV8Internal::setCallback},
 };
 
@@ -93,7 +93,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(), V8Float64Array::internalFieldCount,
         0, 0,
-        Float64ArrayCallbacks, WTF_ARRAY_LENGTH(Float64ArrayCallbacks));
+        V8Float64ArrayCallbacks, WTF_ARRAY_LENGTH(V8Float64ArrayCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8Float64Array::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();

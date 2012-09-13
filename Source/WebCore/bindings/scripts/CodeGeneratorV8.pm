@@ -2685,7 +2685,7 @@ END
     my $has_attributes = 0;
     if (@$attributes) {
         $has_attributes = 1;
-        push(@implContent, "static const V8DOMConfiguration::BatchedAttribute ${interfaceName}Attrs[] = {\n");
+        push(@implContent, "static const V8DOMConfiguration::BatchedAttribute V8${interfaceName}Attrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, $attributes);
         push(@implContent, "};\n\n");
     }
@@ -2700,7 +2700,7 @@ END
         next if !IsStandardFunction($dataNode, $function);
         if (!$has_callbacks) {
             $has_callbacks = 1;
-            push(@implContent, "static const V8DOMConfiguration::BatchedCallback ${interfaceName}Callbacks[] = {\n");
+            push(@implContent, "static const V8DOMConfiguration::BatchedCallback V8${interfaceName}Callbacks[] = {\n");
         }
         my $name = $function->signature->name;
         my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
@@ -2719,7 +2719,7 @@ END
     my @constantsEnabledAtRuntime;
     if (@{$dataNode->constants}) {
         $has_constants = 1;
-        push(@implContent, "static const V8DOMConfiguration::BatchedConstant ${interfaceName}Consts[] = {\n");
+        push(@implContent, "static const V8DOMConfiguration::BatchedConstant V8${interfaceName}Consts[] = {\n");
     }
     foreach my $constant (@{$dataNode->constants}) {
         my $name = $constant->name;
@@ -2810,7 +2810,7 @@ END
     # Set up our attributes if we have them
     if ($has_attributes) {
         push(@implContent, <<END);
-        ${interfaceName}Attrs, WTF_ARRAY_LENGTH(${interfaceName}Attrs),
+        V8${interfaceName}Attrs, WTF_ARRAY_LENGTH(V8${interfaceName}Attrs),
 END
     } else {
         push(@implContent, <<END);
@@ -2820,7 +2820,7 @@ END
 
     if ($has_callbacks) {
         push(@implContent, <<END);
-        ${interfaceName}Callbacks, WTF_ARRAY_LENGTH(${interfaceName}Callbacks));
+        V8${interfaceName}Callbacks, WTF_ARRAY_LENGTH(V8${interfaceName}Callbacks));
 END
     } else {
         push(@implContent, <<END);
@@ -2902,7 +2902,7 @@ END
 
     if ($has_constants) {
         push(@implContent, <<END);
-    V8DOMConfiguration::batchConfigureConstants(desc, proto, ${interfaceName}Consts, WTF_ARRAY_LENGTH(${interfaceName}Consts));
+    V8DOMConfiguration::batchConfigureConstants(desc, proto, V8${interfaceName}Consts, WTF_ARRAY_LENGTH(V8${interfaceName}Consts));
 END
     }
 

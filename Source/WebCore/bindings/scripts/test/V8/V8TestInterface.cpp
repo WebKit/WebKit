@@ -186,7 +186,7 @@ static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& ar
 
 } // namespace TestInterfaceV8Internal
 
-static const V8DOMConfiguration::BatchedAttribute TestInterfaceAttrs[] = {
+static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrs[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalStaticReadOnlyAttr' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
     {"supplementalStaticReadOnlyAttr", TestInterfaceV8Internal::supplementalStaticReadOnlyAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
@@ -213,7 +213,7 @@ static const V8DOMConfiguration::BatchedAttribute TestInterfaceAttrs[] = {
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 };
 
-static const V8DOMConfiguration::BatchedCallback TestInterfaceCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback V8TestInterfaceCallbacks[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1Callback},
 #endif
@@ -222,7 +222,7 @@ static const V8DOMConfiguration::BatchedCallback TestInterfaceCallbacks[] = {
 #endif
 };
 
-static const V8DOMConfiguration::BatchedConstant TestInterfaceConsts[] = {
+static const V8DOMConfiguration::BatchedConstant V8TestInterfaceConsts[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"SUPPLEMENTALCONSTANT1", static_cast<signed int>(1)},
 #endif
@@ -275,8 +275,8 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
-        TestInterfaceAttrs, WTF_ARRAY_LENGTH(TestInterfaceAttrs),
-        TestInterfaceCallbacks, WTF_ARRAY_LENGTH(TestInterfaceCallbacks));
+        V8TestInterfaceAttrs, WTF_ARRAY_LENGTH(V8TestInterfaceAttrs),
+        V8TestInterfaceCallbacks, WTF_ARRAY_LENGTH(V8TestInterfaceCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestInterface::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
@@ -295,7 +295,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 #if ENABLE(Condition11) || ENABLE(Condition12)
     desc->Set(v8::String::NewSymbol("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4Callback, v8Undefined(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
-    V8DOMConfiguration::batchConfigureConstants(desc, proto, TestInterfaceConsts, WTF_ARRAY_LENGTH(TestInterfaceConsts));
+    V8DOMConfiguration::batchConfigureConstants(desc, proto, V8TestInterfaceConsts, WTF_ARRAY_LENGTH(V8TestInterfaceConsts));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());

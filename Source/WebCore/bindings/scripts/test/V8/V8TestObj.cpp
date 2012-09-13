@@ -1903,7 +1903,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
 
 } // namespace TestObjV8Internal
 
-static const V8DOMConfiguration::BatchedAttribute TestObjAttrs[] = {
+static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     // Attribute 'readOnlyLongAttr' (Type: 'readonly attribute' ExtAttr: '')
     {"readOnlyLongAttr", TestObjV8Internal::readOnlyLongAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'readOnlyStringAttr' (Type: 'readonly attribute' ExtAttr: '')
@@ -2034,7 +2034,7 @@ static const V8DOMConfiguration::BatchedAttribute TestObjAttrs[] = {
     {"replaceableAttribute", TestObjV8Internal::replaceableAttributeAttrGetter, TestObjV8Internal::TestObjReplaceableAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedCallback TestObjCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
     {"voidMethod", TestObjV8Internal::voidMethodCallback},
     {"Method", TestObjV8Internal::MethodCallback},
     {"objMethod", TestObjV8Internal::objMethodCallback},
@@ -2084,7 +2084,7 @@ static const V8DOMConfiguration::BatchedCallback TestObjCallbacks[] = {
     {"strictFunction", TestObjV8Internal::strictFunctionCallback},
 };
 
-static const V8DOMConfiguration::BatchedConstant TestObjConsts[] = {
+static const V8DOMConfiguration::BatchedConstant V8TestObjConsts[] = {
 #if ENABLE(Condition1)
     {"CONDITIONAL_CONST", static_cast<signed int>(0)},
 #endif
@@ -2148,8 +2148,8 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestObject", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
-        TestObjAttrs, WTF_ARRAY_LENGTH(TestObjAttrs),
-        TestObjCallbacks, WTF_ARRAY_LENGTH(TestObjCallbacks));
+        V8TestObjAttrs, WTF_ARRAY_LENGTH(V8TestObjAttrs),
+        V8TestObjCallbacks, WTF_ARRAY_LENGTH(V8TestObjCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestObj::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
@@ -2233,7 +2233,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> convert5Argv[convert5Argc] = { V8e::GetRawTemplate() };
     v8::Handle<v8::Signature> convert5Signature = v8::Signature::New(desc, convert5Argc, convert5Argv);
     proto->Set(v8::String::NewSymbol("convert5"), v8::FunctionTemplate::New(TestObjV8Internal::convert5Callback, v8Undefined(), convert5Signature));
-    V8DOMConfiguration::batchConfigureConstants(desc, proto, TestObjConsts, WTF_ARRAY_LENGTH(TestObjConsts));
+    V8DOMConfiguration::batchConfigureConstants(desc, proto, V8TestObjConsts, WTF_ARRAY_LENGTH(V8TestObjConsts));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());
