@@ -1,3 +1,13 @@
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Temporarily remove Android Builder (dbg) from garden-o-matic view
+        https://bugs.webkit.org/show_bug.cgi?id=96678
+
+        Reviewed by Dirk Pranke.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        (.):
+
 2012-09-13  Rob Buis  <rbuis@rim.com>
 
         Unreviewed changes to watchlist.
