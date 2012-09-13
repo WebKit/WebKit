@@ -1,3 +1,9 @@
+2012-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaseline after 128433. It hasn't been updated correctly in the previous revision.
+
+        * platform/qt/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt:
+
 2012-09-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
