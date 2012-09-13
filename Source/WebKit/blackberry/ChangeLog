@@ -1,3 +1,10 @@
+2012-09-13  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed, warning fix left over from r128456 (bug 96645)
+
+        * Api/InRegionScroller.cpp:
+        (WebKit):
+
 2012-09-13  Genevieve Mak  <gmak@rim.com>
 
         Continue to send mouse move events to a non-scrollable page

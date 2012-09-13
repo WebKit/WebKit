@@ -42,7 +42,6 @@ namespace BlackBerry {
 namespace WebKit {
 
 static bool canScrollInnerFrame(Frame*);
-static bool canScrollRenderBox(RenderBox*);
 static RenderLayer* parentLayer(RenderLayer*);
 static bool isNonRenderViewFixedPositionedContainer(RenderLayer*);
 
