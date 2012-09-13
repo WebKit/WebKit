@@ -468,19 +468,23 @@ void RenderThemeEfl::setColorFromThemeClass(const char* colorClass)
     }
 }
 
-void RenderThemeEfl::setThemePath(const String& path)
+void RenderThemeEfl::setThemePath(const String& newThemePath)
 {
-    if (path == m_themePath)
+    if (newThemePath == m_themePath)
         return;
 
-    if (path.isEmpty()) {
+    if (newThemePath.isEmpty()) {
         EINA_LOG_CRIT("No valid theme defined, things will not work properly.");
         return;
     }
 
-    m_themePath = path;
+    String oldThemePath = m_themePath;
+    m_themePath = newThemePath;
 
-    loadTheme();
+    // Keep the consistence by restoring the previous theme path
+    // if we cannot load the new one.
+    if (!loadTheme())
+        m_themePath = oldThemePath;
 }
 
 String RenderThemeEfl::themePath() const

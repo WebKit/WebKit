@@ -1,3 +1,16 @@
+2012-09-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Assertion reached on RenderThemeEFL when setting a theme to an invalid path
+        https://bugs.webkit.org/show_bug.cgi?id=96649
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updated the alternative test theme file. It is basically
+        the default theme with extra padding on the button widget as
+        specified by the comments on the test case.
+
+        * UIProcess/API/efl/tests/resources/big_button_theme.edj:
+
 2012-09-13  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WK2] LayerTreeCoordinator should release unused UpdatedAtlases
