@@ -22,7 +22,6 @@
 #include "BlobRegistryImpl.h"
 #include "CookieManager.h"
 #include "ReadOnlyLatin1String.h"
-#include <LocaleHandler.h>
 #include <network/NetworkRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -226,17 +225,8 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                 platformRequest.addHeader("Cookie", cookiePairs.containsOnlyLatin1() ? cookiePairs.latin1().data() : cookiePairs.utf8().data());
         }
 
-        if (!httpHeaderFields().contains("Accept-Language")) {
-            // Locale has the form "en-US". Construct accept language like "en-US, en;q=0.8".
-            std::string locale = BlackBerry::Platform::LocaleHandler::instance()->language();
-            // POSIX locale has '_' instead of '-'.
-            // Replace to conform to HTTP spec.
-            size_t underscore = locale.find('_');
-            if (underscore != std::string::npos)
-                locale.replace(underscore, 1, "-");
-            std::string acceptLanguage = locale + ", " + locale.substr(0, 2) + ";q=0.8";
-            platformRequest.addHeader("Accept-Language", acceptLanguage.c_str());
-        }
+        if (!httpHeaderFields().contains("Accept-Language"))
+            platformRequest.addAcceptLanguageHeader();
     }
 }
 
