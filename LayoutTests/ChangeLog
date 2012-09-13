@@ -1,3 +1,16 @@
+2012-09-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r122501): replaced elements with percent width are wrongly size when inserted inside an auto-table layout
+        https://bugs.webkit.org/show_bug.cgi?id=95892
+
+        Reviewed by Ojan Vafai.
+
+        * fast/replaced/vertical-writing-mode-max-logical-width-replaced-expected.txt: Added.
+        * fast/replaced/vertical-writing-mode-max-logical-width-replaced.html: Added.
+        * fast/table/bad-replaced-sizing-preferred-logical-widths-expected.txt: Added.
+        * fast/table/bad-replaced-sizing-preferred-logical-widths.html: Added.
+        * fast/table/resources/iframe.html: Added.
+
 2012-09-12  Brady Eidson  <beidson@apple.com>
 
         Assert in NetscapePlugin::destroy() with async plugin init

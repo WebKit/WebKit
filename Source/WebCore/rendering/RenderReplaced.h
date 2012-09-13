@@ -67,6 +67,7 @@ private:
 
     virtual bool canHaveChildren() const { return false; }
 
+    LayoutUnit computeMaxPreferredLogicalWidth() const;
     virtual void computePreferredLogicalWidths();
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 

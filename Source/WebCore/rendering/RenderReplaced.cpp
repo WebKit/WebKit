@@ -437,12 +437,26 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
     return computeReplacedLogicalHeightRespectingMinMaxHeight(intrinsicLogicalHeight());
 }
 
+LayoutUnit RenderReplaced::computeMaxPreferredLogicalWidth() const
+{
+    Length logicalWidth = style()->logicalWidth();
+
+    // We cannot resolve any percent logical width here as the available logical
+    // width may not be set on our containing block.
+    if (logicalWidth.isPercent())
+        return intrinsicLogicalWidth();
+
+    // FIXME: We shouldn't be calling a logical width computing function in preferred
+    // logical widths computation as the layout information is probably invalid.
+    return computeReplacedLogicalWidth(false);
+}
+
 void RenderReplaced::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    LayoutUnit borderAndPadding = borderAndPaddingWidth();
-    m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(false) + borderAndPadding;
+    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
+    m_maxPreferredLogicalWidth = computeMaxPreferredLogicalWidth() + borderAndPadding;
 
     if (style()->maxWidth().isFixed())
         m_maxPreferredLogicalWidth = min<LayoutUnit>(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : ZERO_LAYOUT_UNIT));
