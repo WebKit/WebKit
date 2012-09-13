@@ -234,17 +234,14 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    /**
-     * @param {function()=} userCallback
-     */
-    _rebuildUpdate: function(userCallback)
+    _rebuildUpdate: function()
     {
         if (this._rebuildUpdateInProgress) {
             this._lastNodeForInnerRebuild = this.node;
             return;
         }
 
-        var node = this._validateNode(userCallback);
+        var node = this._validateNode();
         if (!node)
             return;
 
@@ -256,10 +253,13 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             delete this._rebuildUpdateInProgress;
 
-            if (this._lastNodeForInnerRebuild) {
+            var lastNodeForRebuild = this._lastNodeForInnerRebuild;
+            if (lastNodeForRebuild) {
                 delete this._lastNodeForInnerRebuild;
-                this._rebuildUpdate(userCallback);
-                return;
+                if (lastNodeForRebuild !== this.node) {
+                    this._rebuildUpdate();
+                    return;
+                }
             }
 
             if (matchedResult && this.node === node) {
@@ -268,8 +268,12 @@ WebInspector.StylesSidebarPane.prototype = {
                 resultStyles.inherited = matchedResult.inherited;
                 this._innerRebuildUpdate(node, resultStyles);
             }
-            if (userCallback)
-                userCallback();
+
+            if (lastNodeForRebuild) {
+                // lastNodeForRebuild is the same as this.node - another rebuild has been requested.
+                this._rebuildUpdate();
+                return;
+            }
         }
 
         function inlineCallback(inlineStyle, attributesStyle)

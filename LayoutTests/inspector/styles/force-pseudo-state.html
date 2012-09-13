@@ -1,5 +1,19 @@
 <html>
 <head>
+<style>
+div:hover, a:hover {
+    color: red;
+}
+
+div:focus, a:focus {
+    border: 1px solid green;
+}
+
+div:active, a:active {
+    font-weight: bold;
+}
+
+</style>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
@@ -31,9 +45,14 @@ function test()
         InspectorTest.addResult("");
         InspectorTest.addResult("DIV with :hover and :active");
         dumpData();
+        InspectorTest.waitForStyles("div", hoverCallback, true);
         WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "hover", false);
-        WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "focus", true);
-        InspectorTest.waitForStyles("div", divSelected2, true);
+
+        function hoverCallback()
+        {
+            InspectorTest.waitForStyles("div", divSelected2, true);
+            WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "focus", true);
+        }
     }
 
     function divSelected2()
@@ -41,9 +60,14 @@ function test()
         InspectorTest.addResult("");
         InspectorTest.addResult("DIV with :active and :focus");
         dumpData();
+        InspectorTest.waitForStyles("div", focusCallback, true);
         WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "focus", false);
-        WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "active", false);
-        InspectorTest.waitForStyles("div", divSelected3, true);
+
+        function focusCallback()
+        {
+            InspectorTest.waitForStyles("div", divSelected3, true);
+            WebInspector.panels.elements._setPseudoClassForNodeId(divNodeId, "active", false);
+        }
     }
 
     function divSelected3(node)
@@ -52,27 +76,10 @@ function test()
         InspectorTest.addResult("DIV with no forced state");
         dumpData();
         InspectorTest.completeTest();
-        return;
     }
 }
 </script>
-
-<style>
-div:hover, a:hover {
-    color: red;
-}
-
-div:focus, a:focus {
-    border: 1px solid green;
-}
-
-div:active, a:active {
-    font-weight: bold;
-}
-
-</style>
 </head>
-
 <body id="mainBody" class="main1 main2 mainpage" onload="runTest()" style="font-weight: normal; width: 85%; background-image: url(bar.png)">
 <p>
 Tests that forced element state is reflected in the DOM tree and Styles pane.
