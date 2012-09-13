@@ -36,6 +36,12 @@ BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
 BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
 BUGWK95333 DEBUG : fast/forms/color/input-value-sanitization-color.html = CRASH
 
+// WebKitTestRunner needs an implementation for download attribute feature
+// The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
+// anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
+BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-download.html = CRASH
+BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-nodownload-set.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -186,12 +192,6 @@ BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TE
 
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
-
-// WebKitTestRunner needs an implementation for download attribute feature
-// The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
-// anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
-BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-download.html = TEXT
-BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-nodownload-set.html = TEXT
 
 // Unclassified failures
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT

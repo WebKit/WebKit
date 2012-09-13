@@ -1,3 +1,16 @@
+2012-09-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Gardening after r128393
+        https://bugs.webkit.org/show_bug.cgi?id=96640
+
+        Unreviewed gardening.
+
+        Corrected expectations for the following files:
+        fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+        fast/dom/HTMLAnchorElement/anchor-download.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed fix for: REGRESSION(r128451): It broke inspector/profiler/memory-instrumentation-cached-images.html
