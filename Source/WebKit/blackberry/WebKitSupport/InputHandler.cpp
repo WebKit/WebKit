@@ -972,7 +972,8 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
     case BlackBerry::Platform::InputTypeDate:
     case BlackBerry::Platform::InputTypeTime:
     case BlackBerry::Platform::InputTypeDateTime:
-    case BlackBerry::Platform::InputTypeDateTimeLocal: {
+    case BlackBerry::Platform::InputTypeDateTimeLocal:
+    case BlackBerry::Platform::InputTypeMonth: {
         // Check if popup already exists, close it if does.
         m_webPage->m_page->chrome()->client()->closePagePopup(0);
         String value = element->value();

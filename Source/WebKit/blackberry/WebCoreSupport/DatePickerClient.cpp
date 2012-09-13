@@ -74,6 +74,8 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
         source.appendLiteral("window.popupcontrol.show(\"DateTimeLocal\", ");
         break;
     case BlackBerry::Platform::InputTypeMonth:
+        source.appendLiteral("window.popupcontrol.show(\"Month\", ");
+        break;
     case BlackBerry::Platform::InputTypeWeek:
     default:
         break;
