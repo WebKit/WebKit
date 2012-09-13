@@ -1,3 +1,17 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] The ANGLE build on Windows breaks with GnuWin32's flex because it is too old
+        https://bugs.webkit.org/show_bug.cgi?id=96359
+
+        Reviewed by Tor Arne Vestbø.
+
+        GnuWin32's flex is 2.5.4 and that is too old for ANGLE's preprocessor
+        lexer. The only viable alternative I could find on Windows that provides
+        binaries is the winflexbison distribution (http://sourceforge.net/projects/winflexbison/),
+        so let's use that one instead.
+
+        * DerivedSources.pri:
+
 2012-09-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build on Windows requires bison/flex in PATH

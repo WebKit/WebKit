@@ -17,7 +17,7 @@ ANGLE_FLEX_SOURCES = \
 
 angleflex.output = ${QMAKE_FILE_BASE}_lex.cpp
 angleflex.input = ANGLE_FLEX_SOURCES
-angleflex.commands = flex --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
+angleflex.commands = $$FLEX --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
 GENERATORS += angleflex
 
 ANGLE_BISON_SOURCES = \

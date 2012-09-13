@@ -1542,7 +1542,12 @@ sub checkRequiredSystemConfig
             print "*************************************************************\n";
         }
     } elsif (isGtk() or isQt() or isWx() or isEfl()) {
-        my @cmds = qw(flex bison gperf);
+        my @cmds = qw(bison gperf);
+        if (isQt() and isWindows()) {
+            push @cmds, "win_flex";
+        } else {
+            push @cmds, "flex";
+        }
         my @missing = ();
         my $oldPath = $ENV{PATH};
         if (isQt() and isWindows()) {

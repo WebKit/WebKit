@@ -108,3 +108,8 @@ isEmpty(SQLITE3SRCDIR) {
     SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
 }
 
+# A newer version of flex is required on Windows. At the moment the only
+# one that appears to provide binaries and is not cygwin is winflex.
+FLEX = flex
+win32: FLEX = win_flex
+
