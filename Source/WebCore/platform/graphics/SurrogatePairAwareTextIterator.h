@@ -21,6 +21,7 @@
 #ifndef SurrogatePairAwareTextIterator_h
 #define SurrogatePairAwareTextIterator_h
 
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -31,13 +32,31 @@ public:
     // 'endCharacter' denotes the maximum length of the UChar array, which might exceed 'lastCharacter'.
     SurrogatePairAwareTextIterator(const UChar*, int currentCharacter, int lastCharacter, int endCharacter);
 
-    bool consume(UChar32& character, unsigned& clusterLength);
-    void advance(unsigned advanceLength);
+    inline bool consume(UChar32& character, unsigned& clusterLength)
+    {
+        if (m_currentCharacter >= m_lastCharacter)
+            return false;
+
+        character = *m_characters;
+        clusterLength = 1;
+
+        if (character < HiraganaLetterSmallA)
+            return true;
+
+        return consumeSlowCase(character, clusterLength);
+    }
+
+    void advance(unsigned advanceLength)
+    {
+        m_characters += advanceLength;
+        m_currentCharacter += advanceLength;
+    }
 
     int currentCharacter() const { return m_currentCharacter; }
     const UChar* characters() const { return m_characters; }
 
 private:
+    bool consumeSlowCase(UChar32&, unsigned&);
     UChar32 normalizeVoicingMarks();
 
     const UChar* m_characters;

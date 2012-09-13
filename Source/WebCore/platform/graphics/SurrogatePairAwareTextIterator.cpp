@@ -40,17 +40,8 @@ SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* char
 {
 }
 
-bool SurrogatePairAwareTextIterator::consume(UChar32& character, unsigned& clusterLength)
+bool SurrogatePairAwareTextIterator::consumeSlowCase(UChar32& character, unsigned& clusterLength)
 {
-    if (m_currentCharacter >= m_lastCharacter)
-        return false;
-
-    character = *m_characters;
-    clusterLength = 1;
-
-    if (character < 0x3041)
-        return true;
-
     if (character <= 0x30FE) {
         // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
         // Normalize into composed form, and then look for glyph with base + combined mark.
@@ -81,12 +72,6 @@ bool SurrogatePairAwareTextIterator::consume(UChar32& character, unsigned& clust
     character = U16_GET_SUPPLEMENTARY(character, low);
     clusterLength = 2;
     return true;
-}
-
-void SurrogatePairAwareTextIterator::advance(unsigned advanceLength)
-{
-    m_characters += advanceLength;
-    m_currentCharacter += advanceLength;
 }
 
 UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()

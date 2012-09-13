@@ -33678,6 +33678,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\Latin1TextIterator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\LineBreakIteratorPoolICU.h"
 					>
 				</File>

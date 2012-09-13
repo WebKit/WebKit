@@ -1,3 +1,15 @@
+2012-09-13  Michael Saboff  <msaboff@apple.com>
+
+        Added 8 bit path to WidthIterator::advance()
+        https://bugs.webkit.org/show_bug.cgi?id=96590
+
+        Reviewed by Geoffrey Garen.
+
+        Added new character constant for Hiragana Letter Small A.
+
+        * wtf/unicode/CharacterNames.h:
+        (Unicode):
+
 2012-09-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: instrument KURL directly.

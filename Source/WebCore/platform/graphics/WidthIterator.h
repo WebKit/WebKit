@@ -73,6 +73,8 @@ struct WidthIterator {
 
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror, int currentCharacter, unsigned& advanceLength);
+    template <typename TextIterator>
+    inline unsigned advanceInternal(TextIterator&, GlyphBuffer*);
 
     HashSet<const SimpleFontData*>* m_fallbackFonts;
     bool m_accountForGlyphBounds;

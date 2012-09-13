@@ -4775,6 +4775,7 @@
             'platform/graphics/ImageBuffer.cpp',
             'platform/graphics/ImageOrientation.cpp',
             'platform/graphics/ImageSource.cpp',
+            'platform/graphics/Latin1TextIterator.h',
             'platform/graphics/MediaPlayer.cpp',
             'platform/graphics/MediaPlayerPrivate.h',
             'platform/graphics/NativeImagePtr.h' ,
