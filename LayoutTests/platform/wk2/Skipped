@@ -1134,13 +1134,6 @@ media/video-colorspace-yuv420.html
 media/video-colorspace-yuv422.html
 media/video-loop.html
 
-# JQuery tests that time out unexpectedly.
-# https://bugs.webkit.org/show_bug.cgi?id=81606
-jquery/core.html
-jquery/event.html
-jquery/manipulation.html
-jquery/traversing.html
-
 # Times out unexpectedly.
 # https://bugs.webkit.org/show_bug.cgi?id=81609
 fast/loader/window-properties-restored-from-page-cache.html

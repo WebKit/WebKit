@@ -1,3 +1,16 @@
+2012-09-12  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][WTR] Set waitUntilDone watchdog timer value equal to WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=81606
+
+        Reviewed by Tim Horton.
+
+        6 seconds is harsh for some jquery test cases.
+        Therefore, adjust the value to match DumpRenderTree.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR):
+
 2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Support download attribute feature

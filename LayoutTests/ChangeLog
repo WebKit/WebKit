@@ -1,3 +1,14 @@
+2012-09-12  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][WTR] Set waitUntilDone watchdog timer value equal to WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=81606
+
+        Reviewed by Tim Horton.
+
+        Unskip jQuery tests which will now consistently pass due to the increased waitUntilDone timeout.
+
+        * platform/wk2/Skipped:
+
 2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Support download attribute feature

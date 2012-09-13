@@ -57,9 +57,7 @@
 
 namespace WTR {
 
-// This is lower than DumpRenderTree's timeout, to make it easier to work through the failures
-// Eventually it should be changed to match.
-const double TestRunner::waitToDumpWatchdogTimerInterval = 6;
+const double TestRunner::waitToDumpWatchdogTimerInterval = 30;
 
 PassRefPtr<TestRunner> TestRunner::create()
 {
