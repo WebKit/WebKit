@@ -36,6 +36,8 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWK96308 : fast/table/height-percent-test-vertical.html = TEXT
+BUGWK96308 : fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
@@ -469,16 +471,6 @@ BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
 
-BUGWK96534 DEBUG : accessibility/aria-checkbox-checked.html = CRASH
-BUGWK96534 DEBUG : accessibility/aria-combobox.html = CRASH
-BUGWK96534 DEBUG : accessibility/aria-controls-with-tabs.html = CRASH
-BUGWK96534 DEBUG : accessibility/aria-disabled.html = CRASH
-BUGWK96534 DEBUG : accessibility/canvas-accessibilitynodeobject.html = CRASH
-BUGWK96534 DEBUG : accessibility/disabled-controls-not-focusable.html = CRASH
-BUGWK96534 DEBUG : accessibility/removed-anonymous-block-child-causes-crash.html = CRASH
-BUGWK96534 DEBUG : accessibility/table-with-empty-thead-causes-crash.html = CRASH
-BUGWK96534 DEBUG : platform/gtk/accessibility/caret-browsing-text-focus.html = CRASH
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -642,6 +634,7 @@ BUGWKGTK : accessibility/aria-text-role.html = TEXT
 BUGWKGTK : accessibility/aria-used-on-image-maps.html = TEXT
 BUGWKGTK : accessibility/button-press-action.html = TEXT
 BUGWKGTK : accessibility/canvas-fallback-content.html = TEXT
+BUGWKGTK : accessibility/canvas-fallback-content-2.html = TEXT
 BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = TEXT
 BUGWKGTK : accessibility/ellipsis-text.html = TEXT
 BUGWKGTK : accessibility/ignore-spacer-elements.html = TEXT
@@ -1271,7 +1264,7 @@ BUGWK91319 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 // Failing after r123379 on EFL and GTK.
 BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
-BUGWK92100 RELEASE : accessibility/canvas-accessibilitynodeobject.html = TEXT
+BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 
 // These tests depend on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
@@ -1322,7 +1315,11 @@ BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
 
-BUGWK96534 RELEASE : platform/gtk/accessibility/caret-browsing-text-focus.html = TEXT
+BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
+
+BUGWK96606 : fast/canvas/canvas-css-crazy.html = TEXT
+
+BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

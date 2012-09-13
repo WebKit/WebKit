@@ -1,3 +1,20 @@
+2012-09-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing crash expectations for accessibility tests that were added in
+        r128342. The offending commit was reverted in r128353.
+
+        Adding text mismatch expectations for two tests that probably require
+        rebaselining, failing since r128375.
+
+        Adding failure expectations for other regressions:
+        - fast/canvas/canvas-css-crazy.html after r128374
+        - fast/table/bad-replaced-sizing-preferred-logical-widths.html after r128389
+        - fast/js/primitive-property-access-edge-cases.html after r128400
+
+        * platform/gtk/TestExpectations:
+
 2012-09-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Styles not updated when there is a heavy stream of DOM updates
