@@ -62,7 +62,7 @@ private:
 protected:
     JSTestActiveDOMObject(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestActiveDOMObject>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 };
 
 class JSTestActiveDOMObjectOwner : public JSC::WeakHandleOwner {

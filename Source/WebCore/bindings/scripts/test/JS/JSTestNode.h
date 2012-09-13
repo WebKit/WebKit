@@ -54,7 +54,7 @@ public:
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNode>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 
 

@@ -76,7 +76,7 @@ private:
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 
 class JSTestObjOwner : public JSC::WeakHandleOwner {

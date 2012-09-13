@@ -190,15 +190,15 @@ bool JSFloat64Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
     return getStaticValueDescriptor<JSFloat64Array, Base>(exec, getJSFloat64ArrayTable(exec), thisObject, propertyName, descriptor);
 }
 
-bool JSFloat64Array::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSFloat64Array::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    if (propertyName < static_cast<Float64Array*>(thisObject->impl())->length()) {
-        slot.setValue(thisObject->getByIndex(exec, propertyName));
+    if (index < static_cast<Float64Array*>(thisObject->impl())->length()) {
+        slot.setValue(thisObject->getByIndex(exec, index));
         return true;
     }
-    return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
+    return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
 JSValue jsFloat64ArrayConstructor(ExecState* exec, JSValue slotBase, PropertyName)
@@ -219,12 +219,16 @@ void JSFloat64Array::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSFloat64Array::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool)
+void JSFloat64Array::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    thisObject->indexSetter(exec, propertyName, value);
-    return;
+    if (index <= MAX_ARRAY_INDEX) {
+        UNUSED_PARAM(shouldThrow);
+        thisObject->indexSetter(exec, index, value);
+        return;
+    }
+    Base::putByIndex(cell, exec, index, value, shouldThrow);
 }
 
 void JSFloat64Array::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

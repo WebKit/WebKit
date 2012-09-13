@@ -156,6 +156,18 @@ bool JSTestCustomNamedGetter::getOwnPropertyDescriptor(JSObject* object, ExecSta
     return getStaticValueDescriptor<JSTestCustomNamedGetter, Base>(exec, &JSTestCustomNamedGetterTable, thisObject, propertyName, descriptor);
 }
 
+bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)
+{
+    JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    PropertyName propertyName = Identifier::from(exec, index);
+    if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
+        slot.setCustom(thisObject, thisObject->nameGetter);
+        return true;
+    }
+    return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
+}
+
 JSValue jsTestCustomNamedGetterConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestCustomNamedGetter* domObject = jsCast<JSTestCustomNamedGetter*>(asObject(slotBase));

@@ -62,7 +62,7 @@ private:
 protected:
     JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 };
 
 class JSTestMediaQueryListListenerOwner : public JSC::WeakHandleOwner {

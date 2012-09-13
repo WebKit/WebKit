@@ -62,7 +62,7 @@ private:
 protected:
     JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNamedConstructor>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 };
 
 class JSTestNamedConstructorOwner : public JSC::WeakHandleOwner {

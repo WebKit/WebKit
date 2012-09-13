@@ -323,6 +323,17 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
     lookupPut<JSTestInterface, Base>(exec, propertyName, value, &JSTestInterfaceTable, thisObject, slot);
 }
 
+void JSTestInterface::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
+{
+    JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    PropertyName propertyName = Identifier::from(exec, index);
+    PutPropertySlot slot(shouldThrow);
+    if (thisObject->putDelegate(exec, propertyName, value, slot))
+        return;
+    Base::putByIndex(cell, exec, index, value, shouldThrow);
+}
+
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject*, JSValue value)
 {

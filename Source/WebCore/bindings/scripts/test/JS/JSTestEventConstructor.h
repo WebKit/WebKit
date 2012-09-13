@@ -64,7 +64,7 @@ private:
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestEventConstructor>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 };
 
 class JSTestEventConstructorOwner : public JSC::WeakHandleOwner {

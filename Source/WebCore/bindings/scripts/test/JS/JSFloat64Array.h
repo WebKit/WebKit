@@ -63,7 +63,7 @@ public:
 protected:
     JSFloat64Array(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<Float64Array>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
     JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);
     void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);
 };

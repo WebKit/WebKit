@@ -62,7 +62,7 @@ private:
 protected:
     JSTestException(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestException>);
     void finishCreation(JSC::JSGlobalData&);
-    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | Base::StructureFlags;
 };
 
 class JSTestExceptionOwner : public JSC::WeakHandleOwner {
