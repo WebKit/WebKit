@@ -1,3 +1,13 @@
+2012-09-13  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/12283706> WebKit looks for some files on the system even when building against an SDK.
+
+        Reviewed by David Kilzer.
+
+        If an SDK is being used, pass it through to our custom invocations of the preprocessor.
+
+        * DerivedSources.make:
+
 2012-09-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix for export declarations.
