@@ -177,6 +177,11 @@ void TouchEventHandler::touchHoldEvent()
         m_webPage->clearFocusNode();
 }
 
+static bool isMainFrameScrollable(const WebPagePrivate* page)
+{
+    return page->viewportSize().width() < page->contentsSize().width() || page->viewportSize().height() < page->contentsSize().height();
+}
+
 bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFatFingers)
 {
     // Enable input mode on any touch event.
@@ -269,7 +274,9 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
             PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, TouchScreen);
             m_lastScreenPoint = point.m_screenPos;
             if (!m_webPage->handleMouseEvent(mouseEvent)) {
-                m_convertTouchToMouse = pureWithMouseConversion;
+                // If the page is scrollable and the first event is not handled, ignore subsequent mouse moves.
+                if (isMainFrameScrollable(m_webPage) || m_webPage->m_inRegionScroller->d->isActive() )
+                    m_convertTouchToMouse = pureWithMouseConversion;
                 return false;
             }
             return true;

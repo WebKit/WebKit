@@ -1,3 +1,17 @@
+2012-09-13  Genevieve Mak  <gmak@rim.com>
+
+        Continue to send mouse move events to a non-scrollable page
+        even if they are not consumed.
+        PR #207024
+        https://bugs.webkit.org/show_bug.cgi?id=96655
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::isMainFrameScrollable):
+        (WebKit):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-09-13  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Missing conditions in InRegionScrollerPrivate::canScrollRenderBox
