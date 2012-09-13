@@ -1,5 +1,16 @@
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][Win] Enable USE(3D_GRAPHICS)
+        https://bugs.webkit.org/show_bug.cgi?id=90879
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable it on Windows as well as on QNX (bug fixed).
+
+        * qmake/mkspecs/features/features.prf:
+
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] The ANGLE build on Windows breaks with GnuWin32's flex because it is too old
         https://bugs.webkit.org/show_bug.cgi?id=96359
 

@@ -80,11 +80,8 @@ defineTest(detectFeatures) {
 
     # Enable the USE(3D_GRAPHICS) flag when QtOpenGL is enabled.
     contains(QT_CONFIG, opengl) {
-        # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
-        # Also disable on QNX, see https://bugs.webkit.org/show_bug.cgi?id=93278
-        !win32-*:!qnx {
-            WEBKIT_CONFIG += use_3d_graphics
-        }
+        # On Windows we require GLES2/EGL through ANGLE.
+        !win32|contains(QT_CONFIG, opengles2): WEBKIT_CONFIG += use_3d_graphics
     }
 
     # WebGL support - only enabled if we can use 3D graphics
