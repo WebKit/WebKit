@@ -1,3 +1,14 @@
+2012-09-12  Stephanie Lewis  <slewis@apple.com>
+
+        fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html fails on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=96583
+
+        Unreviewed.
+
+        Update TestExpectations
+
+        * platform/mac/TestExpectations:
+
 2012-09-12  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][WTR] Set waitUntilDone watchdog timer value equal to WK1.
