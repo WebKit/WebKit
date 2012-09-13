@@ -45,7 +45,7 @@ WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process, C
 {
 #if OS(DARWIN)
     m_connection->setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) && !OS(WINDOWS)
     m_connection->setShouldCloseConnectionOnProcessTermination(process->processIdentifier());
 #endif
 }

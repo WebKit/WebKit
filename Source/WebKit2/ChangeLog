@@ -1,3 +1,17 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix UIProcess build with Qt on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96635
+
+        Reviewed by Csaba Osztrogonác.
+
+        Enabling setShouldCloseConnectionOnProcessTermination on the connection
+        is something that is only implemented in ConnectionUnix, not
+        ConnectionWin.cpp, where appears to be built-in functionality.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::WebConnectionToWebProcess):
+
 2012-09-13  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Fix build against namespaced Qt
