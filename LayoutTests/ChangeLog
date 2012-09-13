@@ -2,6 +2,17 @@
 
         Unreviewed GTK gardening.
 
+        Rebaselining two tests after r128375.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/table/height-percent-test-vertical-expected.png: Added.
+        * platform/gtk/fast/table/height-percent-test-vertical-expected.txt:
+        * platform/gtk/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Added.
+
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
         Removing expectation for fast/canvas/canvas-css-crazy.html, the test
         was fixed in r128411.
 
