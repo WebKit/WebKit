@@ -1,3 +1,75 @@
+2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WTR] More efficient string handling in InjectedBundlePage
+        https://bugs.webkit.org/show_bug.cgi?id=96609
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update StringBuilder usage in InjectedBundlePage to follow
+        the latest recommandations for efficient string handling:
+        http://trac.webkit.org/wiki/EfficientStrings
+
+        This involves using appendLiteral() or appendNumber()
+        instead of append() whenever possible.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpPath):
+        (WTR::rangeToStr):
+        (WTR::styleDecToStr):
+        (WTR::frameToStr):
+        (WTR::dumpResourceURL):
+        (WTR):
+        (WTR::dumpFrameDescriptionSuitableForTestResult):
+        (WTR::dumpRequestDescriptionSuitableForTestResult):
+        (WTR::dumpResponseDescriptionSuitableForTestResult):
+        (WTR::dumpErrorDescriptionSuitableForTestResult):
+        (WTR::InjectedBundlePage::didReceiveIntentForFrame):
+        (WTR::InjectedBundlePage::registerIntentServiceForFrame):
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WTR::InjectedBundlePage::didCommitLoadForFrame):
+        (WTR::InjectedBundlePage::didFinishProgress):
+        (WTR::dumpFrameScrollPosition):
+        (WTR::dumpFrameText):
+        (WTR::dumpDescendantFramesText):
+        (WTR::InjectedBundlePage::didFinishLoadForFrame):
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame):
+        (WTR::InjectedBundlePage::didCancelClientRedirectForFrame):
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame):
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame):
+        (WTR::InjectedBundlePage::didHandleOnloadEventsForFrame):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        (WTR::InjectedBundlePage::didFinishLoadForResource):
+        (WTR::InjectedBundlePage::didFailLoadForResource):
+        (WTR::InjectedBundlePage::shouldCacheResponse):
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+        (WTR::InjectedBundlePage::willSetStatusbarText):
+        (WTR::InjectedBundlePage::willRunJavaScriptAlert):
+        (WTR::InjectedBundlePage::willRunJavaScriptConfirm):
+        (WTR::InjectedBundlePage::willRunJavaScriptPrompt):
+        (WTR::InjectedBundlePage::didReachApplicationCacheOriginQuota):
+        (WTR::InjectedBundlePage::shouldBeginEditing):
+        (WTR::InjectedBundlePage::shouldEndEditing):
+        (WTR::InjectedBundlePage::shouldInsertNode):
+        (WTR::InjectedBundlePage::shouldInsertText):
+        (WTR::InjectedBundlePage::shouldDeleteRange):
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange):
+        (WTR::InjectedBundlePage::shouldApplyStyle):
+        (WTR::InjectedBundlePage::didBeginEditing):
+        (WTR::InjectedBundlePage::didEndEditing):
+        (WTR::InjectedBundlePage::didChange):
+        (WTR::InjectedBundlePage::didChangeSelection):
+        (WTR::InjectedBundlePage::supportsFullScreen):
+        (WTR::InjectedBundlePage::enterFullScreenForElement):
+        (WTR::InjectedBundlePage::exitFullScreenForElement):
+        (WTR::InjectedBundlePage::beganEnterFullScreen):
+        (WTR::InjectedBundlePage::beganExitFullScreen):
+        (WTR::InjectedBundlePage::closeFullScreen):
+        (WTR::dumpBackForwardListItem):
+        (WTR::InjectedBundlePage::dumpBackForwardList):
+
 2012-09-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [Qt][WK2] Memory leaks in Qt's TestRunner
