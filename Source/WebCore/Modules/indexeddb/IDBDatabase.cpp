@@ -31,7 +31,7 @@
 #include "EventQueue.h"
 #include "ExceptionCode.h"
 #include "IDBAny.h"
-#include "IDBDatabaseCallbacks.h"
+#include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"
@@ -50,28 +50,29 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> database, PassRefPtr<IDBDatabaseCallbacks> callbacks)
+PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> database)
 {
-    RefPtr<IDBDatabase> idbDatabase(adoptRef(new IDBDatabase(context, database, callbacks)));
+    RefPtr<IDBDatabase> idbDatabase(adoptRef(new IDBDatabase(context, database)));
     idbDatabase->suspendIfNeeded();
     return idbDatabase.release();
 }
 
-IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend, PassRefPtr<IDBDatabaseCallbacks> callbacks)
+IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend)
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_closePending(false)
     , m_contextStopped(false)
-    , m_databaseCallbacks(callbacks)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
+    m_databaseCallbacks = IDBDatabaseCallbacksImpl::create(this);
     m_metadata = m_backend->metadata();
 }
 
 IDBDatabase::~IDBDatabase()
 {
     close();
+    m_databaseCallbacks->unregisterDatabase(this);
 }
 
 void IDBDatabase::transactionCreated(IDBTransaction* transaction)
@@ -332,6 +333,12 @@ void IDBDatabase::onVersionChange(const String& version)
         return;
 
     enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
+}
+
+void IDBDatabase::registerFrontendCallbacks()
+{
+    ASSERT(m_backend);
+    m_backend->registerFrontendCallbacks(m_databaseCallbacks);
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)

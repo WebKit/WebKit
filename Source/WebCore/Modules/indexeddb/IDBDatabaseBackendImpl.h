@@ -55,8 +55,9 @@ public:
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }
 
-    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
-    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t version);
+    void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks>);
+    void openConnection(PassRefPtr<IDBCallbacks>);
+    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackendInterface
@@ -78,9 +79,9 @@ private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     bool openInternal();
-    void runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
+    void runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks>);
     void loadObjectStores();
-    size_t connectionCount();
+    int32_t connectionCount();
     void processPendingCalls();
 
     static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
@@ -125,6 +126,10 @@ private:
 
     class PendingDeleteCall;
     Deque<RefPtr<PendingDeleteCall> > m_pendingDeleteCalls;
+
+    // FIXME: Eliminate the limbo state between openConnection() and registerFrontendCallbacks()
+    // that this counter tracks.
+    int32_t m_pendingConnectionCount;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;

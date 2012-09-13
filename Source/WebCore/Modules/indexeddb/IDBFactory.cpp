@@ -120,9 +120,8 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
     if (!isContextValid(context))
         return 0;
 
-    RefPtr<IDBDatabaseCallbacksImpl> databaseCallbacks = IDBDatabaseCallbacksImpl::create();
-    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), databaseCallbacks, version);
-    m_backend->open(name, version, request, databaseCallbacks, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), version);
+    m_backend->open(name, version, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }
 

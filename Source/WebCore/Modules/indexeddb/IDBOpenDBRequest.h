@@ -32,11 +32,9 @@
 
 namespace WebCore {
 
-class IDBDatabaseCallbacksImpl;
-
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    static PassRefPtr<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl>, int64_t version);
+    static PassRefPtr<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, int64_t version);
     virtual ~IDBOpenDBRequest();
 
     using IDBRequest::onSuccess;
@@ -55,9 +53,8 @@ protected:
     virtual bool shouldEnqueueEvent() const OVERRIDE;
 
 private:
-    IDBOpenDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl>, int64_t version);
+    IDBOpenDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, int64_t version);
 
-    RefPtr<IDBDatabaseCallbacksImpl> m_databaseCallbacks;
     int64_t m_version;
 };
 

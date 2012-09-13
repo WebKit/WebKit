@@ -34,14 +34,12 @@
 #include "CrossThreadTask.h"
 #include "DOMStringList.h"
 #include "IDBDatabaseBackendProxy.h"
-#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
-#include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBFactory.h"
 #include "WebKit.h"
@@ -205,16 +203,15 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> prpCallba
 }
 
 
-void IDBFactoryBackendProxy::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
+void IDBFactoryBackendProxy::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
 {
     RefPtr<IDBCallbacks> callbacks(prpCallbacks);
-    RefPtr<IDBDatabaseCallbacks> databaseCallbacks(prpDatabaseCallbacks);
     WebSecurityOrigin origin(securityOrigin);
     if (!allowIndexedDB(context, name, origin, callbacks))
         return;
 
     WebFrameImpl* webFrame = getWebFrame(context);
-    m_webIDBFactory->open(name, version, new WebIDBCallbacksImpl(callbacks), new WebIDBDatabaseCallbacksImpl(databaseCallbacks), origin, webFrame, dataDir);
+    m_webIDBFactory->open(name, version, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
 void IDBFactoryBackendProxy::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)

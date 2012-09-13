@@ -66,7 +66,6 @@ public:
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void forceClose() { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // FIXME: Remove this method after WK90411 cleanup is complete on the Chromium side.
     virtual void open(WebIDBDatabaseCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:

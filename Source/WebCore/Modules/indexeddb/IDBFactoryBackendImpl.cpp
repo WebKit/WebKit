@@ -150,7 +150,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
     return 0;
 }
 
-void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, ScriptExecutionContext*, const String& dataDirectory)
+void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
     RefPtr<SecurityOrigin> securityOrigin = prpSecurityOrigin;
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
@@ -175,9 +175,9 @@ void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr
         databaseBackend = it->second;
 
     if (version == IDBDatabaseMetadata::NoIntVersion)
-        databaseBackend->openConnection(callbacks, databaseCallbacks);
+        databaseBackend->openConnection(callbacks);
     else
-        databaseBackend->openConnectionWithVersion(callbacks, databaseCallbacks, version);
+        databaseBackend->openConnectionWithVersion(callbacks, version);
 }
 
 } // namespace WebCore

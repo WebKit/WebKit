@@ -38,20 +38,18 @@ class IDBDatabase;
 
 class IDBDatabaseCallbacksImpl : public IDBDatabaseCallbacks {
 public:
-    static PassRefPtr<IDBDatabaseCallbacksImpl> create();
+    static PassRefPtr<IDBDatabaseCallbacksImpl> create(IDBDatabase*);
     virtual ~IDBDatabaseCallbacksImpl();
 
-    // IDBDatabaseCallbacks
     virtual void onForcedClose();
     virtual void onVersionChange(const String& version);
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
-
-    void connect(IDBDatabase*);
+    void unregisterDatabase(IDBDatabase*);
 
 private:
-    IDBDatabaseCallbacksImpl();
+    IDBDatabaseCallbacksImpl(IDBDatabase*);
 
-    // The initial IDBOpenDBRequest or final IDBDatabase maintains a RefPtr to this
+    // m_database has a RefPtr to this, so use a weak pointer to avoid a cycle.
     IDBDatabase* m_database;
 };
 

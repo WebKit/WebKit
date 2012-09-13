@@ -107,6 +107,11 @@ void IDBDatabaseBackendProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
     m_webIDBDatabase->close();
 }
 
+void IDBDatabaseBackendProxy::registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+{
+    m_webIDBDatabase->open(new WebIDBDatabaseCallbacksImpl(databaseCallbacks));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)
