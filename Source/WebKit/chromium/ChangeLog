@@ -1,3 +1,19 @@
+2012-09-13  Taiju Tsuiki  <tzik@chromium.org>
+
+        Check if WorkerContext is terminated in WebWorkerClientImple::openFileSystem call.
+        https://bugs.webkit.org/show_bug.cgi?id=96601
+
+        Reviewed by Kent Tamura.
+
+        m_webFrame might be already deleted after terminateWorkerContext call.
+        This patch ensure it be NULL and change to avoid using it.
+
+        Test: fast/filesystem/workers/detached-frame-crash.html
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+        (WebKit::WebWorkerClientImpl::openFileSystem):
+
 2012-09-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Fix cases where find-in-page doesn't send a final update

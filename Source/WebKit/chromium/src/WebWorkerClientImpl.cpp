@@ -104,6 +104,7 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String
 
 void WebWorkerClientImpl::terminateWorkerContext()
 {
+    m_webFrame = 0;
     m_proxy->terminateWorkerContext();
 }
 
@@ -210,7 +211,7 @@ bool WebWorkerClientImpl::allowFileSystem()
 void WebWorkerClientImpl::openFileSystem(WebFileSystem::Type type, long long size, bool create, 
                                          WebFileSystemCallbacks* callbacks)
 {
-    if (!m_webFrame->client()) {
+    if (m_proxy->askedToTerminate()) {
         callbacks->didFail(WebFileErrorAbort);
         return;
     }
