@@ -2356,7 +2356,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return LegendRole;
     if (m_renderer->isText())
         return StaticTextRole;
-    if ((cssBox && cssBox->isImage()) || m_renderer->isSVGImage()) {
+    if (cssBox && cssBox->isImage()) {
         if (node && node->hasTagName(inputTag))
             return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
         return ImageRole;
@@ -2393,6 +2393,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (headingLevel())
         return HeadingRole;
     
+#if ENABLE(SVG)
+    if (m_renderer->isSVGImage())
+        return ImageRole;
+#endif
+
 #if ENABLE(MATHML)
     if (node && node->hasTagName(MathMLNames::mathTag))
         return DocumentMathRole;
