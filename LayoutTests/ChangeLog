@@ -1,3 +1,9 @@
+2012-09-13  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening. Fix lint error in my last TestExpectations patch - whoops!
+
+        * platform/chromium/TestExpectations:
+
 2012-09-13  Adrienne Walker  <enne@google.com>
 
         Hide all ancestors of the full screen element when going full screen

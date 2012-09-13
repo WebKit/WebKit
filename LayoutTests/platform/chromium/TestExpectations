@@ -2191,6 +2191,7 @@ BUGCR67540 LINUX ANDROID : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
 
+// See also CRBUG139863
 BUGCR67442 LINUX ANDROID WIN : fast/canvas/fillText-shadow.html = TEXT
 BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
 
@@ -3633,7 +3634,5 @@ BUGWK96594 MAC : fast/table/bad-replaced-sizing-preferred-logical-widths.html = 
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
 BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR139863 WIN : fast/canvas/fillText-shadow.html = TEXT
-BUGCR139863 WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
 BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
