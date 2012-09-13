@@ -1,3 +1,15 @@
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing expectation for fast/canvas/canvas-css-crazy.html, the test
+        was fixed in r128411.
+
+        Marking fast/events/popup-blocking-timers.html as slow and adding a
+        timeout expectation for touchadjustment/iframe-boundary.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-13  Raul Hudea  <rhudea@adobe.com>
 
         [CSSRegions][CSSOM] Implement Element.getRegionFlowRanges

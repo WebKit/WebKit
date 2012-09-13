@@ -366,7 +366,8 @@ BUGWK73528 SKIP : networkinformation/event-after-navigation.html = TEXT
 
 // Touch adjustment not enabled
 BUGWK78801 : touchadjustment = TEXT
-BUGWK78801 SKIP : touchadjustment/iframe.html = TIMEOUT
+BUGWK78801 : touchadjustment/iframe.html = TIMEOUT
+BUGWK78801 : touchadjustment/iframe-boundary.html = TIMEOUT
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
@@ -588,6 +589,7 @@ BUGWKGTK SLOW : editing/selection/hit-test-on-text-with-line-height.html = PASS
 BUGWKGTK SLOW : editing/selection/rtl-move-selection-right-left.html = PASS
 BUGWKGTK SLOW : fast/events/drag-and-drop.html = PASS
 BUGWKGTK SLOW : fast/events/dropzone-001.html = PASS
+BUGWK96517 SLOW : fast/events/popup-blocking-timers.html = TEXT
 BUGWKGTK SLOW : fast/forms/search-disabled-readonly.html = PASS
 
 // These tests expose possible peformance issues.
@@ -1368,11 +1370,7 @@ BUGWK96226 : fast/spatial-navigation/snav-div-overflow-scrol-hidden.html = TEXT
 BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
 BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
-BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
-
 BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
-
-BUGWK96606 : fast/canvas/canvas-css-crazy.html = TEXT
 
 BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
 
