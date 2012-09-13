@@ -246,7 +246,7 @@ for(library, WEBKIT) {
 # to end up in as public API dependenices in the QtWebKit prl file.
 PKGCONFIG_PRIVATE *= $$PKGCONFIG
 unset(PKGCONFIG)
-LIBS_PRIVATE = $$LIBS
+LIBS_PRIVATE += $$LIBS
 unset(LIBS)
 
 # We do have a limited subset of Qt modules as dependencies for using

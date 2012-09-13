@@ -1,3 +1,11 @@
+2012-09-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't overwrite LIBS_PRIVATE when sanitizing LIBS
+
+        Reviewed by Ossy.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][DRT] Implement LayoutTestController::layerTreeAsText
