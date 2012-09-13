@@ -6,6 +6,6 @@ BUGWK96438 SKIP : fast/spatial-navigation = PASS
 
 BUGWK96652 : fast/events/dispatch-message-string-data.html = TEXT
 
-// Debug WK2 tests fail image diff
-BUGWK96580 DEBUG : css3/filters/custom/filter-fallback-to-software.html = IMAGE
+// WK2 tests fail image diff
+BUGWK96580 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
 
