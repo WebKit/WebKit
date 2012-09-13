@@ -31,11 +31,11 @@
 #include <QVariantAnimation>
 
 QT_BEGIN_NAMESPACE
-class QQuickWebPage;
-class QQuickWebView;
 class QRectF;
 QT_END_NAMESPACE
 
+class QQuickWebPage;
+class QQuickWebView;
 class QWebKitTest;
 
 namespace WebKit {

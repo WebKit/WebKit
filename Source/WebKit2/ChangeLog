@@ -1,3 +1,11 @@
+2012-09-13  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix build against namespaced Qt
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+
 2012-09-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][Qt][WK2] Implement shared undo controller for EFL and Qt port.
