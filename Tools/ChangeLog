@@ -1,3 +1,20 @@
+2012-09-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs testRunner.callShouldCloseOnWebView
+        https://bugs.webkit.org/show_bug.cgi?id=96366
+
+        Reviewed by Anders Carlsson.
+
+        Implement testRunner.callShouldCloseOnWebView for WebKitTestRunner
+        by calling shouldClose() on the FrameLoader.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::callShouldCloseOnWebView):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
 2012-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128453.

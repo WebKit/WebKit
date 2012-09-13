@@ -247,6 +247,8 @@ public:
     void setPageVisibility(JSStringRef state);
     void resetPageVisibility();
 
+    bool callShouldCloseOnWebView();
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

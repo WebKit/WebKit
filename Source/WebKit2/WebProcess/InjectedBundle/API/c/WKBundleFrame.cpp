@@ -262,3 +262,12 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
     
     return 0;
 }
+
+bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
+{
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return true;
+
+    return coreFrame->loader()->shouldClose();
+}

@@ -666,9 +666,6 @@ http/tests/misc/link-rel-icon-beforeload.html
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl
 
-# WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
-fast/events/onbeforeunload-focused-iframe.html
-
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html

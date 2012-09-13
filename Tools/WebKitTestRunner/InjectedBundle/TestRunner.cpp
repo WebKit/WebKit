@@ -760,4 +760,10 @@ void TestRunner::simulateWebNotificationClick(JSValueRef notification)
     InjectedBundle::shared().postSimulateWebNotificationClick(notificationID);
 }
 
+bool TestRunner::callShouldCloseOnWebView()
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundleFrameCallShouldCloseOnWebView(mainFrame);
+}
+
 } // namespace WTR
