@@ -21,6 +21,7 @@
 
 #include "Frame.h"
 #include "LayerWebKitThread.h"
+#include "InRegionScroller_p.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -82,7 +83,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
         RenderBox* box = m_layer->renderBox();
         ASSERT(box);
-        ASSERT(box->canBeScrolledAndHasScrollableArea());
+        ASSERT(InRegionScrollerPrivate::canScrollRenderBox(box));
 
         ScrollableArea* scrollableArea = static_cast<ScrollableArea*>(m_layer);
         m_scrollPosition = m_webPage->mapToTransformed(scrollableArea->scrollPosition());

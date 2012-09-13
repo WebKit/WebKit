@@ -28,6 +28,7 @@
 namespace WebCore {
 class Frame;
 class Node;
+class RenderBox;
 class RenderObject;
 class RenderLayer;
 }
@@ -52,6 +53,8 @@ public:
     const std::vector<Platform::ScrollViewBase*>& activeInRegionScrollableAreas() const;
 
     void clearDocumentData(const WebCore::Document*);
+
+    static bool canScrollRenderBox(WebCore::RenderBox*);
 
     WebPagePrivate* m_webPage;
     bool m_needsActiveScrollableAreaCalculation;

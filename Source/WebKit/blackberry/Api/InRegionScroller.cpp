@@ -360,7 +360,7 @@ static bool canScrollInnerFrame(Frame* frame)
 //     with overflow-y: hidden and overflow-x: auto set.
 // The version below fixes it.
 // FIXME: Fix RenderBox::canBeScrolledAndHasScrollableArea method instead.
-static bool canScrollRenderBox(RenderBox* box)
+bool InRegionScrollerPrivate::canScrollRenderBox(RenderBox* box)
 {
     if (!box)
         return false;
