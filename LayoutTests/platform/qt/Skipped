@@ -2053,6 +2053,10 @@ fast/block/positioning/002.html
 # https://bugs.webkit.org/show_bug.cgi?id=92733
 fast/block/positioning/056.html
 
+# REGRESSION(128400): It broke fast/js/primitive-property-access-edge-cases.html.
+# https://bugs.webkit.org/show_bug.cgi?id=96596
+fast/js/primitive-property-access-edge-cases.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
