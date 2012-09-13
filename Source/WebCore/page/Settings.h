@@ -383,6 +383,9 @@ namespace WebCore {
         void setAcceleratedCompositingForScrollableFramesEnabled(bool enabled) { m_acceleratedCompositingForScrollableFramesEnabled = enabled; }
         bool acceleratedCompositingForScrollableFramesEnabled() const { return m_acceleratedCompositingForScrollableFramesEnabled; }
 
+        void setAcceleratedCompositingForOverflowScrollEnabled(bool enabled) { m_acceleratedCompositingForOverflowScrollEnabled = enabled; }
+        bool acceleratedCompositingForOverflowScrollEnabled() const { return m_acceleratedCompositingForOverflowScrollEnabled; };
+
         void setShowDebugBorders(bool);
         bool showDebugBorders() const { return m_showDebugBorders; }
 
@@ -719,6 +722,7 @@ namespace WebCore {
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;
+        bool m_acceleratedCompositingForOverflowScrollEnabled : 1;
         bool m_acceleratedCompositingFor3DTransformsEnabled : 1;
         bool m_acceleratedCompositingForVideoEnabled : 1;
         bool m_acceleratedCompositingForPluginsEnabled : 1;

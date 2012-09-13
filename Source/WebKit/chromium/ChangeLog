@@ -1,3 +1,33 @@
+2012-09-13  Glenn Hartmann  <hartmanng@chromium.org>
+
+        Add new accelerated compositing for overflow scroll setting.
+        https://bugs.webkit.org/show_bug.cgi?id=95885
+
+        Reviewed by James Robinson.
+
+        wkb.ug/91117 introduces RenderLayer::usesCompositedScrolling(), which
+        currently returns true if we're overflow scrolling and the element has
+        been styled with '-webkit-overflow-scrolling: touch'. If this is true,
+        we get promoted to a composited layer, the associated RenderLayerBacking
+        gets special scrolling layers and in response to RenderLayer::scrollTo()
+        we no longer have to invalidate everything to get the scrolled content
+        in the right spot, thereby avoiding very expensive repaints. It's
+        unfortunate that we require -webkit-overflow-scrolling: touch, though.
+        It would be nice if RenderLayer::usesCompositedScrolling() returned true
+        if the page would continue to behave correctly.  This is what
+        wkb.ug/94743 is intended to do.  Unfortunately, when we become a
+        composited layer, we switch from subpixel to grayscale anti-aliasing. We
+        only want to auto-opt into composited scrolling if we don't mind the
+        change in anti-aliasing, so we need a flag to enable/disable this
+        feature.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedCompositingForOverflowScrollEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-09-13  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Consolidate two-phase connection to avoid race conditions
