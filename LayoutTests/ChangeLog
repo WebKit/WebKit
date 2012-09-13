@@ -1,3 +1,16 @@
+2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Specifying a few slow tests on the debug configuration that pass
+        when given sufficient time to do so.
+
+        Branching expectations for three spellcheck test failures, on release
+        configuration they time out while on the debug configuration they
+        have enough time to fail.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r128375, r128431

@@ -597,6 +597,7 @@ BUGWKGTK SLOW : fast/events/dispatch-message-string-data.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/array-sort-modifying-tostring.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-float32array.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-float64array.html = PASS
+BUGWKGTK DEBUG SLOW : fast/js/dfg-int16array.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-int8array.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
@@ -606,6 +607,7 @@ BUGWKGTK DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-uint8array.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/dfg-uint8clampedarray.html = PASS
 BUGWKGTK DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+BUGWKGTK DEBUG SLOW : fast/frames/lots-of-objects.html = PASS
 BUGWKGTK DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGWKGTK DEBUG SLOW : jquery/manipulation.html = PASS
 BUGWKGTK DEBUG SLOW : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html = PASS
@@ -651,11 +653,11 @@ BUGWK61826 : fast/events/drag-image-filename.html = TIMEOUT
 
 BUGWKGTK : accessibility/aria-invalid.html = TIMEOUT
 
-BUGWK73003 : editing/spelling/spellcheck-async.html = TIMEOUT
-BUGWK73003 : editing/spelling/spellcheck-paste.html = TIMEOUT
-BUGWK50740 : editing/spelling/spellcheck-queue.html = TIMEOUT
-
 BUGWK78819 : fast/workers/shared-worker-load-error.html = TIMEOUT
+
+BUGWK73003 RELEASE : editing/spelling/spellcheck-async.html = TIMEOUT
+BUGWK73003 RELEASE : editing/spelling/spellcheck-paste.html = TIMEOUT
+BUGWK50740 RELEASE : editing/spelling/spellcheck-queue.html = TIMEOUT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
@@ -1371,6 +1373,10 @@ BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
 
 BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
+
+BUGWK73003 DEBUG : editing/spelling/spellcheck-async.html = TEXT
+BUGWK73003 DEBUG : editing/spelling/spellcheck-paste.html = PASS
+BUGWK50740 DEBUG : editing/spelling/spellcheck-queue.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
