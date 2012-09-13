@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef InspectorOverlay_h
-#define InspectorOverlay_h
+#ifndef InspectorOverlayBlackBerry_h
+#define InspectorOverlayBlackBerry_h
 
 #include "WebOverlay.h"
 #include <GraphicsLayerClient.h>
@@ -70,4 +70,4 @@ private:
 } // namespace WebKit
 } // namespace BlackBerry
 
-#endif /* InspectorOverlay_h */
+#endif /* InspectorOverlayBlackBerry_h */

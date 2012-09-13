@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#include "InspectorOverlay.h"
+#include "InspectorOverlayBlackBerry.h"
 
 #include "Frame.h"
 #include "FrameView.h"

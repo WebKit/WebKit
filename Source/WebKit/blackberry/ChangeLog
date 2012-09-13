@@ -1,3 +1,32 @@
+2012-09-13  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Rename InspectorOverlay in blackberry/WebKitSupport
+        https://bugs.webkit.org/show_bug.cgi?id=96689
+
+        Reviewed by Antonio Gomes.
+
+        Rename to InspectorClientBlackBerry to avoid include problems.
+
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        * WebKitSupport/InspectorOverlayBlackBerry.cpp: Renamed from Source/WebKit/blackberry/WebKitSupport/InspectorOverlay.cpp.
+        (WebKit):
+        (BlackBerry::WebKit::InspectorOverlay::create):
+        (BlackBerry::WebKit::InspectorOverlay::InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::notifySyncRequired):
+        (BlackBerry::WebKit::InspectorOverlay::paintContents):
+        (BlackBerry::WebKit::InspectorOverlay::showDebugBorders):
+        (BlackBerry::WebKit::InspectorOverlay::showRepaintCounter):
+        (BlackBerry::WebKit::InspectorOverlay::~InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::clear):
+        (BlackBerry::WebKit::InspectorOverlay::update):
+        * WebKitSupport/InspectorOverlayBlackBerry.h: Renamed from Source/WebKit/blackberry/WebKitSupport/InspectorOverlay.h.
+        (WebCore):
+        (WebKit):
+        (InspectorOverlay):
+        (InspectorOverlayClient):
+        (BlackBerry::WebKit::InspectorOverlay::setClient):
+        (BlackBerry::WebKit::InspectorOverlay::notifyAnimationStarted):
+
 2012-09-13  Antonio Gomes  <agomes@rim.com>
 
         Unreviewed, warning fix left over from r128456 (bug 96645)
