@@ -1,3 +1,11 @@
+2012-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix after r128399.
+
+        * BuildSlaveSupport/wait-for-SVN-server.py: Renamed from Tools/BuildSlaveSupport/build.webkit.org-config/wait-for-SVN-server.py.
+        (getLatestSVNRevision):
+        (waitForSVNRevision):
+
 2012-09-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.callShouldCloseOnWebView
