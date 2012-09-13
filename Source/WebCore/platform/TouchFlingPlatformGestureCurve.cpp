@@ -56,13 +56,13 @@ static const int cMaxSearchIterations = 20;
 PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::createForTouchPad(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
     // The default parameters listed below are a matched set, and should not be changed independently of one another.
-    return create(velocity, -5.70762e+03, 1.72e+02, 3.7e+00, 1.3, cumulativeScroll);
+    return create(velocity, -1.5e+02, 10, 1.5e+00, 2.075, cumulativeScroll);
 }
 
 PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::createForTouchScreen(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
     // The touchscreen-specific parameters listed below are a matched set, and should not be changed independently of one another.
-    return create(velocity, -3.5e+03, 90, 3.0e+00, 1.5864, cumulativeScroll);
+    return create(velocity, -1.5e+02, 10, 1.5e+00, 2.075, cumulativeScroll);
 }
 
 PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::create(const FloatPoint& velocity, float p0, float p1, float p2, float curveDuration, IntPoint cumulativeScroll)
