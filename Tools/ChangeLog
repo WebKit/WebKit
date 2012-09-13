@@ -1,3 +1,17 @@
+2012-09-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [Qt][WK2] Memory leaks in Qt's TestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=96603
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix memory leaks in Qt's TestRunner code by adopting WKString
+        created with WKStringCreateWithUTF8CString().
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+
 2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK][NRWT] Lower timeout value to 6 seconds (12 for debug configuration)

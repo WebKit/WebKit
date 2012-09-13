@@ -99,7 +99,7 @@ void TestController::initializeInjectedBundlePath()
     if (!isExistingLibrary(path))
         qFatal("Cannot find the injected bundle at %s\n", qPrintable(path));
 
-    m_injectedBundlePath = WKStringCreateWithQString(path);
+    m_injectedBundlePath.adopt(WKStringCreateWithQString(path));
 }
 
 void TestController::initializeTestPluginDirectory()
@@ -107,7 +107,7 @@ void TestController::initializeTestPluginDirectory()
     // FIXME: the test plugin cause some trouble for us, so we don't load it for the time being.
     // See: https://bugs.webkit.org/show_bug.cgi?id=86620
 
-    // m_testPluginDirectory = WKStringCreateWithUTF8CString(qgetenv("QTWEBKIT_PLUGIN_PATH").constData());
+    // m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(qgetenv("QTWEBKIT_PLUGIN_PATH").constData()));
 }
 
 void TestController::platformInitializeContext()
