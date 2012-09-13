@@ -166,6 +166,11 @@ void PluginTest::NPN_InvalidateRect(NPRect* invalidRect)
     browser->invalidaterect(m_npp, invalidRect);
 }
 
+bool PluginTest::NPN_Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
+{
+    return browser->invoke(m_npp, npobj, methodName, args, argCount, result);
+}
+
 void* PluginTest::NPN_MemAlloc(uint32_t size)
 {
     return browser->memalloc(size);

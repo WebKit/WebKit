@@ -1,0 +1,45 @@
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.removePluginElement = function()
+{
+    if (!window.testRunner) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+	
+	var element = document.getElementById("TestElement");
+	document.body.removeChild(element);
+
+    testPassed("Didn't crash yet.");
+
+    setTimeout("finishTest();", 0);
+}
+
+function finishTest()
+{
+    testPassed("Still didn't crash yet.");
+
+    if (window.testRunner)
+		testRunner.notifyDone();
+}
+
+</script>
+
+</head>
+<body>
+<embed id="TestElement" type="application/x-webkit-test-netscape" test="invoke-destroys-plugin-within-npp-new"></embed>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+
+<script>
+description("Tests that removing a plug-in element during its NPP_New via an NPN_Invoke resulting in its NPP_Destroy being called doesn't crash.");
+</script>

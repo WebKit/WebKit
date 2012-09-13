@@ -1,3 +1,13 @@
+2012-09-12  Brady Eidson  <beidson@apple.com>
+
+        Assert in NetscapePlugin::destroy() with async plugin init
+        <rdar://problem/12277595> and https://bugs.webkit.org/show_bug.cgi?id=96576
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-wk2/plugins/destroy-during-async-npp-new-expected.txt: Added.
+        * platform/mac-wk2/plugins/destroy-during-async-npp-new.html: Added.
+
 2012-09-12  James Robinson  <jamesr@chromium.org>
 
         Rebaseline chromium-mac pixel results for 128375

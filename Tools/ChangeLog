@@ -1,3 +1,23 @@
+2012-09-12  Brady Eidson  <beidson@apple.com>
+
+        Assert in NetscapePlugin::destroy() with async plugin init
+        <rdar://problem/12277595> and https://bugs.webkit.org/show_bug.cgi?id=96576
+
+        Reviewed by Anders Carlsson.
+
+        Expose NPN_Invoke to plug-in tests:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_Invoke):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        (PluginTest):
+
+        Add a test that uses NPN_Invoke on the window object from inside NPP_New to remove the plug-in element:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/InvokeDestroysPluginWithinNPP_New.cpp: Added.
+        (InvokeDestroysPluginWithinNPP_New):
+        (InvokeDestroysPluginWithinNPP_New::InvokeDestroysPluginWithinNPP_New):
+        (InvokeDestroysPluginWithinNPP_New::NPP_New):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2012-09-12  Dirk Pranke  <dpranke@chromium.org>
 
         refactor TestExpectations tokenization slightly in preparation for the new syntax

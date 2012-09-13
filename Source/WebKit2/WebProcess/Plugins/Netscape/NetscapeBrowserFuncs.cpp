@@ -688,14 +688,20 @@ static void NPN_ReleaseObject(NPObject *npObject)
 
 static bool NPN_Invoke(NPP npp, NPObject *npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+
     if (npObject->_class->invoke)
         return npObject->_class->invoke(npObject, methodName, arguments, argumentCount, result);
 
     return false;
 }
 
-static bool NPN_InvokeDefault(NPP, NPObject *npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+static bool NPN_InvokeDefault(NPP npp, NPObject *npObject, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    PluginDestructionProtector protector(plugin.get());
+
     if (npObject->_class->invokeDefault)
         return npObject->_class->invokeDefault(npObject, arguments, argumentCount, result);
 
