@@ -1,3 +1,15 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][DRT] Implement LayoutTestController::layerTreeAsText
+        https://bugs.webkit.org/show_bug.cgi?id=82294
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement layerTreeAsText using the DumpRenderTreeSupportEfl method.
+
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::layerTreeAsText):
+
 2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Clear application cache between tests in DumpRenderTree

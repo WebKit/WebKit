@@ -104,6 +104,13 @@ void DumpRenderTreeSupportEfl::clearOpener(Evas_Object* ewkFrame)
     frame->loader()->setOpener(0);
 }
 
+String DumpRenderTreeSupportEfl::layerTreeAsText(const Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, String());
+
+    return frame->layerTreeAsText();
+}
+
 bool DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, false);

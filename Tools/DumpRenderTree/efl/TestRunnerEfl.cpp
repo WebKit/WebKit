@@ -119,8 +119,9 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
 
 JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
 {
-    notImplemented();
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(""));
+    String result = DumpRenderTreeSupportEfl::layerTreeAsText(browser->mainFrame());
+
+    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(result.utf8().data()));
 }
 
 size_t TestRunner::webHistoryItemCount()

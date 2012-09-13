@@ -1,3 +1,15 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][DRT] Implement LayoutTestController::layerTreeAsText
+        https://bugs.webkit.org/show_bug.cgi?id=82294
+
+        Reviewed by Gyuyoung Kim.
+
+        The tests are no longer failing because of missing layerTreeAsText
+        but due to accelerated compositing not being enabled.
+
+        * platform/efl/TestExpectations:
+
 2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
