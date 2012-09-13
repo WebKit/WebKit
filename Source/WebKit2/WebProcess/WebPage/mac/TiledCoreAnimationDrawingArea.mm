@@ -205,6 +205,9 @@ void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(const IntRect& re
 
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
+    bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
+    ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), scrollingPerformanceLoggingEnabled));
+
     bool showDebugBorders = m_webPage->corePage()->settings()->showDebugBorders();
 
     if (showDebugBorders == !!m_debugInfoLayer)
@@ -218,10 +221,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
         m_debugInfoLayer = nullptr;
     }
 
-    bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
-
     ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
-    ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), scrollingPerformanceLoggingEnabled));
 }
 
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& functionRef)

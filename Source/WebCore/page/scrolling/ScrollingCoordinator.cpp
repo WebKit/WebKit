@@ -384,11 +384,20 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 {
     FrameView* frameView = m_page->mainFrame()->view();
 
-    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates
-        || frameView->hasSlowRepaintObjects()
-        || (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
-        || (supportsFixedPositionLayers() && hasNonLayerFixedObjects(frameView))
-        || m_page->mainFrame()->document()->isImageDocument());
+    MainThreadScrollingReasons mainThreadScrollingReasons = (MainThreadScrollingReasons)0;
+
+    if (m_forceMainThreadScrollLayerPositionUpdates)
+        mainThreadScrollingReasons |= ForcedOnMainThread;
+    if (frameView->hasSlowRepaintObjects())
+        mainThreadScrollingReasons |= HasSlowRepaintObjects;
+    if (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
+        mainThreadScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
+    if (supportsFixedPositionLayers() && hasNonLayerFixedObjects(frameView))
+        mainThreadScrollingReasons |= HasNonLayerFixedObjects;
+    if (m_page->mainFrame()->document()->isImageDocument())
+        mainThreadScrollingReasons |= IsImageDocument;
+
+    setShouldUpdateScrollLayerPositionOnMainThread(mainThreadScrollingReasons);
 }
 
 void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
@@ -435,14 +444,14 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerC
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool shouldUpdateScrollLayerPositionOnMainThread)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons reasons)
 {
     // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
     // at this point. So we'll update it before we switch back to main thread scrolling
     // in order to avoid layer positioning bugs.
-    if (shouldUpdateScrollLayerPositionOnMainThread)
+    if (reasons)
         updateMainFrameScrollLayerPosition();
-    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(shouldUpdateScrollLayerPositionOnMainThread);
+    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(reasons);
     scheduleTreeStateCommit();
 }
 

@@ -67,7 +67,7 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
 {
 }
 
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons)
 {
 }
 

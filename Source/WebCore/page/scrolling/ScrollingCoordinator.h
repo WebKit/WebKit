@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+typedef unsigned MainThreadScrollingReasons;
+
 class FrameView;
 class GraphicsLayer;
 class Page;
@@ -127,6 +129,14 @@ public:
     // Attach/detach layer position to ancestor fixed position container.
     void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
 
+    enum MainThreadScrollingReasonFlags {
+        ForcedOnMainThread = 1 << 0,
+        HasSlowRepaintObjects = 1 << 1,
+        HasViewportConstrainedObjectsWithoutSupportingFixedLayers = 1 << 2,
+        HasNonLayerFixedObjects = 1 << 3,
+        IsImageDocument = 1 << 4
+    };
+
 private:
     explicit ScrollingCoordinator(Page*);
 
@@ -155,7 +165,7 @@ private:
 
     void setScrollParameters(const ScrollParameters&);
     void setWheelEventHandlerCount(unsigned);
-    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
+    void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
     void updateMainFrameScrollLayerPosition();
 

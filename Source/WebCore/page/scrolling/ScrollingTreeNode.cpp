@@ -34,7 +34,7 @@ namespace WebCore {
 
 ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree)
     : m_scrollingTree(scrollingTree)
-    , m_shouldUpdateScrollLayerPositionOnMainThread(false)
+    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_hasEnabledHorizontalScrollbar(false)

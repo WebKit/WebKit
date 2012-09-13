@@ -224,7 +224,7 @@ void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)
     m_scrollingPerformanceLoggingEnabled = flag;
 }
 
-bool ScrollingTree::scrollingPeformanceLoggingEnabled()
+bool ScrollingTree::scrollingPerformanceLoggingEnabled()
 {
     return m_scrollingPerformanceLoggingEnabled;
 }

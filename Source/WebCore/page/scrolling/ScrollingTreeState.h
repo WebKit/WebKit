@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "ScrollTypes.h"
+#include "ScrollingCoordinator.h"
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
@@ -81,8 +82,8 @@ public:
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
 
-    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
-    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
+    MainThreadScrollingReasons shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
+    void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
     void setHorizontalScrollElasticity(ScrollElasticity);
@@ -126,7 +127,7 @@ private:
 
     unsigned m_wheelEventHandlerCount;
 
-    bool m_shouldUpdateScrollLayerPositionOnMainThread;
+    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
 
     ScrollElasticity m_horizontalScrollElasticity;
     ScrollElasticity m_verticalScrollElasticity;

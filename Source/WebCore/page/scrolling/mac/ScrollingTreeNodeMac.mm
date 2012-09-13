@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "PlatformWheelEvent.h"
+#include "ScrollingCoordinator.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeState.h"
 #include "Settings.h"
@@ -37,8 +38,12 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Deque.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
+
+static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons);
 
 PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrollingTree)
 {
@@ -70,15 +75,22 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
     if (state->changedProperties() & (ScrollingTreeState::ScrollLayer | ScrollingTreeState::ContentsSize | ScrollingTreeState::ViewportRect))
         updateMainFramePinState(scrollPosition());
 
-    if ((state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThread) && shouldUpdateScrollLayerPositionOnMainThread()) {
-        // We're transitioning to the slow "update scroll layer position on the main thread" mode.
-        // Initialize the probable main thread scroll position with the current scroll layer position.
-        if (state->changedProperties() & ScrollingTreeState::RequestedScrollPosition)
-            m_probableMainThreadScrollPosition = state->requestedScrollPosition();
-        else {
-            CGPoint scrollLayerPosition = m_scrollLayer.get().position;
-            m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+    if ((state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThread)) {
+        unsigned mainThreadScrollingReasons = this->shouldUpdateScrollLayerPositionOnMainThread();
+
+        if (mainThreadScrollingReasons) {
+            // We're transitioning to the slow "update scroll layer position on the main thread" mode.
+            // Initialize the probable main thread scroll position with the current scroll layer position.
+            if (state->changedProperties() & ScrollingTreeState::RequestedScrollPosition)
+                m_probableMainThreadScrollPosition = state->requestedScrollPosition();
+            else {
+                CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+                m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+            }
         }
+
+        if (scrollingTree()->scrollingPerformanceLoggingEnabled())
+            logThreadedScrollingMode(mainThreadScrollingReasons);
     }
 }
 
@@ -240,7 +252,7 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
 
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 
-    if (scrollingTree()->scrollingPeformanceLoggingEnabled())
+    if (scrollingTree()->scrollingPerformanceLoggingEnabled())
         logExposedUnfilledArea();
 }
 
@@ -328,6 +340,30 @@ void ScrollingTreeNodeMac::logExposedUnfilledArea()
 
     if (unfilledArea)
         WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);
+}
+
+static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons)
+{
+    if (mainThreadScrollingReasons) {
+        StringBuilder reasonsDescription;
+
+        if (mainThreadScrollingReasons & ScrollingCoordinator::ForcedOnMainThread)
+            reasonsDescription.append("forced,");
+        if (mainThreadScrollingReasons & ScrollingCoordinator::HasSlowRepaintObjects)
+            reasonsDescription.append("slow-repaint objects,");
+        if (mainThreadScrollingReasons & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
+            reasonsDescription.append("viewport-constrained objects,");
+        if (mainThreadScrollingReasons & ScrollingCoordinator::HasNonLayerFixedObjects)
+            reasonsDescription.append("non-layer viewport-constrained objects,");
+        if (mainThreadScrollingReasons & ScrollingCoordinator::IsImageDocument)
+            reasonsDescription.append("image document,");
+
+        // Strip the trailing comma.
+        String reasonsDescriptionTrimmed = reasonsDescription.toString().left(reasonsDescription.length() - 1);
+
+        WTFLogAlways("SCROLLING: Switching to main-thread scrolling mode. Time: %f Reason(s): %s\n", WTF::monotonicallyIncreasingTime(), reasonsDescriptionTrimmed.ascii().data());
+    } else
+        WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", WTF::monotonicallyIncreasingTime());
 }
 
 } // namespace WebCore
