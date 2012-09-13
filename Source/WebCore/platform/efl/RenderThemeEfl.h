@@ -262,22 +262,21 @@ private:
     void applyPartDescription(Evas_Object*, struct ThemePartDesc*);
 
     struct ThemePartCacheEntry {
-        ThemePartCacheEntry();
-        ~ThemePartCacheEntry();
         static ThemePartCacheEntry* create(const String& themePath, FormType, const IntSize&);
         void reuse(const String& themePath, FormType, const IntSize& = IntSize());
 
         ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
         ALWAYS_INLINE Evas_Object* edje() { return m_edje.get(); }
+        ALWAYS_INLINE cairo_surface_t* surface() { return m_surface.get(); }
 
         FormType type;
         IntSize size;
-        cairo_surface_t* surface;
 
     private:
         // Order so that the canvas gets destroyed at last.
         OwnPtr<Ecore_Evas> m_canvas;
         OwnPtr<Evas_Object> m_edje;
+        RefPtr<cairo_surface_t> m_surface;
     };
 
     struct ThemePartDesc m_partDescs[FormTypeLast];

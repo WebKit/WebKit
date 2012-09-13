@@ -162,29 +162,19 @@ void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) co
     style->setPaddingRight(desc->padding.right());
 }
 
-RenderThemeEfl::ThemePartCacheEntry::ThemePartCacheEntry()
-    : surface(0)
-{
-}
-
-RenderThemeEfl::ThemePartCacheEntry::~ThemePartCacheEntry()
-{
-    if (surface)
-        cairo_surface_destroy(surface);
-}
-
-static cairo_surface_t* createCairoSurfaceFor(Ecore_Evas* ee)
+static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee)
 {
     ASSERT(ee);
 
-    int width, height;
+    int width;
+    int height;
     ecore_evas_geometry_get(ee, 0, 0, &width, &height);
     ASSERT(width > 0 && height > 0);
 
     unsigned char* buffer = static_cast<unsigned char*>(const_cast<void*>(ecore_evas_buffer_pixels_get(ee)));
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, width, height, width * 4);
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, width, height, width * 4));
 
-    cairo_status_t status = cairo_surface_status(surface);
+    cairo_status_t status = cairo_surface_status(surface.get());
     if (status != CAIRO_STATUS_SUCCESS) {
         EINA_LOG_ERR("Could not create cairo surface: %s", cairo_status_to_string(status));
         return 0;
@@ -230,8 +220,8 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create
     if (!setSourceGroupForEdjeObject(entry->edje(), themePath, toEdjeGroup(type)))
         return 0;
 
-    entry->surface = createCairoSurfaceFor(entry->canvas());
-    if (!entry->surface)
+    entry->m_surface = createSurfaceForBackingStore(entry->canvas());
+    if (!entry->surface())
         return 0;
 
     evas_object_resize(entry->edje(), size.width(), size.height());
@@ -248,14 +238,14 @@ void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormTyp
     ASSERT(!themePath.isEmpty());
 
     if (!newSize.isEmpty()) {
-        cairo_surface_finish(surface);
+        cairo_surface_finish(surface());
 
         size = newSize;
         ecore_evas_resize(canvas(), newSize.width(), newSize.height());
         evas_object_resize(edje(), newSize.width(), newSize.height());
 
-        surface = createCairoSurfaceFor(canvas());
-        if (!surface) {
+        m_surface = createSurfaceForBackingStore(canvas());
+        if (!surface()) {
             type = FormTypeLast; // Invalidate;
             return;
         }
@@ -417,7 +407,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     evas_render_updates_free(updates);
 
     cairo_save(cairo);
-    cairo_set_source_surface(cairo, entry->surface, rect.x(), rect.y());
+    cairo_set_source_surface(cairo, entry->surface(), rect.x(), rect.y());
     cairo_paint_with_alpha(cairo, 1.0);
     cairo_restore(cairo);
 
