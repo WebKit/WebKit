@@ -402,7 +402,7 @@ JSValue JSArray::pop(ExecState* exec)
     checkIndexingConsistency();
     
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return jsUndefined();
         
     case ArrayWithArrayStorage: {
@@ -460,7 +460,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     checkIndexingConsistency();
     
     switch (structure()->indexingType()) {
-    case Array: {
+    case ArrayClass: {
         putByIndexBeyondVectorLengthWithArrayStorage(exec, 0, value, true, createInitialArrayStorage(exec->globalData()));
         break;
     }
@@ -579,7 +579,7 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
     ASSERT(!inSparseIndexingMode());
 
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return;
         
     case ArrayWithArrayStorage: {
@@ -625,7 +625,7 @@ void JSArray::sort(ExecState* exec)
     ASSERT(!inSparseIndexingMode());
     
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return;
         
     case ArrayWithArrayStorage: {
@@ -791,7 +791,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
     ASSERT(!inSparseIndexingMode());
     
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return;
         
     case ArrayWithArrayStorage: {
@@ -913,7 +913,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
 void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 {
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return;
     
     case ArrayWithArrayStorage: {
@@ -943,7 +943,7 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t le
 {
     ASSERT(length == this->length());
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return;
         
     case ArrayWithArrayStorage: {
@@ -975,7 +975,7 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
     checkIndexingConsistency();
     
     switch (structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
         return 0;
 
     case ArrayWithArrayStorage: {

@@ -41,7 +41,7 @@ static const IndexingType HadArrayStorage          = 16; // Means that this obje
 // List of acceptable array types.
 static const IndexingType NonArray                 = 0;
 static const IndexingType NonArrayWithArrayStorage = HasArrayStorage;
-static const IndexingType Array                    = IsArray;
+static const IndexingType ArrayClass               = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
 static const IndexingType ArrayWithArrayStorage    = IsArray | HasArrayStorage;
 
 // Mask of all possible types.

@@ -1,5 +1,44 @@
 2012-09-13  Filip Pizlo  <fpizlo@apple.com>
 
+        [Qt][Win] REGRESSION(r128400): It broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=96617
+
+        Reviewed by Simon Hausmann.
+
+        Changed "JSC::Array" to "JSC::ArrayClass" because it's not used often enough
+        for the brevity to be beneficial, and because "Array" causes too much namespace
+        pollution.
+
+        * runtime/IndexingType.h:
+        (JSC):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::ensureArrayStorage):
+
+2012-09-13  Filip Pizlo  <fpizlo@apple.com>
+
         Testing whether indexing type is ArrayWithArrayStorage should not compare against ArrayWithArrayStorage
         https://bugs.webkit.org/show_bug.cgi?id=96611
 

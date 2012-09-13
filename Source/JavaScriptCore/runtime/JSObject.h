@@ -136,7 +136,7 @@ namespace JSC {
         {
             switch (structure()->indexingType()) {
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return 0;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
@@ -151,7 +151,7 @@ namespace JSC {
         {
             switch (structure()->indexingType()) {
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return 0;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
@@ -190,7 +190,7 @@ namespace JSC {
         {
             switch (structure()->indexingType()) {
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return false;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
@@ -217,7 +217,7 @@ namespace JSC {
         {
             switch (structure()->indexingType()) {
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return false;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
@@ -299,7 +299,7 @@ namespace JSC {
         {
             switch (structure()->indexingType()) {
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return false;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
@@ -563,7 +563,7 @@ namespace JSC {
                 return m_butterfly->arrayStorage();
                 
             case NonArray:
-            case Array:
+            case ArrayClass:
                 return createInitialArrayStorage(globalData);
                 
             default:

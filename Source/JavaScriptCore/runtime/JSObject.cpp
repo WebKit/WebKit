@@ -235,7 +235,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned
     
     switch (thisObject->structure()->indexingType()) {
     case NonArray:
-    case Array:
+    case ArrayClass:
         break;
         
     case NonArrayWithArrayStorage:
@@ -355,7 +355,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     
     switch (thisObject->structure()->indexingType()) {
     case NonArray:
-    case Array:
+    case ArrayClass:
         break;
         
     case NonArrayWithArrayStorage:
@@ -438,7 +438,7 @@ void JSObject::enterDictionaryIndexingMode(JSGlobalData& globalData)
 ArrayStorage* JSObject::createArrayStorage(JSGlobalData& globalData, unsigned length, unsigned vectorLength)
 {
     IndexingType oldType = structure()->indexingType();
-    ASSERT_UNUSED(oldType, oldType == NonArray || oldType == Array);
+    ASSERT_UNUSED(oldType, oldType == NonArray || oldType == ArrayClass);
     Butterfly* newButterfly = m_butterfly->growArrayRight(
         globalData, structure(), structure()->outOfLineCapacity(), false, 0,
         ArrayStorage::sizeFor(vectorLength));
@@ -471,7 +471,7 @@ ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(J
     case NonArrayWithArrayStorage:
         return enterDictionaryIndexingModeWhenArrayStorageAlreadyExists(globalData, m_butterfly->arrayStorage());
         
-    case Array:
+    case ArrayClass:
     case NonArray: {
         createArrayStorage(globalData, 0, 0);
         SparseArrayValueMap* map = allocateSparseIndexMap(globalData);
@@ -597,7 +597,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, i));
     
     switch (thisObject->structure()->indexingType()) {
-    case Array:
+    case ArrayClass:
     case NonArray:
         return true;
         
@@ -763,7 +763,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
     // which almost certainly means a different structure for PropertyNameArray.
     switch (object->structure()->indexingType()) {
     case NonArray:
-    case Array:
+    case ArrayClass:
         break;
         
     case NonArrayWithArrayStorage:
@@ -1190,7 +1190,7 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
     
     switch (structure()->indexingType()) {
     case NonArray:
-    case Array: {
+    case ArrayClass: {
         if (indexingShouldBeSparse()) {
             putByIndexBeyondVectorLengthWithArrayStorage(exec, i, value, shouldThrow, ensureArrayStorageExistsAndEnterDictionaryIndexingMode(globalData));
             break;
@@ -1299,7 +1299,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
     
     switch (structure()->indexingType()) {
     case NonArray:
-    case Array: {
+    case ArrayClass: {
         if (indexingShouldBeSparse() || attributes)
             return putDirectIndexBeyondVectorLengthWithArrayStorage(exec, i, value, attributes, mode, ensureArrayStorageExistsAndEnterDictionaryIndexingMode(globalData));
         if (!isDenseEnoughForVector(i, 0) || i >= MAX_STORAGE_VECTOR_LENGTH)
@@ -1355,7 +1355,7 @@ ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned desiredLength)
     
     switch (structure()->indexingType()) {
     case NonArray:
-    case Array:
+    case ArrayClass:
         vectorLength = 0;
         length = 0;
         break;
@@ -1479,7 +1479,7 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prope
     
     switch (object->structure()->indexingType()) {
     case NonArray:
-    case Array:
+    case ArrayClass:
         return false;
         
     case NonArrayWithArrayStorage:
