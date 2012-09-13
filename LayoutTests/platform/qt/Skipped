@@ -2755,12 +2755,8 @@ fast/events/autoscroll-in-textarea.html
 fast/forms/time-multiple-fields
 
 # [Qt] New inspector/timeline/timeline-decode-resize.html introduced in r125790 fails
-# https://bugs.webkit.org/show_bug.cgi?id=?????
+https://bugs.webkit.org/show_bug.cgi?id=94341
 inspector/timeline/timeline-decode-resize.html
-
-# [Qt] New fast/forms/range/range-hit-test-with-padding.html introduced in r126132 fails
-# https://bugs.webkit.org/show_bug.cgi?id=?????
-fast/forms/range/range-hit-test-with-padding.html
 
 # REGRESSION(r126852): It broke inspector tests
 # https://bugs.webkit.org/show_bug.cgi?id=95176
