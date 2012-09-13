@@ -254,7 +254,9 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         MacroAssembler::JumpList failureCases;
        
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSCell::structureOffset()), scratchGPR); 
-        failureCases.append(stubJit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, Structure::indexingTypeOffset()), MacroAssembler::TrustedImm32(ArrayWithArrayStorage)));
+        stubJit.load8(MacroAssembler::Address(scratchGPR, Structure::indexingTypeOffset()), scratchGPR);
+        failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(IsArray)));
+        failureCases.append(stubJit.branchTest32(MacroAssembler::Zero, scratchGPR, MacroAssembler::TrustedImm32(HasArrayStorage)));
         
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
         stubJit.load32(MacroAssembler::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);

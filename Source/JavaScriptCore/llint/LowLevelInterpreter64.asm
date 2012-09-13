@@ -1024,7 +1024,9 @@ _llint_op_get_array_length:
     if VALUE_PROFILER
         storep t2, ArrayProfile::m_lastSeenStructure[t1]
     end
-    bbneq Structure::m_indexingType[t2], IsArray | HasArrayStorage, .opGetArrayLengthSlow
+    loadb Structure::m_indexingType[t2], t1
+    btiz t1, IsArray, .opGetArrayLengthSlow
+    btiz t1, HasArrayStorage, .opGetArrayLengthSlow
     loadis 8[PB, PC, 8], t1
     loadp 64[PB, PC, 8], t2
     loadp JSObject::m_butterfly[t3], t0

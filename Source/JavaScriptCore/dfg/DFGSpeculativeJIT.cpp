@@ -331,14 +331,21 @@ void SpeculativeJIT::checkArray(Node& node)
     }
     case ARRAY_WITH_ARRAY_STORAGE_MODES: {
         GPRTemporary temp(this);
+        GPRReg tempGPR = temp.gpr();
         m_jit.loadPtr(
-            MacroAssembler::Address(baseReg, JSCell::structureOffset()), temp.gpr());
+            MacroAssembler::Address(baseReg, JSCell::structureOffset()), tempGPR);
+        m_jit.load8(MacroAssembler::Address(tempGPR, Structure::indexingTypeOffset()), tempGPR);
+        // FIXME: This can be turned into a single branch. But we currently have no evidence
+        // that doing so would be profitable, nor do I feel comfortable with the present test
+        // coverage for this code path.
         speculationCheck(
             Uncountable, JSValueRegs(), NoNode,
-            m_jit.branch8(
-                MacroAssembler::NotEqual,
-                MacroAssembler::Address(temp.gpr(), Structure::indexingTypeOffset()),
-                MacroAssembler::TrustedImm32(ArrayWithArrayStorage)));
+            m_jit.branchTest32(
+                MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(IsArray)));
+        speculationCheck(
+            Uncountable, JSValueRegs(), NoNode,
+            m_jit.branchTest32(
+                MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(HasArrayStorage)));
         
         noResult(m_compileIndex);
         return;

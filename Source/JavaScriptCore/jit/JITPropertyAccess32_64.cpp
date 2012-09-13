@@ -620,13 +620,15 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
 #if ENABLE(VALUE_PROFILER)
     storePtr(regT2, m_codeBlock->getOrAddArrayProfile(stubInfo->bytecodeIndex)->addressOfLastSeenStructure());
 #endif
-    Jump failureCases1 = branch8(NotEqual, Address(regT2, Structure::indexingTypeOffset()), TrustedImm32(ArrayWithArrayStorage));
+    load8(Address(regT2, Structure::indexingTypeOffset()), regT3);
+    Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
+    Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage));
     
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, JSArray::butterflyOffset()), regT2);
     load32(Address(regT2, ArrayStorage::lengthOffset()), regT2);
     
-    Jump failureCases2 = branch32(Above, regT2, TrustedImm32(INT_MAX));
+    Jump failureCases3 = branch32(Above, regT2, TrustedImm32(INT_MAX));
     move(regT2, regT0);
     move(TrustedImm32(JSValue::Int32Tag), regT1);
     Jump success = jump();
@@ -637,6 +639,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     patchBuffer.link(failureCases1, slowCaseBegin);
     patchBuffer.link(failureCases2, slowCaseBegin);
+    patchBuffer.link(failureCases3, slowCaseBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
