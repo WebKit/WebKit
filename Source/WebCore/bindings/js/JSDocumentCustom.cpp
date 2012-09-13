@@ -86,6 +86,14 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     if (wrapper)
         return wrapper;
 
+    if (DOMWindow* domWindow = document->domWindow()) {
+        globalObject = toJSDOMWindow(toJS(exec, domWindow));
+        // Creating a wrapper for domWindow might have created a wrapper for document as well.
+        wrapper = getCachedWrapper(currentWorld(exec), document);
+        if (wrapper)
+            return wrapper;
+    }
+
     if (document->isHTMLDocument())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLDocument, document);
 #if ENABLE(SVG)

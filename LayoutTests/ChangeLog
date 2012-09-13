@@ -1,3 +1,22 @@
+2012-09-13  Adam Barth  <abarth@webkit.org>
+
+        REGRESSION(r125126): It made fast/events/keyevent-iframe-removed-crash.html assert
+        https://bugs.webkit.org/show_bug.cgi?id=93654
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/content-document-prototype-expected.txt: Added.
+        * fast/dom/content-document-prototype.html: Added.
+            - Check that HTMLFrameElement.contentDocument ends up with the
+              right prototype chain. This is a tricky case because not only the
+              prototype chain of the property different from the holder, we
+              never actually touch the DOMWindow in this test case so the
+              prototype chain leads to a global object that doesn't even exist
+              yet!
+        * fast/events/keyevent-iframe-removed-crash.html:
+            - Add a call to gc() so that this test will ASSERT reliabily if we
+              cause a similar problem in the future.
+
 2012-09-13  James Robinson  <jamesr@chromium.org>
 
         Unreviewed gardening - upstream some skia_test_expectations.txt entries.
