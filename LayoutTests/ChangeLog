@@ -1,3 +1,22 @@
+2012-09-13  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] We should have tests for preserving/resetting values of input type "time" after browser navigation
+        https://bugs.webkit.org/show_bug.cgi?id=96595
+
+        Reviewed by Kent Tamura.
+
+        This patch adds two tests for preserving/resetting values input type
+        "time" with multiple fields input UI after page reload, backward and
+        forward browser navigation.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html: Added for checking value is preserved after history backward and forward navigation.
+        * fast/forms/time-multiple-fields/time-multiple-fields-reset-value-after-reload-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-reset-preserve-value-after-reload.html: Added for checking values are resetted after page reload.
+
 2012-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip a failing test. Added platform specific expectations after r128375.
