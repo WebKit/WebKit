@@ -48,12 +48,12 @@ function test()
     function didReceiveMemorySnapshot(error, memoryBlock)
     {
         InspectorTest.addResult("didReceiveMemorySnapshot");
-        var imagesSize = memoryBlockSize(["ProcessPrivateMemory", "MemoryCache", "MemoryCache.Image"], memoryBlock);
+        var imagesSize = memoryBlockSize(["ProcessPrivateMemory", "Page", "Page.Image"], memoryBlock);
         var jpegDecodedSizeExpected = 20000000;
         if (imagesSize > jpegDecodedSizeExpected)
-            InspectorTest.addResult("PASS: MemoryCache.Image size is OK.");
+            InspectorTest.addResult("PASS: Page.Image size is OK.");
         else
-            InspectorTest.addResult("FAIL: MemoryCache.Image size is too small.");
+            InspectorTest.addResult("FAIL: Page.Image size is too small.");
         InspectorTest.completeTest();
     }
 

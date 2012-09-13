@@ -1,3 +1,11 @@
+2012-09-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for: REGRESSION(r128451): It broke inspector/profiler/memory-instrumentation-cached-images.html
+        https://bugs.webkit.org/show_bug.cgi?id=96653
+
+        * inspector/profiler/memory-instrumentation-cached-images.html:
+        * inspector/profiler/memory-instrumentation-cached-images-expected.txt:
+
 2012-09-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         REGRESSION: hit test doesn't take iframe scroll position into account
