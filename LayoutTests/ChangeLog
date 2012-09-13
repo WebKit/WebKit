@@ -1,3 +1,10 @@
+2012-09-12  James Robinson  <jamesr@chromium.org>
+
+        Rebaseline chromium-mac pixel results for 128375
+
+        * platform/chromium-mac-snowleopard/fast/table/height-percent-test-vertical-expected.png:
+        * platform/chromium-mac/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Added.
+
 2012-09-12  Tony Chang  <tony@chromium.org>
 
         flex item sized incorrectly in a column flexbox with height set via top/bottom
