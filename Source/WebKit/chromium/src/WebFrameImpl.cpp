@@ -1779,10 +1779,8 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                                       const WebFindOptions& options,
                                       bool reset)
 {
-    if (!shouldScopeMatches(searchText)) {
-        increaseMatchCount(0, identifier);
+    if (!shouldScopeMatches(searchText))
         return;
-    }
 
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
@@ -2614,9 +2612,9 @@ int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const
 
 bool WebFrameImpl::shouldScopeMatches(const String& searchText)
 {
-    // Don't scope if we can't find a frame or a view.
+    // Don't scope if we can't find a frame or a view or if the frame is not visible.
     // The user may have closed the tab/application, so abort.
-    if (!frame() || !frame()->view())
+    if (!frame() || !frame()->view() || !hasVisibleContent())
         return false;
 
     ASSERT(frame()->document() && frame()->view());
