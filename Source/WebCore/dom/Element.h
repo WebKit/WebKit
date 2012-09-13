@@ -427,6 +427,9 @@ public:
 
     RenderRegion* renderRegion() const;
     const AtomicString& webkitRegionOverset() const;
+#if ENABLE(CSS_REGIONS)
+    Vector<RefPtr<Range> > webkitGetRegionFlowRanges() const;
+#endif
 
     bool hasID() const;
     bool hasClass() const;

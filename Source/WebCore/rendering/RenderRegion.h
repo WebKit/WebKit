@@ -78,8 +78,6 @@ public:
 
     void deleteAllRenderBoxRegionInfo();
 
-    LayoutUnit offsetFromLogicalTopOfFirstPage() const;
-
     bool isFirstRegion() const;
     bool isLastRegion() const;
 
@@ -104,6 +102,13 @@ public:
     virtual LayoutUnit minPreferredLogicalWidth() const OVERRIDE;
     virtual LayoutUnit maxPreferredLogicalWidth() const OVERRIDE;
     
+    LayoutUnit logicalTopOfFlowThreadContentRect(const LayoutRect&) const;
+    LayoutUnit logicalBottomOfFlowThreadContentRect(const LayoutRect&) const;
+    LayoutUnit logicalTopForFlowThreadContent() const { return logicalTopOfFlowThreadContentRect(flowThreadPortionRect()); };
+    LayoutUnit logicalBottomForFlowThreadContent() const { return logicalBottomOfFlowThreadContentRect(flowThreadPortionRect()); };
+
+    void getRanges(Vector<RefPtr<Range> >&) const;
+
     // This method represents the logical height of the entire flow thread portion used by the region or set.
     // For RenderRegions it matches logicalPaginationHeight(), but for sets it is the height of all the pages
     // or columns added together.

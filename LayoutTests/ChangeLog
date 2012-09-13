@@ -1,3 +1,45 @@
+2012-09-13  Raul Hudea  <rhudea@adobe.com>
+
+        [CSSRegions][CSSOM] Implement Element.getRegionFlowRanges
+        https://bugs.webkit.org/show_bug.cgi?id=78493
+
+        Reviewed by David Hyatt.
+
+        Add tests for getRegionFlowRanges call.
+
+        * fast/regions/get-region-flow-ranges-absolute-pos-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-absolute-pos.html: Added.
+        * fast/regions/get-region-flow-ranges-content-nodes-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-content-nodes.html: Added.
+        * fast/regions/get-region-flow-ranges-display-none-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-display-none.html: Added.
+        * fast/regions/get-region-flow-ranges-empty-regions-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-empty-regions.html: Added.
+        * fast/regions/get-region-flow-ranges-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-fixed-pos-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-fixed-pos.html: Added.
+        * fast/regions/get-region-flow-ranges-horiz-bt-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-horiz-bt.html: Added.
+        * fast/regions/get-region-flow-ranges-inline-only-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-inline-only.html: Added.
+        * fast/regions/get-region-flow-ranges-text-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-text-vert-lr-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-text-vert-lr.html: Added.
+        * fast/regions/get-region-flow-ranges-text.html: Added.
+        * fast/regions/get-region-flow-ranges-vert-lr-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-vert-lr.html: Added.
+        * fast/regions/get-region-flow-ranges-vert-rl-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-vert-rl.html: Added.
+        * fast/regions/get-region-flow-ranges-writing-modes-rl-rb-lr-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-writing-modes-rl-rb-lr.html: Added.
+        * fast/regions/get-region-flow-ranges-writing-modes-tb-rl-lr-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-writing-modes-tb-rl-lr.html: Added.
+        * fast/regions/get-region-flow-ranges.html: Added.
+        * fast/regions/resources/helper.js:
+        (getName):
+        (getRangeAt):
+        (compareArrays):
+
 2012-09-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK][NRWT] Lower timeout value to 6 seconds (12 for debug configuration)

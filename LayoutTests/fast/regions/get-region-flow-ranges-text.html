@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
+<style>
+    body { font-family: monospace; }
+    #wrapper { font-size: 50px; }
+    .border { border: 1px solid red; }
+    #box { -webkit-flow-into: flow1;}
+    #region1 { -webkit-flow-from: flow1; width: 250px; height: 70px; left: 20px; top: 250px;}
+    #region2 { -webkit-flow-from: flow1; width: 250px; height: 60px; left: 20px; top: 300px;}
+</style>
+</head>
+<body>
+  <div id="description"></div>
+  <div id="wrapper"><div id="box">Text node.</div></div>
+  <div id="region1" class="border"></div>
+  <div id="region2" class="border"></div>
+  <div id="console"></div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    description("[CSSRegions] Test for Region::getRegionFlowRanges. Text breaks in two regions");
+    var region1 = document.getElementById("region1");
+    var region2 = document.getElementById("region2");
+
+    debug("Flow test");
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 1);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "#text", 4]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["#text", 5, "wrapper", 1]);
+
+function hideRegionsAndFlows() {
+    document.getElementById("region1").style.visibility = "hidden";
+    document.getElementById("region2").style.visibility = "hidden";
+}
+
+  hideRegionsAndFlows();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

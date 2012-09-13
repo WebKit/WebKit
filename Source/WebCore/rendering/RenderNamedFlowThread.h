@@ -70,6 +70,7 @@ public:
     const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
     bool hasContentNode(Node* contentNode) const { ASSERT(contentNode); return m_contentNodes.contains(contentNode); }
     bool isMarkedForDestruction() const;
+    void getRanges(Vector<RefPtr<Range> >&, const RenderRegion*) const;
 
 protected:
     void setMarkForDestruction();

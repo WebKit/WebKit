@@ -160,3 +160,39 @@ function assert(expression, failMessage)
 {
     expression ? logPassMessage("") : logFailMessage(failMessage);
 }
+
+// used by getRegionFlowRanges tests
+function getName(node) {
+  if (!node) return "undefined";
+  if (node.nodeType == 3) // Text node
+    return "#text";
+  // all the others should have an id
+  return node.id;
+}
+
+function getRangeAt(arrRange, index) {
+  if (index < arrRange.length)
+    return [getName(arrRange[index].startContainer), arrRange[index].startOffset, getName(arrRange[index].endContainer), arrRange[index].endOffset];
+  return null;
+}
+
+function compareArrays(current, expected) {
+    try {
+        if (current == null) {
+            testFailed("Null object. Expected [" + expected.toString() + "] was null");
+            return;
+        }
+        if (current.length !== expected.length) {
+            testFailed("Array length differs. Expected [" + expected.toString() + "] was [" + current.toString() + "]");
+            return;
+        }
+        for (var i = 0; i < current.length; i++)
+            if (current[i] !== expected[i]) {
+                testFailed("Expected ["  + expected.toString() + "]. Was [" + current.toString() + "]");
+                return;
+            }
+    } catch (ex) {
+        testFailed(current + " threw exception " + ex);
+    }
+    testPassed("Array ["  + expected.toString() + "] is equal to [" + current.toString() + "]");
+}

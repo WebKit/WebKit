@@ -2232,7 +2232,7 @@ LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const Re
 
     LayoutUnit blockOffset = logicalTopForChild(child);
     if (region)
-        blockOffset = max(blockOffset, blockOffset + (region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage));
+        blockOffset = max(blockOffset, blockOffset + (region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage));
 
     LayoutUnit startOff = startOffsetForLine(blockOffset, false, region, offsetFromLogicalTopOfFirstPage, logicalHeightForChild(child));
 
@@ -6896,7 +6896,7 @@ bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBou
         return false;
     if (region->isLastRegion())
         return region->isRenderRegionSet() || region->style()->regionOverflow() == BreakRegionOverflow
-            || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->offsetFromLogicalTopOfFirstPage());
+            || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->logicalTopForFlowThreadContent());
     return true;
 }
 
@@ -7187,20 +7187,51 @@ bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, Layou
 
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
-    // FIXME: This function needs to work without layout state. It's fine to use the layout state as a cache
-    // for speed, but we need a slow implementation that will walk up the containing block chain and figure
-    // out our offset from the top of the page.
     LayoutState* layoutState = view()->layoutState();
-    if (!layoutState || !layoutState->isPaginated())
-        return 0;
+    if (layoutState && !layoutState->isPaginated())
+        return ZERO_LAYOUT_UNIT;
+    if (layoutState) {
+        // FIXME: Sanity check that the renderer in the layout state is ours, since otherwise the computation will be off.
+        // Right now this assert gets hit inside computeLogicalHeight for percentage margins, since they're computed using
+        // widths which can vary in each region. Until we patch that, we can't have this assert.
+        // ASSERT(layoutState->m_renderer == this);
 
-    // FIXME: Sanity check that the renderer in the layout state is ours, since otherwise the computation will be off.
-    // Right now this assert gets hit inside computeLogicalHeight for percentage margins, since they're computed using
-    // widths which can vary in each region. Until we patch that, we can't have this assert.
-    // ASSERT(layoutState->m_renderer == this);
+        LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
+        return isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
+    }
+    // FIXME: Right now, this assert is hit outside layout, from logicalLeftSelectionOffset in selectionGapRectsForRepaint (called from FrameSelection::selectAll).
+    // ASSERT(inRenderFlowThread());
 
-    LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-    return isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
+    // FIXME: This is a slower path that doesn't use layout state and relies on getting your logical top inside the enclosing flow thread. It doesn't
+    // work with columns or pages currently, but it should once they have been switched over to using flow threads.
+    if (!inRenderFlowThread())
+        return ZERO_LAYOUT_UNIT;
+
+    const RenderBlock* currentBlock = this;
+    LayoutRect blockRect(0, 0, width(), height());
+
+    while (currentBlock && !currentBlock->isRenderFlowThread()) {
+        RenderBlock* containerBlock = currentBlock->containingBlock();
+        ASSERT(containerBlock);
+        if (!containerBlock)
+            return ZERO_LAYOUT_UNIT;
+        LayoutPoint currentBlockLocation = currentBlock->location();
+
+        if (containerBlock->style()->writingMode() != currentBlock->style()->writingMode()) {
+            // We have to put the block rect in container coordinates
+            // and we have to take into account both the container and current block flipping modes
+            if (containerBlock->style()->isFlippedBlocksWritingMode()) {
+                if (containerBlock->isHorizontalWritingMode())
+                    blockRect.setY(currentBlock->height() - blockRect.maxY());
+                else
+                    blockRect.setX(currentBlock->width() - blockRect.maxX());
+            }
+            currentBlock->flipForWritingMode(blockRect);
+        }
+        blockRect.moveBy(currentBlockLocation);
+        currentBlock = containerBlock;
+    };
+    return currentBlock->isHorizontalWritingMode() ? blockRect.y() : blockRect.x();
 }
 
 RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
@@ -7248,9 +7279,9 @@ RenderRegion* RenderBlock::clampToStartAndEndRegions(RenderRegion* region) const
     RenderRegion* endRegion;
     enclosingRenderFlowThread()->getRegionRangeForBox(this, startRegion, endRegion);
     
-    if (startRegion && region->offsetFromLogicalTopOfFirstPage() < startRegion->offsetFromLogicalTopOfFirstPage())
+    if (startRegion && region->logicalTopForFlowThreadContent() < startRegion->logicalTopForFlowThreadContent())
         return startRegion;
-    if (endRegion && region->offsetFromLogicalTopOfFirstPage() > endRegion->offsetFromLogicalTopOfFirstPage())
+    if (endRegion && region->logicalTopForFlowThreadContent() > endRegion->logicalTopForFlowThreadContent())
         return endRegion;
     
     return region;

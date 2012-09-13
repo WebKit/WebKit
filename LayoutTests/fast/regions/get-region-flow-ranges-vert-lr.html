@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
+<style>
+    html { -webkit-writing-mode: vertical-lr; }
+    body { font-family: monospace; }
+    #wrapper { font-size: 30px; }
+    .border { border: 1px solid red; }
+    #article { background-color: lightblue; width: 135px; padding: 10px;}
+    #box1 { background-color: lightgreen; width: 110px; padding: 10px;}
+    #box2 { background-color: orange; width: 10px; padding: 5px;}
+    #region1 { -webkit-flow-from: flow1; width: 70px; height: 250px; left: 20px; top: 250px;}
+    #region2 { -webkit-flow-from: flow1; width: 60px; height: 250px; left: 20px; top: 300px;}
+    #region3 { -webkit-flow-from: flow1; width: 60px; height: 250px; left: 20px; top: 350px;}
+</style>
+</head>
+<body>
+  <div id="description"></div>
+  <div id="wrapper"><div id="article"><div id="box1"><div id="box2"></div></div></div></div>
+  <div id="region1" class="border"></div>
+  <div id="region2" class="border"></div>
+  <div id="region3" class="border"></div>
+  <div id="console"></div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    description("[CSSRegions] Test for Region::getRegionFlowRanges for vertical-lr mode");
+    var region1 = document.getElementById("region1");
+    var region2 = document.getElementById("region2");
+    var region3 = document.getElementById("region3");
+
+    debug("Empty regions");
+    var range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 0);
+    var range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 0);
+    var range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 0);
+
+    debug("Flow article");
+    var article = document.getElementById("article");
+    article.style.webkitFlowInto = "flow1";
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 1);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "box1", 1]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["box1", 1, "box1", 1]);
+    range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 1);
+    compareArrays(getRangeAt(range3, 0), ["box1", 1, "wrapper", 1]);
+
+    debug("Add text node to region2 (creates anonymous block)");
+    var textNode = document.createTextNode("Text node.");
+    document.getElementById("box1").appendChild(textNode);
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 1);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "box1", 1]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["box1", 1, "box1", 2]);
+    range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 1);
+    compareArrays(getRangeAt(range3, 0),  ["box1", 2, "wrapper", 1]);
+
+    debug("Increase font size");
+    var wrapper = document.getElementById("wrapper");
+    wrapper.style.fontSize = "40px";
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 1);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "box1", 1]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["box1", 1, "#text", 4]);
+    range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 1);
+    compareArrays(getRangeAt(range3, 0), ["#text", 5, "wrapper", 1]);
+
+    debug("Make child a content node, so it will move from region1 to region3");
+    var box2 = document.getElementById('box2');
+    box2.style.webkitFlowInto = "flow1";
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 2);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "box1", 0]);
+    compareArrays(getRangeAt(range1, 1), ["box1", 1, "#text", 4]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["#text", 5, "box1", 2]);
+    range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 1);
+    compareArrays(getRangeAt(range3, 0), ["box1", 0, "box1", 1]);
+
+function hideRegionsAndFlows() {
+    document.getElementById("region1").style.visibility = "hidden";
+    document.getElementById("region2").style.visibility = "hidden";
+    document.getElementById("region3").style.visibility = "hidden";
+}
+
+    hideRegionsAndFlows();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

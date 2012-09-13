@@ -35,6 +35,7 @@
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "PaintInfo.h"
+#include "Range.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderView.h"
@@ -328,13 +329,18 @@ void RenderRegion::deleteAllRenderBoxRegionInfo()
     m_renderBoxRegionInfo.clear();
 }
 
-LayoutUnit RenderRegion::offsetFromLogicalTopOfFirstPage() const
+LayoutUnit RenderRegion::logicalTopOfFlowThreadContentRect(const LayoutRect& rect) const
 {
-    if (!m_isValid || !m_flowThread)
-        return 0;
-    if (m_flowThread->isHorizontalWritingMode())
-        return flowThreadPortionRect().y();
-    return flowThreadPortionRect().x();
+    if (!m_isValid || !flowThread())
+        return ZERO_LAYOUT_UNIT;
+    return flowThread()->isHorizontalWritingMode() ? rect.y() : rect.x();
+}
+
+LayoutUnit RenderRegion::logicalBottomOfFlowThreadContentRect(const LayoutRect& rect) const
+{
+    if (!m_isValid || !flowThread())
+        return ZERO_LAYOUT_UNIT;
+    return flowThread()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
 }
 
 void RenderRegion::setRegionObjectsRegionStyle()
@@ -534,6 +540,12 @@ LayoutUnit RenderRegion::maxPreferredLogicalWidth() const
         maxPreferredLogicalWidth = std::min(maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
 
     return maxPreferredLogicalWidth + borderAndPaddingLogicalWidth();
+}
+
+void RenderRegion::getRanges(Vector<RefPtr<Range> >& rangeObjects) const
+{
+    RenderNamedFlowThread* namedFlow = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    namedFlow->getRanges(rangeObjects, this);
 }
 
 } // namespace WebCore

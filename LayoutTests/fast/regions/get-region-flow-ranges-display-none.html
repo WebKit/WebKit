@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
+<style>
+    body { font-family: monospace; }
+    #wrapper { font-size: 20px; }
+    .border { border: 1px solid red; }
+    .flow { -webkit-flow-into: flow1;}
+    #wrapper p {margin: 0; padding: 0;}
+    .none {display: none;}
+    #region1 { -webkit-flow-from: flow1; width: 250px; height: 70px; left: 20px; top: 250px;}
+</style>
+</head>
+<body>
+  <div id="description"></div>
+  <div id="wrapper"><div class="flow"><p>1</p><p class="none">2</p><p>3</p><p class="none">4</p><p>5</p></div></div>
+  <div id="region1" class="border"></div>
+  <div id="console"></div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    description("[CSSRegions] Implement Region::getRegionFlowRanges for elements with display:none (Range should not break ranges at display:none)");
+    var region1 = document.getElementById("region1");
+
+    debug("Flow test");
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 1);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "wrapper", 1]);
+
+function hideRegionsAndFlows() {
+    document.getElementById("region1").style.visibility = "hidden";
+}
+
+    hideRegionsAndFlows();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

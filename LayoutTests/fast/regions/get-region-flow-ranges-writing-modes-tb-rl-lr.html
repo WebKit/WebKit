@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
+<style>
+    body { font-family: monospace; }
+    #wrapper { font-size: 30px; }
+    .border { border: 1px solid red; }
+    #box1 { -webkit-flow-into: flow; background-color: green; }
+    #box11 { background-color: lightgreen; height: 30px; margin-top: 70px;}
+    #region1 { -webkit-flow-from: flow; width: 400px; height: 200px;  }
+    #region2 { -webkit-flow-from: flow; width: 400px; height: 200px;  }
+    #region3 { -webkit-flow-from: flow; width: 400px; height: 200px;  }
+    #box2 { -webkit-writing-mode: vertical-rl; background-color: grey; height: 150px; width: 400px;}
+    #box22 { height: 30px; width: 30px; background-color: white; }
+    #box3 { -webkit-writing-mode: vertical-lr; background-color: lightblue; width: 400px; height: 150px;}
+    #box4 { -webkit-writing-mode: horizontal-bt; background-color: yellow; height: 60px; width: 60px; position: absolute; top: 20px; left: 20px;}
+</style>
+</head>
+<body>
+    <div id="description"></div>
+    <!--div id="wrapper"><div id="box1"><div id="box11"></div><div id="box2">Vert RL</div><div id="box3">Vert LR</div><div id="box4">Horizontal BT</div></div-->
+
+    <div id="wrapper"><div id="box1"><div id="box11"></div><div id="box2">Vertical RL<div id="box22">X</div></div><div id="box3">Vertical LR<div id="box4">Y</div></div></div></div>
+    <div id="region1" class="border"></div>
+    <div id="region2" class="border"></div>
+    <div id="region3" class="border"></div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    debug("[CSSRegions] Test for Region::getRegionFlowRanges for mixed vertical modes");
+    region1 = document.getElementById("region1");
+    region2 = document.getElementById("region2");
+    region3 = document.getElementById("region3");
+    range1 = region1.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range1.length", 2);
+    compareArrays(getRangeAt(range1, 0), ["wrapper", 0, "box1", 1]);
+    compareArrays(getRangeAt(range1, 1), ["box3", 1, "box3", 2]);
+    range2 = region2.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range2.length", 1);
+    compareArrays(getRangeAt(range2, 0), ["box1", 1, "box1", 2]);
+    range3 = region3.webkitGetRegionFlowRanges();
+    shouldEvaluateTo("range3.length", 1);
+    compareArrays(getRangeAt(range3, 0), ["box1", 2, "box3", 1]);
+
+function hideRegionsAndFlows() {
+    document.getElementById("region1").style.visibility = "hidden";
+    document.getElementById("region2").style.visibility = "hidden";
+    document.getElementById("region3").style.visibility = "hidden";
+}
+    hideRegionsAndFlows();
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
