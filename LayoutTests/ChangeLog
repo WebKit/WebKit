@@ -1,3 +1,19 @@
+2012-09-13  Adrienne Walker  <enne@google.com>
+
+        Hide all ancestors of the full screen element when going full screen
+        https://bugs.webkit.org/show_bug.cgi?id=96332
+
+        Reviewed by James Robinson.
+
+        This test has an all red image that (without this patch) incorrectly
+        sorts on top of the full screen element. With this patch, the all
+        green full screen element appears on top.
+
+        * fullscreen/full-screen-fixed-pos-parent-expected.png: Added.
+        * fullscreen/full-screen-fixed-pos-parent-expected.txt: Added.
+        * fullscreen/full-screen-fixed-pos-parent.html: Added.
+        * fullscreen/resources/green.html: Added.
+
 2012-09-13  Adam Barth  <abarth@webkit.org>
 
         REGRESSION(r125126): It made fast/events/keyevent-iframe-removed-crash.html assert

@@ -9,6 +9,7 @@
 
 :-webkit-full-screen-ancestor:not(iframe) {
     z-index: auto !important;
+    position: static !important;
     opacity: 1 !important;
     -webkit-transform: none !important;
     -webkit-mask: none !important;
