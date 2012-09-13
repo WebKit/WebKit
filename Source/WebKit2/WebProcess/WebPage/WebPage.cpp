@@ -307,16 +307,15 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_page->setCanStartMedia(false);
 
-    updatePreferences(parameters.store);
-
     m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
     m_page->setGroupName(m_pageGroup->identifier());
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
-    platformInitialize();
-
     m_drawingArea = DrawingArea::create(this, parameters);
     m_drawingArea->setPaintingEnabled(false);
+
+    updatePreferences(parameters.store);
+    platformInitialize();
 
     m_mainFrame = WebFrame::createMainFrame(this);
 
