@@ -1,3 +1,11 @@
+2012-09-13  Rob Buis  <rbuis@rim.com>
+
+        Unreviewed changes to watchlist.
+
+        - Add myself to BlackBerry bugs
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-09-13  Stephen Chenney  <schenney@chromium.org>
 
         Add an SVG entry to the watchlist
