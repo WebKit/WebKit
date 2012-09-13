@@ -1047,3 +1047,15 @@ BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT
 
+// Fails after r128270.
+BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
+
+// Fails after r128400.
+BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
+
+// Fails after r128389.
+BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
+
+// Fails after r128274.
+BUGWK96619 : fast/overflow/overflow-height-float-not-removed-crash.html = CRASH
+

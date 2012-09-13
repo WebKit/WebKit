@@ -70,3 +70,7 @@ BUGWK87088 : fast/js/names.html = TEXT
 // Failing after 125592
 BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT
 
+// Fail after r128393.
+BUGWK96620 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
+BUGWK96620 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
+

@@ -1,3 +1,15 @@
+2012-09-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r128270, r128400, r128389, r128393, r128274
+        https://bugs.webkit.org/show_bug.cgi?id=96613
+
+        Unreviewed gardening.
+
+        Adding failing test to TestExpectations.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] We should have test for clicking spin button in iframe.
