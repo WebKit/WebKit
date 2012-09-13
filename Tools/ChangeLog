@@ -1,3 +1,19 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] GStreamer detection does not work when cross-compiling
+        https://bugs.webkit.org/show_bug.cgi?id=96608
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When cross-compiling it is not safe to just use system(pkg-config),
+        because there is a high probability that it will find packages in the
+        host system instead of in the target one. Instead use qmake's new
+        packagesExist() function that takes care of this delicate aspect of
+        cross compilation by setting PKG_CONFIG_SYSROOT_DIR and
+        PKG_CONFIG_LIBDIR accordingly.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WTR] More efficient string handling in InjectedBundlePage
