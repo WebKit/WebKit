@@ -1,3 +1,9 @@
+2012-09-13  Mark Lam  <mark.lam@apple.com>
+
+        Unreviewed. Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests output cryptic error when the config file is missing.
