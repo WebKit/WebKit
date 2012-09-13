@@ -112,7 +112,7 @@ private:
                 break;
             nodePtr->setOp(GetArrayLength);
             ASSERT(nodePtr->flags() & NodeMustGenerate);
-            nodePtr->clearFlags(NodeMustGenerate);
+            nodePtr->clearFlags(NodeMustGenerate | NodeClobbersWorld);
             m_graph.deref(m_compileIndex);
             nodePtr->setArrayMode(arrayMode);
             
@@ -365,6 +365,16 @@ private:
 #endif
     }
     
+    NodeIndex addNode(const Node& node, bool shouldGenerate)
+    {
+        NodeIndex nodeIndex = m_graph.size();
+        m_graph.append(node);
+        m_insertionSet.append(m_indexInBlock, nodeIndex);
+        if (shouldGenerate)
+            m_graph[nodeIndex].ref();
+        return nodeIndex;
+    }
+    
     NodeIndex checkArray(Array::Mode arrayMode, CodeOrigin codeOrigin, NodeIndex array, bool (*storageCheck)(Array::Mode) = canCSEStorage, bool shouldGenerate = true)
     {
         ASSERT(modeIsSpecific(arrayMode));
@@ -381,15 +391,11 @@ private:
         
         if (shouldGenerate)
             m_graph.ref(array);
-        Node getIndexedPropertyStorage(
-            GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode), array);
-        if (shouldGenerate)
-            getIndexedPropertyStorage.ref();
-        NodeIndex getIndexedPropertyStorageIndex = m_graph.size();
-        m_graph.append(getIndexedPropertyStorage);
-        m_insertionSet.append(m_indexInBlock, getIndexedPropertyStorageIndex);
         
-        return getIndexedPropertyStorageIndex;
+        if (modeUsesButterfly(arrayMode))
+            return addNode(Node(GetButterfly, codeOrigin, array), shouldGenerate);
+        
+        return addNode(Node(GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode), array), shouldGenerate);
     }
     
     void blessArrayOperation(Edge base, unsigned storageChildIdx)

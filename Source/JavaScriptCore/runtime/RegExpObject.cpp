@@ -21,6 +21,8 @@
 #include "config.h"
 #include "RegExpObject.h"
 
+#include "ButterflyInlineMethods.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
@@ -113,11 +115,11 @@ bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
     return Base::deleteProperty(cell, exec, propertyName);
 }
 
-void RegExpObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().lastIndex);
-    Base::getOwnPropertyNames(object, exec, propertyNames, mode);
+    Base::getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
 }
 
 void RegExpObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

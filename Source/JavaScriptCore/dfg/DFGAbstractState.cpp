@@ -852,11 +852,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).makeTop();
             break;
-        case Array::JSArray:
+        case IN_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).makeTop();
             break;
-        case Array::JSArrayOutOfBounds:
+        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(node.child2()).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
@@ -916,10 +916,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Generic:
             clobberWorld(node.codeOrigin, indexInBlock);
             break;
-        case Array::JSArray:
+        case IN_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(child2).filter(SpecInt32);
             break;
-        case Array::JSArrayOutOfBounds:
+        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(child2).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             break;
@@ -1341,7 +1341,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).set(node.structureTransitionData().newStructure);
         m_haveStructures = true;
         break;
-    case GetPropertyStorage:
+    case GetButterfly:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
         node.setCanExit(false);
@@ -1359,8 +1359,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::String:
             forNode(node.child1()).filter(SpecString);
             break;
-        case Array::JSArray:
-        case Array::JSArrayOutOfBounds:
+        case ALL_ARRAY_STORAGE_MODES:
             // This doesn't filter anything meaningful right now. We may want to add
             // CFA tracking of array mode speculations, but we don't have that, yet.
             forNode(node.child1()).filter(SpecCell);

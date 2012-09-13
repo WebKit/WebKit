@@ -27,6 +27,8 @@
 #include "config.h"
 #include "LiteralParser.h"
 
+#include "ButterflyInlineMethods.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"
@@ -640,7 +642,13 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             }
             case DoParseObjectEndExpression:
             {
-                asObject(objectStack.last())->putDirect(m_exec->globalData(), identifierStack.last(), lastValue);
+                JSObject* object = asObject(objectStack.last());
+                PropertyName ident = identifierStack.last();
+                unsigned i = ident.asIndex();
+                if (i != PropertyName::NotAnIndex)
+                    object->putDirectIndex(m_exec, i, lastValue);
+                else
+                    object->putDirect(m_exec->globalData(), ident, lastValue);
                 identifierStack.removeLast();
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseObjectStartExpression;

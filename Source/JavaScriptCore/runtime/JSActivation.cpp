@@ -107,7 +107,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     return true;
 }
 
-void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(object);
 
@@ -122,8 +122,8 @@ void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
             continue;
         propertyNames.add(Identifier(exec, it->first.get()));
     }
-    // Skip the JSVariableObject implementation of getOwnPropertyNames
-    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    // Skip the JSVariableObject implementation of getOwnNonIndexPropertyNames
+    JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)

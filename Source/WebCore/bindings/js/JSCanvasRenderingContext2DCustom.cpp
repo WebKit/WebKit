@@ -110,8 +110,9 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue valu
 
     Vector<float> dash;
     JSArray* valueArray = asArray(value);
+    // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
     for (unsigned i = 0; i < valueArray->length(); ++i) {
-        float elem = valueArray->getIndex(i).toFloat(exec);
+        float elem = valueArray->getIndexQuickly(i).toFloat(exec);
         if (elem <= 0 || !isfinite(elem))
             return;
 

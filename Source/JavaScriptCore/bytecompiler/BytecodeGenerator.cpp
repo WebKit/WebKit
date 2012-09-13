@@ -1758,7 +1758,9 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
-    instructions().append(property != m_globalData->propertyNames->underscoreProto);
+    instructions().append(
+        property != m_globalData->propertyNames->underscoreProto
+        && PropertyName(property).asIndex() == PropertyName::NotAnIndex);
     return value;
 }
 

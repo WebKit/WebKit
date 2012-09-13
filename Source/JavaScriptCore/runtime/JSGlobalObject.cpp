@@ -213,7 +213,7 @@ void JSGlobalObject::reset(JSValue prototype)
     GetterSetter* protoAccessor = GetterSetter::create(exec);
     protoAccessor->setGetter(exec->globalData(), JSFunction::create(exec, this, 0, String(), globalFuncProtoGetter));
     protoAccessor->setSetter(exec->globalData(), JSFunction::create(exec, this, 0, String(), globalFuncProtoSetter));
-    m_objectPrototype->putDirectAccessor(exec->globalData(), exec->propertyNames().underscoreProto, protoAccessor, Accessor | DontEnum);
+    m_objectPrototype->putDirectAccessor(exec, exec->propertyNames().underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
 
     m_nameScopeStructure.set(exec->globalData(), this, JSNameScope::createStructure(exec->globalData(), this, jsNull()));

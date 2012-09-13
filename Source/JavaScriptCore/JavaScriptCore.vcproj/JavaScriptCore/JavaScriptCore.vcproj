@@ -514,6 +514,58 @@
 			Name="runtime"
 			>
 			<File
+				RelativePath="..\..\runtime\Reject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\SparseArrayValueMapInlineMethods.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ArrayStorage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\IndexingType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\PropertyStorage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\PutDirectIndexMode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ButterflyInlineMethods.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Butterfly.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\IndexingHeaderInlineMethods.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\SparseArrayValueMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ArrayConventions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\IndexingHeader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\SparseArrayValueMap.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\ArgList.cpp"
 				>
 			</File>

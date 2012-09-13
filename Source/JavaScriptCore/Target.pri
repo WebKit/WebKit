@@ -246,6 +246,7 @@ SOURCES += \
     runtime/RegExpCache.cpp \
     runtime/SamplingCounter.cpp \
     runtime/SmallStrings.cpp \
+    runtime/SparseArrayValueMap.cpp \
     runtime/StrictEvalActivation.cpp \
     runtime/StringConstructor.cpp \
     runtime/StringObject.cpp \

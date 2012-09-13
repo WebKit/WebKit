@@ -1,3 +1,21 @@
+2012-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have property butterflies
+        https://bugs.webkit.org/show_bug.cgi?id=91933
+
+        Reviewed by Geoffrey Garen.
+
+        Modify the JSON test to indicate that iterating over properties now returns
+        indexed properties first. This is a behavior change that makes us more
+        compliant with other implementations.
+        
+        Also check in new expected file for the edge cases of indexed property access
+        with prototype accessors. This changeset introduces a known regression in that
+        department, which is tracked here: https://bugs.webkit.org/show_bug.cgi?id=96596
+
+        * fast/js/resources/JSON-stringify.js:
+        * platform/mac/fast/js/primitive-property-access-edge-cases-expected.txt: Added.
+
 2012-09-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

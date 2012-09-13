@@ -155,6 +155,15 @@ bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
+bool JSHistory::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    JSHistory* thisObject = jsCast<JSHistory*>(cell);
+    // Only allow deleting by frames in the same origin.
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+        return false;
+    return Base::deletePropertyByIndex(thisObject, exec, propertyName);
+}
+
 void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSHistory* thisObject = jsCast<JSHistory*>(object);

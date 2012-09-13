@@ -42,9 +42,10 @@ namespace JSC {
     static const unsigned ImplementsDefaultHasInstance = 1 << 3;
     static const unsigned IsEnvironmentRecord = 1 << 4;
     static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
-    static const unsigned OverridesVisitChildren = 1 << 6;
-    static const unsigned OverridesGetPropertyNames = 1 << 7;
-    static const unsigned ProhibitsPropertyCaching = 1 << 8;
+    static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
+    static const unsigned OverridesVisitChildren = 1 << 7;
+    static const unsigned OverridesGetPropertyNames = 1 << 8;
+    static const unsigned ProhibitsPropertyCaching = 1 << 9;
 
     class TypeInfo {
     public:
@@ -75,8 +76,9 @@ namespace JSC {
         bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
         bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
         bool overridesGetOwnPropertySlot() const { return isSetOnFlags1(OverridesGetOwnPropertySlot); }
+        bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
         bool overridesVisitChildren() const { return isSetOnFlags1(OverridesVisitChildren); }
-        bool overridesGetPropertyNames() const { return isSetOnFlags1(OverridesGetPropertyNames); }
+        bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
         bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
 
         static ptrdiff_t flagsOffset()

@@ -94,7 +94,7 @@ public:
                 case StructureTransitionWatchpoint:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
-                case GetPropertyStorage:
+                case GetButterfly:
                 case GetByVal:
                 case PutByVal:
                 case PutByValAlias:

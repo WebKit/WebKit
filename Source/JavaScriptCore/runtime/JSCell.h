@@ -138,7 +138,7 @@ namespace JSC {
         {
             return &m_structure;
         }
-
+        
 #if ENABLE(GC_VALIDATION)
         Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
 #endif
@@ -156,6 +156,7 @@ namespace JSC {
         // Dummy implementations of override-able static functions for classes to put in their MethodTable
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
         static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        static NO_RETURN_DUE_TO_ASSERT void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static String className(const JSObject*);
         static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);

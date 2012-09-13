@@ -118,7 +118,8 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
     unsigned length = array->length();
 
     for (unsigned i = 0; i < length; ++i) {
-        JSValue item = array->getIndex(i);
+        // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
+        JSValue item = array->getIndexQuickly(i);
 #if ENABLE(BLOB)
         if (item.inherits(&JSArrayBuffer::s_info))
             blobBuilder->append(context, toArrayBuffer(item));

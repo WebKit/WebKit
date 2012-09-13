@@ -89,7 +89,8 @@ JSValue JSInspectorFrontendHost::port(ExecState* execState)
 static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMenu& menu)
 {
     for (size_t i = 0; i < array->length(); ++i) {
-        JSObject* item = asObject(array->getIndex(i));
+        // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
+        JSObject* item = asObject(array->getIndexQuickly(i));
         JSValue label = item->get(exec, Identifier(exec, "label"));
         JSValue type = item->get(exec, Identifier(exec, "type"));
         JSValue id = item->get(exec, Identifier(exec, "id"));

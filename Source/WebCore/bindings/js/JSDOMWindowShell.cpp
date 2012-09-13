@@ -97,6 +97,12 @@ bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, Propert
     return thisObject->window()->methodTable()->getOwnPropertySlot(thisObject->window(), exec, propertyName, slot);
 }
 
+bool JSDOMWindowShell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
+    return thisObject->window()->methodTable()->getOwnPropertySlotByIndex(thisObject->window(), exec, propertyName, slot);
+}
+
 bool JSDOMWindowShell::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(object);
@@ -107,6 +113,12 @@ void JSDOMWindowShell::put(JSCell* cell, ExecState* exec, PropertyName propertyN
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
     thisObject->window()->methodTable()->put(thisObject->window(), exec, propertyName, value, slot);
+}
+
+void JSDOMWindowShell::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+{
+    JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
+    thisObject->window()->methodTable()->putByIndex(thisObject->window(), exec, propertyName, value, shouldThrow);
 }
 
 void JSDOMWindowShell::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -125,6 +137,12 @@ bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, PropertyNam
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
     return thisObject->window()->methodTable()->deleteProperty(thisObject->window(), exec, propertyName);
+}
+
+bool JSDOMWindowShell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
+    return thisObject->window()->methodTable()->deletePropertyByIndex(thisObject->window(), exec, propertyName);
 }
 
 void JSDOMWindowShell::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

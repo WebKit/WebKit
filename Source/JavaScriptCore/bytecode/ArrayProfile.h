@@ -35,16 +35,16 @@ namespace JSC {
 
 class LLIntOffsetsExtractor;
 
+// This is a bitfield where each bit represents an IndexingType that we have seen.
+// There are 17 indexing types (0 to 16, inclusive), so 32 bits is more than enough.
 typedef unsigned ArrayModes;
 
-static const unsigned IsNotArray = 1;
-static const unsigned IsJSArray  = 2;
+#define asArrayModes(type) \
+    (1 << static_cast<unsigned>(type))
 
 inline ArrayModes arrayModeFromStructure(Structure* structure)
 {
-    if (structure->classInfo() == &JSArray::s_info)
-        return IsJSArray;
-    return IsNotArray;
+    return asArrayModes(structure->indexingTypeIncludingHistory());
 }
 
 class ArrayProfile {

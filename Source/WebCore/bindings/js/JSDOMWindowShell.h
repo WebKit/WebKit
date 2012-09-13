@@ -79,10 +79,13 @@ namespace WebCore {
 
         static String className(const JSC::JSObject*);
         static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
+        static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned, JSC::PropertySlot&);
         static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);
         static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
+        static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned, JSC::JSValue, bool shouldThrow);
         static void putDirectVirtual(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, unsigned attributes);
         static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);
+        static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);
         static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode);
         static void getPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode);
         static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, bool shouldThrow);

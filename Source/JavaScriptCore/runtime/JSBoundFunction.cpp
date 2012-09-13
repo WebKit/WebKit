@@ -45,7 +45,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < boundArgs->length(); ++i)
-        args.append(boundArgs->getIndex(i));
+        args.append(boundArgs->getIndexQuickly(i));
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->argument(i));
 
@@ -65,7 +65,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < boundArgs->length(); ++i)
-        args.append(boundArgs->getIndex(i));
+        args.append(boundArgs->getIndexQuickly(i));
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->argument(i));
 
@@ -112,8 +112,8 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
     Base::finishCreation(exec, executable, length, name);
     ASSERT(inherits(&s_info));
 
-    putDirectAccessor(exec->globalData(), exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
-    putDirectAccessor(exec->globalData(), exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+    putDirectAccessor(exec, exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
+    putDirectAccessor(exec, exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

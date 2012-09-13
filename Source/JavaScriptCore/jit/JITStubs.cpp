@@ -1504,8 +1504,8 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
     ASSERT(baseValue.isObject());
     JSObject* base = asObject(baseValue);
     JSGlobalData& globalData = *stackFrame.globalData;
-    PropertyStorage newStorage = base->growOutOfLineStorage(globalData, oldSize, newSize);
-    base->setOutOfLineStorage(globalData, newStorage, newStructure);
+    Butterfly* butterfly = base->growOutOfLineStorage(globalData, oldSize, newSize);
+    base->setButterfly(globalData, butterfly, newStructure);
 
     return base;
 }
@@ -2415,7 +2415,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
 
     JSValue baseValue = stackFrame.args[0].jsValue();
     JSValue subscript = stackFrame.args[1].jsValue();
-
+    
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame))) {
             CHECK_FOR_EXCEPTION();
@@ -2508,12 +2508,12 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
 
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
-        if (isJSArray(baseValue)) {
-            JSArray* jsArray = asArray(baseValue);
-            if (jsArray->canSetIndex(i))
-                jsArray->setIndex(*globalData, i, value);
+        if (baseValue.isObject()) {
+            JSObject* object = asObject(baseValue);
+            if (object->canSetIndexQuickly(i))
+                object->setIndexQuickly(*globalData, i, value);
             else
-                JSArray::putByIndex(jsArray, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
+                object->methodTable()->putByIndex(object, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         } else
             baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else if (isName(subscript)) {
@@ -3368,7 +3368,7 @@ DEFINE_STUB_FUNCTION(void, op_put_getter_setter)
         accessor->setGetter(callFrame->globalData(), asObject(getter));
     if (!setter.isUndefined())
         accessor->setSetter(callFrame->globalData(), asObject(setter));
-    baseObj->putDirectAccessor(callFrame->globalData(), stackFrame.args[1].identifier(), accessor, Accessor);
+    baseObj->putDirectAccessor(callFrame, stackFrame.args[1].identifier(), accessor, Accessor);
 }
 
 DEFINE_STUB_FUNCTION(void, op_throw_reference_error)

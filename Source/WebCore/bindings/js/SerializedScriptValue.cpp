@@ -894,8 +894,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     lengthStack.removeLast();
                     break;
                 }
-                if (array->canGetIndex(index))
-                    inValue = array->getIndex(index);
+                // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
+                if (array->canGetIndexQuickly(index))
+                    inValue = array->getIndexQuickly(index);
                 else {
                     bool hasIndex = false;
                     inValue = getSparseIndex(array, index, hasIndex);

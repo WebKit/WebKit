@@ -255,7 +255,7 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         }
     }
 
-    return JSObject::deleteProperty(thisObject, exec, Identifier(exec, String::number(i)));
+    return JSObject::deletePropertyByIndex(thisObject, exec, i);
 }
 
 bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName) 
@@ -308,7 +308,7 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
         // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
         PropertySlot slot;
         if ((!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i]) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
-            object->putDirect(exec->globalData(), propertyName, thisObject->argument(i).get(), 0);
+            object->putDirectMayBeIndex(exec, propertyName, thisObject->argument(i).get());
         if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
             return false;
 

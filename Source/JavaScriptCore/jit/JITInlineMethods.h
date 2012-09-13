@@ -423,7 +423,7 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
     storePtr(structure, Address(result, JSCell::structureOffset()));
 
     // initialize the object's property storage pointer
-    storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfOutOfLineStorage()));
+    storePtr(TrustedImmPtr(0), Address(result, JSObject::butterflyOffset()));
 }
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
@@ -431,7 +431,7 @@ template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, Re
     emitAllocateBasicJSObject<JSFinalObject, false, T>(structure, result, scratch);
 }
 
-inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result)
+inline void JIT::emitAllocateBasicStorage(size_t size, ptrdiff_t offsetFromBase, RegisterID result)
 {
     CopiedAllocator* allocator = &m_globalData->heap.storageAllocator();
 
@@ -440,37 +440,32 @@ inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result)
     storePtr(result, &allocator->m_currentRemaining);
     negPtr(result);
     addPtr(AbsoluteAddress(&allocator->m_currentPayloadEnd), result);
-    subPtr(TrustedImm32(size), result);
+    subPtr(TrustedImm32(size - offsetFromBase), result);
 }
 
 inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr)
 {
     unsigned initialLength = std::max(length, 4U);
-    size_t initialStorage = JSArray::storageSize(initialLength);
+    size_t initialStorage = Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(initialLength));
 
     // We allocate the backing store first to ensure that garbage collection 
     // doesn't happen during JSArray initialization.
-    emitAllocateBasicStorage(initialStorage, storageResult);
+    emitAllocateBasicStorage(initialStorage, sizeof(IndexingHeader), storageResult);
 
     // Allocate the cell for the array.
     emitAllocateBasicJSObject<JSArray, false>(TrustedImmPtr(m_codeBlock->globalObject()->arrayStructure()), cellResult, storagePtr);
 
     // Store all the necessary info in the ArrayStorage.
-    storePtr(storageResult, Address(storageResult, ArrayStorage::allocBaseOffset()));
     store32(Imm32(length), Address(storageResult, ArrayStorage::lengthOffset()));
     store32(Imm32(length), Address(storageResult, ArrayStorage::numValuesInVectorOffset()));
+    store32(Imm32(initialLength), Address(storageResult, ArrayStorage::vectorLengthOffset()));
+    store32(TrustedImm32(0), Address(storageResult, ArrayStorage::indexBiasOffset()));
+    storePtr(TrustedImmPtr(0), Address(storageResult, ArrayStorage::sparseMapOffset()));
 
     // Store the newly allocated ArrayStorage.
-    storePtr(storageResult, Address(cellResult, JSArray::storageOffset()));
+    storePtr(storageResult, Address(cellResult, JSObject::butterflyOffset()));
 
-    // Store the vector length and index bias.
-    store32(Imm32(initialLength), Address(cellResult, JSArray::vectorLengthOffset()));
-    store32(TrustedImm32(0), Address(cellResult, JSArray::indexBiasOffset()));
-
-    // Initialize the sparse value map.
-    storePtr(TrustedImmPtr(0), Address(cellResult, JSArray::sparseValueMapOffset()));
-
-        // Store the values we have.
+    // Store the values we have.
     for (unsigned i = 0; i < length; i++) {
 #if USE(JSVALUE64)
         loadPtr(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
@@ -480,16 +475,6 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
         store32(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
         load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register) + sizeof(uint32_t)), storagePtr);
         store32(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i + sizeof(uint32_t)));
-#endif
-    }
-
-    // Zero out the remaining slots.
-    for (unsigned i = length; i < initialLength; i++) {
-#if USE(JSVALUE64)
-        storePtr(TrustedImmPtr(0), Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
-#else
-        store32(TrustedImm32(static_cast<int>(JSValue::EmptyValueTag)), Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        store32(TrustedImm32(0), Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
 #endif
     }
 }

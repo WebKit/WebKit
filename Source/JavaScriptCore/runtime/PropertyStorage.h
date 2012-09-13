@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageBarrier_h
-#define StorageBarrier_h
+#ifndef PropertyStorage_h
+#define PropertyStorage_h
 
-#include "JSGlobalData.h"
 #include "WriteBarrier.h"
 
 namespace JSC {
@@ -34,45 +33,7 @@ namespace JSC {
 typedef WriteBarrierBase<Unknown>* PropertyStorage;
 typedef const WriteBarrierBase<Unknown>* ConstPropertyStorage;
 
-class StorageBarrier {
-public:
-    enum UncheckedTag { Unchecked };
-    StorageBarrier(JSGlobalData& globalData, JSCell* owner, PropertyStorage storage)
-    {
-        set(globalData, owner, storage);
-    }
-    
-    StorageBarrier(PropertyStorage storage, UncheckedTag)
-    {
-        set(storage, Unchecked);
-    }
-    
-    void set(JSGlobalData&, JSCell*, PropertyStorage newStorage)
-    {
-        m_storage = newStorage;
-    }
-    
-    void set(PropertyStorage newStorage, UncheckedTag)
-    {
-        m_storage = newStorage;
-    }
-    
-    WriteBarrierBase<Unknown>* operator->() const { return m_storage; }
-    WriteBarrierBase<Unknown>* operator->() { return m_storage; }
-    WriteBarrierBase<Unknown> operator*() const { return *m_storage; }
-    WriteBarrierBase<Unknown> operator*() { return *m_storage; }
-    const WriteBarrierBase<Unknown>& operator[](size_t i) const { return m_storage[i]; }
-    WriteBarrierBase<Unknown>& operator[](size_t i) { return m_storage[i]; }
-    
-    ConstPropertyStorage get() const { return m_storage; }
-    PropertyStorage get() { return m_storage; }
+} // namespace JSC
 
-    bool operator!() { return !m_storage; }
-    
-private:
-    PropertyStorage m_storage;
-};
+#endif // PropertyStorage_h
 
-}
-
-#endif

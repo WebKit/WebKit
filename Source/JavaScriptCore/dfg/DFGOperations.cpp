@@ -27,6 +27,7 @@
 #include "DFGOperations.h"
 
 #include "Arguments.h"
+#include "ButterflyInlineMethods.h"
 #include "CodeBlock.h"
 #include "CopiedSpaceInlineMethods.h"
 #include "DFGOSRExit.h"
@@ -226,14 +227,14 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    if (isJSArray(baseValue)) {
-        JSArray* array = asArray(baseValue);
-        if (array->canSetIndex(index)) {
-            array->setIndex(globalData, index, value);
+    if (baseValue.isObject()) {
+        JSObject* object = asObject(baseValue);
+        if (object->canSetIndexQuickly(index)) {
+            object->setIndexQuickly(globalData, index, value);
             return;
         }
 
-        JSArray::putByIndex(array, exec, index, value, strict);
+        object->methodTable()->putByIndex(object, exec, index, value, strict);
         return;
     }
 
@@ -341,11 +342,12 @@ static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t in
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
     
-    // FIXME: the JIT used to handle these in compiled code!
-    if (isJSArray(base) && asArray(base)->canGetIndex(index))
-        return JSValue::encode(asArray(base)->getIndex(index));
+    if (base->isObject()) {
+        JSObject* object = asObject(base);
+        if (object->canGetIndexQuickly(index))
+            return JSValue::encode(object->getIndexQuickly(index));
+    }
 
-    // FIXME: the JITstub used to relink this to an optimized form!
     if (isJSString(base) && asString(base)->canGetIndex(index))
         return JSValue::encode(asString(base)->getIndex(exec, index));
 
@@ -548,15 +550,15 @@ void DFG_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell,
     operationPutByValInternal<false>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
     if (index >= 0) {
         // We should only get here if index is outside the existing vector.
-        ASSERT(!array->canSetIndex(index));
-        JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), true);
+        ASSERT(!array->canSetIndexQuickly(index));
+        array->methodTable()->putByIndex(array, exec, index, JSValue::decode(encodedValue), true);
         return;
     }
     
@@ -565,15 +567,15 @@ void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSA
         array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
-void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
     if (index >= 0) {
         // We should only get here if index is outside the existing vector.
-        ASSERT(!array->canSetIndex(index));
-        JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), false);
+        ASSERT(!array->canSetIndexQuickly(index));
+        array->methodTable()->putByIndex(array, exec, index, JSValue::decode(encodedValue), false);
         return;
     }
     
@@ -1263,20 +1265,29 @@ void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObj
 
 char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState* exec)
 {
-    JSGlobalData& globalData = exec->globalData();
-    void* result;
-    if (!globalData.heap.tryAllocateStorage(initialOutOfLineCapacity * sizeof(JSValue), &result))
-        CRASH();
-    return reinterpret_cast<char*>(reinterpret_cast<JSValue*>(result) + initialOutOfLineCapacity + 1);
+    return reinterpret_cast<char*>(
+        Butterfly::createUninitialized(exec->globalData(), 0, initialOutOfLineCapacity, false, 0));
 }
 
 char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t newSize)
 {
-    JSGlobalData& globalData = exec->globalData();
-    void* result;
-    if (!globalData.heap.tryAllocateStorage(newSize, &result))
-        CRASH();
-    return reinterpret_cast<char*>(reinterpret_cast<JSValue*>(result) + 1) + newSize;
+    return reinterpret_cast<char*>(
+        Butterfly::createUninitialized(exec->globalData(), 0, newSize, false, 0));
+}
+
+char* DFG_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitialCapacity(ExecState* exec, JSObject* object)
+{
+    ASSERT(!object->structure()->outOfLineCapacity());
+    Butterfly* result = object->growOutOfLineStorage(exec->globalData(), 0, initialOutOfLineCapacity);
+    object->setButterflyWithoutChangingStructure(result);
+    return reinterpret_cast<char*>(result);
+}
+
+char* DFG_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState* exec, JSObject* object, size_t newSize)
+{
+    Butterfly* result = object->growOutOfLineStorage(exec->globalData(), object->structure()->outOfLineCapacity(), newSize);
+    object->setButterflyWithoutChangingStructure(result);
+    return reinterpret_cast<char*>(result);
 }
 
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)

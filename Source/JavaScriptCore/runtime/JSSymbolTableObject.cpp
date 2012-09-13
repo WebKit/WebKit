@@ -56,7 +56,7 @@ bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, Property
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-void JSSymbolTableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
     SymbolTable::const_iterator end = thisObject->symbolTable()->end();
@@ -65,7 +65,7 @@ void JSSymbolTableObject::getOwnPropertyNames(JSObject* object, ExecState* exec,
             propertyNames.add(Identifier(exec, it->first.get()));
     }
     
-    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 void JSSymbolTableObject::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned)

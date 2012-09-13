@@ -118,7 +118,7 @@ inline size_t offsetInOutOfLineStorage(PropertyOffset offset)
 {
     validateOffset(offset);
     ASSERT(isOutOfLineOffset(offset));
-    return -static_cast<ptrdiff_t>(offset - firstOutOfLineOffset) - 2;
+    return -static_cast<ptrdiff_t>(offset - firstOutOfLineOffset) - 1;
 }
 
 inline size_t offsetInRespectiveStorage(PropertyOffset offset)

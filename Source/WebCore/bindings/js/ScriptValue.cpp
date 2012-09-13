@@ -144,7 +144,8 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
             JSArray* array = asArray(value);
             unsigned length = array->length();
             for (unsigned i = 0; i < length; i++) {
-                JSValue element = array->getIndex(i);
+                // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
+                JSValue element = array->getIndexQuickly(i);
                 RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element, maxDepth);
                 if (!elementValue)
                     return 0;

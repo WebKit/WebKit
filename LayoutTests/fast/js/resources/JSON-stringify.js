@@ -334,7 +334,7 @@ function createTests() {
         jsonObject.stringify({a:"a", b:"b", c:"c", 3: "d", 2: "e", 1: "f"}, replaceFunc);
         return replaceTracker;
     });
-    result[result.length - 1].expected = '(string){"a":"a","b":"b","c":"c","3":"d","2":"e","1":"f"};a(string)"a";b(string)"b";c(string)"c";3(string)"d";2(string)"e";1(string)"f";';
+    result[result.length - 1].expected = '(string){"1":"f","2":"e","3":"d","a":"a","b":"b","c":"c"};1(string)"f";2(string)"e";3(string)"d";a(string)"a";b(string)"b";c(string)"c";';
     result.push(function(jsonObject){
         var count = 0;
         var array = [{toString:function(){count++; array[0]='a'; array[1]='c'; array[2]='b'; return 'a'}}];

@@ -70,6 +70,11 @@ bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName 
     return !ec;
 }
 
+bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned index)
+{
+    return deleteProperty(cell, exec, Identifier::from(exec, index));
+}
+
 bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     String stringValue = value.toString(exec)->value(exec);

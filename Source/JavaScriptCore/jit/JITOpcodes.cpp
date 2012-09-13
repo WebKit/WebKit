@@ -1666,7 +1666,7 @@ void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
     int length = currentInstruction[3].u.operand;
-    if (CopiedSpace::isOversize(JSArray::storageSize(length))) {
+    if (CopiedSpace::isOversize(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(length)))) {
         JITStubCall stubCall(this, cti_op_new_array);
         stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
         stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
@@ -1685,7 +1685,7 @@ void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCase
     // If the allocation would be oversize, we will already make the proper stub call above in 
     // emit_op_new_array.
     int length = currentInstruction[3].u.operand;
-    if (CopiedSpace::isOversize(JSArray::storageSize(length)))
+    if (CopiedSpace::isOversize(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(length))))
         return;
     linkSlowCase(iter); // Not enough space in CopiedSpace for storage.
     linkSlowCase(iter); // Not enough space in MarkedSpace for cell.

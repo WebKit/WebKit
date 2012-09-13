@@ -38,7 +38,7 @@ namespace JSC {
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
 RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
-    : JSArray(exec->globalData(), structure)
+    : JSArray(exec->globalData(), structure, 0)
     , m_array(0)
 {
 }

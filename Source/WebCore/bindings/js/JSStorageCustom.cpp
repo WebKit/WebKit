@@ -68,6 +68,11 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     return true;
 }
 
+bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    return deleteProperty(cell, exec, Identifier::from(exec, propertyName));
+}
+
 void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSStorage* thisObject = jsCast<JSStorage*>(object);

@@ -81,7 +81,7 @@ private:
     static bool isOversize(size_t);
     static CopiedBlock* oversizeBlockFor(void* ptr);
 
-    CheckedBoolean tryAllocateSlowCase(size_t, void**);
+    JS_EXPORT_PRIVATE CheckedBoolean tryAllocateSlowCase(size_t, void**);
     CheckedBoolean tryAllocateOversize(size_t, void**);
     CheckedBoolean tryReallocateOversize(void**, size_t, size_t);
     

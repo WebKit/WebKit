@@ -28,17 +28,12 @@ namespace JSC {
 
     class ArrayPrototype : public JSArray {
     private:
-        ArrayPrototype(JSGlobalObject*, Structure*);
+        ArrayPrototype(JSGlobalObject*, Structure*, Butterfly*);
 
     public:
         typedef JSArray Base;
 
-        static ArrayPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-        {
-            ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
-            prototype->finishCreation(globalObject);
-            return prototype;
-        }
+        static ArrayPrototype* create(ExecState*, JSGlobalObject*, Structure*);
         
         static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
@@ -47,7 +42,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayWithArrayStorage);
         }
 
     protected:

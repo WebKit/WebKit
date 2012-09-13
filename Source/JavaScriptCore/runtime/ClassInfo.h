@@ -72,6 +72,9 @@ namespace JSC {
         typedef void (*GetOwnPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
 
+        typedef void (*GetOwnNonIndexPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        GetOwnNonIndexPropertyNamesFunctionPtr getOwnNonIndexPropertyNames;
+
         typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         GetPropertyNamesFunctionPtr getPropertyNames;
 
@@ -124,6 +127,7 @@ struct MemberCheck##member { \
         &ClassName::toThisObject, \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
+        &ClassName::getOwnNonIndexPropertyNames, \
         &ClassName::getPropertyNames, \
         &ClassName::className, \
         &ClassName::hasInstance, \

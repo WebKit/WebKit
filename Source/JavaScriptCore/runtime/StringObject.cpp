@@ -78,6 +78,17 @@ void StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
     JSObject::put(cell, exec, propertyName, value, slot);
 }
 
+void StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+{
+    StringObject* thisObject = jsCast<StringObject*>(cell);
+    if (thisObject->internalValue()->canGetIndex(propertyName)) {
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        return;
+    }
+    JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
+}
+
 bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
@@ -131,6 +142,14 @@ bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
         return false;
     }
     return JSObject::deleteProperty(thisObject, exec, propertyName);
+}
+
+bool StringObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
+{
+    StringObject* thisObject = jsCast<StringObject*>(cell);
+    if (thisObject->internalValue()->canGetIndex(i))
+        return false;
+    return JSObject::deletePropertyByIndex(thisObject, exec, i);
 }
 
 void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

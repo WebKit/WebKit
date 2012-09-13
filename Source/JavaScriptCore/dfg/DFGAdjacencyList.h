@@ -44,6 +44,8 @@ public:
     
     enum { Size = 3 };
     
+    AdjacencyList() { }
+    
     AdjacencyList(Kind kind)
 #if !ASSERT_DISABLED
         : m_kind(kind)

@@ -67,6 +67,9 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
     if (o->structure()->typeInfo().overridesGetPropertyNames())
         return jsPropertyNameIterator;
     
+    if (hasIndexingHeader(o->structure()->indexingType()))
+        return jsPropertyNameIterator;
+    
     size_t count = normalizePrototypeChain(exec, o);
     StructureChain* structureChain = o->structure()->prototypeChain(exec);
     WriteBarrier<Structure>* structure = structureChain->head();

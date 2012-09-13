@@ -27,6 +27,7 @@
 #define Structure_h
 
 #include "ClassInfo.h"
+#include "IndexingType.h"
 #include "JSCell.h"
 #include "JSType.h"
 #include "JSValue.h"
@@ -68,7 +69,7 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*);
+        static Structure* create(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = 0);
 
     protected:
         void finishCreation(JSGlobalData& globalData)
@@ -100,6 +101,7 @@ namespace JSC {
         static Structure* sealTransition(JSGlobalData&, Structure*);
         static Structure* freezeTransition(JSGlobalData&, Structure*);
         static Structure* preventExtensionsTransition(JSGlobalData&, Structure*);
+        static Structure* nonPropertyTransition(JSGlobalData&, Structure*, NonPropertyTransition);
 
         bool isSealed(JSGlobalData&);
         bool isFrozen(JSGlobalData&);
@@ -140,6 +142,8 @@ namespace JSC {
         const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
         bool isObject() const { return typeInfo().isObject(); }
 
+        IndexingType indexingType() const { return m_indexingType & AllArrayTypes; }
+        IndexingType indexingTypeIncludingHistory() const { return m_indexingType; }
 
         JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
@@ -334,6 +338,11 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(Structure, m_classInfo);
         }
+        
+        static ptrdiff_t indexingTypeOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_indexingType);
+        }
 
         static Structure* createStructure(JSGlobalData&);
         
@@ -363,7 +372,7 @@ namespace JSC {
     private:
         friend class LLIntOffsetsExtractor;
 
-        JS_EXPORT_PRIVATE Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*);
+        JS_EXPORT_PRIVATE Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = 0);
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
 
@@ -416,6 +425,7 @@ namespace JSC {
         static const unsigned maxSpecificFunctionThrashCount = 3;
 
         TypeInfo m_typeInfo;
+        IndexingType m_indexingType;
         
         WriteBarrier<JSGlobalObject> m_globalObject;
         WriteBarrier<Unknown> m_prototype;
@@ -447,7 +457,7 @@ namespace JSC {
         bool m_hasGetterSetterProperties : 1;
         bool m_hasReadOnlyOrGetterSetterPropertiesExcludingProto : 1;
         bool m_hasNonEnumerableProperties : 1;
-        unsigned m_attributesInPrevious : 7;
+        unsigned m_attributesInPrevious : 22;
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_preventExtensions : 1;
         unsigned m_didTransition : 1;
@@ -465,11 +475,11 @@ namespace JSC {
         return result;
     }
 
-    inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
+    inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType)
     {
         ASSERT(globalData.structureStructure);
         ASSERT(classInfo);
-        Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
+        Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo, indexingType);
         structure->finishCreation(globalData);
         return structure;
     }

@@ -1685,7 +1685,7 @@ void ByteCodeParser::handleGetByOffset(
     if (isInlineOffset(offset))
         propertyStorage = base;
     else
-        propertyStorage = addToGraph(GetPropertyStorage, base);
+        propertyStorage = addToGraph(GetButterfly, base);
     set(destinationOperand,
         addToGraph(
             GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
@@ -2318,7 +2318,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (isInlineOffset(putByIdStatus.offset()))
                     propertyStorage = base;
                 else
-                    propertyStorage = addToGraph(GetPropertyStorage, base);
+                    propertyStorage = addToGraph(GetButterfly, base);
                 addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
                 
                 StorageAccessData storageAccessData;
@@ -2369,13 +2369,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     } else {
                         propertyStorage = addToGraph(
                             ReallocatePropertyStorage, OpInfo(transitionData),
-                            base, addToGraph(GetPropertyStorage, base));
+                            base, addToGraph(GetButterfly, base));
                     }
                 } else {
                     if (isInlineOffset(putByIdStatus.offset()))
                         propertyStorage = base;
                     else
-                        propertyStorage = addToGraph(GetPropertyStorage, base);
+                        propertyStorage = addToGraph(GetButterfly, base);
                 }
                 
                 addToGraph(PutStructure, OpInfo(transitionData), base);

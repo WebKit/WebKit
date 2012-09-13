@@ -1,3 +1,480 @@
+2012-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should have property butterflies
+        https://bugs.webkit.org/show_bug.cgi?id=91933
+
+        Reviewed by Geoffrey Garen.
+
+        This changes the JSC object model. Previously, all objects had fast lookup for
+        named properties. Integer indexed properties were only fast if you used a
+        JSArray. With this change, all objects have fast indexed properties. This is
+        accomplished without any space overhead by using a bidirectional object layout,
+        aka butterflies. Each JSObject has a m_butterfly pointer where previously it
+        had a m_outOfLineStorage pointer. To the left of the location pointed to by
+        m_butterfly, we place all named out-of-line properties. To the right, we place
+        all indexed properties along with indexing meta-data. Though, some indexing
+        meta-data is placed in the 8-byte word immediately left of the pointed-to
+        location; this is in anticipation of the indexing meta-data being small enough
+        in the common case that m_butterfly always points to the first indexed
+        property.
+        
+        This is performance neutral, except on tests that use indexed properties on
+        plain objects, where the speed-up is in excess of an order of magnitude.
+        
+        One notable aspect of what this change brings is that it allows indexing
+        storage to morph over time. Currently this is only used to allow all non-array
+        objects to start out without any indexed storage. But it could be used for
+        some kinds of array type inference in the future.
+
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlotByIndex):
+        (JSC):
+        (JSC::::getOwnNonIndexPropertyNames):
+        * API/JSObjectRef.cpp:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/ArrayProfile.h:
+        (JSC):
+        (JSC::arrayModeFromStructure):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::AdjacencyList):
+        (AdjacencyList):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::modeUsesButterfly):
+        (JSC::DFG::modeIsJSArray):
+        (JSC::DFG::isInBoundsAccess):
+        (JSC::DFG::modeSupportsLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::addNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (Node):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::tryBuildPutByIdList):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateBasicStorage):
+        (JSC::JIT::emitAllocateJSArray):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emitSlow_op_new_array):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::deletePropertyByIndex):
+        (JSC::Arguments::defineOwnProperty):
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayConventions.h: Added.
+        (JSC):
+        (JSC::isDenseEnoughForVector):
+        (JSC::indexingHeaderForArray):
+        (JSC::baseIndexingHeaderForArray):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        (JSC):
+        (JSC::ArrayPrototype::ArrayPrototype):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/ArrayPrototype.h:
+        (ArrayPrototype):
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/ArrayStorage.h: Added.
+        (JSC):
+        (ArrayStorage):
+        (JSC::ArrayStorage::ArrayStorage):
+        (JSC::ArrayStorage::from):
+        (JSC::ArrayStorage::butterfly):
+        (JSC::ArrayStorage::indexingHeader):
+        (JSC::ArrayStorage::length):
+        (JSC::ArrayStorage::setLength):
+        (JSC::ArrayStorage::vectorLength):
+        (JSC::ArrayStorage::setVectorLength):
+        (JSC::ArrayStorage::copyHeaderFromDuringGC):
+        (JSC::ArrayStorage::inSparseMode):
+        (JSC::ArrayStorage::lengthOffset):
+        (JSC::ArrayStorage::vectorLengthOffset):
+        (JSC::ArrayStorage::numValuesInVectorOffset):
+        (JSC::ArrayStorage::vectorOffset):
+        (JSC::ArrayStorage::indexBiasOffset):
+        (JSC::ArrayStorage::sparseMapOffset):
+        (JSC::ArrayStorage::sizeFor):
+        * runtime/Butterfly.h: Added.
+        (JSC):
+        (Butterfly):
+        (JSC::Butterfly::Butterfly):
+        (JSC::Butterfly::totalSize):
+        (JSC::Butterfly::fromBase):
+        (JSC::Butterfly::offsetOfIndexingHeader):
+        (JSC::Butterfly::offsetOfPublicLength):
+        (JSC::Butterfly::offsetOfVectorLength):
+        (JSC::Butterfly::indexingHeader):
+        (JSC::Butterfly::propertyStorage):
+        (JSC::Butterfly::indexingPayload):
+        (JSC::Butterfly::arrayStorage):
+        (JSC::Butterfly::offsetOfPropertyStorage):
+        (JSC::Butterfly::indexOfPropertyStorage):
+        (JSC::Butterfly::base):
+        * runtime/ButterflyInlineMethods.h: Added.
+        (JSC):
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::createUninitializedDuringCollection):
+        (JSC::Butterfly::base):
+        (JSC::Butterfly::growPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        (JSC::Butterfly::unshift):
+        (JSC::Butterfly::shift):
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        (JSC):
+        * runtime/IndexingHeader.h: Added.
+        (JSC):
+        (IndexingHeader):
+        (JSC::IndexingHeader::offsetOfIndexingHeader):
+        (JSC::IndexingHeader::offsetOfPublicLength):
+        (JSC::IndexingHeader::offsetOfVectorLength):
+        (JSC::IndexingHeader::IndexingHeader):
+        (JSC::IndexingHeader::vectorLength):
+        (JSC::IndexingHeader::setVectorLength):
+        (JSC::IndexingHeader::publicLength):
+        (JSC::IndexingHeader::setPublicLength):
+        (JSC::IndexingHeader::from):
+        (JSC::IndexingHeader::fromEndOf):
+        (JSC::IndexingHeader::propertyStorage):
+        (JSC::IndexingHeader::arrayStorage):
+        (JSC::IndexingHeader::butterfly):
+        * runtime/IndexingHeaderInlineMethods.h: Added.
+        (JSC):
+        (JSC::IndexingHeader::preCapacity):
+        (JSC::IndexingHeader::indexingPayloadSizeInBytes):
+        * runtime/IndexingType.h: Added.
+        (JSC):
+        (JSC::hasIndexingHeader):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::visitChildren):
+        (JSC::JSActivation::getOwnNonIndexPropertyNames):
+        * runtime/JSActivation.h:
+        (JSActivation):
+        (JSC::JSActivation::tearOff):
+        * runtime/JSArray.cpp:
+        (JSC):
+        (JSC::createArrayButterflyInDictionaryIndexingMode):
+        (JSC::JSArray::setLengthWritable):
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::deleteProperty):
+        (JSC::JSArray::getOwnNonIndexPropertyNames):
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSC):
+        (JSArray):
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::length):
+        (JSC::JSArray::createStructure):
+        (JSC::JSArray::isLengthWritable):
+        (JSC::createArrayButterfly):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnNonIndexPropertyNames):
+        (JSC):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        (JSFunction):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSFinalObject::visitChildren):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::put):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::createInitialArrayStorage):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::fillGetterPropertySlot):
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::allocateSparseIndexMap):
+        (JSC::JSObject::deallocateSparseIndexMap):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::checkIndexingConsistency):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::putDescriptor):
+        (JSC::JSObject::putDirectMayBeIndex):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::defineOwnProperty):
+        (JSC::JSObject::getOwnPropertySlotSlow):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength):
+        (JSObject):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::putDirectIndex):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::completeInitialization):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::butterfly):
+        (JSC::JSObject::outOfLineStorage):
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::indexingShouldBeSparse):
+        (JSC::JSObject::butterflyOffset):
+        (JSC::JSObject::butterflyAddress):
+        (JSC::JSObject::arrayStorage):
+        (JSC::JSObject::arrayStorageOrZero):
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC::JSObject::checkIndexingConsistency):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC):
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::setButterflyWithoutChangingStructure):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::offsetInButterfly):
+        (JSC::offsetRelativeToPatchedStorage):
+        (JSC::indexRelativeToBase):
+        (JSC::offsetRelativeToBase):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSSymbolTableObject):
+        * runtime/JSTypeInfo.h:
+        (JSC):
+        (JSC::TypeInfo::interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero):
+        (JSC::TypeInfo::overridesGetPropertyNames):
+        * runtime/LiteralParser.cpp:
+        (JSC::::parse):
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        (JSC):
+        * runtime/ObjectPrototype.h:
+        (ObjectPrototype):
+        * runtime/PropertyOffset.h:
+        (JSC::offsetInOutOfLineStorage):
+        * runtime/PropertyStorage.h: Added.
+        (JSC):
+        * runtime/PutDirectIndexMode.h: Added.
+        (JSC):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        (JSC):
+        (JSC::RegExpMatchesArray::create):
+        (JSC::RegExpMatchesArray::finishCreation):
+        * runtime/RegExpMatchesArray.h:
+        (RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::createStructure):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnNonIndexPropertyNames):
+        * runtime/RegExpObject.h:
+        (RegExpObject):
+        * runtime/Reject.h: Added.
+        (JSC):
+        (JSC::reject):
+        * runtime/SparseArrayValueMap.cpp: Added.
+        (JSC):
+        * runtime/SparseArrayValueMap.h: Added.
+        (JSC):
+        (SparseArrayEntry):
+        (JSC::SparseArrayEntry::SparseArrayEntry):
+        (SparseArrayValueMap):
+        (JSC::SparseArrayValueMap::sparseMode):
+        (JSC::SparseArrayValueMap::setSparseMode):
+        (JSC::SparseArrayValueMap::lengthIsReadOnly):
+        (JSC::SparseArrayValueMap::setLengthIsReadOnly):
+        (JSC::SparseArrayValueMap::find):
+        (JSC::SparseArrayValueMap::remove):
+        (JSC::SparseArrayValueMap::notFound):
+        (JSC::SparseArrayValueMap::isEmpty):
+        (JSC::SparseArrayValueMap::contains):
+        (JSC::SparseArrayValueMap::size):
+        (JSC::SparseArrayValueMap::begin):
+        (JSC::SparseArrayValueMap::end):
+        * runtime/SparseArrayValueMapInlineMethods.h: Added.
+        (JSC):
+        (JSC::SparseArrayValueMap::SparseArrayValueMap):
+        (JSC::SparseArrayValueMap::~SparseArrayValueMap):
+        (JSC::SparseArrayValueMap::finishCreation):
+        (JSC::SparseArrayValueMap::create):
+        (JSC::SparseArrayValueMap::destroy):
+        (JSC::SparseArrayValueMap::createStructure):
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayEntry::get):
+        (JSC::SparseArrayEntry::getNonSparseMode):
+        (JSC::SparseArrayValueMap::visitChildren):
+        * runtime/StorageBarrier.h: Removed.
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::putByIndex):
+        (JSC):
+        (JSC::StringObject::deletePropertyByIndex):
+        * runtime/StringObject.h:
+        (StringObject):
+        * runtime/StringPrototype.cpp:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::indexingType):
+        (JSC::Structure::indexingTypeIncludingHistory):
+        (JSC::Structure::indexingTypeOffset):
+        (JSC::Structure::create):
+        * runtime/StructureTransitionTable.h:
+        (JSC):
+        (JSC::toAttributes):
+        (JSC::newIndexingType):
+        (JSC::StructureTransitionTable::Hash::hash):
+        * tests/mozilla/js1_6/Array/regress-304828.js:
+
 2012-09-12  Mark Lam  <mark.lam@apple.com>
 
         Refactor Opcodes to distinguish between core and extension opcodes.

@@ -457,8 +457,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Arguments.h \
 	Source/JavaScriptCore/runtime/ArrayConstructor.cpp \
 	Source/JavaScriptCore/runtime/ArrayConstructor.h \
+	Source/JavaScriptCore/runtime/ArrayConventions.h \
 	Source/JavaScriptCore/runtime/ArrayPrototype.cpp \
 	Source/JavaScriptCore/runtime/ArrayPrototype.h \
+	Source/JavaScriptCore/runtime/ArrayStorage.h \
 	Source/JavaScriptCore/runtime/BatchedTransitionOptimizer.h \
 	Source/JavaScriptCore/runtime/BigInteger.h \
 	Source/JavaScriptCore/runtime/BooleanConstructor.cpp \
@@ -467,6 +469,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/BooleanObject.h \
 	Source/JavaScriptCore/runtime/BooleanPrototype.cpp \
 	Source/JavaScriptCore/runtime/BooleanPrototype.h \
+	Source/JavaScriptCore/runtime/ButterflyInlineMethods.h \
+	Source/JavaScriptCore/runtime/Butterfly.h \
 	Source/JavaScriptCore/runtime/CachedTranscendentalFunction.h \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
@@ -511,6 +515,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
+	Source/JavaScriptCore/runtime/IndexingHeaderInlineMethods.h \
+	Source/JavaScriptCore/runtime/IndexingHeader.h \
+	Source/JavaScriptCore/runtime/IndexingType.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \
 	Source/JavaScriptCore/runtime/InternalFunction.cpp \
@@ -616,7 +623,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertyOffset.h \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \
 	Source/JavaScriptCore/runtime/PropertySlot.h \
+	Source/JavaScriptCore/runtime/PropertyStorage.h \
 	Source/JavaScriptCore/runtime/Protect.h \
+	Source/JavaScriptCore/runtime/PutDirectIndexMode.h \
 	Source/JavaScriptCore/runtime/PutPropertySlot.h \
 	Source/JavaScriptCore/runtime/RegExpCache.cpp \
 	Source/JavaScriptCore/runtime/RegExpCache.h \
@@ -633,11 +642,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/RegExpObject.h \
 	Source/JavaScriptCore/runtime/RegExpPrototype.cpp \
 	Source/JavaScriptCore/runtime/RegExpPrototype.h \
+	Source/JavaScriptCore/runtime/Reject.h \
 	Source/JavaScriptCore/runtime/SamplingCounter.cpp \
 	Source/JavaScriptCore/runtime/SamplingCounter.h \
 	Source/JavaScriptCore/runtime/SmallStrings.cpp \
 	Source/JavaScriptCore/runtime/SmallStrings.h \
-	Source/JavaScriptCore/runtime/StorageBarrier.h \
+	Source/JavaScriptCore/runtime/SparseArrayValueMapInlineMethods.h \
+	Source/JavaScriptCore/runtime/SparseArrayValueMap.cpp \
+	Source/JavaScriptCore/runtime/SparseArrayValueMap.h \
 	Source/JavaScriptCore/runtime/StrictEvalActivation.cpp \
 	Source/JavaScriptCore/runtime/StrictEvalActivation.h \
 	Source/JavaScriptCore/runtime/StringConstructor.cpp \

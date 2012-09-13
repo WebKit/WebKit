@@ -149,9 +149,10 @@ void Structure::dumpStatistics()
 #endif
 }
 
-Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
+Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType)
     : JSCell(globalData, globalData.structureStructure.get())
     , m_typeInfo(typeInfo)
+    , m_indexingType(indexingType)
     , m_globalObject(globalData, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
     , m_prototype(globalData, this, prototype)
     , m_classInfo(classInfo)
@@ -176,6 +177,7 @@ const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(
 Structure::Structure(JSGlobalData& globalData)
     : JSCell(CreatingEarlyCell)
     , m_typeInfo(CompoundType, OverridesVisitChildren)
+    , m_indexingType(0)
     , m_prototype(globalData, this, jsNull())
     , m_classInfo(&s_info)
     , m_transitionWatchpointSet(InitializedWatching)
@@ -197,6 +199,7 @@ Structure::Structure(JSGlobalData& globalData)
 Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     : JSCell(globalData, globalData.structureStructure.get())
     , m_typeInfo(previous->typeInfo())
+    , m_indexingType(previous->indexingTypeIncludingHistory())
     , m_prototype(globalData, this, previous->storedPrototype())
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(InitializedWatching)
@@ -251,6 +254,8 @@ void Structure::materializePropertyMap(JSGlobalData& globalData)
 
     for (ptrdiff_t i = structures.size() - 2; i >= 0; --i) {
         structure = structures[i];
+        if (!structure->m_nameInPrevious)
+            continue;
         PropertyMapEntry entry(globalData, this, structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
         m_propertyTable->add(entry);
     }
@@ -499,6 +504,38 @@ Structure* Structure::preventExtensionsTransition(JSGlobalData& globalData, Stru
     transition->m_preventExtensions = true;
     transition->pin();
 
+    return transition;
+}
+
+Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure* structure, NonPropertyTransition transitionKind)
+{
+    unsigned attributes = toAttributes(transitionKind);
+    IndexingType indexingType = newIndexingType(structure->indexingTypeIncludingHistory(), transitionKind);
+    
+    if (Structure* existingTransition = structure->m_transitionTable.get(0, attributes)) {
+        ASSERT(existingTransition->m_attributesInPrevious == attributes);
+        ASSERT(existingTransition->indexingTypeIncludingHistory() == indexingType);
+        return existingTransition;
+    }
+    
+    Structure* transition = create(globalData, structure);
+    transition->m_previous.set(globalData, transition, structure);
+    transition->m_attributesInPrevious = attributes;
+    transition->m_indexingType = indexingType;
+    
+    if (structure->m_propertyTable) {
+        if (structure->m_isPinnedPropertyTable)
+            transition->m_propertyTable = structure->m_propertyTable->copy(globalData, transition, structure->m_propertyTable->size() + 1);
+        else
+            transition->m_propertyTable = structure->m_propertyTable.release();
+    } else {
+        if (structure->m_previous)
+            transition->materializePropertyMap(globalData);
+        else
+            transition->createPropertyMap();
+    }
+    
+    structure->m_transitionTable.add(globalData, transition);
     return transition;
 }
 

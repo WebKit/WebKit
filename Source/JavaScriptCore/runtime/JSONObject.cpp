@@ -521,8 +521,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     if (m_isArray) {
         // Get the value.
         JSValue value;
-        if (m_isJSArray && asArray(m_object.get())->canGetIndex(index))
-            value = asArray(m_object.get())->getIndex(index);
+        if (m_isJSArray && asArray(m_object.get())->canGetIndexQuickly(index))
+            value = asArray(m_object.get())->getIndexQuickly(index);
         else {
             PropertySlot slot(m_object.get());
             if (!m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot))
@@ -687,8 +687,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     indexStack.removeLast();
                     break;
                 }
-                if (isJSArray(array) && array->canGetIndex(index))
-                    inValue = array->getIndex(index);
+                if (isJSArray(array) && array->canGetIndexQuickly(index))
+                    inValue = array->getIndexQuickly(index);
                 else {
                     PropertySlot slot;
                     if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, index, slot))

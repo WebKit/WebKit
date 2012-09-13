@@ -161,6 +161,15 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
+bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
+{
+    JSLocation* thisObject = jsCast<JSLocation*>(cell);
+    // Only allow deleting by frames in the same origin.
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+        return false;
+    return Base::deletePropertyByIndex(thisObject, exec, propertyName);
+}
+
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);

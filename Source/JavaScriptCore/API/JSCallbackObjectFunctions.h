@@ -183,6 +183,12 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
 }
 
 template <class Parent>
+bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    return cell->methodTable()->getOwnPropertySlot(cell, exec, Identifier::from(exec, propertyName), slot);
+}
+
+template <class Parent>
 JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
 {
     const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
@@ -449,7 +455,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     JSContextRef execRef = toRef(exec);
@@ -484,7 +490,7 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* 
         }
     }
     
-    Parent::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    Parent::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 template <class Parent>

@@ -28,28 +28,14 @@ namespace JSC {
 
     class RegExpMatchesArray : public JSArray {
     private:
-        RegExpMatchesArray(JSGlobalData& globalData, JSGlobalObject* globalObject, JSString* input, RegExp* regExp, MatchResult result)
-            : JSArray(globalData, globalObject->regExpMatchesArrayStructure())
-            , m_result(result)
-            , m_state(ReifiedNone)
-        {
-            m_input.set(globalData, this, input);
-            m_regExp.set(globalData, this, regExp);
-        }
+        RegExpMatchesArray(JSGlobalData&, Butterfly*, JSGlobalObject*, JSString*, RegExp*, MatchResult);
 
         enum ReifiedState { ReifiedNone, ReifiedMatch, ReifiedAll };
 
     public:
         typedef JSArray Base;
 
-        static RegExpMatchesArray* create(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
-        {
-            ASSERT(result);
-            JSGlobalData& globalData = exec->globalData();
-            RegExpMatchesArray* array = new (NotNull, allocateCell<RegExpMatchesArray>(globalData.heap)) RegExpMatchesArray(globalData, exec->lexicalGlobalObject(), input, regExp, result);
-            array->finishCreation(globalData);
-            return array;
-        }
+        static RegExpMatchesArray* create(ExecState*, JSString*, RegExp*, MatchResult);
 
         JSString* leftContext(ExecState*);
         JSString* rightContext(ExecState*);
@@ -58,7 +44,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayWithArrayStorage);
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);

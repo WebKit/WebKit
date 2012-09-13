@@ -74,7 +74,8 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
             Vector<String> protocols;
             JSArray* protocolsArray = asArray(protocolsValue);
             for (unsigned i = 0; i < protocolsArray->length(); ++i) {
-                String protocol = protocolsArray->getIndex(i).toString(exec)->value(exec);
+                // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
+                String protocol = protocolsArray->getIndexQuickly(i).toString(exec)->value(exec);
                 if (exec->hadException())
                     return JSValue::encode(JSValue());
                 protocols.append(protocol);

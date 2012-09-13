@@ -448,7 +448,7 @@ private:
             break;
         }
             
-        case GetPropertyStorage: 
+        case GetButterfly: 
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {

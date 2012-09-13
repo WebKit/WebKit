@@ -244,6 +244,7 @@ namespace JSC {
         Strong<Structure> regExpStructure;
         Strong<Structure> sharedSymbolTableStructure;
         Strong<Structure> structureChainStructure;
+        Strong<Structure> sparseArrayValueMapStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

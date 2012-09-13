@@ -583,7 +583,7 @@ private:
 
             Node& node = m_graph[index];
             switch (node.op()) {
-            case GetPropertyStorage:
+            case GetButterfly:
                 if (node.child1() == child1)
                     return index;
                 break;
@@ -1160,7 +1160,7 @@ private:
             break;
         }
 
-        case GetPropertyStorage:
+        case GetButterfly:
             setReplacement(getPropertyStorageLoadElimination(node.child1().index()));
             break;
 
