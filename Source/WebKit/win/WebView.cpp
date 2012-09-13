@@ -1322,7 +1322,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     m_page->contextMenuController()->clearContextMenu();
 
     IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
-    HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(documentPoint);
+    HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(documentPoint, false);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());
@@ -3597,7 +3597,7 @@ HRESULT STDMETHODCALLTYPE WebView::elementAtPoint(
     IntPoint webCorePoint = IntPoint(point->x, point->y);
     HitTestResult result = HitTestResult(webCorePoint);
     if (frame->contentRenderer())
-        result = frame->eventHandler()->hitTestResultAtPoint(webCorePoint);
+        result = frame->eventHandler()->hitTestResultAtPoint(webCorePoint, false);
     *elementDictionary = WebElementPropertyBag::createInstance(result);
     return S_OK;
 }

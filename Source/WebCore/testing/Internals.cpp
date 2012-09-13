@@ -972,15 +972,8 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, 
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
-    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
-    if (ignoreClipping)
-        hitType |= HitTestRequest::IgnoreClipping;
-    if (allowShadowContent)
-        hitType |= HitTestRequest::AllowShadowContent;
-    if (allowChildFrameContent)
-        hitType |= HitTestRequest::AllowChildFrameContent;
 
-    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, hitType);
+    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping, allowShadowContent, allowChildFrameContent);
 }
 
 void Internals::emitInspectorDidBeginFrame()

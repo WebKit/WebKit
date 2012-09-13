@@ -1,3 +1,15 @@
+2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127876.
+        http://trac.webkit.org/changeset/127876
+        https://bugs.webkit.org/show_bug.cgi?id=96600
+
+        mouse click doesn't work for spin button if spin button in
+        iframe (Requested by yosin on #webkit).
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_hit_test_new):
+
 2012-09-12  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Support download attribute feature

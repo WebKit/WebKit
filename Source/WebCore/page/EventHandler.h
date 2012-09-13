@@ -88,6 +88,8 @@ extern const int TextDragHysteresis;
 extern const int GeneralDragHysteresis;
 #endif // ENABLE(DRAG_SUPPORT)
 
+enum HitTestScrollbars { ShouldHitTestScrollbars, DontHitTestScrollbars };
+
 class EventHandler {
     WTF_MAKE_NONCOPYABLE(EventHandler);
 public:
@@ -113,7 +115,9 @@ public:
     void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
-    HitTestResult hitTestResultAtPoint(const LayoutPoint&, HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active,
+    HitTestResult hitTestResultAtPoint(const LayoutPoint&, bool allowShadowContent, bool ignoreClipping = false,
+                                       HitTestScrollbars scrollbars = DontHitTestScrollbars,
+                                       HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active,
                                        const LayoutSize& padding = LayoutSize());
 
     bool mousePressed() const { return m_mousePressed; }
