@@ -1,3 +1,18 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Evas_Object* is a ref'ed structure, so tread it as such
+        https://bugs.webkit.org/show_bug.cgi?id=96659
+
+        Reviewed by Adam Barth.
+
+        Replace OwnPtr<Evas_Object> with RefPtr.
+
+        * DumpRenderTree/efl/ImageDiff.cpp:
+        (calculateDifference):
+        (printImageDifferences):
+        (readImageFromStdin):
+        (main):
+
 2012-09-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed trivial fix after r128399.

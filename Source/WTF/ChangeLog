@@ -1,3 +1,22 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Evas_Object* is a ref'ed structure, so tread it as such
+        https://bugs.webkit.org/show_bug.cgi?id=96659
+
+        Reviewed by Adam Barth.
+
+        Remove OwnPtr support for Evas_Object* and add support for it
+        with RefPtr instead (the latter moved from WebCore).
+
+        * wtf/PlatformEfl.cmake:
+        * wtf/efl/OwnPtrEfl.cpp:
+        * wtf/efl/RefPtrEfl.cpp: Renamed from Source/WebCore/platform/efl/RefPtrEfl.cpp.
+        (WTF):
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        * wtf/efl/RefPtrEfl.h: Renamed from Source/WebCore/platform/efl/RefPtrEfl.h.
+        (WTF):
+
 2012-09-13  Michael Saboff  <msaboff@apple.com>
 
         Added 8 bit path to WidthIterator::advance()
