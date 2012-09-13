@@ -1,3 +1,23 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build of WTR and the QML2 plugin on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96652
+
+        Reviewed by Tor Arne Vestbø.
+
+        Some components that we build such as WTR or the QML2 plugin include
+        WebKit2 header files as well as WebKit2's config.h. Only the include
+        paths of WebKit2 are required for that at the moment (WEBKIT +=
+        webkit2). Only on Windows WebKit2's config.h also includes
+        WebCore/config.h, which in turn requires to have WebCore/platform in
+        your include search path. That in turn means that any component that
+        wants to use WebKit2 headers also needs the WebCore headers, but only
+        one Windows. It turns out that for the Qt build we don't need it, so
+        skip it in our configuration and make the include path requirement
+        the same across all the platforms we build.
+
+        * config.h:
+
 2012-09-13  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] REGRESSION(r128245): It made zillion API tests fail

@@ -82,7 +82,9 @@ static const type& name() \
 #define _WINSOCKAPI_ /* Prevent inclusion of winsock.h in windows.h */
 #endif
 
+#if !PLATFORM(QT)
 #include <WebCore/config.h>
+#endif
 #include <windows.h>
 
 #if USE(CG)
