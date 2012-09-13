@@ -115,6 +115,12 @@ class MacPort(ApplePort):
 
         default_count = super(MacPort, self).default_child_processes()
 
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=95906  With too many WebProcess WK2 tests get stuck in resource contention.
+        # To alleviate the issue reduce the number of running processes
+        # Anecdotal evidence suggests that a 4 core/8 core logical machine may run into this, but that a 2 core/4 core logical machine does not.
+        if self.get_option('webkit_test_runner') and default_count > 4:
+            default_count = int(.75 * default_count)
+
         # Make sure we have enough ram to support that many instances:
         total_memory = self.host.platform.total_bytes_memory()
         bytes_per_drt = 256 * 1024 * 1024  # Assume each DRT needs 256MB to run.
