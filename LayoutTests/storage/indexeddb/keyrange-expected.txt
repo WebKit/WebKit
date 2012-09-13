@@ -42,92 +42,92 @@ PASS keyRange.upperOpen is false
 IDBKeyRange.lowerBound(10,true)
 PASS keyRange.lower is 10
 PASS keyRange.lowerOpen is true
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound(11,false)
 PASS keyRange.lower is 11
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound(12,undefined)
 PASS keyRange.lower is 12
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound(10.1,true)
 PASS keyRange.lower is 10.1
 PASS keyRange.lowerOpen is true
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound(11.2,false)
 PASS keyRange.lower is 11.2
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound(12.3,undefined)
 PASS keyRange.lower is 12.3
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound('aa',true)
 PASS keyRange.lower is 'aa'
 PASS keyRange.lowerOpen is true
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound('ab',false)
 PASS keyRange.lower is 'ab'
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.lowerBound('ac',undefined)
 PASS keyRange.lower is 'ac'
 PASS keyRange.lowerOpen is false
-PASS keyRange.upper is null
+PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
 IDBKeyRange.upperBound(20,true)
 PASS keyRange.upper is 20
 PASS keyRange.upperOpen is true
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound(21,false)
 PASS keyRange.upper is 21
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound(22,undefined)
 PASS keyRange.upper is 22
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound(20.2,true)
 PASS keyRange.upper is 20.2
 PASS keyRange.upperOpen is true
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound(21.3,false)
 PASS keyRange.upper is 21.3
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound(22.4,undefined)
 PASS keyRange.upper is 22.4
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound('ba',true)
 PASS keyRange.upper is 'ba'
 PASS keyRange.upperOpen is true
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound('bb',false)
 PASS keyRange.upper is 'bb'
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.upperBound('bc',undefined)
 PASS keyRange.upper is 'bc'
 PASS keyRange.upperOpen is false
-PASS keyRange.lower is null
+PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
 IDBKeyRange.bound(30,40, undefined, undefined)
 PASS keyRange.lower is 30

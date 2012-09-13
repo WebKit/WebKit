@@ -21,7 +21,7 @@ function checkLowerBoundKeyRange(value, open)
     if (open === undefined)
         open = false;
     shouldBe("keyRange.lowerOpen", "" + open);
-    shouldBeNull("keyRange.upper");
+    shouldBeUndefined("keyRange.upper");
     shouldBeTrue("keyRange.upperOpen");
 }
 
@@ -32,7 +32,7 @@ function checkUpperBoundKeyRange(value, open)
     if (open === undefined)
         open = false;
     shouldBe("keyRange.upperOpen", "" + open);
-    shouldBeNull("keyRange.lower");
+    shouldBeUndefined("keyRange.lower");
     shouldBeTrue("keyRange.lowerOpen");
 }
 
