@@ -73,7 +73,11 @@ if (isQt()) {
     }
     
     if (isEfl()) {
-        unshift(@ARGV, catdir($launcherPath, "bin", "EWebLauncher"));
+        if (isWK2()) {
+            unshift(@ARGV, catdir($launcherPath, "bin", "MiniBrowser"));
+        } else {
+            unshift(@ARGV, catdir($launcherPath, "bin", "EWebLauncher"));
+        }
         $launcherPath = catdir(sourceDir(), "Tools", "efl", "run-with-jhbuild");
     }
     

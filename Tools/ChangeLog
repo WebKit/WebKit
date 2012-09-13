@@ -1,3 +1,14 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        The Script run-launcher should support -2 in combination with --efl
+        https://bugs.webkit.org/show_bug.cgi?id=96639
+
+        Reviewed by Simon Hausmann.
+
+        Support running the MiniBrowser then supplied -2 as argument.
+
+        * Scripts/run-launcher:
+
 2012-09-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed, add my Intel email address to the list.
