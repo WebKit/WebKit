@@ -1048,6 +1048,26 @@ using namespace other;
 
 </ol>
 
+<h3 id="types">Types</h3>
+
+<ol>
+<li id="types-unsigned">
+Omit "int" when using "unsigned" modifier. Do not use "signed" modifier. Use "int" by itself instead.
+<h4 class="right">Right:</h4>
+<pre class="code">
+unsigned a;
+int b;
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+unsigned int a; // Doesn't omit "int".
+signed b; // Uses "singed" instead of "int".
+signed int c; // Doesn't omit "signed".
+</pre>
+</li>
+</ol>
+
 <h3 id="classes">Classes</h3>
 
 <ol>

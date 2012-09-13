@@ -1,3 +1,14 @@
+2012-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a style guide rule for signed and unsigned int
+        https://bugs.webkit.org/show_bug.cgi?id=96682
+
+        Reviewed by Geoffrey Garen.
+
+        Add a rule per http://lists.webkit.org/pipermail/webkit-dev/2012-September/022199.html.
+
+        * coding/coding-style.html:
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Replace JSC::UString by WTF::String
