@@ -1,3 +1,15 @@
+2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] syncqt isn't re-run when WebKit1.pro changes and we're building with --no-webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=96545
+
+        Reviewed by Tor Arne Vestbø.
+
+        Do the QMAKE_INTERNAL_INCLUDED_FILES trick separately for WebKit1.pro and WebKit2/Target.pri,
+        depending on build?(webkit1) and build?(webkit2), as discussed earlier.
+
+        * Source/api.pri:
+
 2012-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127876.

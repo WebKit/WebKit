@@ -71,15 +71,12 @@ macx {
 WEBKIT += wtf javascriptcore webcore
 
 build?(webkit1): WEBKIT += webkit1
+build?(webkit2): WEBKIT += webkit2
 
-build?(webkit2) {
-    WEBKIT += webkit2
-
-    # Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
-    # file, which in turn runs syncqt to update the forwarding headers.
-    QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
-    QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
-}
+# Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
+# file, which in turn runs syncqt to update the forwarding headers.
+build?(webkit1): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
+build?(webkit2): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
 
 use?(3D_GRAPHICS): WEBKIT += angle
 
