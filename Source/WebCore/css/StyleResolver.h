@@ -480,6 +480,7 @@ private:
     RefPtr<RenderStyle> m_rootDefaultStyle;
 
     PseudoId m_dynamicPseudo;
+    PseudoId m_pseudoStyle;
 
     SelectorChecker m_checker;
 

@@ -64,6 +64,7 @@ public:
             , elementStyle(0)
             , elementParentStyle(0)
             , isSubSelector(false)
+            , pseudoStyle(NOPSEUDO)
         { }
 
         CSSSelector* selector;
@@ -73,6 +74,7 @@ public:
         RenderStyle* elementStyle;
         RenderStyle* elementParentStyle;
         bool isSubSelector;
+        PseudoId pseudoStyle;
     };
 
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
@@ -99,9 +101,6 @@ public:
 
     Mode mode() const { return m_mode; }
     void setMode(Mode mode) { m_mode = mode; }
-
-    PseudoId pseudoStyle() const { return m_pseudoStyle; }
-    void setPseudoStyle(PseudoId pseudoId) { m_pseudoStyle = pseudoId; }
 
     static bool tagMatches(const Element*, const CSSSelector*);
     static bool attributeNameMatches(const Attribute*, const QualifiedName&);
@@ -134,7 +133,6 @@ private:
     bool m_strictParsing;
     bool m_documentIsHTML;
     Mode m_mode;
-    PseudoId m_pseudoStyle;
     mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 
     struct ParentStackFrame {

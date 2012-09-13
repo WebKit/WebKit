@@ -70,7 +70,6 @@ SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     , m_strictParsing(strictParsing)
     , m_documentIsHTML(document->isHTMLDocument())
     , m_mode(ResolvingStyle)
-    , m_pseudoStyle(NOPSEUDO)
 {
 }
 
@@ -462,7 +461,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
             return SelectorFailsCompletely;
 
         // Bail-out if this selector is irrelevant for the pseudoStyle
-        if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
+        if (context.pseudoStyle != NOPSEUDO && context.pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
 
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.

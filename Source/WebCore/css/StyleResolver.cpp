@@ -1121,7 +1121,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             }
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
-            if (m_dynamicPseudo != NOPSEUDO && m_checker.pseudoStyle() == NOPSEUDO) {
+            if (m_dynamicPseudo != NOPSEUDO && m_pseudoStyle == NOPSEUDO) {
                 if (m_checker.mode() == SelectorChecker::CollectingRules) {
                     InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
@@ -1218,7 +1218,7 @@ inline void StyleResolver::initElement(Element* e)
 
 inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
 {
-    m_checker.setPseudoStyle(pseudoID);
+    m_pseudoStyle = pseudoID;
 
     if (e) {
         NodeRenderingContext context(e);
@@ -2405,7 +2405,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
 
     if (ruleData.hasFastCheckableSelector()) {
         // We know this selector does not include any pseudo elements.
-        if (m_checker.pseudoStyle() != NOPSEUDO)
+        if (m_pseudoStyle != NOPSEUDO)
             return false;
         // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
         // This is limited to HTML only so we don't need to check the namespace.
@@ -2424,10 +2424,11 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
     context.elementStyle = style();
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
+    context.pseudoStyle = m_pseudoStyle;
     SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo, m_hasUnknownPseudoElements);
     if (match != SelectorChecker::SelectorMatches)
         return false;
-    if (m_checker.pseudoStyle() != NOPSEUDO && m_checker.pseudoStyle() != m_dynamicPseudo)
+    if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != m_dynamicPseudo)
         return false;
     return true;
 }
@@ -2438,7 +2439,7 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
         return false;
 
     m_hasUnknownPseudoElements = false;
-    m_checker.setPseudoStyle(NOPSEUDO);
+    m_pseudoStyle = NOPSEUDO;
 
     for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
         if (m_checker.checkSelector(s, regionElement))
