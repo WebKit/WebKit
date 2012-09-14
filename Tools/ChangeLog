@@ -1,3 +1,16 @@
+2012-09-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Build fix for DumpRenderTree following r128628
+        https://bugs.webkit.org/show_bug.cgi?id=96808
+
+        Reviewed by Tony Chang.
+
+        When building DumpRenderTree from the Chromium project, a compile error
+        shows up because including the header ForwardIOStreamsAndroid.h cannot
+        be located. TestWebKitAPI does this correctly.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-09-14  Dana Jansens  <danakj@chromium.org>
 
         Change cc-bugs@google.com watchlist to cc-bugs@chromium.org

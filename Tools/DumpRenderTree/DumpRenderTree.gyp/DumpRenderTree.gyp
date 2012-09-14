@@ -292,6 +292,14 @@
                         'copy_TestNetscapePlugIn',
                         '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                     ],
+                    # FIXME: Remove when the io_stream_forwarder_android target is deprecated.
+                    'conditions': [
+                        ['inside_chromium_build==1', {
+                            'include_dirs': [
+                                '<(source_dir)/WebKit/chromium/',
+                            ],
+                        }],
+                    ],
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
                         'files': [
