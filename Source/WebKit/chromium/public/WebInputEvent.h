@@ -388,6 +388,11 @@ public:
       struct {
         int width;
         int height;
+      } tapDown;
+
+      struct {
+        int width;
+        int height;
       } longPress;
 
       struct {

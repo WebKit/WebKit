@@ -1,3 +1,16 @@
+2012-09-14  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] add touch area to gestureTapDown data
+        https://bugs.webkit.org/show_bug.cgi?id=96806
+
+        Reviewed by Adam Barth.
+
+        Add width/height for GestureTapDown as for GestureTap/LongPress so that
+        we can eventually do fuzzing on it.
+        * public/WebInputEvent.h:
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+
 2012-09-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Support the --{in,out,err}-fifo arguments on TestWebKitAPI and webkit_unit_tests
