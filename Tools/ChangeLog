@@ -1,3 +1,24 @@
+2012-09-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix linking on Windows
+
+        Reviewed by Tor Arne Vestbø.
+
+        When compiling code _after_ QtWebKit.dll, we need to make sure that the QWEBKIT_EXPORT
+        macro turns into an import macro, which means QT_MAKEDLL should only be set _up until_
+        the QtWebKit.dll creation in the build process and be off afterwards. This is done in
+        win32/default_post.prf using a !contains(QT, webkit): DEFINES += QT_MAKEDLL.
+
+        r128450 sanitized the values of QT and PKGCONFIG to only contain the dependencies we
+        want for QtWebKit.dll, but unfortunately that code was applied to any binary built also
+        after the module. Therefore QT did never contain webkit anymore and we always passed
+        QT_MAKEDLL to DEFINES, resulting in QWEBKIT_EXPORT to _not_ turn into an import macro.
+
+        This patch introduces a creating_module configuration that is used to
+        scope the qt/pkgconfig sanitization.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner is not dumping some frame load callbacks information
