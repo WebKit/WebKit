@@ -107,6 +107,8 @@ testInvalidFilterRule("Semicolon separated values in array()", "custom(none url(
 testInvalidFilterRule("Space separated values in array()", "custom(none url(shader), id array(1 2 3 4))");
 testInvalidFilterRule("Space separated values with comma terminator in array()", "custom(none url(shader), id array(1 2 3 4,))");
 testInvalidFilterRule("Space separated values with leading comma in array()", "custom(none url(shader), id array(, 1 2 3 4))");
+testInvalidFilterRule("NaN in array()", "custom(none url(shader), id array(NaN))");
+testInvalidFilterRule("NaN and values in array()", "custom(none url(shader), id array(1, 2, NaN, 3))");
 testInvalidFilterRule("Invalid unit value in array()", "custom(none url(shader), id array(1px))");
 testInvalidFilterRule("Invalid unit value in array(), second", "custom(none url(shader), id array(none))");
 testInvalidFilterRule("Invalid unit value in array(), third", "custom(none url(shader), id array(1deg))");

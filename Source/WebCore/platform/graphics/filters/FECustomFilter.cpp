@@ -32,6 +32,7 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "FECustomFilter.h"
 
+#include "CustomFilterArrayParameter.h"
 #include "CustomFilterCompiledProgram.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterMesh.h"
@@ -261,6 +262,17 @@ void FECustomFilter::unbindVertexAttribute(int attributeLocation)
         m_context->disableVertexAttribArray(attributeLocation);
 }
 
+void FECustomFilter::bindProgramArrayParameters(int uniformLocation, CustomFilterArrayParameter* arrayParameter)
+{
+    unsigned parameterSize = arrayParameter->size();
+    Vector<GC3Dfloat> floatVector;
+
+    for (unsigned i = 0; i < parameterSize; ++i)
+        floatVector.append(arrayParameter->valueAt(i));
+
+    m_context->uniform1fv(uniformLocation, parameterSize, floatVector.data());
+}
+
 void FECustomFilter::bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter* numberParameter)
 {
     switch (numberParameter->size()) {
@@ -312,6 +324,9 @@ void FECustomFilter::bindProgramParameters()
         if (uniformLocation == -1)
             continue;
         switch (parameter->parameterType()) {
+        case CustomFilterParameter::ARRAY:
+            bindProgramArrayParameters(uniformLocation, static_cast<CustomFilterArrayParameter*>(parameter));
+            break;
         case CustomFilterParameter::NUMBER:
             bindProgramNumberParameters(uniformLocation, static_cast<CustomFilterNumberParameter*>(parameter));
             break;

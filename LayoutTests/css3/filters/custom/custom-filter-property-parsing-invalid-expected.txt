@@ -369,6 +369,16 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+NaN in array() : custom(none url(shader), id array(NaN))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+NaN and values in array() : custom(none url(shader), id array(1, 2, NaN, 3))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 Invalid unit value in array() : custom(none url(shader), id array(1px))
 PASS cssRule.type is 1
 PASS declaration.length is 0

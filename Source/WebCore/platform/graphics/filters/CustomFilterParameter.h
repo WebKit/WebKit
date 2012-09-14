@@ -45,6 +45,7 @@ public:
     // 3d-transforms: https://bugs.webkit.org/show_bug.cgi?id=71443
     // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
     enum ParameterType {
+        ARRAY,
         NUMBER,
         TRANSFORM
     };

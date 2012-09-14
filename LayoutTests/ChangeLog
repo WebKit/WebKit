@@ -1,3 +1,22 @@
+2012-09-14  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        Use arrays in shaders
+        https://bugs.webkit.org/show_bug.cgi?id=95223
+
+        Reviewed by Dean Jackson.
+
+        New tests have been added for checking the correctness of array()
+        within shaders.
+
+        * css3/filters/custom/custom-filter-array-expected.html: Added.
+        * css3/filters/custom/custom-filter-array.html: Added.
+        * css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        * css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt:
+        * css3/filters/resources/fragment-color.fs: Added.
+        * css3/filters/script-tests/custom-filter-property-computed-style.js:
+        * css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+        * platform/chromium/css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
