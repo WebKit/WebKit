@@ -1,3 +1,16 @@
+2012-09-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Attempt to create a theme for 0 sized element leads to assertion hit
+        https://bugs.webkit.org/show_bug.cgi?id=96743
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        RenderThemeEfl was not supposed to be created for the elements with '0' size and had an assertion
+        on that causing crash in debug mode.
+
+        * fast/forms/range/slider-zero-size-crash-expected.txt: Added.
+        * fast/forms/range/slider-zero-size-crash.html: Added.
+
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests

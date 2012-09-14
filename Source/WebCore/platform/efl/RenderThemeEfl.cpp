@@ -196,9 +196,8 @@ static bool isFormElementTooLargeToDisplay(const IntSize& elementSize)
 RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create(const String& themePath, FormType type, const IntSize& size)
 {
     ASSERT(!themePath.isEmpty());
-    ASSERT(!size.isEmpty());
 
-    if (isFormElementTooLargeToDisplay(size)) {
+    if (isFormElementTooLargeToDisplay(size) || size.isEmpty()) {
         EINA_LOG_ERR("Cannot render an element of size %dx%d.", size.width(), size.height());
         return 0;
     }
