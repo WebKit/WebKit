@@ -246,7 +246,7 @@
         "BlackBerry": [ "mifenton@rim.com", "rwlbuis@gmail.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org" ],
-        "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
+        "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],

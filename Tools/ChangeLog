@@ -1,3 +1,13 @@
+2012-09-14  Dana Jansens  <danakj@chromium.org>
+
+        Change cc-bugs@google.com watchlist to cc-bugs@chromium.org
+        https://bugs.webkit.org/show_bug.cgi?id=96805
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-09-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Support the --{in,out,err}-fifo arguments on TestWebKitAPI and webkit_unit_tests
