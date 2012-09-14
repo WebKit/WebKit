@@ -311,7 +311,7 @@ WebInspector.Resource.prototype = {
         this._contentRequested = true;
 
         /**
-         * @param {string} content
+         * @param {?string} content
          * @param {boolean} contentEncoded
          */
         function contentLoaded(content, contentEncoded)
@@ -339,7 +339,7 @@ WebInspector.Resource.prototype = {
         
         if (this.request) {
             /**
-             * @param {string} content
+             * @param {?string} content
              * @param {boolean} contentEncoded
              * @param {string} mimeType
              */

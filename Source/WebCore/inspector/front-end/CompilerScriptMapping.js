@@ -84,7 +84,7 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        var originalUISourceCode = new WebInspector.JavaScriptSource(script.sourceURL, null, script, this, true);
+        var originalUISourceCode = new WebInspector.JavaScriptSource(script.sourceURL, null, script, true);
         this._originalUISourceCodeForScriptId[script.scriptId] = originalUISourceCode;
         this._scriptForOriginalUISource.put(originalUISourceCode, script);
         this._workspace.project().addUISourceCode(originalUISourceCode);
