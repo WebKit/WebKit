@@ -1,3 +1,35 @@
+2012-09-14  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening.
+
+        Update fixpos layout test results. Chromium currently doesn't set the fixpos-forms-stacking-context setting in
+        DumpRenderTree.
+
+        * fast/block/positioning/016-expected.png: Copied from LayoutTests/platform/efl/fast/block/positioning/016-expected.png.
+        * fast/block/positioning/025-expected.png: Renamed from LayoutTests/platform/efl/fast/block/positioning/025-expected.png.
+        * platform/chromium-linux-x86/compositing/geometry/fixed-position-composited-switch-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/016-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/025-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/fixed-position-stacking-context-expected.txt: Added.
+        * platform/chromium-linux/compositing/geometry/fixed-position-composited-switch-expected.txt: Added.
+        * platform/chromium-linux/fast/block/positioning/016-expected.png: Renamed from LayoutTests/platform/gtk/fast/block/positioning/016-expected.png.
+        * platform/chromium-linux/fast/block/positioning/016-expected.txt: Added.
+        * platform/chromium-linux/fast/block/positioning/025-expected.png: Renamed from LayoutTests/platform/gtk/fast/block/positioning/025-expected.png.
+        * platform/chromium-linux/fast/block/positioning/025-expected.txt: Added.
+        * platform/chromium-linux/fast/block/positioning/fixed-position-stacking-context-expected.png: Renamed from LayoutTests/platform/efl/fast/block/positioning/016-expected.png.
+        * platform/chromium-linux/fast/block/positioning/fixed-position-stacking-context-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-composited-switch-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/016-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/025-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/fixed-position-stacking-context-expected.txt: Added.
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-switch-expected.txt: Added.
+        * platform/chromium-mac/fast/block/positioning/016-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/016-expected.txt: Added.
+        * platform/chromium-mac/fast/block/positioning/025-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/025-expected.txt: Added.
+        * platform/chromium-mac/fast/block/positioning/fixed-position-stacking-context-expected.png: Added.
+        * platform/chromium-mac/fast/block/positioning/fixed-position-stacking-context-expected.txt: Added.
+
 2012-09-14  Adam Barth  <abarth@webkit.org>
 
         Remove webkitPostMessage
