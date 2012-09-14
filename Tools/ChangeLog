@@ -1,5 +1,15 @@
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Enable force_static_libs_as_shared for development
+
+        Not enabled for buildbots or production-builds (part of Qt5)
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Make force_static_libs_as_shared work on Mac OS
 
         We had to move a few LIBS += around that were in the wrong place,

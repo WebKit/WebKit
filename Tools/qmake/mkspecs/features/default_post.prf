@@ -71,6 +71,9 @@ else {
     contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
 }
 
+# Enable dynamic instead of static libraries for development
+!production_build:!buildbot:!win*: CONFIG += force_static_libs_as_shared
+
 # Template configurations
 contains(TEMPLATE, derived) {
     # A (mostly) no-op template
