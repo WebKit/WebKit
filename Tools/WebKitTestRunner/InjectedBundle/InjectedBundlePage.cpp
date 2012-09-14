@@ -774,6 +774,11 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
+    if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks()) {
+        dumpFrameDescriptionSuitableForTestResult(frame);
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" - didFailProvisionalLoadWithError\n");
+    }
+
     if (frame != InjectedBundle::shared().topLoadingFrame())
         return;
     InjectedBundle::shared().setTopLoadingFrame(0);
