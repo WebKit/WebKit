@@ -2567,7 +2567,10 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
         and not (match(r'.*\(.*\).*{.*.}', line)
                  and class_state.classinfo_stack
                  and line.count('{') == line.count('}'))
-        and not cleansed_line.startswith('#define ')):
+        and not cleansed_line.startswith('#define ')
+        # It's ok to use use WTF_MAKE_NONCOPYABLE and WTF_MAKE_FAST_ALLOCATED macros in 1 line
+        and not (cleansed_line.find("WTF_MAKE_NONCOPYABLE") != -1
+                 and cleansed_line.find("WTF_MAKE_FAST_ALLOCATED") != -1)):
         error(line_number, 'whitespace/newline', 4,
               'More than one command on the same line')
 

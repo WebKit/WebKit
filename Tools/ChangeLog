@@ -1,3 +1,19 @@
+2012-09-14  Zoltan Horvath  <zoltan@webkit.org>
+
+        check-webkit-style should not warn in case of NONCOPYABLE and FAST_ALLOCATED macros
+        https://bugs.webkit.org/show_bug.cgi?id=96656
+
+        Reviewed by Adam Barth.
+
+        We should allow to use WTF_MAKE_NONCOPYABLE(ClassName) and WTF_MAKE_FAST_ALLOCATED
+        macros in 1 line.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_style.definitions):
+        (check_style): Add rule.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_line_breaking): Add unittest.
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
