@@ -55,6 +55,8 @@ inline bool isStrictParserMode(CSSParserMode cssParserMode)
 }
 
 struct CSSParserContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     CSSParserContext(CSSParserMode, const KURL& baseURL = KURL());
     CSSParserContext(Document*, const KURL& baseURL = KURL(), const String& charset = emptyString());
 

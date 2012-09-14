@@ -52,6 +52,7 @@ struct LineSegment {
 typedef Vector<LineSegment> SegmentList;
 
 class WrapShapeInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum LineState {
         LINE_BEFORE_SHAPE,

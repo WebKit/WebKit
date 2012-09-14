@@ -91,6 +91,7 @@ static String urlForLogging(const String& url)
 #endif
 
 class DefaultIconDatabaseClient : public IconDatabaseClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual bool performImport() { return true; }
     virtual void didImportIconURLForPageURL(const String&) { } 
@@ -2232,6 +2233,7 @@ void IconDatabase::setWasExcludedFromBackup()
 }
 
 class ClientWorkItem {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ClientWorkItem(IconDatabaseClient* client)
         : m_client(client)

@@ -144,6 +144,7 @@ static Color parseConfigColor(const String& fieldName, InspectorObject* configOb
 }
 
 class RevalidateStyleAttributeTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RevalidateStyleAttributeTask(InspectorDOMAgent*);
     void scheduleFor(Element*);

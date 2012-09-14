@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class WebGLExtension {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Extension names are needed to properly wrap instances in JavaScript objects.
     enum ExtensionName {

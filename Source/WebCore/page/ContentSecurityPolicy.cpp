@@ -700,6 +700,7 @@ private:
 };
 
 class CSPDirectiveList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicy::HeaderType);
 

@@ -47,6 +47,7 @@ private:
 
 
 class TextureMapperImageBuffer : public TextureMapper {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<TextureMapper> create() { return adoptPtr(new TextureMapperImageBuffer); }
 

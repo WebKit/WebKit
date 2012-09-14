@@ -161,8 +161,8 @@ static ColorProfile readColorProfile(jpeg_decompress_struct* info)
 #endif
 }
 
-class JPEGImageReader
-{
+class JPEGImageReader {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JPEGImageReader(JPEGImageDecoder* decoder)
         : m_decoder(decoder)

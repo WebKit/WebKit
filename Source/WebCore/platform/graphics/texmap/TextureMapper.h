@@ -97,8 +97,8 @@ private:
 // A "context" class used to encapsulate accelerated texture mapping functions: i.e. drawing a texture
 // onto the screen or into another texture with a specified transform, opacity and mask.
 class TextureMapper {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class BitmapTexture;
-
 public:
     enum AccelerationMode { SoftwareMode, OpenGLMode };
     enum PaintFlag {

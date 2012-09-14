@@ -56,7 +56,7 @@ private:
 };
 
 class StyleBuilder {
-    WTF_MAKE_NONCOPYABLE(StyleBuilder);
+    WTF_MAKE_NONCOPYABLE(StyleBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const StyleBuilder& sharedStyleBuilder();
 

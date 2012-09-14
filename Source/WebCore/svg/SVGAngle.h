@@ -30,6 +30,7 @@ namespace WebCore {
 typedef int ExceptionCode;
 
 class SVGAngle {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGAngle();
 

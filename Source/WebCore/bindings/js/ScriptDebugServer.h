@@ -96,6 +96,7 @@ public:
     void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
     class Task {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~Task() { }
         virtual void run() = 0;

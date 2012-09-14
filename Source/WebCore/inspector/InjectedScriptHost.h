@@ -92,6 +92,7 @@ public:
     void disconnect();
 
     class InspectableObject {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ScriptValue get(ScriptState*);
         virtual ~InspectableObject() { }

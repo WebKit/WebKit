@@ -65,6 +65,7 @@ static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
 
 class InspectorBackendDispatchTask {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorBackendDispatchTask(InspectorController* inspectorController)
         : m_inspectorController(inspectorController)

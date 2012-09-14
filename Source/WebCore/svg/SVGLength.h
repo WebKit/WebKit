@@ -40,6 +40,7 @@ enum SVGLengthNegativeValuesMode {
 };
 
 class SVGLength {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Forward declare these enums in the w3c naming scheme, for IDL generation
     enum {

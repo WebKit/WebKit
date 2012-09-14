@@ -63,6 +63,7 @@ class TimingFunction;
 // represent values for properties being animated via the GraphicsLayer,
 // without pulling in style-related data from outside of the platform directory.
 class AnimationValue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationValue(float keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
         : m_keyTime(keyTime)

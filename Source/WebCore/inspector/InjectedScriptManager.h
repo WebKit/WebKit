@@ -44,7 +44,7 @@ class InspectorObject;
 class ScriptObject;
 
 class InjectedScriptManager {
-    WTF_MAKE_NONCOPYABLE(InjectedScriptManager);
+    WTF_MAKE_NONCOPYABLE(InjectedScriptManager); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InjectedScriptManager> createForPage();
     static PassOwnPtr<InjectedScriptManager> createForWorker();

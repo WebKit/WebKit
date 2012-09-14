@@ -73,7 +73,7 @@ using namespace std;
 namespace WebCore {
 
 class PendingCallbacks {
-    WTF_MAKE_NONCOPYABLE(PendingCallbacks);
+    WTF_MAKE_NONCOPYABLE(PendingCallbacks); WTF_MAKE_FAST_ALLOCATED;
 public:
     ~PendingCallbacks() { }
     static PassOwnPtr<PendingCallbacks> create()
@@ -344,6 +344,7 @@ static int matchFunc(const char*)
 }
 
 class OffsetBuffer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
 

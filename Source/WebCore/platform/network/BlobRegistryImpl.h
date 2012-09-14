@@ -50,6 +50,7 @@ class ResourceResponse;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class BlobRegistryImpl : public BlobRegistry {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~BlobRegistryImpl() { }
 

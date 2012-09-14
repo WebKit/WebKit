@@ -51,7 +51,7 @@ public:
     ~HTMLElementStack();
 
     class ElementRecord {
-        WTF_MAKE_NONCOPYABLE(ElementRecord);
+        WTF_MAKE_NONCOPYABLE(ElementRecord); WTF_MAKE_FAST_ALLOCATED;
     public:
         ~ElementRecord(); // Public for ~PassOwnPtr()
     

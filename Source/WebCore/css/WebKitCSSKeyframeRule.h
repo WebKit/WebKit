@@ -38,6 +38,7 @@ class StyleRuleCSSStyleDeclaration;
 class WebKitCSSKeyframesRule;
 
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleKeyframe> create()
     {

@@ -34,6 +34,7 @@ class CSSStyleSheet;
 class StylePropertySet;
 
 class StyleRuleBase : public WTF::RefCountedBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
         Unknown, // Not used.
@@ -90,6 +91,7 @@ private:
 };
 
 class StyleRule : public StyleRuleBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleRule> create(int sourceLine) { return adoptRef(new StyleRule(sourceLine)); }
     

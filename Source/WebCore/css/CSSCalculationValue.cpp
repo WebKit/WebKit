@@ -132,6 +132,7 @@ CSSCalcExpressionNode::~CSSCalcExpressionNode()
 }
     
 class CSSCalcPrimitiveValue : public CSSCalcExpressionNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 
     static PassRefPtr<CSSCalcPrimitiveValue> create(CSSPrimitiveValue* value, bool isInteger)

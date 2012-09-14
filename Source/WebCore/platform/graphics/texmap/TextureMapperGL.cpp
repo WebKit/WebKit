@@ -57,6 +57,8 @@
 
 namespace WebCore {
 struct TextureMapperGLData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     struct SharedGLData : public RefCounted<SharedGLData> {
 
         typedef HashMap<PlatformGraphicsContext3D, SharedGLData*> GLContextDataMap;

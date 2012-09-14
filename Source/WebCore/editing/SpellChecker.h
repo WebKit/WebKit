@@ -70,7 +70,7 @@ private:
 };
 
 class SpellChecker {
-    WTF_MAKE_NONCOPYABLE(SpellChecker);
+    WTF_MAKE_NONCOPYABLE(SpellChecker); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend class SpellCheckRequest;
 

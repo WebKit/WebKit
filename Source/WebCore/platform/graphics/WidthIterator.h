@@ -36,6 +36,8 @@ class TextRun;
 struct GlyphData;
 
 struct WidthIterator {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     unsigned advance(int to, GlyphBuffer* = 0);

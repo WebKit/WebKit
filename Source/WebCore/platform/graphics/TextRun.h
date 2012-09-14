@@ -40,6 +40,7 @@ struct GlyphData;
 struct WidthIterator;
 
 class TextRun {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ExpansionBehaviorFlags {
         ForbidTrailingExpansion = 0 << 0,

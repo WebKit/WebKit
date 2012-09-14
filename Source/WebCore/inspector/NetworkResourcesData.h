@@ -47,8 +47,10 @@ class SharedBuffer;
 class TextResourceDecoder;
 
 class NetworkResourcesData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class ResourceData {
+        WTF_MAKE_FAST_ALLOCATED;
         friend class NetworkResourcesData;
     public:
         ResourceData(const String& requestId, const String& loaderId);

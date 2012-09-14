@@ -35,6 +35,7 @@ enum ENinePieceImageRule {
 };
 
 class NinePieceImageData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NinePieceImageData()
         : m_image(0)

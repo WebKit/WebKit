@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class GenericEventQueue : public EventQueue {
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GenericEventQueue(EventTarget*);
     static PassOwnPtr<GenericEventQueue> create(EventTarget*);

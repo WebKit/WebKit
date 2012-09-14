@@ -35,6 +35,8 @@
 namespace WebCore {
 
 struct GradientData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     RefPtr<Gradient> gradient;
     AffineTransform userspaceTransform;
 };

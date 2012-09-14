@@ -61,6 +61,7 @@ enum CalcExpressionNodeType {
 };
         
 class CalcExpressionNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CalcExpressionNode()
         : m_type(CalcExpressionNodeUndefined)

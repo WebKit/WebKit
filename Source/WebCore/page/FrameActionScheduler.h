@@ -47,6 +47,7 @@ public:
 };
 
 class FrameActionScheduler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FrameActionScheduler();
     ~FrameActionScheduler();

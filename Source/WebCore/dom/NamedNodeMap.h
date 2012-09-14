@@ -37,6 +37,7 @@ class Element;
 typedef int ExceptionCode;
 
 class NamedNodeMap {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:
     static PassOwnPtr<NamedNodeMap> create(Element* element)

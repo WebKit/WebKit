@@ -63,12 +63,12 @@ namespace WebCore {
     };
 
     struct ICUConverterWrapper {
+        WTF_MAKE_NONCOPYABLE(ICUConverterWrapper); WTF_MAKE_FAST_ALLOCATED;
+    public:
         ICUConverterWrapper() : converter(0) { }
         ~ICUConverterWrapper();
 
         UConverter* converter;
-
-        WTF_MAKE_NONCOPYABLE(ICUConverterWrapper);
     };
 
 } // namespace WebCore

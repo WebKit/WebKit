@@ -52,6 +52,7 @@ static const char autoconnectToWorkers[] = "autoconnectToWorkers";
 };
 
 class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerContextProxy::PageInspector {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerContextProxy* proxy)
         : m_frontend(frontend)

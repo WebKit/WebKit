@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class StylePropertyShorthand {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StylePropertyShorthand()
         : m_properties(0)

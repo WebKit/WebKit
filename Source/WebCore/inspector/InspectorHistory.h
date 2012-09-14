@@ -46,9 +46,10 @@ class Node;
 #if ENABLE(INSPECTOR)
 
 class InspectorHistory {
-    WTF_MAKE_NONCOPYABLE(InspectorHistory);
+    WTF_MAKE_NONCOPYABLE(InspectorHistory); WTF_MAKE_FAST_ALLOCATED;
 public:
     class Action {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Action(const String& name);
         virtual ~Action();

@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class RadioButtonGroup {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<RadioButtonGroup> create();
     bool isEmpty() const { return m_members.isEmpty(); }

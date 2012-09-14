@@ -57,7 +57,7 @@ public:
 class XMLToken : public MarkupTokenBase<XMLTokenTypes, DoctypeDataBase, PrefixedAttribute> {
 public:
     class XMLDeclarationData {
-        WTF_MAKE_NONCOPYABLE(XMLDeclarationData);
+        WTF_MAKE_NONCOPYABLE(XMLDeclarationData); WTF_MAKE_FAST_ALLOCATED;
     public:
         XMLDeclarationData()
             : m_hasStandalone(false)

@@ -103,6 +103,7 @@ struct RuleMatchingStats {
 };
 
 class SelectorProfile {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SelectorProfile()
         : m_totalMatchingTimeMs(0.0)

@@ -56,6 +56,7 @@ static inline int roundUpToMultipleOf32(int d)
 // Instead of creating and destroying the buffer for every operation,
 // we create a buffer which will be automatically purged via a timer.
 class ScratchBuffer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ScratchBuffer()
         : m_purgeTimer(this, &ScratchBuffer::timerFired)

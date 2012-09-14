@@ -47,7 +47,7 @@ class ValidationMessageClient;
 // FIXME: We should remove the code for !validationMessageClient() when all
 // ports supporting interactive validation switch to ValidationMessageClient.
 class ValidationMessage {
-    WTF_MAKE_NONCOPYABLE(ValidationMessage);
+    WTF_MAKE_NONCOPYABLE(ValidationMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ValidationMessage> create(HTMLFormControlElement*);
     ~ValidationMessage();

@@ -130,6 +130,7 @@ inline ClipRect intersection(const ClipRect& a, const ClipRect& b)
 }
 
 class ClipRects {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<ClipRects> create()
     {
@@ -227,6 +228,8 @@ enum ClipRectsType {
 };
 
 struct ClipRectsCache {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     ClipRectsCache()
     {
 #ifndef NDEBUG

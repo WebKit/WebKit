@@ -33,6 +33,7 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class ScrollableArea;
 class Scrollbar;
 
 class ScrollAnimator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
 

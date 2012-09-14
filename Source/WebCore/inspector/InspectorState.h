@@ -43,6 +43,7 @@ namespace WebCore {
 class InspectorStateClient;
 
 class InspectorState {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorState(InspectorStateClient*);
     virtual ~InspectorState() {}

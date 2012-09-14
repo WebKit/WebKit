@@ -151,6 +151,7 @@ PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
 }
         
 class CalculationValueHandleMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CalculationValueHandleMap() 
         : m_index(1) 

@@ -59,7 +59,7 @@ public:
 };
 
 class TextureMapperLayer : public GraphicsLayerAnimation::Client {
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.

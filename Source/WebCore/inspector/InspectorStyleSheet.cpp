@@ -65,6 +65,7 @@ using WebCore::RuleSourceDataList;
 using WebCore::CSSRuleSourceData;
 
 class ParsedStyleSheet {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ParsedStyleSheet();
 

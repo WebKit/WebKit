@@ -37,6 +37,8 @@
 namespace WebCore {
 
 struct PatternData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     RefPtr<Pattern> pattern;
     AffineTransform transform;
 };

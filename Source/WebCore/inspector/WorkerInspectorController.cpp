@@ -59,6 +59,7 @@ namespace WebCore {
 namespace {
 
 class PageInspectorProxy : public InspectorFrontendChannel {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageInspectorProxy(WorkerContext* workerContext) : m_workerContext(workerContext) { }
     virtual ~PageInspectorProxy() { }
@@ -72,6 +73,7 @@ private:
 };
 
 class WorkerStateClient : public InspectorStateClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerStateClient(WorkerContext* context) : m_workerContext(context) { }
     virtual ~WorkerStateClient() { }

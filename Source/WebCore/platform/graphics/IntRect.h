@@ -80,6 +80,7 @@ class FloatRect;
 class FractionalLayoutRect;
 
 class IntRect {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IntRect() { }
     IntRect(const IntPoint& location, const IntSize& size)

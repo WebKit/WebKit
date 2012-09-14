@@ -43,7 +43,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
 
 class HeapSizeCache {
-    WTF_MAKE_NONCOPYABLE(HeapSizeCache);
+    WTF_MAKE_NONCOPYABLE(HeapSizeCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     HeapSizeCache()
         : m_lastUpdateTime(0)

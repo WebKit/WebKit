@@ -32,6 +32,7 @@ class FloatRect;
 typedef int ExceptionCode;
 
 class SVGPreserveAspectRatio {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum SVGPreserveAspectRatioType {
         SVG_PRESERVEASPECTRATIO_UNKNOWN = 0,

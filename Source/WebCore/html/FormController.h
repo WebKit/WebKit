@@ -73,6 +73,7 @@ inline void FormControlState::append(const String& value)
 }
 
 class FormController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<FormController> create()
     {

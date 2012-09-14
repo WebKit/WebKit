@@ -37,8 +37,8 @@ namespace WebCore {
 class IdTargetObserver;
 
 class IdTargetObserverRegistry {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class IdTargetObserver;
-
 public:
     static PassOwnPtr<IdTargetObserverRegistry> create();
     void notifyObservers(const AtomicString& id);

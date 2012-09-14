@@ -69,6 +69,7 @@ typedef struct _Evas_Event_Key_Up Evas_Event_Key_Up;
 namespace WebCore {
 
     class PlatformKeyboardEvent : public PlatformEvent {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         PlatformKeyboardEvent()
             : PlatformEvent(PlatformEvent::KeyDown)

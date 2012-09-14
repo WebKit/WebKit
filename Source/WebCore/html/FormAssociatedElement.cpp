@@ -39,6 +39,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 class FormAttributeTargetObserver : IdTargetObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<FormAttributeTargetObserver> create(const AtomicString& id, FormAssociatedElement*);
     virtual void idTargetChanged() OVERRIDE;

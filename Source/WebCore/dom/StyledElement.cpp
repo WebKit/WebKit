@@ -59,6 +59,8 @@ struct PresentationAttributeCacheKey {
 };
 
 struct PresentationAttributeCacheEntry {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     PresentationAttributeCacheKey key;
     RefPtr<StylePropertySet> value;
 };
@@ -79,7 +81,7 @@ static PresentationAttributeCache& presentationAttributeCache()
 }
 
 class PresentationAttributeCacheCleaner {
-    WTF_MAKE_NONCOPYABLE(PresentationAttributeCacheCleaner);
+    WTF_MAKE_NONCOPYABLE(PresentationAttributeCacheCleaner); WTF_MAKE_FAST_ALLOCATED;
 public:
     PresentationAttributeCacheCleaner()
         : m_cleanTimer(this, &PresentationAttributeCacheCleaner::cleanCache)

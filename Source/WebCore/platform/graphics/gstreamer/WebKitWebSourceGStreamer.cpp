@@ -44,7 +44,7 @@
 using namespace WebCore;
 
 class StreamingClient : public ResourceHandleClient {
-    WTF_MAKE_NONCOPYABLE(StreamingClient);
+    WTF_MAKE_NONCOPYABLE(StreamingClient); WTF_MAKE_FAST_ALLOCATED;
     public:
         StreamingClient(WebKitWebSrc*);
         virtual ~StreamingClient();

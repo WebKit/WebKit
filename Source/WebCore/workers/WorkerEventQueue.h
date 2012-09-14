@@ -40,6 +40,7 @@ class Node;
 class ScriptExecutionContext;
 
 class WorkerEventQueue : public EventQueue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
 
     static PassOwnPtr<WorkerEventQueue> create(ScriptExecutionContext*);

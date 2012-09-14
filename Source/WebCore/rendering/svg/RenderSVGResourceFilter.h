@@ -40,6 +40,8 @@
 namespace WebCore {
 
 struct FilterData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     FilterData()
         : savedContext(0)
         , builded(false)

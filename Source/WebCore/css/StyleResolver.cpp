@@ -252,7 +252,7 @@ struct SameSizeAsRuleData {
 COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
 
 class RuleSet {
-    WTF_MAKE_NONCOPYABLE(RuleSet);
+    WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<RuleSet> create() { return adoptPtr(new RuleSet); }
 

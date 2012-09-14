@@ -42,6 +42,7 @@ class RenderNamedFlowThread;
 typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 
 class FlowThreadController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<FlowThreadController> create(RenderView*);
     ~FlowThreadController();

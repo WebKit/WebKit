@@ -55,6 +55,8 @@ enum AnimatedPropertyType {
 };
 
 struct SVGPropertyInfo {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     typedef void (*SynchronizeProperty)(void*);
     typedef PassRefPtr<SVGAnimatedProperty> (*LookupOrCreateWrapperForAnimatedProperty)(void*);
 

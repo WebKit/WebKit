@@ -6293,6 +6293,7 @@ PassRefPtr<UndoManager> Document::undoManager()
 #endif
 
 class ImmutableAttributeDataCacheKey {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ImmutableAttributeDataCacheKey()
         : m_localName(0)

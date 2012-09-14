@@ -47,7 +47,7 @@ class Text;
 typedef String ErrorString;
 
 class DOMEditor {
-    WTF_MAKE_NONCOPYABLE(DOMEditor);
+    WTF_MAKE_NONCOPYABLE(DOMEditor); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMEditor(InspectorHistory*);
     ~DOMEditor();

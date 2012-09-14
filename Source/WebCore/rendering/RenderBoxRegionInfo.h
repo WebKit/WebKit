@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderBoxRegionInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderBoxRegionInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
         : m_logicalLeft(logicalLeft)

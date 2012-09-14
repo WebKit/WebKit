@@ -37,6 +37,7 @@ class SVGImage;
 class RenderObject;
 
 class SVGImageCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ~SVGImageCache();
 

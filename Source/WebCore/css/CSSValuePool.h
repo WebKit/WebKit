@@ -39,6 +39,7 @@ namespace WebCore {
 class CSSValueList;
 
 class CSSValuePool {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> createFontFamilyValue(const String&);

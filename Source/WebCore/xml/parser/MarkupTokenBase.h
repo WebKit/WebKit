@@ -47,7 +47,7 @@ static inline Attribute* findAttributeInVector(Vector<Attribute>& attributes, co
 
 
 class DoctypeDataBase {
-    WTF_MAKE_NONCOPYABLE(DoctypeDataBase);
+    WTF_MAKE_NONCOPYABLE(DoctypeDataBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     DoctypeDataBase()
         : m_hasPublicIdentifier(false)

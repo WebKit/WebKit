@@ -40,6 +40,8 @@ public:
     };
 
     struct StepDescription {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         int defaultStep;
         int defaultStepBase;
         int stepScaleFactor;

@@ -67,6 +67,7 @@ class SimpleFontData;
 // but on demand for each glyph, because the system may need to use different
 // fallback fonts for each. This lazy population is done by the Font.
 class GlyphPageTreeNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GlyphPageTreeNode()
         : m_parent(0)

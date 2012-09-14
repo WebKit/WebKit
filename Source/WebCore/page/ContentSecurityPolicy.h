@@ -49,6 +49,7 @@ typedef int SandboxFlags;
 typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
 
 class ContentSecurityPolicy {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
     {

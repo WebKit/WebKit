@@ -79,6 +79,7 @@ inline void ContextFeatures::hostDestroyed()
 
 
 class ContextFeaturesClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static ContextFeaturesClient* empty();
 

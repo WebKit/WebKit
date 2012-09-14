@@ -77,6 +77,8 @@ typedef enum {
 } gstate;
 
 struct GIFFrameReader {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     /* LZW decoder state machine */
     unsigned char *stackp;              /* Current stack pointer */
     int datasize;
@@ -152,6 +154,8 @@ struct GIFFrameReader {
 };
 
 struct GIFImageReader {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     WebCore::GIFImageDecoder* clientptr;
     /* Parsing state machine */
     gstate state;                      /* Current decoder master state */

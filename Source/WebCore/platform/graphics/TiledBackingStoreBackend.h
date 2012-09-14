@@ -31,6 +31,7 @@ class TiledBackingStore;
 class TiledBackingStoreBackend;
 
 class TiledBackingStoreBackend {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<TiledBackingStoreBackend> create() { return adoptPtr(new TiledBackingStoreBackend); }
     virtual ~TiledBackingStoreBackend() { }

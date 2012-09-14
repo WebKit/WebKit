@@ -44,6 +44,7 @@ typedef z_stream_s z_stream;
 namespace WebCore {
 
 class WebSocketDeflater {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ContextTakeOverMode {
         DoNotTakeOverContext,
@@ -70,6 +71,7 @@ private:
 };
 
 class WebSocketInflater {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<WebSocketInflater> create(int windowBits = 15);
 

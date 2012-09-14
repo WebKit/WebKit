@@ -50,6 +50,8 @@ class Node;
 class Page;
 
 struct HighlightConfig {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     Color content;
     Color contentOutline;
     Color padding;
@@ -86,6 +88,7 @@ struct Highlight {
 };
 
 class InspectorOverlay {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorOverlay> create(Page* page, InspectorClient* client)
     {

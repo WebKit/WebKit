@@ -46,7 +46,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class WebSocketHandshake {
-    WTF_MAKE_NONCOPYABLE(WebSocketHandshake);
+    WTF_MAKE_NONCOPYABLE(WebSocketHandshake); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Mode {
         Incomplete, Normal, Failed, Connected

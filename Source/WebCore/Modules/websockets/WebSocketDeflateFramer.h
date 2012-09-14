@@ -46,6 +46,7 @@ namespace WebCore {
 class WebSocketDeflateFramer;
 
 class DeflateResultHolder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<DeflateResultHolder> create(WebSocketDeflateFramer* framer)
     {
@@ -68,6 +69,7 @@ private:
 };
 
 class InflateResultHolder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InflateResultHolder> create(WebSocketDeflateFramer* framer)
     {

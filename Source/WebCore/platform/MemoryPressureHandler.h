@@ -27,11 +27,13 @@
 #define MemoryPressureHandler_h
 
 #include <time.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/Platform.h>
 
 namespace WebCore {
 
 class MemoryPressureHandler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     friend MemoryPressureHandler& memoryPressureHandler();
 

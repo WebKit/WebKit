@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~Extensions3DOpenGL();
 

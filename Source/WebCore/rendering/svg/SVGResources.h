@@ -113,6 +113,8 @@ private:
     // masker:  'container elements' and 'graphics elements'
     // -> a, circle, defs, ellipse, glyph, g, image, line, marker, mask, missing-glyph, path, pattern, polygon, polyline, rect, svg, switch, symbol, text, use
     struct ClipperFilterMaskerData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         ClipperFilterMaskerData()
             : clipper(0)
 #if ENABLE(FILTERS)
@@ -137,6 +139,8 @@ private:
     // From SVG 1.1 2nd Edition
     // marker: line, path, polygon, polyline
     struct MarkerData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         MarkerData()
             : markerStart(0)
             , markerMid(0)
@@ -159,6 +163,8 @@ private:
     // stroke:     'shapes' and 'text content elements'
     // -> altGlyph, circle, ellipse, line, path, polygon, polyline, rect, text, textPath, tref, tspan
     struct FillStrokeData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         FillStrokeData()
             : fill(0)
             , stroke(0)
