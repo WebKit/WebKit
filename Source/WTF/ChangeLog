@@ -1,3 +1,18 @@
+2012-09-13  Byungseon Shin  <xingri@gmail.com>
+
+        Fix for WTF fails to compile in thumb mode when llint is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=96400
+
+        Reviewed by Filip Pizlo.
+
+        When using "+m" with Armv7 cross compiler assume offset range between +/- 4095
+        (the largest possible offset range).
+        However, ldrex/strex can only use offset range of 0~1020, so "+m" needed to be changed to "+Q".
+        Ref. http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54480
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Evas_Object* is a ref'ed structure, so tread it as such

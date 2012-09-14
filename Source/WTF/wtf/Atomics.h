@@ -160,7 +160,7 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
         "bne.n 0f\n\t"
         "strex %1, %4, %0\n\t"
         "0:"
-        : "+m"(*location), "=&r"(result), "=&r"(tmp)
+        : "+Q"(*location), "=&r"(result), "=&r"(tmp)
         : "r"(expected), "r"(newValue)
         : "memory");
     result = !result;
