@@ -145,10 +145,8 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char
         Result result;
         convertValue(m_exec, value, result);
 
-        if (m_exec->hadException()) {
-            m_exec->clearException();
+        if (m_exec->hadException())
             return ExceptionThrown;
-        }
 
         setter(context, result);
         break;
