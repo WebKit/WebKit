@@ -94,7 +94,7 @@ namespace WTF {
         uint64_t longRandom = 19248658165952622LL; // A random 64-bit value.
 
         uint64_t product = longRandom * (shortRandom1 * key1 + shortRandom2 * key2);
-        unsigned highBits = product >> (sizeof(uint64_t) - sizeof(unsigned));
+        unsigned highBits = static_cast<unsigned>(product >> (sizeof(uint64_t) - sizeof(unsigned)));
         return highBits;
     }
 

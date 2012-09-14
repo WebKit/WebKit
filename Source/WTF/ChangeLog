@@ -1,3 +1,13 @@
+2012-09-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Minimize collisions when hashing pairs
+        https://bugs.webkit.org/show_bug.cgi?id=96022
+
+        Build fix (with newer clang?)
+
+        * wtf/HashFunctions.h: (WTF::pairIntHash): Be explicit about casting from
+        64 bit to 32 bit.
+
 2012-09-14  Dana Jansens  <danakj@chromium.org>
 
         Minimize collisions when hashing pairs
