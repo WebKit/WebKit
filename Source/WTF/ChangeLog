@@ -1,5 +1,33 @@
 2012-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: NMI: convert template versions of String*::reportMemoryUsage functions to normal functions.
+        https://bugs.webkit.org/show_bug.cgi?id=96759
+
+        Reviewed by Yury Semikhatsky.
+
+        Now when MemoryInstrumentation.h is a part of WTF we can move reportMemoryUsage functions to cpp file.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::reportMemoryUsage):
+        (WTF):
+        * wtf/text/AtomicString.h:
+        (WTF):
+        (AtomicString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reportMemoryUsage):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (WTF):
+        (StringImpl):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::reportMemoryUsage):
+        (WTF):
+        * wtf/text/WTFString.h:
+        (WTF):
+        (String):
+
+2012-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: NMI: remove current traits helper class because it is customizing the instrumentation at a wrong place and is not necessary at the moment.
         https://bugs.webkit.org/show_bug.cgi?id=96737
 

@@ -35,6 +35,7 @@
 namespace WTF {
 
 struct AtomicStringHash;
+class MemoryObjectInfo;
 
 class AtomicString {
 public:
@@ -158,12 +159,7 @@ public:
     void show() const;
 #endif
 
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_string);
-    }
+    WTF_EXPORT_STRING_API void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.

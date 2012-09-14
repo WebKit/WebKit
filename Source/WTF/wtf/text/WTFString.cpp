@@ -27,6 +27,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MemoryInstrumentation.h>
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -818,6 +819,12 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
     if (!utf8)
         return String(string, size);
     return utf8;
+}
+
+void String::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addInstrumentedMember(m_impl);
 }
 
 // String Operations

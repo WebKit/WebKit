@@ -58,6 +58,7 @@ namespace WebKit {
 namespace WTF {
 
 class CString;
+class MemoryObjectInfo;
 struct StringHash;
 
 // Declarations of string operations
@@ -455,12 +456,7 @@ public:
         return (*m_impl)[index];
     }
 
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_impl);
-    }
+    WTF_EXPORT_STRING_API void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     RefPtr<StringImpl> m_impl;
