@@ -3439,11 +3439,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     const PropertyHandler& handler = m_styleBuilder.propertyHandler(id);
     if (handler.isValid()) {
         if (isInherit)
-            handler.applyInheritValue(this);
+            handler.applyInheritValue(id, this);
         else if (isInitial)
-            handler.applyInitialValue(this);
+            handler.applyInitialValue(id, this);
         else
-            handler.applyValue(this, value);
+            handler.applyValue(id, this, value);
         return;
     }
 

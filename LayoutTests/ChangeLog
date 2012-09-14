@@ -1,3 +1,16 @@
+2012-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: transition doesn’t always override transition-property
+        https://bugs.webkit.org/show_bug.cgi?id=96658
+
+        Reviewed by Dean Jackson.
+
+        Test with longhand transition-property rule, followed by shorthand
+        with missing property value. This test should pass, and not assert.
+
+        * transitions/longhand-vs-shorthand-initial-expected.txt: Added.
+        * transitions/longhand-vs-shorthand-initial.html: Added.
+
 2012-09-14  Tom Sepez  <tsepez@chromium.org>
 
         ImageLoader can't be cleared when video element poster attribute removed.

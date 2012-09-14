@@ -3200,18 +3200,19 @@ bool CSSParser::parseAnimationShorthand(bool important)
 
 bool CSSParser::parseTransitionShorthand(bool important)
 {
-    const unsigned numProperties = webkitTransitionShorthand().length();
+    const unsigned numProperties = 4;
+    ASSERT(numProperties == webkitTransitionShorthand().length());
 
     ShorthandScope scope(this, CSSPropertyWebkitTransition);
 
-    bool parsedProperty[] = { false, false, false, false };
-    RefPtr<CSSValue> values[4];
+    bool parsedProperty[numProperties] = { false };
+    RefPtr<CSSValue> values[numProperties];
 
     unsigned i;
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
         if (val->unit == CSSParserValue::Operator && val->iValue == ',') {
-            // We hit the end.  Fill in all remaining values with the initial value.
+            // We hit the end. Fill in all remaining values with the initial value.
             m_valueList->next();
             for (i = 0; i < numProperties; ++i) {
                 if (!parsedProperty[i])
