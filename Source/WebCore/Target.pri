@@ -14,8 +14,6 @@ WEBKIT += javascriptcore
 
 CONFIG += staticlib
 
-DEFINES += QT_MAKEDLL
-
 RESOURCES += \
     $$PWD/WebCore.qrc
 

@@ -1,5 +1,14 @@
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove old cruft from the qmake build system
+
+        Rubber-stamped by Simon Hausmann.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Enable force_static_libs_as_shared for development
 
         Not enabled for buildbots or production-builds (part of Qt5)

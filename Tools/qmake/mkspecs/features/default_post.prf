@@ -65,12 +65,6 @@ CONFIG -= warn_on
     -Winit-self \
     $$QMAKE_CXXFLAGS
 
-v8: DEFINES += WTF_USE_V8=1
-else {
-    contains(JAVASCRIPTCORE_JIT, yes): DEFINES+=ENABLE_JIT=1
-    contains(JAVASCRIPTCORE_JIT, no): DEFINES+=ENABLE_JIT=0
-}
-
 # Enable dynamic instead of static libraries for development
 !production_build:!buildbot:!win*: CONFIG += force_static_libs_as_shared
 
@@ -190,8 +184,7 @@ contains(QT, webkit) {
     # In addition to the main shared QtWebKit library we also
     # need to link to any intermediate shared libraries.
     force_static_libs_as_shared {
-        WEBKIT += wtf webcore
-        !v8: WEBKIT += javascriptcore
+        WEBKIT += wtf javascriptcore webcore
         build?(webkit1): WEBKIT += webkit1
         build?(webkit2): WEBKIT += webkit2
     }
