@@ -39,6 +39,7 @@
 #include "DocumentThreadableLoaderClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "InspectorInstrumentation.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"
@@ -49,7 +50,6 @@
 #include <wtf/UnusedParam.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorInstrumentation.h"
 #include "ProgressTracker.h"
 #endif
 
