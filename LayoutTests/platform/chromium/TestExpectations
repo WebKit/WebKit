@@ -3595,6 +3595,7 @@ BUGWK96835 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PAS
 BUGWK96835 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PASS
 BUGWK96836 : inspector/debugger/xhr-breakpoints.html = TEXT PASS
 BUGWK96834 : platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers.html = IMAGE PASS
+BUGWK96833 : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUGWK96833 : svg/carto.net/combobox.svg = IMAGE PASS
 
 BUGWK96720 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html = PASS TIMEOUT

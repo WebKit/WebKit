@@ -1,5 +1,11 @@
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
+        Mark svg/carto.net/selectionlist.svg as flaky because it depends on svg/carto.net/button.svg
+        running first in order to pass.
+        * platform/chromium/TestExpectations:
+
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
         The cr-linux-ews thinks http/tests/cache/post-redirect-get.php and http/tests/cache/post-with-cached-subresources.php are MISSING results
         https://bugs.webkit.org/show_bug.cgi?id=95215
 
