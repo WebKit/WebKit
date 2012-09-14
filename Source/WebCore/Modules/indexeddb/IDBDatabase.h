@@ -32,7 +32,7 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "IDBDatabaseBackendInterface.h"
-#include "IDBDatabaseCallbacksImpl.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
@@ -51,7 +51,7 @@ typedef int ExceptionCode;
 
 class IDBDatabase : public RefCounted<IDBDatabase>, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
+    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
 
     void transactionCreated(IDBTransaction*);
@@ -89,7 +89,6 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     void forceClose();
-    void registerFrontendCallbacks();
     const IDBDatabaseMetadata metadata() const { return m_metadata; }
     void enqueueEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
@@ -99,7 +98,7 @@ public:
     using RefCounted<IDBDatabase>::deref;
 
 private:
-    IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>);
+    IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
@@ -123,7 +122,7 @@ private:
     // database so that we can cancel them if the database closes.
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
-    RefPtr<IDBDatabaseCallbacksImpl> m_databaseCallbacks;
+    RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };
 
 } // namespace WebCore

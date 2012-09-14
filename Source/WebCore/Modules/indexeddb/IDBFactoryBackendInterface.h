@@ -28,19 +28,19 @@
 #ifndef IDBFactoryBackendInterface_h
 #define IDBFactoryBackendInterface_h
 
-#include "IDBCallbacks.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class Frame;
+class IDBCallbacks;
 class IDBDatabase;
+class IDBDatabaseCallbacks;
 class SecurityOrigin;
-class WorkerContext;
+class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
@@ -54,7 +54,7 @@ public:
     virtual ~IDBFactoryBackendInterface() { }
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) = 0;
-    virtual void open(const String& name, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) = 0;
+    virtual void open(const String& name, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) = 0;
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) = 0;
 };
 

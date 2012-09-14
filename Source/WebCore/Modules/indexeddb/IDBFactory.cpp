@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "GroupSettings.h"
 #include "IDBDatabase.h"
+#include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
@@ -120,8 +121,9 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
     if (!isContextValid(context))
         return 0;
 
-    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), version);
-    m_backend->open(name, version, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
+    RefPtr<IDBDatabaseCallbacksImpl> databaseCallbacks = IDBDatabaseCallbacksImpl::create();
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), databaseCallbacks, version);
+    m_backend->open(name, version, request, databaseCallbacks, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }
 

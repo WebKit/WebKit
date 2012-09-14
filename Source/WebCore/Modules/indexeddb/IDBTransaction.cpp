@@ -294,12 +294,10 @@ void IDBTransaction::onAbort()
     }
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();
-    m_database->transactionFinished(this);
 
-    if (m_contextStopped || !scriptExecutionContext())
-        return;
-
+    // Enqueue events before notifying database, as database may close which enqueues more events and order matters.
     enqueueEvent(Event::create(eventNames().abortEvent, true, false));
+    m_database->transactionFinished(this);
 }
 
 void IDBTransaction::onComplete()
@@ -309,12 +307,10 @@ void IDBTransaction::onComplete()
     m_state = Finishing;
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();
-    m_database->transactionFinished(this);
 
-    if (m_contextStopped || !scriptExecutionContext())
-        return;
-
+    // Enqueue events before notifying database, as database may close which enqueues more events and order matters.
     enqueueEvent(Event::create(eventNames().completeEvent, false, false));
+    m_database->transactionFinished(this);
 }
 
 bool IDBTransaction::hasPendingActivity() const

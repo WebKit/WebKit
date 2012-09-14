@@ -34,13 +34,15 @@
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseBackendProxy.h"
+#include "IDBDatabaseCallbacksProxy.h"
 #include "IDBDatabaseError.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"
-#include "WebIDBDatabaseImpl.h"
+#include "WebIDBDatabaseCallbacks.h"
 #include "WebIDBDatabaseError.h"
+#include "WebIDBDatabaseImpl.h"
 #include "WebIDBKey.h"
 #include "WebIDBTransactionImpl.h"
 #include "platform/WebSerializedScriptValue.h"
@@ -75,7 +77,8 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCurso
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
-    m_callbacks->onSuccess(new WebIDBDatabaseImpl(backend));
+    ASSERT(m_databaseCallbacks.get());
+    m_callbacks->onSuccess(new WebIDBDatabaseImpl(backend, m_databaseCallbacks.release()));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
@@ -137,9 +140,17 @@ void IDBCallbacksProxy::onBlocked(int64_t existingVersion)
 
 void IDBCallbacksProxy::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBDatabaseBackendInterface> database)
 {
-    m_callbacks->onUpgradeNeeded(oldVersion, new WebIDBTransactionImpl(transaction), new WebIDBDatabaseImpl(database));
+    ASSERT(m_databaseCallbacks);
+    m_callbacks->onUpgradeNeeded(oldVersion, new WebIDBTransactionImpl(transaction), new WebIDBDatabaseImpl(database, m_databaseCallbacks));
+}
+
+void IDBCallbacksProxy::setDatabaseCallbacks(PassRefPtr<IDBDatabaseCallbacksProxy> databaseCallbacks)
+{
+    ASSERT(!m_databaseCallbacks);
+    m_databaseCallbacks = databaseCallbacks;
 }
 
 } // namespace WebKit
+
 
 #endif // ENABLE(INDEXED_DATABASE)
