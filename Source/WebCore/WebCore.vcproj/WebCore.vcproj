@@ -33694,6 +33694,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\LocaleNone.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\LocaleToScriptMapping.h"
 					>
 				</File>
@@ -33716,6 +33720,14 @@
 				<File
 					RelativePath="..\platform\text\LocalizedNumberNone.cpp"
 					>
+				<File
+					RelativePath="..\platform\text\Localizer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\Localizer.h"
+					>
+				</File>
 				</File>
 				<File
 					RelativePath="..\platform\text\ParserUtilities.h"
