@@ -36,7 +36,6 @@
 #include "RenderTheme.h"
 
 #include <cairo.h>
-#include <wtf/efl/RefPtrEfl.h>
 
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef struct _Evas_Object Evas_Object;
@@ -251,7 +250,7 @@ private:
     String m_themePath;
     // Order so that the canvas gets destroyed at last.
     OwnPtr<Ecore_Evas> m_canvas;
-    RefPtr<Evas_Object> m_edje;
+    OwnPtr<Evas_Object> m_edje;
 
     struct ThemePartDesc {
         FormType type;
@@ -276,7 +275,7 @@ private:
     private:
         // Order so that the canvas gets destroyed at last.
         OwnPtr<Ecore_Evas> m_canvas;
-        RefPtr<Evas_Object> m_edje;
+        OwnPtr<Evas_Object> m_edje;
         RefPtr<cairo_surface_t> m_surface;
     };
 

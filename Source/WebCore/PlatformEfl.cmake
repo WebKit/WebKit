@@ -39,6 +39,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/PlatformMouseEventEfl.cpp
   platform/efl/PlatformScreenEfl.cpp
   platform/efl/PlatformWheelEventEfl.cpp
+  platform/efl/RefPtrEfl.cpp
   platform/efl/RenderThemeEfl.cpp
   platform/efl/RunLoopEfl.cpp
   platform/efl/ScrollViewEfl.cpp
