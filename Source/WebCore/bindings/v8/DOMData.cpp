@@ -43,9 +43,9 @@ DOMDataStore& DOMData::getCurrentStore(v8::Isolate* isolate)
     V8PerIsolateData* data = V8PerIsolateData::current(isolate);
     if (UNLIKELY(data->domDataStore() != 0))
         return *data->domDataStore();
-    V8DOMWindowShell::IsolatedContextData* isolatedData = V8DOMWindowShell::enteredIsolatedContextData();
-    if (UNLIKELY(!!isolatedData))
-        return *isolatedData->world()->domDataStore();
+    V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
+    if (UNLIKELY(context != 0))
+        return *context->world()->domDataStore();
     return defaultStore;
 }
 

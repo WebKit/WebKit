@@ -42,13 +42,14 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
     if (worldToUse == UseMainWorld)
         return;
 
-    v8::Local<v8::Context> isolatedContext = V8DOMWindowShell::enteredIsolatedContext();
-    if (LIKELY(isolatedContext.IsEmpty())) {
+    V8DOMWindowShell* shell = V8DOMWindowShell::getEntered();
+    if (LIKELY(!shell)) {
         m_worldToUse = UseMainWorld;
         return;
     }
 
-    m_context = SharedPersistent<v8::Context>::create(isolatedContext);
+    ASSERT(!shell->context().IsEmpty());
+    m_context = SharedPersistent<v8::Context>::create(shell->context());
 }
 
 v8::Local<v8::Context> WorldContextHandle::adjustedContext(ScriptController* script) const
