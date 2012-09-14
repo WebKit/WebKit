@@ -1,5 +1,10 @@
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
+        Comment out bug URL. This fixes a lint warning.
+        * platform/qt/Skipped:
+
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
         Update all the MISSING lines in chromium's TestExpectations.
         If the test always passed, removed the line. In some cases, they just needed
         obvious rebaselines. In others, they haven't reported MISSING in the past

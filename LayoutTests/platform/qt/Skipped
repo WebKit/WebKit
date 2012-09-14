@@ -2755,7 +2755,7 @@ fast/events/autoscroll-in-textarea.html
 fast/forms/time-multiple-fields
 
 # [Qt] New inspector/timeline/timeline-decode-resize.html introduced in r125790 fails
-https://bugs.webkit.org/show_bug.cgi?id=94341
+# https://bugs.webkit.org/show_bug.cgi?id=94341
 inspector/timeline/timeline-decode-resize.html
 
 # REGRESSION(r126852): It broke inspector tests
