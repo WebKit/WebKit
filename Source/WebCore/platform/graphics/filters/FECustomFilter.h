@@ -78,27 +78,42 @@ private:
     bool applyShader();
     void clearShaderResult();
     bool initializeContext();
+    
+    enum CustomFilterDrawType {
+        NEEDS_INPUT_TEXTURE,
+        NO_INPUT_TEXTURE
+    };
+    bool prepareForDrawing(CustomFilterDrawType = NEEDS_INPUT_TEXTURE);
+
+    void drawFilterMesh(Platform3DObject inputTexture);
+    bool programNeedsInputTexture() const;
+    bool ensureInputTexture();
+    void uploadInputTexture(Uint8ClampedArray* srcPixelArray);
+    bool resizeContextIfNeeded(const IntSize&);
+    bool resizeContext(const IntSize&);
+
+    bool ensureFrameBuffer();
     void deleteRenderBuffers();
-    void resizeContext(const IntSize& newContextSize);
+
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset);
     void unbindVertexAttribute(int attributeLocation);
     void bindProgramArrayParameters(int uniformLocation, CustomFilterArrayParameter*);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
     void bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter*);
     void bindProgramParameters();
-    void bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray);
+    void bindProgramAndBuffers(Platform3DObject inputTexture);
     void unbindVertexAttributes();
     
     // No need to keep a reference here. It is owned by the RenderView.
     CustomFilterGlobalContext* m_globalContext;
     
     RefPtr<GraphicsContext3D> m_context;
-    RefPtr<Texture> m_inputTexture;
     RefPtr<CustomFilterValidatedProgram> m_validatedProgram;
     RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
     RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
 
+    Platform3DObject m_inputTexture;
     Platform3DObject m_frameBuffer;
     Platform3DObject m_depthBuffer;
     Platform3DObject m_destTexture;

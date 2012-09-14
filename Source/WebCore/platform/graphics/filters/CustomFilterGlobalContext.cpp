@@ -78,6 +78,8 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
     GraphicsContext3D::Attributes attributes;
     attributes.preserveDrawingBuffer = true;
     attributes.premultipliedAlpha = false;
+    attributes.shareResources = true;
+    attributes.preferDiscreteGPU = true;
     m_context = GraphicsContext3D::create(attributes, hostWindow, GraphicsContext3D::RenderOffscreen);
     if (!m_context)
         return;

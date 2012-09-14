@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,6 +85,7 @@ FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* custom
     , m_globalContext(customFilterGlobalContext)
     , m_validatedProgram(validatedProgram)
     , m_compiledProgram(0) // Don't compile the program unless we need to paint.
+    , m_inputTexture(0)
     , m_frameBuffer(0)
     , m_depthBuffer(0)
     , m_destTexture(0)
@@ -113,6 +115,10 @@ void FECustomFilter::deleteRenderBuffers()
     if (!m_context)
         return;
     m_context->makeContextCurrent();
+    if (m_inputTexture) {
+        m_context->deleteTexture(m_inputTexture);
+        m_inputTexture = 0;
+    }
     if (m_frameBuffer) {
         // Make sure to unbind any framebuffer from the context first, otherwise
         // some platforms might refuse to bind the same buffer id again.
@@ -149,46 +155,64 @@ void FECustomFilter::clearShaderResult()
     in->copyUnmultipliedImage(dstPixelArray, effectDrawingRect);
 }
 
+void FECustomFilter::drawFilterMesh(Platform3DObject inputTexture)
+{
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
+    m_context->viewport(0, 0, m_contextSize.width(), m_contextSize.height());
+    
+    m_context->clearColor(0, 0, 0, 0);
+    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
+    
+    bindProgramAndBuffers(inputTexture);
+    m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
+    unbindVertexAttributes();
+}
+
+bool FECustomFilter::prepareForDrawing(CustomFilterDrawType filterDrawType)
+{
+    if (!m_context && !initializeContext())
+        return false;
+    m_context->makeContextCurrent();
+
+    // If the shader had compiler errors we cannot draw anything.
+    if (!m_compiledProgram->isInitialized())
+        return false;
+    
+    // Only allocate a texture if the program needs one and the caller doesn't allocate one by itself.
+    if ((programNeedsInputTexture() && (filterDrawType == NEEDS_INPUT_TEXTURE) && !ensureInputTexture())
+        || !ensureFrameBuffer())
+        return false;
+    
+    return true;
+}
+
+bool FECustomFilter::programNeedsInputTexture() const
+{
+    ASSERT(m_compiledProgram.get());
+    return m_compiledProgram->samplerLocation() != -1;
+}
+
 bool FECustomFilter::applyShader()
 {
     Uint8ClampedArray* dstPixelArray = createUnmultipliedImageResult();
     if (!dstPixelArray)
         return false;
 
+    if (!prepareForDrawing())
+        return false;
+
     FilterEffect* in = inputEffect(0);
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArray = in->asUnmultipliedImage(effectDrawingRect);
-    
     IntSize newContextSize(effectDrawingRect.size());
-    bool hadContext = m_context;
-    if (!m_context && !initializeContext())
-        return false;
-    m_context->makeContextCurrent();
-    
-    if (!hadContext || m_contextSize != newContextSize)
-        resizeContext(newContextSize);
-
-#if !PLATFORM(BLACKBERRY) // BlackBerry defines its own Texture class.
-    // Do not draw the filter if the input image cannot fit inside a single GPU texture.
-    if (m_inputTexture->tiles().numTilesX() != 1 || m_inputTexture->tiles().numTilesY() != 1)
-        return false;
-#endif
-    
-    // The shader had compiler errors. We cannot draw anything.
-    if (!m_compiledProgram->isInitialized())
+    if (!resizeContextIfNeeded(newContextSize))
         return false;
 
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
-    m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
-    
-    m_context->clearColor(0, 0, 0, 0);
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
-    
-    bindProgramAndBuffers(srcPixelArray.get());
-    
-    m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
-    
-    unbindVertexAttributes();
+    bool needsInputTexture = programNeedsInputTexture();
+    if (needsInputTexture) {
+        RefPtr<Uint8ClampedArray> srcPixelArray = in->asUnmultipliedImage(effectDrawingRect);
+        uploadInputTexture(srcPixelArray.get());
+    }
+    drawFilterMesh(needsInputTexture ? m_inputTexture : 0);
 
     ASSERT(static_cast<size_t>(newContextSize.width() * newContextSize.height() * 4) == dstPixelArray->length());
     m_context->readPixels(0, 0, newContextSize.width(), newContextSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, dstPixelArray->data());
@@ -211,41 +235,73 @@ bool FECustomFilter::initializeContext()
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
                                       FloatRect(0, 0, 1, 1),
                                       m_meshType);
+
     return true;
 }
 
-void FECustomFilter::resizeContext(const IntSize& newContextSize)
+bool FECustomFilter::ensureInputTexture()
 {
-#if !PLATFORM(BLACKBERRY) // BlackBerry defines its own Texture class
-    m_inputTexture = Texture::create(m_context.get(), Texture::RGBA8, newContextSize.width(), newContextSize.height());
-#else
-    m_inputTexture = Texture::create(true);
-#endif
-    
+    if (!m_inputTexture)
+        m_inputTexture = m_context->createTexture();
+    return m_inputTexture;
+}
+
+void FECustomFilter::uploadInputTexture(Uint8ClampedArray* srcPixelArray)
+{
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_inputTexture);
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_contextSize.width(), m_contextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, srcPixelArray->data());
+}
+
+bool FECustomFilter::ensureFrameBuffer()
+{
     if (!m_frameBuffer)
         m_frameBuffer = m_context->createFramebuffer();
     if (!m_depthBuffer)
         m_depthBuffer = m_context->createRenderbuffer();
-    if (!m_destTexture) {
+    if (!m_destTexture)
         m_destTexture = m_context->createTexture();
-        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
-        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
-        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-    }
-    
-    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
-    m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
+    return m_frameBuffer && m_depthBuffer && m_destTexture;
+}
 
+bool FECustomFilter::resizeContextIfNeeded(const IntSize& newContextSize)
+{
+    if (newContextSize.isEmpty())
+        return false;
+    if (m_contextSize == newContextSize)
+        return true;
+
+    int maxTextureSize = 0;
+    m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
+    if (newContextSize.height() > maxTextureSize || newContextSize.width() > maxTextureSize)
+        return false;
+
+    return resizeContext(newContextSize);
+}
+
+bool FECustomFilter::resizeContext(const IntSize& newContextSize)
+{
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
+    // We are going to clear the output buffer anyway, so we can safely initialize the destination texture with garbage data.
+#if PLATFORM(CHROMIUM)
+    // FIXME: GraphicsContext3D::texImage2DDirect is not implemented on Chromium.
+    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
+#else
+    m_context->texImage2DDirect(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
+#endif
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_destTexture, 0);
-    
+ 
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
     m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, newContextSize.width(), newContextSize.height());
     m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+
+    if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+        return false;
+
+    m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
     
     m_contextSize = newContextSize;
+    return true;
 }
 
 void FECustomFilter::bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset)
@@ -337,24 +393,24 @@ void FECustomFilter::bindProgramParameters()
     }
 }
 
-void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
+void FECustomFilter::bindProgramAndBuffers(Platform3DObject inputTexture)
 {
     ASSERT(m_compiledProgram->isInitialized());
 
     m_context->useProgram(m_compiledProgram->program());
     
-    if (m_compiledProgram->samplerLocation() != -1) {
+    if (programNeedsInputTexture()) {
         // We should be binding the DOM element texture sampler only if the author is using the CSS mix function.
         ASSERT(m_validatedProgram->programInfo().programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
+        ASSERT(m_compiledProgram->samplerLocation() != -1);
 
         m_context->activeTexture(GraphicsContext3D::TEXTURE0);
         m_context->uniform1i(m_compiledProgram->samplerLocation(), 0);
-#if !PLATFORM(BLACKBERRY)
-        m_inputTexture->load(srcPixelArray->data());
-        m_inputTexture->bindTile(0);
-#else
-        notImplemented();
-#endif
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, inputTexture);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
     }
     
     if (m_compiledProgram->projectionMatrixLocation() != -1) {
