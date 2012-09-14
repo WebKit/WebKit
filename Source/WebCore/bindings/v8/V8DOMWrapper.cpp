@@ -201,8 +201,7 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> va
         return 0;
     if (lookup == ListenerFindOnly)
         return V8EventListenerList::findWrapper(value, isAttribute);
-    v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-    if (isWrapperOfType(globalPrototype, &V8DOMWindow::info))
+    if (isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info))
         return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
 #if ENABLE(WORKERS)
     return V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(value, isAttribute);

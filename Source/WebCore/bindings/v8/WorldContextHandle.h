@@ -40,7 +40,7 @@ namespace WebCore {
 
 class ScriptController;
 
-enum WorldToUse { UseMainWorld, UseCurrentWorld };
+enum WorldToUse { UseMainWorld, UseCurrentWorld, UseWorkerWorld };
 
 class WorldContextHandle {
 public:
