@@ -1,3 +1,13 @@
+2012-09-13  Ojan Vafai  <ojan@chromium.org>
+
+        Remove lines for fast/table/bad-replaced-sizing-preferred-logical-widths.html
+        fixed in http://trac.webkit.org/changeset/128528.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-09-13  James Robinson  <jamesr@chromium.org>
 
         Unreviewed gardening for r128516/r128517:

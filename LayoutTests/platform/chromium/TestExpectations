@@ -3635,7 +3635,6 @@ BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html = IMA
 BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html = IMAGE
 BUGWK96628 LION : fast/frames/calculate-order.html = PASS TEXT
 BUGWK96550 : http/tests/media/media-source/seek-to-end-after-duration-change.html = PASS TIMEOUT
-BUGWK96594 MAC : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
 BUGWK96416 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
 BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT

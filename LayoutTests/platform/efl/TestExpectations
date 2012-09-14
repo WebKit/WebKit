@@ -1056,6 +1056,3 @@ BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
 
 // Fails after r128400.
 BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
-
-// Fails after r128389.
-BUGWK96594 : fast/table/bad-replaced-sizing-preferred-logical-widths.html = TEXT
