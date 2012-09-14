@@ -1,3 +1,9 @@
+2012-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, remove an unnecessary expected file.
+
+        * platform/qt/fast/events/keyevent-iframe-removed-crash-expected.txt: Removed.
+
 2012-09-13  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt][WK2] qt-5.0-wk2 Skipped file can be updated after bug #73917 got fixed
