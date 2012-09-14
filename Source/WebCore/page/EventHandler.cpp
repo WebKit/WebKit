@@ -2381,7 +2381,8 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         eventTarget = m_scrollGestureHandlingNode.get();
 
     if (!eventTarget) {
-        HitTestResult result = hitTestResultAtPoint(gestureEvent.position(), false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active);
+        IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
+        HitTestResult result = hitTestResultAtPoint(hitTestPoint, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active);
         eventTarget = result.targetNode();
     }
 

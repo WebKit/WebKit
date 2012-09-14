@@ -1,0 +1,43 @@
+<html>
+<head>
+<style>
+  body {
+    height: 2000px;
+  }
+  #plugin {
+    position: absolute;
+    top: 500px;
+    width: 150px;
+    height: 150px;
+  }
+</style>
+</head>
+
+<body>
+<embed id="plugin" type="application/x-webkit-test-webplugin" primitive="triangle" background-color="green" primitive-color="blue"></embed>
+<script>
+
+    if (!window.testRunner) {
+        document.write("This test does not work in manual mode.");
+    } else {
+        testRunner.dumpAsText();
+
+        // Scroll so the plugin is 100px down the page
+        window.scroll(0, 400);
+
+        // These events should not reach the plugin since it's futher down on the page.
+        eventSender.gestureTapDown(30, 30);
+        eventSender.gestureTapDown(30, 530);
+
+        // Send some gesture events to the plugin.
+        var positionX = 30;
+        var positionY = 110;
+        eventSender.gestureTap(positionX, positionY);
+        eventSender.gestureScrollBegin(positionX, positionY);
+        eventSender.gestureScrollUpdate(30, 0);
+        eventSender.gestureScrollEnd(0, 0);
+    }
+
+</script>
+</body>
+</html>

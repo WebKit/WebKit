@@ -1,3 +1,16 @@
+2012-09-14  Rick Byers  <rbyers@chromium.org>
+
+        Gesture events sent to wrong node when page is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=96788
+
+        Reviewed by Antonio Gomes.
+
+        Add layout test based on gesture-events.html which tests the case when
+        the document is scrolled (so that client co-ordinates don't equal page
+        co-ordinates).
+        * platform/chromium/plugins/gesture-events-scrolled-expected.txt: Added.
+        * platform/chromium/plugins/gesture-events-scrolled.html: Added.
+
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][WK2] Unskip test cases that are now passing
