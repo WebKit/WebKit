@@ -99,7 +99,7 @@ WebInspector.WebGLProfileView.prototype = {
     {
         function didReceiveTraceLog(error, traceLog)
         {
-            this._traceLogElement.innerHTML = "";
+            this._traceLogElement.textContent = "";
             if (!traceLog)
                 return;
             var calls = traceLog.calls;
