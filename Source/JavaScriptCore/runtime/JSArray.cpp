@@ -549,7 +549,9 @@ bool JSArray::unshiftCount(ExecState* exec, unsigned count)
         storage = m_butterfly->arrayStorage();
         storage->m_indexBias -= count;
         storage->setVectorLength(storage->vectorLength() + count);
-    } else if (!unshiftCountSlowCase(exec->globalData(), count)) {
+    } else if (unshiftCountSlowCase(exec->globalData(), count))
+        storage = arrayStorage();
+    else {
         throwOutOfMemoryError(exec);
         return true;
     }

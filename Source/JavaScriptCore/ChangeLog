@@ -1,3 +1,17 @@
+2012-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        bbc homepage crashes immediately
+        https://bugs.webkit.org/show_bug.cgi?id=96812
+        <rdar://problem/12081386>
+
+        Reviewed by Oliver Hunt.
+
+        If you use the old storage pointer to write to space you thought was newly allocated,
+        you're going to have a bad time.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCount):
+
 2012-09-14  Adam Barth  <abarth@webkit.org>
 
         Remove webkitPostMessage
