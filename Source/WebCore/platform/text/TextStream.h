@@ -34,6 +34,11 @@ namespace WebCore {
 
 class TextStream {
 public:
+    struct FormatNumberRespectingIntegers {
+        FormatNumberRespectingIntegers(double number) : value(number) { }
+        double value;
+    };
+
     TextStream& operator<<(bool);
     TextStream& operator<<(int);
     TextStream& operator<<(unsigned);
@@ -46,6 +51,7 @@ public:
     TextStream& operator<<(const char*);
     TextStream& operator<<(const void*);
     TextStream& operator<<(const String&);
+    TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
     String release();
 

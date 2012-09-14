@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextStream.h"
 
+#include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,6 +35,14 @@ using namespace std;
 namespace WebCore {
 
 static const size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
+
+static inline bool hasFractions(double val)
+{
+    static const double s_epsilon = 0.0001;
+    int ival = static_cast<int>(val);
+    double dval = static_cast<double>(ival);
+    return fabs(val - dval) > s_epsilon;
+}
 
 TextStream& TextStream::operator<<(bool b)
 {
@@ -104,6 +113,15 @@ TextStream& TextStream::operator<<(const void* p)
 TextStream& TextStream::operator<<(const String& string)
 {
     m_text.append(string);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberToFormat)
+{
+    if (hasFractions(numberToFormat.value))
+        return *this << numberToFormat.value;
+
+    m_text.appendNumber(static_cast<int>(numberToFormat.value));
     return *this;
 }
 

@@ -28,7 +28,6 @@
 #include "TextStream.h"
 
 #include <wtf/Forward.h>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -97,8 +96,6 @@ String quoteAndEscapeNonPrintables(const String&);
 String counterValueForElement(Element*);
 
 String markerTextForListItem(Element*);
-
-String formatNumberRespectingIntegers(double);
 
 } // namespace WebCore
 

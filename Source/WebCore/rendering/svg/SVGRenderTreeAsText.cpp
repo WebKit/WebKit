@@ -134,10 +134,10 @@ static void writeIfNotDefault(TextStream& ts, const char* name, ValueType value,
 
 TextStream& operator<<(TextStream& ts, const FloatRect& r)
 {
-    ts << "at (" << formatNumberRespectingIntegers(r.x()); 
-    ts << "," << formatNumberRespectingIntegers(r.y());
-    ts << ") size " << formatNumberRespectingIntegers(r.width());
-    ts << "x" << formatNumberRespectingIntegers(r.height());
+    ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x());
+    ts << "," << TextStream::FormatNumberRespectingIntegers(r.y());
+    ts << ") size " << TextStream::FormatNumberRespectingIntegers(r.width());
+    ts << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
     return ts;
 }
 

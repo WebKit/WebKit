@@ -79,21 +79,6 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const LayoutRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
-static inline bool hasFractions(double val)
-{
-    static const double s_epsilon = 0.0001;
-    int ival = static_cast<int>(val);
-    double dval = static_cast<double>(ival);
-    return fabs(val - dval) > s_epsilon;
-}
-
-String formatNumberRespectingIntegers(double value)
-{
-    if (!hasFractions(value))
-        return String::number(static_cast<int>(value));
-    return String::number(value, ShouldRoundDecimalPlaces, 2);
-}
-
 TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
     return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
@@ -112,16 +97,16 @@ TextStream& operator<<(TextStream& ts, const FractionalLayoutPoint& p)
 
 TextStream& operator<<(TextStream& ts, const FloatPoint& p)
 {
-    ts << "(" << formatNumberRespectingIntegers(p.x());
-    ts << "," << formatNumberRespectingIntegers(p.y());
+    ts << "(" << TextStream::FormatNumberRespectingIntegers(p.x());
+    ts << "," << TextStream::FormatNumberRespectingIntegers(p.y());
     ts << ")";
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const FloatSize& s)
 {
-    ts << "width=" << formatNumberRespectingIntegers(s.width());
-    ts << " height=" << formatNumberRespectingIntegers(s.height());
+    ts << "width=" << TextStream::FormatNumberRespectingIntegers(s.width());
+    ts << " height=" << TextStream::FormatNumberRespectingIntegers(s.height());
     return ts;
 }
 
