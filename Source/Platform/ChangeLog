@@ -1,3 +1,25 @@
+2012-09-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add the ubercomp WebDelegatedRendererLayer
+        https://bugs.webkit.org/show_bug.cgi?id=94145
+
+        Reviewed by Adrienne Walker.
+
+        Expose a WebDelegatedRendererLayer to allow the browser compositor to
+        embed such a layer in its tree. This layer will be connected to IPC
+        machinery in the compositor that is yet TBD which will give a set of
+        RenderPasses with DrawQuads to the impl copy of the layer.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        (WebKit::WebCompositorSupport::createDelegatedRendererLayer):
+        (WebCompositorSupport):
+        * chromium/public/WebDelegatedRendererLayer.h: Added.
+        (WebKit):
+        (WebDelegatedRendererLayer):
+        (WebKit::WebDelegatedRendererLayer::~WebDelegatedRendererLayer):
+
 2012-09-11  Zach Kuznia  <zork@chromium.org>
 
         Fix FilterTypeZoom to properly call canvas->restore()

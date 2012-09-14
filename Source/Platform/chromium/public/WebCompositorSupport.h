@@ -36,6 +36,7 @@ namespace WebKit {
 class WebAnimationCurve;
 class WebContentLayer;
 class WebContentLayerClient;
+class WebDelegatedRendererLayer;
 class WebExternalTextureLayer;
 class WebExternalTextureLayerClient;
 class WebFloatAnimationCurve;
@@ -80,6 +81,8 @@ public:
     virtual WebLayer* createLayer() { return 0; }
 
     virtual WebContentLayer* createContentLayer(WebContentLayerClient*) { return 0; }
+
+    virtual WebDelegatedRendererLayer* createDelegatedRendererLayer() { return 0; }
 
     virtual WebExternalTextureLayer* createExternalTextureLayer(WebExternalTextureLayerClient* = 0) { return 0; }
 
