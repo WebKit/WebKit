@@ -1,3 +1,16 @@
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
+        Mark compositing/geometry/fixed-position-transform-composited-page-scale.html flaky
+        as it's flaky on all the Chromium bots.
+        * platform/chromium/TestExpectations:
+
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
+        Add expectations for tests that depend on other tests running before them.
+        Filed a bug for each with information on which test it depends on.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-14  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] u_textureSize uniform should be set to the size of the texture.

@@ -3229,6 +3229,7 @@ BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 // Timing out on some Windows bots
 BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT
 
+BUGWK96839 : compositing/geometry/fixed-position-transform-composited-page-scale.html = PASS IMAGE
 BUGWK89702 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = PASS IMAGE
 BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
 
