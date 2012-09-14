@@ -1,3 +1,11 @@
+// This goes before everything else to keep console message line number invariant.
+var lastXHRIndex = 0;
+function xhrLoadedCallback()
+{
+    // We need to make sure the console message text is unique so that we don't end up with repeat count update only.
+    console.log("XHR loaded: " + (++lastXHRIndex));
+}
+
 var initialize_NetworkTest = function() {
 
 InspectorTest.dumpNetworkRequests = function()
@@ -23,14 +31,54 @@ InspectorTest.resetInspectorResourcesData = function(callback)
     }
 }
 
-};
-
-function doXHR(method, url, async, callback)
+InspectorTest.makeSimpleXHR = function(method, url, async, callback)
 {
-    doXHRWithPayload(method, url, async, null, callback);
+    InspectorTest.makeXHR(method, url, async, undefined, undefined, [], false, undefined, callback);
 }
 
-function doXHRWithPayload(method, url, async, payload, callback)
+InspectorTest.makeSimpleXHRWithPayload = function(method, url, async, payload, callback)
+{
+    InspectorTest.makeXHR(method, url, async, undefined, undefined, [], false, payload, callback);
+}
+
+InspectorTest.makeXHR = function(method, url, async, user, password, headers, withCredentials, payload, callback)
+{
+    var args = {};
+    args.method = method;
+    args.url = url;
+    args.async = async;
+    args.user = user;
+    args.password = password;
+    args.headers = headers;
+    args.withCredentials = withCredentials;
+    args.payload = payload;
+    var jsonArgs = JSON.stringify(args).replace(/\"/g, "\\\"");
+
+    function innerCallback(msg)
+    {
+        if (msg._messageText.indexOf("XHR loaded") !== -1)
+            callback();
+        else
+            InspectorTest.addConsoleSniffer(innerCallback);
+    }
+
+    InspectorTest.addConsoleSniffer(innerCallback);
+    InspectorTest.evaluateInPage("makeXHRForJSONArguments(\"" + jsonArgs + "\")");
+}
+
+};
+
+function makeSimpleXHR(method, url, async, callback)
+{
+    makeSimpleXHRWithPayload(method, url, async, null, callback);
+}
+
+function makeSimpleXHRWithPayload(method, url, async, payload, callback)
+{
+    makeXHR(method, url, async, undefined, undefined, [], false, payload, callback)
+}
+
+function makeXHR(method, url, async, user, password, headers, withCredentials, payload, callback)
 {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function()
@@ -40,9 +88,19 @@ function doXHRWithPayload(method, url, async, payload, callback)
                 callback();
         }
     }
-    xhr.open(method, url, async);
+    xhr.open(method, url, async, user, password);
+    xhr.withCredentials = withCredentials;
+    for (var  i = 0; i < headers.length; ++i)
+        xhr.setRequestHeader(headers[i][0], headers[i][1]);
     xhr.send(payload);
 }
+
+function makeXHRForJSONArguments(jsonArgs)
+{
+    var args = JSON.parse(jsonArgs);
+    makeXHR(args.method, args.url, args.async, args.user, args.password, args.headers, args.withCredentials, args.payload, xhrLoadedCallback);
+}
+
 
 function resetInspectorResourcesData()
 {

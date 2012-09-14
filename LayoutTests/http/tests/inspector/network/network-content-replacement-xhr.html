@@ -3,45 +3,44 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
+function setInspectorResourcesDataSizeLimits()
 {
     if (!window.internals) {
         console.log("This test can not be run as window.internals is not available.");
         return;
     }
     internals.settings.setInspectorResourcesDataSizeLimits(300, 200);
-
-    // Here we test replacement logic. We save first two resources content,
-    // discard third resource content once we see its size exceeds limit,
-    // and finally replace first resource content with the last resource content.
-
-    doXHR("GET", "resources/resource.php?size=200", false, xhrLoaded1);
-}
-
-function xhrLoaded1()
-{
-    doXHR("GET", "resources/resource.php?size=100", false, xhrLoaded2);
-}
-
-function xhrLoaded2()
-{
-    doXHR("GET", "resources/resource.php?size=201", false, xhrLoaded3);
-}
-
-function xhrLoaded3()
-{
-    doXHR("GET", "resources/resource.php?size=100", false, allXHRsLoaded);
-}
-
-function allXHRsLoaded()
-{
     console.log("Done.");
 }
 
 function test()
 {
-    InspectorTest.addConsoleSniffer(step1);
-    InspectorTest.evaluateInPage("loadData()");
+    InspectorTest.addConsoleSniffer(dataSizeLimitsSet);
+    InspectorTest.evaluateInPage("setInspectorResourcesDataSizeLimits()");
+
+    function dataSizeLimitsSet()
+    {
+        // Here we test replacement logic. We save first two resources content,
+        // discard third resource content once we see its size exceeds limit,
+        // and finally replace first resource content with the last resource content.
+
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=200", false, xhrLoaded1);
+    }
+
+    function xhrLoaded1()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=100", false, xhrLoaded2);
+    }
+
+    function xhrLoaded2()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=201", false, xhrLoaded3);
+    }
+
+    function xhrLoaded3()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=100", false, step1);
+    }
 
     function dumpRequest(request, callback)
     {

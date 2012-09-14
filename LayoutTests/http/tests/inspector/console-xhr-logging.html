@@ -8,7 +8,7 @@ function requestHelper(method, url)
 {
     // Make synchronous requests for simplicity.
     console.log("sending a %s request to %s", method, url);
-    doXHR(method, url, false);
+    makeSimpleXHR(method, url, false);
 }
 
 function makeRequests()

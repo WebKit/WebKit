@@ -4,28 +4,22 @@
 <script src="console-test.js"></script>
 <script src="network-test.js"></script>
 <script>
-function makeRequest()
-{
-    doXHR("GET", "resources/xhr-exists.html", true, allXHRsLoaded);
-}
-
-function allXHRsLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     step1();
+
+    function makeRequest(callback)
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/xhr-exists.html", true, callback);
+    }
 
     function step1()
     {
         function callback()
         {
-            InspectorTest.evaluateInPage("makeRequest()");
+            makeRequest(step2);
         }
 
-        InspectorTest.addConsoleSniffer(step2);
         ConsoleAgent.setMonitoringXHREnabled(true, callback);
     }
 
@@ -33,10 +27,9 @@ function test()
     {
         function callback()
         {
-            InspectorTest.evaluateInPage("makeRequest()");
+            makeRequest(step3);
         }
 
-        InspectorTest.addConsoleSniffer(step3);
         ConsoleAgent.setMonitoringXHREnabled(false, callback);
     }
 

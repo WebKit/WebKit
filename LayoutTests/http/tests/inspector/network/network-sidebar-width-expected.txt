@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 13: Done.
+CONSOLE MESSAGE: line 6: XHR loaded: 1
 Tests network panel sidebar width with and without preference set.
 
 Bug 65256

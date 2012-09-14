@@ -4,16 +4,6 @@
 <script src="appcache-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function stepManifestVersion()
-{
-    doXHR("GET", "resources/versioned-manifest.php?command=step", true, xhrLoaded);
-}
-
-function xhrLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     var frameId1;
@@ -33,8 +23,7 @@ function test()
     function step2()
     {
         InspectorTest.dumpApplicationCache();
-        InspectorTest.addConsoleSniffer(step3);
-        InspectorTest.evaluateInPage("stepManifestVersion()");
+        InspectorTest.makeSimpleXHR("GET", "resources/versioned-manifest.php?command=step", true, step3);
     }
 
     function step3()

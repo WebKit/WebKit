@@ -3,36 +3,6 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadXHR(callback)
-{
-    doXHR("GET", "resources/resource.php?random=1&cached=1", true, callback);
-}
-
-function loadData()
-{
-    loadXHR(xhrLoaded1);
-}
-
-function xhrLoaded1()
-{
-    loadXHR(xhrLoaded2);
-}
-
-function xhrLoaded2()
-{
-    console.log("First XHR loaded.");
-}
-
-function cacheDisabled()
-{
-    loadXHR(allXHRsLoaded);
-}
-
-function allXHRsLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     // Since this test could be run together with other inspector backend cache
@@ -41,8 +11,12 @@ function test()
 
     function step1()
     {
-        InspectorTest.addConsoleSniffer(step2);
-        InspectorTest.evaluateInPage("loadData()");
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, step2);
+        }
     }
 
     function step2(msg)
@@ -52,8 +26,7 @@ function test()
 
     function step3(msg)
     {
-        InspectorTest.addConsoleSniffer(step4);
-        InspectorTest.evaluateInPage("cacheDisabled()");
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, step4);
     }
 
     function step4(msg)

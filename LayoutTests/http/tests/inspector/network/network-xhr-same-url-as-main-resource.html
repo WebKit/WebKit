@@ -3,20 +3,9 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
-{
-    doXHR("GET", "network-xhr-same-url-as-main-resource.html", true, resourceLoaded);
-}
-
-function resourceLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
-    InspectorTest.addConsoleSniffer(step2);
-    InspectorTest.evaluateInPage("loadData()");
+    InspectorTest.makeSimpleXHR("GET", "network-xhr-same-url-as-main-resource.html", true, step2);
 
     function step2()
     {

@@ -3,31 +3,6 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
-{
-    doXHR("GET", "resources/set-cookie.php", true, xhrLoaded1);
-}
-
-function xhrLoaded1()
-{
-    console.log("First XHR loaded.");
-}
-
-function cookiesCleared()
-{
-    doXHR("GET", "resources/set-cookie.php", true, xhrLoaded2);
-}
-
-function xhrLoaded2()
-{
-    doXHR("GET", "resources/set-cookie.php", true, allXHRsLoaded);
-}
-
-function allXHRsLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     // Since this test could be run together with other inspector backend cache
@@ -36,8 +11,7 @@ function test()
 
     function step1()
     {
-        InspectorTest.addConsoleSniffer(step2);
-        InspectorTest.evaluateInPage("loadData()");
+        InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, step2);
     }
 
     function step2(msg)
@@ -50,8 +24,12 @@ function test()
 
     function step3(msg)
     {
-        InspectorTest.addConsoleSniffer(step4);
-        InspectorTest.evaluateInPage("cookiesCleared()");
+        InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, step4);
+        }
     }
 
     function step4(msg)

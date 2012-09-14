@@ -3,21 +3,6 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
-{
-    doXHR("GET", "resources/cyrillic.html", false, xhrLoaded1);
-}
-
-function xhrLoaded1()
-{
-    doXHR("GET", "resources/cyrillic.html", true, allXHRsLoaded);
-}
-
-function allXHRsLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     // Since this test could be run together with other inspector backend cache
@@ -41,8 +26,12 @@ function test()
 
     function step1()
     {
-        InspectorTest.addConsoleSniffer(step2);
-        InspectorTest.evaluateInPage("loadData()");
+        InspectorTest.makeSimpleXHR("GET", "resources/cyrillic.html", false, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHR("GET", "resources/cyrillic.html", true, step2);
+        }
     }
 
     function step2()

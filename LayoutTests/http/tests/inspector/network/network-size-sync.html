@@ -3,20 +3,9 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
-{
-    doXHR("GET", "resources/resource.php?type=image&size=500&gzip=true&chunked=true", false, resourceLoaded);
-}
-
-function resourceLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
-    InspectorTest.addConsoleSniffer(step2);
-    InspectorTest.evaluateInPage("loadData()");
+    InspectorTest.makeSimpleXHR("GET", "resources/resource.php?type=image&size=500&gzip=true&chunked=true", false, step2);
 
     function step2()
     {

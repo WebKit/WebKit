@@ -3,20 +3,9 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function sendXHR()
-{
-    doXHR("GET", "resources/resource.php", false, resourceLoaded);
-}
-
-function resourceLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
-    InspectorTest.addConsoleSniffer(step2);
-    InspectorTest.evaluateInPage("sendXHR()");
+    InspectorTest.makeSimpleXHR("GET", "resources/resource.php", false, step2);
 
     function step2()
     {

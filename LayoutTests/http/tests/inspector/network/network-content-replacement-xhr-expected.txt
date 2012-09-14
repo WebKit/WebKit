@@ -1,4 +1,8 @@
-CONSOLE MESSAGE: line 38: Done.
+CONSOLE MESSAGE: line 13: Done.
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+CONSOLE MESSAGE: line 6: XHR loaded: 2
+CONSOLE MESSAGE: line 6: XHR loaded: 3
+CONSOLE MESSAGE: line 6: XHR loaded: 4
 Tests NetworkResourcesData logic for XHR content replacement.
 
 http://127.0.0.1:8000/inspector/network/resources/resource.php?size=200

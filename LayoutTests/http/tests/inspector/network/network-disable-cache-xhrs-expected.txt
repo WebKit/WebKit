@@ -1,5 +1,6 @@
-CONSOLE MESSAGE: line 23: First XHR loaded.
-CONSOLE MESSAGE: line 33: Done.
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+CONSOLE MESSAGE: line 6: XHR loaded: 2
+CONSOLE MESSAGE: line 6: XHR loaded: 3
 Tests disabling cache from inspector.
 
 http://127.0.0.1:8000/inspector/network/resources/resource.php?random=1&cached=1

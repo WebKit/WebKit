@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 14: Done.
+CONSOLE MESSAGE: line 6: XHR loaded: 1
 Tests that application cache model keeps track of manifest urls and statuses correctly after UPDATEREADY event and swapCache() call.
 
 Bug 72123

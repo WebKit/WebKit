@@ -3,16 +3,6 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadData()
-{
-    doXHR("GET", "resources/resource.php", false, resourceLoaded);
-}
-
-function resourceLoaded()
-{
-    console.log("Done.");
-}
-
 function test()
 {
     // Since this test could be run together with other inspector backend cache
@@ -21,8 +11,7 @@ function test()
 
     function step1()
     {
-        InspectorTest.addConsoleSniffer(step2);
-        InspectorTest.evaluateInPage("loadData()");
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php", false, step2);
     }
 
     function step2()
