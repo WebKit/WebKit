@@ -38,6 +38,7 @@
 #include "JSScriptProfile.h"
 #include "JSTestCallback.h"
 #include "JSTestObj.h"
+#include "JSTestSubObj.h"
 #include "JSa.h"
 #include "JSb.h"
 #include "JSbool.h"
@@ -438,7 +439,7 @@ JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestSubObj::getConstructor(exec, castedThis);
+    return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
 }
 
 
@@ -815,7 +816,7 @@ JSValue jsTestObjConditionalAttr3(ExecState* exec, JSValue slotBase, PropertyNam
 JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectA::getConstructor(exec, castedThis);
+    return JSTestObjectA::getConstructor(exec, castedThis->globalObject());
 }
 
 #endif
@@ -824,7 +825,7 @@ JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectB::getConstructor(exec, castedThis);
+    return JSTestObjectB::getConstructor(exec, castedThis->globalObject());
 }
 
 #endif
@@ -833,7 +834,7 @@ JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectC::getConstructor(exec, castedThis);
+    return JSTestObjectC::getConstructor(exec, castedThis->globalObject());
 }
 
 #endif

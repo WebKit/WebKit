@@ -1878,9 +1878,14 @@ sub GenerateImplementation
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                     $constructorType =~ s/Constructor$//;
-                    # Constructor attribute is only used by DOMWindow.idl, so it's correct to pass castedThis as the global object
-                    # Once JSDOMWrappers have a back-pointer to the globalObject we can pass castedThis->globalObject()
-                    push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
+                    # When Constructor attribute is used by DOMWindow.idl, it's correct to pass castedThis as the global object
+                    # When JSDOMWrappers have a back-pointer to the globalObject we can pass castedThis->globalObject()
+                    if ($interfaceName eq "DOMWindow") {
+                        push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
+                    } else {
+                       AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
+                       push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis->globalObject());\n");
+                    }
                 } elsif (!@{$attribute->getterExceptions}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n") if !$attribute->signature->extendedAttributes->{"CallWith"};
 
