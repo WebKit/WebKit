@@ -572,6 +572,7 @@ body.drawer-visible #floating-status-bar-container {
     content: url(Images/statusbarResizerVertical.png);
     margin-top: 7px;
     pointer-events: none;
+    height: 8px;
 }
 
 #panel-status-bar {
