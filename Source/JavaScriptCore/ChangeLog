@@ -1,3 +1,16 @@
+2012-09-14  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Switching from Slogger to Slogger2 requires changes in CMakeList of 
+        webkit in order to include libraries of slog2
+        https://bugs.webkit.org/show_bug.cgi?id=96391
+
+        Reviewed by Yong Li.
+
+        Changes in Cmake files of JavaScriptCore of webkit to include slog2 libs in build 
+        files of webkit in response to switching from Slogger to Slogger2.
+
+        * shell/PlatformBlackBerry.cmake:
+
 2012-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove the Zapped BlockState
