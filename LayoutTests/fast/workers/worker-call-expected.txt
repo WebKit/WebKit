@@ -1,10 +1,7 @@
 Test calling functions from WorkerContext. Should print multiple SUCCESS lines, followed by DONE.
 
 SUCCESS: postMessage() called directly
-SUCCESS: webkitPostMessage() called directly
 SUCCESS: postMessage() invoked via postMessage.call()
-SUCCESS: webkitPostMessage() invoked via webkitPostMessage.call()
 SUCCESS: postMessage() called via intermediate variable
-SUCCESS: webkitPostMessage() called via intermediate variable
 DONE
 

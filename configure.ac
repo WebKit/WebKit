@@ -860,6 +860,14 @@ AC_ARG_ENABLE(blob,
               [],[enable_blob="yes"])
 AC_MSG_RESULT([$enable_blob])
 
+# check whether to enable Legacy vendor prefix support
+AC_MSG_CHECKING([whether to enable legacy vendor prefix support])
+AC_ARG_ENABLE(legacy_vendor_prefixes,
+              AC_HELP_STRING([--enable-legacy-vendor-prefixes],
+                             [enable support for legacy vendor prefixes [default=yes]]),
+              [],[enable_legacy_vendor_prefixes="yes"])
+AC_MSG_RESULT([$legacy_vendor_prefixes])
+
 # check whether to enable Legacy WebKitBlobBuilder support
 AC_MSG_CHECKING([whether to enable Legacy WebKitBlobBuilder support])
 AC_ARG_ENABLE(legacy_webkit_blob_builder,
@@ -1248,6 +1256,7 @@ AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_UNSTABLE_FEATURES],[test "$enable_unstable_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
+AM_CONDITIONAL([ENABLE_LEGACY_VENDOR_PREFIXES],[test "$enable_legacy_vendor_prefixes" = "yes"])
 AM_CONDITIONAL([ENABLE_LEGACY_WEBKIT_BLOB_BUILDER],[test "$enable_legacy_webkit_blob_builder" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_ELEMENT],[test "$enable_meter_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_PROGRESS_ELEMENT],[test "$enable_progress_tag" = "yes"])
@@ -1360,6 +1369,7 @@ Features:
  Icon database support                                    : $enable_icon_database
  JIT compilation                                          : $enable_jit
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
+ Legacy vendor prefix support                             : $enable_legacy_vendor_prefixes
  Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
  Link prefetch support                                    : $enable_link_prefetch
  MHTML support                                            : $enable_mhtml

@@ -23,8 +23,8 @@ window.onerror = function() {
     return true;
 };
 
-webkitRequestAnimationFrame(webkitPostMessage);
-setTimeout(webkitPostMessage);
+webkitRequestAnimationFrame(postMessage);
+setTimeout(postMessage);
 
 if (window.testRunner)
     testRunner.display();

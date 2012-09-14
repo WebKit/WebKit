@@ -70,10 +70,12 @@ v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& ar
     return handlePostMessageCallback(args);
 }
 
+#if ENABLE(LEGACY_VENDOR_PREFIXES)
 v8::Handle<v8::Value> V8MessagePort::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.webkitPostMessage");
     return handlePostMessageCallback(args);
 }
+#endif
 
 } // namespace WebCore

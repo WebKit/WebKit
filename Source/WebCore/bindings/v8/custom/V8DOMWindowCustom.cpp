@@ -357,11 +357,13 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     return handlePostMessageCallback(args);
 }
 
+#if ENABLE(LEGACY_VENDOR_PREFIXES)
 v8::Handle<v8::Value> V8DOMWindow::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.webkitPostMessage()");
     return handlePostMessageCallback(args);
 }
+#endif
 
 // FIXME(fqian): returning string is cheating, and we should
 // fix this by calling toString function on the receiver.

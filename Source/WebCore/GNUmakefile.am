@@ -461,6 +461,15 @@ feature_defines_overrides += ENABLE_BLOB=0
 endif  # END ENABLE_BLOB
 
 # ---
+# Legacy vendor prefixes support
+# ---
+if ENABLE_LEGACY_VENDOR_PREFIXES
+feature_defines_overrides += ENABLE_LEGACY_VENDOR_PREFIXES=1
+else
+feature_defines_overrides += ENABLE_LEGACY_VENDOR_PREFIXES=0
+endif  # END ENABLE_LEGACY_VENDOR_PREFIXES
+
+# ---
 # Legacy WebKitBlobBuilder support
 # ---
 if ENABLE_LEGACY_WEBKIT_BLOB_BUILDER

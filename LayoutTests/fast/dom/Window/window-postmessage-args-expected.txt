@@ -1,23 +1,15 @@
 Test that the second argument of window.postMessage is ignored or triggers an error if it is not a message port. You should see PASS message '1' through '7', followed by 'done', with messages 4-7 received below.
 
 PASS: Posting message ('1', 1): threw exception TypeError: Type error
-PASS: Posting message ('1', 1): threw exception TypeError: Type error
-PASS: Posting message ('2', c): threw exception TypeError: Type error
 PASS: Posting message ('2', c): threw exception TypeError: Type error
 PASS: Posting message ('3', [object Object]): threw exception TypeError: Type error
-PASS: Posting message ('3', [object Object]): threw exception TypeError: Type error
-PASS: Posting message ('4', [object Window]) did not throw an exception
 PASS: Posting message ('4', [object Window]) did not throw an exception
 PASS: Posting message ('4a', *) did not throw an exception
-PASS: Posting message ('4a', *) did not throw an exception
 PASS: Posting message ('5', null) did not throw an exception
-PASS: Posting message ('5', null) did not throw an exception
-PASS: Posting message ('6', undefined) did not throw an exception
 PASS: Posting message ('6', undefined) did not throw an exception
 PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('7a', *) did not throw an exception
 PASS: Posting message ('7', [object MessagePort],[object MessagePort]) did not throw an exception
-PASS: Posting message ('2147483648', null) did not throw an exception
 PASS: Posting message ('2147483648', null) did not throw an exception
 PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
 PASS: Posting message ('[object MessagePort]', [object MessagePort],[object MessagePort]) did not throw an exception
@@ -27,17 +19,12 @@ PASS: arrayBuffer neutered
 PASS: view neutered
 PASS: Posting message ('done', undefined) did not throw an exception
 Received message '4' with 0 ports.
-Received message '4' with 0 ports.
-Received message '4a' with 0 ports.
 Received message '4a' with 0 ports.
 Received message '5' with 0 ports.
-Received message '5' with 0 ports.
-Received message '6' with 0 ports.
 Received message '6' with 0 ports.
 Received message '7' with 2 ports.
 Received message '7a' with 2 ports.
 Received message '7' with 2 ports.
-Received message '2147483648' with 0 ports.
 Received message '2147483648' with 0 ports.
 Received message '[object MessagePort]' with 2 ports.
 Received message '[object MessagePort]' with 2 ports.

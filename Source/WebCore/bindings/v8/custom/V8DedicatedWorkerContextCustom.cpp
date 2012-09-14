@@ -71,11 +71,13 @@ v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Ar
     return handlePostMessageCallback(args);
 }
 
+#if ENABLE(LEGACY_VENDOR_PREFIXES)
 v8::Handle<v8::Value> V8DedicatedWorkerContext::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DedicatedWorkerContext.postMessage");
     return handlePostMessageCallback(args);
 }
+#endif
 
 } // namespace WebCore
 

@@ -20,7 +20,7 @@ var currentTest = 0;
 
 function nextTest() 
 {
-    var fun = currentTest % 2 == 0 ? "postMessage" : "webkitPostMessage";
+    var fun = "postMessage";
     var testFunNo = Math.floor(currentTest / 2);
     if (testFunNo < allTests.length)
     {

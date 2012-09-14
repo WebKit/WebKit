@@ -63,10 +63,12 @@ JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)
     return handlePostMessage(exec, impl());
 }
 
+#if ENABLE(LEGACY_VENDOR_PREFIXES)
 JSC::JSValue JSMessagePort::webkitPostMessage(JSC::ExecState* exec)
 {
     return handlePostMessage(exec, impl());
 }
+#endif
 
 void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)
 {
