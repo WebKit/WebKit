@@ -80,7 +80,9 @@ public:
 #endif
         bool m_canStartMedia;
         bool m_originalMockScrollbarsEnabled;
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
         bool m_langAttributeAwareFormControlUIEnabled;
+#endif
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;
