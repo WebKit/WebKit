@@ -310,9 +310,9 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldC
 
 V8PerContextData* perContextDataForCurrentWorld(Frame* frame)
 {
-    V8DOMWindowShell* isolatedShell;
-    if (UNLIKELY(!!(isolatedShell = V8DOMWindowShell::getEntered())))
-        return isolatedShell->perContextData();
+    V8DOMWindowShell::IsolatedContextData* isolatedShellData;
+    if (UNLIKELY(!!(isolatedShellData = V8DOMWindowShell::enteredIsolatedContextData())))
+        return isolatedShellData->perContextData();
     return frame->script()->windowShell()->perContextData();
 }
 
