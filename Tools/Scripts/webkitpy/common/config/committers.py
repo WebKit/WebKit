@@ -400,7 +400,6 @@ committers_unable_to_review = [
     Committer("Yongjun Zhang", ["yongjun.zhang@nokia.com", "yongjun_zhang@apple.com"]),
     Committer("Yoshifumi Inoue", "yosin@chromium.org", "yosin"),
     Committer("Yuqiang Xian", "yuqiang.xian@intel.com"),
-    Committer("Yuta Kitamura", "yutak@chromium.org", "yutak"),
     Committer("Yuzo Fujishima", "yuzo@google.com", "yuzo"),
     Committer("Zalan Bujtas", ["zbujtas@gmail.com", "zalan.bujtas@nokia.com"], "zalan"),
     Committer("Zeno Albisser", ["zeno@webkit.org", "zeno.albisser@nokia.com"], "zalbisser"),
@@ -534,6 +533,7 @@ reviewers_list = [
     Reviewer("Xan Lopez", ["xan.lopez@gmail.com", "xan@gnome.org", "xan@webkit.org", "xlopez@igalia.com"], "xan"),
     Reviewer("Yong Li", ["yoli@rim.com", "yong.li.webkit@gmail.com"], "yoli"),
     Reviewer("Yury Semikhatsky", "yurys@chromium.org", "yurys"),
+    Reviewer("Yuta Kitamura", "yutak@chromium.org", "yutak"),
     Reviewer("Zack Rusin", "zack@kde.org", "zackr"),
     Reviewer("Zoltan Herczeg", ["zherczeg@webkit.org", "zherczeg@inf.u-szeged.hu"], "zherczeg"),
 ]
