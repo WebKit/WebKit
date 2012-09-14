@@ -1047,9 +1047,6 @@ BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT
 
-BUG_OJAN : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE
 
 // Fails after r128270.
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT

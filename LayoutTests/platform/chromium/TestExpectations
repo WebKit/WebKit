@@ -3626,10 +3626,6 @@ BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
 
 BUGWK96524 WIN LINUX DEBUG : fast/filesystem/workers/detached-frame-crash.html = PASS CRASH
 
-BUG_OJAN WIN MAC : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN WIN MAC : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN WIN MAC : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN WIN MAC : tables/mozilla_expected_failures/bugs/bug85016.html = TEXT IMAGE+TEXT IMAGE
 
 BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html = IMAGE
 BUGWK96549 MAC : platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html = IMAGE

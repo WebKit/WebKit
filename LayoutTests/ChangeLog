@@ -1,5 +1,42 @@
 2012-09-13  Ojan Vafai  <ojan@chromium.org>
 
+        Test rebaselines after http://trac.webkit.org/changeset/128517.
+
+        * fast/table/height-percent-test-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/table/height-percent-test-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac/fast/table/height-percent-test-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/chromium-win/fast/table/height-percent-test-expected.png:
+        * platform/chromium-win/tables/mozilla/core/cell_heights-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/table/height-percent-test-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/table/height-percent-test-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug19526-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug19526-expected.txt:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/table/height-percent-test-expected.txt: Renamed from LayoutTests/platform/mac/fast/table/height-percent-test-expected.txt.
+        * platform/qt/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug19526-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/win-future/fast/table/height-percent-test-expected.txt: Copied from LayoutTests/fast/table/height-percent-test-expected.txt.
+        * tables/mozilla_expected_failures/bugs/bug19526-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug19526-expected.txt.
+
+2012-09-13  Ojan Vafai  <ojan@chromium.org>
+
         Rebaseline fast/css/percentage-height-auto-sized-body-quirks.html after
         http://trac.webkit.org/changeset/128517. The results are now consistent
         across platforms.

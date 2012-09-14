@@ -131,10 +131,6 @@ BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 // This has always failed on Qt - exposed by bug 89826
 BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 
-BUG_OJAN : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla_expected_failures/bugs/bug85016.html = TEXT IMAGE+TEXT IMAGE
 
 // Added by bug 89826
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-003.htm = IMAGE

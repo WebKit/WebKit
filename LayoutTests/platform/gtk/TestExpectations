@@ -1367,10 +1367,6 @@ BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
 
 BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
 
-BUG_OJAN : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE
-BUG_OJAN : tables/mozilla_expected_failures/bugs/bug85016.html = TEXT IMAGE+TEXT IMAGE
 
 BUGWK73003 DEBUG : editing/spelling/spellcheck-async.html = TEXT
 BUGWK73003 DEBUG : editing/spelling/spellcheck-paste.html = PASS
