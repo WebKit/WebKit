@@ -140,21 +140,30 @@ static const Ecore_Getopt options = {
     }
 };
 
+typedef struct _User_Arguments {
+    const char *engine;
+    Eina_Bool quitOption;
+    const char *backingStore;
+    Eina_Bool isFlattening;
+    Eina_Bool isFullscreen;
+    Eina_Rectangle geometry;
+    const char *theme;
+    const char *userAgent;
+    const char *databasePath;
+} User_Arguments;
+
 typedef struct _ELauncher {
     Ecore_Evas *ee;
     Evas *evas;
     Evas_Object *bg;
     Evas_Object *browser;
     Url_Bar *url_bar;
-    const char *theme;
-    const char *userAgent;
-    const char *backingStore;
-    unsigned char isFlattening;
+    User_Arguments *userArgs;
 } ELauncher;
 
 static void browserDestroy(Ecore_Evas *ee);
 static void closeWindow(Ecore_Evas *ee);
-static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFlattening, unsigned char isFullscreen, const char *databasePath);
+static int browserCreate(const char *url, User_Arguments *userArgs);
 
 static ELauncher *
 find_app_from_ee(Ecore_Evas *ee)
@@ -560,10 +569,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
             currentZoomLevel++;
     } else if (!strcmp(ev->key, "F9")) {
         info("Create new window (F9) was pressed.\n");
-        Eina_Rectangle geometry = {0, 0, 0, 0};
-        browserCreate("http://www.google.com",
-                       app->theme, app->userAgent, geometry, NULL,
-                       app->backingStore, app->isFlattening, 0, NULL);
+        browserCreate("http://www.google.com", app->userArgs);
     } else if (!strcmp(ev->key, "g") && ctrlPressed ) {
         Evas_Coord x, y, w, h;
         Evas_Object *frame = ewk_view_frame_main_get(obj);
@@ -656,8 +662,9 @@ quit(Eina_Bool success, const char *msg)
 }
 
 static int
-browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFlattening, unsigned char isFullscreen, const char *databasePath)
+browserCreate(const char *url, User_Arguments *userArgs)
 {
+    Eina_Rectangle geometry = userArgs->geometry;
     if ((geometry.w <= 0) && (geometry.h <= 0)) {
         geometry.w = DEFAULT_WIDTH;
         geometry.h = DEFAULT_HEIGHT;
@@ -667,12 +674,12 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     if (!app)
         return quit(EINA_FALSE, "ERROR: could not create EWebLauncher window\n");
 
-    app->ee = ecore_evas_new(engine, 0, 0, geometry.w, geometry.h, NULL);
+    app->ee = ecore_evas_new(userArgs->engine, 0, 0, geometry.w, geometry.h, NULL);
 
     if (!app->ee)
         return quit(EINA_FALSE, "ERROR: could not construct evas-ecore\n");
 
-    if (isFullscreen)
+    if (userArgs->isFullscreen)
         ecore_evas_fullscreen_set(app->ee, EINA_TRUE);
 
     ecore_evas_title_set(app->ee, "EFL Test Launcher");
@@ -684,11 +691,6 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     if (!app->evas)
         return quit(EINA_FALSE, "ERROR: could not get evas from evas-ecore\n");
 
-    app->theme = theme;
-    app->userAgent = userAgent;
-    app->backingStore = backingStore;
-    app->isFlattening = isFlattening;
-
     app->bg = evas_object_rectangle_add(app->evas);
     evas_object_name_set(app->bg, "bg");
     evas_object_color_set(app->bg, 255, 0, 255, 255);
@@ -697,7 +699,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_layer_set(app->bg, EVAS_LAYER_MIN);
     evas_object_show(app->bg);
 
-    if (backingStore && !strcasecmp(backingStore, "tiled")) {
+    if (userArgs->backingStore && !strcasecmp(userArgs->backingStore, "tiled")) {
         app->browser = ewk_view_tiled_add(app->evas);
         info("backing store: tiled\n");
     } else {
@@ -705,12 +707,13 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
         info("backing store: single\n");
     }
 
-    ewk_view_theme_set(app->browser, theme);
-    if (userAgent)
-        ewk_view_setting_user_agent_set(app->browser, userAgent);
-    ewk_view_setting_local_storage_database_path_set(app->browser, databasePath);
-    ewk_view_setting_enable_frame_flattening_set(app->browser, isFlattening);
+    ewk_view_theme_set(app->browser, themePath);
+    if (userArgs->userAgent)
+        ewk_view_setting_user_agent_set(app->browser, userArgs->userAgent);
+    ewk_view_setting_local_storage_database_path_set(app->browser, userArgs->databasePath);
+    ewk_view_setting_enable_frame_flattening_set(app->browser, userArgs->isFlattening);
     
+    app->userArgs = userArgs;
     evas_object_name_set(app->browser, "browser");
 
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
@@ -801,6 +804,7 @@ findThemePath(const char *theme)
         theme = default_theme;
 
     rpath = ecore_file_realpath(theme);
+
     if (!strlen(rpath) || stat(rpath, &st)) {
         free(rpath);
         return NULL;
@@ -810,41 +814,57 @@ findThemePath(const char *theme)
 }
 
 int
+parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
+{
+    int args;
+
+    userArgs->engine = NULL;
+    userArgs->quitOption = EINA_FALSE;
+    userArgs->backingStore = (char *)backingStores[1];
+    userArgs->isFlattening = EINA_FALSE;
+    userArgs->isFullscreen = EINA_FALSE;
+    userArgs->geometry.x = 0;
+    userArgs->geometry.y = 0;
+    userArgs->geometry.w = 0;
+    userArgs->geometry.h = 0;
+    userArgs->theme = NULL;
+    userArgs->userAgent = NULL;
+
+    Ecore_Getopt_Value values[] = {
+        ECORE_GETOPT_VALUE_STR(userArgs->engine),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
+        ECORE_GETOPT_VALUE_STR(userArgs->backingStore),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->isFlattening),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->isFullscreen),
+        ECORE_GETOPT_VALUE_PTR_CAST(userArgs->geometry),
+        ECORE_GETOPT_VALUE_STR(userArgs->theme),
+        ECORE_GETOPT_VALUE_STR(userArgs->userAgent),
+        ECORE_GETOPT_VALUE_INT(verbose),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
+        ECORE_GETOPT_VALUE_NONE
+    };
+
+    ecore_app_args_set(argc, (const char**) argv);
+    args = ecore_getopt_parse(&options, values, argc, argv);
+
+    themePath = findThemePath(userArgs->theme);
+
+    return args;
+}
+
+int
 main(int argc, char *argv[])
 {
     const char *default_url = "http://www.google.com/";
-
-    Eina_Rectangle geometry = {0, 0, 0, 0};
-    char *userAgent = NULL;
     const char *tmp;
     const char *proxyUri;
     char path[PATH_MAX];
-
-    char *engine = NULL;
-    char *theme = NULL;
-    char *backingStore = (char *)backingStores[1];
-
-    unsigned char quitOption = 0;
-    unsigned char isFlattening = 0;
-    unsigned char isFullscreen = 0;
     int args;
 
-    Ecore_Getopt_Value values[] = {
-        ECORE_GETOPT_VALUE_STR(engine),
-        ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_STR(backingStore),
-        ECORE_GETOPT_VALUE_BOOL(isFlattening),
-        ECORE_GETOPT_VALUE_BOOL(isFullscreen),
-        ECORE_GETOPT_VALUE_PTR_CAST(geometry),
-        ECORE_GETOPT_VALUE_STR(theme),
-        ECORE_GETOPT_VALUE_STR(userAgent),
-        ECORE_GETOPT_VALUE_INT(verbose),
-        ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_NONE
-    };
+    User_Arguments userArgs;
 
     if (!ecore_evas_init())
         return EXIT_FAILURE;
@@ -860,16 +880,13 @@ main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    ecore_app_args_set(argc, (const char**) argv);
-    args = ecore_getopt_parse(&options, values, argc, argv);
-
+    args = parseUserArguments(argc, argv, &userArgs);
     if (args < 0)
        return quit(EINA_FALSE, "ERROR: could not parse options.\n");
 
-    if (quitOption)
+    if (userArgs.quitOption)
         return quit(EINA_TRUE, NULL);
 
-    themePath = findThemePath(theme);
     if (!themePath)
         return quit(EINA_FALSE, "ERROR: could not find theme.\n");
 
@@ -881,6 +898,8 @@ main(int argc, char *argv[])
     if (!ecore_file_mkpath(path))
         return quit(EINA_FALSE, "ERROR: could not create settings database directory.\n");
 
+    userArgs.databasePath = path;
+
     ewk_settings_icon_database_path_set(path);
     ewk_settings_web_database_path_set(path);
 
@@ -890,10 +909,10 @@ main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
+        browserCreate(url, &userArgs);
         free(url);
     } else
-        browserCreate(default_url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
+        browserCreate(default_url, &userArgs);
 
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 

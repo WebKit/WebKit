@@ -1,3 +1,22 @@
+2012-09-13  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Remove some parameters in browserCreate()
+        https://bugs.webkit.org/show_bug.cgi?id=96499
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        There are too many parameters in browserCreate(). Lots of it seems like settings from command line argument.
+        And I have moved some parameters into User_Arguments.
+
+        * EWebLauncher/main.c:
+        (_User_Arguments):
+        (_ELauncher):
+        (on_key_down):
+        (browserCreate):
+        (findThemePath):
+        (parseUserArguments):
+        (main):
+
 2012-09-13  Mark Lam  <mark.lam@apple.com>
 
         Unreviewed. Adding myself to the committers list.
