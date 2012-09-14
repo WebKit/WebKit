@@ -1,3 +1,15 @@
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] RefPtr<Evas_Object> unit tests fails
+        https://bugs.webkit.org/show_bug.cgi?id=96809
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added missing return.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTest::EWK2UnitTestBase::canvas):
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
