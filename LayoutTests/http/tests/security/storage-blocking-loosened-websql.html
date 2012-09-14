@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.waitUntilDone();
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+}
+
+if (window.testRunner)
+	internals.settings.setStorageBlockingPolicy('BlockAll');
+
+function decrement() {
+	if (window.testRunner)
+		internals.settings.setStorageBlockingPolicy('AllowAll');
+	for (var i = 0; i < window.frames.length; ++i)
+		window.frames[i].postMessage('blocked', '*');
+}
+
+window.onmessage = function() {
+	if (window.testRunner) {
+		testRunner.notifyDone();
+	}
+}
+</script>
+</head>
+<body>
+<p>This iframe should return only one security error:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/iframe-for-storage-blocking-changed-websql.html" onload="decrement()"></iframe>
+</body>
+</html>

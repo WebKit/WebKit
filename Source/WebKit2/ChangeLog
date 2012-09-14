@@ -1,3 +1,44 @@
+2012-09-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow third-party storage blocking setting to change while a page is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=95790
+
+        Reviewed by Brady Eidson.
+
+        Inform plugins about changes to the storage blocking policy by way of the private browsing feature.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::storageBlockingStateChanged):
+        (WebKit):
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+        * PluginProcess/PluginControllerProxy.messages.in: Add WK2 message for storageBlockingStateChanged.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::storageBlockingStateChanged):
+        (WebKit):
+        (WebKit::NetscapePlugin::privateBrowsingStateChanged):
+        (WebKit::NetscapePlugin::updateNPNPrivateMode): Set plugin's private browsing if either private browsing or storage blocking is enabled.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (BuiltInPDFView):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.mm: Treat storageBlockingStateChanged as a no-op.
+        (WebKit::BuiltInPDFView::storageBlockingStateChanged):
+        (WebKit):
+        * WebProcess/Plugins/Plugin.h: Add pure virtual storageBlockingStateChanged method.
+        (Plugin):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::storageBlockingStateChanged):
+        (WebKit):
+        * WebProcess/Plugins/PluginProxy.h:
+        (PluginProxy):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::storageBlockingStateChanged):
+        (WebKit):
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+        * win/WebKit2.def:
+
 2012-09-14  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96688

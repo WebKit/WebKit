@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.waitUntilDone();
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+}
+
+window.onmessage = function() {
+	if (window.testRunner)
+		internals.settings.setStorageBlockingPolicy('BlockAll');
+	for (var i = 0; i < window.frames.length; ++i)
+		window.frames[i].postMessage('blocked', '*');
+
+	window.onmessage = function() {
+		if (window.testRunner) {
+			internals.settings.setStorageBlockingPolicy('AllowAll');
+			testRunner.notifyDone();
+		}
+	}
+}
+</script>
+</head>
+<body>
+<p>This iframe should return only one security error:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/iframe-for-storage-blocking-changed-shared-worker.html"></iframe>
+</body>
+</html>

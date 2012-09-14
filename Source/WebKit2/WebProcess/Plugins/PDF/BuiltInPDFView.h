@@ -112,6 +112,7 @@ private:
     virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 #endif
 
+    virtual void storageBlockingStateChanged(bool);
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);

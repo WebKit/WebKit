@@ -221,6 +221,7 @@ private:
 #endif
 
     virtual void contentsScaleFactorChanged(float);
+    virtual void storageBlockingStateChanged(bool);
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String& formValue);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
@@ -235,6 +236,8 @@ private:
     // Convert the given point from root view coordinates to plug-in coordinates. Returns false if the point can't be
     // converted (if the transformation matrix isn't invertible).
     bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
+
+    void updateNPNPrivateMode();
 
 #if PLUGIN_ARCHITECTURE(WIN)
     static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
@@ -311,6 +314,9 @@ private:
     typedef HashMap<unsigned, OwnPtr<Timer> > TimerMap;
     TimerMap m_timers;
     unsigned m_nextTimerID;
+
+    bool m_privateBrowsingState;
+    bool m_storageBlockingState;
 
 #if PLUGIN_ARCHITECTURE(MAC)
     NPDrawingModel m_drawingModel;

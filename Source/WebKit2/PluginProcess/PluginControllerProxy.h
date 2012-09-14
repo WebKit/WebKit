@@ -35,6 +35,7 @@
 #include "ShareableBitmap.h"
 #include "WebProcessConnectionMessages.h"
 #include <WebCore/RunLoop.h>
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/Noncopyable.h>
 
 namespace CoreIPC {
@@ -152,6 +153,7 @@ private:
     void updateLayerHostingContext(LayerHostingMode);
 #endif
 
+    void storageBlockingStateChanged(bool);
     void privateBrowsingStateChanged(bool);
     void getFormValue(bool& returnValue, String& formValue);
 
@@ -163,6 +165,7 @@ private:
     uint64_t m_pluginInstanceID;
 
     String m_userAgent;
+    bool m_storageBlockingEnabled;
     bool m_isPrivateBrowsingEnabled;
     bool m_isAcceleratedCompositingEnabled;
     bool m_isInitializing;

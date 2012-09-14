@@ -49,6 +49,7 @@ public:
 #endif
 
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }
+    virtual void storageBlockingStateChanged() { }
     virtual void privateBrowsingStateChanged(bool) { }
     virtual bool getFormValue(String&) { return false; }
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }

@@ -570,13 +570,21 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 #endif
 }
 
-void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
+void PluginView::storageBlockingStateChanged()
 {
     // The plug-in can be null here if it failed to initialize.
     if (!m_isInitialized || !m_plugin)
         return;
 
-    if (!privateBrowsingEnabled && !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin()))
+    bool storageBlockingPolicy = !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin());
+
+    m_plugin->storageBlockingStateChanged(storageBlockingPolicy);
+}
+
+void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);

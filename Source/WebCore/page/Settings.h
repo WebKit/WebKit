@@ -602,7 +602,7 @@ namespace WebCore {
         void setWindowFocusRestricted(bool restricted) { m_windowFocusRestricted = restricted; }
         bool windowFocusRestricted() const { return m_windowFocusRestricted; }
 
-        void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
+        void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy);
         SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy() const { return m_storageBlockingPolicy; }
 
         void setScrollingPerformanceLoggingEnabled(bool);

@@ -936,6 +936,15 @@ void Settings::setLoadDeferringEnabled(bool enabled)
     m_loadDeferringEnabled = enabled;
 }
 
+void Settings::setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy enabled)
+{
+    if (m_storageBlockingPolicy == enabled)
+        return;
+
+    m_storageBlockingPolicy = enabled;
+    m_page->storageBlockingStateChanged();
+}
+
 void Settings::setTiledBackingStoreEnabled(bool enabled)
 {
     m_tiledBackingStoreEnabled = enabled;

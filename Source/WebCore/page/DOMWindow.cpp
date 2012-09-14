@@ -735,8 +735,6 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
-    if (m_sessionStorage)
-        return m_sessionStorage.get();
 
     Document* document = this->document();
     if (!document)
@@ -746,6 +744,9 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
         ec = SECURITY_ERR;
         return 0;
     }
+
+    if (m_sessionStorage)
+        return m_sessionStorage.get();
 
     Page* page = document->page();
     if (!page)
@@ -762,8 +763,6 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return 0;
-    if (m_localStorage)
-        return m_localStorage.get();
 
     Document* document = this->document();
     if (!document)
@@ -773,6 +772,9 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
         ec = SECURITY_ERR;
         return 0;
     }
+
+    if (m_localStorage)
+        return m_localStorage.get();
 
     Page* page = document->page();
     if (!page)

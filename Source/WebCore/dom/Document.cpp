@@ -4552,6 +4552,12 @@ void Document::unregisterForMediaVolumeCallbacks(Element* e)
     m_mediaVolumeCallbackElements.remove(e);
 }
 
+void Document::storageBlockingStateDidChange()
+{
+    if (Settings* settings = this->settings())
+        securityOrigin()->setStorageBlockingPolicy(settings->storageBlockingPolicy());
+}
+
 void Document::privateBrowsingStateDidChange() 
 {
     HashSet<Element*>::iterator end = m_privateBrowsingStateChangedElements.end();

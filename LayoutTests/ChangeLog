@@ -1,3 +1,39 @@
+2012-09-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow third-party storage blocking setting to change while a page is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=95790
+
+        Reviewed by Brady Eidson.
+
+        Tested combinations of loosening and strengthening the storage blocking policy on various types of storage.
+
+        * http/tests/security/resources/iframe-for-storage-blocking-changed-local-storage.html: Added.
+        * http/tests/security/resources/iframe-for-storage-blocking-changed-shared-worker.html: Added.
+        * http/tests/security/resources/iframe-for-storage-blocking-changed-websql.html: Added.
+        * http/tests/security/storage-blocking-loosened-local-storage-expected.txt: Added.
+        * http/tests/security/storage-blocking-loosened-local-storage.html: Added.
+        * http/tests/security/storage-blocking-loosened-plugin-expected.txt: Added.
+        * http/tests/security/storage-blocking-loosened-plugin.html: Added.
+        * http/tests/security/storage-blocking-loosened-private-browsing-plugin-expected.txt: Added.
+        * http/tests/security/storage-blocking-loosened-private-browsing-plugin.html: Added.
+        * http/tests/security/storage-blocking-loosened-shared-worker-expected.txt: Added.
+        * http/tests/security/storage-blocking-loosened-shared-worker.html: Added.
+        * http/tests/security/storage-blocking-loosened-websql-expected.txt: Added.
+        * http/tests/security/storage-blocking-loosened-websql.html: Added.
+        * http/tests/security/storage-blocking-strengthened-local-storage-expected.txt: Added.
+        * http/tests/security/storage-blocking-strengthened-local-storage.html: Added.
+        * http/tests/security/storage-blocking-strengthened-plugin-expected.txt: Added.
+        * http/tests/security/storage-blocking-strengthened-plugin.html: Added.
+        * http/tests/security/storage-blocking-strengthened-private-browsing-plugin-expected.txt: Added.
+        * http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html: Added.
+        * http/tests/security/storage-blocking-strengthened-shared-worker-expected.txt: Added.
+        * http/tests/security/storage-blocking-strengthened-shared-worker.html: Added.
+        * http/tests/security/storage-blocking-strengthened-websql-expected.txt: Added.
+        * http/tests/security/storage-blocking-strengthened-websql.html: Added.
+        * platform/chromium/TestExpectations: Skip shared worker and plugin tests.
+        * platform/mac-wk2/http/tests/security/storage-blocking-strengthened-plugin-expected.txt: Added.
+        * platform/mac-wk2/http/tests/security/storage-blocking-strengthened-private-browsing-plugin-expected.txt: Added.
+
 2012-09-14  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96688

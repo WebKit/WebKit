@@ -29,6 +29,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KURL.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -215,6 +216,9 @@ public:
 
     // Tells the plug-in about scale factor changes.
     virtual void contentsScaleFactorChanged(float) = 0;
+
+    // Called when the storage blocking policy for this plug-in changes.
+    virtual void storageBlockingStateChanged(bool) = 0;
 
     // Called when the private browsing state for this plug-in changes.
     virtual void privateBrowsingStateChanged(bool) = 0;

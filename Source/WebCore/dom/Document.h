@@ -1020,6 +1020,7 @@ public:
 
     void registerForPrivateBrowsingStateChangedCallbacks(Element*);
     void unregisterForPrivateBrowsingStateChangedCallbacks(Element*);
+    void storageBlockingStateDidChange();
     void privateBrowsingStateDidChange();
 
     void setShouldCreateRenderers(bool);

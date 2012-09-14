@@ -109,6 +109,7 @@ private:
     virtual PlatformLayer* platformLayer() const;
 #endif
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*);
+    virtual void storageBlockingStateChanged();
     virtual void privateBrowsingStateChanged(bool);
     virtual bool getFormValue(String&);
     virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);

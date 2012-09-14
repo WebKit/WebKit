@@ -537,6 +537,8 @@ WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-s
 WONTFIX SKIP : http/tests/security/cross-origin-shared-worker.html = TEXT
 WONTFIX SKIP : http/tests/security/cross-origin-shared-worker-allowed.html = TEXT
 WONTFIX SKIP : http/tests/security/same-origin-shared-worker-blocked.html = TEXT
+WONTFIX SKIP : http/tests/security/storage-blocking-loosened-shared-worker.html = TEXT
+WONTFIX SKIP : http/tests/security/storage-blocking-strengthened-shared-worker.html = TEXT
 WONTFIX SKIP : storage/indexeddb/basics-shared-workers.html = PASS
 
 // test_shell does not support message ports
@@ -611,6 +613,10 @@ WONTFIX SKIP : fast/dom/gc-10.html = PASS
 
 // We do not use Safari's private browsing mode.
 WONTFIX SKIP : http/tests/security/cross-frame-access-private-browsing.html = PASS
+WONTFIX SKIP : http/tests/security/storage-blocking-loosened-plugin.html = PASS
+WONTFIX SKIP : http/tests/security/storage-blocking-loosened-private-browsing-plugin.html = PASS
+WONTFIX SKIP : http/tests/security/storage-blocking-strengthened-plugin.html = PASS
+WONTFIX SKIP : http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html = PASS
 WONTFIX SKIP : plugins/private-browsing-mode.html = PASS
 WONTFIX SKIP : plugins/private-browsing-mode-2.html = TEXT
 WONTFIX SKIP : storage/domstorage/localstorage/private-browsing-affects-storage.html = PASS

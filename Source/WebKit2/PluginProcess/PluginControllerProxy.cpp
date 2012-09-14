@@ -563,6 +563,14 @@ void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptab
     releaseNPObject(pluginScriptableNPObject);
 }
 
+void PluginControllerProxy::storageBlockingStateChanged(bool isStorageBlockingEnabled)
+{
+    if (m_storageBlockingEnabled != isStorageBlockingEnabled) {
+        m_storageBlockingEnabled = isStorageBlockingEnabled;
+        m_plugin->storageBlockingStateChanged(m_storageBlockingEnabled);
+    }
+}
+
 void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
     m_isPrivateBrowsingEnabled = isPrivateBrowsingEnabled;

@@ -946,7 +946,23 @@ void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
 #endif
 }
 
+void NetscapePlugin::storageBlockingStateChanged(bool storageBlockingEnabled)
+{
+    if (m_storageBlockingState != storageBlockingEnabled) {
+        m_storageBlockingState = storageBlockingEnabled;
+        updateNPNPrivateMode();
+    }
+}
+
 void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)
+{
+    if (m_privateBrowsingState != privateBrowsingEnabled) {
+        m_privateBrowsingState = privateBrowsingEnabled;
+        updateNPNPrivateMode();
+    }
+}
+
+void NetscapePlugin::updateNPNPrivateMode()
 {
     ASSERT(m_isStarted);
 
@@ -955,7 +971,7 @@ void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     //   (assigned enum value 18) with a pointer to an NPBool value on all applicable instances.
     //   Plugins should check the boolean value pointed to, not the pointer itself. 
     //   The value will be true when private mode is on.
-    NPBool value = privateBrowsingEnabled;
+    NPBool value = m_privateBrowsingState || m_storageBlockingState;
     NPP_SetValue(NPNVprivateModeBool, &value);
 }
 

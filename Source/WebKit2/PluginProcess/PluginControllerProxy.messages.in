@@ -106,6 +106,9 @@ messages -> PluginControllerProxy {
     # Return a snapshot of the plugin
     Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle)
     
+    # Sent when storage blocking policy changes
+    StorageBlockingStateChanged(bool storageBlockingEnabled)
+
     # Sent when private browsing is enabled or disabled
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 

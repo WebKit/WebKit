@@ -55,7 +55,6 @@
 #include "PageGroup.h"
 #include "PluginData.h"
 #include "PluginView.h"
-#include "PluginViewBase.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "RenderArena.h"
@@ -1030,16 +1029,8 @@ void Page::dnsPrefetchingStateChanged()
         frame->document()->initDNSPrefetch();
 }
 
-void Page::privateBrowsingStateChanged()
+void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases)
 {
-    bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
-
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->document()->privateBrowsingStateDidChange();
-
-    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
-    // from below privateBrowsingStateChanged does not affect their lifetime.
-    Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         FrameView* view = frame->view();
         if (!view)
@@ -1055,6 +1046,33 @@ void Page::privateBrowsingStateChanged()
                 pluginViewBases.append(static_cast<PluginViewBase*>(widget));
         }
     }
+}
+
+void Page::storageBlockingStateChanged()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->storageBlockingStateDidChange();
+
+    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
+    // from below storageBlockingStateChanged does not affect their lifetime.
+    Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
+    collectPluginViews(pluginViewBases);
+
+    for (size_t i = 0; i < pluginViewBases.size(); ++i)
+        pluginViewBases[i]->storageBlockingStateChanged();
+}
+
+void Page::privateBrowsingStateChanged()
+{
+    bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
+
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->privateBrowsingStateDidChange();
+
+    // Collect the PluginViews in to a vector to ensure that action the plug-in takes
+    // from below privateBrowsingStateChanged does not affect their lifetime.
+    Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
+    collectPluginViews(pluginViewBases);
 
     for (size_t i = 0; i < pluginViewBases.size(); ++i)
         pluginViewBases[i]->privateBrowsingStateChanged(privateBrowsingEnabled);

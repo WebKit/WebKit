@@ -452,6 +452,11 @@ void PluginProxy::contentsScaleFactorChanged(float scaleFactor)
     geometryDidChange();
 }
 
+void PluginProxy::storageBlockingStateChanged(bool isStorageBlockingEnabled)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::StorageBlockingStateChanged(isStorageBlockingEnabled), m_pluginInstanceID);
+}
+
 void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::PrivateBrowsingStateChanged(isPrivateBrowsingEnabled), m_pluginInstanceID);

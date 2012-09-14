@@ -27,6 +27,7 @@
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
+#include "PluginViewBase.h"
 #include "Region.h"
 #include "Supplementable.h"
 #include "ViewportArguments.h"
@@ -277,6 +278,7 @@ namespace WebCore {
         const String& userStyleSheet() const;
 
         void dnsPrefetchingStateChanged();
+        void storageBlockingStateChanged();
         void privateBrowsingStateChanged();
 
         static void setDebuggerForAllPages(JSC::Debugger*);
@@ -355,6 +357,8 @@ namespace WebCore {
 
         void setMinimumTimerInterval(double);
         double minimumTimerInterval() const;
+
+        void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
 
         OwnPtr<Chrome> m_chrome;
         OwnPtr<DragCaretController> m_dragCaretController;
