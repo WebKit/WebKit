@@ -49,7 +49,7 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
             }
 
             if (bytes > block->cellSize()) {
-                block->zapFreeList(freeList);
+                block->canonicalizeCellLivenessData(freeList);
                 continue;
             }
 

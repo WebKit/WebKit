@@ -21,7 +21,7 @@ class MarkedAllocator {
 public:
     MarkedAllocator();
     void reset();
-    void zapFreeList();
+    void canonicalizeCellLivenessData();
     size_t cellSize() { return m_cellSize; }
     bool cellsNeedDestruction() { return m_cellsNeedDestruction; }
     bool onlyContainsStructures() { return m_onlyContainsStructures; }
@@ -92,14 +92,14 @@ inline void MarkedAllocator::reset()
     m_blocksToSweep = m_blockList.head();
 }
 
-inline void MarkedAllocator::zapFreeList()
+inline void MarkedAllocator::canonicalizeCellLivenessData()
 {
     if (!m_currentBlock) {
         ASSERT(!m_freeList.head);
         return;
     }
     
-    m_currentBlock->zapFreeList(m_freeList);
+    m_currentBlock->canonicalizeCellLivenessData(m_freeList);
     m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
 }

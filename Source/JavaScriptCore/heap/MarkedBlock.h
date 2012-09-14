@@ -136,7 +136,7 @@ namespace JSC {
         // cell liveness data. To restore accurate cell liveness data, call one
         // of these functions:
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
-        void zapFreeList(const FreeList&); // Call this to undo the free list.
+        void canonicalizeCellLivenessData(const FreeList&);
 
         void clearMarks();
         size_t markCount();
@@ -154,7 +154,8 @@ namespace JSC {
         bool isLive(const JSCell*);
         bool isLiveCell(const void*);
         void setMarked(const void*);
-        
+        void clearMarked(const void*);
+
         bool needsSweeping();
 
 #if ENABLE(GGC)
@@ -185,13 +186,14 @@ namespace JSC {
         template <int size> inline void gatherDirtyCellsWithSize(DirtyCellVector&);
 #endif
 
+        template <typename Functor> void forEachCell(Functor&);
         template <typename Functor> void forEachLiveCell(Functor&);
         template <typename Functor> void forEachDeadCell(Functor&);
 
     private:
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
 
-        enum BlockState { New, FreeListed, Allocated, Marked, Zapped };
+        enum BlockState { New, FreeListed, Allocated, Marked };
         template<bool destructorCallNeeded> FreeList sweepHelper(SweepMode = SweepOnly);
 
         typedef char Atom[atomSize];
@@ -364,21 +366,18 @@ namespace JSC {
         m_marks.set(atomNumber(p));
     }
 
+    inline void MarkedBlock::clearMarked(const void* p)
+    {
+        ASSERT(m_marks.get(atomNumber(p)));
+        m_marks.clear(atomNumber(p));
+    }
+
     inline bool MarkedBlock::isLive(const JSCell* cell)
     {
         switch (m_state) {
         case Allocated:
             return true;
-        case Zapped:
-            if (isZapped(cell)) {
-                // Object dead in previous collection, not allocated since previous collection: mark bit should not be set.
-                ASSERT(!m_marks.get(atomNumber(cell)));
-                return false;
-            }
-            
-            // Newly allocated objects: mark bit not set.
-            // Objects that survived prior collection: mark bit set.
-            return true;
+
         case Marked:
             return m_marks.get(atomNumber(cell));
 
@@ -405,6 +404,14 @@ namespace JSC {
             return false;
 
         return isLive(static_cast<const JSCell*>(p));
+    }
+
+    template <typename Functor> inline void MarkedBlock::forEachCell(Functor& functor)
+    {
+        for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+            JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
+            functor(cell);
+        }
     }
 
     template <typename Functor> inline void MarkedBlock::forEachLiveCell(Functor& functor)

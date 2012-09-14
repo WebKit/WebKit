@@ -81,8 +81,6 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
             continue;
 
         JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
-        if (blockState == Zapped && !cell->isZapped())
-            continue;
 
         if (destructorCallNeeded && blockState != New)
             callDestructor(cell);
@@ -95,7 +93,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
         }
     }
 
-    m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Zapped);
+    m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Marked);
     return FreeList(head, count * cellSize());
 }
 
@@ -132,18 +130,21 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
         return sweepMode == SweepToFreeList
             ? specializedSweep<Marked, SweepToFreeList, destructorCallNeeded>()
             : specializedSweep<Marked, SweepOnly, destructorCallNeeded>();
-    case Zapped:
-        ASSERT(!m_onlyContainsStructures || heap()->isSafeToSweepStructures());
-        return sweepMode == SweepToFreeList
-            ? specializedSweep<Zapped, SweepToFreeList, destructorCallNeeded>()
-            : specializedSweep<Zapped, SweepOnly, destructorCallNeeded>();
     }
 
     ASSERT_NOT_REACHED();
     return FreeList();
 }
 
-void MarkedBlock::zapFreeList(const FreeList& freeList)
+class SetAllMarksFunctor : public MarkedBlock::VoidFunctor {
+public:
+    void operator()(JSCell* cell)
+    {
+        MarkedBlock::blockFor(cell)->setMarked(cell);
+    }
+};
+
+void MarkedBlock::canonicalizeCellLivenessData(const FreeList& freeList)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
     FreeCell* head = freeList.head;
@@ -156,40 +157,26 @@ void MarkedBlock::zapFreeList(const FreeList& freeList)
         // Hence if the block is Marked we need to leave it Marked.
         
         ASSERT(!head);
-        
         return;
     }
-    
-    if (m_state == Zapped) {
-        // If the block is in the Zapped state then we know that someone already
-        // zapped it for us. This could not have happened during a GC, but might
-        // be the result of someone having done a GC scan to perform some operation
-        // over all live objects (or all live blocks). It also means that somebody
-        // had allocated in this block since the last GC, swept all dead objects
-        // onto the free list, left the block in the FreeListed state, then the heap
-        // scan happened, and canonicalized the block, leading to all dead objects
-        // being zapped. Therefore, it is safe for us to simply do nothing, since
-        // dead objects will have 0 in their vtables and live objects will have
-        // non-zero vtables, which is consistent with the block being zapped.
-        
-        ASSERT(!head);
-        
-        return;
-    }
-    
+   
     ASSERT(m_state == FreeListed);
     
     // Roll back to a coherent state for Heap introspection. Cells newly
     // allocated from our free list are not currently marked, so we need another
-    // way to tell what's live vs dead. We use zapping for that.
+    // way to tell what's live vs dead. 
     
+    SetAllMarksFunctor functor;
+    forEachCell(functor);
+
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
         reinterpret_cast<JSCell*>(current)->zap();
+        clearMarked(current);
     }
     
-    m_state = Zapped;
+    m_state = Marked;
 }
 
 } // namespace JSC

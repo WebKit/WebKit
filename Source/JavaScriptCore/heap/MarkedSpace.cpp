@@ -146,17 +146,17 @@ void MarkedSpace::reapWeakSets()
 void MarkedSpace::canonicalizeCellLivenessData()
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
-        allocatorFor(cellSize).zapFreeList();
-        destructorAllocatorFor(cellSize).zapFreeList();
+        allocatorFor(cellSize).canonicalizeCellLivenessData();
+        destructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
     }
 
     for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
-        allocatorFor(cellSize).zapFreeList();
-        destructorAllocatorFor(cellSize).zapFreeList();
+        allocatorFor(cellSize).canonicalizeCellLivenessData();
+        destructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
     }
 
-    m_largeAllocator.zapFreeList();
-    m_structureAllocator.zapFreeList();
+    m_largeAllocator.canonicalizeCellLivenessData();
+    m_structureAllocator.canonicalizeCellLivenessData();
 }
 
 bool MarkedSpace::isPagedOut(double deadline)

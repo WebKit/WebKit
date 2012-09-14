@@ -1,3 +1,52 @@
+2012-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove the Zapped BlockState
+        https://bugs.webkit.org/show_bug.cgi?id=96708
+
+        Reviewed by Geoffrey Garen.
+
+        The Zapped block state is rather confusing. It indicates that a block is in one of two different states that we 
+        can't tell the difference between:
+
+        1) I have run all destructors of things that are zapped, and I have not allocated any more objects. This block 
+           is ready for reclaiming if you so choose.
+        2) I have run all the destructors of things that are zapped, but I have allocated more stuff since then, so it 
+           is not safe to reclaim this block.
+
+        This state adds a lot of complexity to our state transition model for MarkedBlocks. We should get rid of it. 
+        We can replace this state by making sure mark bits represent all of the liveness information we need when running 
+        our conservative stack scan. Instead of zapping the free list when canonicalizing cell liveness data prior to 
+        a conservative scan, we can instead mark all objects in the block except for those in the free list. This should 
+        incur no performance penalty since we're doing it on a very small O(1) number of blocks at the beginning of the collection. 
+
+        For the time being we still need to use zapping to determine whether we have run an object's destructor or not.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): Renaming stuff.
+        * heap/MarkedAllocator.h: Renamed zapFreeList to canonicalizeCellLivenessData to match.
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::canonicalizeCellLivenessData): Same as old zapFreeList, but just call canonicalize instead.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep): Remove the check for Zapped block stuff. Also change the block state to Marked 
+        instead of Zapped if we're not producing a FreeList since that's the only other state that really makes any sense.
+        (JSC::MarkedBlock::sweepHelper): Remove Zapped related code.
+        (SetAllMarksFunctor): Functor to set all the mark bits in the block since there's not a simple function to call on 
+        the Bitmap itself.
+        (JSC::SetAllMarksFunctor::operator()):
+        (JSC):
+        (JSC::MarkedBlock::canonicalizeCellLivenessData): Remove all the stuff for Zapped. For FreeListed, set all the mark bits
+        and then clear the ones for the objects in the FreeList. This ensures that only the things that were in the FreeList 
+        are considered to be dead by the conservative scan, just like if we were to have zapped the FreeList like before. 
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::clearMarked): Add function to clear individual mark bits, since we need that functionality now.
+        (JSC):
+        (JSC::MarkedBlock::isLive): Remove code for Zapped stuff. Marked handles all interesting cases now.
+        (JSC::MarkedBlock::forEachCell): Add new iterator function that iterates over all cells in the block, regardless of 
+        whether they're live or a dead.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::canonicalizeCellLivenessData): Change to call the renamed canonicalize function. 
+
 2012-09-13  Kevin Funk  <kevin.funk@kdab.com>
 
         Make compile with both OS(WINCE) and PLATFORM(QT) support
