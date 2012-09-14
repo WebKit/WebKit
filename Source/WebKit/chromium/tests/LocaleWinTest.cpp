@@ -358,44 +358,44 @@ TEST_F(LocaleWinTest, decimalSeparator)
 }
 #endif
 
-static void testNumberIsReversible(const AtomicString& locale, const char* original, const char* shouldHave = 0)
+static void testNumberIsReversible(LCID lcid, const char* original, const char* shouldHave = 0)
 {
-    OwnPtr<Localizer> localizer = Localizer::create(locale);
-    String localized = localizer->convertToLocalizedNumber(original);
+    OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+    String localized = locale->convertToLocalizedNumber(original);
     if (shouldHave)
         EXPECT_TRUE(localized.contains(shouldHave));
-    String converted = localizer->convertFromLocalizedNumber(localized);
+    String converted = locale->convertFromLocalizedNumber(localized);
     EXPECT_STREQ(original, converted.utf8().data());
 }
 
-void testNumbers(const AtomicString& locale)
+void testNumbers(LCID lcid)
 {
-    testNumberIsReversible(locale, "123456789012345678901234567890");
-    testNumberIsReversible(locale, "-123.456");
-    testNumberIsReversible(locale, ".456");
-    testNumberIsReversible(locale, "-0.456");
+    testNumberIsReversible(lcid, "123456789012345678901234567890");
+    testNumberIsReversible(lcid, "-123.456");
+    testNumberIsReversible(lcid, ".456");
+    testNumberIsReversible(lcid, "-0.456");
 }
 
 TEST_F(LocaleWinTest, localizedNumberRoundTrip)
 {
-    testNumberIsReversible("en-us", "123456789012345678901234567890");
-    testNumberIsReversible("en-us", "-123.456", ".");
-    testNumberIsReversible("en-us", ".456", ".");
-    testNumberIsReversible("en-us", "-0.456", ".");
-    
-    testNumberIsReversible("fr", "123456789012345678901234567890");
-    testNumberIsReversible("fr", "-123.456", ",");
-    testNumberIsReversible("fr", ".456", ",");
-    testNumberIsReversible("fr", "-0.456", ",");
+    testNumberIsReversible(EnglishUS, "123456789012345678901234567890");
+    testNumberIsReversible(EnglishUS, "-123.456", ".");
+    testNumberIsReversible(EnglishUS, ".456", ".");
+    testNumberIsReversible(EnglishUS, "-0.456", ".");
+
+    testNumberIsReversible(FrenchFR, "123456789012345678901234567890");
+    testNumberIsReversible(FrenchFR, "-123.456", ",");
+    testNumberIsReversible(FrenchFR, ".456", ",");
+    testNumberIsReversible(FrenchFR, "-0.456", ",");
 
     // Test some of major locales.
-    testNumbers("ar-eg");
-    testNumbers("de");
-    testNumbers("es");
-    testNumbers("fa");
-    testNumbers("ja");
-    testNumbers("ko");
-    testNumbers("zh-cn");
-    testNumbers("zh-hk");
-    testNumbers("zh-tw");
+    testNumbers(ArabicEG);
+    testNumbers(German);
+    testNumbers(Spanish);
+    testNumbers(Persian);
+    testNumbers(JapaneseJP);
+    testNumbers(KoreanKR);
+    testNumbers(ChineseCN);
+    testNumbers(ChineseHK);
+    testNumbers(ChineseTW);
 }

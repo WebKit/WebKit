@@ -1,3 +1,17 @@
+2012-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128543.
+        http://trac.webkit.org/changeset/128543
+        https://bugs.webkit.org/show_bug.cgi?id=96722
+
+        Caused LocaleWinTest.localizedNumberRoundTrip to fail
+        (Requested by keishi on #webkit).
+
+        * tests/LocaleWinTest.cpp:
+        (testNumberIsReversible):
+        (testNumbers):
+        (TEST_F):
+
 2012-09-13  Keishi Hattori  <keishi@webkit.org>
 
         Create Localizer factory method for LocaleWin
