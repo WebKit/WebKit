@@ -1,3 +1,16 @@
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        EventSendingController::keyDown does not support non-array modifier arguments
+        https://bugs.webkit.org/show_bug.cgi?id=96727
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for handling a string as modifier argument to
+        EventSendingController::keyDown.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::parseModifierArray):
+
 2012-09-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs layoutTestController.setCustomPolicyDelegate

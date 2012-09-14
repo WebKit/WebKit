@@ -1,3 +1,15 @@
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        EventSendingController::keyDown does not support non-array modifier arguments
+        https://bugs.webkit.org/show_bug.cgi?id=96727
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip passing test fast/forms/legend-access-key.html
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk-wk2/Skipped:
+
 2012-09-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed skipping failing test.

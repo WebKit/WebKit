@@ -74,6 +74,13 @@ static WKEventModifiers parseModifierArray(JSContextRef context, JSValueRef arra
 {
     if (!arrayValue)
         return 0;
+
+    // The value may either be a string with a single modifier or an array of modifiers.
+    if (JSValueIsString(context, arrayValue)) {
+        JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(context, arrayValue, 0));
+        return parseModifier(string.get());
+    }
+
     if (!JSValueIsObject(context, arrayValue))
         return 0;
     JSObjectRef array = const_cast<JSObjectRef>(arrayValue);
