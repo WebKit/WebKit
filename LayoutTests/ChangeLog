@@ -1,3 +1,32 @@
+2012-09-14  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] u_textureSize uniform should be set to the size of the texture.
+        https://bugs.webkit.org/show_bug.cgi?id=95914
+
+        Reviewed by Dean Jackson.
+
+        Tests for the following uniform variables:
+            uniform vec2 u_textureSize
+            uniform vec4 u_meshBox
+            uniform vec2 u_tileSize
+            uniform vec2 u_meshSize
+
+        The relevant section of the specification is:
+        http://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#shader-uniform-variables
+
+        * css3/filters/custom/custom-filter-u-mesh-box-expected.html: Added.
+        * css3/filters/custom/custom-filter-u-mesh-box.html: Added.
+        * css3/filters/custom/custom-filter-u-mesh-size-expected.html: Added.
+        * css3/filters/custom/custom-filter-u-mesh-size.html: Added.
+        * css3/filters/custom/custom-filter-u-texture-size-expected.html: Added.
+        * css3/filters/custom/custom-filter-u-texture-size.html: Added.
+        * css3/filters/custom/custom-filter-u-tile-size-expected.html: Added.
+        * css3/filters/custom/custom-filter-u-tile-size.html: Added.
+        * css3/filters/resources/u-mesh-box-is-unit-square.fs: Added.
+        * css3/filters/resources/u-mesh-size.fs: Added.
+        * css3/filters/resources/u-texture-size.fs: Added.
+        * css3/filters/resources/u-tile-size.fs: Added.
+
 2012-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed.

@@ -547,6 +547,24 @@ void FECustomFilter::bindProgramAndBuffers(Platform3DObject inputTexture)
         projectionMatrix.toColumnMajorFloatArray(glProjectionMatrix);
         m_context->uniformMatrix4fv(m_compiledProgram->projectionMatrixLocation(), 1, false, &glProjectionMatrix[0]);
     }
+
+    ASSERT(m_meshColumns);
+    ASSERT(m_meshRows);
+
+    if (m_compiledProgram->meshSizeLocation() != -1)
+        m_context->uniform2f(m_compiledProgram->meshSizeLocation(), m_meshColumns, m_meshRows);
+
+    if (m_compiledProgram->tileSizeLocation() != -1)
+        m_context->uniform2f(m_compiledProgram->tileSizeLocation(), 1.0 / m_meshColumns, 1.0 / m_meshRows);
+
+    if (m_compiledProgram->meshBoxLocation() != -1) {
+        // FIXME: This will change when filter margins will be implemented,
+        // see https://bugs.webkit.org/show_bug.cgi?id=71400
+        m_context->uniform4f(m_compiledProgram->meshBoxLocation(), -0.5, -0.5, 1.0, 1.0);
+    }
+
+    if (m_compiledProgram->samplerSizeLocation() != -1)
+        m_context->uniform2f(m_compiledProgram->samplerSizeLocation(), m_contextSize.width(), m_contextSize.height());
     
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_mesh->verticesBufferObject());
     m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_mesh->elementsBufferObject());
