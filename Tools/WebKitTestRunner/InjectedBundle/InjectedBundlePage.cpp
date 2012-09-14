@@ -732,9 +732,14 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
         InjectedBundle::shared().stringBuilder()->appendLiteral(" - didStartProvisionalLoadForFrame\n");
     }
 
-    if (InjectedBundle::shared().topLoadingFrame())
-        return;
-    InjectedBundle::shared().setTopLoadingFrame(frame);
+    if (!InjectedBundle::shared().topLoadingFrame())
+        InjectedBundle::shared().setTopLoadingFrame(frame);
+
+    if (InjectedBundle::shared().testRunner()->shouldStopProvisionalFrameLoads()) {
+        dumpFrameDescriptionSuitableForTestResult(frame);
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" - stopping load in didStartProvisionalLoadForFrame callback\n");
+        WKBundleFrameStopLoading(frame);
+    }
 }
 
 void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef frame)

@@ -113,6 +113,7 @@ public:
     bool hasVerticalScrollbar() const;
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;
+    void stopLoading();
 
     static WebFrame* frameForContext(JSContextRef);
 

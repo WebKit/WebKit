@@ -182,6 +182,11 @@ void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
         coreFrame->loader()->setOpener(0);
 }
 
+void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)
+{
+    toImpl(frameRef)->stopLoading();
+}
+
 WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frameRef)
 {
     return toCopiedAPI(toImpl(frameRef)->layerTreeAsText());

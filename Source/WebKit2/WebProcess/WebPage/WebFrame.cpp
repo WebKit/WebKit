@@ -651,6 +651,14 @@ bool WebFrame::containsAnyFormElements() const
     return false;
 }
 
+void WebFrame::stopLoading()
+{
+    if (!m_coreFrame)
+        return;
+
+    m_coreFrame->loader()->stopForUserCancel();
+}
+
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
     JSObjectRef globalObjectRef = JSContextGetGlobalObject(context);

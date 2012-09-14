@@ -142,6 +142,7 @@ module WTR {
         void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
 
         void setDefersLoading(in boolean flag);
+        void setStopProvisionalFrameLoads();
 
         // Web intents testing.
         void sendWebIntentResponse(in DOMString reply);

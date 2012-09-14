@@ -1,3 +1,25 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
+        https://bugs.webkit.org/show_bug.cgi?id=42691
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add WKBundleFrame private API to stop loading of a frame.
+        This is needed by WebKitTestRunner to implement
+        testrunner.setStopProvisionalFrameLoads.
+
+        Original patch by Alexey Proskuryakov.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameStopLoading):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::stopLoading):
+        (WebKit):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+
 2012-09-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL] Add unit test for RefPtr<Evas_Object>

@@ -206,6 +206,9 @@ public:
     void setShouldStayOnPageAfterHandlingBeforeUnload(bool);
 
     void setDefersLoading(bool);
+
+    void setStopProvisionalFrameLoads() { m_shouldStopProvisionalFrameLoads = true; }
+    bool shouldStopProvisionalFrameLoads() const { return m_shouldStopProvisionalFrameLoads; }
     
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool value) { m_globalFlag = value; }
@@ -282,6 +285,7 @@ private:
     bool m_testRepaintSweepHorizontally;
 
     bool m_willSendRequestReturnsNull;
+    bool m_shouldStopProvisionalFrameLoads;
 
     bool m_policyDelegateEnabled;
     bool m_policyDelegatePermissive;

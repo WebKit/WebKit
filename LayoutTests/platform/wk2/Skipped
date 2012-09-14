@@ -428,10 +428,6 @@ fast/encoding/idn-security.html
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html
 
-# WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
-# <https://bugs.webkit.org/show_bug.cgi?id=42691>
-fast/loader/stop-provisional-loads.html
-
 # WebKitTestRunner needs layoutTestController.setPrinting
 # <https://bugs.webkit.org/show_bug.cgi?id=42693>
 printing/compositing-layer-printing.html

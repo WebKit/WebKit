@@ -1,3 +1,25 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
+        https://bugs.webkit.org/show_bug.cgi?id=42691
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add implementation for testrunner.setStopProvisionalFrameLoads()
+        in WebKitTestRunner.
+
+        Original patch by Alexey Proskuryakov.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+        (WTR::TestRunner::setStopProvisionalFrameLoads):
+        (WTR::TestRunner::shouldStopProvisionalFrameLoads):
+
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix handling of debug/release/debug_and_release/build_all

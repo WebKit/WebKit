@@ -1,3 +1,15 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
+        https://bugs.webkit.org/show_bug.cgi?id=42691
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip fast/loader/stop-provisional-loads.html now that WebKitTestRunner
+        implements testrunner.setStopProvisionalFrameLoads().
+
+        * platform/wk2/Skipped:
+
 2012-09-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Attempt to create a theme for 0 sized element leads to assertion hit
