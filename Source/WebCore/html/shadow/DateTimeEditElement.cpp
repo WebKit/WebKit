@@ -29,6 +29,7 @@
 
 #include "DateComponents.h"
 #include "DateTimeFieldElements.h"
+#include "DateTimeFieldsState.h"
 #include "DateTimeFormat.h"
 #include "DateTimeSymbolicFieldElement.h"
 #include "EventHandler.h"
@@ -410,6 +411,12 @@ void DateTimeEditElement::setValueAsDate(const StepRange& stepRange, const DateC
         m_fields[fieldIndex]->setValueAsDate(date);
 }
 
+void DateTimeEditElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
+        m_fields[fieldIndex]->setValueAsDateTimeFieldsState(dateTimeFieldsState, dateForReadOnlyField);
+}
+
 void DateTimeEditElement::setEmptyValue(const StepRange& stepRange, const DateComponents& dateForReadOnlyField)
 {
     layout(stepRange, dateForReadOnlyField);
@@ -449,6 +456,14 @@ void DateTimeEditElement::updateUIState()
         if (DateTimeFieldElement* field = focusedField())
             field->blur();
     }
+}
+
+DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState() const
+{
+    DateTimeFieldsState dateTimeFieldsState;
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
+        m_fields[fieldIndex]->populateDateTimeFieldsState(dateTimeFieldsState);
+    return dateTimeFieldsState;
 }
 
 double DateTimeEditElement::valueAsDouble() const

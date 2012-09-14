@@ -4019,6 +4019,8 @@
             'html/DOMURL.h',
             'html/DateInputType.cpp',
             'html/DateInputType.h',
+            'html/DateTimeFieldsState.cpp',
+            'html/DateTimeFieldsState.h',
             'html/DateTimeInputType.cpp',
             'html/DateTimeInputType.h',
             'html/DateTimeLocalInputType.cpp',

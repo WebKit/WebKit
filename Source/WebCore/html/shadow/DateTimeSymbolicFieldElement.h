@@ -38,7 +38,10 @@ class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
 
 protected:
     DateTimeSymbolicFieldElement(Document*, FieldOwner&, const Vector<String>&);
+    virtual bool hasValue() const OVERRIDE FINAL;
+    virtual void setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
+    virtual int valueAsInteger() const OVERRIDE FINAL;
 
 private:
     static const int invalidIndex = -1;
@@ -48,14 +51,11 @@ private:
 
     // DateTimeFieldElement functions.
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
-    virtual bool hasValue() const OVERRIDE FINAL;
     virtual int maximum() const OVERRIDE FINAL;
     virtual int minimum() const OVERRIDE FINAL;
-    virtual void setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual void stepDown() OVERRIDE FINAL;
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
-    virtual int valueAsInteger() const OVERRIDE FINAL;
     virtual String visibleValue() const OVERRIDE FINAL;
 
     const Vector<String> m_symbols;

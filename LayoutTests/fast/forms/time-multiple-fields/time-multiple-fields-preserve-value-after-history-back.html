@@ -34,6 +34,14 @@ function failed(message) {
     finishJSTest();
 }
 
+function fieldsText(input)
+{
+    if (!window.internals)
+        return "";
+    var editElement = window.internals.oldestShadowRoot(input);
+    return editElement.textContent;
+}
+
 function finishTest() {
     runTestCases();
     document.body.removeChild(document.getElementById('container'));
@@ -72,6 +80,9 @@ case '?page1':
         testInput1.value = '01:01';
         testInput2.focus();
         keyDown('upArrow');
+        keyDown('\t');
+        keyDown('\t');
+        keyDown('upArrow');
         var nextUri = location.toString().replace('?page1', '?page2');
         setTimeout(function () { window.location.href = nextUri; }, 0);
         break;
@@ -84,8 +95,8 @@ case '?page1':
                 'expected' : '01:01' },
             {
                 'description' : 'Went back to a page. Checking a form control which had a partial value',
-                'actual' : testInput2.value,
-                'expected' : ''
+                'actual' : fieldsText(testInput2),
+                'expected' : '01:-- AM'
             });
         forward('forwardTo2');
         break;
@@ -102,7 +113,8 @@ case '?page2':
     case 'direct':
         testInput1.value = '02:02';
         testInput2.focus();
-        keyDown('upArrow');
+        keyDown('\t');
+        keyDown('downArrow');
         back('backTo1');
         break;
     case 'forwardTo2':
@@ -114,8 +126,8 @@ case '?page2':
             },
             {
                 'description' : 'Went forward to a page. Checking a form control which had a partial value',
-                'actual' : testInput2.value,
-                'expected' : ''
+                'actual' : fieldsText(testInput2),
+                'expected' : '--:59 --'
             });
         back('backTo1Second');
         break;

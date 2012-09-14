@@ -28,6 +28,7 @@
 #include "DateTimeFieldElements.h"
 
 #include "DateComponents.h"
+#include "DateTimeFieldsState.h"
 #include "LocalizedStrings.h"
 #include <wtf/DateMath.h>
 
@@ -46,9 +47,25 @@ PassRefPtr<DateTimeAMPMFieldElement> DateTimeAMPMFieldElement::create(Document* 
     return field.release();
 }
 
+void DateTimeAMPMFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (hasValue())
+        dateTimeFieldsState.setAMPM(valueAsInteger() ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
+    else
+        dateTimeFieldsState.setAMPM(DateTimeFieldsState::AMPMValueEmpty);
+}
+
 void DateTimeAMPMFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.hour() >= 12 ? 1 : 0);
+}
+
+void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (dateTimeFieldsState.hasAMPM())
+        setValueAsInteger(dateTimeFieldsState.ampm());
+    else
+        setEmptyValue(dateForReadOnlyField);
 }
 
 double DateTimeAMPMFieldElement::unitInMillisecond() const
@@ -73,9 +90,81 @@ PassRefPtr<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document* 
     return field.release();
 }
 
+void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (!hasValue()) {
+        dateTimeFieldsState.setHour(DateTimeFieldsState::emptyValue);
+        return;
+    }
+
+    const int value = DateTimeNumericFieldElement::valueAsInteger();
+
+    switch (maximum()) {
+    case 11:
+        dateTimeFieldsState.setHour(value ? value : 12);
+        return;
+    case 12:
+        dateTimeFieldsState.setHour(value);
+        return;
+    case 23:
+        dateTimeFieldsState.setHour(value ? value % 12 : 12);
+        dateTimeFieldsState.setAMPM(value >= 12 ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
+        return;
+    case 24:
+        if (value == 24) {
+            dateTimeFieldsState.setHour(12);
+            dateTimeFieldsState.setHour(DateTimeFieldsState::AMPMValueAM);
+            return;
+        }
+        dateTimeFieldsState.setHour(value == 12 ? 12 : value % 12);
+        dateTimeFieldsState.setAMPM(value >= 12 ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.hour());
+}
+
+void DateTimeHourFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasHour()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const int hour12 = dateTimeFieldsState.hour();
+
+    if (hour12 < 1 || hour12 > 12) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    switch (maximum()) {
+    case 11:
+        DateTimeNumericFieldElement::setValueAsInteger(hour12 % 12);
+        return;
+    case 12:
+        DateTimeNumericFieldElement::setValueAsInteger(hour12);
+        return;
+    case 23:
+        if (dateTimeFieldsState.ampm() == DateTimeFieldsState::AMPMValuePM)
+            DateTimeNumericFieldElement::setValueAsInteger((hour12 + 12) % 24);
+        else
+            DateTimeNumericFieldElement::setValueAsInteger(hour12 % 12);
+        return;
+    case 24:
+        if (dateTimeFieldsState.ampm() == DateTimeFieldsState::AMPMValuePM)
+            DateTimeNumericFieldElement::setValueAsInteger(hour12 == 12 ? 12 : hour12 + 12);
+        else
+            DateTimeNumericFieldElement::setValueAsInteger(hour12);
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void DateTimeHourFieldElement::setValueAsInteger(int valueAsHour23, EventBehavior eventBehavior)
@@ -109,9 +198,30 @@ PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::cre
     return field.release();
 }
 
+void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    dateTimeFieldsState.setMillisecond(hasValue() ? valueAsInteger() : DateTimeFieldsState::emptyValue);
+}
+
 void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.millisecond());
+}
+
+void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasMillisecond()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const unsigned value = dateTimeFieldsState.millisecond();
+    if (value > static_cast<unsigned>(maximum())) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    setValueAsInteger(value);
 }
 
 double DateTimeMillisecondFieldElement::unitInMillisecond() const
@@ -134,9 +244,30 @@ PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Docume
     return field.release();
 }
 
+void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    dateTimeFieldsState.setMinute(hasValue() ? valueAsInteger() : DateTimeFieldsState::emptyValue);
+}
+
 void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.minute());
+}
+
+void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasMinute()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const unsigned value = dateTimeFieldsState.minute();
+    if (value > static_cast<unsigned>(maximum())) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    setValueAsInteger(value);
 }
 
 double DateTimeMinuteFieldElement::unitInMillisecond() const
@@ -159,9 +290,30 @@ PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Docume
     return field.release();
 }
 
+void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    dateTimeFieldsState.setSecond(hasValue() ? valueAsInteger() : DateTimeFieldsState::emptyValue);
+}
+
 void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.second());
+}
+
+void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasSecond()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const unsigned value = dateTimeFieldsState.second();
+    if (value > static_cast<unsigned>(maximum())) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    setValueAsInteger(value);
 }
 
 double DateTimeSecondFieldElement::unitInMillisecond() const

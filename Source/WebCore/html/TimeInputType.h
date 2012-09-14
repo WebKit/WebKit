@@ -94,6 +94,8 @@ private:
     virtual bool isTextField() const OVERRIDE FINAL;
     virtual void minOrMaxAttributeChanged() OVERRIDE FINAL;
     virtual void readonlyAttributeChanged() OVERRIDE FINAL;
+    virtual void restoreFormControlState(const FormControlState&) OVERRIDE FINAL;
+    virtual FormControlState saveFormControlState() const OVERRIDE FINAL;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE FINAL;
     virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
     virtual void stepAttributeChanged() OVERRIDE FINAL;

@@ -34,6 +34,7 @@ namespace WebCore {
 
 class DateComponents;
 class DateTimeEditLayouter;
+class DateTimeFieldsState;
 class KeyboardEvent;
 class MouseEvent;
 class StepRange;
@@ -71,6 +72,8 @@ public:
     void resetFields();
     void setEmptyValue(const StepRange&, const DateComponents&  dateForReadOnlyField);
     void setValueAsDate(const StepRange&, const DateComponents&);
+    void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField);
+    DateTimeFieldsState valueAsDateTimeFieldsState() const;
     double valueAsDouble() const;
 
 private:

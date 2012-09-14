@@ -42,7 +42,9 @@ private:
     DateTimeAMPMFieldElement(Document*, FieldOwner&, const Vector<String>&);
 
     // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
@@ -63,7 +65,9 @@ private:
     DateTimeHourFieldElement(Document*, FieldOwner&, int minimum, int maximum);
 
     // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual double unitInMillisecond() const OVERRIDE FINAL;
     virtual int valueAsInteger() const OVERRIDE FINAL;
@@ -81,7 +85,9 @@ private:
     DateTimeMillisecondFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
@@ -95,7 +101,9 @@ private:
     DateTimeMinuteFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
@@ -109,7 +117,9 @@ private:
     DateTimeSecondFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 

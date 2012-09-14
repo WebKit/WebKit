@@ -1,3 +1,19 @@
+2012-09-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] multiple fields time input UI should save/restore its value even if it has an empty field.
+        https://bugs.webkit.org/show_bug.cgi?id=96714
+
+        Reviewed by Kent Tamura.
+
+        This patch changes time-multiple-fields-preserve-value-after-history-back.html
+        to check partial value is saved and restored rather than resetting value.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back-expected.txt: Updated for new expectation.
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html: Changed to check partially populated fields of input element.
+
 2012-09-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Tests] Extract a common method for sending XHRs from tests.
