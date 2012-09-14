@@ -330,16 +330,6 @@ fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
 fast/dom/Geolocation/window-close-crash.html
 
-# WebKitTestRunner needs layoutTestController.setCustomPolicyDelegate
-# <https://bugs.webkit.org/show_bug.cgi?id=42546>
-fast/loader/javascript-url-hierarchical-execution.html
-fast/loader/onload-policy-ignore-for-frame.html
-fast/loader/reload-policy-delegate.html
-http/tests/misc/policy-delegate-called-twice.html
-http/tests/misc/redirect-to-external-url.html
-http/tests/security/feed-urls-from-remote.html
-http/tests/download
-
 # WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
 # <https://bugs.webkit.org/show_bug.cgi?id=42547>
 fast/canvas/canvas-gradient-addStop-error.html
@@ -354,6 +344,7 @@ svg/custom/svg-allowed-in-dashboard-object.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
 fast/css/compare-content-style.html
 fast/frames/frame-display-none-focus.html
+fast/loader/reload-policy-delegate.html
 
 # WebKitTestRunner needs layoutTestController.queueLoad
 # <https://bugs.webkit.org/show_bug.cgi?id=42674>
@@ -620,6 +611,11 @@ inspector/geolocation-error.html
 inspector/geolocation-success.html
 inspector/geolocation-watchPosition.html
 
+# WebFrameLoaderClient::dispatchDecidePolicy methods should consider 
+# 'WKBundlePagePolicyActionPassThrough' policy action 
+# https://bugs.webkit.org/show_bug.cgi?id=95974
+fast/loader/onload-policy-ignore-for-frame.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -868,6 +864,13 @@ fast/spatial-navigation/snav-fully-aligned-horizontally.html
 fast/spatial-navigation/snav-fully-aligned-vertically.html
 fast/spatial-navigation/snav-iframe-no-scrollable-content.html
 fast/spatial-navigation/snav-imagemap-overlapped-areas.html
+
+# WK2 is missing API for getting header fields from HTTP responses
+# which have to be serialized.
+http/tests/download
+
+# WebFrameLoaderClient::canHandleRequest() has to be implemented.
+http/tests/misc/redirect-to-external-url.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
@@ -1122,6 +1125,9 @@ fast/harness/page-cache-crash-on-data-urls.html
 # Wrong logging order
 fast/loader/file-protocol-fragment.html
 http/tests/loading/pdf-commit-load-callbacks.html
+
+# Times out unexpectedly.
+http/tests/security/feed-urls-from-remote.html
 
 ### END OF (3) Unclassified failures
 ########################################

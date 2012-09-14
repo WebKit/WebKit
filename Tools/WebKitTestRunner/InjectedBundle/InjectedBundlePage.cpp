@@ -1264,22 +1264,20 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
     if (!InjectedBundle::shared().testRunner()->isPolicyDelegateEnabled())
         return WKBundlePagePolicyActionUse;
 
-    if (InjectedBundle::shared().testRunner()->waitToDump()) {
-        WKRetainPtr<WKStringRef> url = adoptWK(WKURLCopyString(WKURLRequestCopyURL(request)));
-        InjectedBundle::shared().stringBuilder()->appendLiteral("Policy delegate: attempt to load ");
-        InjectedBundle::shared().stringBuilder()->append(toWTFString(url));
-        InjectedBundle::shared().stringBuilder()->appendLiteral(" with navigation type \'");
-        InjectedBundle::shared().stringBuilder()->append(toWTFString(NavigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction))));
-        InjectedBundle::shared().stringBuilder()->appendLiteral("\'");
-        WKBundleHitTestResultRef hitTestResultRef = WKBundleNavigationActionCopyHitTestResult(navigationAction);
-        if (hitTestResultRef) {
-            InjectedBundle::shared().stringBuilder()->appendLiteral(" originating from ");
-            InjectedBundle::shared().stringBuilder()->append(dumpPath(m_page, m_world.get(), WKBundleHitTestResultCopyNodeHandle(hitTestResultRef)));
-        }
-
-        InjectedBundle::shared().stringBuilder()->append('\n');
-        InjectedBundle::shared().testRunner()->notifyDone();
+    WKRetainPtr<WKStringRef> url = adoptWK(WKURLCopyString(WKURLRequestCopyURL(request)));
+    InjectedBundle::shared().stringBuilder()->appendLiteral("Policy delegate: attempt to load ");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(url));
+    InjectedBundle::shared().stringBuilder()->appendLiteral(" with navigation type \'");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(NavigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction))));
+    InjectedBundle::shared().stringBuilder()->appendLiteral("\'");
+    WKBundleHitTestResultRef hitTestResultRef = WKBundleNavigationActionCopyHitTestResult(navigationAction);
+    if (hitTestResultRef) {
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" originating from ");
+        InjectedBundle::shared().stringBuilder()->append(dumpPath(m_page, m_world.get(), WKBundleHitTestResultCopyNodeHandle(hitTestResultRef)));
     }
+
+    InjectedBundle::shared().stringBuilder()->append('\n');
+    InjectedBundle::shared().testRunner()->notifyDone();
 
     if (InjectedBundle::shared().testRunner()->isPolicyDelegatePermissive())
         return WKBundlePagePolicyActionUse;

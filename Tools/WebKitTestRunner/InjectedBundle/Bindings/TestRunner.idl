@@ -64,6 +64,7 @@ module WTR {
         void setPrivateBrowsingEnabled(in boolean value);
         void setPopupBlockingEnabled(in boolean value);
         void setAuthorAndUserStylesEnabled(in boolean value);
+        void setCustomPolicyDelegate(in boolean enabled, in boolean permissive);
         void addOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
         void removeOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
         void setUserStyleSheetEnabled(in boolean value);
