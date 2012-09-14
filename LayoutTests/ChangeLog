@@ -1,5 +1,68 @@
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
+        Update all the MISSING lines in chromium's TestExpectations.
+        If the test always passed, removed the line. In some cases, they just needed
+        obvious rebaselines. In others, they haven't reported MISSING in the past
+        500 runs on the bots, so removed that expectation.
+
+        * platform/chromium-linux-x86/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        * platform/chromium-linux/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/chromium-linux/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/chromium-linux/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        * platform/chromium-linux/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/frames/iframe-scaling-with-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/chromium-mac/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/chromium-mac/fast/frames/iframe-scaling-with-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/chromium-win-xp/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/chromium-win-xp/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        * platform/chromium-win/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/chromium-win/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/chromium-win/fast/frames/iframe-scaling-with-scroll-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/chromium-win/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        * platform/chromium-win/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png: Added.
+        * platform/chromium-win/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/perf/nested-combined-selectors-expected.txt: Added.
+
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
         Complete forgotten rebaseline. See https://bugs.webkit.org/show_bug.cgi?id=96751.
         The results all look like they pass.
 

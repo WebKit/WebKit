@@ -1983,7 +1983,7 @@ BUGWK67921 RELEASE ANDROID : perf/show-hide-table-rows.html = TIMEOUT
 BUGWK67921 RELEASE LINUX WIN MAC SLOW : perf/show-hide-table-rows.html = PASS
 BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
 BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
-BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = MISSING PASS TEXT
+BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = PASS TEXT
 BUGWK72901 RELEASE SLOW : perf/array-push-pop.html = PASS
 BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
 BUGWK63057 RELEASE : perf/adding-radio-buttons.html = TEXT PASS
@@ -2370,9 +2370,6 @@ BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT
 
-// Temporarily ignore fails until we generate a new baseline.
-BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = IMAGE MISSING
-
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TIMEOUT TEXT
 
 // Regression caused by r83514.
@@ -2488,10 +2485,10 @@ BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html 
 BUGWK74137 SNOWLEOPARD : fast/regions/outline-sides-in-region.html = PASS TIMEOUT
 BUGWK83824 MAC : fast/regions/region-overflow-break.html = IMAGE
 BUGWK74137 : fast/regions/float-pushed-width-change.html = PASS IMAGE
-BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-hidden.html = PASS IMAGE+TEXT TIMEOUT
-BUGWK74137 WIN LINUX ANDROID LION : fast/regions/region-overflow-auto-overflow-hidden.html = PASS MISSING
-BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = PASS IMAGE+TEXT TIMEOUT
-BUGWK74137 WIN LINUX ANDROID LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
+BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-hidden.html = IMAGE+TEXT
+BUGWK74137 WIN LION : fast/regions/region-overflow-auto-overflow-hidden.html = MISSING
+BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = IMAGE+TEXT
+BUGWK74137 WIN LION : fast/regions/region-overflow-auto-overflow-visible.html = MISSING
 
 // CSS3 filters needs rebaselines on windows after 94372
 BUGWK82783 WIN : css3/filters/filter-change-repaint.html = IMAGE
@@ -2504,10 +2501,7 @@ BUGWK82783 WIN : css3/filters/crash-hw-sw-switch.html = IMAGE
 BUGWK82783 WIN : css3/filters/effect-brightness-clamping.html = IMAGE
 
 // CSS Regions tests for region styling and scoped styles
-BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK49142 : fast/regions/style-scoped-in-flow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = IMAGE
 
 BUGWK92131 SKIP : inspector/styles/region-style-crash.html = PASS
 
@@ -2632,7 +2626,7 @@ BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 // ICC color profiles are not supported on WIN, LINUX, ANDROID so SKIP for now.
 BUGWK70001 SKIP LINUX ANDROID WIN : fast/images/color-jpeg-with-color-profile.html = PASS
 // Paletted PNG with ICC color profiles not working.
-BUGWK86722 : fast/images/paletted-png-with-color-profile.html = MISSING
+BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = MISSING
 
 // V8 handles stack overflow exceptions differently than JSC
 BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
@@ -2656,12 +2650,9 @@ BUGWK70866 LINUX ANDROID MAC DEBUG : fast/forms/form-associated-element-crash3.h
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-associated-element-removal.html = MISSING PASS
-BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-attribute-elements.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-attribute-elements-order.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
-BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-attribute-nonexistence-form-id.html = MISSING PASS
 BUGWK72039 DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
-BUGWK72039 MAC : http/tests/loading/empty-subframe.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/formaction-attribute.html = MISSING PASS
 BUGWK78620 LINUX ANDROID DEBUG SLOW : fast/forms/formaction-attribute.html = PASS TEXT
 
@@ -2733,7 +2724,6 @@ BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = P
 BUGCR108832 SKIP : fast/js/array-splice.html = PASS
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
-BUGWK75083 RELEASE : perf/nested-combined-selectors.html = MISSING
 
 BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 
@@ -2775,8 +2765,6 @@ BUGWK77397 WIN MAC : plugins/crash-restoring-plugin-page-from-page-cache.html = 
 
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = PASS
-
-BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
 BUGWK78159 DEBUG WIN MAC LINUX ANDROID : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
@@ -3143,6 +3131,7 @@ BUGWK86592 LINUX ANDROID : http/tests/xmlhttprequest/zero-length-response-sync.h
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX ANDROID : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX ANDROID : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
+
 BUGWK88964 MAC : http/tests/misc/embedCrasher.html = MISSING PASS
 
 BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = TIMEOUT PASS
@@ -3422,9 +3411,6 @@ BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS
 
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
-// Need baselines after bots cycle
-BUGLEVIW LINUX WIN SNOWLEOPARD : fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html = PASS IMAGE IMAGE+TEXT MISSING
-
 // Following tests need baselines on Win and Linux 
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-color-matrix.html = IMAGE
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.html = IMAGE
@@ -3469,9 +3455,6 @@ BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH TIMEOUT
 BUGWK95366 DEBUG : css3/flexbox/flexitem-stretch-image.html = TEXT PASS
 
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
-
-BUGWK95167 : fast/overflow/paged-x-with-column-gap.html = IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95167 : fast/overflow/paged-x-div-with-column-gap.html = IMAGE IMAGE+TEXT TEXT MISSING
 
 BUGWK94793 : http/tests/notifications/event-listener-crash.html = TEXT PASS
 
@@ -3586,18 +3569,6 @@ BUGWK80394 MAC WIN : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+
 BUGWK80394 MAC WIN : fast/block/float/024.html = IMAGE+TEXT
 BUGWK80394 MAC WIN : fast/block/margin-collapse/025.html = TEXT
 BUGWK80394 MAC WIN : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
-
-// Following tests need baselines on Mac, Win and Linux  
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-circle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-ellipse.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-rectangle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-polygon.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-polygon-evenodd.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-polygon-nonzero.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-circle-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-circle-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-circle-relative-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK95646 MAC WIN LINUX : css3/masking/clip-path-circle-overflow-hidden.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // Does not yet support new web notifications TestRunner API
 BUGWK95506 SKIP : http/tests/notifications = PASS
