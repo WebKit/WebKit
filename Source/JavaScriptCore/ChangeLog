@@ -1,3 +1,36 @@
+2012-09-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the SourceProvider hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=95635
+
+        Reviewed by Geoffrey Garen.
+
+        SourceProvider was designed to have subclasses magically handling the data without
+        decoding all of it. The virtual methods length() and getRange() were based
+        on these assumptions.
+
+        In practice, the magic was in our head, there is no implementation that takes
+        advantage of that.
+
+        SourceProvider is modified to adopt WebCore's ScriptSourceProvider::source() and base
+        everything on it.
+        The code using SourceProvider is also simplified.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::appendSourceToError): Keep a reference to the string instead of querying it for
+        each time it is used.
+        * parser/Lexer.cpp:
+        (JSC::::setCode):
+        (JSC::::sourceCode):
+        * parser/Parser.h:
+        (JSC::parse):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::subExpression):
+        * parser/SourceProvider.h:
+        (SourceProvider):
+        (JSC::SourceProvider::getRange):
+
 2012-09-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG: Dead GetButterfly's shouldn't be subject to CSE

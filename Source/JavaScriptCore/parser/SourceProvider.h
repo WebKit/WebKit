@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,10 +56,12 @@ namespace JSC {
                 delete m_cache;
         }
 
-        virtual String getRange(int start, int end) const = 0;
-        virtual const StringImpl* data() const = 0;
-        virtual int length() const = 0;
-        
+        virtual const String& source() const = 0;
+        String getRange(int start, int end) const
+        {
+            return source().substringSharingImpl(start, end - start);
+        }
+
         const String& url() { return m_url; }
         TextPosition startPosition() const { return m_startPosition; }
         intptr_t asID()
@@ -93,12 +95,10 @@ namespace JSC {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        virtual String getRange(int start, int end) const OVERRIDE
+        virtual const String& source() const OVERRIDE
         {
-            return m_source.substringSharingImpl(start, end - start);
+            return m_source;
         }
-        const StringImpl* data() const { return m_source.impl(); }
-        int length() const { return m_source.length(); }
 
     private:
         StringSourceProvider(const String& source, const String& url, const TextPosition& startPosition)

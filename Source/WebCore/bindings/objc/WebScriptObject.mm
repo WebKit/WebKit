@@ -38,7 +38,6 @@
 #import "JSMainThreadExecState.h"
 #import "JSPluginElementFunctions.h"
 #import "ObjCRuntimeObject.h"
-#import "StringSourceProvider.h"
 #import "WebCoreObjCExtras.h"
 #import "objc_instance.h"
 #import "runtime_object.h"

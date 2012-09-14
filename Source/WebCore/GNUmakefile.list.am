@@ -2417,7 +2417,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptProfiler.cpp \
 	Source/WebCore/bindings/js/ScriptProfiler.h \
 	Source/WebCore/bindings/js/ScriptSourceCode.h \
-	Source/WebCore/bindings/js/ScriptSourceProvider.h \
 	Source/WebCore/bindings/js/ScriptState.cpp \
 	Source/WebCore/bindings/js/ScriptState.h \
 	Source/WebCore/bindings/js/ScriptValue.cpp \
@@ -2425,7 +2424,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptWrappable.h \
 	Source/WebCore/bindings/js/SerializedScriptValue.cpp \
 	Source/WebCore/bindings/js/SerializedScriptValue.h \
-	Source/WebCore/bindings/js/StringSourceProvider.h \
 	Source/WebCore/bindings/js/WebCoreJSClientData.h \
 	Source/WebCore/bindings/js/WorkerScriptController.cpp \
 	Source/WebCore/bindings/js/WorkerScriptController.h \

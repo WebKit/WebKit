@@ -405,10 +405,10 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_lineNumber = source.firstLine();
     m_lastToken = -1;
     
-    const StringImpl* sourceString = source.provider()->data();
+    const String& sourceString = source.provider()->source();
 
-    if (sourceString)
-        setCodeStart(sourceString);
+    if (!sourceString.isNull())
+        setCodeStart(sourceString.impl());
     else
         m_codeStart = 0;
 
@@ -1689,8 +1689,8 @@ void Lexer<T>::clear()
 template <typename T>
 SourceCode Lexer<T>::sourceCode(int openBrace, int closeBrace, int firstLine)
 {
-    ASSERT((*m_source->provider()->data())[openBrace] == '{');
-    ASSERT((*m_source->provider()->data())[closeBrace] == '}');
+    ASSERT(m_source->provider()->source()[openBrace] == '{');
+    ASSERT(m_source->provider()->source()[closeBrace] == '}');
     return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine);
 }
 

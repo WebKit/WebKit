@@ -47,7 +47,7 @@ namespace JSC {
         SourceCode(PassRefPtr<SourceProvider> provider, int firstLine = 1)
             : m_provider(provider)
             , m_startChar(0)
-            , m_endChar(m_provider->length())
+            , m_endChar(m_provider->source().length())
             , m_firstLine(std::max(firstLine, 1))
         {
         }
@@ -97,8 +97,8 @@ namespace JSC {
 
     inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine)
     {
-        ASSERT((*provider()->data())[openBrace] == '{');
-        ASSERT((*provider()->data())[closeBrace] == '}');
+        ASSERT(provider()->source()[openBrace] == '{');
+        ASSERT(provider()->source()[closeBrace] == '}');
         return SourceCode(provider(), openBrace, closeBrace + 1, firstLine);
     }
 

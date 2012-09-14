@@ -45,6 +45,7 @@
 #import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/PropertyNameArray.h>
+#import <JavaScriptCore/SourceCode.h>
 #import <JavaScriptCore/StrongInlines.h>
 #import <WebCore/CookieJar.h>
 #import <WebCore/DocumentLoader.h>
@@ -56,7 +57,6 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
-#import <WebCore/StringSourceProvider.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>

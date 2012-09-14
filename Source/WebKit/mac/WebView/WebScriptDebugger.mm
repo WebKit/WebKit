@@ -51,11 +51,12 @@ using namespace WebCore;
 - (void)_clearDebuggerCallFrame;
 @end
 
-static NSString *toNSString(SourceProvider* s)
+static NSString *toNSString(SourceProvider* sourceProvider)
 {
-    if (!s->length())
+    const String& sourceString = sourceProvider->source();
+    if (sourceString.isEmpty())
         return nil;
-    return [NSString stringWithCharacters:s->data()->characters() length:s->length()];
+    return sourceString;
 }
 
 // Convert String to NSURL.

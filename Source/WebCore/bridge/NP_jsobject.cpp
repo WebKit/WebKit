@@ -30,7 +30,6 @@
 #include "NP_jsobject.h"
 
 #include "PluginView.h"
-#include "StringSourceProvider.h"
 #include "c_utility.h"
 #include "c_instance.h"
 #include "IdentifierRep.h"

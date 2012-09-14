@@ -36,11 +36,11 @@
 #include "JavaStringJSC.h"
 #include "Logging.h"
 #include "ScriptController.h"
-#include "StringSourceProvider.h"
 #include "WebCoreFrameView.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <interpreter/CallFrame.h>
+#include <parser/SourceCode.h>
 #include <runtime/Completion.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>

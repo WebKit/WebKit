@@ -32,9 +32,8 @@
 #define ScriptSourceCode_h
 
 #include "CachedScriptSourceProvider.h"
-#include "ScriptSourceProvider.h"
-#include "StringSourceProvider.h"
 #include "KURL.h"
+#include <parser/SourceProvider.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/RefPtr.h>
 
@@ -43,7 +42,7 @@ namespace WebCore {
 class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition& startPosition = TextPosition::minimumPosition())
-        : m_provider(StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition))
+        : m_provider(JSC::StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition))
         , m_code(m_provider, startPosition.m_line.oneBasedInt())
         , m_url(url)
     {
@@ -66,7 +65,7 @@ public:
     const KURL& url() const { return m_url; }
     
 private:
-    RefPtr<ScriptSourceProvider> m_provider;
+    RefPtr<JSC::SourceProvider> m_provider;
     
     JSC::SourceCode m_code;
     

@@ -72070,10 +72070,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptSourceProvider.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\ScriptState.cpp"
 					>
 					<FileConfiguration
@@ -72195,10 +72191,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\SerializedScriptValue.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\StringSourceProvider.h"
 					>
 				</File>
 				<File

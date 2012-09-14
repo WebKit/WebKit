@@ -1029,9 +1029,9 @@ PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGl
 {
     SamplingRegion samplingRegion("Parsing");
 
-    ASSERT(source.provider()->data());
+    ASSERT(!source.provider()->source().isNull());
 
-    if (source.provider()->data()->is8Bit()) {
+    if (source.provider()->source().is8Bit()) {
         Parser< Lexer<LChar> > parser(globalData, source, parameters, name, strictness, parserMode);
         return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
     }

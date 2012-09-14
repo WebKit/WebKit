@@ -31,6 +31,7 @@
 
 #include "WorkerScriptController.h"
 
+#include "JSDOMBinding.h"
 #include "JSDedicatedWorkerContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"

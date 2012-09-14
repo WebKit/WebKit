@@ -1342,12 +1342,10 @@ HEADERS += \
     bindings/js/ScriptProfileNode.h \
     bindings/js/ScriptProfiler.h \
     bindings/js/ScriptSourceCode.h \
-    bindings/js/ScriptSourceProvider.h \
     bindings/js/ScriptState.h \
     bindings/js/ScriptValue.h \
     bindings/js/ScriptWrappable.h \
     bindings/js/SerializedScriptValue.h \
-    bindings/js/StringSourceProvider.h \
     bindings/js/WebCoreJSClientData.h \
     bindings/js/WorkerScriptController.h \
     bindings/js/WorkerScriptDebugServer.h \

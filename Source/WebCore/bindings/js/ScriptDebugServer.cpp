@@ -134,7 +134,7 @@ void ScriptDebugServer::updateCurrentStatementPosition(intptr_t sourceID, int li
     SourceProvider* source = reinterpret_cast<SourceProvider*>(sourceID);
 
     if (m_currentSourceID != sourceID) {
-        String sourceCode(const_cast<StringImpl*>(source->data()));
+        const String& sourceCode = source->source();
         m_currentSourceCode.clear();
         sourceCode.split("\n", true, m_currentSourceCode);
         m_currentSourceID = sourceID;
@@ -320,7 +320,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 
     ScriptDebugListener::Script script;
     script.url = sourceProvider->url();
-    script.source = String(const_cast<StringImpl*>(sourceProvider->data()));
+    script.source = sourceProvider->source();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
@@ -355,7 +355,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     String url = sourceProvider->url();
-    String data = String(const_cast<StringImpl*>(sourceProvider->data()));
+    const String& data = sourceProvider->source();
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;

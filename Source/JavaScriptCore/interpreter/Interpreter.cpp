@@ -525,7 +525,8 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     int expressionStart = divotPoint - startOffset;
     int expressionStop = divotPoint + endOffset;
 
-    if (!expressionStop || expressionStart > codeBlock->source()->length())
+    const String& sourceString = codeBlock->source()->source();
+    if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
         return;
 
     JSGlobalData* globalData = &callFrame->globalData();
@@ -539,8 +540,8 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
         message =  makeString(message, " (evaluating '", codeBlock->source()->getRange(expressionStart, expressionStop), "')");
     else {
         // No range information, so give a few characters of context
-        const StringImpl* data = codeBlock->source()->data();
-        int dataLength = codeBlock->source()->length();
+        const StringImpl* data = sourceString.impl();
+        int dataLength = sourceString.length();
         int start = expressionStart;
         int stop = expressionStart;
         // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
