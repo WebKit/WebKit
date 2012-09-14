@@ -208,8 +208,6 @@ static double maximumBlockZoomScale = 3; // This scale can be clamped by the max
 
 const double manualScrollInterval = 0.1; // The time interval during which we associate user action with scrolling.
 
-const double delayedZoomInterval = 0;
-
 const IntSize minimumLayoutSize(10, 10); // Needs to be a small size, greater than 0, that we can grow the layout from.
 
 const double minimumExpandingRatio = 0.15;
@@ -402,7 +400,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_currentBlockZoomNode(0)
     , m_currentBlockZoomAdjustedNode(0)
     , m_shouldReflowBlock(false)
-    , m_delayedZoomTimer(adoptPtr(new Timer<WebPagePrivate>(this, &WebPagePrivate::zoomAboutPointTimerFired)))
     , m_lastUserEventTimestamp(0.0)
     , m_pluginMouseButtonPressed(false)
     , m_pluginMayOpenNewTab(false)
@@ -1042,8 +1039,6 @@ void WebPagePrivate::setLoadState(LoadState state)
         break;
     case Committed:
         {
-            unscheduleZoomAboutPoint();
-
 #if ENABLE(ACCELERATED_2D_CANVAS)
             if (m_page->settings()->canvasUsesAcceleratedDrawing()) {
                 // Free GPU resources as we're on a new page.
@@ -1297,71 +1292,6 @@ IntPoint WebPagePrivate::calculateReflowedScrollPosition(const FloatPoint& ancho
 
     return IntPoint(max(0, static_cast<int>(roundf(reflowedRect.x() + offsetX))),
                     max(0, static_cast<int>(roundf(reflowedRect.y() + offsetY - anchorOffset.y() / inverseScale))));
-}
-
-bool WebPagePrivate::scheduleZoomAboutPoint(double unclampedScale, const FloatPoint& anchor, bool enforceScaleClamping, bool forceRendering)
-{
-    double scale;
-    if (!shouldZoomAboutPoint(unclampedScale, anchor, enforceScaleClamping, &scale)) {
-        // We could be back to the right zoom level before the timer has
-        // timed out, because of wiggling back and forth. Stop the timer.
-        unscheduleZoomAboutPoint();
-        return false;
-    }
-
-    // For some reason, the bitmap zoom wants an anchor in backingstore coordinates!
-    // this is different from zoomAboutPoint, which wants content coordinates.
-    // See RIM Bug #641.
-
-    FloatPoint transformedAnchor = mapToTransformedFloatPoint(anchor);
-    FloatPoint transformedScrollPosition = mapToTransformedFloatPoint(scrollPosition());
-
-    // Prohibit backingstore from updating the window overtop of the bitmap.
-    m_backingStore->d->suspendScreenAndBackingStoreUpdates();
-
-    // Need to invert the previous transform to anchor the viewport.
-    double zoomFraction = scale / transformationMatrix()->m11();
-
-    // Anchor offset from scroll position in float.
-    FloatPoint anchorOffset(transformedAnchor.x() - transformedScrollPosition.x(),
-                            transformedAnchor.y() - transformedScrollPosition.y());
-
-    IntPoint srcPoint(
-        static_cast<int>(roundf(transformedAnchor.x() - anchorOffset.x() / zoomFraction)),
-        static_cast<int>(roundf(transformedAnchor.y() - anchorOffset.y() / zoomFraction)));
-
-    const IntRect viewportRect = IntRect(IntPoint::zero(), transformedViewportSize());
-    const IntRect dstRect = viewportRect;
-
-    // This is the rect to pass as the actual source rect in the backingstore
-    // for the transform given by zoom.
-    IntRect srcRect(srcPoint.x(),
-                    srcPoint.y(),
-                    viewportRect.width() / zoomFraction,
-                    viewportRect.height() / zoomFraction);
-    m_backingStore->d->blitContents(dstRect, srcRect);
-
-    m_delayedZoomArguments.scale = scale;
-    m_delayedZoomArguments.anchor = anchor;
-    m_delayedZoomArguments.enforceScaleClamping = enforceScaleClamping;
-    m_delayedZoomArguments.forceRendering = forceRendering;
-    m_delayedZoomTimer->startOneShot(delayedZoomInterval);
-
-    return true;
-}
-
-void WebPagePrivate::unscheduleZoomAboutPoint()
-{
-    if (m_delayedZoomTimer->isActive())
-        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
-
-    m_delayedZoomTimer->stop();
-}
-
-void WebPagePrivate::zoomAboutPointTimerFired(Timer<WebPagePrivate>*)
-{
-    zoomAboutPoint(m_delayedZoomArguments.scale, m_delayedZoomArguments.anchor, m_delayedZoomArguments.enforceScaleClamping, m_delayedZoomArguments.forceRendering);
-    m_backingStore->d->resumeScreenAndBackingStoreUpdates(m_delayedZoomArguments.forceRendering ? BackingStore::RenderAndBlit : BackingStore::None);
 }
 
 void WebPagePrivate::setNeedsLayout()
@@ -3881,12 +3811,56 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     if (atLeft)
         anchor.setX(0);
 
+    double clampedScale;
+
     // Try and zoom here with clamping on.
     if (m_backingStore->d->shouldDirectRenderingToWindow()) {
         bool success = zoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, true /* forceRendering */);
         if (!success && ensureFocusElementVisible)
             ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
-    } else if (!scheduleZoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, true /* forceRendering */)) {
+
+    } else if (shouldZoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, &clampedScale)) {
+
+        // For some reason, the bitmap zoom wants an anchor in backingstore coordinates!
+        // this is different from zoomAboutPoint, which wants content coordinates.
+        // See RIM Bug #641.
+
+        FloatPoint transformedAnchor = mapToTransformedFloatPoint(anchor);
+        FloatPoint transformedScrollPosition = mapToTransformedFloatPoint(scrollPosition());
+
+        // Prohibit backingstore from updating the window overtop of the bitmap.
+        m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
+        // Need to invert the previous transform to anchor the viewport.
+        double zoomFraction = clampedScale / transformationMatrix()->m11();
+
+        // Anchor offset from scroll position in float.
+        FloatPoint anchorOffset(transformedAnchor.x() - transformedScrollPosition.x(),
+                transformedAnchor.y() - transformedScrollPosition.y());
+
+        IntPoint srcPoint(
+                static_cast<int>(roundf(transformedAnchor.x() - anchorOffset.x() / zoomFraction)),
+                static_cast<int>(roundf(transformedAnchor.y() - anchorOffset.y() / zoomFraction)));
+
+        const IntRect viewportRect = IntRect(IntPoint::zero(), transformedViewportSize());
+        const IntRect dstRect = viewportRect;
+
+        // This is the rect to pass as the actual source rect in the backingstore
+        // for the transform given by zoom.
+        IntRect srcRect(srcPoint.x(),
+                srcPoint.y(),
+                viewportRect.width() / zoomFraction,
+                viewportRect.height() / zoomFraction);
+        m_backingStore->d->blitContents(dstRect, srcRect);
+
+        zoomAboutPoint(clampedScale, anchor, false /*enforceScaleClamping*/, true /*forceRendering*/);
+
+        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
+
+        if (ensureFocusElementVisible)
+            ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
+    } else {
+
         // Suspend all screen updates to the backingstore.
         m_backingStore->d->suspendScreenAndBackingStoreUpdates();
 
@@ -3917,8 +3891,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
         // If we need layout then render and blit, otherwise just blit as our viewport has changed.
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(needsLayout ? BackingStore::RenderAndBlit : BackingStore::Blit);
-    } else if (ensureFocusElementVisible)
-        ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
+    }
 }
 
 void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible)

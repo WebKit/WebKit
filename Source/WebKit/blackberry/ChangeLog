@@ -1,3 +1,35 @@
+2012-09-13  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry]  Remove the ability to schedule a zoom about point call.
+        https://bugs.webkit.org/show_bug.cgi?id=96696
+
+        [FullScreen] entering/leaving fullscreen results in temporary glitches on the screen (Part I)
+        PR #180866
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Jacky Jiang and Arvid Nilsson.
+
+        Patch replaces the async call to zoomAboutPoint (via scheduling it with a one-shot-0-timer).
+        Instead, at its single call site, we inline most of the previous scheduleZoomAboutPoint code,
+        and in the end call zoomAboutPoint directly.
+
+        Change was estimulated by Arvid's comment on PRzilla: "There is no longer any reason to have
+        zoom about point be async.. That was a hack I did for BB6, back when we were doing everything on the WK
+        thread and needed manual time slicing betwren rendering and user interaction."
+
+        The bigger goal though is to be able to remove screen glitches while entering/leaving
+        fullscreen mode: since we could accurately use the count-based suspend/resume backing
+        store mechanism to prevent it.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-09-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add renderTreeAsText API to WebPage
