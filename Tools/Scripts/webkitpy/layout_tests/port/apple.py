@@ -92,7 +92,8 @@ class ApplePort(Port):
 
     def _generate_all_test_configurations(self):
         configurations = []
-        for port_name in self.VERSION_FALLBACK_ORDER:
+        allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
+        for port_name in allowed_port_names:
             for build_type in self.ALL_BUILD_TYPES:
                 for architecture in self.ARCHITECTURES:
                     configurations.append(TestConfiguration(version=self._strip_port_name_prefix(port_name), architecture=architecture, build_type=build_type))

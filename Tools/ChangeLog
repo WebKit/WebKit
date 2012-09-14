@@ -1,3 +1,17 @@
+2012-09-13  Stephanie Lewis  <slewis@apple.com>
+
+        mac-future ignores previous platform TestExpectations.
+        https://bugs.webkit.org/show_bug.cgi?id=96718.
+
+        Reviewed by Dirk Pranke.
+
+        TestExpectations match an expectation's configuraton against a list of configurations that are 
+        valid for that port.  That list does not contain mac-future so none of the expectations can be
+        applied.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort._generate_all_test_configurations):
+
 2012-09-14  Adam Barth  <abarth@webkit.org>
 
         Remove webkitPostMessage
