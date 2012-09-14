@@ -1,5 +1,14 @@
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        [EFL] Gardening of failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=96646
+
+        Unreviewed EFL gardening of flaky tests on wk1.
+
+        * platform/efl-wk1/TestExpectations:
+
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         WebKitTestRunner needs layoutTestController.setTabKeyCyclesThroughElements
         https://bugs.webkit.org/show_bug.cgi?id=42687
 

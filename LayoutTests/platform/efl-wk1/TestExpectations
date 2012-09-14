@@ -41,6 +41,9 @@ BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 BUGWKEFL : editing/undo/undo-indent.html = TEXT PASS
 BUGWKEFL : editing/undo/undo-misspellings.html = TEXT PASS
 
+BUGWK96641 : media/video-seek-past-end-playing.html = TEXT PASS
+BUGWK96642 : loader/go-back-to-different-window-size.html = TEXT PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
