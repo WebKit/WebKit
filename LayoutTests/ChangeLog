@@ -1,6 +1,13 @@
 2012-09-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
+
+        * platform/chromium/TestExpectations:
+        Fix an error in the previous change.
+
+2012-09-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
         https://bugs.webkit.org/show_bug.cgi?id=96725
 
         * platform/chromium/TestExpectations:
