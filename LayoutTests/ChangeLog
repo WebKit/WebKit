@@ -1,3 +1,11 @@
+2012-09-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation udpate.
+        https://bugs.webkit.org/show_bug.cgi?id=96720
+
+        * platform/chromium/TestExpectations:
+        time-multiple-fields-preserve-value-after-history-back.html is flaky.
+
 2012-09-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG: Dead GetButterfly's shouldn't be subject to CSE
