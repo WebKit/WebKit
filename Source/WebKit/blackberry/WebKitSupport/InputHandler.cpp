@@ -66,6 +66,7 @@
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
+#include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
 #include <sys/keycodes.h>
 #include <wtf/text/CString.h>
@@ -1158,9 +1159,10 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     }
 
     // If the text is too small, zoom in to make it a minimum size.
-    static const int s_minimumTextHeightInPixels = 6;
+    // The minimum size being defined as 3 mm is a good value based on my observations.
+    static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->widthInMMToPixels(3);
     if (fontHeight && fontHeight < s_minimumTextHeightInPixels)
-        m_webPage->zoomAboutPoint(s_minimumTextHeightInPixels / fontHeight, m_webPage->centerOfVisibleContentsRect());
+        m_webPage->zoomAboutPoint(s_minimumTextHeightInPixels / fontHeight, selectionFocusRect.location());
 }
 
 void InputHandler::ensureFocusPluginElementVisible()

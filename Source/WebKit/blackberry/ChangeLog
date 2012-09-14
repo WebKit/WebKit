@@ -1,3 +1,19 @@
+2012-09-14  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Update the minimum zoom scale when focusing an input field.
+        https://bugs.webkit.org/show_bug.cgi?id=96789
+
+        Reviewed by Antonio Gomes.
+
+        PR 188751.
+
+        Increase the minimum font fix and base it on mm instead of pixels.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-09-13  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry]  Remove the ability to schedule a zoom about point call.
