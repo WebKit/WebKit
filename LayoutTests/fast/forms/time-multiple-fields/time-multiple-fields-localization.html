@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script>
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
+</script>
+</head>
+<body>
+<div id=console></div>
+<input type="time" value="13:23:45.1" lang="en" /><br>
+<input type="time" value="13:23:45.1" lang="ar" /><br>
+<input type="time" value="13:23:45.1" lang="fr" /><br>
+<input type="time" value="13:23:45.1" lang="ja" /><br>
+<input type="time" value="13:23:45.1" lang="ko" /><br>
+<input type="time" value="13:23:45.1" lang="cn" />
+<script>
+description("Tests the time format for various locales.", true);
+debug("The following lines depend on the locale data in the system.");
+var inputs = document.getElementsByTagName("input");
+for (var i = 0; i < inputs.length; ++i) {
+     debug(inputs[i].lang + ': ' + getUserAgentShadowTextContent(inputs[i]));
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

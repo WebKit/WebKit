@@ -187,6 +187,8 @@ BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-wi
 BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-transform.html = MISSING IMAGE
 BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
 
+BUGWK96751 WIN LINUX : fast/forms/time-multiple-fields/time-multiple-fields-localization.html = MISSING TEXT
+
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS

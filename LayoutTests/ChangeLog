@@ -1,3 +1,16 @@
+2012-09-14  Keishi Hattori  <keishi@webkit.org>
+
+        Make time input lang attribute aware for testing
+        https://bugs.webkit.org/show_bug.cgi?id=96728
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/resources/common.js:
+        (getUserAgentShadowTextContent): Used to get the text inside an input element.
+        * fast/forms/time-multiple-fields/time-multiple-fields-localization.html: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-localization-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r128575): fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html is failed on Chromium-Win

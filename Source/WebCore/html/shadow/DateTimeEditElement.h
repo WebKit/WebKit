@@ -36,6 +36,7 @@ class DateComponents;
 class DateTimeEditLayouter;
 class DateTimeFieldsState;
 class KeyboardEvent;
+class Localizer;
 class MouseEvent;
 class StepRange;
 
@@ -70,8 +71,8 @@ public:
     void readOnlyStateChanged();
     void removeEditControlOwner() { m_editControlOwner = 0; }
     void resetFields();
-    void setEmptyValue(const StepRange&, const DateComponents&  dateForReadOnlyField);
-    void setValueAsDate(const StepRange&, const DateComponents&);
+    void setEmptyValue(const StepRange&, const DateComponents&  dateForReadOnlyField, Localizer&);
+    void setValueAsDate(const StepRange&, const DateComponents&, Localizer&);
     void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField);
     DateTimeFieldsState valueAsDateTimeFieldsState() const;
     double valueAsDouble() const;
@@ -98,7 +99,7 @@ private:
     size_t focusedFieldIndex() const;
     bool isDisabled() const;
     bool isReadOnly() const;
-    void layout(const StepRange&, const DateComponents&);
+    void layout(const StepRange&, const DateComponents&, Localizer&);
     void updateUIState();
 
     // DateTimeFieldElement::FieldOwner functions.

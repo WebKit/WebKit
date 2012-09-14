@@ -302,13 +302,14 @@ void TimeInputType::updateInnerTextValue()
     if (!m_dateTimeEditElement)
         return;
 
+    Localizer& localizer = element()->document()->getLocalizer(element()->computeInheritedLanguage());
     const StepRange stepRange(createStepRange(AnyIsDefaultStep));
     DateComponents date;
     if (parseToDateComponents(element()->value(), &date))
-        m_dateTimeEditElement->setValueAsDate(stepRange, date);
+        m_dateTimeEditElement->setValueAsDate(stepRange, date, localizer);
     else {
         setMillisecondToDateComponents(stepRange.minimum().toDouble(), &date);
-        m_dateTimeEditElement->setEmptyValue(stepRange, date);
+        m_dateTimeEditElement->setEmptyValue(stepRange, date, localizer);
     }
 }
 #else

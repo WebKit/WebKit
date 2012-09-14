@@ -115,3 +115,7 @@ function mouseMoveToIndexInListbox(index, listboxId) {
     if (window.eventSender)
         eventSender.mouseMoveTo(listbox.offsetLeft + border, listbox.offsetTop + y - window.pageYOffset);
 }
+
+function getUserAgentShadowTextContent(element) {
+    return internals.youngestShadowRoot(element).textContent;
+};

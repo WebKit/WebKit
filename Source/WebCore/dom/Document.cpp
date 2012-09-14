@@ -105,6 +105,8 @@
 #include "ImageLoader.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
+#include "Language.h"
+#include "Localizer.h"
 #include "Logging.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
@@ -131,6 +133,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptCallStack.h"
@@ -6360,6 +6363,17 @@ PassRefPtr<ElementAttributeData> Document::cachedImmutableAttributeData(const El
     cacheIterator->second = newEntry.release();
 
     return attributeData.release();
+}
+
+Localizer& Document::getLocalizer(const AtomicString& locale)
+{
+    AtomicString localeKey = locale;
+    if (locale.isEmpty() || !RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
+        localeKey = defaultLanguage();
+    LocaleToLocalizerMap::AddResult result = m_localizerCache.add(localeKey, nullptr);
+    if (result.isNewEntry)
+        result.iterator->second = Localizer::create(localeKey);
+    return *(result.iterator->second);
 }
 
 } // namespace WebCore

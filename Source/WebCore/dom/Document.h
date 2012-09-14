@@ -108,6 +108,7 @@ class HitTestResult;
 class IntPoint;
 class DOMWrapperWorld;
 class JSNode;
+class Localizer;
 class MediaCanStartListener;
 class MediaQueryList;
 class MediaQueryMatcher;
@@ -1192,6 +1193,8 @@ public:
 
     PassRefPtr<ElementAttributeData> cachedImmutableAttributeData(const Element*, const Vector<Attribute>&);
 
+    Localizer& getLocalizer(const AtomicString& locale);
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1582,6 +1585,9 @@ private:
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;
 #endif
+
+    typedef HashMap<AtomicString, OwnPtr<Localizer> > LocaleToLocalizerMap;
+    LocaleToLocalizerMap m_localizerCache;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

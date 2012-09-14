@@ -37,6 +37,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedDate.h"
 #include "LocalizedNumber.h"
+#include "Localizer.h"
 #include "MouseEvent.h"
 #include "StepRange.h"
 #include "Text.h"
@@ -51,7 +52,7 @@ class DateTimeEditBuilder : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeEditBuilder);
 
 public:
-    DateTimeEditBuilder(DateTimeEditElement&, const StepRange&, const DateComponents&);
+    DateTimeEditBuilder(DateTimeEditElement&, const StepRange&, const DateComponents&, Localizer&);
 
     bool build(const String&);
     bool needSecondField() const;
@@ -70,12 +71,14 @@ private:
     DateTimeEditElement& m_editElement;
     const DateComponents& m_dateValue;
     const StepRange& m_stepRange;
+    Localizer& m_localizer;
 };
 
-DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const StepRange& stepRange, const DateComponents& dateValue)
+DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const StepRange& stepRange, const DateComponents& dateValue, Localizer& localizer)
     : m_editElement(elemnt)
     , m_dateValue(dateValue)
     , m_stepRange(stepRange)
+    , m_localizer(localizer)
 {
 }
 
@@ -136,7 +139,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
     }
 
     case DateTimeFormat::FieldTypePeriod:
-        m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, timeAMPMLabels()));
+        m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, m_localizer.timeAMPMLabels()));
         return;
 
     case DateTimeFormat::FieldTypeSecond: {
@@ -146,7 +149,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
             field->setReadOnly();
 
         if (needMillisecondField()) {
-            visitLiteral(localizedDecimalSeparator());
+            visitLiteral(m_localizer.localizedDecimalSeparator());
             visitField(DateTimeFormat::FieldTypeFractionalSecond, 3);
         }
         return;
@@ -337,14 +340,14 @@ bool DateTimeEditElement::isReadOnly() const
     return m_editControlOwner && m_editControlOwner->isEditControlOwnerReadOnly();
 }
 
-void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponents& dateValue)
+void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponents& dateValue, Localizer& localizer)
 {
     size_t focusedFieldIndex = this->focusedFieldIndex();
     DateTimeFieldElement* const focusedField = fieldAt(focusedFieldIndex);
     const AtomicString focusedFieldId = focusedField ? focusedField->shadowPseudoId() : nullAtom;
 
-    DateTimeEditBuilder builder(*this, stepRange, dateValue);
-    const String dateTimeFormat = builder.needSecondField() ? localizedTimeFormatText() : localizedShortTimeFormatText();
+    DateTimeEditBuilder builder(*this, stepRange, dateValue, localizer);
+    const String dateTimeFormat = builder.needSecondField() ? localizer.timeFormat() : localizer.shortTimeFormat();
     Node* lastChildToBeRemoved = lastChild();
     if (!builder.build(dateTimeFormat) || m_fields.isEmpty()) {
         lastChildToBeRemoved = lastChild();
@@ -404,9 +407,9 @@ void DateTimeEditElement::defaultEventHandler(Event* event)
     HTMLDivElement::defaultEventHandler(event);
 }
 
-void DateTimeEditElement::setValueAsDate(const StepRange& stepRange, const DateComponents& date)
+void DateTimeEditElement::setValueAsDate(const StepRange& stepRange, const DateComponents& date, Localizer& localizer)
 {
-    layout(stepRange, date);
+    layout(stepRange, date, localizer);
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
         m_fields[fieldIndex]->setValueAsDate(date);
 }
@@ -417,9 +420,9 @@ void DateTimeEditElement::setValueAsDateTimeFieldsState(const DateTimeFieldsStat
         m_fields[fieldIndex]->setValueAsDateTimeFieldsState(dateTimeFieldsState, dateForReadOnlyField);
 }
 
-void DateTimeEditElement::setEmptyValue(const StepRange& stepRange, const DateComponents& dateForReadOnlyField)
+void DateTimeEditElement::setEmptyValue(const StepRange& stepRange, const DateComponents& dateForReadOnlyField, Localizer& localizer)
 {
-    layout(stepRange, dateForReadOnlyField);
+    layout(stepRange, dateForReadOnlyField, localizer);
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
         m_fields[fieldIndex]->setEmptyValue(dateForReadOnlyField, DateTimeFieldElement::DispatchNoEvent);
 }
