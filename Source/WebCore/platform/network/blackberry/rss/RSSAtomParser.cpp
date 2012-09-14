@@ -22,6 +22,7 @@
 #include "BlackBerryPlatformAssert.h"
 #include "libxml/parser.h"
 #include "libxml/xmlwriter.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -231,7 +232,7 @@ String RSSAtomParser::parseContent(const String& base, xmlNode* node)
 
     BLACKBERRY_ASSERT(node);
     // Why does Blackberry have its own RSS parser?
-    // FIXME: content should be a StringBuilder.
+
     String content;
     String type = "default";
     String src;
@@ -248,9 +249,10 @@ String RSSAtomParser::parseContent(const String& base, xmlNode* node)
     if (!src.isEmpty()) {
         if (isRelativePath(src))
             src = base + "/" + src;
-        content += "<a href=\"";
-        content += src + "\">" + src + "</a>";
-        return content;
+        StringBuilder builder;
+        builder.appendLiteral("<a href=\"");
+        builder.append(src + "\">" + src + "</a>");
+        return builder.toString();
     }
 
     if (type == "text" || type.startsWith("text/"))
@@ -263,14 +265,16 @@ String RSSAtomParser::parseContent(const String& base, xmlNode* node)
         if (cur && cur->type == XML_ELEMENT_NODE) {
             // Encoding of buffer is utf-8.
             xmlNodeDump(buffer, cur->doc, cur, 0, 0);
+            StringBuilder builder;
             if (!base.isEmpty()) {
-                content += "<base href='";
-                content += m_url.baseAsString();
-                content += "/";
-                content += base;
-                content += "/' />";
+                builder.appendLiteral("<base href='");
+                builder.append(m_url.baseAsString());
+                builder.appendLiteral("/");
+                builder.append(base);
+                builder.appendLiteral("/' />");
             }
-            content += (const char*)xmlBufferContent(buffer);
+            builder.append((const char*)xmlBufferContent(buffer));
+            content = builder.toString();
         }
         xmlBufferFree(buffer);
     } else if (type.endsWith("+xml") || type.endsWith("/xml"))
@@ -300,9 +304,9 @@ String RSSAtomParser::parseAuthor(xmlNode* node)
     }
 
     if (!email.isEmpty()) {
-        username += " (";
-        username += email;
-        username += ")";
+        username = username + " (";
+        username = username + email;
+        username = username + ")";
     }
 
     return username;

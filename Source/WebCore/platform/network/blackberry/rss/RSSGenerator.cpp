@@ -23,6 +23,7 @@
 #include "RSSParserBase.h"
 
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -39,131 +40,131 @@ RSSGenerator::~RSSGenerator()
 
 String RSSGenerator::generateHtml(RSSFeed* feed)
 {
-    String rc;
-    rc += "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />";
-    rc += "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable= no\">";
-    rc += "<title>";
+    StringBuilder builder;
+    builder.appendLiteral("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />");
+    builder.appendLiteral("<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable= no\">");
+    builder.appendLiteral("<title>");
 
     if (!feed->m_title.isEmpty())
-        rc += feed->m_title;
+        builder.append(feed->m_title);
     else if (!feed->m_link.isEmpty())
-        rc += feed->m_link;
+        builder.append(feed->m_link);
     else
-        rc += s_defaultFeedTitle;
+        builder.append(s_defaultFeedTitle);
 
-    rc += "</title></head><body>";
+    builder.appendLiteral("</title></head><body>");
 
-    rc += "<h2>";
+    builder.appendLiteral("<h2>");
     if (!feed->m_link.isEmpty()) {
-        rc += "<a href=\"";
-        rc += feed->m_link;
-        rc += "\">";
+        builder.appendLiteral("<a href=\"");
+        builder.append(feed->m_link);
+        builder.appendLiteral("\">");
     }
     if (!feed->m_title.isEmpty())
-        rc += feed->m_title;
+        builder.append(feed->m_title);
     else
-        rc += s_defaultFeedTitle;
+        builder.append(s_defaultFeedTitle);
 
     if (!feed->m_link.isEmpty())
-        rc += "</a>";
+        builder.appendLiteral("</a>");
 
-    rc += "</h2>";
+    builder.appendLiteral("</h2>");
 
     if (!feed->m_description.isEmpty()) {
-        rc += "<p>";
-        rc += feed->m_description;
-        rc += "</p>";
+        builder.appendLiteral("<p>");
+        builder.append(feed->m_description);
+        builder.appendLiteral("</p>");
     }
 
     for (unsigned i = 0; i < feed->m_items.size(); ++i) {
         RSSItem* item = feed->m_items[i];
         String articleName;
-        rc += "<div id=\"";
-        rc += articleName;
-        rc += "\" class=\"article\">\n<a href=\"";
+        builder.appendLiteral("<div id=\"");
+        builder.append(articleName);
+        builder.appendLiteral("\" class=\"article\">\n<a href=\"");
         if (!item->m_link.isEmpty())
-            rc +=  item->m_link.utf8(true).data();
-        rc += "\"><b>";
+            builder.append(item->m_link.utf8(true).data());
+        builder.appendLiteral("\"><b>");
         if (!item->m_title.isEmpty())
-            rc +=  item->m_title.utf8(true).data();
+            builder.append(item->m_title.utf8(true).data());
         else
-            rc += s_defaultEntryTitle;
-        rc += "</b></a>\n<br />";
+            builder.append(s_defaultEntryTitle);
+        builder.appendLiteral("</b></a>\n<br />");
 
         if (!item->m_author.isEmpty()) {
-            rc += i18n("By");
-            rc += " <b>";
-            rc += item->m_author.utf8(true).data();
-            rc += "</b> ";
+            builder.append(i18n("By"));
+            builder.appendLiteral(" <b>");
+            builder.append(item->m_author.utf8(true).data());
+            builder.appendLiteral("</b> ");
         } else {
             if (!feed->m_author.isEmpty()) {
-                rc += i18n("By");
-                rc += " <b>";
-                rc += feed->m_author.utf8(true).data();
-                rc += "</b> ";
+                builder.append(i18n("By"));
+                builder.appendLiteral(" <b>");
+                builder.append(feed->m_author.utf8(true).data());
+                builder.appendLiteral("</b> ");
             }
         }
 
         if (!item->m_categories.isEmpty()) {
             if (!item->m_author.isEmpty())
-                rc += i18n("under ");
+                builder.append(i18n("under "));
             else
-                rc += i18n("Under ");
+                builder.append(i18n("Under "));
 
             for (unsigned i = 0; i < item->m_categories.size() ; ++i) {
-                rc += "<b>";
-                rc += item->m_categories[i].utf8(true).data();
-                rc += "</b>";
+                builder.appendLiteral("<b>");
+                builder.append(item->m_categories[i].utf8(true).data());
+                builder.appendLiteral("</b>");
 
                 if (i < item->m_categories.size() - 1)
-                    rc += ", ";
+                    builder.appendLiteral(", ");
             }
         }
 
-        rc += "<br />";
+        builder.appendLiteral("<br />");
         if (!item->m_pubDate.isEmpty())
-            rc += item->m_pubDate.utf8(true).data();
+            builder.append(item->m_pubDate.utf8(true).data());
 
-        rc += "<br />";
+        builder.appendLiteral("<br />");
         if (!item->m_description.isEmpty())
-            rc += item->m_description.utf8(true).data();
-        rc += "<br />";
+            builder.append(item->m_description.utf8(true).data());
+        builder.appendLiteral("<br />");
 
         if (item->m_enclosure) {
-            rc += "<br />";
-            rc += "<a href=\"";
-            rc += item->m_enclosure->m_url;
-            rc += "\">";
-            rc += i18n("Embedded ");
+            builder.appendLiteral("<br />");
+            builder.appendLiteral("<a href=\"");
+            builder.append(item->m_enclosure->m_url);
+            builder.appendLiteral("\">");
+            builder.append(i18n("Embedded "));
 
             RSSEnclosure::Type type = item->m_enclosure->typeInEnum();
             switch (type) {
             case RSSEnclosure::TypeImage:
-                rc += i18n("Image");
+                builder.append(i18n("Image"));
                 break;
             case RSSEnclosure::TypeAudio:
-                rc += i18n("Audio");
+                builder.append(i18n("Audio"));
                 break;
             case RSSEnclosure::TypeVideo:
-                rc += i18n("Video");
+                builder.append(i18n("Video"));
                 break;
             case RSSEnclosure::TypeApplication:
             default:
-                rc += i18n("Unknown Content");
+                builder.append(i18n("Unknown Content"));
                 break;
             }
 
-            rc += i18n(" Source: ");
-            rc += item->m_enclosure->suggestedName();
-            rc += "</a><br /><br />";
+            builder.append(i18n(" Source: "));
+            builder.append(item->m_enclosure->suggestedName());
+            builder.appendLiteral("</a><br /><br />");
         }
 
-        rc += "<br /></div>\n";
+        builder.appendLiteral("<br /></div>\n");
     }
 
-    rc += "</body></html>\n";
+    builder.appendLiteral("</body></html>\n");
 
-    return rc;
+    return builder.toString();
 }
 
 } // namespace WebCore

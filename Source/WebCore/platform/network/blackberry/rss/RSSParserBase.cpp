@@ -21,6 +21,7 @@
 
 #include "libxml/parser.h"
 #include "libxml/xmlwriter.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -110,14 +111,14 @@ String textFromXMLAttr(xmlAttr* attr)
     if (!attr)
         return emptyString();
 
-    String text;
+    StringBuilder text;
 
     for (xmlNode* node = attr->children; node; node = node->next) {
         if (node->type == XML_TEXT_NODE)
-            text += reinterpret_cast<const char*>(node->content);
+            text.append(reinterpret_cast<const char*>(node->content));
     }
 
-    return text.stripWhiteSpace();
+    return text.toString().stripWhiteSpace();
 }
 
 String textFromXMLNode(xmlNode* node)
@@ -125,14 +126,14 @@ String textFromXMLNode(xmlNode* node)
     if (!node)
         return emptyString();
 
-    String text;
+    StringBuilder text;
 
     for (node = node->children; node; node = node->next) {
         if ((node->type == XML_TEXT_NODE) || (node->type == XML_CDATA_SECTION_NODE))
-            text += reinterpret_cast<const char*>(node->content);
+            text.append(reinterpret_cast<const char*>(node->content));
     }
 
-    return text.stripWhiteSpace();
+    return text.toString().stripWhiteSpace();
 }
 
 } // namespace WebCore
