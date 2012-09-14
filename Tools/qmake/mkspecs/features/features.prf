@@ -79,9 +79,15 @@ defineTest(detectFeatures) {
     }
 
     # Enable the USE(3D_GRAPHICS) flag when QtOpenGL is enabled.
-    contains(QT_CONFIG, opengl) {
+    # Disable on Windows CE for now, as ANGLE won't compile.
+    !wince*:contains(QT_CONFIG, opengl) {
         # On Windows we require GLES2/EGL through ANGLE.
         !win32|contains(QT_CONFIG, opengles2): WEBKIT_CONFIG += use_3d_graphics
+    }
+
+    # Temporarily disable FTPDIR on Windows CE (missing functions from time.h)
+    wince* {
+        WEBKIT_CONFIG -= ftpdir
     }
 
     # WebGL support - only enabled if we can use 3D graphics

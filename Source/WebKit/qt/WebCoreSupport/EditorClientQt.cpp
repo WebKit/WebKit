@@ -644,7 +644,11 @@ void EditorClientQt::setInputMethodState(bool active)
 
 bool EditorClientQt::supportsGlobalSelection()
 {
+#ifndef QT_NO_CLIPBOARD
     return qApp->clipboard()->supportsSelection();
+#else
+    return false;
+#endif
 }
 
 }

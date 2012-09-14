@@ -14,6 +14,11 @@ VPATH += $$PWD/wtf
 
 INCLUDEPATH += $$PWD/wtf
 
+wince* {
+    # for mt19937ar.c
+    INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/ThirdParty
+}
+
 HEADERS += \
     Alignment.h \
     AlwaysInline.h \

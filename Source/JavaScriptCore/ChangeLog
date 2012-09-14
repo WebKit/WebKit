@@ -1,3 +1,14 @@
+2012-09-13  Kevin Funk  <kevin.funk@kdab.com>
+
+        Make compile with both OS(WINCE) and PLATFORM(QT) support
+        https://bugs.webkit.org/show_bug.cgi?id=95536
+
+        Reviewed by Simon Hausmann.
+
+        Do not link against advapi32 on wince
+
+        * jsc.pro:
+
 2012-09-13  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored the DFG to make fewer assumptions about variable capture

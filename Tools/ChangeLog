@@ -1,3 +1,18 @@
+2012-09-13  Kevin Funk  <kevin.funk@kdab.com>
+
+        Make compile with both OS(WINCE) and PLATFORM(QT) support
+        https://bugs.webkit.org/show_bug.cgi?id=95536
+
+        Reviewed by Simon Hausmann.
+
+        Fix wince support in qmake files
+
+        * Tools.pro:
+        * qmake/mkspecs/features/configure.prf:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
 
         [WK2] Add color picker API support for WebKit2

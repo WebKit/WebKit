@@ -32,6 +32,7 @@
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 
 #include <wtf/Assertions.h>
+#include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <unicode/ucol.h>
 #include <string.h>

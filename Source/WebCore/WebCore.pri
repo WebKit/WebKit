@@ -220,11 +220,21 @@ mac {
     LIBS += -framework Carbon -framework AppKit
 }
 
-win32-* {
+win32 {
     INCLUDEPATH += $$SOURCE_DIR/platform/win
-    LIBS += -lgdi32
-    LIBS += -lole32
-    LIBS += -luser32
+
+    wince* {
+        # see https://bugs.webkit.org/show_bug.cgi?id=43442
+        DEFINES += HAVE_LOCALTIME_S=0
+
+        LIBS += -lmmtimer
+        LIBS += -lole32
+    }
+    else {
+        LIBS += -lgdi32
+        LIBS += -lole32
+        LIBS += -luser32
+    }
 }
 
 # Remove whole program optimizations due to miscompilations
@@ -239,12 +249,6 @@ win32-msvc2005|win32-msvc2008|win32-msvc2010|wince*:{
     equals(ARCH, x86):{
         isEmpty(WOW64ARCH): QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
     }
-}
-
-wince* {
-    DEFINES += HAVE_LOCALTIME_S=0
-    LIBS += -lmmtimer
-    LIBS += -lole32
 }
 
 mac {

@@ -1,3 +1,18 @@
+2012-09-13  Kevin Funk  <kevin.funk@kdab.com>
+
+        Make compile with both OS(WINCE) and PLATFORM(QT) support
+        https://bugs.webkit.org/show_bug.cgi?id=95536
+
+        Reviewed by Simon Hausmann.
+
+        Fixes for Windows CE.
+
+        * WTF.pri:
+        Also include path for mt19937ar.c
+        * wtf/unicode/icu/CollatorICU.cpp:
+        Fix undeclared strdup() on CE7
+        * wtf/Platform.h:
+
 2012-09-13  Byungseon Shin  <xingri@gmail.com>
 
         Fix for WTF fails to compile in thumb mode when llint is enabled.

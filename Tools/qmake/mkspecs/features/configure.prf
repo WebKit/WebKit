@@ -86,6 +86,10 @@ defineTest(finalizeConfigure) {
         WEBKIT_CONFIG -= build_drt build_wtr build_tests
     }
 
+    wince* {
+        WEBKIT_CONFIG -= build_drt
+    }
+
     production_build {
         WEBKIT_CONFIG -= build_drt build_wtr build_tests
     }
