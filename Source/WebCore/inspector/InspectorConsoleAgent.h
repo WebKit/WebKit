@@ -77,7 +77,7 @@ public:
 
     void frameWindowDiscarded(DOMWindow*);
 
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber);
+    void didFinishXHRLoading(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     void didFailLoading(unsigned long identifier, const ResourceError&);
 #if ENABLE(JAVASCRIPT_DEBUGGER)

@@ -50,7 +50,9 @@ namespace WebCore {
 class CachedResource;
 class Document;
 class DocumentLoader;
+class FormData;
 class Frame;
+class HTTPHeaderMap;
 class InspectorArray;
 class InspectorClient;
 class InspectorFrontend;
@@ -66,6 +68,9 @@ class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
+class ThreadableLoaderClient;
+class XHRReplayData;
+class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
@@ -100,10 +105,15 @@ public:
     void mainFrameNavigated(DocumentLoader*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void didReceiveScriptResponse(unsigned long identifier);
-    void setInitialXHRContent(unsigned long identifier, const String& sourceString);
+
+    void documentThreadableLoaderStartedLoadingForClient(unsigned long identifier, ThreadableLoaderClient*);
+    void willLoadXHR(ThreadableLoaderClient*, const String& method, const KURL&, bool async, PassRefPtr<FormData> body, const HTTPHeaderMap& headers, bool includeCrendentials);
+    void didFailXHRLoading(ThreadableLoaderClient*);
+    void didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString);
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();
+
     void willDestroyCachedResource(CachedResource*);
 
     void applyUserAgentOverride(String* userAgent);
@@ -135,6 +145,8 @@ public:
     virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>&);
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
 
+    virtual void replayXHR(ErrorString*, const String& requestId);
+
     virtual void canClearBrowserCache(ErrorString*, bool*);
     virtual void clearBrowserCache(ErrorString*);
     virtual void canClearBrowserCookies(ErrorString*, bool*);
@@ -153,6 +165,8 @@ private:
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_loadingXHRSynchronously;
 
+    typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData> > PendingXHRReplayDataMap;
+    PendingXHRReplayDataMap m_pendingXHRReplayData;
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
     RefPtr<TypeBuilder::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle;

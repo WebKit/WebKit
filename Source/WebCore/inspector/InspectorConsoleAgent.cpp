@@ -219,7 +219,7 @@ void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
     m_injectedScriptManager->discardInjectedScriptsFor(window);
 }
 
-void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorConsoleAgent::didFinishXHRLoading(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (!developerExtrasEnabled())
         return;

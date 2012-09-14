@@ -875,6 +875,14 @@
                 ]
             },
             {
+                "name": "replayXHR",
+                "description": "This method sends a new XMLHttpRequest which is identical to the original one. The following parameters should be identical: method, url, async, request body, extra headers, withCredentials attribute, user, password.",
+                "parameters": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Identifier of XHR to replay." }
+                ],
+                "hidden": true
+            },
+            {
                 "name": "canClearBrowserCache",
                 "description": "Tells whether clearing browser cache is supported.",
                 "returns": [

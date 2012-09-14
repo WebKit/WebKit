@@ -145,6 +145,8 @@ public:
     bool isLoading() const { return m_loading; }
     void setLoading(bool b) { m_loading = b; }
 
+    SubresourceLoader* loader() { return m_loader.get(); }
+
     virtual bool isImage() const { return false; }
     bool ignoreForRequestCount() const
     {

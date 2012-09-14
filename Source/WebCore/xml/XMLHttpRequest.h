@@ -105,6 +105,8 @@ public:
     Blob* responseBlob(ExceptionCode&);
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
 
+    void sendFromInspector(PassRefPtr<FormData>, ExceptionCode&);
+
     // Expose HTTP validation methods for other untrusted requests.
     static bool isAllowedHTTPMethod(const String&);
     static String uppercaseKnownHTTPMethod(const String&);

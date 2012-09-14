@@ -682,6 +682,13 @@ void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCod
     createRequest(ec);
 }
 
+void XMLHttpRequest::sendFromInspector(PassRefPtr<FormData> formData, ExceptionCode& ec)
+{
+    m_requestEntityBody = formData ? formData->deepCopy() : FormData::create();
+    createRequest(ec);
+    m_exceptionCode = ec;
+}
+
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
 #if ENABLE(BLOB)
@@ -715,6 +722,8 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 #if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
     request.setTargetType(ResourceRequest::TargetIsXHR);
 #endif
+
+    InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this, m_method, m_url, m_async, m_requestEntityBody ? m_requestEntityBody->deepCopy() : 0, m_requestHeaders, m_includeCredentials);
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
@@ -807,6 +816,8 @@ void XMLHttpRequest::internalAbort()
     }
 
     m_decoder = 0;
+
+    InspectorInstrumentation::didFailXHRLoading(scriptExecutionContext(), this);
 
     if (hadLoader)
         dropProtection();
@@ -1073,7 +1084,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
 
     m_responseBuilder.shrinkToFit();
 
-    InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(scriptExecutionContext(), identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber);
+    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber);
 
     bool hadLoader = m_loader;
     m_loader = 0;

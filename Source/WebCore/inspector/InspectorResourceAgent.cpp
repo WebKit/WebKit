@@ -34,6 +34,7 @@
 
 #include "InspectorResourceAgent.h"
 
+#include "CachedRawResource.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
@@ -64,6 +65,7 @@
 #include "WebSocketFrame.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
+#include "XMLHttpRequest.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/HexNumber.h>
@@ -333,6 +335,12 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     String requestId = IdentifiersFactory::requestId(identifier);
     m_resourcesData->resourceCreated(requestId, loaderId);
     m_resourcesData->addCachedResource(requestId, resource);
+    if (resource->type() == CachedResource::RawResource) {
+        CachedRawResource* rawResource = static_cast<CachedRawResource*>(resource);
+        String rawRequestId = IdentifiersFactory::requestId(rawResource->identifier());
+        m_resourcesData->reuseXHRReplayData(requestId, rawRequestId);
+    }
+
     RefPtr<TypeBuilder::Network::Initiator> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
 
     m_frontend->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource, loader));
@@ -348,12 +356,41 @@ void InspectorResourceAgent::didReceiveScriptResponse(unsigned long identifier)
     m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::ScriptResource);
 }
 
-void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
+void InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient(unsigned long identifier, ThreadableLoaderClient* client)
+{
+    if (!client)
+        return;
+
+    PendingXHRReplayDataMap::iterator it = m_pendingXHRReplayData.find(client);
+    if (it == m_pendingXHRReplayData.end())
+        return;
+
+    XHRReplayData* xhrReplayData = it->second.get();
+    String requestId = IdentifiersFactory::requestId(identifier);
+    m_resourcesData->setXHRReplayData(requestId, xhrReplayData);
+}
+
+void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const String& method, const KURL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
+{
+    RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, includeCredentials);
+    HTTPHeaderMap::const_iterator end = headers.end();
+    for (HTTPHeaderMap::const_iterator it = headers.begin(); it!= end; ++it)
+        xhrReplayData->addHeader(it->first, it->second);
+    m_pendingXHRReplayData.set(client, xhrReplayData);
+}
+
+void InspectorResourceAgent::didFailXHRLoading(ThreadableLoaderClient* client)
+{
+    m_pendingXHRReplayData.remove(client);
+}
+
+void InspectorResourceAgent::didFinishXHRLoading(ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString)
 {
     // For Asynchronous XHRs, the inspector can grab the data directly off of the CachedResource. For sync XHRs, we need to
     // provide the data here, since no CachedResource was involved.
     if (m_loadingXHRSynchronously)
         m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    m_pendingXHRReplayData.remove(client);
 }
 
 void InspectorResourceAgent::didReceiveXHRResponse(unsigned long identifier)
@@ -568,6 +605,23 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
     }
 
     *errorString = "No data found for resource with given identifier";
+}
+
+void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
+{
+    RefPtr<XMLHttpRequest> xhr = XMLHttpRequest::create(m_pageAgent->mainFrame()->document());
+    ExceptionCode code;
+    String actualRequestId = requestId;
+
+    XHRReplayData* xhrReplayData = m_resourcesData->xhrReplayData(requestId);
+    if (!xhrReplayData)
+        return;
+
+    xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), code);
+    HTTPHeaderMap::const_iterator end = xhrReplayData->headers().end();
+    for (HTTPHeaderMap::const_iterator it = xhrReplayData->headers().begin(); it!= end; ++it)
+        xhr->setRequestHeader(it->first, it->second, code);
+    xhr->sendFromInspector(xhrReplayData->formData(), code);
 }
 
 void InspectorResourceAgent::canClearBrowserCache(ErrorString*, bool* result)

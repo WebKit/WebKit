@@ -763,12 +763,30 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents* instrumen
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
-void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClientImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, ThreadableLoaderClient* client)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->documentThreadableLoaderStartedLoadingForClient(identifier, client);
+}
+
+void InspectorInstrumentation::willLoadXHRImpl(InstrumentingAgents* instrumentingAgents, ThreadableLoaderClient* client, const String& method, const KURL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->willLoadXHR(client, method, url, async, formData, headers, includeCredentials);
+}
+
+void InspectorInstrumentation::didFailXHRLoadingImpl(InstrumentingAgents* instrumentingAgents, ThreadableLoaderClient* client)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didFailXHRLoading(client);
+}
+
+void InspectorInstrumentation::didFinishXHRLoadingImpl(InstrumentingAgents* instrumentingAgents, ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
-        consoleAgent->resourceRetrievedByXMLHttpRequest(identifier, url, sendURL, sendLineNumber);
+        consoleAgent->didFinishXHRLoading(identifier, url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->setInitialXHRContent(identifier, sourceString);
+        resourceAgent->didFinishXHRLoading(client, identifier, sourceString);
 }
 
 void InspectorInstrumentation::didReceiveXHRResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier)

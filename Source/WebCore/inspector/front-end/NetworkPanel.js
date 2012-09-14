@@ -962,8 +962,21 @@ WebInspector.NetworkLogView.prototype = {
         if (this._canClearBrowserCookies)
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cookies" : "Clear Browser Cookies"), this._clearBrowserCookies.bind(this));
 
+
+        if (request.type === WebInspector.resourceTypes.XHR) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Replay XHR"), this._replayXHR.bind(this, request.requestId));
+            contextMenu.appendSeparator();
+        }
+
         contextMenu.show(event);
     },
+    
+    _replayXHR: function(requestId)
+    {
+        NetworkAgent.replayXHR(requestId);
+    },
+    
 
     _copyAll: function()
     {

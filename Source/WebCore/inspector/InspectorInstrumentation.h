@@ -77,6 +77,7 @@ class SecurityOrigin;
 class ShadowRoot;
 class StorageArea;
 class StyleRule;
+class ThreadableLoaderClient;
 class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
@@ -183,7 +184,10 @@ public:
     static void didReceiveData(Frame*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
-    static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void documentThreadableLoaderStartedLoadingForClient(ScriptExecutionContext*, unsigned long identifier, ThreadableLoaderClient*);
+    static void willLoadXHR(ScriptExecutionContext*, ThreadableLoaderClient*, const String&, const KURL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
+    static void didFailXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*);
+    static void didFinishXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void didReceiveXHRResponse(ScriptExecutionContext*, unsigned long identifier);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
@@ -362,7 +366,10 @@ private:
     static void didReceiveDataImpl(InstrumentingAgents*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoadingImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, double finishTime);
     static void didFailLoadingImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, const ResourceError&);
-    static void resourceRetrievedByXMLHttpRequestImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void documentThreadableLoaderStartedLoadingForClientImpl(InstrumentingAgents*, unsigned long identifier, ThreadableLoaderClient*);
+    static void willLoadXHRImpl(InstrumentingAgents*, ThreadableLoaderClient*, const String&, const KURL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
+    static void didFailXHRLoadingImpl(InstrumentingAgents*, ThreadableLoaderClient*);
+    static void didFinishXHRLoadingImpl(InstrumentingAgents*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void didReceiveXHRResponseImpl(InstrumentingAgents*, unsigned long identifier);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
@@ -1168,11 +1175,36 @@ inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoade
 #endif
 }
 
-inline void InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(ScriptExecutionContext* context, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+inline void InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(ScriptExecutionContext* context, unsigned long identifier, ThreadableLoaderClient* client)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        resourceRetrievedByXMLHttpRequestImpl(instrumentingAgents, identifier, sourceString, url, sendURL, sendLineNumber);
+        documentThreadableLoaderStartedLoadingForClientImpl(instrumentingAgents, identifier, client);
+#endif
+}
+
+inline void InspectorInstrumentation::willLoadXHR(ScriptExecutionContext* context, ThreadableLoaderClient* client, const String& method, const KURL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        willLoadXHRImpl(instrumentingAgents, client, method, url, async, formData, headers, includeCredentials);
+#endif
+}
+
+inline void InspectorInstrumentation::didFailXHRLoading(ScriptExecutionContext* context, ThreadableLoaderClient* client)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didFailXHRLoadingImpl(instrumentingAgents, client);
+#endif
+}
+
+
+inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext* context, ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didFinishXHRLoadingImpl(instrumentingAgents, client, identifier, sourceString, url, sendURL, sendLineNumber);
 #endif
 }
 

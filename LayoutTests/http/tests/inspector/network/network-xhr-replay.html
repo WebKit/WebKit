@@ -1,0 +1,109 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+
+function test()
+{
+    var networkPanel = WebInspector.showPanel("network");
+
+    function lastRequest()
+    {
+        return networkPanel.requests[networkPanel.requests.length - 1];
+    }
+
+    function dumpRequest(request)
+    {
+        InspectorTest.addResult("Dumping request: ");
+        InspectorTest.addResult("    url: " + request.url);
+        if (request.requestFormData)
+            InspectorTest.addResult("    requestFormData: " + request.requestFormData);
+        InspectorTest.addResult("    requestMethod: " + request.requestMethod);
+        InspectorTest.addResult("    test request header value: " + request.requestHeaderValue("headerName"));
+    }
+
+    function assertRequestEqual(request1, request2)
+    {
+        InspectorTest.assertEquals(request1.url, request2.url, "Requests have different url");
+        InspectorTest.assertEquals(request1.requestFormData, request2.requestFormData, "Requests have different requestFormData");
+        InspectorTest.assertEquals(request1.requestMethod, request2.requestMethod, "Requests have different requestMethod");
+        InspectorTest.assertEquals(request1.requestHeadersText, request2.requestHeadersText, "Requests have different requestHeadersText");
+    }
+
+    function testXHRReplay(method, url, async, user, password, headers, withCredentials, payload, callback)
+    {
+        InspectorTest.resetInspectorResourcesData(step1);
+
+        function step1()
+        {
+            InspectorTest.makeXHR(method, url, async, user, password, headers, withCredentials, payload, step2);
+        }
+
+        var originalRequest;
+        function step2()
+        {
+            originalRequest = lastRequest();
+            dumpRequest(originalRequest);
+            NetworkAgent.replayXHR(originalRequest.requestId);
+            InspectorTest.addSniffer(WebInspector.NetworkLogView.prototype, "_appendRequest", step3);
+        }
+
+        function step3()
+        {
+            var replayedRequest = lastRequest();
+            assertRequestEqual(originalRequest, replayedRequest);
+            callback();
+        }
+    }
+
+
+    InspectorTest.runTestSuite([
+        function testGetStaticAsync(next)
+        {
+            testXHRReplay("GET", "resources/empty.html", true, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testGetStaticSync(next)
+        {
+            testXHRReplay("GET", "resources/empty.html", false, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testGetCachedAsync(next)
+        {
+            testXHRReplay("GET", "resources/random-cached.php", true, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testGetCachedSync(next)
+        {
+            testXHRReplay("GET", "resources/random-cached.php", false, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testGetRandomAsync(next)
+        {
+            testXHRReplay("GET", "resources/random.php", true, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testGetRandomSync(next)
+        {
+            testXHRReplay("GET", "resources/random.php", false, "user", "password", [["headerName", "headerValue"]], false, undefined, next);
+        },
+
+        function testPostAsync(next)
+        {
+            testXHRReplay("POST", "resources/random.php", true, "user", "password", [["headerName", "headerValue"]], false, "payload", next);
+        },
+
+        function testPostSync(next)
+        {
+            testXHRReplay("POST", "resources/random.php", false, "user", "password", [["headerName", "headerValue"]], false, "payload", next);
+        }
+    ]);
+}
+</script>
+</head>
+<body onload="runTest()">
+Tests XHR replaying.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=95187">Bug 95187</a>
+</body>
+</html>
