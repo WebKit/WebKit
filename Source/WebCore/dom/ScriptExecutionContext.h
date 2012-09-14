@@ -79,7 +79,7 @@ public:
 
     virtual String userAgent(const KURL&) const = 0;
 
-    virtual void disableEval() = 0;
+    virtual void disableEval(const String& errorMessage) = 0;
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
     void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);

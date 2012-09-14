@@ -645,7 +645,7 @@ public:
 
     virtual String userAgent(const KURL&) const;
 
-    virtual void disableEval();
+    virtual void disableEval(const String& errorMessage);
 
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();

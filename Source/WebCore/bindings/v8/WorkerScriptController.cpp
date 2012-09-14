@@ -132,7 +132,7 @@ bool WorkerScriptController::isExecutionForbidden() const
     return m_executionForbidden;
 }
 
-void WorkerScriptController::disableEval()
+void WorkerScriptController::disableEval(const String& /* errorMessage */)
 {
     m_proxy->setEvalAllowed(false);
 }

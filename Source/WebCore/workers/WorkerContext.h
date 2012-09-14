@@ -72,7 +72,7 @@ namespace WebCore {
         const GroupSettings* groupSettings() { return m_groupSettings.get(); }
         virtual String userAgent(const KURL&) const;
 
-        virtual void disableEval();
+        virtual void disableEval(const String& errorMessage);
 
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script.clear(); }

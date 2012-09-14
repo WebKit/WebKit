@@ -202,7 +202,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
         m_evalCodeBlock = newCodeBlock.release();
     } else {
         if (!lexicalGlobalObject->evalEnabled())
-            return throwError(exec, createEvalError(exec, ASCIILiteral("Eval is disabled")));
+            return throwError(exec, createEvalError(exec, lexicalGlobalObject->evalDisabledErrorMessage()));
         RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, Identifier(), isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
         if (!evalNode) {
             ASSERT(exception);

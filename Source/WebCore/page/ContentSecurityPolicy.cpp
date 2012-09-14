@@ -726,6 +726,7 @@ public:
     bool allowFormAction(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
 
     void gatherReportURIs(DOMStringList&) const;
+    const String& evalDisabledErrorMessage() { return m_evalDisabledErrorMessage; }
 
 private:
     explicit CSPDirectiveList(ContentSecurityPolicy*);
@@ -751,6 +752,8 @@ private:
     bool checkSource(SourceListDirective*, const KURL&) const;
     bool checkMediaType(MediaListDirective*, const String& type, const String& typeAttribute) const;
 
+    void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
+
     bool checkEvalAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
     bool checkInlineAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool checkNonceAndReportViolation(NonceDirective*, const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
@@ -760,6 +763,7 @@ private:
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
 
     ContentSecurityPolicy* m_policy;
+
     String m_header;
 
     bool m_reportOnly;
@@ -779,6 +783,8 @@ private:
     OwnPtr<SourceListDirective> m_styleSrc;
 
     Vector<KURL> m_reportURIs;
+
+    String m_evalDisabledErrorMessage;
 };
 
 CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy)
@@ -801,6 +807,11 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* pol
     case ContentSecurityPolicy::EnforcePolicy:
         ASSERT(!directives->m_reportOnly);
         break;
+    }
+
+    if (!directives->checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
+        String message = makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
+        directives->setEvalDisabledErrorMessage(message);
     }
 
     return directives.release();
@@ -1261,7 +1272,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
     }
 
     if (!allowEval(0, SuppressReport))
-        m_scriptExecutionContext->disableEval();
+        m_scriptExecutionContext->disableEval(evalDisabledErrorMessage());
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
@@ -1349,6 +1360,15 @@ bool ContentSecurityPolicy::allowEval(PassRefPtr<ScriptCallStack> callStack, Con
     return isAllowedByAllWithCallStack<&CSPDirectiveList::allowEval>(m_policies, callStack, reportingStatus);
 }
 
+String ContentSecurityPolicy::evalDisabledErrorMessage() const
+{
+    for (size_t i = 0; i < m_policies.size(); ++i) {
+        if (!m_policies[i]->allowEval(0, SuppressReport))
+            return m_policies[i]->evalDisabledErrorMessage();
+    }
+    return String();
+}
+
 bool ContentSecurityPolicy::allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& url) const
 {
     return isAllowedByAllWithNonce<&CSPDirectiveList::allowScriptNonce>(m_policies, nonce, contextURL, contextLine, url);
@@ -1357,7 +1377,7 @@ bool ContentSecurityPolicy::allowScriptNonce(const String& nonce, const String& 
 bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     for (size_t i = 0; i < m_policies.size(); ++i) {
-        if (!m_policies[i].get()->allowPluginType(type, typeAttribute, url, reportingStatus))
+        if (!m_policies[i]->allowPluginType(type, typeAttribute, url, reportingStatus))
             return false;
     }
     return true;
@@ -1416,7 +1436,7 @@ bool ContentSecurityPolicy::isActive() const
 void ContentSecurityPolicy::gatherReportURIs(DOMStringList& list) const
 {
     for (size_t i = 0; i < m_policies.size(); ++i)
-        m_policies[i].get()->gatherReportURIs(list);
+        m_policies[i]->gatherReportURIs(list);
 }
 
 SecurityOrigin* ContentSecurityPolicy::securityOrigin() const

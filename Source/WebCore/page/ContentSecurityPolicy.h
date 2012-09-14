@@ -112,6 +112,7 @@ public:
     KURL completeURL(const String&) const;
     SecurityOrigin* securityOrigin() const;
     void enforceSandboxFlags(SandboxFlags) const;
+    String evalDisabledErrorMessage() const;
 
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);

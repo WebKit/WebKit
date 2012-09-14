@@ -82,7 +82,7 @@ CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const String& sourceURL, const TextPosition& position)
 {
     if (!globalObject->evalEnabled())
-        return throwError(exec, createEvalError(exec, ASCIILiteral("Function constructor is disabled")));
+        return throwError(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
     return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, position);
 }
 

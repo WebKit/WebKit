@@ -155,6 +155,7 @@ namespace JSC {
         WeakRandom m_weakRandom;
 
         bool m_evalEnabled;
+        String m_evalDisabledErrorMessage;
         bool m_experimentsEnabled;
 
         static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
@@ -304,8 +305,13 @@ namespace JSC {
 
         bool isDynamicScope(bool& requiresDynamicChecks) const;
 
-        void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }
-        bool evalEnabled() { return m_evalEnabled; }
+        bool evalEnabled() const { return m_evalEnabled; }
+        const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
+        void setEvalEnabled(bool enabled, const String& errorMessage = String())
+        {
+            m_evalEnabled = enabled;
+            m_evalDisabledErrorMessage = errorMessage;
+        }
 
         void resetPrototype(JSGlobalData&, JSValue prototype);
 

@@ -2826,12 +2826,12 @@ String Document::userAgent(const KURL& url) const
     return frame() ? frame()->loader()->userAgent(url) : String();
 }
 
-void Document::disableEval()
+void Document::disableEval(const String& errorMessage)
 {
     if (!frame())
         return;
 
-    frame()->script()->disableEval();
+    frame()->script()->disableEval(errorMessage);
 }
 
 bool Document::canNavigate(Frame* targetFrame)

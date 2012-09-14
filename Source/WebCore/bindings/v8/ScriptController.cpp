@@ -487,7 +487,7 @@ void ScriptController::enableEval()
     v8Context->AllowCodeGenerationFromStrings(true);
 }
 
-void ScriptController::disableEval()
+void ScriptController::disableEval(const String& /* errorMessage */)
 {
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = windowShell()->context();

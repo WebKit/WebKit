@@ -73,7 +73,7 @@ namespace WebCore {
         void forbidExecution();
         bool isExecutionForbidden() const;
 
-        void disableEval();
+        void disableEval(const String&);
 
         // Returns WorkerScriptController for the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerScriptController* controllerForContext();

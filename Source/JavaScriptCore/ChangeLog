@@ -1,3 +1,40 @@
+2012-09-14  Mike West  <mkwst@chromium.org>
+
+        JSC should throw a more descriptive exception when blocking 'eval' via CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=94331
+
+        Reviewed by Geoffrey Garen.
+
+        Unless explicitly whitelisted, the 'script-src' Content Security Policy
+        directive blocks 'eval' and 'eval'-like constructs such as
+        'new Function()'. When 'eval' is encountered in code, an 'EvalError' is
+        thrown, but the associated message is poor: "Eval is disabled" doesn't
+        give developers enough information about why their code isn't behaving
+        as expected.
+
+        This patch adds an 'errorMessage' parameter to the JavaScriptCore method
+        used to disable 'eval'; ContentSecurityPolicy has the opportunity to
+        pass in a more detailed and descriptive error that contains more context
+        for the developer.
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+            Drop the hard-coded "Eval is disabled" error message in favor of
+            reading the error message off the global object.
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::getCallData):
+            Drop the hard-coded "Function constructor is disabled" error message
+            in favor of reading the error message off the global object.
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::evalEnabled):
+            Making this accessor method const.
+        (JSC::JSGlobalObject::evalDisabledErrorMessage):
+            Accessor for the error message set via 'setEvalDisabled'.
+        (JSC::JSGlobalObject::setEvalEnabled):
+            Adding an 'errorMessage' parameter which is stored on the global
+            object, and used when exceptions are thrown.
+
 2012-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         bbc homepage crashes immediately

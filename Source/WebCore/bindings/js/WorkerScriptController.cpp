@@ -189,12 +189,12 @@ bool WorkerScriptController::isExecutionForbidden() const
     return m_executionForbidden;
 }
 
-void WorkerScriptController::disableEval()
+void WorkerScriptController::disableEval(const String& errorMessage)
 {
     initScriptIfNeeded();
     JSLockHolder lock(globalData());
 
-    m_workerContextWrapper->setEvalEnabled(false);
+    m_workerContextWrapper->setEvalEnabled(false, errorMessage);
 }
 
 } // namespace WebCore

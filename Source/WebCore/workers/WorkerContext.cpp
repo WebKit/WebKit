@@ -148,9 +148,9 @@ String WorkerContext::userAgent(const KURL&) const
     return m_userAgent;
 }
 
-void WorkerContext::disableEval()
+void WorkerContext::disableEval(const String& errorMessage)
 {
-    m_script->disableEval();
+    m_script->disableEval(errorMessage);
 }
 
 WorkerLocation* WorkerContext::location() const

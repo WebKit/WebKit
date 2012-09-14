@@ -222,7 +222,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
     windowShell->window()->updateDocument();
 
     if (m_frame->document())
-        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));   
+        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport), m_frame->document()->contentSecurityPolicy()->evalDisabledErrorMessage());   
 
     if (Page* page = m_frame->page()) {
         attachDebugger(windowShell, page->debugger());
@@ -250,12 +250,12 @@ void ScriptController::enableEval()
     windowShell->window()->setEvalEnabled(true);
 }
 
-void ScriptController::disableEval()
+void ScriptController::disableEval(const String& errorMessage)
 {
     JSDOMWindowShell* windowShell = existingWindowShell(mainThreadNormalWorld());
     if (!windowShell)
         return;
-    windowShell->window()->setEvalEnabled(false);
+    windowShell->window()->setEvalEnabled(false, errorMessage);
 }
 
 bool ScriptController::processingUserGesture()

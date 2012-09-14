@@ -1,2 +1,3 @@
-CONSOLE MESSAGE: line 12: EvalError: Function constructor is disabled
+CONSOLE MESSAGE: line 12: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
 

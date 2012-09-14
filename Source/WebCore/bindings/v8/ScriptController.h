@@ -121,7 +121,7 @@ public:
     bool haveInterpreter() const;
 
     void enableEval();
-    void disableEval();
+    void disableEval(const String& errorMessage);
 
     static bool canAccessFromCurrentOrigin(Frame*);
 
