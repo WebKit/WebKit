@@ -240,8 +240,6 @@ webarchive/test-xml-stylesheet.xml
 # WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=42331>
 fast/loader/recursive-before-unload-crash.html
-http/tests/globalhistory/history-delegate-basic-302-redirect.html
-http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
 http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
 http/tests/security/mixedContent/data-url-script-in-iframe.html
@@ -509,6 +507,8 @@ http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
+http/tests/globalhistory/history-delegate-basic-302-redirect.html
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 http/tests/globalhistory/history-delegate-basic-title.html
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 

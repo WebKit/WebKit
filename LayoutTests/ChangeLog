@@ -1,3 +1,15 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Move globalhistory tests to their correct section in Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=96738
+
+        Unreviewed gardening.
+
+        Move 2 globalhistory tests to their correct section in WK2
+        Skipped list.
+
+        * platform/wk2/Skipped:
+
 2012-09-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] multiple fields time input UI should save/restore its value even if it has an empty field.
