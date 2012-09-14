@@ -123,16 +123,16 @@ protected:
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String timeFormatText(LCID lcid)
+    String timeFormat(LCID lcid)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->timeFormatText();
+        return locale->timeFormat();
     }
 
-    String shortTimeFormatText(LCID lcid)
+    String shortTimeFormat(LCID lcid)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->shortTimeFormatText();
+        return locale->shortTimeFormat();
     }
 
     String timeAMPMLabel(LCID lcid, unsigned index)
@@ -325,18 +325,18 @@ TEST_F(LocaleWinTest, weekDayShortLabels)
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-TEST_F(LocaleWinTest, timeFormatText)
+TEST_F(LocaleWinTest, timeFormat)
 {
-    EXPECT_STREQ("h:mm:ss a", timeFormatText(EnglishUS).utf8().data());
-    EXPECT_STREQ("HH:mm:ss", timeFormatText(FrenchFR).utf8().data());
-    EXPECT_STREQ("H:mm:ss", timeFormatText(JapaneseJP).utf8().data());
+    EXPECT_STREQ("h:mm:ss a", timeFormat(EnglishUS).utf8().data());
+    EXPECT_STREQ("HH:mm:ss", timeFormat(FrenchFR).utf8().data());
+    EXPECT_STREQ("H:mm:ss", timeFormat(JapaneseJP).utf8().data());
 }
 
-TEST_F(LocaleWinTest, shortTimeFormatText)
+TEST_F(LocaleWinTest, shortTimeFormat)
 {
-    EXPECT_STREQ("h:mm:ss a", shortTimeFormatText(EnglishUS).utf8().data());
-    EXPECT_STREQ("HH:mm:ss", shortTimeFormatText(FrenchFR).utf8().data());
-    EXPECT_STREQ("H:mm:ss", shortTimeFormatText(JapaneseJP).utf8().data());
+    EXPECT_STREQ("h:mm:ss a", shortTimeFormat(EnglishUS).utf8().data());
+    EXPECT_STREQ("HH:mm:ss", shortTimeFormat(FrenchFR).utf8().data());
+    EXPECT_STREQ("H:mm:ss", shortTimeFormat(JapaneseJP).utf8().data());
 }
 
 TEST_F(LocaleWinTest, timeAMPMLabels)

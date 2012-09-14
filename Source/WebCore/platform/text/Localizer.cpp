@@ -190,6 +190,32 @@ String Localizer::localizedDecimalSeparator()
     initializeLocalizerData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
+
+String Localizer::timeFormat()
+{
+    if (!m_localizedTimeFormatText.isEmpty())
+        return m_localizedTimeFormatText;
+    m_localizedTimeFormatText = "hh:mm:ss";
+    return m_localizedTimeFormatText;
+}
+
+String Localizer::shortTimeFormat()
+{
+    if (!m_localizedShortTimeFormatText.isEmpty())
+        return m_localizedShortTimeFormatText;
+    m_localizedTimeFormatText = "hh:mm";
+    return m_localizedShortTimeFormatText;
+}
+
+const Vector<String>& Localizer::timeAMPMLabels()
+{
+    if (!m_timeAMPMLabels.isEmpty())
+        return m_timeAMPMLabels;
+    m_timeAMPMLabels.reserveCapacity(2);
+    m_timeAMPMLabels.append("AM");
+    m_timeAMPMLabels.append("PM");
+    return m_timeAMPMLabels;
+}
 #endif
 
 }

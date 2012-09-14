@@ -37,6 +37,9 @@ public:
     String convertFromLocalizedNumber(const String&);
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
     String localizedDecimalSeparator();
+    virtual String timeFormat();
+    virtual String shortTimeFormat();
+    virtual const Vector<String>& timeAMPMLabels();
 #endif
     virtual ~Localizer();
 
@@ -47,6 +50,12 @@ protected:
         GroupSeparatorIndex = 11,
         DecimalSymbolsSize
     };
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String m_localizedTimeFormatText;
+    String m_localizedShortTimeFormatText;
+    Vector<String> m_timeAMPMLabels;
+#endif
 
     Localizer() : m_hasLocalizerData(false) { }
     virtual void initializeLocalizerData() = 0;

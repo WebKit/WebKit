@@ -720,18 +720,18 @@ static String convertWindowsTimeFormatToLDML(const String& windowsTimeFormat)
     return builder.toString();
 }
 
-String LocaleWin::timeFormatText()
+String LocaleWin::timeFormat()
 {
-    if (m_timeFormatText.isEmpty())
-        m_timeFormatText = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
-    return m_timeFormatText;
+    if (m_localizedTimeFormatText.isEmpty())
+        m_localizedTimeFormatText = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
+    return m_localizedTimeFormatText;
 }
 
 // Note: To make XP/Vista and Windows 7/later same behavior, we don't use
 // LOCALE_SSHORTTIME.
-String LocaleWin::shortTimeFormatText()
+String LocaleWin::shortTimeFormat()
 {
-    return timeFormatText();
+    return timeFormat();
 }
 
 const Vector<String>& LocaleWin::timeAMPMLabels()

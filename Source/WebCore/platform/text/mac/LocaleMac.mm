@@ -250,7 +250,7 @@ NSDateFormatter* LocaleMac::createShortTimeFormatter()
     return createDateTimeFormatter(m_locale.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
 }
 
-String LocaleMac::timeFormatText()
+String LocaleMac::timeFormat()
 {
     if (!m_localizedTimeFormatText.isEmpty())
         return m_localizedTimeFormatText;
@@ -259,7 +259,7 @@ String LocaleMac::timeFormatText()
     return m_localizedTimeFormatText;
 }
 
-String LocaleMac::shortTimeFormatText()
+String LocaleMac::shortTimeFormat()
 {
     if (!m_localizedShortTimeFormatText.isEmpty())
         return m_localizedShortTimeFormatText;

@@ -91,13 +91,13 @@ protected:
     String localizedDateFormatText(const char* localeString)
     {
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
-        return locale->localizedTimeFormatText();
+        return locale->timeFormat();
     }
 
     String localizedShortDateFormatText(const char* localeString)
     {
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
-        return locale->localizedShortTimeFormatText();
+        return locale->shortTimeFormat();
     }
 
     Labels timeAMPMLabels(const char* localeString)

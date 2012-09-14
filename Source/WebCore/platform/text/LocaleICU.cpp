@@ -395,20 +395,21 @@ void LocaleICU::initializeDateTimeFormat()
     m_shortTimeFormat = openDateFormat(UDAT_SHORT, UDAT_NONE);
     m_localizedShortTimeFormatText = getDateFormatPattern(m_shortTimeFormat);
 
-    m_timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
-    if (!m_timeAMPMLabels)
-        m_timeAMPMLabels = createFallbackAMPMLabels();
+    OwnPtr<Vector<String> > timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
+    if (!timeAMPMLabels)
+        timeAMPMLabels = createFallbackAMPMLabels();
+    m_timeAMPMLabels = *timeAMPMLabels;
 
     m_didCreateTimeFormat = true;
 }
 
-String LocaleICU::localizedTimeFormatText()
+String LocaleICU::timeFormat()
 {
     initializeDateTimeFormat();
     return m_localizedTimeFormatText;
 }
 
-String LocaleICU::localizedShortTimeFormatText()
+String LocaleICU::shortTimeFormat()
 {
     initializeDateTimeFormat();
     return m_localizedShortTimeFormatText;
@@ -417,7 +418,7 @@ String LocaleICU::localizedShortTimeFormatText()
 const Vector<String>& LocaleICU::timeAMPMLabels()
 {
     initializeDateTimeFormat();
-    return *m_timeAMPMLabels;
+    return m_timeAMPMLabels;
 }
 
 #endif

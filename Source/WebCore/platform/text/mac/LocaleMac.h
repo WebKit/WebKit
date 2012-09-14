@@ -60,9 +60,9 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String timeFormatText();
-    String shortTimeFormatText();
-    const Vector<String>& timeAMPMLabels();
+    virtual String timeFormat() OVERRIDE;
+    virtual String shortTimeFormat() OVERRIDE;
+    virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 #endif
 
 private:

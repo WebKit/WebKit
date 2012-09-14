@@ -57,9 +57,9 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String timeFormatText();
-    String shortTimeFormatText();
-    const Vector<String>& timeAMPMLabels();
+    virtual String timeFormat() OVERRIDE;
+    virtual String shortTimeFormat() OVERRIDE;
+    virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 #endif
 
     // For testing.
@@ -96,10 +96,6 @@ private:
 #if ENABLE(CALENDAR_PICKER)
     Vector<String> m_weekDayShortLabels;
     unsigned m_firstDayOfWeek;
-#endif
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String m_timeFormatText;
-    Vector<String> m_timeAMPMLabels;
 #endif
     bool m_didInitializeNumberData;
 };

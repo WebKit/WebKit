@@ -62,9 +62,9 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String localizedTimeFormatText();
-    String localizedShortTimeFormatText();
-    const Vector<String>& timeAMPMLabels();
+    virtual String timeFormat() OVERRIDE;
+    virtual String shortTimeFormat() OVERRIDE;
+    virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 #endif
 
 private:
@@ -109,9 +109,7 @@ private:
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
     UDateFormat* m_mediumTimeFormat;
     UDateFormat* m_shortTimeFormat;
-    String m_localizedTimeFormatText;
-    String m_localizedShortTimeFormatText;
-    OwnPtr<Vector<String> > m_timeAMPMLabels;
+    Vector<String> m_timeAMPMLabels;
     bool m_didCreateTimeFormat;
 #endif
 };

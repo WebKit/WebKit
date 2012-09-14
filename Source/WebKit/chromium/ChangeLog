@@ -1,5 +1,24 @@
 2012-09-14  Keishi Hattori  <keishi@webkit.org>
 
+        Refactor time format related methods on LocaleWin/Mac/ICU so that they override Localizer methods
+        https://bugs.webkit.org/show_bug.cgi?id=96726
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::timeFormat):
+        (LocaleMacTest::shortTimeFormat):
+        (TEST_F):
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest::timeFormat):
+        (LocaleWinTest::shortTimeFormat):
+        (TEST_F):
+        * tests/LocalizedDateICUTest.cpp:
+        (LocalizedDateICUTest::localizedDateFormatText):
+        (LocalizedDateICUTest::localizedShortDateFormatText):
+
+2012-09-14  Keishi Hattori  <keishi@webkit.org>
+
         LocaleMac should fallback to defaultLanguage for an invalid locale
         https://bugs.webkit.org/show_bug.cgi?id=96744
 
