@@ -3028,6 +3028,11 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
 
     check_identifier_name_in_declaration(filename, line_number, line, file_state, error)
 
+    # Check for unsigned int (should be just 'unsigned')
+    if search(r'\bunsigned int\b', line):
+        error(line_number, 'runtime/unsigned', 1,
+              'Omit int when using unsigned')
+
     # Check that we're not using static_cast<Text*>.
     if search(r'\bstatic_cast<Text\*>', line):
         error(line_number, 'readability/check', 4,

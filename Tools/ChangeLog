@@ -1,3 +1,15 @@
+2012-09-13  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Make the style checker report usage of "unsigned int"
+        https://bugs.webkit.org/show_bug.cgi?id=96693
+
+        Reviewed by Dirk Pranke.
+
+        Add a rule to check for uses of unsigned int, as the updated coding style recomends.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language):
+
 2012-09-13  Philip Rogers  <pdr@google.com>
 
         Add gender-neutral form of webkit-patch land-cowboy
