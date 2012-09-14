@@ -1,3 +1,39 @@
+2012-09-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Remove a lot of C'ism from Ewk_Tiled_Matrix
+        https://bugs.webkit.org/show_bug.cgi?id=96638
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove a lot of C'ism from Ewk_Tiled_Matrix and
+        fix the code so that it follows coding style.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        (_Ewk_Tile_Matrix):
+        (ewk_tile_matrix_entry_get):
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_zoom_level_set):
+        (ewk_tile_matrix_entry_new):
+        (ewk_tile_matrix_invalidate):
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_resize):
+        (ewk_tile_matrix_size_get):
+        (ewk_tile_matrix_unused_cache_get):
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_exact_exists):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_put):
+        (ewk_tile_matrix_tile_updates_clear):
+        (_ewk_tile_matrix_slicer_setup):
+        (ewk_tile_matrix_update):
+        (ewk_tile_matrix_updates_process):
+        (ewk_tile_matrix_updates_clear):
+        (ewk_tile_matrix_dbg):
+        (ewk_tile_matrix_freeze):
+        (ewk_tile_matrix_thaw):
+        * ewk/ewk_tiled_matrix_private.h:
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Evas_Object* is a ref'ed structure, so tread it as such
