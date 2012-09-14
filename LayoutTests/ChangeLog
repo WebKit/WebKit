@@ -1,3 +1,12 @@
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of the WK2 Debug Bot failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=96795
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] [WK2] Unreviewed gardening.

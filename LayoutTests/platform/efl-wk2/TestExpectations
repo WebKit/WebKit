@@ -199,3 +199,9 @@ BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
 BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT
 
+// New test introduced in r128462 fails.
+BUGWK96794 : fast/events/touch/touch-inside-iframe-scrolled.html = TEXT
+
+// Fails after r128056.
+BUGWk96792 : inspector/console/alert-toString-exception.html = TEXT
+
