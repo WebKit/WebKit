@@ -726,6 +726,134 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
     }
 }
 
+bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
+{
+    if (!renderer())
+        return false;
+    // What is this code really trying to do?
+    RenderObject* o = renderer();
+    RenderObject* p = o;
+
+    if (!o->isInline() || o->isReplaced()) {
+        point = o->localToAbsolute(FloatPoint(), false, true);
+        return true;
+    }
+
+    // find the next text/image child, to get a position
+    while (o) {
+        p = o;
+        if (o->firstChild())
+            o = o->firstChild();
+        else if (o->nextSibling())
+            o = o->nextSibling();
+        else {
+            RenderObject* next = 0;
+            while (!next && o->parent()) {
+                o = o->parent();
+                next = o->nextSibling();
+            }
+            o = next;
+
+            if (!o)
+                break;
+        }
+        ASSERT(o);
+
+        if (!o->isInline() || o->isReplaced()) {
+            point = o->localToAbsolute(FloatPoint(), false, true);
+            return true;
+        }
+
+        if (p->node() && p->node() == this && o->isText() && !o->isBR() && !toRenderText(o)->firstTextBox()) {
+            // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
+        } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
+            point = FloatPoint();
+            if (o->isText() && toRenderText(o)->firstTextBox()) {
+                point.move(toRenderText(o)->linesBoundingBox().x(), toRenderText(o)->firstTextBox()->root()->lineTop());
+            } else if (o->isBox()) {
+                RenderBox* box = toRenderBox(o);
+                point.moveBy(box->location());
+            }
+            point = o->container()->localToAbsolute(point, false, true);
+            return true;
+        }
+    }
+    
+    // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
+    // at the end of the document. Scroll to the bottom. FIXME: who said anything about scrolling?
+    if (!o && document()->view()) {
+        point = FloatPoint(0, document()->view()->contentsHeight());
+        return true;
+    }
+    return false;
+}
+
+bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
+{
+    if (!renderer())
+        return false;
+
+    RenderObject* o = renderer();
+    if (!o->isInline() || o->isReplaced()) {
+        RenderBox* box = toRenderBox(o);
+        point = o->localToAbsolute(LayoutPoint(box->size()), false, true);
+        return true;
+    }
+
+    // find the last text/image child, to get a position
+    while (o) {
+        if (o->lastChild())
+            o = o->lastChild();
+        else if (o->previousSibling())
+            o = o->previousSibling();
+        else {
+            RenderObject* prev = 0;
+            while (!prev) {
+                o = o->parent();
+                if (!o)
+                    return false;
+                prev = o->previousSibling();
+            }
+            o = prev;
+        }
+        ASSERT(o);
+        if (o->isText() || o->isReplaced()) {
+            point = FloatPoint();
+            if (o->isText()) {
+                RenderText* text = toRenderText(o);
+                IntRect linesBox = text->linesBoundingBox();
+                if (!linesBox.maxX() && !linesBox.maxY())
+                    continue;
+                point.moveBy(linesBox.maxXMaxYCorner());
+            } else {
+                RenderBox* box = toRenderBox(o);
+                point.moveBy(box->frameRect().maxXMaxYCorner());
+            }
+            point = o->container()->localToAbsolute(point, false, true);
+            return true;
+        }
+    }
+    return true;
+}
+
+LayoutRect ContainerNode::boundingBox() const
+{
+    FloatPoint upperLeft, lowerRight;
+    bool foundUpperLeft = getUpperLeftCorner(upperLeft);
+    bool foundLowerRight = getLowerRightCorner(lowerRight);
+    
+    // If we've found one corner, but not the other,
+    // then we should just return a point at the corner that we did find.
+    if (foundUpperLeft != foundLowerRight) {
+        if (foundUpperLeft)
+            lowerRight = upperLeft;
+        else
+            upperLeft = lowerRight;
+    } 
+
+    return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
+}
+
 void ContainerNode::setFocus(bool received)
 {
     if (focused() == received)

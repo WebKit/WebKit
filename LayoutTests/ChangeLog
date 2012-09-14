@@ -1,3 +1,14 @@
+2012-09-14  Emil A Eklund  <eae@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96226
+        REGRESSION (r128006): Three spatial navigation tests are failing
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove spatial navigation tests from Skipped list.
+
+        * platform/mac/Skipped:
+
 2012-09-14  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r128627.
