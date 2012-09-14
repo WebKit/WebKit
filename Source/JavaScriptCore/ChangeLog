@@ -1,3 +1,15 @@
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make force_static_libs_as_shared work on Mac OS
+
+        We had to move a few LIBS += around that were in the wrong place,
+        and not caught when everything was just linked into the final
+        QtWebKit library.
+
+        Reviewed by Simon Hausmann.
+
+        * jsc.pro: No need for AppKit, we get it from WTF.pri
+
 2012-09-14  Kevin Funk  <kevin.funk@kdab.com>
 
         Fix interpreter build

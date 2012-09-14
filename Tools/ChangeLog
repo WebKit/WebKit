@@ -1,3 +1,16 @@
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make force_static_libs_as_shared work on Mac OS
+
+        We had to move a few LIBS += around that were in the wrong place,
+        and not caught when everything was just linked into the final
+        QtWebKit library.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/force_static_libs_as_shared.prf:
+
 2012-09-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build of WTR on Windows

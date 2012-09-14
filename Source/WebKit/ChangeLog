@@ -1,3 +1,15 @@
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make force_static_libs_as_shared work on Mac OS
+
+        We had to move a few LIBS += around that were in the wrong place,
+        and not caught when everything was just linked into the final
+        QtWebKit library.
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit1.pri: Move multimedia-stuff to WebCore, to share with WK2
+
 2012-09-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Rewrite the EFL-related Find modules

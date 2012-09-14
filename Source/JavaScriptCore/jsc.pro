@@ -19,10 +19,6 @@ WEBKIT += javascriptcore wtf
 
 SOURCES = jsc.cpp
 
-mac {
-    LIBS_PRIVATE += -framework AppKit
-}
-
 win32-* {
     LIBS += -ladvapi32
 }

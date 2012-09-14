@@ -189,8 +189,11 @@ contains(QT, webkit) {
     force_static_libs_as_shared {
         WEBKIT += wtf webcore
         !v8: WEBKIT += javascriptcore
+        build?(webkit1): WEBKIT += webkit1
         build?(webkit2): WEBKIT += webkit2
     }
+
+    # FIXME: Replace this with putting the intermediate libraries in the prl file
 }
 
 contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): CONFIG += creating_module

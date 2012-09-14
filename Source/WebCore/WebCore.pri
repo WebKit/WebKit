@@ -176,8 +176,21 @@ enable?(VIDEO) {
 
         LIBS += -framework AppKit -framework AudioUnit \
                 -framework AudioToolbox -framework CoreAudio \
-                -framework QuartzCore -framework QTKit
+                -framework QuartzCore -framework QTKit \
+                -framework Security -framework IOKit
 
+        # We can know the Mac OS version by using the Darwin major version
+        DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
+        DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
+        equals(DARWIN_MAJOR_VERSION, "12") {
+            LIBS += $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceMountainLion.a
+        } else:equals(DARWIN_MAJOR_VERSION, "11") {
+            LIBS += $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceLion.a
+        } else:equals(DARWIN_MAJOR_VERSION, "10") {
+            LIBS += $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a
+        } else:equals(DARWIN_MAJOR_VERSION, "9") {
+            LIBS += $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceLeopard.a
+        }
     } else:use?(GSTREAMER) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gstreamer
         PKGCONFIG += gstreamer-video-0.10
@@ -217,7 +230,7 @@ use?(libpng): LIBS += -lpng
 use?(webp): LIBS += -lwebp
 
 mac {
-    LIBS += -framework Carbon -framework AppKit
+    LIBS += -framework Carbon -framework AppKit -framework IOKit
 }
 
 win32 {
