@@ -842,7 +842,7 @@ mac: {
             $$PWD/../../WebKitLibraries/
         HEADERS += \
             WebProcess/WebCoreSupport/qt/WebSystemInterface.h
-        SOURCES += \
+        OBJECTIVE_SOURCES += \
             WebProcess/WebCoreSupport/qt/WebSystemInterface.mm
     }
     INCLUDEPATH += \
