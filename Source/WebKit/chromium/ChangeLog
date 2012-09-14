@@ -1,3 +1,38 @@
+2012-09-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Support the --{in,out,err}-fifo arguments on TestWebKitAPI and webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=96687
+
+        Reviewed by Tony Chang.
+
+        Android's DumpRenderTree currently supports these arguments, implemented
+        as part of TestShellAndroid:
+        http://trac.webkit.org/browser/trunk/Tools/DumpRenderTree/chromium/TestShellAndroid.cpp?rev=128496
+
+        They're used by the layout test runner to get the STDOUT and STDERR while
+        a layout test run is in process, which is a safer alternative to parsing
+        all the logcat output manually. The implementation can be seen here:
+        http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/layout_tests/port/chromium_android.py?rev=128496#L590
+
+        This patch generalizes parsing of and applying the effects of these arguments
+        so that they can be used for TestWebKitAPI and webkit_unit_tests as well.
+        After this patch, this will make it possible to pull out the output-reading
+        code from Android's layout test port and generalize it so it can be re-used
+        in the new test-runner for the other two test suites.
+
+        This has no effect when compiling and running these tests as part of Chromium
+        code, which has a much more advanced test-runner that does parse complete log
+        output, but also directly depends on code licensed under Apache 2.
+
+        * WebKit.gypi:
+        * tests/ForwardIOStreamsAndroid.cpp: Added.
+        (WebKit):
+        (WebKit::maybeInitIOStreamForwardingForAndroid):
+        * tests/ForwardIOStreamsAndroid.h: Added.
+        (WebKit):
+        * tests/RunAllTests.cpp:
+        (main):
+
 2012-09-14  Keishi Hattori  <keishi@webkit.org>
 
         Make time input lang attribute aware for testing

@@ -285,6 +285,7 @@
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
                         '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
                         '<(chromium_src_dir)/tools/android/md5sum/md5sum.gyp:md5sum',
+                        '<(source_dir)/WebKit/chromium/WebKitUnitTests.gyp:io_stream_forwarder_android',
                     ],
                     'dependencies!': [
                         'ImageDiff',

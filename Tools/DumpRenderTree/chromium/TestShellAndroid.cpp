@@ -32,15 +32,8 @@
 #include "TestShell.h"
 
 #include "linux/WebFontRendering.h"
+#include "tests/ForwardIOStreamsAndroid.h"
 #include "third_party/skia/include/ports/SkTypeface_android.h"
-#include <android/log.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <wtf/Assertions.h>
 
 namespace {
 
@@ -51,46 +44,6 @@ const char fontMainConfigFile[] = DEVICE_DRT_DIR "android_main_fonts.xml";
 const char fontFallbackConfigFile[] = DEVICE_DRT_DIR "android_fallback_fonts.xml";
 const char fontsDir[] = DEVICE_DRT_DIR "fonts/";
 
-const char optionInFIFO[] = "--in-fifo=";
-const char optionOutFIFO[] = "--out-fifo=";
-const char optionErrFIFO[] = "--err-fifo=";
-
-void androidLogError(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-
-void androidLogError(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    __android_log_vprint(ANDROID_LOG_ERROR, "DumpRenderTree", format, args);
-    va_end(args);
-}
-
-void removeArg(int index, int* argc, char*** argv)
-{
-    for (int i = index; i < *argc; ++i)
-        (*argv)[i] = (*argv)[i + 1];
-    --*argc;
-}
-
-void createFIFO(const char* fifoPath)
-{
-    unlink(fifoPath);
-    // 0666 is rw-rw-rw-, to allow adb shell to read/write the fifo.
-    // Explicitly call chmod to ensure the mode is set despite umask.
-    if (mkfifo(fifoPath, 0666) || chmod(fifoPath, 0666)) {
-        androidLogError("Failed to create fifo %s: %s\n", fifoPath, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-}
-
-void redirect(FILE* stream, const char* path, const char* mode)
-{
-    if (!freopen(path, mode, stream)) {
-        androidLogError("Failed to redirect stream to file: %s: %s\n", path, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-}
-
 } // namespace
 
 void platformInit(int* argc, char*** argv)
@@ -98,38 +51,8 @@ void platformInit(int* argc, char*** argv)
     // Initialize skia with customized font config files.
     SkUseTestFontConfigFile(fontMainConfigFile, fontFallbackConfigFile, fontsDir);
 
-    const char* inFIFO = 0;
-    const char* outFIFO = 0;
-    const char* errFIFO = 0;
-    for (int i = 1; i < *argc; ) {
-        const char* argument = (*argv)[i];
-        if (strstr(argument, optionInFIFO) == argument) {
-            inFIFO = argument + WTF_ARRAY_LENGTH(optionInFIFO) - 1;
-            createFIFO(inFIFO);
-            removeArg(i, argc, argv);
-        } else if (strstr(argument, optionOutFIFO) == argument) {
-            outFIFO = argument + WTF_ARRAY_LENGTH(optionOutFIFO) - 1;
-            createFIFO(outFIFO);
-            removeArg(i, argc, argv);
-        } else if (strstr(argument, optionErrFIFO) == argument) {
-            errFIFO = argument + WTF_ARRAY_LENGTH(optionErrFIFO) - 1;
-            createFIFO(errFIFO);
-            removeArg(i, argc, argv);
-        } else
-            ++i;
-    }
-
-    // The order of createFIFO() and redirectToFIFO() is important to avoid deadlock.
-    if (outFIFO)
-        redirect(stdout, outFIFO, "w");
-    if (inFIFO)
-        redirect(stdin, inFIFO, "r");
-    if (errFIFO)
-        redirect(stderr, errFIFO, "w");
-    else {
-        // Redirect stderr to stdout.
-        dup2(1, 2);
-    }
+    // Set up IO stream forwarding if necessary.
+    WebKit::maybeInitIOStreamForwardingForAndroid(argc, argv);
 
     // Disable auto hint and use normal hinting in layout test mode to produce the same font metrics as chromium-linux.
     WebKit::WebFontRendering::setAutoHint(false);
