@@ -1,3 +1,15 @@
+2012-09-13  Philip Rogers  <pdr@google.com>
+
+        Add gender-neutral form of webkit-patch land-cowboy
+        https://bugs.webkit.org/show_bug.cgi?id=96709
+
+        Reviewed by Adam Barth.
+
+        Add webkit-patch land-cowhand, the confident and courageous form of webkit-patch for everyone.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (LandCowhand):
+
 2012-09-13  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Remove some parameters in browserCreate()

@@ -129,6 +129,11 @@ class LandCowboy(AbstractSequencedCommand):
         options.check_style_filter = "-changelog"
 
 
+class LandCowhand(LandCowboy):
+    # Gender-blind term for cowboy, see: http://en.wiktionary.org/wiki/cowhand
+    name = "land-cowhand"
+
+
 class CheckStyleLocal(AbstractSequencedCommand):
     name = "check-style-local"
     help_text = "Run check-webkit-style on the current working directory diff"
