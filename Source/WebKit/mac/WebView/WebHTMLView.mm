@@ -3376,8 +3376,9 @@ static void setMenuTargets(NSMenu* menu)
     // descendants, including plug-in views. This can result in calls out to plug-in code and back into
     // WebCore via JavaScript, which could normally mutate the NSView tree while it is being traversed.
     // Defer those mutations while descendants are being traveresed.
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+    RenderWidget::suspendWidgetHierarchyUpdates();
     [super _invalidateGStatesForTree];
+    RenderWidget::resumeWidgetHierarchyUpdates();
 }
 
 - (BOOL)isFlipped 

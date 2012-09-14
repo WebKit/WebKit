@@ -1002,36 +1002,36 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 void Element::attach()
 {
     suspendPostAttachCallbacks();
-    {
-        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+    RenderWidget::suspendWidgetHierarchyUpdates();
 
-        createRendererIfNeeded();
-        StyleResolverParentPusher parentPusher(this);
+    createRendererIfNeeded();
+    StyleResolverParentPusher parentPusher(this);
 
-        if (parentElement() && parentElement()->isInCanvasSubtree())
-            setIsInCanvasSubtree(true);
+    if (parentElement() && parentElement()->isInCanvasSubtree())
+        setIsInCanvasSubtree(true);
 
-        // When a shadow root exists, it does the work of attaching the children.
-        if (ElementShadow* shadow = this->shadow()) {
+    // When a shadow root exists, it does the work of attaching the children.
+    if (ElementShadow* shadow = this->shadow()) {
+        parentPusher.push();
+        shadow->attach();
+        attachChildrenIfNeeded();
+        attachAsNode();
+    } else {
+        if (firstChild())
             parentPusher.push();
-            shadow->attach();
-            attachChildrenIfNeeded();
-            attachAsNode();
-        } else {
-            if (firstChild())
-                parentPusher.push();
-            ContainerNode::attach();
-        }
+        ContainerNode::attach();
+    }
 
-        if (hasRareData()) {   
-            ElementRareData* data = elementRareData();
-            if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
-                if (isFocusable() && document()->focusedNode() == this)
-                    document()->updateFocusAppearanceSoon(false /* don't restore selection */);
-                data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
-            }
+    if (hasRareData()) {   
+        ElementRareData* data = elementRareData();
+        if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
+            if (isFocusable() && document()->focusedNode() == this)
+                document()->updateFocusAppearanceSoon(false /* don't restore selection */);
+            data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
         }
     }
+
+    RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
 }
 
@@ -1045,7 +1045,7 @@ void Element::unregisterNamedFlowContentNode()
 
 void Element::detach()
 {
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+    RenderWidget::suspendWidgetHierarchyUpdates();
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
@@ -1058,6 +1058,8 @@ void Element::detach()
         shadow->detach();
     }
     ContainerNode::detach();
+
+    RenderWidget::resumeWidgetHierarchyUpdates();
 }
 
 bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
