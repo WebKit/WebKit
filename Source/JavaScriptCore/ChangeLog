@@ -1,3 +1,38 @@
+2012-09-13  Oliver Hunt  <oliver@apple.com>
+
+        Make global const initialisation explicit in the bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=96711
+
+        Reviewed by Gavin Barraclough.
+
+        Added op_init_global_const to make initialisation of global const
+        fields explicit.  This will help us keep correct semantics in the
+        upcoming variable resolution refactoring.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitInitGlobalConst):
+        (JSC):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstDeclNode::emitCodeSingle):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-09-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename forEachCell to forEachLiveCell

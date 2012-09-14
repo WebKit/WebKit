@@ -462,6 +462,7 @@ namespace JSC {
 
         RegisterID* emitGetStaticVar(RegisterID* dst, const ResolveResult&, const Identifier&);
         RegisterID* emitPutStaticVar(const ResolveResult&, const Identifier&, RegisterID* value);
+        RegisterID* emitInitGlobalConst(const ResolveResult&, const Identifier&, RegisterID* value);
 
         RegisterID* emitResolve(RegisterID* dst, const ResolveResult&, const Identifier& property);
         RegisterID* emitResolveBase(RegisterID* dst, const ResolveResult&, const Identifier& property);

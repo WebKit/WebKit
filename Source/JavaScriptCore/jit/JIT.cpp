@@ -330,7 +330,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_by_index)
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_setter)
+        case op_init_global_const:
         DEFINE_OP(op_put_global_var)
+        case op_init_global_const_check:
         DEFINE_OP(op_put_global_var_check)
         DEFINE_OP(op_put_scoped_var)
         DEFINE_OP(op_resolve)
@@ -491,6 +493,7 @@ void JIT::privateCompileSlowCases()
         case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         DEFINE_SLOWCASE_OP(op_put_by_val)
+        case op_init_global_const_check:
         DEFINE_SLOWCASE_OP(op_put_global_var_check);
         DEFINE_SLOWCASE_OP(op_resolve_global)
         DEFINE_SLOWCASE_OP(op_resolve_global_dynamic)

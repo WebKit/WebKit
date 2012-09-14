@@ -1387,9 +1387,11 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 
     RefPtr<RegisterID> value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
 
-    if (resolveResult.isStatic())
+    if (resolveResult.isStatic()) {
+        if (generator.codeType() == GlobalCode)
+            return generator.emitInitGlobalConst(resolveResult, m_ident, value.get());
         return generator.emitPutStaticVar(resolveResult, m_ident, value.get());
-    
+    }
     if (generator.codeType() != EvalCode)
         return value.get();
 

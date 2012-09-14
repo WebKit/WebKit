@@ -2459,7 +2459,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_global_var_watchable);
         }
 
-        case op_put_global_var: {
+        case op_put_global_var:
+        case op_init_global_const: {
             NodeIndex value = get(currentInstruction[2].u.operand);
             addToGraph(
                 PutGlobalVar,
@@ -2468,7 +2469,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_global_var);
         }
 
-        case op_put_global_var_check: {
+        case op_put_global_var_check:
+        case op_init_global_const_check: {
             NodeIndex value = get(currentInstruction[2].u.operand);
             CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
             JSGlobalObject* globalObject = codeBlock->globalObject();

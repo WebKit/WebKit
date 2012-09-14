@@ -1663,6 +1663,31 @@ RegisterID* BytecodeGenerator::emitGetStaticVar(RegisterID* dst, const ResolveRe
     }
 }
 
+RegisterID* BytecodeGenerator::emitInitGlobalConst(const ResolveResult& resolveResult, const Identifier& identifier, RegisterID* value)
+{
+    ASSERT(m_codeType == GlobalCode);
+    switch (resolveResult.type()) {
+    case ResolveResult::IndexedGlobal:
+    case ResolveResult::ReadOnlyIndexedGlobal:
+        emitOpcode(op_init_global_const);
+        instructions().append(resolveResult.registerPointer());
+        instructions().append(value->index());
+        return value;
+
+    case ResolveResult::WatchedIndexedGlobal:
+        emitOpcode(op_init_global_const_check);
+        instructions().append(resolveResult.registerPointer());
+        instructions().append(value->index());
+        instructions().append(jsCast<JSGlobalObject*>(resolveResult.globalObject())->symbolTable()->get(identifier.impl()).addressOfIsWatched());
+        instructions().append(addConstant(identifier));
+        return value;
+        
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 RegisterID* BytecodeGenerator::emitPutStaticVar(const ResolveResult& resolveResult, const Identifier& identifier, RegisterID* value)
 {
     switch (resolveResult.type()) {

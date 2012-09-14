@@ -2680,6 +2680,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_get_global_var_watchable);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_init_global_const)
     DEFINE_OPCODE(op_put_global_var) {
         /* put_global_var globalObject(c) registerPointer(n) value(r)
          
@@ -2694,6 +2695,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_put_global_var);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_init_global_const_check)
     DEFINE_OPCODE(op_put_global_var_check) {
         /* put_global_var_check globalObject(c) registerPointer(n) value(r)
          

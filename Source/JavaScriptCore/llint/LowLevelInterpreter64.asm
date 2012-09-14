@@ -953,6 +953,7 @@ _llint_op_get_global_var_watchable:
     getGlobalVar(5)
 
 
+_llint_op_init_global_const:
 _llint_op_put_global_var:
     traceExecution()
     loadis 16[PB, PC, 8], t1
@@ -963,6 +964,7 @@ _llint_op_put_global_var:
     dispatch(3)
 
 
+_llint_op_init_global_const_check:
 _llint_op_put_global_var_check:
     traceExecution()
     loadp 24[PB, PC, 8], t2

@@ -105,6 +105,8 @@ namespace JSC {
         macro(op_get_global_var_watchable, 5) /* has value profiling */ \
         macro(op_put_global_var, 3) \
         macro(op_put_global_var_check, 5) \
+        macro(op_init_global_const, 3) \
+        macro(op_init_global_const_check, 5) \
         macro(op_resolve_base, 5) /* has value profiling */ \
         macro(op_ensure_property_exists, 3) \
         macro(op_resolve_with_base, 5) /* has value profiling */ \
