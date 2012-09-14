@@ -221,6 +221,12 @@ TEST_F(LocaleMacTest, decimalSeparator)
 }
 #endif
 
+TEST_F(LocaleMacTest, invalidLocale)
+{
+    EXPECT_STREQ(monthLabel("en_US", January).utf8().data(), monthLabel("foo", January).utf8().data());
+    EXPECT_STREQ(decimalSeparator("en_US").utf8().data(), decimalSeparator("foo").utf8().data());
+}
+
 static void testNumberIsReversible(const AtomicString& localeString, const char* original, const char* shouldHave = 0)
 {
     OwnPtr<Localizer> locale = Localizer::create(localeString);
