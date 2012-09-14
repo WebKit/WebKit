@@ -128,8 +128,6 @@ BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
-BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
-
 // This has always failed on Qt - exposed by bug 89826
 BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 

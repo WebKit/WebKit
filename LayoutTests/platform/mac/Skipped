@@ -1000,16 +1000,18 @@ platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=93878 (yes, same bug as the previous)
 # Due to WebCore::JSEventListener::jsFunction(WebCore::ScriptExecutionContext*) crashes:
-fast/events/keyevent-iframe-removed-crash.html
-fullscreen/full-screen-iframe-zIndex.html
-fullscreen/full-screen-restrictions.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=94458
+# Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 http/tests/security/MessagePort/event-listener-context.html
-platform/mac/accessibility/search-with-frames.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=93812
+# REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey
+# ASSERTION FAILED: m_wrapper || !m_jsFunction
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=96226
 # REGRESSION (r128006): Three spatial navigation tests are failing
-
 fast/spatial-navigation/snav-container-white-space.html
 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html
 fast/spatial-navigation/snav-imagemap-overlapped-areas.html

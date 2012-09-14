@@ -463,12 +463,7 @@ BUGWK93502 DEBUG : fast/history/sibling-visited-test.html = CRASH PASS
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
-BUGWK93727 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH PASS
-BUGWK93727 DEBUG : fullscreen/full-screen-iframe-zIndex.html = CRASH PASS
-BUGWK93727 DEBUG : fullscreen/full-screen-iframe-allowed.html = CRASH PASS
-BUGWK93727 DEBUG : fullscreen/full-screen-iframe-not-allowed.html = CRASH PASS
-BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
-BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
+BUGWK93812 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
 
 BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 
