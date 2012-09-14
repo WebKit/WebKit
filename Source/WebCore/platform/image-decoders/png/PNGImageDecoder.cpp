@@ -401,7 +401,7 @@ void PNGImageDecoder::headerAvailable()
     }
 }
 
-void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass)
+void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
 {
     if (m_frameBufferCache.isEmpty())
         return;

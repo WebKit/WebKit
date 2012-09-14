@@ -55,7 +55,7 @@ enum {
     LAST_PROP
 };
 
-static void soup_proxy_resolver_wk_init(SoupProxyResolverWk* resolverWk)
+static void soup_proxy_resolver_wk_init(SoupProxyResolverWk*)
 {
 }
 
@@ -144,7 +144,7 @@ static gboolean idle_return_proxy_uri(void* data)
     return false;
 }
 
-static void soupProxyResolverWkGetProxyURIAsync(SoupProxyURIResolver* proxyResolver, SoupURI* uri, GMainContext* asyncContext, GCancellable* cancellable, SoupProxyURIResolverCallback callback, void* userData)
+static void soupProxyResolverWkGetProxyURIAsync(SoupProxyURIResolver* proxyResolver, SoupURI* uri, GMainContext* asyncContext, GCancellable*, SoupProxyURIResolverCallback callback, void* userData)
 {
     SoupWkAsyncData* ssad;
 
@@ -156,7 +156,7 @@ static void soupProxyResolverWkGetProxyURIAsync(SoupProxyURIResolver* proxyResol
     soup_add_completion(asyncContext, idle_return_proxy_uri, ssad);
 }
 
-static uint soupProxyResolverWkGetProxyURISync(SoupProxyURIResolver* proxyResolver, SoupURI* uri, GCancellable* cancellable, SoupURI** proxyURI)
+static uint soupProxyResolverWkGetProxyURISync(SoupProxyURIResolver* proxyResolver, SoupURI* uri, GCancellable*, SoupURI** proxyURI)
 {
     SoupProxyResolverWkPrivate* priv = SOUP_PROXY_RESOLVER_WK_GET_PRIVATE(proxyResolver);
 

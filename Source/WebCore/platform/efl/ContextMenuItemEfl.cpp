@@ -52,7 +52,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     m_platformDescription.title = title;
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& subMenuItems)
+ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool, bool, Vector<ContextMenuItem>&)
 {
 }
 

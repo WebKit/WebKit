@@ -43,7 +43,7 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
     return false;
 }
 
-static void resolvedCallback(SoupAddress* soupAddress, guint status, void* userData)
+static void resolvedCallback(SoupAddress*, guint, void*)
 {
     DNSResolveQueue::shared().decrementRequestCount();
 }

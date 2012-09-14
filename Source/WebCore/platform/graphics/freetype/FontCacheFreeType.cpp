@@ -100,7 +100,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return getCachedFontData(&alternateFontData, DoNotRetain);
 }
 
-SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font&)
 {
     return 0;
 }
@@ -113,7 +113,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     return getCachedFontData(fontDescription, timesStr, false, shouldRetain);
 }
 
-void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
+void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)
 {
 }
 

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData(const IntSize& size)
+ImageBufferData::ImageBufferData(const IntSize&)
     : m_surface(0)
     , m_platformContext(0)
 {

@@ -573,6 +573,8 @@ static inline void adjustFocusRingLineWidth(int& width)
 {
 #if PLATFORM(GTK)
     width = 2;
+#else
+    UNUSED_PARAM(width);
 #endif
 }
 
@@ -667,7 +669,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool)
 {
     if (paintingDisabled())
         return;
@@ -770,13 +772,13 @@ void GraphicsContext::translate(float x, float y)
     m_data->translate(x, y);
 }
 
-void GraphicsContext::setPlatformFillColor(const Color& col, ColorSpace colorSpace)
+void GraphicsContext::setPlatformFillColor(const Color&, ColorSpace)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color& col, ColorSpace colorSpace)
+void GraphicsContext::setPlatformStrokeColor(const Color&, ColorSpace)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
@@ -815,7 +817,7 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
     }
 }
 
-void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
 {
     notImplemented();
 }
@@ -865,7 +867,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::setPlatformShadow(FloatSize const& size, float blur, Color const& color, ColorSpace)
+void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
 {
     if (paintingDisabled())
         return;
@@ -1094,7 +1096,7 @@ static inline FloatPoint getPhase(const FloatRect& dest, const FloatRect& tile)
     return phase;
 }
 
-void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;

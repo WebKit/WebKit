@@ -720,7 +720,7 @@ bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     return false;
 }
 
-void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
@@ -1003,7 +1003,7 @@ void RenderThemeEfl::setDefaultFontSize(int size)
     defaultFontSize = size;
 }
 
-void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeEfl::systemFont(int, FontDescription& fontDescription) const
 {
     // It was called by RenderEmbeddedObject::paintReplaced to render alternative string.
     // To avoid cairo_error while rendering, fontDescription should be passed.
@@ -1214,32 +1214,32 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
     return true;
 }
 
-bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMediaSliderThumb(RenderObject*, const PaintInfo& info, const IntRect& rect)
 {
     IntSize thumbRect(3, 3);
     info.context->fillRoundedRect(rect, thumbRect, thumbRect, thumbRect, thumbRect, m_sliderThumbColor, ColorSpaceDeviceRGB);
     return true;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&)
 {
     notImplemented();
     return false;
 }
 
-bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMediaCurrentTime(RenderObject*, const PaintInfo& info, const IntRect& rect)
 {
     info.context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
     return true;

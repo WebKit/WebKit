@@ -49,6 +49,7 @@ static bool mainBundleIsEqualTo(const String& bundleIdentifierString)
     RetainPtr<CFStringRef> bundleIdentifierToCompare(AdoptCF, bundleIdentifierString.createCFString());
     return CFStringCompare(bundleIdentifier, bundleIdentifierToCompare.get(), 0) == kCFCompareEqualTo;
 #else
+    UNUSED_PARAM(bundleIdentifierString);
     return false;
 #endif
 }

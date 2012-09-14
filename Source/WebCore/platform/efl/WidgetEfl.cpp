@@ -106,7 +106,7 @@ void Widget::frameRectsChanged()
     evas_object_resize(object, rect.width(), rect.height());
 }
 
-void Widget::setFocus(bool focused)
+void Widget::setFocus(bool)
 {
 }
 
@@ -134,7 +134,7 @@ void Widget::hide()
     evas_object_hide(platformWidget());
 }
 
-void Widget::paint(GraphicsContext* context, const IntRect&)
+void Widget::paint(GraphicsContext*, const IntRect&)
 {
     notImplemented();
 }

@@ -218,6 +218,7 @@ static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
         return 0;
     return renderView->compositor()->scrollLayer();
 #else
+    UNUSED_PARAM(frameView);
     return 0;
 #endif
 }

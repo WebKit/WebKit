@@ -90,7 +90,7 @@ public:
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
     void setCTM(const AffineTransform&) {}
-    void syncContext(cairo_t* cr) {}
+    void syncContext(cairo_t*) { }
 #endif
 
     PlatformContextCairo* platformContext;

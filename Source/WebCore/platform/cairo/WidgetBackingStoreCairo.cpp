@@ -37,6 +37,7 @@ static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget w
                                              CAIRO_CONTENT_COLOR_ALPHA,
                                              size.width(), size.height());
 #else
+    UNUSED_PARAM(widget);
     return adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
 #endif
 }

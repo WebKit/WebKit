@@ -785,6 +785,8 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentTy
             && (contentType.type().startsWith("video/webm", false) || contentType.type().startsWith("video/x-flv", false)))
             return IsNotSupported;
     }
+#else
+    UNUSED_PARAM(client);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

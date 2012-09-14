@@ -91,7 +91,7 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
     return PlatformMenuDescription();
 }
 
-PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)
+PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>&)
 {
     notImplemented();
     return 0;

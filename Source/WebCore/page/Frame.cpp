@@ -886,6 +886,7 @@ String Frame::layerTreeAsText(bool showDebugInfo) const
 
     return contentRenderer()->compositor()->layerTreeAsText(showDebugInfo);
 #else
+    UNUSED_PARAM(showDebugInfo);
     return String();
 #endif
 }

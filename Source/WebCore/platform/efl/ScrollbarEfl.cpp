@@ -67,7 +67,7 @@ ScrollbarEfl::~ScrollbarEfl()
     setEvasObject(0);
 }
 
-static void scrollbarEflEdjeMessage(void* data, Evas_Object* object, Edje_Message_Type messageType, int id, void* message)
+static void scrollbarEflEdjeMessage(void* data, Evas_Object*, Edje_Message_Type messageType, int id, void* message)
 {
     ScrollbarEfl* that = static_cast<ScrollbarEfl*>(data);
     Edje_Message_Float* messageFloat;

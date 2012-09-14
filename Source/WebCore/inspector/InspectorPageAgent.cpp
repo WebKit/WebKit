@@ -1018,6 +1018,9 @@ void InspectorPageAgent::setGeolocationOverride(ErrorString* error, const double
     controller->positionChanged(0); // Kick location update.
 #else
     *error = "Geolocation is not available.";
+    UNUSED_PARAM(latitude);
+    UNUSED_PARAM(longitude);
+    UNUSED_PARAM(accuracy);
 #endif
 }
 

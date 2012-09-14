@@ -1362,7 +1362,7 @@ void ScrollView::platformSetScrollbarsSuppressed(bool)
 {
 }
 
-void ScrollView::platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously)
+void ScrollView::platformSetScrollOrigin(const IntPoint&, bool, bool)
 {
 }
 

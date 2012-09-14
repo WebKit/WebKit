@@ -116,6 +116,7 @@ FloatRect screenRect(Widget* widget)
 #ifdef HAVE_ECORE_X
     int width = 0, height = 0;
     CALL_WITH_ECORE_X(ecore_x_screen_size_get(screen, &width, &height));
+    UNUSED_PARAM(widget);
     return FloatRect(0, 0, width, height);
 #else
     if (!widget || !widget->evas())

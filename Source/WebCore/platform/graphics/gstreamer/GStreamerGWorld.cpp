@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-gboolean gstGWorldSyncMessageCallback(GstBus* bus, GstMessage* message, gpointer data)
+gboolean gstGWorldSyncMessageCallback(GstBus*, GstMessage* message, gpointer data)
 {
     ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_ELEMENT);
 

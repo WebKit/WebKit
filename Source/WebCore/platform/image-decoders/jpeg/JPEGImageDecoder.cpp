@@ -156,6 +156,7 @@ static ColorProfile readColorProfile(jpeg_decompress_struct* info)
     free(profile);
     return colorProfile;
 #else
+    UNUSED_PARAM(info);
     return ColorProfile();
 #endif
 }
@@ -475,7 +476,7 @@ void error_exit(j_common_ptr cinfo)
     longjmp(err->setjmp_buffer, -1);
 }
 
-void init_source(j_decompress_ptr jd)
+void init_source(j_decompress_ptr)
 {
 }
 
@@ -485,7 +486,7 @@ void skip_input_data(j_decompress_ptr jd, long num_bytes)
     src->decoder->skipBytes(num_bytes);
 }
 
-boolean fill_input_buffer(j_decompress_ptr jd)
+boolean fill_input_buffer(j_decompress_ptr)
 {
     // Our decode step always sets things up properly, so if this method is ever
     // called, then we have hit the end of the buffer.  A return value of false

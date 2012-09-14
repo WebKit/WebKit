@@ -362,7 +362,7 @@ static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery
 #endif
 
 #ifndef GST_API_VERSION_1
-static void webkitVideoSinkMarshalVoidAndMiniObject(GClosure* closure, GValue* returnValue, guint parametersNumber, const GValue* parameterValues, gpointer invocationHint, gpointer marshalData)
+static void webkitVideoSinkMarshalVoidAndMiniObject(GClosure* closure, GValue*, guint parametersNumber, const GValue* parameterValues, gpointer, gpointer marshalData)
 {
     typedef void (*marshalfunc_VOID__MINIOBJECT) (gpointer obj, gpointer arg1, gpointer data2);
     marshalfunc_VOID__MINIOBJECT callback;

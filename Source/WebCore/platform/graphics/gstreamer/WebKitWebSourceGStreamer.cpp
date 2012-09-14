@@ -630,7 +630,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
 }
 #endif
 
-static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer ifaceData)
+static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
 {
     GstURIHandlerInterface* iface = (GstURIHandlerInterface *) gIface;
 
@@ -655,7 +655,7 @@ static gboolean webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
     return FALSE;
 }
 
-static void webKitWebSrcNeedDataCb(GstAppSrc* appsrc, guint length, gpointer userData)
+static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
     WebKitWebSrcPrivate* priv = src->priv;
@@ -686,7 +686,7 @@ static gboolean webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
     return FALSE;
 }
 
-static void webKitWebSrcEnoughDataCb(GstAppSrc* appsrc, gpointer userData)
+static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
     WebKitWebSrcPrivate* priv = src->priv;
@@ -711,7 +711,7 @@ static gboolean webKitWebSrcSeekMainCb(WebKitWebSrc* src)
     return FALSE;
 }
 
-static gboolean webKitWebSrcSeekDataCb(GstAppSrc* appsrc, guint64 offset, gpointer userData)
+static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer userData)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
     WebKitWebSrcPrivate* priv = src->priv;
@@ -853,7 +853,7 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
         notifyGstTagsOnPad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 }
 
-void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int encodedDataLength)
+void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 

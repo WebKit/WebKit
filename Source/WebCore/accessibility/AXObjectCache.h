@@ -114,7 +114,7 @@ public:
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
 #else
     static void enableAccessibility() { }
-    static void setEnhancedUserInterfaceAccessibility(bool flag) { }
+    static void setEnhancedUserInterfaceAccessibility(bool) { }
     static bool accessibilityEnabled() { return false; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return false; }
 #endif
@@ -243,9 +243,9 @@ inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::nodeTextChangeNotification(Node*, AXTextChange, unsigned, const String&) { }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
-inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType) { }
-inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement, PostType) { }
-inline void AXObjectCache::postNotification(Node*, AXNotification, bool postToElement, PostType) { }
+inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool, PostType) { }
+inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool, PostType) { }
+inline void AXObjectCache::postNotification(Node*, AXNotification, bool, PostType) { }
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }

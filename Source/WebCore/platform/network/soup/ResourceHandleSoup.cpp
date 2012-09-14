@@ -410,7 +410,7 @@ static inline bool hasUnignoredTLSErrors(ResourceHandle* handle)
         && !allowsAnyHTTPSCertificateHosts().contains(handle->firstRequest().url().host().lower());
 }
 
-static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer data)
+static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 
@@ -543,7 +543,7 @@ static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormData
 }
 #endif // ENABLE(BLOB)
 
-static bool addFormElementsToSoupMessage(SoupMessage* message, const char* contentType, FormData* httpBody, unsigned long& totalBodySize)
+static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, FormData* httpBody, unsigned long& totalBodySize)
 {
     soup_message_body_set_accumulate(message->request_body, FALSE);
     size_t numElements = httpBody->elements().size();
@@ -594,7 +594,7 @@ static void wroteBodyCallback(SoupMessage*, gpointer data)
     d->m_response.resourceLoadTiming()->sendEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
 }
 
-static void requestStartedCallback(SoupSession*, SoupMessage* soupMessage, SoupSocket*, gpointer data)
+static void requestStartedCallback(SoupSession*, SoupMessage* soupMessage, SoupSocket*, gpointer)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
     if (!handle)
@@ -905,7 +905,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     syncLoader.run();
 }
 
-static void closeCallback(GObject* source, GAsyncResult* res, gpointer data)
+static void closeCallback(GObject*, GAsyncResult* res, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = handle->getInternal();
@@ -919,7 +919,7 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer data)
     cleanupSoupRequestOperation(handle.get());
 }
 
-static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer data)
+static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 

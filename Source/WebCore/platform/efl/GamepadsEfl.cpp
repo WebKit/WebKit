@@ -128,7 +128,7 @@ private:
     Eeze_Udev_Watch* m_gamepadsWatcher;
 };
 
-void GamepadsEfl::onGamePadChange(const char* syspath, Eeze_Udev_Event event, void* userData, Eeze_Udev_Watch* watcher)
+void GamepadsEfl::onGamePadChange(const char* syspath, Eeze_Udev_Event event, void* userData, Eeze_Udev_Watch*)
 {
     GamepadsEfl* gamepadsEfl = static_cast<GamepadsEfl*>(userData);
 

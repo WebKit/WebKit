@@ -3710,6 +3710,8 @@ void FrameView::setScrollingPerformanceLoggingEnabled(bool flag)
 #if USE(ACCELERATED_COMPOSITING)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setScrollingPerformanceLoggingEnabled(flag);
+#else
+    UNUSED_PARAM(flag);
 #endif
 }
 

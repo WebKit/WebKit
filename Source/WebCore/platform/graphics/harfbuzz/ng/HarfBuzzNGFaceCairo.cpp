@@ -90,7 +90,7 @@ static void CairoGetGlyphWidthAndExtents(cairo_scaled_font_t* scaledFont, hb_cod
     }
 }
 
-static hb_bool_t harfbuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoint_t unicode, hb_codepoint_t variationSelector, hb_codepoint_t* glyph, void* userData)
+static hb_bool_t harfbuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t unicode, hb_codepoint_t, hb_codepoint_t* glyph, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -108,7 +108,7 @@ static hb_bool_t harfbuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoin
     return true;
 }
 
-static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, void* userData)
+static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t*, void* fontData, hb_codepoint_t glyph, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -119,14 +119,14 @@ static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* 
     return advance;
 }
 
-static hb_bool_t harfbuzzGetGlyphHorizontalOrigin(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_position_t* x, hb_position_t* y, void* userData)
+static hb_bool_t harfbuzzGetGlyphHorizontalOrigin(hb_font_t*, void*, hb_codepoint_t, hb_position_t*, hb_position_t*, void*)
 {
     // Just return true, following the way that Harfbuzz-FreeType
     // implementation does.
     return true;
 }
 
-static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void* userData)
+static hb_bool_t harfbuzzGetGlyphExtents(hb_font_t*, void* fontData, hb_codepoint_t glyph, hb_glyph_extents_t* extents, void*)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
@@ -153,7 +153,7 @@ static hb_font_funcs_t* harfbuzzCairoTextGetFontFuncs()
     return harfbuzzCairoFontFuncs;
 }
 
-static hb_blob_t* harfbuzzCairoGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
+static hb_blob_t* harfbuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData)
 {
     FontPlatformData* font = reinterpret_cast<FontPlatformData*>(userData);
 

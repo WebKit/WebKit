@@ -175,7 +175,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return duration;
 }
 
-ImageOrientation ImageSource::orientationAtIndex(size_t index) const
+ImageOrientation ImageSource::orientationAtIndex(size_t) const
 {
     // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
     notImplemented();

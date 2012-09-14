@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int, int) const
 {
     GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);

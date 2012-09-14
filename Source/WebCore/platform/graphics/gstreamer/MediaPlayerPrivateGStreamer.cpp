@@ -1543,7 +1543,7 @@ void MediaPlayerPrivateGStreamer::setSize(const IntSize& size)
     m_size = size;
 }
 
-void MediaPlayerPrivateGStreamer::setVisible(bool visible)
+void MediaPlayerPrivateGStreamer::setVisible(bool)
 {
 }
 

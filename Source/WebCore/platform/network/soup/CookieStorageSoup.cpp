@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool enabled)
+void setCookieStoragePrivateBrowsingEnabled(bool)
 {
     notImplemented();
 }

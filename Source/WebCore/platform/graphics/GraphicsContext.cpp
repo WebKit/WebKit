@@ -704,7 +704,7 @@ CompositeOperator GraphicsContext::compositeOperation() const
 #if !USE(CG) && !USE(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
-void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
+void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 {
 }
 #endif

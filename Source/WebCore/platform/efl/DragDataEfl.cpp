@@ -46,7 +46,7 @@ unsigned DragData::numberOfFiles() const
     return 0;
 }
 
-void DragData::asFilenames(Vector<String>& result) const
+void DragData::asFilenames(Vector<String>&) const
 {
 }
 
@@ -70,12 +70,12 @@ bool DragData::containsCompatibleContent() const
     return false;
 }
 
-bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy) const
 {
     return false;
 }
 
-String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy, String*) const
 {
     return String();
 }
