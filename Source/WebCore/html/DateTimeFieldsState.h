@@ -47,7 +47,7 @@ public:
         AMPMValuePM,
     };
 
-    static const unsigned emptyValue = static_cast<unsigned>(-1);
+    static const unsigned emptyValue;
 
     DateTimeFieldsState();
 

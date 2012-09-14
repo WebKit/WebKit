@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+const unsigned DateTimeFieldsState::emptyValue = static_cast<unsigned>(-1);
+
 static unsigned getNumberFromFormControlState(const FormControlState& state, size_t index)
 {
     if (index >= state.valueSize())
