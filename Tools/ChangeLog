@@ -1,3 +1,17 @@
+2012-09-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build of WTR on Windows
+
+        Reviewed by Tor Arne Vestbø.
+
+        WTR/qt/main.cpp includes TestController.h, which lives in just WTR/
+        With qmake's unix makefile generator as well as with the MingW generator,
+        the directory where the pro file lives (WTR/) is automatically added to
+        the include search path, but not so with MSVC. Instead of relying on qmake's
+        implicit feature here, add WTR/ explicitly to the include search path.
+
+        * WebKitTestRunner/Target.pri:
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
