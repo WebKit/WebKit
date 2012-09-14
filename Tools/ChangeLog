@@ -1,3 +1,19 @@
+2012-09-14  Peter Beverloo  <peter@chromium.org>
+
+        The runtime/unsigned category should be valid in the cpp style-checker.
+        https://bugs.webkit.org/show_bug.cgi?id=96748
+
+        Reviewed by Csaba Osztrogonác.
+
+        This is causing the webkitpy tests to fail because it's not listed in the
+        category array. Furthermore, change an "int" to "long" because it's
+        throwing a double error in one of the earlier asserts.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Evas_Object* is a ref'ed structure, so tread it as such

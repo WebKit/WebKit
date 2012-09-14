@@ -4457,7 +4457,7 @@ class WebKitStyleTest(CppStyleTestBase):
                          'length_' + name_underscore_error_message)
         self.assert_lint('unsigned _length;',
                          '_length' + name_underscore_error_message)
-        self.assert_lint('unsigned int _length;',
+        self.assert_lint('unsigned long _length;',
                          '_length' + name_underscore_error_message)
         self.assert_lint('unsigned long long _length;',
                          '_length' + name_underscore_error_message)

@@ -3600,6 +3600,7 @@ class CppChecker(object):
         'runtime/sizeof',
         'runtime/string',
         'runtime/threadsafe_fn',
+        'runtime/unsigned',
         'runtime/virtual',
         'whitespace/blank_line',
         'whitespace/braces',
