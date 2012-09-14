@@ -193,7 +193,7 @@ private:
     NodeIndex getLocal(unsigned operand)
     {
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.local(operand);
-        bool isCaptured = m_codeBlock->localIsCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
+        bool isCaptured = m_codeBlock->isCaptured(operand, m_inlineStackTop->m_inlineCallFrame);
         
         if (nodeIndex != NoNode) {
             Node* nodePtr = &m_graph[nodeIndex];
@@ -253,7 +253,7 @@ private:
     }
     void setLocal(unsigned operand, NodeIndex value, SetMode setMode = NormalSet)
     {
-        bool isCaptured = m_codeBlock->localIsCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
+        bool isCaptured = m_codeBlock->isCaptured(operand, m_inlineStackTop->m_inlineCallFrame);
         
         if (setMode == NormalSet) {
             ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
@@ -272,12 +272,10 @@ private:
     NodeIndex getArgument(unsigned operand)
     {
         unsigned argument = operandToArgument(operand);
-        
-        bool isCaptured = m_codeBlock->argumentIsCaptured(argument);
-        
         ASSERT(argument < m_numArguments);
         
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
+        bool isCaptured = m_codeBlock->isCaptured(operand);
 
         if (nodeIndex != NoNode) {
             Node* nodePtr = &m_graph[nodeIndex];
@@ -339,10 +337,10 @@ private:
     void setArgument(int operand, NodeIndex value, SetMode setMode = NormalSet)
     {
         unsigned argument = operandToArgument(operand);
-        bool isCaptured = m_codeBlock->argumentIsCaptured(argument);
-        
         ASSERT(argument < m_numArguments);
         
+        bool isCaptured = m_codeBlock->isCaptured(operand);
+
         // Always flush arguments, except for 'this'.
         if (argument && setMode == NormalSet)
             flushDirect(operand);
@@ -402,7 +400,7 @@ private:
         // FIXME: This should check if the same operand had already been flushed to
         // some other local variable.
         
-        bool isCaptured = m_codeBlock->isCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
+        bool isCaptured = m_codeBlock->isCaptured(operand, m_inlineStackTop->m_inlineCallFrame);
         
         ASSERT(operand < FirstConstantRegisterIndex);
         
@@ -1773,7 +1771,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(
-                argumentToOperand(argument), m_codeBlock->argumentIsCaptured(argument));
+                argumentToOperand(argument), m_codeBlock->isCaptured(argumentToOperand(argument)));
             variable->mergeStructureCheckHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
             NodeIndex setArgument = addToGraph(SetArgument, OpInfo(variable));
@@ -3190,17 +3188,21 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         if (inlineCallFrame.caller.inlineCallFrame)
             inlineCallFrame.capturedVars = inlineCallFrame.caller.inlineCallFrame->capturedVars;
         else {
-            for (int i = byteCodeParser->m_codeBlock->m_numCapturedVars; i--;)
-                inlineCallFrame.capturedVars.set(i);
+            for (int i = byteCodeParser->m_codeBlock->m_numVars; i--;) {
+                if (byteCodeParser->m_codeBlock->isCaptured(i))
+                    inlineCallFrame.capturedVars.set(i);
+            }
         }
-        
-        if (codeBlock->argumentsAreCaptured()) {
-            for (int i = argumentCountIncludingThis; i--;)
+
+        for (int i = argumentCountIncludingThis; i--;) {
+            if (codeBlock->isCaptured(argumentToOperand(i)))
                 inlineCallFrame.capturedVars.set(argumentToOperand(i) + inlineCallFrame.stackOffset);
         }
-        for (int i = codeBlock->m_numCapturedVars; i--;)
-            inlineCallFrame.capturedVars.set(i + inlineCallFrame.stackOffset);
-        
+        for (size_t i = codeBlock->m_numVars; i--;) {
+            if (codeBlock->isCaptured(i))
+                inlineCallFrame.capturedVars.set(i + inlineCallFrame.stackOffset);
+        }
+
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Current captured variables: ");
         inlineCallFrame.capturedVars.dump(WTF::dataFile());

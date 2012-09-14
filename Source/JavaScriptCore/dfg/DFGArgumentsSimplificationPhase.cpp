@@ -188,28 +188,30 @@ public:
                         // aliasing. But not yet.
                         observeBadArgumentsUse(node.child1());
                         
-                        if (variableAccessData->isCaptured()) {
-                            // If this is an assignment to the arguments register, then
-                            // pretend as if the arguments were created. We don't want to
-                            // optimize code that explicitly assigns to the arguments,
-                            // because that seems too ugly.
-                            
-                            // But, before getting rid of CreateArguments, we will have
-                            // an assignment to the arguments registers with JSValue().
-                            // That's because CSE will refuse to get rid of the
-                            // init_lazy_reg since it treats CreateArguments as reading
-                            // local variables. That could be fixed, but it's easier to
-                            // work around this here.
-                            if (source.op() == JSConstant
-                                && !source.valueOfJSConstant(codeBlock()))
-                                break;
-                            
-                            if (argumentsRegister != InvalidVirtualRegister
-                                && (variableAccessData->local() == argumentsRegister
-                                    || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister)))
-                                m_createsArguments.add(node.codeOrigin.inlineCallFrame);
+                        // If this is an assignment to the arguments register, then
+                        // pretend as if the arguments were created. We don't want to
+                        // optimize code that explicitly assigns to the arguments,
+                        // because that seems too ugly.
+                        
+                        // But, before getting rid of CreateArguments, we will have
+                        // an assignment to the arguments registers with JSValue().
+                        // That's because CSE will refuse to get rid of the
+                        // init_lazy_reg since it treats CreateArguments as reading
+                        // local variables. That could be fixed, but it's easier to
+                        // work around this here.
+                        if (source.op() == JSConstant
+                            && !source.valueOfJSConstant(codeBlock()))
+                            break;
+                        
+                        if (argumentsRegister != InvalidVirtualRegister
+                            && (variableAccessData->local() == argumentsRegister
+                                || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister))) {
+                            m_createsArguments.add(node.codeOrigin.inlineCallFrame);
                             break;
                         }
+
+                        if (variableAccessData->isCaptured())
+                            break;
                         
                         // Make sure that if it's a variable that we think is aliased to
                         // the arguments, that we know that it might actually not be.
@@ -432,9 +434,8 @@ public:
                     
                     VariableAccessData* variableAccessData = node.variableAccessData();
                     
-                    if (variableAccessData->isCaptured()) {
-                        ASSERT(m_graph.argumentsRegisterFor(node.codeOrigin) == variableAccessData->local()
-                               || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node.codeOrigin)) == variableAccessData->local());
+                    if (m_graph.argumentsRegisterFor(node.codeOrigin) == variableAccessData->local()
+                           || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node.codeOrigin)) == variableAccessData->local()) {
                         // The child of this store should really be the empty value.
                         Node emptyJSValue(JSConstant, node.codeOrigin, OpInfo(codeBlock()->addOrFindConstant(JSValue())));
                         emptyJSValue.ref();
@@ -446,6 +447,7 @@ public:
                         changed = true;
                         break;
                     }
+                    ASSERT(!variableAccessData->isCaptured());
                     
                     // If this is a store into a VariableAccessData* that is marked as
                     // arguments aliasing for an InlineCallFrame* that does not create
@@ -755,12 +757,14 @@ private:
         }
                         
         VariableAccessData* variableAccessData = child.variableAccessData();
-        if (variableAccessData->isCaptured()) {
-            if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)
-                && node.codeOrigin.inlineCallFrame != child.codeOrigin.inlineCallFrame)
-                m_createsArguments.add(child.codeOrigin.inlineCallFrame);
+        if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)
+            && node.codeOrigin.inlineCallFrame != child.codeOrigin.inlineCallFrame) {
+            m_createsArguments.add(child.codeOrigin.inlineCallFrame);
             return;
         }
+
+        if (variableAccessData->isCaptured())
+            return;
         
         ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
@@ -774,16 +778,15 @@ private:
         switch (source.op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = source.variableAccessData();
-            if (variableAccessData->isCaptured()) {
-                int argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(source.codeOrigin);
-                if (argumentsRegister == InvalidVirtualRegister)
-                    break;
-                if (argumentsRegister == variableAccessData->local())
-                    return true;
-                if (unmodifiedArgumentsRegister(argumentsRegister) == variableAccessData->local())
-                    return true;
+            int argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(source.codeOrigin);
+            if (argumentsRegister == InvalidVirtualRegister)
                 break;
-            }
+            if (argumentsRegister == variableAccessData->local())
+                return true;
+            if (unmodifiedArgumentsRegister(argumentsRegister) == variableAccessData->local())
+                return true;
+            if (variableAccessData->isCaptured())
+                break;
             ArgumentsAliasingData& data =
                 m_argumentsAliasing.find(variableAccessData)->second;
             if (!data.isValid())

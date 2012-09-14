@@ -1,3 +1,51 @@
+2012-09-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored the DFG to make fewer assumptions about variable capture
+        https://bugs.webkit.org/show_bug.cgi?id=96680
+
+        Reviewed by Gavin Barraclough.
+
+        A variable capture optimization patch I'm working on broke DFG
+        correctness and the arguments simplification optimization phase, so I've
+        refactored both to make fewer assumptions about variable capture.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isCaptured): This is the new One True Way to find out
+        if a variable was captured. This gives us a single point of maintenance
+        as we chagne capture behavior.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::clobberCapturedVars): Don't assume that captured
+        variables have any particular location. Instead, ask the One True Function.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeProperArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::isOKToOptimize): Mechanical
+        changes to separate being captured from being 'arguments'. What used
+        to be
+                if (captured)
+                        if (arguments)
+                                x
+                        y
+        is now
+                if (arguments)
+                        x
+                        y
+                else if (captured)
+                        y
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Use the One True Function.
+
 2012-09-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the SourceProvider hierarchy

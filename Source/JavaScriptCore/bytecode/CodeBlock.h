@@ -547,29 +547,16 @@ namespace JSC {
             return needsFullScopeChain() && codeType() != GlobalCode;
         }
         
-        bool argumentsAreCaptured() const
+        bool isCaptured(int operand, InlineCallFrame* inlineCallFrame = 0) const
         {
-            return needsActivation() || usesArguments();
-        }
-        
-        bool argumentIsCaptured(int) const
-        {
-            return argumentsAreCaptured();
-        }
-        
-        bool localIsCaptured(InlineCallFrame* inlineCallFrame, int operand) const
-        {
-            if (!inlineCallFrame)
-                return operand < m_numCapturedVars;
-            
-            return inlineCallFrame->capturedVars.get(operand);
-        }
-        
-        bool isCaptured(InlineCallFrame* inlineCallFrame, int operand) const
-        {
+            if (inlineCallFrame && !operandIsArgument(operand))
+                return inlineCallFrame->capturedVars.get(operand);
+
+            // Our estimate of argument capture is conservative.
             if (operandIsArgument(operand))
-                return argumentIsCaptured(operandToArgument(operand));
-            return localIsCaptured(inlineCallFrame, operand);
+                return needsActivation() || usesArguments();
+
+            return operand < m_numCapturedVars;
         }
 
         CodeType codeType() const { return m_codeType; }

@@ -1360,11 +1360,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 InlineCallFrame* inlineCallFrame = node.codeOrigin.inlineCallFrame;
                 int argumentCountIncludingThis = inlineCallFrame->arguments.size();
                 unsigned argumentPositionStart = node.argumentPositionStart();
-                bool argumentsAreCaptured =
-                    baselineCodeBlockForInlineCallFrame(inlineCallFrame)->argumentsAreCaptured();
+                CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
                 for (int i = 0; i < argumentCountIncludingThis; ++i) {
                     ValueRecovery recovery;
-                    if (argumentsAreCaptured)
+                    if (codeBlock->isCaptured(argumentToOperand(i)))
                         recovery = ValueRecovery::alreadyInRegisterFile();
                     else {
                         ArgumentPosition& argumentPosition =

@@ -1522,11 +1522,14 @@ inline void AbstractState::clobberCapturedVars(const CodeOrigin& codeOrigin)
             m_variables.local(i).makeTop();
         }
     } else {
-        for (size_t i = m_codeBlock->m_numCapturedVars; i--;)
-            m_variables.local(i).makeTop();
+        for (size_t i = m_codeBlock->m_numVars; i--;) {
+            if (m_codeBlock->isCaptured(i))
+                m_variables.local(i).makeTop();
+        }
     }
-    if (m_codeBlock->argumentsAreCaptured()) {
-        for (size_t i = m_variables.numberOfArguments(); i--;)
+
+    for (size_t i = m_variables.numberOfArguments(); i--;) {
+        if (m_codeBlock->isCaptured(argumentToOperand(i)))
             m_variables.argument(i).makeTop();
     }
 }
