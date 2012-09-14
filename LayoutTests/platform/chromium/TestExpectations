@@ -1315,8 +1315,7 @@ BUGWK84854 LINUX ANDROID : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
 BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 BUGWK85107 : svg/as-image/animated-svg-as-image.html = PASS IMAGE
 
-// Times out on debug builds
-BUGWK93589 LINUX SNOWLEOPARD DEBUG : svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg = TIMEOUT PASS TEXT
+BUGWK93589 : svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg = TIMEOUT PASS TEXT
 
 // Need rebaseline for slight pixel changes
 BUGWK95238 : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
