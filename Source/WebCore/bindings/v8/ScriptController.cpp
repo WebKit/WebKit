@@ -146,7 +146,8 @@ void ScriptController::resetIsolatedWorlds()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
          iter != m_isolatedWorlds.end(); ++iter) {
-        iter->second->destroyIsolatedShell();
+        iter->second->clearIsolatedShell();
+        delete iter->second;
     }
     m_isolatedWorlds.clear();
     m_isolatedWorldSecurityOrigins.clear();
@@ -389,11 +390,12 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
             resultArray->Set(i, evaluationResult);
         }
 
-        // Mark temporary shell for weak destruction.
+        // Destroy temporary world.
         if (worldID == DOMWrapperWorld::uninitializedWorldId) {
             int actualWorldId = isolatedWorldShell->world()->worldId();
             m_isolatedWorlds.remove(actualWorldId);
-            isolatedWorldShell->destroyIsolatedShell();
+            isolatedWorldShell->clearIsolatedShell();
+            delete isolatedWorldShell;
         }
 
         v8Results = evaluateHandleScope.Close(resultArray);
@@ -428,11 +430,11 @@ void ScriptController::finishedWithEvent(Event* event)
 
 v8::Local<v8::Context> ScriptController::currentWorldContext()
 {
-    if (V8DOMWindowShell* isolatedShell = V8DOMWindowShell::getEntered()) {
-        v8::Persistent<v8::Context> context = isolatedShell->context();
-        if (context.IsEmpty() || m_frame != toFrameIfNotDetached(context))
+    v8::Local<v8::Context> isolatedContext = V8DOMWindowShell::enteredIsolatedContext();
+    if (UNLIKELY(!isolatedContext.IsEmpty())) {
+        if (m_frame != toFrameIfNotDetached(isolatedContext))
             return v8::Local<v8::Context>();
-        return v8::Local<v8::Context>::New(context);
+        return v8::Local<v8::Context>::New(isolatedContext);
     }
     windowShell()->initializeIfNeeded();
     return v8::Local<v8::Context>::New(windowShell()->context());
