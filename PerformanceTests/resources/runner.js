@@ -27,8 +27,6 @@ PerfTestRunner.random = Math.random = function() {
     return (randomSeed & 0xfffffff) / 0x10000000;
 };
 
-PerfTestRunner.now = window.performance && window.performance.webkitNow ? window.performance.webkitNow : Date.now;
-
 PerfTestRunner.log = function (text) {
     if (this._logLines) {
         this._logLines.push(text);
@@ -147,7 +145,7 @@ PerfTestRunner._runLoop = function () {
 }
 
 PerfTestRunner._runner = function () {
-    var start = this.now();
+    var start = Date.now();
     var totalTime = 0;
 
     for (var i = 0; i < this._loopsPerRun; ++i) {
@@ -160,7 +158,7 @@ PerfTestRunner._runner = function () {
     }
 
     // Assume totalTime can never be zero when _runFunction returns a number.
-    var time = totalTime ? totalTime : this.now() - start;
+    var time = totalTime ? totalTime : Date.now() - start;
 
     this.ignoreWarmUpAndLog(time);
     this._runLoop();
@@ -260,10 +258,10 @@ PerfTestRunner._perSecondRunner = function () {
 }
 
 PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
-    var startTime = this.now();
+    var startTime = Date.now();
     for (var i = 0; i < callsPerIteration; i++)
         this._test.run();
-    return this.now() - startTime;
+    return Date.now() - startTime;
 }
 
 if (window.testRunner) {
