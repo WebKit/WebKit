@@ -175,7 +175,6 @@ BUGWKEFL SKIP : accessibility = TEXT
 // FLAKY TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK93654 : fast/events/keyevent-iframe-removed-crash.html = CRASH TEXT
 BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
 BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT PASS
 BUGWK83878 : media/track/track-mode.html = TEXT PASS

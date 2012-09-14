@@ -30,11 +30,8 @@
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKEFL : inspector/debugger/debugger-eval-on-call-frame.html = CRASH
-BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH
 BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
 BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
-BUGWK95333 DEBUG : fast/forms/color/input-value-sanitization-color.html = CRASH
 
 // WebKitTestRunner needs an implementation for download attribute feature
 // The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
@@ -166,10 +163,8 @@ BUGWKEFL : fast/events/touch/multi-touch-grouped-targets.html = TEXT
 BUGWKEFL : fast/events/touch/send-oncancel-event.html = TEXT
 BUGWKEFL : fast/events/touch/tap-highlight-color.html = TEXT
 BUGWKEFL : fast/events/touch/touch-active-state.html = TEXT
-BUGWKEFL : fast/events/touch/touch-before-pressing-spin-button.html = TEXT
 BUGWKEFL : fast/events/touch/touch-coords-in-zoom-and-scroll.html = TEXT
 BUGWKEFL : fast/events/touch/touch-inside-iframe.html = TEXT
-BUGWKEFL : fast/events/touch/touch-slider-no-js-touch-listener.html = TEXT
 BUGWKEFL : fast/events/touch/touch-slider.html = TEXT
 BUGWKEFL : fast/events/touch/touch-stale-node-crash.html = TEXT
 BUGWKEFL : fast/events/touch/touch-target-limited.html = TEXT
@@ -201,11 +196,6 @@ BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
 BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
-BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
-BUGWKEFL : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TEXT
-BUGWKEFL : inspector/debugger/debugger-completions-on-call-frame.html = TEXT
 BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT
-BUGWKEFL : inspector/extensions/extensions-sidebar.html = TEXT
-BUGWKEFL : jquery/attributes.html = TEXT
 

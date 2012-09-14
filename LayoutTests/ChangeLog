@@ -1,3 +1,13 @@
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][WK2] Unskip test cases that are now passing
+        https://bugs.webkit.org/show_bug.cgi?id=96762
+
+        Unreviewed EFL gardening, unskip now passing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
