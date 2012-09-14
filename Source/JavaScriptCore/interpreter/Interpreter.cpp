@@ -3610,8 +3610,8 @@ skip_id_custom_self:
             uint32_t i = subscript.asUInt32();
             if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
-                if (jsArray->canGetIndex(i))
-                    result = jsArray->getIndex(i);
+                if (jsArray->canGetIndexQuickly(i))
+                    result = jsArray->getIndexQuickly(i);
                 else
                     result = jsArray->JSArray::get(callFrame, i);
             } else if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
@@ -3652,8 +3652,8 @@ skip_id_custom_self:
             uint32_t i = subscript.asUInt32();
             if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
-                if (jsArray->canSetIndex(i))
-                    jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
+                if (jsArray->canSetIndexQuickly(i))
+                    jsArray->setIndexQuickly(*globalData, i, callFrame->r(value).jsValue());
                 else
                     jsArray->JSArray::putByIndex(jsArray, callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
             } else
@@ -5012,7 +5012,7 @@ skip_id_custom_self:
             accessor->setGetter(callFrame->globalData(), asObject(getter));
         if (!setter.isUndefined())
             accessor->setSetter(callFrame->globalData(), asObject(setter));
-        baseObj->putDirectAccessor(callFrame->globalData(), ident, accessor, Accessor);
+        baseObj->putDirectAccessor(callFrame, ident, accessor, Accessor);
 
         vPC += OPCODE_LENGTH(op_put_getter_setter);
         NEXT_INSTRUCTION();
