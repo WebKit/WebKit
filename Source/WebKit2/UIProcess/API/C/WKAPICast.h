@@ -61,6 +61,7 @@ class WebBackForwardListItem;
 class WebBatteryManagerProxy;
 class WebBatteryStatus;
 class WebResourceCacheManagerProxy;
+class WebColorPickerResultListenerProxy;
 class WebContext;
 class WebCookieManagerProxy;
 class WebCredential;
@@ -104,6 +105,7 @@ WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKBatteryManagerRef, WebBatteryManagerProxy)
 WK_ADD_API_MAPPING(WKBatteryStatusRef, WebBatteryStatus)
 WK_ADD_API_MAPPING(WKResourceCacheManagerRef, WebResourceCacheManagerProxy)
+WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
 WK_ADD_API_MAPPING(WKCookieManagerRef, WebCookieManagerProxy)
 WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)

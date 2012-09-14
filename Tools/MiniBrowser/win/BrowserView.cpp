@@ -130,6 +130,10 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         0,          /* shouldInterruptJavaScript */
         createNewPage,
         mouseDidMoveOverElement,
+        0,          /* decidePolicyForNotificationPermissionRequest */
+        0,          /* unavailablePluginButtonClicked */
+        0,          /* showColorPicker */
+        0,          /* hideColorPicker */
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);

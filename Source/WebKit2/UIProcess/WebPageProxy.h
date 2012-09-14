@@ -139,6 +139,7 @@ class PlatformCertificateInfo;
 class StringPairVector;
 class WebBackForwardList;
 class WebBackForwardListItem;
+class WebColorPickerResultListenerProxy;
 class WebContextMenuProxy;
 class WebData;
 class WebEditCommandProxy;
@@ -721,6 +722,11 @@ public:
 
     void postMessageToInjectedBundle(const String& messageName, APIObject* messageBody);
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    void setColorChooserColor(const WebCore::Color&);
+    void endColorChooser();
+#endif
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
@@ -853,8 +859,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorChooser(const WebCore::Color& initialColor, const WebCore::IntRect&);
-    void setColorChooserColor(const WebCore::Color&);
-    void endColorChooser();
     void didChooseColor(const WebCore::Color&);
     void didEndColorChooser();
 #endif
@@ -1145,6 +1149,7 @@ private:
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorChooserProxy> m_colorChooser;
+    RefPtr<WebColorPickerResultListenerProxy> m_colorPickerResultListener;
 #endif
 
     uint64_t m_pageID;

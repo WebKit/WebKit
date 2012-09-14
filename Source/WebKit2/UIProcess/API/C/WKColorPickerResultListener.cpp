@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,53 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebColorChooserProxy_h
-#define WebColorChooserProxy_h
+#include "config.h"
+#include "WKColorPickerResultListener.h"
 
+#include "WKAPICast.h"
+#include "WebColorPickerResultListenerProxy.h"
+
+using namespace WebKit;
+
+WKTypeID WKColorPickerResultListenerGetTypeID()
+{
 #if ENABLE(INPUT_TYPE_COLOR)
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-class Color;
+    return toAPI(WebColorPickerResultListenerProxy::APIType);
+#else
+    return 0;
+#endif
 }
 
-namespace WebKit {
-
-class WebPageProxy;
-
-class WebColorChooserProxy : public RefCounted<WebColorChooserProxy> {
-public:
-    class Client {
-    protected:
-        virtual ~Client() { }
-
-    public:
-        virtual void didChooseColor(const WebCore::Color&) = 0;
-        virtual void didEndColorChooser() = 0;
-    };
-
-    static PassRefPtr<WebColorChooserProxy> create(Client* client)
-    {
-        return adoptRef(new WebColorChooserProxy(client));
-    }
-
-    virtual ~WebColorChooserProxy();
-
-    void invalidate() { m_client = 0; }
-
-    virtual void endChooser();
-    virtual void setSelectedColor(const WebCore::Color&);
-
-protected:
-    explicit WebColorChooserProxy(Client*);
-
-    Client* m_client;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
-
-#endif // WebColorChooserProxy_h
+void WKColorPickerResultListenerSetColor(WKColorPickerResultListenerRef listenerRef, const WKStringRef color)
+{
+#if ENABLE(INPUT_TYPE_COLOR)
+    toImpl(listenerRef)->setColor(toWTFString(color));
+#endif
+}

@@ -694,6 +694,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         mouseDidMoveOverElement,
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
+        0, // showColorPicker
+        0, // hideColorPicker
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

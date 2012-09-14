@@ -235,6 +235,8 @@ SET(WebKit2_SOURCES
     UIProcess/WebBackForwardList.cpp
     UIProcess/WebBatteryManagerProxy.cpp
     UIProcess/WebBatteryProvider.cpp
+    UIProcess/WebColorChooserProxy.cpp
+    UIProcess/WebColorPickerResultListenerProxy.cpp
     UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContext.cpp
     UIProcess/WebContextConnectionClient.cpp
@@ -290,6 +292,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKBackForwardListItem.cpp
     UIProcess/API/C/WKBatteryManager.cpp
     UIProcess/API/C/WKBatteryStatus.cpp
+    UIProcess/API/C/WKColorPickerResultListener.cpp
     UIProcess/API/C/WKContext.cpp
     UIProcess/API/C/WKCookieManager.cpp
     UIProcess/API/C/WKCredential.cpp

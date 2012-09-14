@@ -150,6 +150,7 @@ HEADERS += \
     UIProcess/API/C/WKBackForwardListItem.h \
     UIProcess/API/C/WKBatteryManager.h \
     UIProcess/API/C/WKBatteryStatus.h \
+    UIProcess/API/C/WKColorPickerResultListener.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
@@ -228,6 +229,7 @@ HEADERS += \
     UIProcess/WebBatteryManagerProxy.h \
     UIProcess/WebBatteryProvider.h \
     UIProcess/WebColorChooserProxy.h \
+    UIProcess/WebColorPickerResultListenerProxy.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextConnectionClient.h \
@@ -501,6 +503,7 @@ SOURCES += \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKBatteryManager.cpp \
     UIProcess/API/C/WKBatteryStatus.cpp \
+    UIProcess/API/C/WKColorPickerResultListener.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKCredential.cpp \
     UIProcess/API/C/WKDatabaseManager.cpp \
@@ -569,6 +572,8 @@ SOURCES += \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBatteryManagerProxy.cpp \
     UIProcess/WebBatteryProvider.cpp \
+    UIProcess/WebColorChooserProxy.cpp \
+    UIProcess/WebColorPickerResultListenerProxy.cpp \
     UIProcess/WebConnectionToWebProcess.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextConnectionClient.cpp \

@@ -223,6 +223,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
+        0, // showColorPicker
+        0, // hideColorPicker
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -391,6 +393,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // mouseDidMoveOverElement
         decidePolicyForNotificationPermissionRequest, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
+        0, // showColorPicker
+        0, // hideColorPicker
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

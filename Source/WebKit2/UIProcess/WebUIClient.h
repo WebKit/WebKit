@@ -48,6 +48,7 @@ class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
+class WebColorPickerResultListenerProxy;
 class WebData;
 class WebFrameProxy;
 class WebPageProxy;
@@ -115,6 +116,11 @@ public:
     void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
     bool shouldInterruptJavaScript(WebPageProxy*);
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool showColorPicker(WebPageProxy*, const String&, WebColorPickerResultListenerProxy*);
+    bool hideColorPicker(WebPageProxy*);
+#endif
 };
 
 } // namespace WebKit

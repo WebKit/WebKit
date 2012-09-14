@@ -1,5 +1,70 @@
 2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
 
+        [WK2] Add color picker API support for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=95058
+
+        Reviewed by Gyuyoung Kim.
+
+        Add support for color picker API to WebKit2.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * Shared/APIObject.h:
+        * Target.pri:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKColorPickerResultListener.cpp: Added.
+        (WKColorPickerResultListenerGetTypeID):
+        (WKColorPickerResultListenerColorSet):
+        * UIProcess/API/C/WKColorPickerResultListener.h: Added.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (attachUIClientToView):
+        * UIProcess/WebColorChooserProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebColorChooserProxy::WebColorChooserProxy):
+        (WebKit::WebColorChooserProxy::~WebColorChooserProxy):
+        (WebKit::WebColorChooserProxy::endChooser):
+        (WebKit::WebColorChooserProxy::setSelectedColor):
+        * UIProcess/WebColorChooserProxy.h:
+        (WebColorChooserProxy):
+        (WebKit::WebColorChooserProxy::create):
+        * UIProcess/WebColorPickerResultListenerProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebColorPickerResultListenerProxy::WebColorPickerResultListenerProxy):
+        (WebKit::WebColorPickerResultListenerProxy::~WebColorPickerResultListenerProxy):
+        (WebKit::WebColorPickerResultListenerProxy::invalidate):
+        (WebKit::WebColorPickerResultListenerProxy::setColor):
+        * UIProcess/WebColorPickerResultListenerProxy.h: Added.
+        (WebKit):
+        (WebColorPickerResultListenerProxy):
+        (WebKit::WebColorPickerResultListenerProxy::create):
+        (WebKit::WebColorPickerResultListenerProxy::type):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::showColorChooser):
+        (WebKit::WebPageProxy::didEndColorChooser):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        (WebKit):
+        (WebPageProxy):
+        * UIProcess/WebUIClient.cpp:
+        (WebKit):
+        (WebKit::WebUIClient::showColorPicker):
+        (WebKit::WebUIClient::hideColorPicker):
+        * UIProcess/WebUIClient.h:
+        (WebKit):
+        (WebUIClient):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
+2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
+
         [EFL][WK2] Implement missing initializeLogChannel function
         https://bugs.webkit.org/show_bug.cgi?id=96478
 

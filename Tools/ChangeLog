@@ -1,3 +1,20 @@
+2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [WK2] Add color picker API support for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=95058
+
+        Reviewed by Gyuyoung Kim.
+
+        Initialization code for color picker callbacks in UI client.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
 2012-09-13  Yuta Kitamura  <yutak@chromium.org>
 
         Upgrade yutak to reviewer

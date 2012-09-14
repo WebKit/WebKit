@@ -75,6 +75,7 @@ public:
         TypeBatteryManager,
         TypeBatteryStatus,
         TypeCacheManager,
+        TypeColorPickerResultListener,
         TypeContext,
         TypeCookieManager,
         TypeDatabaseManager,

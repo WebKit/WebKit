@@ -204,6 +204,8 @@ void attachUIClientToView(WebKitWebView* webView)
         mouseDidMoveOverElement,
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
+        0, // showColorPicker
+        0, // hideColorPicker
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageUIClient(wkPage, &wkUIClient);

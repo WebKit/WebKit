@@ -52,6 +52,7 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
+#include "WebColorPickerResultListenerProxy.h"
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebContextUserMessageCoders.h"
@@ -412,6 +413,11 @@ void WebPageProxy::close()
     if (m_colorChooser) {
         m_colorChooser->invalidate();
         m_colorChooser = nullptr;
+    }
+
+    if (m_colorPickerResultListener) {
+        m_colorPickerResultListener->invalidate();
+        m_colorPickerResultListener = nullptr;
     }
 #endif
 
@@ -2724,7 +2730,20 @@ void WebPageProxy::showColorChooser(const WebCore::Color& initialColor, const In
 {
     ASSERT(!m_colorChooser);
 
+    if (m_colorPickerResultListener) {
+        m_colorPickerResultListener->invalidate();
+        m_colorPickerResultListener = nullptr;
+    }
+
+    m_colorPickerResultListener = WebColorPickerResultListenerProxy::create(this);
+    m_colorChooser = WebColorChooserProxy::create(this);
+
+    if (m_uiClient.showColorPicker(this, initialColor.serialized(), m_colorPickerResultListener.get()))
+        return;
+
     m_colorChooser = m_pageClient->createColorChooserProxy(this, initialColor, elementRect);
+    if (!m_colorChooser)
+        didEndColorChooser();
 }
 
 void WebPageProxy::setColorChooserColor(const WebCore::Color& color)
@@ -2754,12 +2773,17 @@ void WebPageProxy::didEndColorChooser()
     if (!isValid())
         return;
 
-    ASSERT(m_colorChooser);
-
-    m_colorChooser->invalidate();
-    m_colorChooser = nullptr;
+    if (m_colorChooser) {
+        m_colorChooser->invalidate();
+        m_colorChooser = nullptr;
+    }
 
     m_process->send(Messages::WebPage::DidEndColorChooser(), m_pageID);
+
+    m_colorPickerResultListener->invalidate();
+    m_colorPickerResultListener = nullptr;
+
+    m_uiClient.hideColorPicker(this);
 }
 #endif
 
@@ -3535,6 +3559,11 @@ void WebPageProxy::processDidCrash()
     if (m_colorChooser) {
         m_colorChooser->invalidate();
         m_colorChooser = nullptr;
+    }
+
+    if (m_colorPickerResultListener) {
+        m_colorPickerResultListener->invalidate();
+        m_colorPickerResultListener = nullptr;
     }
 #endif
 

@@ -51,6 +51,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKAuthenticationDecisionListener.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBackForwardList.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKBackForwardListItem.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKColorPickerResultListener.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKContext.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKContextPrivate.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKCookieManager.h" "%ConfigurationBuildDir%\include\WebKit2"

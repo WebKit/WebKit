@@ -49,6 +49,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/C/WKBatteryManager.h \
 	$(WebKit2)/UIProcess/API/C/WKBatteryStatus.h \
+	$(WebKit2)/UIProcess/API/C/WKColorPickerResultListener.h \
 	$(WebKit2)/UIProcess/API/C/WKContext.h \
 	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
@@ -530,6 +531,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKBatteryManager.h \
 	Source/WebKit2/UIProcess/API/C/WKBatteryStatus.cpp \
 	Source/WebKit2/UIProcess/API/C/WKBatteryStatus.h \
+	Source/WebKit2/UIProcess/API/C/WKColorPickerResultListener.cpp \
+	Source/WebKit2/UIProcess/API/C/WKColorPickerResultListener.h \
 	Source/WebKit2/UIProcess/API/C/WKContext.cpp \
 	Source/WebKit2/UIProcess/API/C/WKContext.h \
 	Source/WebKit2/UIProcess/API/C/WKContextPrivate.h \
@@ -814,7 +817,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebBatteryManagerProxy.h \
 	Source/WebKit2/UIProcess/WebBatteryProvider.cpp \
 	Source/WebKit2/UIProcess/WebBatteryProvider.h \
+	Source/WebKit2/UIProcess/WebColorChooserProxy.cpp \
 	Source/WebKit2/UIProcess/WebColorChooserProxy.h \
+	Source/WebKit2/UIProcess/WebColorPickerResultListenerProxy.cpp \
+	Source/WebKit2/UIProcess/WebColorPickerResultListenerProxy.h \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.cpp \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.h \
 	Source/WebKit2/UIProcess/WebContext.cpp \
