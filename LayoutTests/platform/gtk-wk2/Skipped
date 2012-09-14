@@ -70,6 +70,11 @@ fullscreen/full-screen-iframe-allowed.html
 fullscreen/full-screen-twice.html
 fullscreen/full-screen-remove.html
 fullscreen/full-screen-zIndex-after.html
+fullscreen/full-screen-element-stack.html
+fullscreen/full-screen-fixed-pos-parent.html
+fullscreen/full-screen-keyboard-enabled.html
+fullscreen/full-screen-restrictions.html
+fullscreen/non-ancestor-iframe.html
 
 animations/fill-mode-forwards.html
 editing/deleting/delete-by-word-001.html
@@ -83,6 +88,7 @@ fast/forms/implicit-submission.html
 fast/forms/select-type-ahead-non-latin.html
 fast/forms/listbox-typeahead-cyrillic.html
 fast/forms/listbox-typeahead-greek.html
+fast/forms/legend-access-key.html
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
 platform/gtk/fast/forms/menulist-typeahead-find.html
 plugins/document-open.html
@@ -405,11 +411,91 @@ transitions/change-values-during-transition.html
 transitions/extra-transition.html
 transitions/interrupted-accelerated-transition.html
 
+# [Navigation Timing] Remove old-style LayoutTests
+# https://bugs.webkit.org/show_bug.cgi?id=91158
+fast/dom/navigation-type-back-forward.html
+fast/dom/navigation-type-navigate.html
+fast/dom/navigation-type-reload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=94549
+fast/forms/file/selected-files-from-history-state.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95043
+http/tests/security/local-user-CSS-from-remote.html
+
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61827
+fast/events/drag-image-filename.html
+
+# Assertion failure in replaySavedEvents
+# http://webkit.org/b/21796
+fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
+
+# WebKitTestRunner layoutTestController.pathToLocalResource needs to be updated to work with NRWT
+# https://bugs.webkit.org/show_bug.cgi?id=81299
+fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
+fast/loader/local-image-from-local.html
+
+# WebKitTestRunner needs a more-complete implementation of eventSender
+# https://bugs.webkit.org/show_bug.cgi?id=42194
+editing/undo/undo-smart-delete-reversed-selection.html
+fast/dom/vertical-scrollbar-in-rtl.html
+fast/events/5056619.html
+http/tests/security/drag-drop-same-unique-origin.html
+svg/custom/polyline-hittest.svg
+
+# [Qt][GTK][WK2] New http/tests/cache/xhr-vary-header.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89278
+http/tests/cache/xhr-vary-header.html
+
+# [Qt][GTK] REGRESSION(r126194): http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=94677
+http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html
+
+# [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=95935
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html
+http/tests/security/cross-origin-plugin.html
+
+# REGRESSION (r127202): http/tests/security/inactive-document-with-empty-security-origin.html failing on JSC ports
+# https://bugs.webkit.org/show_bug.cgi?id=95530
+http/tests/security/inactive-document-with-empty-security-origin.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82672
+http/tests/xmlhttprequest/range-test.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=39160
+security/block-test-no-port.html
+
+# Some tests rely on a /tmp/LayoutTests symlink pointing to the LayoutTests directory
+# https://bugs.webkit.org/show_bug.cgi?id=64135
+fast/dom/frame-loading-via-document-write.html
+
+# media/audio-garbage-collect.html is flaky
+# https://bugs.webkit.org/show_bug.cgi?id=72698
+media/audio-garbage-collect.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
 
-# Unchecked failures
+# Unexplained failures
+accessibility/accessibility-node-memory-management.html
+accessibility/accessibility-node-reparent.html
+accessibility/aria-invalid.html
+accessibility/img-fallsback-to-title.html
+accessibility/legend.html
+fast/dom/rtl-scroll-to-leftmost-and-resize.html
+fast/forms/input-paste-undo.html
+fast/forms/input-placeholder-paint-order.html
+fast/forms/interactive-validation-novalidate.html
+fast/forms/listbox-deselect-scroll.html
+fast/forms/listbox-selection.html
+fast/media/mq-transform-02.html
+fast/media/mq-transform-03.html
+fast/regions/css-regions-disabled.html
+fast/repaint/fixed-move-after-keyboard-scroll.html
 fast/ruby/nested-ruby.html
 fast/ruby/ruby-beforeafter.html
 fast/ruby/ruby-empty-rt.html
@@ -428,9 +514,14 @@ fast/ruby/rubyDOM-remove-rt1.html
 fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
+fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
 editing/deleting/delete-ligature-003.html
 editing/deleting/paragraph-in-preserveNewline.html
 editing/deleting/whitespace-pre-1.html
+editing/execCommand/delete-selection-has-style.html
+editing/selection/5136696.html
+editing/selection/inactive-selection.html
+editing/selection/programmatic-selection-on-mac-is-directionless.html
 editing/spelling/spelling-insert-html.html
 fast/css/bidi-override-in-anonymous-block.html
 fast/css/disabled-author-styles.html
@@ -442,15 +533,25 @@ fast/forms/mailto/formenctype-attribute-input-html.html
 fast/forms/selection-direction.html
 fast/frames/iframe-reparenting-plugins.html
 fast/js/navigator-language.html
+fast/regions/css-regions-disabled.html
 fast/replaced/object-with-embed-url-param.html
 fast/text/international/complex-character-based-fallback.html
 fast/text/international/thai-line-breaks.html
+fast/workers/shared-worker-load-error.html
 fast/writing-mode/Kusa-Makura-background-canvas.html
+fast/xsl/xslt-missing-namespace-in-xslt.xml
+media/track/track-cue-rendering-horizontal.html
+media/track/track-cue-rendering-vertical.html
+media/video-play-require-user-gesture.html
 media/video-zoom-controls.html
+platform/gtk/accessibility/entry-and-password.html
+platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html
+platform/gtk/fast/events/event-sender-metakey.html
 plugins/destroy-during-npp-new-object-with-fallback-content.html
 plugins/embed-inside-object.html
 plugins/embed-prefers-plugins-for-images.html
 plugins/evaluate-js-after-removing-plugin-element.html
+plugins/netscape-plugin-setwindow-size-2.html
 plugins/npp-set-window-called-during-destruction.html
 plugins/object-embed-plugin-scripting.html
 plugins/plugin-document-back-forward.html
@@ -461,11 +562,17 @@ plugins/npruntime/browser-object-identity.html
 plugins/npruntime/embed-property-equality.html
 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
 svg/dom/SVGPathSegList-segment-modification.svg
+svg/text/select-textLength-spacing-stretch-1.svg
+svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
+svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
+touchadjustment/iframe-boundary.html
+touchadjustment/iframe.html
 http/tests/media/video-cookie.html
 http/tests/media/video-referer.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
+http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html
 http/tests/xmlviewer/dumpAsText/frames.html

@@ -1,3 +1,12 @@
+2012-09-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] [WK2] Unreviewed gardening.
+
+        Added a bunch of tests failing in the WK2 tests bot to the Skipped
+        list with the proper links to each bug.
+
+        * platform/gtk-wk2/Skipped:
+
 2012-09-14  Rick Byers  <rbyers@chromium.org>
 
         Gesture events sent to wrong node when page is scrolled
