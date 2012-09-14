@@ -1,19 +1,11 @@
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback1
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback2
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback3
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback5
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback7
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback8
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback9
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback10
 Tests that database names are correctly loaded and saved in IndexedDBModel.

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test that a database is recreated correctly when an open-with-version call is queued behind both a deleteDatabase and setVersion call
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

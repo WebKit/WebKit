@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's cursor skips deleted entries.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

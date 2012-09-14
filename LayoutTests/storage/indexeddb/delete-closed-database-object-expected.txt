@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Ensure that IDBDatabase objects are deleted when there are no retaining paths left
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
