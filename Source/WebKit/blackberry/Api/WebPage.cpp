@@ -338,6 +338,12 @@ void WebPage::enableQnxJavaScriptObject(bool enabled)
     d->m_enableQnxJavaScriptObject = enabled;
 }
 
+WebString WebPage::renderTreeAsText()
+{
+    String result = externalRepresentation(d->m_mainFrame);
+    return WebString(result.impl());
+}
+
 WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const IntRect& rect)
     : m_webPage(webPage)
     , m_client(client)

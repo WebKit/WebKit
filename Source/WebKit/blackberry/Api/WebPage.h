@@ -381,6 +381,8 @@ public:
 
     void enableQnxJavaScriptObject(bool);
 
+    WebString renderTreeAsText();
+
 private:
     virtual ~WebPage();
 

@@ -1,3 +1,19 @@
+2012-09-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add renderTreeAsText API to WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=96629
+
+        Reviewed by Antonio Gomes.
+
+        This will be used for automated testing.
+
+        PR #198595
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::renderTreeAsText):
+        (WebKit):
+        * Api/WebPage.h:
+
 2012-09-13  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Cleanup AboutDataEnableFeatures.in
