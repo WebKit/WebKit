@@ -6322,7 +6322,7 @@ public:
     unsigned hash() const
     {
         unsigned attributeHash = StringHasher::hashMemory(m_attributes, m_attributeCount * sizeof(Attribute));
-        return WTF::intHash((static_cast<uint64_t>(m_localName->existingHash()) << 32 | attributeHash));
+        return WTF::pairIntHash(m_localName->existingHash(), attributeHash);
     }
 
 private:

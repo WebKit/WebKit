@@ -33,7 +33,7 @@
 #include <wtf/StringHasher.h>
 #include <wtf/UnusedParam.h>
 
-using WTF::intHash;
+using WTF::pairIntHash;
 
 namespace WebCore {
 
@@ -283,7 +283,7 @@ unsigned Gradient::hash() const
     unsigned parametersHash = StringHasher::hashMemory(&parameters, sizeof(parameters));
     unsigned stopHash = StringHasher::hashMemory(m_stops.data(), m_stops.size() * sizeof(ColorStop));
 
-    m_cachedHash = intHash((static_cast<uint64_t>(parametersHash) << 32) | stopHash);
+    m_cachedHash = pairIntHash(parametersHash, stopHash);
 
     return m_cachedHash;
 }

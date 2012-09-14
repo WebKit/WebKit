@@ -28,7 +28,7 @@ using BlackBerry::WebKit::TileIndex;
 namespace WTF {
 
 template<> struct IntHash<TileIndex> {
-    static unsigned hash(const TileIndex& key) { return intHash((static_cast<uint64_t>(key.i()) << 32 | key.j())); }
+    static unsigned hash(const TileIndex& key) { return pairIntHash(key.i(), key.j()); }
     static bool equal(const TileIndex& a, const TileIndex& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

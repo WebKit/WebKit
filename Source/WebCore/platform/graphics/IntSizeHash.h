@@ -27,7 +27,7 @@
 namespace WTF {
 
     template<> struct IntHash<WebCore::IntSize> {
-        static unsigned hash(const WebCore::IntSize& key) { return intHash((static_cast<uint64_t>(key.width()) << 32 | key.height())); }
+        static unsigned hash(const WebCore::IntSize& key) { return pairIntHash(key.width(), key.height()); }
         static bool equal(const WebCore::IntSize& a, const WebCore::IntSize& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };

@@ -28,7 +28,7 @@ namespace WTF {
     
 // The empty value is (0, INT_MIN), the deleted value is (INT_MIN, 0)
 struct IntPointHash {
-    static unsigned hash(const WebCore::IntPoint& p) { return WTF::intHash(static_cast<uint64_t>(p.x()) << 32 | p.y()); }
+    static unsigned hash(const WebCore::IntPoint& p) { return pairIntHash(p.x(), p.y()); }
     static bool equal(const WebCore::IntPoint& a, const WebCore::IntPoint& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

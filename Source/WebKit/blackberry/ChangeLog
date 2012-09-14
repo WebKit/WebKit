@@ -1,3 +1,14 @@
+2012-09-14  Dana Jansens  <danakj@chromium.org>
+
+        Minimize collisions when hashing pairs
+        https://bugs.webkit.org/show_bug.cgi?id=96022
+
+        Reviewed by Adrienne Walker.
+
+        Use WTF::pairIntHash() to hash a pair of integers.
+
+        * WebKitSupport/TileIndexHash.h:
+
 2012-09-14  Genevieve Mak  <gmak@rim.com>
 
         Always send mouse events on pages that don't scroll even if there

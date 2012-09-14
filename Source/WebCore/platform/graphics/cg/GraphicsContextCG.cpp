@@ -74,7 +74,7 @@ extern "C" {
 using namespace std;
 
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
-using WTF::intHash;
+using WTF::pairIntHash;
 
 // FIXME: The following using declaration should be in <wtf/HashTraits.h>.
 using WTF::GenericHashTraits;
@@ -116,8 +116,8 @@ struct SubimageCacheEntryTraits : GenericHashTraits<SubimageCacheEntry> {
 struct SubimageCacheHash {
     static unsigned hash(CGImageRef image, const FloatRect& rect)
     {
-        return intHash((static_cast<uint64_t>(PtrHash<CGImageRef>::hash(image)) << 32)
-            | (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
+        return pairIntHash(PtrHash<CGImageRef>::hash(image),
+            (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
     }
     static unsigned hash(const SubimageCacheEntry& key)
     {

@@ -37,7 +37,7 @@ namespace WTF {
 template<> struct IntHash<WebCore::IntRect> {
     static unsigned hash(const WebCore::IntRect& key)
     {
-        return intHash(static_cast<uint64_t>(DefaultHash<WebCore::IntPoint>::Hash::hash(key.location())) << 32 | DefaultHash<WebCore::IntSize>::Hash::hash(key.size()));
+        return pairIntHash(DefaultHash<WebCore::IntPoint>::Hash::hash(key.location()), DefaultHash<WebCore::IntSize>::Hash::hash(key.size()));
     }
     static bool equal(const WebCore::IntRect& a, const WebCore::IntRect& b)
     {

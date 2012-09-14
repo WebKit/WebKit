@@ -1,3 +1,38 @@
+2012-09-14  Dana Jansens  <danakj@chromium.org>
+
+        Minimize collisions when hashing pairs
+        https://bugs.webkit.org/show_bug.cgi?id=96022
+
+        Reviewed by Adrienne Walker.
+
+        The current hash function for pairs has poor performance as it does a
+        nice hash function on 64 bits, but then just drops the top 32 bits. The
+        hash method for pairs tries to use Thomas Wang's 64 bit Mix Function,
+        but this requires not dropping any bits in order to retain the
+        characteristics mentioned by Thomas.
+
+        A better method of hashing sets of 32-bit integers is to use
+        multiplication in 64 bits with random integers. This method is a
+        provably almost-universal hash function. Testing shows that this
+        method decreases the time required, when compared with the current
+        method, by more than 20% due to better hashing characteristics.
+
+        * wtf/HashFunctions.h:
+        (WTF):
+        (WTF::pairIntHash):
+        Implments the hashing method for a pair of unsigned integers.
+
+        (WTF::PairHash::hash):
+        Use pairIntHash() on the hash results of each object in the pair.
+
+        (WTF::IntPairHash::hash):
+        Implement an integer-specific PairHash class that does not need to
+        hash each object in the pair. It uses pairIntHash on the two
+        integers in the pair directly.
+
+        (WTF::IntPairHash::equal):
+        (IntPairHash):
+
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make force_static_libs_as_shared work on Mac OS
