@@ -1,5 +1,13 @@
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Set force_static_libs_as_shared early enough to be caught by configure
+
+        Rubber-stamped by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Remove old cruft from the qmake build system
 
         Rubber-stamped by Simon Hausmann.

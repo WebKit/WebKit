@@ -10,6 +10,9 @@
 # or include() and a CONFIG += feature.
 CONFIG += config_step
 
+# Enable dynamic instead of static libraries for development
+!production_build:!buildbot:!win*: CONFIG += force_static_libs_as_shared
+
 root_project_file: finalizeConfigure()
 
 # Sanitize build config for single-configuration builds
@@ -64,9 +67,6 @@ CONFIG -= warn_on
     -Wmissing-noreturn \
     -Winit-self \
     $$QMAKE_CXXFLAGS
-
-# Enable dynamic instead of static libraries for development
-!production_build:!buildbot:!win*: CONFIG += force_static_libs_as_shared
 
 # Template configurations
 contains(TEMPLATE, derived) {
