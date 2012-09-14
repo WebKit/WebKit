@@ -1,3 +1,16 @@
+2012-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: remove current traits helper class because it is customizing the instrumentation at a wrong place and is not necessary at the moment.
+        https://bugs.webkit.org/show_bug.cgi?id=96737
+
+        Reviewed by Yury Semikhatsky.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        WTF::MemoryInstrumentationTraits): removed
+        (WTF::MemoryInstrumentation::OwningTraits::addInstrumentedObject): direct call inserted
+        (WTF::MemoryInstrumentation::OwningTraits::addObject):direct call inserted
+
 2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Evas_Object* is a ref'ed structure, so tread it as such

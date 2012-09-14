@@ -48,12 +48,6 @@ enum MemoryOwningType {
     byReference
 };
 
-class MemoryInstrumentationTraits {
-public:
-    template<typename T> static void addInstrumentedObject(MemoryInstrumentation*, const T* const&, MemoryObjectType, MemoryOwningType);
-    template<typename T> static void addObject(MemoryInstrumentation*, const T* const&, MemoryObjectType, MemoryOwningType);
-};
-
 class MemoryInstrumentation {
 public:
     virtual ~MemoryInstrumentation() { }
@@ -80,7 +74,6 @@ private:
     virtual void processDeferredInstrumentedPointers() = 0;
 
     friend class MemoryClassInfo;
-    friend class MemoryInstrumentationTraits;
 
     template<typename T> class InstrumentedPointer : public InstrumentedPointerBase {
     public:
@@ -116,11 +109,11 @@ private:
     struct OwningTraits { // Default byReference implementation.
         static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectType ownerObjectType)
         {
-            MemoryInstrumentationTraits::addInstrumentedObject<T>(instrumentation, &t, ownerObjectType, byReference);
+            instrumentation->addInstrumentedObjectImpl(&t, ownerObjectType, byReference);
         }
         static void addObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectType ownerObjectType)
         {
-            MemoryInstrumentationTraits::addObject<T>(instrumentation, &t, ownerObjectType, byReference);
+            instrumentation->addObjectImpl(&t, ownerObjectType, byReference);
         }
     };
 
@@ -128,11 +121,11 @@ private:
     struct OwningTraits<T*> { // Custom byPointer implementation.
         static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType)
         {
-            MemoryInstrumentationTraits::addInstrumentedObject<T>(instrumentation, t, ownerObjectType, byPointer);
+            instrumentation->addInstrumentedObjectImpl(t, ownerObjectType, byPointer);
         }
         static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType)
         {
-            MemoryInstrumentationTraits::addObject<T>(instrumentation, t, ownerObjectType, byPointer);
+            instrumentation->addObjectImpl(t, ownerObjectType, byPointer);
         }
     };
 
@@ -144,18 +137,6 @@ private:
     template<typename T> void addObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const RefPtr<T>* const&, MemoryObjectType, MemoryOwningType);
 };
-
-template<typename T>
-void MemoryInstrumentationTraits::addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    instrumentation->addInstrumentedObjectImpl(t, ownerObjectType, owningType);
-}
-
-template<typename T>
-void MemoryInstrumentationTraits::addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    instrumentation->addObjectImpl(t, ownerObjectType, owningType);
-}
 
 class MemoryObjectInfo {
 public:
