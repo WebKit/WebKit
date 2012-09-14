@@ -1,3 +1,22 @@
+2012-09-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL] Add unit test for RefPtr<Evas_Object>
+        https://bugs.webkit.org/show_bug.cgi?id=96776
+
+        Reviewed by Simon Hausmann.
+
+        Basic testing of the new EFL specific RefPtr type.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTest::EWK2UnitTestBase::backingStore):
+        (EWK2UnitTest::EWK2UnitTestBase::canvas):
+
+            Add some new accessors for Ecore_Evas and Evas*.
+
+        * UIProcess/API/efl/tests/test_ewk2_refptr_evas_object.cpp: Added.
+        (TEST_F):
+
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move .mm file to OBJECTIVE_SOURCES
