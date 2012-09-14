@@ -84,6 +84,7 @@ fast/js/dfg-convert-this-dom-window
 fast/js/dfg-cse-cfa-discrepancy
 fast/js/dfg-dead-min-one-arg
 fast/js/dfg-dead-min-two-args
+fast/js/dfg-dead-redundant-get-array-length
 fast/js/dfg-dead-speculation
 fast/js/dfg-dead-variable-on-exit
 fast/js/dfg-double-use-of-post-simplification-double-prediction

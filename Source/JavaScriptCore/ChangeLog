@@ -1,3 +1,21 @@
+2012-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG: Dead GetButterfly's shouldn't be subject to CSE
+        https://bugs.webkit.org/show_bug.cgi?id=96707
+        <rdar://problem/12296311>
+
+        Reviewed by Oliver Hunt.
+        
+        There were a number of cases of this that creeped into the CSE: it would
+        match something even though it was dead.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::checkArrayElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::getScopeChainLoadElimination):
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+
 2012-09-13  Oliver Hunt  <oliver@apple.com>
 
         Make global const initialisation explicit in the bytecode

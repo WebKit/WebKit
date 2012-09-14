@@ -1,3 +1,17 @@
+2012-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG: Dead GetButterfly's shouldn't be subject to CSE
+        https://bugs.webkit.org/show_bug.cgi?id=96707
+        <rdar://problem/12296311>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-dead-redundant-get-array-length-expected.txt: Added.
+        * fast/js/dfg-dead-redundant-get-array-length.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-dead-redundant-get-array-length.js: Added.
+        (foo):
+
 2012-09-13  Ojan Vafai  <ojan@chromium.org>
 
         Test rebaselines after http://trac.webkit.org/changeset/128517.
