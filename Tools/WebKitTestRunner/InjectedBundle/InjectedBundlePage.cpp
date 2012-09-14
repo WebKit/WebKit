@@ -194,6 +194,20 @@ static WTF::String styleDecToStr(WKBundleCSSStyleDeclarationRef style)
     return stringBuilder.toString();
 }
 
+static WTF::String securityOriginToStr(WKSecurityOriginRef origin)
+{
+    WTF::StringBuilder stringBuilder;
+    stringBuilder.append('{');
+    stringBuilder.append(toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin))));
+    stringBuilder.appendLiteral(", ");
+    stringBuilder.append(toWTFString(adoptWK(WKSecurityOriginCopyHost(origin))));
+    stringBuilder.appendLiteral(", ");
+    stringBuilder.appendNumber(WKSecurityOriginGetPort(origin));
+    stringBuilder.append('}');
+
+    return stringBuilder.toString();
+}
+
 static WTF::String frameToStr(WKBundleFrameRef frame)
 {
     WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
@@ -360,6 +374,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*menuBarIsVisible*/
         0, /*toolbarsAreVisible*/
         didReachApplicationCacheOriginQuota,
+        didExceedDatabaseQuota,
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 
@@ -1335,6 +1350,11 @@ void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKBundlePageRef pag
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didReachApplicationCacheOriginQuota(origin, totalBytesNeeded);
 }
 
+uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKBundlePageRef page, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didExceedDatabaseQuota(origin, databaseName, databaseDisplayName, currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes);
+}
+
 static WTF::String lastFileURLPathComponent(const WTF::String& path)
 {
     size_t pos = path.find("file://");
@@ -1421,30 +1441,39 @@ void InjectedBundlePage::willRunJavaScriptPrompt(WKStringRef message, WKStringRe
 
 void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKSecurityOriginRef origin, int64_t totalBytesNeeded)
 {
-    if (!InjectedBundle::shared().testRunner()->shouldDumpApplicationCacheDelegateCallbacks())
-        return;
+    if (InjectedBundle::shared().testRunner()->shouldDumpApplicationCacheDelegateCallbacks()) {
+        // For example, numbers from 30000 - 39999 will output as 30000.
+        // Rounding up or down does not really matter for these tests. It's
+        // sufficient to just get a range of 10000 to determine if we were
+        // above or below a threshold.
+        int64_t truncatedSpaceNeeded = (totalBytesNeeded / 10000) * 10000;
 
-    // For example, numbers from 30000 - 39999 will output as 30000.
-    // Rounding up or down does not really matter for these tests. It's
-    // sufficient to just get a range of 10000 to determine if we were
-    // above or below a threshold.
-    int64_t truncatedSpaceNeeded = (totalBytesNeeded / 10000) * 10000;
-
-    InjectedBundle::shared().stringBuilder()->appendLiteral("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{");
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin))));
-    InjectedBundle::shared().stringBuilder()->appendLiteral(", ");
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKSecurityOriginCopyHost(origin))));
-    InjectedBundle::shared().stringBuilder()->appendLiteral(", ");
-    InjectedBundle::shared().stringBuilder()->appendNumber(WKSecurityOriginGetPort(origin));
-    InjectedBundle::shared().stringBuilder()->appendLiteral("} totalSpaceNeeded:~");
-    InjectedBundle::shared().stringBuilder()->appendNumber(truncatedSpaceNeeded);
-    InjectedBundle::shared().stringBuilder()->append('\n');
+        InjectedBundle::shared().stringBuilder()->appendLiteral("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:");
+        InjectedBundle::shared().stringBuilder()->append(securityOriginToStr(origin));
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" totalSpaceNeeded:~");
+        InjectedBundle::shared().stringBuilder()->appendNumber(truncatedSpaceNeeded);
+        InjectedBundle::shared().stringBuilder()->append('\n');
+    }
 
     if (InjectedBundle::shared().testRunner()->shouldDisallowIncreaseForApplicationCacheQuota())
         return;
 
     // Reset default application cache quota.
     WKBundleResetApplicationCacheOriginQuota(InjectedBundle::shared().bundle(), adoptWK(WKSecurityOriginCopyToString(origin)).get());
+}
+
+uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes)
+{
+    if (InjectedBundle::shared().testRunner()->shouldDumpDatabaseCallbacks()) {
+        InjectedBundle::shared().stringBuilder()->appendLiteral("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:");
+        InjectedBundle::shared().stringBuilder()->append(securityOriginToStr(origin));
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" database:");
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(databaseName));
+        InjectedBundle::shared().stringBuilder()->append('\n');
+    }
+
+    static const uint64_t defaultQuota = 5 * 1024 * 1024;
+    return defaultQuota;
 }
 
 // Editor Client Callbacks

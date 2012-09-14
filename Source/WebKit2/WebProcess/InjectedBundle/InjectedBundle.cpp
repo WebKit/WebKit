@@ -327,7 +327,9 @@ void InjectedBundle::clearAllDatabases()
 void InjectedBundle::setDatabaseQuota(uint64_t quota)
 {
 #if ENABLE(SQL_DATABASE)
-    WebDatabaseManager::shared().setQuotaForOrigin("file:///", quota);
+    // Historically, we've used the following (somewhat non-sensical) string
+    // for the databaseIdentifier of local files.
+    WebDatabaseManager::shared().setQuotaForOrigin("file__0", quota);
 #endif
 }
 

@@ -1,3 +1,15 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=57570
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several test cases which require implementation of
+        testRunner.dumpDatabaseCallbacks in WebKitTestRunner.
+
+        * platform/wk2/Skipped:
+
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of the WK2 Debug Bot failing tests

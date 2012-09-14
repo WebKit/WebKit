@@ -1,5 +1,34 @@
 2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
 
+        WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=57570
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new didExceedDatabaseQuota callback to WKBundlePageUIClient
+        and call it from WebChromeClient::exceededDatabaseQuota().
+        This is needed by WebKitTestRunner to dump information about
+        database callbacks.
+
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setDatabaseQuota): Call WebDatabaseManager::setQuotaForOrigin()
+        with "file__0" instead of "file:///" as origin identifier. WebDatabaseManager expects
+        a database identifier, not a string representation of the security origin. "file__0" is
+        the string that is used as databaseIdentifier of local files. This bug was causing the
+        database quota not to be set. The test cases would therefore fail due to the quota being
+        0 instead of the value explicitly set.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didExceedDatabaseQuota):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        (InjectedBundlePageUIClient):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
         WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
         https://bugs.webkit.org/show_bug.cgi?id=42691
 

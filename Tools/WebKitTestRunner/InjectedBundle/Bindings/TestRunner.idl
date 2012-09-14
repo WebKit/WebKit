@@ -48,6 +48,7 @@ module WTR {
         void dumpResourceResponseMIMETypes();
         void dumpWillCacheResponse();
         void dumpApplicationCacheDelegateCallbacks();
+        void dumpDatabaseCallbacks();
 
         // Special options.
         void keepWebHistory();
