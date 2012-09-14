@@ -1,3 +1,15 @@
+2012-09-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Add method to get the list of all available dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=96518
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::getSpellCheckingLanguages):
+        Update the method name that is called inside getSpellCheckingLanguages.
+        This replace doesn't affect any on API changes.
+
 2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
 
         [WK2] Add color picker API support for WebKit2

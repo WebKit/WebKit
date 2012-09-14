@@ -173,7 +173,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
     m_enchantDictionaries = spellDictionaries;
 }
 
-Vector<String> TextCheckerEnchant::getSpellCheckingLanguages()
+Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const
 {
     Vector<String> languages;
     if (m_enchantDictionaries.isEmpty())
@@ -185,6 +185,18 @@ Vector<String> TextCheckerEnchant::getSpellCheckingLanguages()
         enchant_dict_describe(*iter, enchantDictDescribeCallback, &currentDictionaries);
 
     for (Vector<CString>::const_iterator iter = currentDictionaries.begin(); iter != currentDictionaries.end(); ++iter)
+        languages.append(String::fromUTF8(iter->data()));
+
+    return languages;
+}
+
+Vector<String> TextCheckerEnchant::availableSpellCheckingLanguages() const
+{
+    Vector<CString> allDictionaries;
+    enchant_broker_list_dicts(m_broker, enchantDictDescribeCallback, &allDictionaries);
+
+    Vector<String> languages;
+    for (Vector<CString>::const_iterator iter = allDictionaries.begin(); iter != allDictionaries.end(); ++iter)
         languages.append(String::fromUTF8(iter->data()));
 
     return languages;

@@ -140,7 +140,7 @@ void WebKitTextChecker::setSpellCheckingEnabled(bool enabled)
 
 const char* const* WebKitTextChecker::getSpellCheckingLanguages()
 {
-    Vector<String> spellCheckingLanguages = m_textChecker->getSpellCheckingLanguages();
+    Vector<String> spellCheckingLanguages = m_textChecker->loadedSpellCheckingLanguages();
     if (spellCheckingLanguages.isEmpty())
         return 0;
 
