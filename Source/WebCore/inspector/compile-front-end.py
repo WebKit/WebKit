@@ -179,6 +179,7 @@ modules = [
         "name": "elements",
         "dependencies": ["components"],
         "sources": [
+            "CSSNamedFlowCollectionsView.js",
             "ElementsPanel.js",
             "ElementsPanelDescriptor.js",
             "EventListenersSidebarPane.js",

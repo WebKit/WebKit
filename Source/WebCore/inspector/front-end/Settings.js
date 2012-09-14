@@ -197,6 +197,7 @@ WebInspector.ExperimentsSettings = function()
     this.deviceOrientationOverride = this._createExperiment("deviceOrientationOverride", "Override Device Orientation");
     this.sass = this._createExperiment("sass", "Support for SASS");
     this.codemirror = this._createExperiment("codemirror", "Use CodeMirror editor");
+    this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
 
     this._cleanUpSetting();
 }

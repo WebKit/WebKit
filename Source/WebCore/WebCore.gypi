@@ -6468,6 +6468,7 @@
             'inspector/front-end/auditsPanel.css',
             'inspector/front-end/breadcrumbList.css',
             'inspector/front-end/cm/codemirror.css',
+            'inspector/front-end/cssNamedFlows.css',
             'inspector/front-end/cmdevtools.css',
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/elementsPanel.css',
@@ -6494,6 +6495,7 @@
             'inspector/front-end/webGLProfiler.css',
         ],
         'webinspector_elements_js_files': [
+            'inspector/front-end/CSSNamedFlowCollectionsView.js',
             'inspector/front-end/ElementsPanel.js',
             'inspector/front-end/EventListenersSidebarPane.js',
             'inspector/front-end/MetricsSidebarPane.js',
@@ -6611,6 +6613,7 @@
             'inspector/front-end/Images/checker.png',
             'inspector/front-end/Images/closeButtons.png',
             'inspector/front-end/Images/cookie.png',
+            'inspector/front-end/Images/namedFlowOverflow.png',
             'inspector/front-end/Images/database.png',
             'inspector/front-end/Images/databaseTable.png',
             'inspector/front-end/Images/debuggerContinue.png',

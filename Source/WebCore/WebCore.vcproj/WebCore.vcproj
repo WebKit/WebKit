@@ -76022,6 +76022,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CSSNamedFlowCollectionsView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cssNamedFlows.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CSSSelectorProfileView.js"
 					>
 				</File>

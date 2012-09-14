@@ -31,6 +31,7 @@
     <file>CPUProfileView.js</file>
     <file>CSSCompletions.js</file>
     <file>CSSKeywordCompletions.js</file>
+    <file>CSSNamedFlowCollectionsView.js</file>
     <file>CSSSelectorProfileView.js</file>
     <file>CSSStyleModel.js</file>
     <file>cm/codemirror.css</file>
@@ -215,6 +216,7 @@
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
     <file>breadcrumbList.css</file>
+    <file>cssNamedFlows.css</file>
     <file>dataGrid.css</file>
     <file>cmdevtools.css</file>
     <file>dialog.css</file>
@@ -288,6 +290,7 @@
     <file>Images/indexedDBIndex.png</file>
     <file>Images/localStorage.png</file>
     <file>Images/navigatorShowHideButton.png</file>
+    <file>Images/namedFlowOverflow.png</file>
     <file>Images/paneAddButtons.png</file>
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>

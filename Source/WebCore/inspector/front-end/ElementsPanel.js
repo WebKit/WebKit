@@ -28,6 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("CSSNamedFlowCollectionsView.js");
 importScript("EventListenersSidebarPane.js");
 importScript("MetricsSidebarPane.js");
 importScript("PropertiesSidebarPane.js");
@@ -336,10 +337,23 @@ WebInspector.ElementsPanel.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
         var populated = this.treeOutline.populateContextMenu(contextMenu, event);
+
+        if (WebInspector.experimentsSettings.cssRegions.isEnabled()) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("CSS Named Flows..."), this._showNamedFlowCollections.bind(this));
+        }
+
         contextMenu.appendSeparator();
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), WebInspector.settings.domWordWrap.get());
 
         contextMenu.show(event);
+    },
+
+    _showNamedFlowCollections: function()
+    {
+        if (!WebInspector.cssNamedFlowCollectionsView)
+            WebInspector.cssNamedFlowCollectionsView = new WebInspector.CSSNamedFlowCollectionsView();
+        WebInspector.cssNamedFlowCollectionsView.showInDrawer();
     },
 
     _domWordWrapSettingChanged: function(event)
