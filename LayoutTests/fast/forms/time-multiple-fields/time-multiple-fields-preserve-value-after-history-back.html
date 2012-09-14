@@ -6,7 +6,7 @@
 <body>
 <div id=container>
 <input type=time id=test1><br>
-<input type=time id=test2><br>
+<input type=time id=test2 step=1><br>
 <iframe id=iframe></iframe>
 </div>
 <script>
@@ -82,6 +82,7 @@ case '?page1':
         keyDown('upArrow');
         keyDown('\t');
         keyDown('\t');
+        keyDown('\t');
         keyDown('upArrow');
         var nextUri = location.toString().replace('?page1', '?page2');
         setTimeout(function () { window.location.href = nextUri; }, 0);
@@ -96,7 +97,7 @@ case '?page1':
             {
                 'description' : 'Went back to a page. Checking a form control which had a partial value',
                 'actual' : fieldsText(testInput2),
-                'expected' : '01:-- AM'
+                'expected' : '01:--:-- AM'
             });
         forward('forwardTo2');
         break;
@@ -127,7 +128,7 @@ case '?page2':
             {
                 'description' : 'Went forward to a page. Checking a form control which had a partial value',
                 'actual' : fieldsText(testInput2),
-                'expected' : '--:59 --'
+                'expected' : '--:59:-- --'
             });
         back('backTo1Second');
         break;
