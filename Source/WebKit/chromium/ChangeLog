@@ -1,3 +1,14 @@
+2012-09-13  Keishi Hattori  <keishi@webkit.org>
+
+        Create Localizer factory method for LocaleWin
+        https://bugs.webkit.org/show_bug.cgi?id=96667
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocaleWinTest.cpp:
+        (testNumberIsReversible):
+        (testNumbers):
+
 2012-09-13  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Consolidate two-phase connection to avoid race conditions
