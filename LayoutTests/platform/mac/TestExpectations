@@ -352,9 +352,6 @@ BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html
 
 BUGWK95501 SKIP : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
 
-// (r128375) new test fails on Mac
-BUGWK96583 : fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html = TEXT
-
 BUG_OJAN : fast/table/height-percent-test.html = TEXT IMAGE+TEXT IMAGE
 BUG_OJAN : tables/mozilla/core/cell_heights.html = TEXT IMAGE+TEXT IMAGE
 BUG_OJAN : tables/mozilla_expected_failures/bugs/bug19526.html = TEXT IMAGE+TEXT IMAGE

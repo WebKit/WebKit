@@ -1,5 +1,16 @@
 2012-09-13  Ojan Vafai  <ojan@chromium.org>
 
+        Rebaseline fast/css/percentage-height-auto-sized-body-quirks.html after
+        http://trac.webkit.org/changeset/128517. The results are now consistent
+        across platforms.
+
+        * platform/efl/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/qt/fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks-expected.txt: Removed.
+
+2012-09-13  Ojan Vafai  <ojan@chromium.org>
+
         Remove lines for fast/table/bad-replaced-sizing-preferred-logical-widths.html
         fixed in http://trac.webkit.org/changeset/128528.
 
