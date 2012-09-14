@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".

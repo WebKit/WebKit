@@ -63,6 +63,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
     , m_closePending(false)
     , m_contextStopped(false)
     , m_databaseCallbacks(callbacks)
+    , m_didSpamConsole(false)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -198,6 +199,12 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
 {
+    if (!m_didSpamConsole) {
+        String consoleMessage = ASCIILiteral("The setVersion() method is non-standard and will be removed. Use the \"upgradeneeded\" event instead.");
+        context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+        m_didSpamConsole = true;
+    }
+
     if (version.isNull()) {
         ec = NATIVE_TYPE_ERR;
         return 0;

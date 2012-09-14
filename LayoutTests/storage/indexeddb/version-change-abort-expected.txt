@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 71: Uncaught Error: This should *NOT* be caught!
 Ensure that aborted VERSION_CHANGE transactions are completely rolled back
 
