@@ -1,3 +1,12 @@
+2012-09-14  Keishi Hattori  <keishi@webkit.org>
+
+        Add runtime flag that enables lang attribute for form controls in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=96636
+
+        Reviewed by Kent Tamura.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Remove some redundant warning flags and enable a few more warnings.

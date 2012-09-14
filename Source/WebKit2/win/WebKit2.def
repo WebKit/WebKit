@@ -186,6 +186,7 @@ EXPORTS
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
         ?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z
         ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
+        ?isLangAttributeAwareFormControlUIEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ

@@ -80,6 +80,7 @@ public:
 #endif
         bool m_canStartMedia;
         bool m_originalMockScrollbarsEnabled;
+        bool m_langAttributeAwareFormControlUIEnabled;
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;
@@ -143,6 +144,7 @@ public:
     String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
     void setMemoryInfoEnabled(bool, ExceptionCode&);
     void setStorageBlockingPolicy(const String&, ExceptionCode&);
+    void setLangAttributeAwareFormControlUIEnabled(bool);
 private:
     explicit InternalSettings(Page*);
     virtual void hostDestroyed() OVERRIDE { m_page = 0; }

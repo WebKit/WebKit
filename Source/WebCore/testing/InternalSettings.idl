@@ -68,6 +68,7 @@ module window {
         void setJavaScriptProfilingEnabled(in boolean creates) raises(DOMException);
         void setWindowFocusRestricted(in boolean restricted) raises(DOMException);
         void setDialogElementEnabled(in boolean enabled) raises(DOMException);
+        void setLangAttributeAwareFormControlUIEnabled(in boolean enabled);
 
         void setPagination(in DOMString mode, in long gap, in [Optional] long pageLength) raises(DOMException);
         sequence<String> userPreferredLanguages();

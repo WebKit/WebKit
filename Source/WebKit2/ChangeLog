@@ -1,3 +1,13 @@
+2012-09-14  Keishi Hattori  <keishi@webkit.org>
+
+        Add runtime flag that enables lang attribute for form controls in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=96636
+
+        Reviewed by Kent Tamura.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-09-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Add method to get the list of all available dictionaries
