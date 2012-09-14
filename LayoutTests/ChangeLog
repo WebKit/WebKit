@@ -1,3 +1,13 @@
+2012-09-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed.
+        
+        A small improvement to this flaky test: use a correct URL, so that the test fails
+        quickly and understandably instead of timing out. This code path didn't use to be
+        taken before, so the URL was always wrong.
+
+        * fast/loader/resources/submit-form-while-parsing-subframe.html:
+
 2012-09-14  Stephanie Lewis  <slewis@apple.com>
 
         new fast/loader tests from r128645 fail on Mac-wk2.
