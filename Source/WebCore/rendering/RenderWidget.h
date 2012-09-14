@@ -28,6 +28,32 @@
 
 namespace WebCore {
 
+class WidgetHierarchyUpdatesSuspensionScope {
+public:
+    WidgetHierarchyUpdatesSuspensionScope()
+    {
+        s_widgetHierarchyUpdateSuspendCount++;
+    }
+    ~WidgetHierarchyUpdatesSuspensionScope()
+    {
+        ASSERT(s_widgetHierarchyUpdateSuspendCount);
+        if (s_widgetHierarchyUpdateSuspendCount == 1)
+            moveWidgets();
+        s_widgetHierarchyUpdateSuspendCount--;
+    }
+
+    static bool isSuspended() { return s_widgetHierarchyUpdateSuspendCount; }
+    static void scheduleWidgetToMove(Widget* widget, FrameView* frame) { widgetNewParentMap().set(widget, frame); }
+
+private:
+    typedef HashMap<RefPtr<Widget>, FrameView*> WidgetToParentMap;
+    static WidgetToParentMap& widgetNewParentMap();
+
+    void moveWidgets();
+
+    static unsigned s_widgetHierarchyUpdateSuspendCount;
+};
+    
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
 public:
     virtual ~RenderWidget();
@@ -42,9 +68,6 @@ public:
     IntRect windowClipRect() const;
 
     void notifyWidget(WidgetNotification);
-    
-    static void suspendWidgetHierarchyUpdates();
-    static void resumeWidgetHierarchyUpdates();
 
     RenderArena* ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena*);

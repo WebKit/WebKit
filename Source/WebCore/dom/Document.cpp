@@ -1825,65 +1825,66 @@ void Document::recalcStyle(StyleChange change)
 
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
-    RenderWidget::suspendWidgetHierarchyUpdates();
-    
-    RefPtr<FrameView> frameView = view();
-    if (frameView) {
-        frameView->pauseScheduledEvents();
-        frameView->beginDeferredRepaints();
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+        RefPtr<FrameView> frameView = view();
+        if (frameView) {
+            frameView->pauseScheduledEvents();
+            frameView->beginDeferredRepaints();
+        }
+
+        ASSERT(!renderer() || renderArena());
+        if (!renderer() || !renderArena())
+            goto bailOut;
+
+        if (m_pendingStyleRecalcShouldForce)
+            change = Force;
+
+        // Recalculating the root style (on the document) is not needed in the common case.
+        if ((change == Force) || (shouldDisplaySeamlesslyWithParent() && (change >= Inherit))) {
+            // style selector may set this again during recalc
+            m_hasNodesWithPlaceholderStyle = false;
+            
+            RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleResolver ? m_styleResolver->fontSelector() : 0);
+            StyleChange ch = Node::diff(documentStyle.get(), renderer()->style(), this);
+            if (ch != NoChange)
+                renderer()->setStyle(documentStyle.release());
+        }
+
+        for (Node* n = firstChild(); n; n = n->nextSibling()) {
+            if (!n->isElementNode())
+                continue;
+            Element* element = static_cast<Element*>(n);
+            if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc())
+                element->recalcStyle(change);
+        }
+
+    #if USE(ACCELERATED_COMPOSITING)
+        if (view()) {
+            bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
+            // If we didn't update compositing layers because of layout(), we need to do so here.
+            if (!layoutPending)
+                view()->updateCompositingLayersAfterStyleChange();
+        }
+    #endif
+
+    bailOut:
+        clearNeedsStyleRecalc();
+        clearChildNeedsStyleRecalc();
+        unscheduleStyleRecalc();
+
+        m_inStyleRecalc = false;
+
+        // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
+        if (m_styleResolver)
+            resetCSSFeatureFlags();
+
+        if (frameView) {
+            frameView->resumeScheduledEvents();
+            frameView->endDeferredRepaints();
+        }
     }
-
-    ASSERT(!renderer() || renderArena());
-    if (!renderer() || !renderArena())
-        goto bail_out;
-
-    if (m_pendingStyleRecalcShouldForce)
-        change = Force;
-
-    // Recalculating the root style (on the document) is not needed in the common case.
-    if ((change == Force) || (shouldDisplaySeamlesslyWithParent() && (change >= Inherit))) {
-        // style selector may set this again during recalc
-        m_hasNodesWithPlaceholderStyle = false;
-        
-        RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleResolver ? m_styleResolver->fontSelector() : 0);
-        StyleChange ch = Node::diff(documentStyle.get(), renderer()->style(), this);
-        if (ch != NoChange)
-            renderer()->setStyle(documentStyle.release());
-    }
-
-    for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        if (!n->isElementNode())
-            continue;
-        Element* element = static_cast<Element*>(n);
-        if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc())
-            element->recalcStyle(change);
-    }
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (view()) {
-        bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
-        // If we didn't update compositing layers because of layout(), we need to do so here.
-        if (!layoutPending)
-            view()->updateCompositingLayersAfterStyleChange();
-    }
-#endif
-
-bail_out:
-    clearNeedsStyleRecalc();
-    clearChildNeedsStyleRecalc();
-    unscheduleStyleRecalc();
-
-    m_inStyleRecalc = false;
-    
-    // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    if (m_styleResolver)
-        resetCSSFeatureFlags();
-
-    if (frameView) {
-        frameView->resumeScheduledEvents();
-        frameView->endDeferredRepaints();
-    }
-    RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
