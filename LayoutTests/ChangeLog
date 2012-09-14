@@ -1,3 +1,14 @@
+2012-09-14  Stephanie Lewis  <slewis@apple.com>
+
+        new fast/loader tests from r128645 fail on Mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=96832.
+
+        Unreviewed.
+
+        Update TestExpectations
+
+        * platform/mac-wk2/TestExpectations:
+
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
         Add expectations for tests that depend on other tests running before them.

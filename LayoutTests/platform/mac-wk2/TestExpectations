@@ -9,3 +9,6 @@ BUGWK96652 : fast/events/dispatch-message-string-data.html = TEXT
 // WK2 tests fail image diff
 BUGWK96580 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
 
+// new fast/load tests fail https://bugs.webkit.org/show_bug.cgi?id=96832
+BUGWK96832 : fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html = TEXT
+BUGWK96832 : fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html = TEXT
