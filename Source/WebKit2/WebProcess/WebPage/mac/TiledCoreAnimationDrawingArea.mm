@@ -76,6 +76,12 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     page->settings()->setScrollingCoordinatorEnabled(true);
     page->settings()->setForceCompositingMode(true);
 
+    // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
+    // As a part of that work, we have to composite fixed position elements, and we have to allow those
+    // elements to create a stacking context.
+    page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+    page->settings()->setFixedPositionCreatesStackingContext(true);
+
     WebProcess::shared().eventDispatcher().addScrollingTreeForPage(webPage);
 
     m_rootLayer = [CALayer layer];

@@ -1,3 +1,20 @@
+2012-09-14  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96688
+        Put position:fixed elements in their own layers and allow them to 
+        create a stacking context
+        -and corresponding-
+        <rdar://problem/11467961>
+
+        Reviewed by Simon Fraser.
+
+        Soon we want pages with fixed positioned elements to be able to be 
+        scrolled by the ScrollingCoordinator. As a part of that work, we have 
+        to composite fixed position elements, and we have to allow those
+        elements to create a stacking context.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2012-09-14  Bo Liu  <boliu@chromium.org>
 
         Add in-place reload behavior to ImagesEnabled setting

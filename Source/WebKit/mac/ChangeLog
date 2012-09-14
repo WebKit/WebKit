@@ -1,3 +1,17 @@
+2012-09-14  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96688
+        Put position:fixed elements in their own layers and allow them to 
+        create a stacking context
+        -and corresponding-
+        <rdar://problem/11467961>
+
+        Reviewed by Simon Fraser.
+
+        Enable these settings in WK1 too for consistency. 
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128552.
