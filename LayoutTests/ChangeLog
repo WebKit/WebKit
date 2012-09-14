@@ -1,3 +1,10 @@
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
+        Add expectations for tests that depend on other tests running before them.
+        Filed a bug for each with information on which test it depends on.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-14  James Robinson  <jamesr@chromium.org>
 
         Unreviewed gardening.
