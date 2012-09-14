@@ -30,14 +30,14 @@
 
 /**
  * @constructor
+ * @param {function(Array.<string>, WebInspector.Progress, boolean, function(), function()):undefined} runnerCallback
  * @extends {WebInspector.View}
  */
-WebInspector.AuditLauncherView = function(runnerCallback, stopCallback)
+WebInspector.AuditLauncherView = function(runnerCallback)
 {
     WebInspector.View.call(this);
 
     this._runnerCallback = runnerCallback;
-    this._stopCallback = stopCallback;
     this._categoryIdPrefix = "audit-category-item-";
     this._auditRunning = false;
 
@@ -118,27 +118,44 @@ WebInspector.AuditLauncherView.prototype = {
         if (this._auditRunning === auditRunning)
             return;
         this._auditRunning = auditRunning;
-        delete this._stopRequested;
         this._updateButton();
-        this._updateResourceProgress();
+        if (this._auditRunning)
+            this._startAudit();
+        else
+            this._stopAudit();
+    },
+
+    _startAudit: function()
+    {
+        var catIds = [];
+        for (var category = 0; category < this._sortedCategories.length; ++category) {
+            if (this._sortedCategories[category]._checkboxElement.checked)
+                catIds.push(this._sortedCategories[category].id);
+        }
+
+        this._resetResourceCount();
+        this._progressIndicator = new WebInspector.ProgressIndicator();
+        this._buttonContainerElement.appendChild(this._progressIndicator.element);
+        this._displayResourceLoadingProgress = true;
+
+        function onAuditStarted()
+        {
+            this._displayResourceLoadingProgress = false;
+        }
+        this._runnerCallback(catIds, this._progressIndicator, this._auditPresentStateElement.checked, onAuditStarted.bind(this), this._setAuditRunning.bind(this, false));
+    },
+
+    _stopAudit: function()
+    {
+        this._displayResourceLoadingProgress = false;
+        this._progressIndicator.cancel();
+        this._progressIndicator.done();
+        delete this._progressIndicator;
     },
 
     _launchButtonClicked: function(event)
     {
-        if (!this._auditRunning) {
-            var catIds = [];
-            for (var category = 0; category < this._sortedCategories.length; ++category) {
-                if (this._sortedCategories[category]._checkboxElement.checked)
-                    catIds.push(this._sortedCategories[category].id);
-            }
-
-            this._setAuditRunning(true);
-            this._runnerCallback(catIds, this._resourceProgressElement, this._auditPresentStateElement.checked, this._setAuditRunning.bind(this, false));
-        } else {
-            this._stopRequested = true;
-            this._stopCallback(this._setAuditRunning.bind(this, false));
-            this._updateButton();
-        }
+        this._setAuditRunning(!this._auditRunning);
     },
 
     _selectAllClicked: function(checkCategories)
@@ -218,37 +235,20 @@ WebInspector.AuditLauncherView.prototype = {
         this._launchButton.textContent = WebInspector.UIString("Run");
         this._launchButton.addEventListener("click", this._launchButtonClicked.bind(this), false);
 
-        this._resourceProgressContainer = this._buttonContainerElement.createChild("span", "resource-progress");
-        this._resourceProgressElement = this._resourceProgressContainer.createChild("progress");
-        this._resourceProgressContainer.appendChild(document.createTextNode(" "));
-        this._resourceProgressTextElement = this._resourceProgressContainer.createChild("span");
-
-
         this._selectAllClicked(this._selectAllCheckboxElement.checked);
         this._updateButton();
-        this._updateResourceProgress();
     },
 
     _updateResourceProgress: function()
     {
-        if (!this._resourceProgressContainer)
-            return;
-
-        if (!this._auditRunning || this._stopRequested) {
-            this._resetResourceCount();
-            this._resourceProgressContainer.addStyleClass("hidden");
-        } else
-            this._resourceProgressContainer.removeStyleClass("hidden");
-        if (this._loadedResources)
-            this._resourceProgressTextElement.textContent = WebInspector.UIString("Loading (%d of %d)", this._loadedResources, this._totalResources);
-        else
-            this._resourceProgressTextElement.textContent = "";
+        if (this._displayResourceLoadingProgress)
+            this._progressIndicator.setTitle(WebInspector.UIString("Loading (%d of %d)", this._loadedResources, this._totalResources));
     },
 
     _updateButton: function()
     {
         this._launchButton.textContent = this._auditRunning ? WebInspector.UIString("Stop") : WebInspector.UIString("Run");
-        this._launchButton.disabled = !this._currentCategoriesCount || (this._auditRunning && this._stopRequested);
+        this._launchButton.disabled = !this._currentCategoriesCount;
     }
 }
 

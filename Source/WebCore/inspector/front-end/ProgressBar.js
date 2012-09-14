@@ -52,6 +52,11 @@ WebInspector.Progress.prototype = {
      */
     setWorked: function(worked, title) { },
 
+    /**
+     * @param {number=} worked
+     */
+    worked: function(worked) { },
+
     done: function() { },
 
     /**
@@ -72,9 +77,10 @@ WebInspector.ProgressIndicator = function()
     this._labelElement = this.element.createChild("span");
     this._progressElement = this.element.createChild("progress");
     this._stopButton = new WebInspector.StatusBarButton(WebInspector.UIString("Cancel"), "progress-bar-stop-button");
-    this._stopButton.addEventListener("click", this._cancel, this);
+    this._stopButton.addEventListener("click", this.cancel, this);
     this.element.appendChild(this._stopButton.element);
     this._isCanceled = false;
+    this._worked = 0;
 }
 
 WebInspector.ProgressIndicator.Events = {
@@ -103,7 +109,7 @@ WebInspector.ProgressIndicator.prototype = {
         this.dispatchEventToListeners(WebInspector.ProgressIndicator.Events.Done);
     },
 
-    _cancel: function()
+    cancel: function()
     {
         this._isCanceled = true;
     },
@@ -135,9 +141,18 @@ WebInspector.ProgressIndicator.prototype = {
      */
     setWorked: function(worked, title)
     {
+        this._worked = worked;
         this._progressElement.value = worked;
         if (title)
             this.setTitle(title);
+    },
+
+    /**
+     * @param {number=} worked
+     */
+    worked: function(worked)
+    {
+        this.setWorked(this._worked + (worked || 1));
     }
 }
 
@@ -243,5 +258,13 @@ WebInspector.SubProgress.prototype = {
         if (typeof title !== "undefined")
             this.setTitle(title);
         this._composite._update();
+    },
+
+    /**
+     * @param {number=} worked
+     */
+    worked: function(worked)
+    {
+        this.setWorked(this._worked + (worked || 1));
     }
 }

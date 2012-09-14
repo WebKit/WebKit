@@ -75,8 +75,11 @@ WebInspector.AuditRules.GzipRule = function()
 WebInspector.AuditRules.GzipRule.prototype = {
     /**
      * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
      */
-    doRun: function(requests, result, callback, progressMonitor)
+    doRun: function(requests, result, callback, progress)
     {
         var totalSavings = 0;
         var compressedSize = 0;
@@ -135,7 +138,13 @@ WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, 
 }
 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests, [this._type], false);
         var penalizedResourceCount = 0;
@@ -190,7 +199,13 @@ WebInspector.AuditRules.MinimizeDnsLookupsRule = function(hostCountThreshold) {
 }
 
 WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var summary = result.addChild("");
         var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(requests, undefined, false);
@@ -228,7 +243,13 @@ WebInspector.AuditRules.ParallelizeDownloadRule = function(optimalHostnameCount,
 }
 
 WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         function hostSorter(a, b)
         {
@@ -297,12 +318,18 @@ WebInspector.AuditRules.UnusedCssRule = function()
 }
 
 WebInspector.AuditRules.UnusedCssRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var self = this;
 
         function evalCallback(styleSheets) {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!styleSheets.length)
@@ -324,7 +351,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
             function selectorsCallback(callback, styleSheets, testedSelectors, foundSelectors)
             {
-                if (progressMonitor.canceled)
+                if (progress.isCanceled())
                     return;
 
                 var inlineBlockOrdinal = 0;
@@ -389,7 +416,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
             function documentLoaded(selectors, document) {
                 for (var i = 0; i < selectors.length; ++i) {
-                    if (progressMonitor.canceled)
+                    if (progress.isCanceled())
                         return;
                     WebInspector.domAgent.querySelector(document.id, selectors[i], queryCallback.bind(null, i === selectors.length - 1 ? selectorsCallback.bind(null, callback, styleSheets, testedSelectors) : null, selectors[i], styleSheets, testedSelectors));
                 }
@@ -400,7 +427,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
         function styleSheetCallback(styleSheets, sourceURL, continuation, styleSheet)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (styleSheet) {
@@ -413,7 +440,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
         function allStylesCallback(error, styleSheetInfos)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (error || !styleSheetInfos || !styleSheetInfos.length)
@@ -443,8 +470,13 @@ WebInspector.AuditRules.CacheControlRule = function(id, name)
 WebInspector.AuditRules.CacheControlRule.MillisPerMonth = 1000 * 60 * 60 * 24 * 30;
 
 WebInspector.AuditRules.CacheControlRule.prototype = {
-
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var cacheableAndNonCacheableResources = this._cacheableAndNonCacheableResources(requests);
         if (cacheableAndNonCacheableResources[0].length)
@@ -691,7 +723,13 @@ WebInspector.AuditRules.ImageDimensionsRule = function()
 }
 
 WebInspector.AuditRules.ImageDimensionsRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var urlToNoDimensionCount = {};
 
@@ -710,7 +748,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
         function imageStylesReady(imageId, styles, isLastStyle, computedStyle)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             const node = WebInspector.domAgent.nodeForId(imageId);
@@ -766,7 +804,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
         function getStyles(nodeIds)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
             var targetResult = {};
 
@@ -794,12 +832,12 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
         function onDocumentAvailable(root)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
             WebInspector.domAgent.querySelectorAll(root.id, "img[src]", getStyles);
         }
 
-        if (progressMonitor.canceled)
+        if (progress.isCanceled())
             return;
         WebInspector.domAgent.requestDocument(onDocumentAvailable);
     }
@@ -817,11 +855,17 @@ WebInspector.AuditRules.CssInHeadRule = function()
 }
 
 WebInspector.AuditRules.CssInHeadRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         function evalCallback(evalResult)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!evalResult)
@@ -846,7 +890,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
         function externalStylesheetsReceived(root, inlineStyleNodeIds, nodeIds)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!nodeIds)
@@ -869,7 +913,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
         function inlineStylesReceived(root, nodeIds)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!nodeIds)
@@ -879,7 +923,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 
         function onDocumentAvailable(root)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             WebInspector.domAgent.querySelectorAll(root.id, "body style", inlineStylesReceived.bind(null, root));
@@ -901,11 +945,17 @@ WebInspector.AuditRules.StylesScriptsOrderRule = function()
 }
 
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         function evalCallback(resultValue)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!resultValue)
@@ -927,7 +977,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
         function cssBeforeInlineReceived(lateStyleIds, nodeIds)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!nodeIds)
@@ -950,7 +1000,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
         function lateStylesReceived(root, nodeIds)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!nodeIds)
@@ -961,7 +1011,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 
         function onDocumentAvailable(root)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             WebInspector.domAgent.querySelectorAll(root.id, "head script[src] ~ link[rel~='stylesheet'][href]", lateStylesReceived.bind(null, root));
@@ -983,7 +1033,13 @@ WebInspector.AuditRules.CSSRuleBase = function(id, name)
 }
 
 WebInspector.AuditRules.CSSRuleBase.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         CSSAgent.getAllStyleSheets(sheetsCallback.bind(this));
 
@@ -997,7 +1053,7 @@ WebInspector.AuditRules.CSSRuleBase.prototype = {
                 if (header.disabled)
                     continue; // Do not check disabled stylesheets.
 
-                this._visitStyleSheet(header.styleSheetId, i === headers.length - 1 ? finishedCallback : null, result, progressMonitor);
+                this._visitStyleSheet(header.styleSheetId, i === headers.length - 1 ? finishedCallback : null, result, progress);
             }
         }
 
@@ -1007,13 +1063,13 @@ WebInspector.AuditRules.CSSRuleBase.prototype = {
         }
     },
 
-    _visitStyleSheet: function(styleSheetId, callback, result, progressMonitor)
+    _visitStyleSheet: function(styleSheetId, callback, result, progress)
     {
         WebInspector.CSSStyleSheet.createForId(styleSheetId, sheetCallback.bind(this));
 
         function sheetCallback(styleSheet)
         {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             if (!styleSheet) {
@@ -1144,11 +1200,17 @@ WebInspector.AuditRules.CookieRuleBase = function(id, name)
 }
 
 WebInspector.AuditRules.CookieRuleBase.prototype = {
-    doRun: function(requests, result, callback, progressMonitor)
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.AuditRuleResult} result
+     * @param {function(WebInspector.AuditRuleResult)} callback
+     * @param {WebInspector.Progress} progress
+     */
+    doRun: function(requests, result, callback, progress)
     {
         var self = this;
         function resultCallback(receivedCookies, isAdvanced) {
-            if (progressMonitor.canceled)
+            if (progress.isCanceled())
                 return;
 
             self.processCookies(isAdvanced ? receivedCookies : [], requests, result);

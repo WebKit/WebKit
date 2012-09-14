@@ -116,12 +116,6 @@
     margin-left: 0;
 }
 
-.audit-launcher-view .resource-progress > img {
-    content: url(Images/spinner.gif);
-    vertical-align: text-top;
-    margin: 0 4px 0 8px;
-}
-
 .audit-result-view {
     overflow: auto;
     position: absolute;
@@ -232,4 +226,12 @@
     float: left;
     margin-left: -28px;
     margin-top: -1px;
+}
+
+.audit-launcher-view .progress-bar-container {
+    display: inline-block;
+}
+
+.audit-launcher-view .progress-bar-container .progress-bar-stop-button {
+    display: none;
 }

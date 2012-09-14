@@ -742,3 +742,4 @@ localizedStrings["Layout invalidated"] = "Layout invalidated";
 localizedStrings["Layout forced"] = "Layout forced";
 localizedStrings["Paused on assertion."] = "Paused on assertion.";
 localizedStrings["%s (%s%s)"] = "%s (%s%s)";
+localizedStrings["Running audit"] = "Running audit";
