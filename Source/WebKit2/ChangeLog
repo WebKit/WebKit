@@ -1,3 +1,21 @@
+2012-09-13  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Implement missing initializeLogChannel function
+        https://bugs.webkit.org/show_bug.cgi?id=96478
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented log channel initialization function for EFL platform in WebKit2.
+
+        * Platform/Logging.cpp:
+        (WebKit):
+        * Platform/Logging.h:
+        (WebKit):
+        * Platform/efl/LoggingEfl.cpp: Added.
+        (WebKit):
+        (WebKit::initializeLogChannel): Channel is initialized if its name is found in WEBKIT_DEBUG.
+        * PlatformEfl.cmake:
+
 2012-09-13  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/12283706> WebKit looks for some files on the system even when building against an SDK.

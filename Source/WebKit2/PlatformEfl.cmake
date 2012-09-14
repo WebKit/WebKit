@@ -1,4 +1,5 @@
 LIST(APPEND WebKit2_SOURCES
+    Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
     Platform/efl/WorkQueueEfl.cpp
     Platform/unix/SharedMemoryUnix.cpp

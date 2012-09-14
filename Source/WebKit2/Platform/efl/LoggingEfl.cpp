@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
-
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "Logging.h"
 
 #if !LOG_DISABLED
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
-
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
+void initializeLogChannel(WTFLogChannel* channel)
+{
+    DEFINE_STATIC_LOCAL(Vector<WTFLogChannel*>, activatedChannels, ());
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+    // Fill activatedChannels vector only once based on names set in logValue.
+    if (activatedChannels.isEmpty()) {
+        const String logValue = getenv("WEBKIT_DEBUG");
+        if (logValue.isEmpty())
+            return;
+
+        Vector<String> activatedNames;
+        logValue.split(',', activatedNames);
+        for (size_t i = 0; i < activatedNames.size(); i++) {
+            WTFLogChannel* activeChannel = getChannelFromName(activatedNames[i]);
+            if (activeChannel)
+                activatedChannels.append(activeChannel);
+        }
+    }
+
+    if (activatedChannels.contains(channel))
+        channel->state = WTFLogChannelOn;
+}
 
 } // namespace WebKit
 
 #endif // !LOG_DISABLED
-
-#endif // Logging_h
