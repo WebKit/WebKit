@@ -1035,7 +1035,7 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundleFrameRef fram
 
     dumpFrameDescriptionSuitableForTestResult(frame);
     InjectedBundle::shared().stringBuilder()->appendLiteral(" - willPerformClientRedirectToURL: ");
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKURLCopyString(url))));
+    InjectedBundle::shared().stringBuilder()->append(pathSuitableForTestResult(url));
     InjectedBundle::shared().stringBuilder()->appendLiteral(" \n");
 }
 
@@ -1075,14 +1075,20 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)
 
 void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundleFrameRef frame)
 {
+    if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks())
+        InjectedBundle::shared().stringBuilder()->appendLiteral("didDisplayInsecureContent\n");
 }
 
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
 {
+    if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks())
+        InjectedBundle::shared().stringBuilder()->appendLiteral("didRunInsecureContent\n");
 }
 
 void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef frame)
 {
+    if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks())
+        InjectedBundle::shared().stringBuilder()->appendLiteral("didDetectXSS\n");
 }
 
 void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)

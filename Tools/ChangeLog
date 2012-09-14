@@ -1,3 +1,24 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner is not dumping some frame load callbacks information
+        https://bugs.webkit.org/show_bug.cgi?id=96740
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Dump information expected by the test cases about the following
+        frame load callbacks:
+        "didDisplayInsecureContentForFrame"
+        "didRunInsecureContentForFrame"
+        "didDetectXSSForFrame"
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame): Print a URL
+        as expected by test results by calling pathSuitableForTestResult() instead
+        of printing raw URL.
+        (WTR::InjectedBundlePage::didDisplayInsecureContentForFrame):
+        (WTR::InjectedBundlePage::didRunInsecureContentForFrame):
+        (WTR::InjectedBundlePage::didDetectXSSForFrame):
+
 2012-09-14  Peter Beverloo  <peter@chromium.org>
 
         The runtime/unsigned category should be valid in the cpp style-checker.

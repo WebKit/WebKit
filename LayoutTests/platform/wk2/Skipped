@@ -237,29 +237,9 @@ webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
 
-# WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks
-# <https://bugs.webkit.org/show_bug.cgi?id=42331>
+# Fails on WebKit2
+# <https://bugs.webkit.org/show_bug.cgi?id=96741>
 fast/loader/recursive-before-unload-crash.html
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-script-in-iframe.html
-http/tests/security/mixedContent/empty-url-plugin-in-frame.html
-http/tests/security/mixedContent/insecure-css-in-iframe.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-iframe.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-iframe.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
-http/tests/security/mixedContent/insecure-script-in-iframe.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
-webarchive/loading/javascript-url-iframe-crash.html
-webarchive/loading/mainresource-null-mimetype-crash.html
-webarchive/loading/missing-data.html
-http/tests/security/xssAuditor/script-tag-with-callbacks.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>

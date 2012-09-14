@@ -1,3 +1,16 @@
+2012-09-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner is not dumping some frame load callbacks information
+        https://bugs.webkit.org/show_bug.cgi?id=96740
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip test cases which were failing due to missing
+        frame load callbacks information dumping with
+        WebKitTestRunner.
+
+        * platform/wk2/Skipped:
+
 2012-09-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add ability to replay XHR in network panel.
