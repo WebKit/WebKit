@@ -183,10 +183,6 @@ BUGWK60830 SKIP : editing/pasteboard/smart-paste-in-text-control.html = PASS
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
 
-BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-padding-with-datalist.html = MISSING IMAGE
-BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-transform.html = MISSING IMAGE
-BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
-
 BUGWK96751 WIN LINUX : fast/forms/time-multiple-fields/time-multiple-fields-localization.html = MISSING TEXT
 
 // Proximity Events is not supported.

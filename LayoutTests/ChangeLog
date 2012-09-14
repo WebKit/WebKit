@@ -1,3 +1,19 @@
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
+        Complete some forgotten rebaselines. See https://bugs.webkit.org/show_bug.cgi?id=94916.
+        All the differences were anti-aliasing/form-controls.
+
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Added.
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Removed.
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Added.
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-14  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Print console warning about setVersion
