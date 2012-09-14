@@ -1,3 +1,15 @@
+2012-09-14  Tom Sepez  <tsepez@chromium.org>
+
+        ImageLoader can't be cleared when video element poster attribute removed.
+        https://bugs.webkit.org/show_bug.cgi?id=96301
+
+        Reviewed by Abhishek Arya.
+
+        Added test case.
+
+        * fast/dom/beforeload/clear-video-poster-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html: Added.
+
 2012-09-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow third-party storage blocking setting to change while a page is loaded
