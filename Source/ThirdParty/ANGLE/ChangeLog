@@ -1,3 +1,18 @@
+2012-09-13  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/12255720> Fix the build with newer Clang
+
+        Reviewed by Sam Weinig.
+        
+        Clang generates a warning about the inclusion of trailing commas on the final enum item as it's apparently
+        a C++11 extension. Remove them.
+        
+        * src/compiler/BaseTypes.h:
+        * src/compiler/ExtensionBehavior.h:
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::parseVectorFields):
+        * src/compiler/intermediate.h:
+
 2012-09-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] The ANGLE build on Windows breaks with GnuWin32's flex because it is too old

@@ -16,7 +16,7 @@ typedef enum
     EBhEnable,
     EBhWarn,
     EBhDisable,
-    EBhUndefined,
+    EBhUndefined
 } TBehavior;
 
 inline const char* getBehaviorString(TBehavior b)

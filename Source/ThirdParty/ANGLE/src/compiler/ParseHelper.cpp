@@ -33,7 +33,7 @@ bool TParseContext::parseVectorFields(const TString& compString, int vecSize, TV
     enum {
         exyzw,
         ergba,
-        estpq,
+        estpq
     } fieldSet[4];
 
     for (int i = 0; i < fields.num; ++i) {
