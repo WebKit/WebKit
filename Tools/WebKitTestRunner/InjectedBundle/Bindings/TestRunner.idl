@@ -71,6 +71,7 @@ module WTR {
         void setUserStyleSheetLocation(in DOMString location);
         void setMinimumTimerInterval(in double interval); // Interval specified in seconds.
         void setSpatialNavigationEnabled(in boolean value);
+        void setTabKeyCyclesThroughElements(in boolean enabled);
 
         // Special DOM functions.
         void clearBackForwardList();

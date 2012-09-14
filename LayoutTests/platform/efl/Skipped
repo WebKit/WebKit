@@ -78,9 +78,6 @@ fast/history/window-open.html
 # EFL's LayoutTestController does not implement setScrollbarPolicy
 fast/overflow/scrollbar-restored-and-then-locked.html
 
-# EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements
-fast/events/keypress-insert-tab.html
-
 # EFL's LayoutTestController does not implement enableAutoResizeMode
 fast/autoresize
 

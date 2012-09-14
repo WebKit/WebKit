@@ -109,6 +109,7 @@ public:
     void setUserStyleSheetLocation(JSStringRef);
     void setMinimumTimerInterval(double seconds); // Interval specified in seconds.
     void setSpatialNavigationEnabled(bool);
+    void setTabKeyCyclesThroughElements(bool);
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);

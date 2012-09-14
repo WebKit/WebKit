@@ -1,5 +1,24 @@
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        WebKitTestRunner needs layoutTestController.setTabKeyCyclesThroughElements
+        https://bugs.webkit.org/show_bug.cgi?id=42687
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement testRunner.setTabKeyCyclesThroughElements for
+        WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setTabKeyCyclesThroughElements):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         EventSendingController::keyDown does not support non-array modifier arguments
         https://bugs.webkit.org/show_bug.cgi?id=96727
 

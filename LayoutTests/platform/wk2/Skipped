@@ -424,10 +424,6 @@ platform/mac/scrollbars/key-window-not-first-responder.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42686>
 fast/encoding/idn-security.html
 
-# WebKitTestRunner needs layoutTestController.setTabKeyCyclesThroughElements
-# <https://bugs.webkit.org/show_bug.cgi?id=42687>
-fast/events/keypress-insert-tab.html
-
 # WebKitTestRunner needs layoutTestController.abortModal
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html

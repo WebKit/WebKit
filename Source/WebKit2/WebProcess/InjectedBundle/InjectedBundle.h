@@ -175,6 +175,8 @@ public:
 
     static size_t workerThreadCount();
 
+    void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
+
 private:
     explicit InjectedBundle(const String&);
 

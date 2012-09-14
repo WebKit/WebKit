@@ -646,4 +646,9 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
 #endif
 }
 
+void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
+{
+    page->corePage()->setTabKeyCyclesThroughElements(enabled);
+}
+
 } // namespace WebKit

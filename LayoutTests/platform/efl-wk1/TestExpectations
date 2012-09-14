@@ -78,3 +78,6 @@ BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navi
 BUGWK96620 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 BUGWK96620 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
 
+// EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements.
+BUGWK82864 : fast/events/keypress-insert-tab.html = TEXT
+

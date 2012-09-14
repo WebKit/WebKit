@@ -1,5 +1,19 @@
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        WebKitTestRunner needs layoutTestController.setTabKeyCyclesThroughElements
+        https://bugs.webkit.org/show_bug.cgi?id=42687
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        fast/events/keypress-insert-tab.html is passing now on wk2. So, unskip
+        in common skipped files and re-skip it on efl-wk1 until WK82864 is fixed.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/wk2/Skipped:
+
+2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         EventSendingController::keyDown does not support non-array modifier arguments
         https://bugs.webkit.org/show_bug.cgi?id=96727
 

@@ -324,3 +324,7 @@ uint64_t WKBundleGetWebNotificationID(WKBundleRef bundleRef, JSContextRef contex
     return toImpl(bundleRef)->webNotificationID(context, notification);
 }
 
+void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageRef pageRef, bool enabled)
+{
+    toImpl(bundleRef)->setTabKeyCyclesThroughElements(toImpl(pageRef), enabled);
+}
