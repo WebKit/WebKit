@@ -50,8 +50,6 @@ mac {
     QMAKE_PLUGIN_BUNDLE_NAME = $$TARGET
     QMAKE_BUNDLE_LOCATION += "Contents/MacOS"
 
-    !build_pass:CONFIG += build_all
-
     OBJECTIVE_SOURCES += PluginObjectMac.mm
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
 }

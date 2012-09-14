@@ -2267,7 +2267,6 @@ sub buildQMakeProjects
     } elsif ($passedConfig) {
         die "Build type $passedConfig is not supported with --qt.\n";
     }
-    push @buildArgs, "CONFIG-=debug_and_release" if ($passedConfig && isDarwin());
 
     # Using build-webkit to build assumes you want a developer-build
     push @buildArgs, "CONFIG-=production_build";

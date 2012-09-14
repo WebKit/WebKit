@@ -12,6 +12,19 @@ CONFIG += config_step
 
 root_project_file: finalizeConfigure()
 
+# Sanitize build config for single-configuration builds
+!debug|!release {
+    # Removing debug_and_release causes issues with lib suffixes when building debug on Windows.
+    # Work around it by only removing build_all, and still create the Makefiles for both configurations.
+    win32*: CONFIG -= build_all
+    else: CONFIG -= debug_and_release
+} else:debug_and_release {
+    # Only build a single instance of each application
+    contains(TEMPLATE, app) {
+        CONFIG -= build_all
+    }
+}
+
 # Help keep the build tree clean
 MOC_DIR = moc
 RCC_DIR = rcc
@@ -152,9 +165,6 @@ contains(TEMPLATE, lib) {
 
     # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
     DEFINES += BUILDING_WEBKIT
-
-    # Build both debug and release configurations
-    mac: CONFIG += build_all
 
     # Prevent name clashes when building both debug and release. Qt5's module
     # system already takes care of this for the top level QtWebKit library.

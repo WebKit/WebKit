@@ -102,6 +102,12 @@ CONFIG += include_webinspector
 # used by bots and developers, will disable it, to enable warnings etc.
 CONFIG += production_build
 
+# Pick up Qt's defaults for debug/release/debug_and_release
+if(win32|mac):!macx-xcode {
+    contains(QT_CONFIG, debug_and_release): CONFIG += debug_and_release
+    contains(QT_CONFIG, build_all): CONFIG += build_all
+}
+
 # Try to locate sqlite3 source (for WebCore)
 SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
 isEmpty(SQLITE3SRCDIR) {
