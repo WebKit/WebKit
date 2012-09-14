@@ -43,11 +43,15 @@ class StyleSheetContents : public RefCounted<StyleSheetContents> {
 public:
     static PassRefPtr<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
     {
-        return adoptRef(new StyleSheetContents(String(), context));
+        return adoptRef(new StyleSheetContents(0, String(), context));
     }
     static PassRefPtr<StyleSheetContents> create(const String& originalURL, const CSSParserContext& context)
     {
-        return adoptRef(new StyleSheetContents(originalURL, context));
+        return adoptRef(new StyleSheetContents(0, originalURL, context));
+    }
+    static PassRefPtr<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
+    {
+        return adoptRef(new StyleSheetContents(ownerRule, originalURL, context));
     }
 
     ~StyleSheetContents();
@@ -56,7 +60,7 @@ public:
 
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
-    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, CSSStyleSheet* rootSheet);
+    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     bool parseString(const String&);
     bool parseStringAtLine(const String&, int startLineNumber);
 
@@ -64,7 +68,12 @@ public:
 
     bool isLoading() const;
 
-    void checkLoadCompleted();
+    void checkLoaded();
+    void startLoadingDynamicSheet();
+
+    StyleSheetContents* rootStyleSheet() const;
+    Node* singleOwnerNode() const;
+    Document* singleOwnerDocument() const;
 
     const String& charset() const { return m_parserContext.charset; }
 
@@ -92,8 +101,12 @@ public:
     const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
     const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
 
-    bool hasImportCycle(const StyleRuleImport* importRule, const KURL& importURL, const KURL& documentBaseURL) const;
-
+    void notifyLoadedSheet(const CachedCSSStyleSheet*);
+    
+    StyleSheetContents* parentStyleSheet() const;
+    StyleRuleImport* ownerRule() const { return m_ownerRule; }
+    void clearOwnerRule() { m_ownerRule = 0; }
+    
     // Note that href is the URL that started the redirect chain that led to
     // this style sheet. This property probably isn't useful for much except
     // the JavaScript binding (which needs to use this value for security).
@@ -109,8 +122,6 @@ public:
     
     bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
     void wrapperDeleteRule(unsigned index);
-
-    void requestImportedStyleSheets(CSSStyleSheet* rootSheet);
 
     PassRefPtr<StyleSheetContents> copy() const { return adoptRef(new StyleSheetContents(*this)); }
 
@@ -128,13 +139,12 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    StyleSheetContents(const String& originalURL, const CSSParserContext&);
+    StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
 
     void clearCharsetRule();
 
-    bool checkImportedSheetLoadCompleted();
-    bool getAncestors(const StyleRuleImport*, Vector<const StyleSheetContents*>& result) const;
+    StyleRuleImport* m_ownerRule;
 
     String m_originalURL;
 

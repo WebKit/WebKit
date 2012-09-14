@@ -86,13 +86,6 @@ void CSSImportRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectIn
     info.addInstrumentedMember(m_styleSheetCSSOMWrapper);
 }
 
-void CSSImportRule::reattachStyleSheetContents()
-{
-    ASSERT(m_styleSheetCSSOMWrapper);
-    ASSERT(!parentStyleSheet() || parentStyleSheet()->contents()->hasOneClient());
-    m_importRule->reattachStyleSheetContents(m_styleSheetCSSOMWrapper->contents());
-}
-
 CSSStyleSheet* CSSImportRule::styleSheet() const
 { 
     if (!m_importRule->styleSheet())

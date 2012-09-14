@@ -323,10 +323,11 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
     m_sheet->setTitle(title());
 
-    styleSheet->parseAuthorStyleSheet(cachedStyleSheet, m_sheet.get());
+    styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document()->securityOrigin());
 
     m_loading = false;
-    styleSheet->checkLoadCompleted();
+    styleSheet->notifyLoadedSheet(cachedStyleSheet);
+    styleSheet->checkLoaded();
 
 #if ENABLE(PARSED_STYLE_SHEET_CACHING)
     if (styleSheet->isCacheable())
