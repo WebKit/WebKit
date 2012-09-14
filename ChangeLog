@@ -1,3 +1,14 @@
+2012-09-14  Bo Liu  <boliu@chromium.org>
+
+        Add in-place reload behavior to ImagesEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=95478
+
+        Reviewed by Adam Barth.
+
+        Export WebCore::Settings::setImagesEnabled symbol.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix handling of debug/release/debug_and_release/build_all

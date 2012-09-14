@@ -46,6 +46,7 @@
 #include "MemoryCache.h"
 #include "PingLoader.h"
 #include "ResourceLoadScheduler.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/UnusedParam.h>
@@ -115,6 +116,7 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
     , m_requestCount(0)
     , m_garbageCollectDocumentResourcesTimer(this, &CachedResourceLoader::garbageCollectDocumentResourcesTimerFired)
     , m_autoLoadImages(true)
+    , m_imagesEnabled(true)
     , m_allowStaleResources(false)
 {
 }
@@ -160,7 +162,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(ResourceReq
         }
     }
     CachedResourceHandle<CachedImage> resource(static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, request, String(), defaultCachedResourceOptions()).get()));
-    if (autoLoadImages() && resource && resource->stillNeedsLoad())
+    if (!shouldDeferImageLoad(request.url()) && resource && resource->stillNeedsLoad())
         resource->load(this, defaultCachedResourceOptions());
     return resource;
 }
@@ -362,12 +364,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::ImageResource:
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;
-
-        if (frame()) {
-            Settings* settings = frame()->settings();
-            if (!frame()->loader()->client()->allowImage(!settings || settings->areImagesEnabled(), url))
-                return false;
-        }
         break;
     case CachedResource::FontResource: {
         if (!m_document->contentSecurityPolicy()->allowFontFromSource(url))
@@ -514,11 +510,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 {
     if (!existingResource)
         return Load;
-    
+
     // We already have a preload going for this URL.
     if (forPreload && existingResource->isPreloaded())
         return Use;
-    
+
     // If the same URL has been loaded as a different type, we need to reload.
     if (existingResource->type() != type) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to type mismatch.");
@@ -532,6 +528,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // FIXME: In theory, this should be a Revalidate case. In practice, the MemoryCache revalidation path assumes a whole bunch
     // of things about how revalidation works that manual headers violate, so punt to Reload instead.
     if (request.isConditional())
+        return Reload;
+
+    // Do not load from cache if images are not enabled. The load for this image will be blocked
+    // in requestImage.
+    if (existingResource->type() == CachedResource::ImageResource && shouldDeferImageLoad(existingResource->url()))
         return Reload;
     
     // Don't reload resources while pasting.
@@ -629,13 +630,39 @@ void CachedResourceLoader::setAutoLoadImages(bool enable)
     if (!m_autoLoadImages)
         return;
 
+    reloadImagesIfNotDeferred();
+}
+
+void CachedResourceLoader::setImagesEnabled(bool enable)
+{
+    if (enable == m_imagesEnabled)
+        return;
+
+    m_imagesEnabled = enable;
+
+    if (!m_imagesEnabled)
+        return;
+
+    reloadImagesIfNotDeferred();
+}
+
+bool CachedResourceLoader::shouldDeferImageLoad(const KURL& url) const
+{
+    if (frame() && !frame()->loader()->client()->allowImage(m_imagesEnabled, url))
+        return true;
+
+    return !m_autoLoadImages;
+}
+
+void CachedResourceLoader::reloadImagesIfNotDeferred()
+{
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it) {
         CachedResource* resource = it->second.get();
         if (resource->type() == CachedResource::ImageResource) {
             CachedImage* image = const_cast<CachedImage*>(static_cast<const CachedImage*>(resource));
 
-            if (image->stillNeedsLoad())
+            if (image->stillNeedsLoad() && !shouldDeferImageLoad(image->url()))
                 image->load(this, defaultCachedResourceOptions());
         }
     }

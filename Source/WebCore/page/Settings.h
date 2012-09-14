@@ -800,8 +800,8 @@ namespace WebCore {
 
         bool m_scrollingPerformanceLoggingEnabled : 1;
 
-        Timer<Settings> m_loadsImagesAutomaticallyTimer;
-        void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
+        Timer<Settings> m_setImageLoadingSettingsTimer;
+        void imageLoadingSettingsTimerFired(Timer<Settings>*);
         
         double m_incrementalRenderingSuppressionTimeoutInSeconds;
 

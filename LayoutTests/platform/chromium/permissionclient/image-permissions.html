@@ -1,6 +1,9 @@
 <html>
 <head>
 <script>
+// Blocked images can be reloaded, so neither onload nor onerror is called.
+// Only check here that onload is never called when image is blocked.
+
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpPermissionClientCallbacks();
@@ -21,14 +24,12 @@ function loaded()
 
     // Load an image not in cache.
     var img = document.createElement('img');
-    img.onerror = function () { log("PASS: error event for not cached image"); }
     img.onload = function () { log("FAIL: not cached image loaded"); }
     img.src = "resources/boston.gif?nocache";
     document.getElementById("img").appendChild(img);
 
     // Load an image from cache.
     var imgFromCache = document.createElement('img');
-    imgFromCache.onerror = function () { log("PASS: error event for image from cache"); }
     imgFromCache.onload = function () { log("FAIL: image from cache loaded"); }
     imgFromCache.src = "resources/boston.gif";
     document.getElementById("img").appendChild(imgFromCache);
@@ -41,7 +42,7 @@ function loaded()
 </script>
 </head>
 <body>
-<img src="resources/boston.gif" onload="loaded()" onerror="log('FAIL: error event for first image')">
+<img src="resources/boston.gif" onload="loaded()">
 <div id="img"></div>
 <div id="results"></div>
 </body>

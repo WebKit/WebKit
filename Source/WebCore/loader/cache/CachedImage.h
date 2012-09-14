@@ -82,7 +82,7 @@ public:
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
 
     virtual bool isImage() const { return true; }
-    bool stillNeedsLoad() const { return !errorOccurred() && status() == Unknown && !isLoading(); }
+    virtual bool stillNeedsLoad() const OVERRIDE { return !errorOccurred() && status() == Unknown && !isLoading(); }
     void load();
 
     // ImageObserver

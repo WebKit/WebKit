@@ -1,3 +1,25 @@
+2012-09-14  Bo Liu  <boliu@chromium.org>
+
+        Add in-place reload behavior to ImagesEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=95478
+
+        Add tests to check autoLoadImages and imagesEnabled can block
+        images and can reload them in place when setting is set to unblock.
+
+        image-permissions tests are updated to reflect that onerror will no
+        longer be called when images are blocked.
+
+        Reviewed by Adam Barth.
+
+        * fast/loader/display-image-unset-can-block-image-and-can-reload-in-place-expected.txt: Added.
+        * fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html: Added.
+        * fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place-expected.txt: Added.
+        * fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html: Added.
+        * platform/chromium/http/tests/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions.html:
+        * platform/chromium/permissionclient/resources/image.html:
+
 2012-09-14  Emil A Eklund  <eae@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=96226

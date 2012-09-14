@@ -1,3 +1,14 @@
+2012-09-14  Bo Liu  <boliu@chromium.org>
+
+        Add in-place reload behavior to ImagesEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=95478
+
+        Reviewed by Adam Barth.
+
+        Export WebCore::Settings::setImagesEnabled symbol.
+
+        * win/WebKit2.def:
+
 2012-09-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] RefPtr<Evas_Object> unit tests fails
