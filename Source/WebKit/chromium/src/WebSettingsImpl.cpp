@@ -337,6 +337,11 @@ void WebSettingsImpl::setExperimentalWebGLEnabled(bool enabled)
     m_settings->setWebGLEnabled(enabled);
 }
 
+void WebSettingsImpl::setCSSStickyPositionEnabled(bool enabled)
+{
+    m_settings->setCSSStickyPositionEnabled(enabled);
+}
+
 void WebSettingsImpl::setExperimentalCSSRegionsEnabled(bool enabled)
 {
     m_settings->setCSSRegionsEnabled(enabled);

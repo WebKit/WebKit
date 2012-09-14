@@ -337,6 +337,14 @@ namespace WebCore {
         void setCSSCustomFilterEnabled(bool enabled) { m_isCSSCustomFilterEnabled = enabled; }
         bool isCSSCustomFilterEnabled() const { return m_isCSSCustomFilterEnabled; }
 
+#if ENABLE(CSS_STICKY_POSITION)
+        void setCSSStickyPositionEnabled(bool enabled) { m_cssStickyPositionEnabled = enabled; }
+        bool cssStickyPositionEnabled() const { return m_cssStickyPositionEnabled; }
+#else
+        void setCSSStickyPositionEnabled(bool) { }
+        bool cssStickyPositionEnabled() const { return false; }
+#endif
+
 #if ENABLE(CSS_REGIONS)
         void setCSSRegionsEnabled(bool enabled) { m_cssRegionsEnabled = enabled; }
         bool cssRegionsEnabled() const { return m_cssRegionsEnabled; }
@@ -711,6 +719,9 @@ namespace WebCore {
         bool m_acceleratedDrawingEnabled : 1;
         bool m_acceleratedFiltersEnabled : 1;
         bool m_isCSSCustomFilterEnabled : 1;
+#if ENABLE(CSS_STICKY_POSITION)
+        bool m_cssStickyPositionEnabled : 1;
+#endif        
 #if ENABLE(CSS_REGIONS)
         bool m_cssRegionsEnabled : 1;
 #endif

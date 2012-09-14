@@ -202,6 +202,9 @@ Settings::Settings(Page* page)
     , m_acceleratedDrawingEnabled(false)
     , m_acceleratedFiltersEnabled(false)
     , m_isCSSCustomFilterEnabled(false)
+#if ENABLE(CSS_STICKY_POSITION)
+    , m_cssStickyPositionEnabled(true)
+#endif
 #if ENABLE(CSS_REGIONS)
     , m_cssRegionsEnabled(false)
 #endif

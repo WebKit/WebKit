@@ -65,6 +65,7 @@ public:
     CSSParserMode mode;
     bool isHTMLDocument;
     bool isCSSCustomFilterEnabled;
+    bool isCSSStickyPositionEnabled;
     bool isCSSRegionsEnabled;
     bool isCSSGridLayoutEnabled;
 #if ENABLE(CSS_VARIABLES)

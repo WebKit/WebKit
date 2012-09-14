@@ -85,6 +85,7 @@ public:
     virtual void setEnableScrollAnimator(bool);
     virtual void setExperimentalCSSCustomFilterEnabled(bool);
     virtual void setExperimentalCSSGridLayoutEnabled(bool);
+    virtual void setCSSStickyPositionEnabled(bool);
     virtual void setExperimentalCSSRegionsEnabled(bool);
     virtual void setExperimentalCSSVariablesEnabled(bool);
     virtual void setExperimentalWebGLEnabled(bool);

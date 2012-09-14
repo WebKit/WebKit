@@ -355,6 +355,7 @@ public:
     virtual PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
 
+    bool cssStickyPositionEnabled() const;
     bool cssRegionsEnabled() const;
 #if ENABLE(CSS_REGIONS)
     PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);

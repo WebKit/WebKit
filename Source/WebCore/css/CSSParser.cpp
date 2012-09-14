@@ -199,6 +199,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
     , mode(mode)
     , isHTMLDocument(false)
     , isCSSCustomFilterEnabled(false)
+    , isCSSStickyPositionEnabled(false)
     , isCSSRegionsEnabled(false)
     , isCSSGridLayoutEnabled(false)
 #if ENABLE(CSS_VARIABLES)
@@ -215,6 +216,7 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
     , mode(document->inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
     , isHTMLDocument(document->isHTMLDocument())
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
+    , isCSSStickyPositionEnabled(document->cssStickyPositionEnabled())
     , isCSSRegionsEnabled(document->cssRegionsEnabled())
     , isCSSGridLayoutEnabled(document->cssGridLayoutEnabled())
 #if ENABLE(CSS_VARIABLES)
@@ -232,6 +234,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.mode == b.mode
         && a.isHTMLDocument == b.isHTMLDocument
         && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
+        && a.isCSSStickyPositionEnabled == b.isCSSStickyPositionEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
         && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
 #if ENABLE(CSS_VARIABLES)
@@ -670,7 +673,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
     case CSSPropertyPosition: // static | relative | absolute | fixed | sticky | inherit
         if (valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed
 #if ENABLE(CSS_STICKY_POSITION)
-            || valueID == CSSValueWebkitSticky
+            || (parserContext.isCSSStickyPositionEnabled && valueID == CSSValueWebkitSticky)
 #endif
             )
             return true;
