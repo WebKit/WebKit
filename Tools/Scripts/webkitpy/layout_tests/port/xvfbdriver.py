@@ -61,6 +61,8 @@ class XvfbDriver(Driver):
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % display_id
+        # Drivers should use separate application cache locations
+        environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(self._port.results_directory(), '%s-appcache-%d' % (server_name, self._worker_number))
 
         self._crashed_process_name = None
         self._crashed_pid = None

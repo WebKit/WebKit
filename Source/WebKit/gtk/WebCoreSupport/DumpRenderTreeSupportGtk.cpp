@@ -26,6 +26,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "AnimationController.h"
+#include "ApplicationCacheStorage.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"
@@ -810,4 +811,10 @@ void DumpRenderTreeSupportGtk::resetTrackedRepaints(WebKitWebFrame* frame)
 void DumpRenderTreeSupportGtk::clearMemoryCache()
 {
     memoryCache()->evictResources();
+}
+
+void DumpRenderTreeSupportGtk::clearApplicationCache()
+{
+    cacheStorage().empty();
+    cacheStorage().vacuumDatabaseFile();
 }

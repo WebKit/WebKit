@@ -1,3 +1,27 @@
+2012-09-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Clear application cache between tests in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=96543
+
+        Reviewed by Philippe Normand.
+
+        Call the new DumpRenderTreeSupportGtk method to clear application cache
+        after each test in DumpRenderTree.
+
+        Set the XDG_CACHE_HOME environment variable when running DumpRenderTree
+        as well. It's now being set in XvfbDriver._start so that each driver is assigned
+        a cache directory that's constructed out of the driver's name and its worker
+        number. These directories are located in the layout tests results directory.
+        At least on the builders this ensures a driver-specific empty cache directory
+        with each test run.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver._start):
+
 2012-09-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix linking on Windows
