@@ -1,3 +1,15 @@
+2012-09-14  Ojan Vafai  <ojan@chromium.org>
+
+        The cr-linux-ews thinks http/tests/cache/post-redirect-get.php and http/tests/cache/post-with-cached-subresources.php are MISSING results
+        https://bugs.webkit.org/show_bug.cgi?id=95215
+
+        Reviewed by Adam Barth.
+
+        Apparently, marking these as missing did not fix the EWS problem,
+        so remove them from TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-14  Mike West  <mkwst@chromium.org>
 
         JSC should throw a more descriptive exception when blocking 'eval' via CSP.

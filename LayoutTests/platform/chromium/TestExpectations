@@ -2675,10 +2675,6 @@ BUGWK91415 WIN DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71278 SLOW : fast/events/dispatch-message-string-data.html = PASS
 
-// For some reason the EWS bots cannot find the results for these tests.
-BUGWK95215 LINUX : http/tests/cache/post-redirect-get.php = PASS MISSING
-BUGWK95215 LINUX : http/tests/cache/post-with-cached-subresources.php = PASS MISSING
-
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
 BUGWK94681 : fast/js/array-functions-non-arrays.html = TEXT
@@ -3133,10 +3129,6 @@ BUGWK86592 LINUX ANDROID : fast/loader/text-document-wrapping.html = TIMEOUT PAS
 BUGWK86592 LINUX ANDROID : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html = TIMEOUT PASS
 BUGWK86592 LINUX ANDROID : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
 BUGWK86592 LINUX ANDROID : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
-
-// strange "Unexpected no expected results found" on cr-linux ews
-BUGWK86600 LINUX ANDROID : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
-BUGWK86600 LINUX ANDROID : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
 
 BUGWK88964 MAC : http/tests/misc/embedCrasher.html = MISSING PASS
 
