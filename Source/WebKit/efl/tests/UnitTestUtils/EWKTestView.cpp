@@ -23,6 +23,7 @@
 #include <EWebKit.h>
 
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace EWKUnitTests {
 
@@ -98,11 +99,11 @@ bool EWKTestView::init()
 
     switch (m_defaultViewType) {
     case SingleView:
-        m_webView = adoptPtr(ewk_view_single_add(m_evas));
+        m_webView = adoptRef(ewk_view_single_add(m_evas));
         break;
 
     case TiledView:
-        m_webView = adoptPtr(ewk_view_tiled_add(m_evas));
+        m_webView = adoptRef(ewk_view_tiled_add(m_evas));
         break;
     }
 

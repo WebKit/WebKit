@@ -214,7 +214,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create
     // By default EFL creates buffers without alpha.
     ecore_evas_alpha_set(entry->canvas(), EINA_TRUE);
 
-    entry->m_edje = adoptPtr(edje_object_add(ecore_evas_get(entry->canvas())));
+    entry->m_edje = adoptRef(edje_object_add(ecore_evas_get(entry->canvas())));
     ASSERT(entry->edje());
 
     if (!setSourceGroupForEdjeObject(entry->edje(), themePath, toEdjeGroup(type)))
@@ -509,7 +509,7 @@ bool RenderThemeEfl::loadTheme()
                 "Could not create canvas required by theme, things will not work properly.");
     }
 
-    OwnPtr<Evas_Object> o = adoptPtr(edje_object_add(ecore_evas_get(canvas())));
+    RefPtr<Evas_Object> o = adoptRef(edje_object_add(ecore_evas_get(canvas())));
     _ASSERT_ON_RELEASE_RETURN_VAL(o, false, "Could not create new base Edje object.");
 
     if (!setSourceGroupForEdjeObject(o.get(), m_themePath, "webkit/base"))
@@ -520,7 +520,7 @@ bool RenderThemeEfl::loadTheme()
         flushThemePartCache();
 
     // Set new loaded theme, and apply it.
-    m_edje.swap(o);
+    m_edje = o;
 
     edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/active", applyColorCallback, this);
     edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/inactive", applyColorCallback, this);
@@ -601,7 +601,7 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* object, ThemePartDesc* de
 
 void RenderThemeEfl::applyPartDescriptionsFrom(const String& themePath)
 {
-    OwnPtr<Evas_Object> temp = adoptPtr(edje_object_add(ecore_evas_get(canvas())));
+    RefPtr<Evas_Object> temp = adoptRef(edje_object_add(ecore_evas_get(canvas())));
     _ASSERT_ON_RELEASE_RETURN(temp, "Could not create Edje object.");
 
     for (size_t i = 0; i < FormTypeLast; i++) {

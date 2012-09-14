@@ -45,6 +45,8 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/efl/RefPtrEfl.h>
 
 enum PixelComponent {
     Red,
@@ -106,7 +108,7 @@ static float calculatePixelDifference(unsigned char* basePixel, unsigned char* a
     return sqrtf(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
 }
 
-static float calculateDifference(Evas_Object* baselineImage, Evas_Object* actualImage, OwnPtr<Evas_Object>& differenceImage)
+static float calculateDifference(Evas_Object* baselineImage, Evas_Object* actualImage, RefPtr<Evas_Object>& differenceImage)
 {
     int width, height, baselineWidth, baselineHeight;
     evas_object_image_size_get(actualImage, &width, &height);
@@ -163,7 +165,7 @@ static float calculateDifference(Evas_Object* baselineImage, Evas_Object* actual
         difference = roundf(difference * 100.0f) / 100.0f;
         difference = std::max(difference, 0.01f); // round to 2 decimal places
 
-        differenceImage = adoptPtr(differenceImageFromDifferenceBuffer(evas_object_evas_get(baselineImage), diffBuffer.get(), width, height));
+        differenceImage = adoptRef(differenceImageFromDifferenceBuffer(evas_object_evas_get(baselineImage), diffBuffer.get(), width, height));
     }
 
     return difference;
@@ -226,7 +228,7 @@ static void printImage(Evas_Object* image)
 
 static void printImageDifferences(Evas_Object* baselineImage, Evas_Object* actualImage)
 {
-    OwnPtr<Evas_Object> differenceImage;
+    RefPtr<Evas_Object> differenceImage;
     const float difference = calculateDifference(baselineImage, actualImage, differenceImage);
 
     if (difference > 0.0f) {
@@ -254,7 +256,7 @@ static void resizeEcoreEvasIfNeeded(Evas_Object* image)
     ecore_evas_resize(gEcoreEvas.get(), currentWidth, currentHeight);
 }
 
-static PassOwnPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
+static PassRefPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
 {
     OwnArrayPtr<unsigned char> imageBuffer = adoptArrayPtr(new unsigned char[imageSize]);
     if (!imageBuffer)
@@ -262,7 +264,7 @@ static PassOwnPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
 
     const size_t bytesRead = fread(imageBuffer.get(), 1, imageSize, stdin);
     if (!bytesRead)
-        return PassOwnPtr<Evas_Object>();
+        return PassRefPtr<Evas_Object>();
 
     Evas_Object* image = evas_object_image_filled_add(evas);
     evas_object_image_colorspace_set(image, EVAS_COLORSPACE_ARGB8888);
@@ -270,7 +272,7 @@ static PassOwnPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
 
     resizeEcoreEvasIfNeeded(image);
 
-    return adoptPtr(image);
+    return adoptRef(image);
 }
 
 static bool parseCommandLineOptions(int argc, char** argv)
@@ -331,8 +333,8 @@ int main(int argc, char* argv[])
 
     Evas* evas = initEfl();
 
-    OwnPtr<Evas_Object> actualImage;
-    OwnPtr<Evas_Object> baselineImage;
+    RefPtr<Evas_Object> actualImage;
+    RefPtr<Evas_Object> baselineImage;
 
     char buffer[2048];
     while (fgets(buffer, sizeof(buffer), stdin)) {

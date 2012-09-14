@@ -1,6 +1,7 @@
 LIST(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
     efl/OwnPtrEfl.cpp
+    efl/RefPtrEfl.cpp
     gobject/GOwnPtr.cpp
     gobject/GRefPtr.cpp
 
@@ -33,5 +34,6 @@ LIST(APPEND WTF_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
     ${JAVASCRIPTCORE_DIR}/wtf/gobject
-    ${JAVASCRIPTCORE_DIR}/wtf/unicode/
+    ${JAVASCRIPTCORE_DIR}/wtf/unicode
+    ${JAVASCRIPTCORE_DIR}/wtf/efl
 )

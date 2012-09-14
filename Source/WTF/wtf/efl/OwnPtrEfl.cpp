@@ -40,11 +40,6 @@ void deleteOwnedPtr(Ecore_Evas* ptr)
         ecore_evas_free(ptr);
 }
 
-void deleteOwnedPtr(Evas_Object* ptr)
-{
-    evas_object_del(ptr);
-}
-
 void deleteOwnedPtr(Ecore_Pipe* ptr)
 {
     if (ptr)

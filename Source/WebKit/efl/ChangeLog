@@ -1,3 +1,17 @@
+2012-09-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Evas_Object* is a ref'ed structure, so tread it as such
+        https://bugs.webkit.org/show_bug.cgi?id=96659
+
+        Reviewed by Adam Barth.
+
+        Replace OwnPtr<Evas_Object> with RefPtr.
+
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestView::init):
+        * tests/UnitTestUtils/EWKTestView.h:
+        (EWKTestView):
+
 2012-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r128507.

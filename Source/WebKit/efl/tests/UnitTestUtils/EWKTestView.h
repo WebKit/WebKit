@@ -23,6 +23,7 @@
 #include <Evas.h>
 #include <string>
 #include <wtf/OwnPtr.h>
+#include <wtf/efl/RefPtrEfl.h>
 
 namespace EWKUnitTests {
 
@@ -63,7 +64,7 @@ private:
     EWKTestView operator=(const EWKTestView&);
 
     Evas* m_evas;
-    OwnPtr<Evas_Object> m_webView;
+    RefPtr<Evas_Object> m_webView;
 
     int m_width, m_height;
     EwkViewType m_defaultViewType;
