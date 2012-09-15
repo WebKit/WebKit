@@ -31,4 +31,6 @@
 #define COMPILE_ASSERT_MATCHING_ENUM(ewkName, webcoreName) \
         COMPILE_ASSERT(int(ewkName) == int(webcoreName), mismatchingEnums)
 
+extern int _ewk_log_dom;
+
 #endif // ewk_private_h

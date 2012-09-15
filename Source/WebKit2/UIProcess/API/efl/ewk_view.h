@@ -64,6 +64,7 @@
  * - "text,found", unsigned int*: the requested text was found and it gives the number of matches.
  * - "title,changed", const char*: title of the main frame was changed.
  * - "uri,changed", const char*: uri of the main frame was changed.
+ * - "webprocess,crashed", Eina_Bool*: expects a @c EINA_TRUE if web process crash is handled; @c EINA_FALSE, otherwise.
  */
 
 #ifndef ewk_view_h

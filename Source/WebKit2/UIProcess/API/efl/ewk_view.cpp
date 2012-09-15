@@ -1623,3 +1623,26 @@ Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object* ewkView)
 
     return priv->areMouseEventsEnabled;
 }
+
+/**
+ * @internal
+ * Web process has crashed.
+ *
+ * Emits signal: "webprocess,crashed" with pointer to crash handling boolean.
+ */
+void ewk_view_webprocess_crashed(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    bool handled = false;
+    evas_object_smart_callback_call(ewkView, "webprocess,crashed", &handled);
+
+    if (!handled) {
+        CString url = priv->pageProxy->urlAtProcessExit().utf8();
+        EINA_LOG_DOM_WARN(_ewk_log_dom, "WARNING: The web process experienced a crash on '%s'.\n", url.data());
+
+        // Display an error page
+        ewk_view_html_string_load(ewkView, "The web process has crashed.", 0, url.data());
+    }
+}

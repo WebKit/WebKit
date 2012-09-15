@@ -1,3 +1,26 @@
+2012-09-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Provide implementation for PageClientImpl::processDidCrash()
+        https://bugs.webkit.org/show_bug.cgi?id=96197
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit2 EFL does not have an implementation for PageClientImpl::processDidCrash().
+        So when WebProcess has crashed, UI process does nothing and is left alone as it is.
+
+        This patch checks if loading was ongoing, if so, set the load progress as 1.
+        Then send a signal callback "webprocess,crashed" for an application to handle it.
+        If the application does not handle the crash event, show an Eina Log warning message
+        with a url at web process exit and load an error page.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::processDidCrash):
+        * UIProcess/API/efl/ewk_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_webprocess_crashed):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-09-15  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] QDoc fixes for Qt 5 documentation

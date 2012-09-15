@@ -101,5 +101,6 @@ bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView);
 #endif
 
 void ewk_view_popup_menu_request(Evas_Object* ewkView, WebKit::WebPopupMenuProxyEfl* popupMenu, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
+void ewk_view_webprocess_crashed(Evas_Object* ewkView);
 
 #endif // ewk_view_private_h
