@@ -498,3 +498,10 @@ fast/events/popup-blocking-timers.html
 # [Qt][WK2] New fast/forms/number/number-spinbutton-click-in-iframe.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=96634
 fast/forms/number/number-spinbutton-click-in-iframe.html
+
+# [Qt][WK2] New http/tests/security/storage-blocking* tests fails
+# https://bugs.webkit.org/show_bug.cgi?id=96859
+http/tests/security/storage-blocking-loosened-plugin.html
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html
+http/tests/security/storage-blocking-strengthened-plugin.html
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html

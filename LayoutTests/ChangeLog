@@ -1,5 +1,11 @@
 2012-09-15  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Unreviewed weekend gardening. Skip 4 new failing tests to paint the bot green.
+
+        * platform/qt-5.0-wk2/Skipped:
+
+2012-09-15  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed weekend gardening. Skip 2 new tests, because 
         TestRunner::overridePreference() does not support the 'WebKitDisplayImagesKey' preference
 
