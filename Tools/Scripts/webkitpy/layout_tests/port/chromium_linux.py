@@ -106,7 +106,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         self._version = 'lucid'  # We only support lucid right now.
         self._architecture = arch
 
-    def baseline_search_path(self):
+    def default_baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self._architecture]
         return map(self._webkit_baseline_path, port_names)
 

@@ -187,7 +187,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def default_child_processes(self):
         return len(self._get_devices())
 
-    def baseline_search_path(self):
+    def default_baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS)
 
     def check_wdiff(self, logging=True):

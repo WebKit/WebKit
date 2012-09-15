@@ -609,3 +609,7 @@ class PortTestCase(unittest.TestCase):
         port._build_driver = build_driver_called
         port.check_build(False)
         self.assertFalse(self.build_called, None)
+
+    def test_additional_platform_directory(self):
+        port = self.make_port(options=MockOptions(additional_platform_directory=['/tmp/foo']))
+        self.assertEquals(port.baseline_search_path()[0], '/tmp/foo')

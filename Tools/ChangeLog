@@ -1,3 +1,27 @@
+2012-09-14  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: --additional-platform-dir is broken on chromium ports
+        https://bugs.webkit.org/show_bug.cgi?id=96840
+
+        Reviewed by Ojan Vafai.
+
+        Looks like I broke this when cleaning things up as part of
+        adding ML support. Fixing and adding a test.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.default_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.default_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.default_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (test_check_build):
+        (test_additional_platform_directory):
+
 2012-09-13  Stephanie Lewis  <slewis@apple.com>
 
         mac-future ignores previous platform TestExpectations.

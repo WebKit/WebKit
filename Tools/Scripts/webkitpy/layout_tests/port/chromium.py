@@ -114,6 +114,9 @@ class ChromiumPort(Port):
     def default_pixel_tests(self):
         return True
 
+    def default_baseline_search_path(self):
+        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self.version()])
+
     def default_timeout_ms(self):
         if self.get_option('configuration') == 'Debug':
             return 12 * 1000

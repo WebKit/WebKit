@@ -99,10 +99,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
             self._executive.run_command([setup_mount])  # Paths are all absolute, so this does not require a cwd.
         return env
 
-    def baseline_search_path(self):
-        port_names = self.FALLBACK_PATHS[self.version()]
-        return map(self._webkit_baseline_path, port_names)
-
     def _modules_to_search_for_symbols(self):
         # FIXME: we should return the path to the ffmpeg equivalents to detect if we have the mp3 and aac codecs installed.
         # See https://bugs.webkit.org/show_bug.cgi?id=89706.

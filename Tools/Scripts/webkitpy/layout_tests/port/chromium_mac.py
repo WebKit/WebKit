@@ -79,10 +79,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
         self._version = port_name[port_name.index('chromium-mac-') + len('chromium-mac-'):]
         assert self._version in self.SUPPORTED_OS_VERSIONS
 
-    def baseline_search_path(self):
-        fallback_paths = self.FALLBACK_PATHS
-        return map(self._webkit_baseline_path, fallback_paths[self._version])
-
     def _modules_to_search_for_symbols(self):
         return [self._build_path('ffmpegsumo.so')]
 
