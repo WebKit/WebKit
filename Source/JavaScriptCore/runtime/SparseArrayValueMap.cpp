@@ -27,11 +27,181 @@
 #include "SparseArrayValueMap.h"
 
 #include "ClassInfo.h"
-#include "SparseArrayValueMapInlineMethods.h"
+#include "GetterSetter.h"
+#include "JSObject.h"
+#include "PropertySlot.h"
+#include "Reject.h"
+#include "SlotVisitor.h"
+#include "Structure.h"
 
 namespace JSC {
 
 const ClassInfo SparseArrayValueMap::s_info = { "SparseArrayValueMap", 0, 0, 0, CREATE_METHOD_TABLE(SparseArrayValueMap) };
+
+SparseArrayValueMap::SparseArrayValueMap(JSGlobalData& globalData)
+    : Base(globalData, globalData.sparseArrayValueMapStructure.get())
+    , m_flags(Normal)
+    , m_reportedCapacity(0)
+{
+}
+
+SparseArrayValueMap::~SparseArrayValueMap()
+{
+}
+
+void SparseArrayValueMap::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
+}
+
+SparseArrayValueMap* SparseArrayValueMap::create(JSGlobalData& globalData)
+{
+    SparseArrayValueMap* result = new (NotNull, allocateCell<SparseArrayValueMap>(globalData.heap)) SparseArrayValueMap(globalData);
+    result->finishCreation(globalData);
+    return result;
+}
+
+void SparseArrayValueMap::destroy(JSCell* cell)
+{
+    static_cast<SparseArrayValueMap*>(cell)->SparseArrayValueMap::~SparseArrayValueMap();
+}
+
+Structure* SparseArrayValueMap::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), &s_info);
+}
+
+SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigned i)
+{
+    SparseArrayEntry entry;
+    entry.setWithoutWriteBarrier(jsUndefined());
+
+    AddResult result = m_map.add(i, entry);
+    size_t capacity = m_map.capacity();
+    if (capacity != m_reportedCapacity) {
+        Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
+        m_reportedCapacity = capacity;
+    }
+    return result;
+}
+
+void SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
+{
+    AddResult result = add(array, i);
+    SparseArrayEntry& entry = result.iterator->second;
+
+    // To save a separate find & add, we first always add to the sparse map.
+    // In the uncommon case that this is a new property, and the array is not
+    // extensible, this is not the right thing to have done - so remove again.
+    if (result.isNewEntry && !array->isExtensible()) {
+        remove(result.iterator);
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        return;
+    }
+
+    if (!(entry.attributes & Accessor)) {
+        if (entry.attributes & ReadOnly) {
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
+        }
+
+        entry.set(exec->globalData(), this, value);
+        return;
+    }
+
+    JSValue accessor = entry.SparseArrayEntry::Base::get();
+    ASSERT(accessor.isGetterSetter());
+    JSObject* setter = asGetterSetter(accessor)->setter();
+    
+    if (!setter) {
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        return;
+    }
+
+    CallData callData;
+    CallType callType = setter->methodTable()->getCallData(setter, callData);
+    MarkedArgumentBuffer args;
+    args.append(value);
+    call(exec, setter, callType, callData, array, args);
+}
+
+bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
+{
+    AddResult result = add(array, i);
+    SparseArrayEntry& entry = result.iterator->second;
+
+    // To save a separate find & add, we first always add to the sparse map.
+    // In the uncommon case that this is a new property, and the array is not
+    // extensible, this is not the right thing to have done - so remove again.
+    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isExtensible()) {
+        remove(result.iterator);
+        return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
+    }
+
+    entry.attributes = attributes;
+    entry.set(exec->globalData(), this, value);
+    return true;
+}
+
+void SparseArrayEntry::get(PropertySlot& slot) const
+{
+    JSValue value = Base::get();
+    ASSERT(value);
+
+    if (LIKELY(!value.isGetterSetter())) {
+        slot.setValue(value);
+        return;
+    }
+
+    JSObject* getter = asGetterSetter(value)->getter();
+    if (!getter) {
+        slot.setUndefined();
+        return;
+    }
+
+    slot.setGetterSlot(getter);
+}
+
+void SparseArrayEntry::get(PropertyDescriptor& descriptor) const
+{
+    descriptor.setDescriptor(Base::get(), attributes);
+}
+
+JSValue SparseArrayEntry::get(ExecState* exec, JSObject* array) const
+{
+    JSValue result = Base::get();
+    ASSERT(result);
+
+    if (LIKELY(!result.isGetterSetter()))
+        return result;
+
+    JSObject* getter = asGetterSetter(result)->getter();
+    if (!getter)
+        return jsUndefined();
+
+    CallData callData;
+    CallType callType = getter->methodTable()->getCallData(getter, callData);
+    return call(exec, getter, callType, callData, array, exec->emptyList());
+}
+
+JSValue SparseArrayEntry::getNonSparseMode() const
+{
+    ASSERT(!attributes);
+    return Base::get();
+}
+
+void SparseArrayValueMap::visitChildren(JSCell* thisObject, SlotVisitor& visitor)
+{
+    Base::visitChildren(thisObject, visitor);
+    
+    SparseArrayValueMap* thisMap = jsCast<SparseArrayValueMap*>(thisObject);
+    iterator end = thisMap->m_map.end();
+    for (iterator it = thisMap->m_map.begin(); it != end; ++it)
+        visitor.append(&it->second);
+}
 
 } // namespace JSC
 

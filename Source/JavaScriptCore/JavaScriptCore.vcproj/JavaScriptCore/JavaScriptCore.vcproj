@@ -518,10 +518,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\SparseArrayValueMapInlineMethods.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\ArrayStorage.h"
 				>
 			</File>

@@ -27,7 +27,6 @@
 #include "RegExpMatchesArray.h"
 
 #include "ButterflyInlineMethods.h"
-#include "SparseArrayValueMapInlineMethods.h"
 
 namespace JSC {
 

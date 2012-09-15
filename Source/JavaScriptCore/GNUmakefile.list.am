@@ -647,7 +647,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/SamplingCounter.h \
 	Source/JavaScriptCore/runtime/SmallStrings.cpp \
 	Source/JavaScriptCore/runtime/SmallStrings.h \
-	Source/JavaScriptCore/runtime/SparseArrayValueMapInlineMethods.h \
 	Source/JavaScriptCore/runtime/SparseArrayValueMap.cpp \
 	Source/JavaScriptCore/runtime/SparseArrayValueMap.h \
 	Source/JavaScriptCore/runtime/StrictEvalActivation.cpp \

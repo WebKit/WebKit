@@ -55,7 +55,6 @@
 #include "ParserArena.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
-#include "SparseArrayValueMapInlineMethods.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include <wtf/RetainPtr.h>

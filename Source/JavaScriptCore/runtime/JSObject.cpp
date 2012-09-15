@@ -42,7 +42,6 @@
 #include "PropertyNameArray.h"
 #include "Reject.h"
 #include "SlotVisitorInlineMethods.h"
-#include "SparseArrayValueMapInlineMethods.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 

@@ -34,7 +34,6 @@
 #include "IndexingHeaderInlineMethods.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"
-#include "SparseArrayValueMapInlineMethods.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
