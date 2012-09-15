@@ -123,7 +123,7 @@ EventTarget* EventRelatedTargetAdjuster::findRelatedTarget(TreeScope* scope)
 
 bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 
     EventDispatcher dispatcher(node);
     return mediator->dispatchEvent(&dispatcher);
@@ -248,7 +248,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
     event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
     ensureEventAncestors(event.get());

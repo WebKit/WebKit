@@ -64,10 +64,6 @@ static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
 
-#ifndef NDEBUG
-unsigned AssertNoEventDispatch::s_count = 0;
-#endif
-
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
     if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
@@ -190,13 +186,13 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
 void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild->nextSibling());
     ASSERT(!newChild->previousSibling());
     ASSERT(!newChild->isShadowRoot());
 
+    forbidEventDispatch();
     Node* prev = nextChild->previousSibling();
     ASSERT(m_lastChild != prev);
     nextChild->setPreviousSibling(newChild);
@@ -211,6 +207,7 @@ void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
     newChild->setParentOrHostNode(this);
     newChild->setPreviousSibling(prev);
     newChild->setNextSibling(nextChild);
+    allowEventDispatch();
 }
 
 void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChild)
@@ -311,13 +308,12 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         treeScope()->adoptIfNeeded(child);
 
         // Add child before "next".
-        {
-            AssertNoEventDispatch assertNoEventDispatch;
-            if (next)
-                insertBeforeCommon(next.get(), child);
-            else
-                appendChildToContainer(child, this);
-        }
+        forbidEventDispatch();
+        if (next)
+            insertBeforeCommon(next.get(), child);
+        else
+            appendChildToContainer(child, this);
+        allowEventDispatch();
 
         updateTreeAfterInsertion(this, child, shouldLazyAttach);
     }
@@ -439,9 +435,10 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* oldChild)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
     ASSERT(oldChild);
     ASSERT(oldChild->parentNode() == this);
+
+    forbidEventDispatch();
 
     // Remove from rendering tree
     if (oldChild->attached())
@@ -461,6 +458,8 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
     oldChild->setParentOrHostNode(0);
 
     document()->adoptIfNeeded(oldChild);
+
+    allowEventDispatch();
 }
 
 void ContainerNode::parserRemoveChild(Node* oldChild)
@@ -499,48 +498,47 @@ void ContainerNode::removeChildren()
     willRemoveChildren(protect.get());
 
     RenderWidget::suspendWidgetHierarchyUpdates();
-    {
-        AssertNoEventDispatch assertNoEventDispatch;
+    forbidEventDispatch();
+    Vector<RefPtr<Node>, 10> removedChildren;
+    removedChildren.reserveInitialCapacity(childNodeCount());
+    while (RefPtr<Node> n = m_firstChild) {
+        Node* next = n->nextSibling();
 
-        Vector<RefPtr<Node>, 10> removedChildren;
-        removedChildren.reserveInitialCapacity(childNodeCount());
-        while (RefPtr<Node> n = m_firstChild) {
-            Node* next = n->nextSibling();
+        // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744).
+        // removeChild() does this after calling detach(). There is no explanation for
+        // this discrepancy between removeChild() and its optimized version removeChildren().
+        n->setPreviousSibling(0);
+        n->setNextSibling(0);
+        n->setParentOrHostNode(0);
+        document()->adoptIfNeeded(n.get());
 
-            // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744).
-            // removeChild() does this after calling detach(). There is no explanation for
-            // this discrepancy between removeChild() and its optimized version removeChildren().
-            n->setPreviousSibling(0);
-            n->setNextSibling(0);
-            n->setParentOrHostNode(0);
-            document()->adoptIfNeeded(n.get());
-
-            m_firstChild = next;
-            if (n == m_lastChild)
-                m_lastChild = 0;
-            removedChildren.append(n.release());
-        }
-
-        size_t removedChildrenCount = removedChildren.size();
-        size_t i;
-
-        // Detach the nodes only after properly removed from the tree because
-        // a. detaching requires a proper DOM tree (for counters and quotes for
-        // example) and during the previous loop the next sibling still points to
-        // the node being removed while the node being removed does not point back
-        // and does not point to the same parent as its next sibling.
-        // b. destroying Renderers of standalone nodes is sometimes faster.
-        for (i = 0; i < removedChildrenCount; ++i) {
-            Node* removedChild = removedChildren[i].get();
-            if (removedChild->attached())
-                removedChild->detach();
-        }
-
-        childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
-
-        for (i = 0; i < removedChildrenCount; ++i)
-            ChildNodeRemovalNotifier(this).notify(removedChildren[i].get());
+        m_firstChild = next;
+        if (n == m_lastChild)
+            m_lastChild = 0;
+        removedChildren.append(n.release());
     }
+
+    size_t removedChildrenCount = removedChildren.size();
+    size_t i;
+
+    // Detach the nodes only after properly removed from the tree because
+    // a. detaching requires a proper DOM tree (for counters and quotes for
+    // example) and during the previous loop the next sibling still points to
+    // the node being removed while the node being removed does not point back
+    // and does not point to the same parent as its next sibling.
+    // b. destroying Renderers of standalone nodes is sometimes faster.
+    for (i = 0; i < removedChildrenCount; ++i) {
+        Node* removedChild = removedChildren[i].get();
+        if (removedChild->attached())
+            removedChild->detach();
+    }
+
+    childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
+
+    for (i = 0; i < removedChildrenCount; ++i)
+        ChildNodeRemovalNotifier(this).notify(removedChildren[i].get());
+
+    allowEventDispatch();
     RenderWidget::resumeWidgetHierarchyUpdates();
 
     dispatchSubtreeModifiedEvent();
@@ -591,10 +589,9 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         treeScope()->adoptIfNeeded(child);
 
         // Append child to the end of the list
-        {
-            AssertNoEventDispatch assertNoEventDispatch;
-            appendChildToContainer(child, this);
-        }
+        forbidEventDispatch();
+        appendChildToContainer(child, this);
+        allowEventDispatch();
 
         updateTreeAfterInsertion(this, child, shouldLazyAttach);
     }
@@ -608,13 +605,13 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
 
+    forbidEventDispatch();
     Node* last = m_lastChild;
-    {
-        AssertNoEventDispatch assertNoEventDispatch;
-        // FIXME: This method should take a PassRefPtr.
-        appendChildToContainer(newChild.get(), this);
-        treeScope()->adoptIfNeeded(newChild.get());
-    }
+    // FIXME: This method should take a PassRefPtr.
+    appendChildToContainer(newChild.get(), this);
+    treeScope()->adoptIfNeeded(newChild.get());
+    
+    allowEventDispatch();
 
     childrenChanged(true, last, 0, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());
@@ -951,7 +948,7 @@ static void dispatchChildInsertionEvents(Node* child)
     if (child->isInShadowTree())
         return;
 
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
@@ -971,7 +968,7 @@ static void dispatchChildRemovalEvents(Node* child)
     if (child->isInShadowTree())
         return;
 
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!eventDispatchForbidden());
 
     InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
 
