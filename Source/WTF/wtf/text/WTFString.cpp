@@ -26,7 +26,6 @@
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
-#include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryInstrumentation.h>
 #include <wtf/text/CString.h>
@@ -1136,17 +1135,16 @@ Vector<char> asciiDebug(StringImpl* impl)
         return asciiDebug(String("[null]").impl());
 
     Vector<char> buffer;
-    for (unsigned i = 0; i < impl->length(); ++i) {
-        UChar ch = (*impl)[i];
-        if (isASCIIPrintable(ch))
-            buffer.append(ch);
-        else {
-            buffer.append('\\');
-            buffer.append('u');
-            appendUnsignedAsHexFixedSize(ch, buffer, 4);
-        }
+    unsigned length = impl->length();
+    const UChar* characters = impl->characters();
+
+    buffer.resize(length + 1);
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        buffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
     }
-    buffer.append('\0');
+    buffer[length] = '\0';
+
     return buffer;
 }
 
