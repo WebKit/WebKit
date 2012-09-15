@@ -317,9 +317,6 @@ BUGWK93552 : inspector/device-orientation-success.html = TEXT
 // (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
 BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TEXT
 
-// Added by bug 89826 
-BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
-
 // (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
 BUGWK94374 : inspector/timeline/timeline-decode-resize.html = TEXT
 

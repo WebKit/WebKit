@@ -1,5 +1,18 @@
 2012-09-15  Dan Bernstein  <mitz@apple.com>
 
+        REGRESSION (r125578): The monospace code path in RenderText::widthFromCache disagrees with Font::width on word spacing
+        https://bugs.webkit.org/show_bug.cgi?id=96869
+
+        Reviewed by Eric Seidel.
+
+        * fast/text/word-space-monospace-expected.html: Added.
+        * fast/text/word-space-monospace.html: Added.
+        * platform/mac/TestExpectations: Removed fast/css/word-spacing-characters.html.
+        * platform/mac/fast/css/word-space-extra-expected.png: Updated.
+        * platform/mac/fast/css/word-space-extra-expected.txt: Updated.
+
+2012-09-15  Dan Bernstein  <mitz@apple.com>
+
         REGRESSION (r125578): Word spacing not applied to newline and tab characters that are treated as spaces
         https://bugs.webkit.org/show_bug.cgi?id=96865
 
