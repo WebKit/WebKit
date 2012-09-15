@@ -31,24 +31,31 @@ using namespace WTF;
 
 namespace WebCore {
 
-static bool hasNonASCIIOrUpper(const String& string)
+template <typename CharacterType>
+static inline bool hasNonASCIIOrUpper(const CharacterType* characters, unsigned length)
 {
-    const UChar* characters = string.characters();
-    unsigned length = string.length();
     bool hasUpper = false;
-    UChar ored = 0;
+    CharacterType ored = 0;
     for (unsigned i = 0; i < length; i++) {
-        UChar c = characters[i];
+        CharacterType c = characters[i];
         hasUpper |= isASCIIUpper(c);
         ored |= c;
     }
     return hasUpper || (ored & ~0x7F);
 }
 
-void SpaceSplitStringData::createVector(const String& string)
+static inline bool hasNonASCIIOrUpper(const String& string)
 {
-    const UChar* characters = string.characters();
     unsigned length = string.length();
+
+    if (string.is8Bit())
+        return hasNonASCIIOrUpper(string.characters8(), length);
+    return hasNonASCIIOrUpper(string.characters16(), length);
+}
+
+template <typename CharacterType>
+inline void SpaceSplitStringData::createVector(const CharacterType* characters, unsigned length)
+{
     unsigned start = 0;
     while (true) {
         while (start < length && isHTMLSpace(characters[start]))
@@ -63,6 +70,18 @@ void SpaceSplitStringData::createVector(const String& string)
 
         start = end + 1;
     }
+}
+
+void SpaceSplitStringData::createVector(const String& string)
+{
+    unsigned length = string.length();
+
+    if (string.is8Bit()) {
+        createVector(string.characters8(), length);
+        return;
+    }
+
+    createVector(string.characters16(), length);
 }
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)

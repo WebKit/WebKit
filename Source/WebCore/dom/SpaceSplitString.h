@@ -58,6 +58,8 @@ namespace WebCore {
         explicit SpaceSplitStringData(const SpaceSplitStringData&);
 
         void createVector(const String&);
+        template <typename CharacterType>
+        inline void createVector(const CharacterType*, unsigned);
 
         AtomicString m_keyString;
         Vector<AtomicString, 4> m_vector;
