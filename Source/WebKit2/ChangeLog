@@ -1,3 +1,22 @@
+2012-09-14  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96846
+        Tests failing on WK2 bots after giving fixed positioning its own 
+        stacking context
+
+        Reviewed by Geoffrey Garen.
+
+        Tests are failing because I checked in updated results that expect 
+        fixed positioning to create a stacking context. However, 
+        WebKitTestRunner does not enable ScrollingCoordinator, so the code 
+        that I added to enable stacking contexts for fixedPos is never 
+        actually running. This patch moves that code to a place where it will 
+        run for the testing tools, which matches the patch for WK1.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2012-09-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Revert r127457 and following fixes due to several hit-testing regressions

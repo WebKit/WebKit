@@ -261,9 +261,15 @@ void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
 
 void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
 {
+#if PLATFORM(MAC)
+    // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
+    // As a part of that work, we have to composite fixed position elements, and we have to allow those
+    // elements to create a stacking context.
+    m_webPage->corePage()->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+    m_webPage->corePage()->settings()->setFixedPositionCreatesStackingContext(true);
+
     // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
     // is enabled on Mac so that scrollbars are always in their own layers.
-#if PLATFORM(MAC)
     if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
         m_webPage->corePage()->settings()->setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
     else
