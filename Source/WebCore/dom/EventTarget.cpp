@@ -43,32 +43,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static int gEventDispatchForbidden = 0;
-
-void forbidEventDispatch()
-{
-    if (!isMainThread())
-        return;
-    ++gEventDispatchForbidden;
-}
-
-void allowEventDispatch()
-{
-    if (!isMainThread())
-        return;
-    if (gEventDispatchForbidden > 0)
-        --gEventDispatchForbidden;
-}
-
-bool eventDispatchForbidden()
-{
-    if (!isMainThread())
-        return false;
-    return gEventDispatchForbidden > 0;
-}
-#endif // NDEBUG
-
 EventTargetData::EventTargetData()
 {
 }
@@ -185,7 +159,7 @@ void EventTarget::uncaughtExceptionInEventHandler()
 
 bool EventTarget::fireEventListeners(Event* event)
 {
-    ASSERT(!eventDispatchForbidden());
+    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
     ASSERT(event && !event->type().isEmpty());
 
     EventTargetData* d = eventTargetData();
