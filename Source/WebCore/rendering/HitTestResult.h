@@ -55,7 +55,7 @@ public:
     // Pass non-zero padding values to perform a rect-based hit test.
     HitTestLocation(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
-    HitTestLocation(const HitTestLocation&, const LayoutSize& offset, RenderRegion* = 0);
+    HitTestLocation(const HitTestLocation&, const LayoutSize& offset, RenderRegion*);
     HitTestLocation(const HitTestLocation&);
     ~HitTestLocation();
     HitTestLocation& operator=(const HitTestLocation&);

@@ -104,7 +104,7 @@ HitTestLocation::HitTestLocation(const HitTestLocation& other, const LayoutSize&
     , m_boundingBox(other.m_boundingBox)
     , m_transformedPoint(other.m_transformedPoint)
     , m_transformedRect(other.m_transformedRect)
-    , m_region(region ? region : other.m_region)
+    , m_region(region)
     , m_isRectBased(other.m_isRectBased)
     , m_isRectilinear(other.m_isRectilinear)
 {

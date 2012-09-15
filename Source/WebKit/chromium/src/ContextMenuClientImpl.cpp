@@ -160,7 +160,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     Frame* selectedFrame = r.innerNonSharedNode()->document()->frame();
 
     WebContextMenuData data;
-    data.mousePosition = r.roundedPoint();
+    data.mousePosition = selectedFrame->view()->contentsToWindow(r.roundedPoint());
 
     // Compute edit flags.
     data.editFlags = WebContextMenuData::CanDoNone;

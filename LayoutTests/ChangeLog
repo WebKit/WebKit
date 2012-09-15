@@ -1,3 +1,24 @@
+2012-09-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Revert r127457 and following fixes due to several hit-testing regressions
+        https://bugs.webkit.org/show_bug.cgi?id=96830
+
+        Reviewed by Antonio Gomes.
+
+        This change reverts r127457, r127863 and r128505. As the tests relies on the extended API
+        after r127457, we cannot keep them.
+
+        * fast/dom/nodesFromRect/nodesFromRect-child-frame-content-expected.txt: Removed.
+        * fast/dom/nodesFromRect/nodesFromRect-child-frame-content.html: Removed.
+        * fast/dom/nodesFromRect/resources/child-frame.html: Removed.
+        * fast/dom/nodesFromRect/resources/nodesFromRect.js:
+        (check):
+        (checkShadowContent):
+        * touchadjustment/iframe-boundary-expected.txt: Removed.
+        * touchadjustment/iframe-boundary.html: Removed.
+        * touchadjustment/resources/inner-content-page.html: Removed.
+        * touchadjustment/resources/inner-navigation-frame.html: Removed.
+
 2012-09-14  Bo Liu  <boliu@chromium.org>
 
         Skip image load tests that requires queueReload in WebKit2

@@ -257,7 +257,7 @@ EXPORTS
         ??1ContextDestructionObserver@WebCore@@MAE@XZ
         ?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ
         ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
-        ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N00@Z
+        ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
         ?restrictScaleFactorToInitialScaleIfNotUserScalable@WebCore@@YAXAAUViewportAttributes@1@@Z
         ?restrictMinimumScaleFactorToViewportSize@WebCore@@YAXAAUViewportAttributes@1@VIntSize@1@@Z

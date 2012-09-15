@@ -1,3 +1,15 @@
+2012-09-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Revert r127457 and following fixes due to several hit-testing regressions
+        https://bugs.webkit.org/show_bug.cgi?id=96830
+
+        Reviewed by Antonio Gomes.
+
+        This change reverts r127457, r127863 and r128505.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
         Provide a runtime setting to disable position:sticky

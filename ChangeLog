@@ -1,3 +1,14 @@
+2012-09-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Revert r127457 and following fixes due to several hit-testing regressions
+        https://bugs.webkit.org/show_bug.cgi?id=96830
+
+        Reviewed by Antonio Gomes.
+
+        This change reverts r127457, r127863 and r128505.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-14  Adam Barth  <abarth@webkit.org>
 
         Remove webkitPostMessage
