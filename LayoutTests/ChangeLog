@@ -1,3 +1,10 @@
+2012-09-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening. Skip 2 new tests, because 
+        TestRunner::overridePreference() does not support the 'WebKitDisplayImagesKey' preference
+
+        * platform/qt/Skipped:
+
 2012-09-14  James Robinson  <jamesr@chromium.org>
 
         Unreviewed gardening - more position:fixed stacking context rebaselines.
