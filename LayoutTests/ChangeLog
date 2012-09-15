@@ -1,3 +1,16 @@
+2012-09-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r125578): The Mac complex text code path disagrees with the fast path on word spacing
+        https://bugs.webkit.org/show_bug.cgi?id=96857
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/atsui-negative-spacing-features.html: Removed some newlines from this test,
+        because now that the complex text code path matches the fast path, it too suffers from a bug
+        where word spacing is not added at a newline.
+        * fast/text/atsui-spacing-features.html: Ditto.
+        * platform/mac/TestExpectations: Removed fast/css/word-spacing-characters-complex-text.html.
+
 2012-09-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectation

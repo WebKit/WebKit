@@ -322,7 +322,6 @@ BUGWK89826 : fast/css/word-space-extra.html = TEXT
 
 // Added by bug 89826 
 BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
-BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
 // (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
 BUGWK94374 : inspector/timeline/timeline-decode-resize.html = TEXT
