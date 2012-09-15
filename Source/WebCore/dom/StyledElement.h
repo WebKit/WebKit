@@ -79,12 +79,6 @@ private:
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void updateAttributeStyle();
-
-    void destroyInlineStyle()
-    {
-        if (attributeData())
-            attributeData()->destroyInlineStyle(this);
-    }
 };
 
 inline void StyledElement::invalidateStyleAttribute()

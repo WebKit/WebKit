@@ -1,3 +1,16 @@
+2012-09-15  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r127438): Google Docs to renders text too small.
+        <http://webkit.org/b/96554>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test that an element that shared its inline style with another element works as expected
+        after the other element is destroyed.
+
+        * fast/dom/shared-inline-style-after-node-removal-expected.txt: Added.
+        * fast/dom/shared-inline-style-after-node-removal.html: Added.
+
 2012-09-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r125578): The monospace code path in RenderText::widthFromCache disagrees with Font::width on word spacing

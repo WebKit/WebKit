@@ -58,7 +58,8 @@ public:
     StylePropertySet* ensureInlineStyle(StyledElement*);
     StylePropertySet* ensureMutableInlineStyle(StyledElement*);
     void updateInlineStyleAvoidingMutation(StyledElement*, const String& text) const;
-    void destroyInlineStyle(StyledElement*) const;
+    void destroyInlineStyle(StyledElement*);
+    void detachCSSOMWrapperIfNeeded(StyledElement*);
 
     const StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
     void setAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_attributeStyle = style; }

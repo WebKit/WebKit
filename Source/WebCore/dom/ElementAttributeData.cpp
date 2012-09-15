@@ -213,11 +213,15 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
         m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
 }
 
-void ElementAttributeData::destroyInlineStyle(StyledElement* element) const
+void ElementAttributeData::detachCSSOMWrapperIfNeeded(StyledElement* element)
 {
-    if (!m_inlineStyleDecl)
-        return;
-    m_inlineStyleDecl->clearParentElement(element);
+    if (m_inlineStyleDecl)
+        m_inlineStyleDecl->clearParentElement(element);
+}
+
+void ElementAttributeData::destroyInlineStyle(StyledElement* element)
+{
+    detachCSSOMWrapperIfNeeded(element);
     m_inlineStyleDecl = 0;
 }
 
