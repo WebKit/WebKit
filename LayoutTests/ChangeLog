@@ -1,3 +1,14 @@
+2012-09-14  Bo Liu  <boliu@chromium.org>
+
+        Skip image load tests that requires queueReload in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=96832
+
+        Tests added in reivison 128645.
+
+        Reviewed by Adam Barth.
+
+        * platform/wk2/Skipped:
+
 2012-09-14  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Calling close() during upgradeneeded handler should fire error at open request
