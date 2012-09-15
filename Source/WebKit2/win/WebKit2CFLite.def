@@ -216,6 +216,7 @@ EXPORTS
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?setImagesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?mockScrollbarsEnabled@Settings@WebCore@@SA_NXZ
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
@@ -229,6 +230,7 @@ EXPORTS
         ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setStandardFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
