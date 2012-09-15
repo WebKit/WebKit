@@ -51,7 +51,7 @@ class WebSocketServerConnection;
 class WebSocketServer {
 public:
     enum ServerState { Closed, Listening };
-    WebSocketServer(WebSocketServerClient*);
+    explicit WebSocketServer(WebSocketServerClient*);
     virtual ~WebSocketServer();
 
     // Server operations.

@@ -52,7 +52,7 @@ public:
     void invalidate();
 
 private:
-    WebOpenPanelResultListenerProxy(WebPageProxy*);
+    explicit WebOpenPanelResultListenerProxy(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
 

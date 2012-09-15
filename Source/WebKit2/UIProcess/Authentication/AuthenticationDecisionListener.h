@@ -50,7 +50,7 @@ public:
     void detachChallenge();
 
 private:
-    AuthenticationDecisionListener(AuthenticationChallengeProxy* authenticationChallenge);
+    explicit AuthenticationDecisionListener(AuthenticationChallengeProxy*);
 
     virtual Type type() const { return APIType; }
     

@@ -51,7 +51,7 @@ public:
     WebCore::ProtectionSpaceAuthenticationScheme authenticationScheme() const;
 
 private:
-    WebProtectionSpace(const WebCore::ProtectionSpace&);
+    explicit WebProtectionSpace(const WebCore::ProtectionSpace&);
 
     virtual Type type() const { return APIType; }
     

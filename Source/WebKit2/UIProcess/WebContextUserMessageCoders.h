@@ -41,7 +41,7 @@ class WebContextUserMessageEncoder : public UserMessageEncoder<WebContextUserMes
 public:
     typedef UserMessageEncoder<WebContextUserMessageEncoder> Base;
 
-    WebContextUserMessageEncoder(APIObject* root) 
+    explicit WebContextUserMessageEncoder(APIObject* root) 
         : Base(root)
     {
     }

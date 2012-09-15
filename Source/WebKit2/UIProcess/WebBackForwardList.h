@@ -85,7 +85,7 @@ public:
 #endif
 
 private:
-    WebBackForwardList(WebPageProxy*);
+    explicit WebBackForwardList(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
 

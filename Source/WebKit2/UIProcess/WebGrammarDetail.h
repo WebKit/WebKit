@@ -50,7 +50,7 @@ public:
 
 private:
     WebGrammarDetail(int location, int length, ImmutableArray* guesses, const String& userDescription);
-    WebGrammarDetail(const WebCore::GrammarDetail&);
+    explicit WebGrammarDetail(const WebCore::GrammarDetail&);
 
     virtual Type type() const { return APIType; }
 

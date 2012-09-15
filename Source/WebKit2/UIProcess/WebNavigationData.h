@@ -48,7 +48,7 @@ public:
     const WebCore::ResourceRequest& originalRequest() const { return m_store.originalRequest; }
 
 private:
-    WebNavigationData(const WebNavigationDataStore&);
+    explicit WebNavigationData(const WebNavigationDataStore&);
 
     virtual Type type() const { return APIType; }
 

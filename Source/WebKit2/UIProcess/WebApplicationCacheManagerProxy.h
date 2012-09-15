@@ -68,7 +68,7 @@ public:
     bool shouldTerminate(WebProcessProxy*) const;
 
 private:
-    WebApplicationCacheManagerProxy(WebContext*);
+    explicit WebApplicationCacheManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
 

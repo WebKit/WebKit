@@ -44,7 +44,7 @@ public:
     uint64_t callbackID() const { return m_callbackID; }
 
 protected:
-    CallbackBase(void* context)
+    explicit CallbackBase(void* context)
         : m_context(context)
         , m_callbackID(generateCallbackID())
     {

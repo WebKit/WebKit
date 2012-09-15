@@ -144,7 +144,7 @@ public:
 #endif
 
 private:
-    WebInspectorProxy(WebPageProxy* page);
+    explicit WebInspectorProxy(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
 

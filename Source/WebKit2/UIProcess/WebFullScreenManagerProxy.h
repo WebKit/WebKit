@@ -90,7 +90,7 @@ public:
     void requestExitFullScreen();
 
 private:
-    WebFullScreenManagerProxy(WebPageProxy*);
+    explicit WebFullScreenManagerProxy(WebPageProxy*);
 
     void supportsFullScreen(bool withKeyboard, bool&);
     void enterFullScreen();

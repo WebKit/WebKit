@@ -68,7 +68,7 @@ public:
     bool shouldTerminate(WebProcessProxy*) const;
 
 private:
-    WebKeyValueStorageManagerProxy(WebContext*);
+    explicit WebKeyValueStorageManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
 

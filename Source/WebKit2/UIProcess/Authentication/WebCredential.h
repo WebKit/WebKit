@@ -63,8 +63,8 @@ public:
     const String& user() const;
     
 private:
-    WebCredential(const WebCore::Credential&);
-    WebCredential(WebCertificateInfo*);
+    explicit WebCredential(const WebCore::Credential&);
+    explicit WebCredential(WebCertificateInfo*);
 
     virtual Type type() const { return APIType; }
 

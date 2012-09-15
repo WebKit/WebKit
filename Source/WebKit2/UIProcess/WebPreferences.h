@@ -79,7 +79,7 @@ public:
 
 private:
     WebPreferences();
-    WebPreferences(const String& identifier);
+    explicit WebPreferences(const String&);
     WebPreferences(const WebPreferences&);
 
     void platformInitializeStore();
