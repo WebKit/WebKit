@@ -5977,6 +5977,7 @@ else
 if TARGET_WIN32
 webcore_sources += \
 	Source/WebCore/platform/graphics/win/DIBPixelData.cpp \
+	Source/WebCore/platform/graphics/win/DIBPixelData.h \
 	Source/WebCore/platform/graphics/win/GraphicsContextCairoWin.cpp \
 	Source/WebCore/platform/graphics/win/GraphicsContextWin.cpp \
 	Source/WebCore/platform/graphics/win/LocalWindowsContext.h \
@@ -5987,6 +5988,7 @@ webcore_sources += \
 	Source/WebCore/platform/win/SystemInfo.h \
 	Source/WebCore/platform/win/WebCoreInstanceHandle.cpp \
 	Source/WebCore/platform/win/WebCoreInstanceHandle.h \
+	Source/WebCore/platform/win/WindowsExtras.h \
 	Source/WebCore/plugins/win/PluginDatabaseWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h \
