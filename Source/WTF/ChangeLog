@@ -1,3 +1,15 @@
+2012-09-15  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        llint: Implement LOCAL_LABEL_STRING for the BSD platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=96870
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/InlineASM.h: Extend the definition of LOCAL_LABEL_STRING
+        currently used for OS(LINUX) to the BSDs, since they also normally
+        use GNU as, and clang/llvm seems to parse that syntax just fine as
+        well.
+
 2012-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         Minimize collisions when hashing pairs

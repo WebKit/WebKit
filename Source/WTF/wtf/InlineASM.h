@@ -79,7 +79,11 @@
 // Don't know about any of the others.
 #if PLATFORM(MAC)
 #define LOCAL_LABEL_STRING(name) "L" #name
-#elif OS(LINUX)
+#elif   OS(LINUX)               \
+     || OS(FREEBSD)             \
+     || OS(OPENBSD)             \
+     || OS(NETBSD)
+    // GNU as-compatible syntax.
 #define LOCAL_LABEL_STRING(name) ".L" #name
 #endif
 
