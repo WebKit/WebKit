@@ -40,15 +40,16 @@ public:
 };
 
 /*!
-    \qmlclass WebLoadRequest QWebLoadRequest
+    \qmltype WebLoadRequest
+    \instantiates QWebLoadRequest
+    \inqmlmodule QtWebKit 3.0
+
     \brief A utility class for the WebView::loadingChanged signal.
 
     This class contains information about a requested load of a web page, like the URL and
     current loading status (started, finished, failed).
 
-    \sa WebView::loadingChanged(WebLoadRequest)
-
-    \inqmlmodule QtWebKit 3.0
+    \sa WebView::onLoadingChanged
 */
 QWebLoadRequest::QWebLoadRequest(const QUrl& url, QQuickWebView::LoadStatus status, const QString& errorString, QQuickWebView::ErrorDomain errorDomain, int errorCode, QObject* parent)
     : QObject(parent)
@@ -80,7 +81,8 @@ QUrl QWebLoadRequest::url() const
     \li WebView::LoadFailedStatus - the page has failed loading.
     \endlist
 
-    \sa WebLoadRequest, WebView::loadingChanged(WebLoadRequest)
+    \sa WebLoadRequest
+    \sa WebView::onLoadingChanged
 */
 QQuickWebView::LoadStatus QWebLoadRequest::status() const
 {

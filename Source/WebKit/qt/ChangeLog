@@ -1,3 +1,20 @@
+2012-09-15  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] QDoc fixes for Qt 5 documentation
+        https://bugs.webkit.org/show_bug.cgi?id=96796
+
+        Reviewed by Simon Hausmann.
+
+        Produce fewer warnings and a better documentation.
+        Having two QML modules providing a WebView component is a bit too much for poor old qdoc to
+        cope with (or would require a lot of painful disambiguation by hand). Since the plan is to have
+        QDeclarativeWebView living in the qtquick1 module, we can already take it out of the 
+        documentation generation for now.
+
+        * declarative/qdeclarativewebview.cpp: s/qmlclass/qmltype/ out of principle
+        * docs/qtwebkit.qdocconf: Remove the \i alias that caused a warning. Use *.h as headers suffix, not sources.
+        Also remove QDeclarativeWebView from the documentation.
+
 2012-09-13  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt][WK2] fast/forms/access-key-for-all-elements.html fails

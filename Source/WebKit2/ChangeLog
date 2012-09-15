@@ -1,3 +1,15 @@
+2012-09-15  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] QDoc fixes for Qt 5 documentation
+        https://bugs.webkit.org/show_bug.cgi?id=96796
+
+        Reviewed by Simon Hausmann.
+
+        Fixup miscellaneous qdoc commands syntax.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qwebloadrequest.cpp:
+
 2012-09-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *explicit* keyword to constructors to WebKit2/UIProcess

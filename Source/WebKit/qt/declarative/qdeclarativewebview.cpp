@@ -152,7 +152,9 @@ bool GraphicsWebView::sceneEvent(QEvent *event)
 }
 
 /*!
-    \qmlclass WebView QDeclarativeWebView
+    \qmltype WebView
+    \instantiates QDeclarativeWebView
+    \inqmlmodule QtWebKit 1.0
     \ingroup qml-view-elements
     \since 4.7
     \brief The WebView item allows you to add Web content to a canvas.
