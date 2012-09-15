@@ -317,9 +317,6 @@ BUGWK93552 : inspector/device-orientation-success.html = TEXT
 // (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
 BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TEXT
 
-// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-BUGWK89826 : fast/css/word-space-extra.html = TEXT
-
 // Added by bug 89826 
 BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
 

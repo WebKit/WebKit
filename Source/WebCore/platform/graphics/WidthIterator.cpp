@@ -181,8 +181,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                // Word-spacing affects each space (U+0020) and non-breaking space (U+00A0).
-                if ((character == noBreakSpace || character == ' ') && textIterator.currentCharacter() && m_font->wordSpacing())
+                if (treatAsSpace && (character != '\t' || !m_run.allowTabs()) && textIterator.currentCharacter() && m_font->wordSpacing())
                     width += m_font->wordSpacing();
             } else
                 m_isAfterExpansion = false;

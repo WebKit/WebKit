@@ -635,7 +635,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                         m_afterExpansion = false;
 
                     // Account for word-spacing.
-                    if ((ch == noBreakSpace || ch == ' ') && (characterIndex > 0 || r > 0) && m_font.wordSpacing())
+                    if (treatAsSpace && (ch != '\t' || !m_run.allowTabs()) && (characterIndex > 0 || r > 0) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 } else
                     m_afterExpansion = false;
