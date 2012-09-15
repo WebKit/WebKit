@@ -53,34 +53,6 @@ class HTMLDocument;
 // persist between navigations.
 class V8DOMWindowShell {
 public:
-
-    // This class holds all the data that is accessible from a context for an isolated shell.
-    // It survives until the context is deleted.
-    class IsolatedContextData {
-        WTF_MAKE_NONCOPYABLE(IsolatedContextData);
-    public:
-        static PassOwnPtr<IsolatedContextData> create(PassRefPtr<DOMWrapperWorld> world, PassOwnPtr<V8PerContextData> perContextData,
-                PassRefPtr<SecurityOrigin> securityOrigin)
-        {
-            return adoptPtr(new IsolatedContextData(world, perContextData, securityOrigin));
-        }
-        DOMWrapperWorld* world() { return m_world.get(); }
-        V8PerContextData* perContextData() { return m_perContextData.get(); }
-        void setSecurityOrigin(PassRefPtr<SecurityOrigin> origin) { m_securityOrigin = origin; }
-        SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
-
-    private:
-        IsolatedContextData(PassRefPtr<DOMWrapperWorld> world, PassOwnPtr<V8PerContextData> perContextData, PassRefPtr<SecurityOrigin> securityOrigin)
-            : m_world(world)
-            , m_perContextData(perContextData)
-            , m_securityOrigin(securityOrigin)
-        { }
-
-        RefPtr<DOMWrapperWorld> m_world;
-        OwnPtr<V8PerContextData> m_perContextData;
-        RefPtr<SecurityOrigin> m_securityOrigin;
-    };
-
     static PassOwnPtr<V8DOMWindowShell> create(Frame*, PassRefPtr<DOMWrapperWorld>);
 
     v8::Persistent<v8::Context> context() const { return m_context.get(); }
@@ -104,7 +76,6 @@ public:
 
     void clearForNavigation();
     void clearForClose();
-    void clearIsolatedShell();
 
     void destroyGlobal();
 
@@ -119,36 +90,29 @@ public:
         return m_isolatedWorldShellSecurityOrigin.get();
     };
 
-    inline static v8::Local<v8::Context> enteredIsolatedContext()
+    // Returns the isolated world associated with
+    // v8::Context::GetEntered(). Because worlds are isolated, the entire
+    // JavaScript call stack should be from the same isolated world.
+    // Returns 0 if the entered context is from the main world.
+    //
+    // FIXME: Consider edge cases with DOM mutation events that might
+    // violate this invariant.
+    //
+    // FIXME: This is poorly named after the deletion of isolated contexts.
+    static V8DOMWindowShell* getEntered()
     {
-        if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()))
-            return v8::Local<v8::Context>();
-        if (!v8::Context::InContext())
-            return v8::Local<v8::Context>();
-        v8::Local<v8::Context> context = v8::Context::GetEntered();
-        IsolatedContextData* isolatedContextData = toIsolatedContextData(context);
-        if (LIKELY(!isolatedContextData))
-            return v8::Local<v8::Context>();
-        return context;
-    }
-
-    inline static IsolatedContextData* enteredIsolatedContextData()
-    {
-        if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()))
+        if (!DOMWrapperWorld::isolatedWorldsExist())
             return 0;
         if (!v8::Context::InContext())
             return 0;
-        v8::Local<v8::Context> context = v8::Context::GetEntered();
-        IsolatedContextData* isolatedContextData = toIsolatedContextData(context);
-        if (LIKELY(!isolatedContextData))
-            return 0;
-        return isolatedContextData;
+        return enteredIsolatedWorldContext();
     }
 
+    void destroyIsolatedShell();
 private:
     V8DOMWindowShell(Frame*, PassRefPtr<DOMWrapperWorld>);
 
-    void disposeContext();
+    void disposeContext(bool weak = false);
 
     void setSecurityToken();
 
@@ -162,13 +126,12 @@ private:
     void createContext();
     bool installDOMWindow();
 
-    static IsolatedContextData* toIsolatedContextData(v8::Handle<v8::Context>);
+    static V8DOMWindowShell* enteredIsolatedWorldContext();
 
     Frame* m_frame;
     RefPtr<DOMWrapperWorld> m_world;
 
     OwnPtr<V8PerContextData> m_perContextData;
-    OwnPtr<IsolatedContextData> m_isolatedContextData;
 
     ScopedPersistent<v8::Context> m_context;
     ScopedPersistent<v8::Object> m_global;

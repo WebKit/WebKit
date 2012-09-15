@@ -171,14 +171,14 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
     ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
-static void setIsolatedWorldField(V8DOMWindowShell::IsolatedContextData* data, v8::Handle<v8::Context> context)
+static void setIsolatedWorldField(V8DOMWindowShell* shell, v8::Local<v8::Context> context)
 {
-    toInnerGlobalObject(context)->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, data);
+    toInnerGlobalObject(context)->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, shell);
 }
 
-V8DOMWindowShell::IsolatedContextData* V8DOMWindowShell::toIsolatedContextData(v8::Handle<v8::Context> context)
+V8DOMWindowShell* V8DOMWindowShell::enteredIsolatedWorldContext()
 {
-    return static_cast<IsolatedContextData*>(toInnerGlobalObject(context)->GetPointerFromInternalField(V8DOMWindow::enteredIsolatedWorldIndex));
+    return static_cast<V8DOMWindowShell*>(toInnerGlobalObject(v8::Context::GetEntered())->GetPointerFromInternalField(V8DOMWindow::enteredIsolatedWorldIndex));
 }
 
 static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext, int debugId)
@@ -208,14 +208,20 @@ bool V8DOMWindowShell::isContextInitialized()
     return !m_context.isEmpty();
 }
 
-static void isolatedContextWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
+void V8DOMWindowShell::destroyIsolatedShell()
 {
-    object.Dispose();
-    delete static_cast<V8DOMWindowShell::IsolatedContextData*>(parameter);
+    disposeContext(true);
 }
 
-void V8DOMWindowShell::disposeContext()
+static void isolatedContextWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
 {
+    // Handle will be disposed in delete.
+    delete static_cast<V8DOMWindowShell*>(parameter);
+}
+
+void V8DOMWindowShell::disposeContext(bool weak)
+{
+    ASSERT(!m_context.get().IsWeak());
     m_perContextData.clear();
 
     if (m_context.isEmpty())
@@ -223,14 +229,14 @@ void V8DOMWindowShell::disposeContext()
 
     m_frame->loader()->client()->willReleaseScriptContext(m_context.get(), m_world->worldId());
 
-    if (m_isolatedContextData) {
-        ASSERT(!m_world->isMainWorld());
-        // Here we must intentionally leak the per context data pointer as it gets deleted in isolatedContextWeakCallback.
-        m_context.leakHandle().MakeWeak(m_isolatedContextData.leakPtr(), isolatedContextWeakCallback);
-        // The global handle keeps a reference to the context, so it must be removed.
-        m_global.clear();
-    } else
+    if (!weak)
         m_context.clear();
+    else {
+        ASSERT(!m_world->isMainWorld());
+        destroyGlobal();
+        m_frame = 0;
+        m_context.get().MakeWeak(this, isolatedContextWeakCallback);
+    }
 
     // It's likely that disposing the context has created a lot of
     // garbage. Notify V8 about this so it'll have a chance of cleaning
@@ -244,11 +250,6 @@ void V8DOMWindowShell::disposeContext()
 void V8DOMWindowShell::destroyGlobal()
 {
     m_global.clear();
-}
-
-void V8DOMWindowShell::clearIsolatedShell()
-{
-    disposeContext();
 }
 
 void V8DOMWindowShell::clearForClose()
@@ -345,20 +346,19 @@ bool V8DOMWindowShell::initializeIfNeeded()
         }
     }
 
-    m_perContextData = V8PerContextData::create(m_context.get());
-    if (!m_perContextData->init()) {
-        disposeContext();
-        return false;
-    }
-
     // Flag context as isolated.
     if (!isMainWorld) {
         V8DOMWindowShell* mainWindow = m_frame->script()->windowShell();
         mainWindow->initializeIfNeeded();
         if (!mainWindow->context().IsEmpty())
             setInjectedScriptContextDebugId(m_context.get(), m_frame->script()->contextDebugId(mainWindow->context()));
-        m_isolatedContextData = IsolatedContextData::create(m_world, m_perContextData.release(), m_isolatedWorldShellSecurityOrigin);
-        setIsolatedWorldField(m_isolatedContextData.get(), context);
+        setIsolatedWorldField(this, context);
+    }
+
+    m_perContextData = V8PerContextData::create(m_context.get());
+    if (!m_perContextData->init()) {
+        disposeContext();
+        return false;
     }
 
     if (!installDOMWindow()) {
@@ -618,8 +618,6 @@ void V8DOMWindowShell::setIsolatedWorldSecurityOrigin(PassRefPtr<SecurityOrigin>
         InspectorInstrumentation::didCreateIsolatedContext(m_frame, scriptState, securityOrigin.get());
     }
     m_isolatedWorldShellSecurityOrigin = securityOrigin;
-    if (m_isolatedContextData)
-        m_isolatedContextData->setSecurityOrigin(m_isolatedWorldShellSecurityOrigin);
 }
 
 } // WebCore
