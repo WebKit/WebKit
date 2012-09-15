@@ -1,3 +1,10 @@
+2012-09-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectation
+
+        * platform/chromium/TestExpectations:
+        Don't run an inspector test on Mac.
+
 2012-09-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed weekend gardening. Skip 4 new failing tests to paint the bot green.

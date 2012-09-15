@@ -3593,7 +3593,7 @@ BUGWK96524 WIN LINUX DEBUG : fast/filesystem/workers/detached-frame-crash.html =
 
 BUGWK96835 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PASS
 BUGWK96835 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PASS
-BUGWK96836 : inspector/debugger/xhr-breakpoints.html = TEXT PASS
+BUGWK96836 ANDROID LINUX WIN : inspector/debugger/xhr-breakpoints.html = TEXT PASS
 BUGWK96834 : platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers.html = IMAGE PASS
 BUGWK96833 : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUGWK96833 : svg/carto.net/combobox.svg = IMAGE PASS
