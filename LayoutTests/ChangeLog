@@ -1,3 +1,33 @@
+2012-09-14  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed gardening - more position:fixed stacking context rebaselines.
+
+        * fast/block/positioning/016-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/block/positioning/016-expected.txt.
+        * fast/block/positioning/025-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/block/positioning/025-expected.txt.
+        * platform/chromium-linux/compositing/geometry/fixed-position-composited-switch-expected.txt: Removed.
+        * platform/chromium-linux/fast/block/positioning/fixed-position-stacking-context-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-composited-switch-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/016-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/025-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/fixed-position-stacking-context-expected.txt: Removed.
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-switch-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/positioning/016-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/positioning/025-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/positioning/fixed-position-stacking-context-expected.txt: Removed.
+        * platform/chromium-win/fast/block/positioning/016-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/016-expected.png.
+        * platform/chromium-win/fast/block/positioning/025-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/025-expected.png.
+        * platform/chromium-win/fast/block/positioning/fixed-position-stacking-context-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/fixed-position-stacking-context-expected.png.
+        * platform/chromium/compositing/geometry/fixed-position-composited-switch-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/compositing/geometry/fixed-position-composited-switch-expected.txt.
+        * platform/chromium/fast/block/positioning/016-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/016-expected.txt.
+        * platform/chromium/fast/block/positioning/025-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/025-expected.txt.
+        * platform/chromium/fast/block/positioning/fixed-position-stacking-context-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/block/positioning/fixed-position-stacking-context-expected.txt.
+        * platform/efl/fast/block/positioning/016-expected.txt: Removed.
+        * platform/efl/fast/block/positioning/025-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/016-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/025-expected.txt: Removed.
+        * platform/qt/fast/block/positioning/016-expected.txt: Removed.
+        * platform/qt/fast/block/positioning/025-expected.txt: Removed.
+
 2012-09-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Revert r127457 and following fixes due to several hit-testing regressions
