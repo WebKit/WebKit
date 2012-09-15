@@ -559,8 +559,13 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
     ASSERT(m_databaseCallbacksSet.contains(callbacks));
 
     m_databaseCallbacksSet.remove(callbacks);
-    // FIXME: If callbacks is also held in m_pendingSecondHalfOpenWithVersionCalls
-    // it should be removed and onError fired against it.
+    for (Deque<RefPtr<PendingOpenWithVersionCall> >::iterator it = m_pendingSecondHalfOpenWithVersionCalls.begin(); it != m_pendingSecondHalfOpenWithVersionCalls.end(); ++it) {
+        if ((*it)->databaseCallbacks() == callbacks) {
+            (*it)->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "The connection was closed."));
+            m_pendingSecondHalfOpenWithVersionCalls.remove(it);
+            break;
+        }
+    }
 
     if (connectionCount() > 1)
         return;

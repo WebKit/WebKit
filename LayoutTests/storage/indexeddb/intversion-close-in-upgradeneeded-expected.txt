@@ -20,12 +20,19 @@ db.close()
 transaction.oncomplete:
 sawTransactionComplete = true
 
-openSuccess():
+openError():
 PASS sawTransactionComplete is true
-db = event.target.result
+PASS event.target.errorCode is DOMException.ABORT_ERR
+PASS event.target.error.name is 'AbortError'
+PASS event.result is undefined
+
+Verify that the old connection is unchanged and was closed:
+PASS db is non-null.
 PASS db.version is 7
-transaction = db.transaction('os')
-FAIL transaction = db.transaction('os') threw exception Error: InvalidStateError: DOM IDBDatabase Exception 11
+Expecting exception from db.transaction('os')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

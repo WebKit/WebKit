@@ -17,18 +17,17 @@ function test()
 
 function deleteSuccess(evt) {
     evalAndLog("request = indexedDB.open(dbname, 7)");
-    request.onsuccess = openSuccess;
+    request.onsuccess = unexpectedSuccessCallback;
     request.onupgradeneeded = upgradeNeeded;
     request.onblocked = unexpectedBlockedCallback;
+    request.onerror = openError;
     debug("");
 }
 
 var sawTransactionComplete = false;
 function upgradeNeeded(evt)
 {
-    event = evt;
-    debug("");
-    debug("upgradeNeeded():");
+    preamble(evt);
     evalAndLog("db = event.target.result");
     shouldBe("event.newVersion", "7");
 
@@ -40,18 +39,24 @@ function upgradeNeeded(evt)
         debug("");
         debug("transaction.oncomplete:");
         evalAndLog("sawTransactionComplete = true");
-    }
+    };
 }
 
-function openSuccess(evt)
+function openError(evt)
 {
-    event = evt;
-    debug("");
-    debug("openSuccess():");
+    preamble(evt);
     shouldBeTrue("sawTransactionComplete");
-    db = evalAndLog("db = event.target.result");
+
+    shouldBe("event.target.errorCode", "DOMException.ABORT_ERR");
+    shouldBe("event.target.error.name", "'AbortError'");
+    shouldBe("event.result", "undefined");
+
+    debug("");
+    debug("Verify that the old connection is unchanged and was closed:");
+    shouldBeNonNull("db");
     shouldBe('db.version', "7");
-    evalAndLog("transaction = db.transaction('os')");
+    evalAndExpectException("db.transaction('os')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
     finishJSTest();
 }
 

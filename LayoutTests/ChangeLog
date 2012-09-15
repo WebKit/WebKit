@@ -1,3 +1,19 @@
+2012-09-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Calling close() during upgradeneeded handler should fire error at open request
+        https://bugs.webkit.org/show_bug.cgi?id=96807
+
+        Reviewed by Tony Chang.
+
+        Update the test to match the spec behavior.
+
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/resources/intversion-close-in-upgradeneeded.js:
+        (deleteSuccess):
+        (upgradeNeeded.transaction.oncomplete):
+        (upgradeNeeded):
+        (openError):
+
 2012-09-14  Ojan Vafai  <ojan@chromium.org>
 
         Mark svg/carto.net/selectionlist.svg as flaky because it depends on svg/carto.net/button.svg
