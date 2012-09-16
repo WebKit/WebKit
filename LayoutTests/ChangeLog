@@ -1,5 +1,16 @@
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] 3 spatial navigation tests can be unskipped after r128644
+        https://bugs.webkit.org/show_bug.cgi?id=96880
+
+        Unreviewed EFL gardening.
+
+        Unskip 3 spatial navigation tests that have been fixed in r128644.
+
+        * platform/efl/TestExpectations:
+
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip fast/events/message-port-constructor-for-deleted-document.html
         https://bugs.webkit.org/show_bug.cgi?id=96885
 

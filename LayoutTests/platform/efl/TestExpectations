@@ -968,11 +968,6 @@ BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting-fields.html =
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting.html = TEXT
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting-instances.html = TEXT
 
-// REGRESSION (r128006): Three spatial navigation tests are failing
-BUGWK96226 : fast/spatial-navigation/snav-div-overflow-scrol-hidden.html = TEXT
-BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
-BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
-
 // ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
 
