@@ -1462,14 +1462,14 @@ public:
     static BasicShape* initialWrapShapeInside() { return 0; }
     static BasicShape* initialWrapShapeOutside() { return 0; }
 
-    void setClipPath(PassRefPtr<BasicShape> shape)
+    void setClipPath(PassRefPtr<ClipPathOperation> operation)
     {
-        if (rareNonInheritedData->m_clipPath != shape)
-            rareNonInheritedData.access()->m_clipPath = shape;
+        if (rareNonInheritedData->m_clipPath != operation)
+            rareNonInheritedData.access()->m_clipPath = operation;
     }
-    BasicShape* clipPath() const { return rareNonInheritedData->m_clipPath.get(); }
+    ClipPathOperation* clipPath() const { return rareNonInheritedData->m_clipPath.get(); }
 
-    static BasicShape* initialClipPath() { return 0; }
+    static ClipPathOperation* initialClipPath() { return 0; }
 
     Length wrapPadding() const { return rareNonInheritedData->m_wrapPadding; }
     void setWrapPadding(Length wrapPadding) { SET_VAR(rareNonInheritedData, m_wrapPadding, wrapPadding); }

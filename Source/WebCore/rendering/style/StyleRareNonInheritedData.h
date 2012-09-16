@@ -26,6 +26,7 @@
 #define StyleRareNonInheritedData_h
 
 #include "BasicShapes.h"
+#include "ClipPathOperation.h"
 #include "CounterDirectives.h"
 #include "CursorData.h"
 #include "DataRef.h"
@@ -138,7 +139,7 @@ public:
     Length m_wrapMargin;
     Length m_wrapPadding;
 
-    RefPtr<BasicShape> m_clipPath;
+    RefPtr<ClipPathOperation> m_clipPath;
 
     Color m_visitedLinkBackgroundColor;
     Color m_visitedLinkOutlineColor;

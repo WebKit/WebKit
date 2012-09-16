@@ -591,6 +591,7 @@
             'rendering/style/BasicShapes.h',
             'rendering/style/BorderData.h',
             'rendering/style/BorderValue.h',
+            'rendering/style/ClipPathOperation.h',
             'rendering/style/CollapsedBorderValue.h',
             'rendering/style/ContentData.h',
             'rendering/style/CounterContent.h',

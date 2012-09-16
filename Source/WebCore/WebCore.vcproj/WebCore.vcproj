@@ -46687,6 +46687,10 @@
 					RelativePath="..\rendering\style\BasicShapes.h"
 					>
 				</File>
+				<File
+					RelativePath="..\rendering\style\ClipPathOperation.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="svg"

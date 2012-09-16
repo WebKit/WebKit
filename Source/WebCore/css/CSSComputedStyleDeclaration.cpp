@@ -2417,9 +2417,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID);
         case CSSPropertyWebkitClipPath:
-            if (!style->clipPath())
-                return cssValuePool().createIdentifierValue(CSSValueNone);
-            return valueForBasicShape(style->clipPath());
+            if (ClipPathOperation* operation = style->clipPath()) {
+                if (operation->getOperationType() == ClipPathOperation::SHAPE)
+                    return valueForBasicShape(static_cast<ShapeClipPathOperation*>(operation)->basicShape());
+            }
+            return cssValuePool().createIdentifierValue(CSSValueNone);
 #if ENABLE(CSS_REGIONS)
         case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())

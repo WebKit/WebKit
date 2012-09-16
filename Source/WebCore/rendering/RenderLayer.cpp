@@ -3116,12 +3116,10 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     // Apply clip-path to context.
     RenderStyle* style = renderer()->style();
     if (renderer()->hasClipPath() && !context->paintingDisabled() && style) {
-        if (BasicShape* clipShape = style->clipPath()) {
-            // FIXME: Investigate if it is better to store and update a Path object in RenderStyle.
-            // https://bugs.webkit.org/show_bug.cgi?id=95619
-            Path clipPath;
-            clipShape->path(clipPath, calculateLayerBounds(this, rootLayer, 0));
-            transparencyLayerContext->clipPath(clipPath, clipShape->windRule());
+        ASSERT(style->clipPath());
+        if (style->clipPath()->getOperationType() == ClipPathOperation::SHAPE) {
+            ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
+            transparencyLayerContext->clipPath(clipPath->path(calculateLayerBounds(this, rootLayer, 0)), clipPath->windRule());
         }
     }
 

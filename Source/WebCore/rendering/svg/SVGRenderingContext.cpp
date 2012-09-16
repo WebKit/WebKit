@@ -123,13 +123,10 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
         }
     }
 
-    BasicShape* clipShape = style->clipPath();
-    if (clipShape) {
-        // FIXME: Investigate if it is better to store and update a Path object in RenderStyle.
-        // https://bugs.webkit.org/show_bug.cgi?id=95619
-        Path clipPath;
-        clipShape->path(clipPath, object->objectBoundingBox());
-        m_paintInfo->context->clipPath(clipPath, clipShape->windRule());
+    ClipPathOperation* clipPathOperation = style->clipPath();
+    if (clipPathOperation && clipPathOperation->getOperationType() == ClipPathOperation::SHAPE) {
+        ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(clipPathOperation);
+        m_paintInfo->context->clipPath(clipPath->path(object->objectBoundingBox()), clipPath->windRule());
     }
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(m_object);
@@ -150,7 +147,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
     }
 
     RenderSVGResourceClipper* clipper = resources->clipper();
-    if (!clipShape && clipper) {
+    if (!clipPathOperation && clipper) {
         if (!clipper->applyResource(m_object, style, m_paintInfo->context, ApplyToDefaultMode))
             return;
     }
