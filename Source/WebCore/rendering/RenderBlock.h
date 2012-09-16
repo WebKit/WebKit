@@ -715,6 +715,7 @@ private:
         RenderText* m_text;
         OwnPtr<TextLayout> m_layout;
         LazyLineBreakIterator m_lineBreakIterator;
+        const Font* m_font;
     };
 
     class LineBreaker {

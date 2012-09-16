@@ -1275,6 +1275,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
 
 RenderBlock::RenderTextInfo::RenderTextInfo()
     : m_text(0)
+    , m_font(0)
 {
 }
 
@@ -2436,9 +2437,14 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             if (renderTextInfo.m_text != t) {
                 t->updateTextIfNeeded();
                 renderTextInfo.m_text = t;
+                renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
                 renderTextInfo.m_lineBreakIterator.reset(t->characters(), t->textLength(), style->locale());
+            } else if (renderTextInfo.m_layout && renderTextInfo.m_font != &f) {
+                renderTextInfo.m_font = &f;
+                renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
             }
+
             TextLayout* textLayout = renderTextInfo.m_layout.get();
 
             for (; current.m_pos < t->textLength(); current.fastIncrementInTextNode()) {
