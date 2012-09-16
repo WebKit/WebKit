@@ -43,14 +43,14 @@ public:
 
     static inline bool isExternalURIReference(const String& uri, Document* document)
     {
-        // If the URI matches our documents URL, early exit, we're dealing with a local reference.
-        ASSERT(document);
-        KURL url = document->completeURL(uri);
-        if (equalIgnoringFragmentIdentifier(url, document->url()))
+        // Fragment-only URIs are always internal
+        if (uri.startsWith('#'))
             return false;
 
-        // If the URI doesn't contain a base string, just see if it starts with a fragment-identifier.
-        return uri.find('#') != notFound;
+        // If the URI matches our documents URL, we're dealing with a local reference.
+        ASSERT(document);
+        KURL url = document->completeURL(uri);
+        return !equalIgnoringFragmentIdentifier(url, document->url());
     }
 
 protected:

@@ -1,3 +1,13 @@
+2012-09-15  Florin Malita  <fmalita@chromium.org>
+
+        <use> not working when the SVG doc is embedded as <object> data
+        https://bugs.webkit.org/show_bug.cgi?id=96816
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/object-data-href-expected.html: Added.
+        * svg/custom/object-data-href.html: Added.
+
 2012-09-15  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r127438): Google Docs to renders text too small.
