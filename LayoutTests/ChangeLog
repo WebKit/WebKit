@@ -1,5 +1,18 @@
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Skip fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
+        https://bugs.webkit.org/show_bug.cgi?id=96884
+
+        Unreviewed EFL gardening.
+
+        Skip fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
+        because EFL's DRT does not support overriding 'WebKitDisplayImagesKey'
+        preference yet.
+
+        * platform/efl-wk1/TestExpectations:
+
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Update TestExpectations for tests requiring plugins support
         https://bugs.webkit.org/show_bug.cgi?id=96882
 

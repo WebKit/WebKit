@@ -57,6 +57,9 @@ BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 // EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
 BUGWK86460 : http/tests/appcache/origin-usage.html = TEXT
 
+// EFL's DRT does not support overriding 'WebKitDisplayImagesKey' preference
+BUGWK96883 : fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html = TEXT
+
 // EFL's TestRunner does not implement originsWithApplicationCache
 BUGWK86498 : http/tests/appcache/origins-with-appcache.html = TEXT
 
