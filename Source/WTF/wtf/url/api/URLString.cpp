@@ -26,9 +26,17 @@
 #include "config.h"
 #include "URLString.h"
 
+#include <wtf/MemoryInstrumentation.h>
+
 #if USE(WTFURL)
 
 namespace WTF {
+
+void URLString::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addInstrumentedMember(m_string);
+}
 
 #ifndef NDEBUG
 void URLString::print() const

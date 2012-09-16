@@ -64,6 +64,8 @@ public:
 
     const URLString& spec() { return m_spec; }
 
+    WTF_EXPORT_PRIVATE void reportMemoryUsage(MemoryObjectInfo*) const;
+
 #ifndef NDEBUG
     WTF_EXPORT_PRIVATE void print() const;
 #endif

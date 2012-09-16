@@ -40,6 +40,8 @@ public:
 
     const String& string() const { return m_string;}
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 #ifndef NDEBUG
     WTF_EXPORT_PRIVATE void print() const;
 #endif

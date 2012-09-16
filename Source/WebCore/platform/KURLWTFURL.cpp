@@ -113,7 +113,7 @@ bool KURL::isValid() const
 const String& KURL::string() const
 {
     if (isNull())
-        return nullAtom();
+        return emptyString();
 
     if (isValid())
         return m_urlImpl->m_parsedURL.spec().string();

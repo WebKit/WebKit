@@ -1,3 +1,21 @@
+2012-09-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the build with WTF URL
+        https://bugs.webkit.org/show_bug.cgi?id=96875
+
+        Reviewed by Adam Barth.
+
+        Add support for MemoryInstrumentation to WTF's URL classes.
+
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::reportMemoryUsage):
+        * wtf/url/api/ParsedURL.h:
+        (ParsedURL):
+        * wtf/url/api/URLString.cpp:
+        (WTF::URLString::reportMemoryUsage):
+        * wtf/url/api/URLString.h:
+        (URLString):
+
 2012-09-15  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         llint: Implement LOCAL_LABEL_STRING for the BSD platforms.

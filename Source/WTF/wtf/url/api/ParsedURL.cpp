@@ -30,6 +30,7 @@
 #if USE(WTFURL)
 
 #include <wtf/DataLog.h>
+#include <wtf/MemoryInstrumentation.h>
 #include <wtf/RawURLBuffer.h>
 #include <wtf/URLComponent.h>
 #include <wtf/URLParser.h>
@@ -172,6 +173,12 @@ String ParsedURL::segment(const URLComponent& component) const
     String segment = m_spec.string().substring(component.begin(), component.length());
     ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
     return segment;
+}
+
+void ParsedURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addInstrumentedMember(m_spec);
 }
 
 #ifndef NDEBUG

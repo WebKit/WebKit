@@ -2565,7 +2565,9 @@ __ZN7WebCore12WorkerThread17workerThreadCountEv
 
 #if USE(WTFURL)
 __ZNK7WebCore4KURL6stringEv
+__ZNK7WebCore4KURL7hasPortEv
 __ZNK7WebCore4KURL7isEmptyEv
+__ZNK7WebCore4KURL6isNullEv
 __ZNK7WebCore4KURL7isValidEv
 __ZNK7WebCore4KURL22protocolIsInHTTPFamilyEv
 #endif
