@@ -140,17 +140,6 @@ http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
 
-# The EFL port has no support for plugins
-fast/dom/Window/Plug-ins.html
-fast/frames/sandboxed-iframe-about-blank.html
-fast/frames/sandboxed-iframe-navigation-allowed.html
-fast/frames/sandboxed-iframe-plugins.html
-fast/js/navigator-plugins-crash.html
-http/tests/plugins
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-java
-plugins
-
 # The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
@@ -309,10 +298,8 @@ fast/harness/results.html
 fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
-fast/replaced/invalid-object-with-fallback.html
 fast/text/midword-break-after-breakable-char.html
 http/tests/navigation/go-back-to-error-page.html
-userscripts/user-script-plugin-document.html
 
 # BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
 fast/repaint/absolute-position-change-containing-block.html
@@ -736,9 +723,6 @@ http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
 http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
 http/tests/security/cookies/first-party-cookie-allow-xslt.xml
 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
@@ -750,7 +734,6 @@ http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
 http/tests/security/local-user-CSS-from-remote.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/security/mixedContent/insecure-script-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html

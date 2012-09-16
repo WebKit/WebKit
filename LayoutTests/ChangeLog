@@ -1,5 +1,18 @@
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Update TestExpectations for tests requiring plugins support
+        https://bugs.webkit.org/show_bug.cgi?id=96882
+
+        Unreviewed EFL gardening.
+
+        Regroup all test requiring plugins support in TestExpectation file
+        and update their bug number.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Mark inspector/debugger/dynamic-script-tag.html as flaky
         https://bugs.webkit.org/show_bug.cgi?id=96887
 

@@ -972,8 +972,6 @@ BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting-instances.htm
 // ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
 
-BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
-
 BUGWK93976 : fast/css-generated-content/quotes-lang.html = IMAGE
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
@@ -1036,11 +1034,27 @@ BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.ht
 // Fails after r127140.
 BUGWK95551 : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
 
-// Fail after they were introduced in r127513
-BUGWK95840 : http/tests/security/cross-origin-plugin-allowed.html = TEXT
-BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html = TEXT
-BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
-BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
+// EFL port does not support plugins yet
+BUGWK96881 : fast/dom/Window/Plug-ins.html = TEXT
+BUGWK96881 : fast/frames/sandboxed-iframe-about-blank.html = TEXT
+BUGWK96881 : fast/frames/sandboxed-iframe-navigation-allowed.html = TEXT
+BUGWK96881 : fast/frames/sandboxed-iframe-plugins.html = TEXT
+BUGWK96881 : fast/replaced/invalid-object-with-fallback.html = TEXT
+BUGWK96881 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT
+BUGWK96881 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
+BUGWK96881 SKIP : http/tests/plugins = TEXT
+BUGWK96881 : http/tests/security/cross-origin-plugin-allowed.html = TEXT
+BUGWK96881 : http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html = TEXT
+BUGWK96881 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
+BUGWK96881 : http/tests/security/cross-origin-plugin.html = TEXT
+BUGWK96881 : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = TEXT
+BUGWK96881 : http/tests/security/storage-blocking-loosened-plugin.html = TEXT
+BUGWK96881 : http/tests/security/storage-blocking-loosened-private-browsing-plugin.html = TEXT
+BUGWK96881 : http/tests/security/storage-blocking-strengthened-plugin.html = TEXT
+BUGWK96881 : http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html = TEXT
+BUGWK96881 SKIP : java = TEXT
+BUGWK96881 SKIP : plugins = TEXT
+BUGWK96881 : userscripts/user-script-plugin-document.html = TEXT
 
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT
