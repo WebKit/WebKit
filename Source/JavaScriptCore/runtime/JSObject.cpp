@@ -347,7 +347,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     JSObject* thisObject = jsCast<JSObject*>(cell);
     thisObject->checkIndexingConsistency();
     
-    if (UNLIKELY(propertyName > MAX_ARRAY_INDEX)) {
+    if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(shouldThrow);
         thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
         return;
@@ -980,7 +980,7 @@ void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
 // Defined in ES5.1 8.12.9
 bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, PropertyDescriptor& descriptor, bool throwException)
 {
-    ASSERT(index != 0xFFFFFFFF);
+    ASSERT(index <= MAX_ARRAY_INDEX);
 
     if (!inSparseIndexingMode()) {
         // Fast case: we're putting a regular property to a regular array

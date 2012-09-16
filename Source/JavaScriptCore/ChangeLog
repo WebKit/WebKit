@@ -1,3 +1,23 @@
+2012-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JSObject.cpp and JSArray.cpp have inconsistent tests for the invalid array index case
+        https://bugs.webkit.org/show_bug.cgi?id=96878
+
+        Reviewed by Sam Weinig.
+
+        Removed the uses of UNLIKELY() because I don't believe they are buying us anything,
+        since we're already on the slow path. Also found other places where we're testing for
+        the invalid array index case using unusual predicates rather than just using
+        MAX_ARRAY_INDEX. With this change, I believe that all of our tests for invalid
+        array indices (i.e. indices that should be treated as non-indexed properties)
+        uniformly use MAX_ARRAY_INDEX and PropertyName::NotAnIndex.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::push):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::defineOwnIndexedProperty):
+
 2012-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         Following the Butterfly refactoring, the comment for lastArraySize was not updated
