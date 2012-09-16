@@ -147,7 +147,13 @@ void AbstractState::initialize(Graph& graph)
         for (size_t i = 0; i < graph.m_mustHandleValues.size(); ++i) {
             AbstractValue value;
             value.setMostSpecific(graph.m_mustHandleValues[i]);
-            block->valuesAtHead.operand(graph.m_mustHandleValues.operandForIndex(i)).merge(value);
+            int operand = graph.m_mustHandleValues.operandForIndex(i);
+            block->valuesAtHead.operand(operand).merge(value);
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
+            block->valuesAtHead.operand(operand).dump(WTF::dataFile());
+            dataLog("\n");
+#endif
         }
         block->cfaShouldRevisit = true;
     }
@@ -1293,20 +1299,6 @@ bool AbstractState::execute(unsigned indexInBlock)
             !value.m_currentKnownStructure.isSubsetOf(set)
             || !isCellSpeculation(value.m_type));
         value.filter(set);
-        // This is likely to be unnecessary, but it's conservative, and that's a good thing.
-        // This is trying to avoid situations where the CFA proves that this structure check
-        // must fail due to a future structure proof. We have two options at that point. We
-        // can either compile all subsequent code as we would otherwise, or we can ensure
-        // that the subsequent code is never reachable. The former is correct because the
-        // Proof Is Infallible (TM) -- hence even if we don't force the subsequent code to
-        // be unreachable, it must be unreachable nonetheless. But imagine what would happen
-        // if the proof was borked. In the former case, we'd get really bizarre bugs where
-        // we assumed that the structure of this object was known even though it wasn't. In
-        // the latter case, we'd have a slight performance pathology because this would be
-        // turned into an OSR exit unnecessarily. Which would you rather have?
-        if (value.m_currentKnownStructure.isClear()
-            || value.m_futurePossibleStructure.isClear())
-            m_isValid = false;
         m_haveStructures = true;
         break;
     }
@@ -1325,10 +1317,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         
         ASSERT(value.isClear() || isCellSpeculation(value.m_type)); // Value could be clear if we've proven must-exit due to a speculation statically known to be bad.
         value.filter(node.structure());
-        // See comment in CheckStructure for why this is here.
-        if (value.m_currentKnownStructure.isClear()
-            || value.m_futurePossibleStructure.isClear())
-            m_isValid = false;
         m_haveStructures = true;
         node.setCanExit(true);
         break;
@@ -1337,9 +1325,11 @@ bool AbstractState::execute(unsigned indexInBlock)
     case PutStructure:
     case PhantomPutStructure:
         node.setCanExit(false);
-        clobberStructures(indexInBlock);
-        forNode(node.child1()).set(node.structureTransitionData().newStructure);
-        m_haveStructures = true;
+        if (!forNode(node.child1()).m_currentKnownStructure.isClear()) {
+            clobberStructures(indexInBlock);
+            forNode(node.child1()).set(node.structureTransitionData().newStructure);
+            m_haveStructures = true;
+        }
         break;
     case GetButterfly:
     case AllocatePropertyStorage:

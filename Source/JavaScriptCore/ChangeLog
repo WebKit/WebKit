@@ -1,3 +1,38 @@
+2012-09-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure check hoisting fails to consider the possibility of conflicting checks on the source of the first assignment to the hoisted variable
+        https://bugs.webkit.org/show_bug.cgi?id=96872
+
+        Reviewed by Oliver Hunt.
+
+        This does a few related things:
+        
+        - It turns off the use of ForceOSRExit for sure-to-fail CheckStructures, because
+          I noticed that this would sometimes happen for a ForwardCheckStructure. The
+          problem is that ForceOSRExit exits backwards, not forwards. Since the code that
+          led to those ForceOSRExit's being inserted was written out of paranoia rather
+          than need, I removed it. Specifically, I removed the m_isValid = false code
+          for CheckStructure/StructureTransitionWatchpoint in AbstractState.
+        
+        - If a structure check causes a structure set to go empty, we don't want a
+          PutStructure to revive the set. It should instead be smart enough to realize 
+          that an empty set implies that the code can't execute. This was the only "bug"
+          that the use of m_isValid = false was preventing.
+        
+        - Finally, the main change: structure check hoisting looks at the source of the
+          SetLocals on structure-check-hoistable variables and ensures that the source
+          is not checked with a conflicting structure. This is O(n^2) but it does not
+          show up at all in performance tests.
+        
+        The first two parts of this change were auxiliary bugs that were revealed by
+        the structure check hoister doing bad things.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
 2012-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         All of the things in SparseArrayValueMap should be out-of-line

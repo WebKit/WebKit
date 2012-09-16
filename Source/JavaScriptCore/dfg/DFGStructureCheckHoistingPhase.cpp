@@ -67,7 +67,8 @@ public:
                 if (!node.shouldGenerate())
                     continue;
                 switch (node.op()) {
-                case CheckStructure: {
+                case CheckStructure:
+                case StructureTransitionWatchpoint: {
                     Node& child = m_graph[node.child1()];
                     if (child.op() != GetLocal)
                         break;
@@ -91,7 +92,6 @@ public:
                 case GetByOffset:
                 case PutByOffset:
                 case PutStructure:
-                case StructureTransitionWatchpoint:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
@@ -104,6 +104,40 @@ public:
                 case Phantom:
                     // Don't count these uses.
                     break;
+                    
+                case SetLocal: {
+                    // Find all uses of the source of the SetLocal. If any of them are a
+                    // kind of CheckStructure, then we should notice them to ensure that
+                    // we're not hoisting a check that would contravene checks that are
+                    // already being performed.
+                    VariableAccessData* variable = node.variableAccessData();
+                    if (variable->isCaptured() || variable->structureCheckHoistingFailed())
+                        break;
+                    if (!isCellSpeculation(variable->prediction()))
+                        break;
+                    NodeIndex source = node.child1().index();
+                    for (unsigned subIndexInBlock = 0; subIndexInBlock < block->size(); ++subIndexInBlock) {
+                        NodeIndex subNodeIndex = block->at(subIndexInBlock);
+                        Node& subNode = m_graph[subNodeIndex];
+                        if (!subNode.shouldGenerate())
+                            continue;
+                        switch (subNode.op()) {
+                        case CheckStructure:
+                        case StructureTransitionWatchpoint: {
+                            if (subNode.child1().index() != source)
+                                break;
+                            
+                            noticeStructureCheck(variable, subNode.structureSet());
+                            break;
+                        }
+                        default:
+                            break;
+                        }
+                    }
+                    
+                    m_graph.vote(node, VoteOther);
+                    break;
+                }
                     
                 default:
                     m_graph.vote(node, VoteOther);
