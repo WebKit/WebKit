@@ -495,6 +495,7 @@ localizedStrings["Paused on a \"%s\" breakpoint set on %s."] = "Paused on a \"%s
 localizedStrings["Paused on a XMLHttpRequest."] = "Paused on a XMLHttpRequest.";
 localizedStrings["Paused on a \"%s\" Event Listener."] = "Paused on a \"%s\" Event Listener.";
 localizedStrings["Paused on a JavaScript breakpoint."] = "Paused on a JavaScript breakpoint.";
+localizedStrings["Paused on a script blocked due to Content Security Policy directive: \"%s\"."] = "Paused on a script blocked due to Content Security Policy directive: \"%s\".";
 localizedStrings["URL contains \"%s\""] = "URL contains \"%s\"";
 localizedStrings["Network"] = "Network";
 localizedStrings["Status"] = "Status";

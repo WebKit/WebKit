@@ -580,6 +580,15 @@ void InspectorDebuggerAgent::setOverlayMessage(ErrorString*, const String*)
 {
 }
 
+void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
+{
+    if (scriptDebugServer().pauseOnExceptionsState() != ScriptDebugServer::DontPauseOnExceptions) {
+        RefPtr<InspectorObject> directive = InspectorObject::create();
+        directive->setString("directiveText", directiveText);
+        breakProgram(InspectorFrontend::Debugger::Reason::CSPViolation, directive.release());
+    }
+}
+
 PassRefPtr<Array<TypeBuilder::Debugger::CallFrame> > InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)

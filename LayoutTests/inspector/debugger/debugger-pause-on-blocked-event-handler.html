@@ -1,0 +1,15 @@
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="script-src 'self';">
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="resources/pause-on-blocked-event-handler.js"></script>
+<script src="resources/pause-on-blocked-by-csp.js"></script>
+</head>
+<body>
+<p>
+Tests that pause on exception works for inline event handlers blocked by CSP.
+</p>
+<button id="test" onclick="alert('FAIL!');">Button</button>
+</body>
+</html>

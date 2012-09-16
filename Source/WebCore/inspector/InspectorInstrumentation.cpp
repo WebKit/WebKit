@@ -813,6 +813,14 @@ void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents* instrumen
         resourceAgent->setInitialScriptContent(identifier, sourceString);
 }
 
+void InspectorInstrumentation::scriptExecutionBlockedByCSPImpl(InstrumentingAgents* instrumentingAgents, const String& directiveText)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent())
+        debuggerAgent->scriptExecutionBlockedByCSP(directiveText);
+#endif
+}
+
 void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())

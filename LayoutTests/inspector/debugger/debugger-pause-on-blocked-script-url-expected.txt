@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "script-src 'self'".
+
+Tests that pause on exception works for inline script URLs blocked by CSP.
+
+Debugger was enabled.
+Script execution paused.
+Call stack:
+    0) testAction (pause-on-blocked-script-url.js:6)
+Script execution resumed.
+Debugger was disabled.
+

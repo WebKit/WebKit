@@ -192,6 +192,7 @@ public:
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
+    static void scriptExecutionBlockedByCSP(ScriptExecutionContext*, const String& directiveText);
     static void didReceiveScriptResponse(ScriptExecutionContext*, unsigned long identifier);
     static void domContentLoadedEventFired(Frame*);
     static void loadEventFired(Frame*);
@@ -374,6 +375,7 @@ private:
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void scriptImportedImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString);
+    static void scriptExecutionBlockedByCSPImpl(InstrumentingAgents*, const String& directiveText);
     static void didReceiveScriptResponseImpl(InstrumentingAgents*, unsigned long identifier);
     static void domContentLoadedEventFiredImpl(InstrumentingAgents*, Frame*);
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*);
@@ -1237,6 +1239,14 @@ inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext* con
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         scriptImportedImpl(instrumentingAgents, identifier, sourceString);
+#endif
+}
+
+inline void InspectorInstrumentation::scriptExecutionBlockedByCSP(ScriptExecutionContext* context, const String& directiveText)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        scriptExecutionBlockedByCSPImpl(instrumentingAgents, directiveText);
 #endif
 }
 

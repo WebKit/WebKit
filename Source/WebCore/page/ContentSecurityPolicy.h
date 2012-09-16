@@ -108,6 +108,8 @@ public:
     void reportUnrecognizedDirective(const String&) const;
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
 
+    void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
+
     const KURL& url() const;
     KURL completeURL(const String&) const;
     SecurityOrigin* securityOrigin() const;

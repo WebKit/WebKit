@@ -95,7 +95,8 @@ WebInspector.DebuggerModel.BreakReason = {
     EventListener: "EventListener",
     XHR: "XHR",
     Exception: "exception",
-    Assert: "assert"
+    Assert: "assert",
+    CSPViolation: "CSPViolation"
 }
 
 WebInspector.DebuggerModel.prototype = {
