@@ -1031,6 +1031,9 @@ BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-block
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
 BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
+// Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
+BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
+
 // Started failing on JSC ports after r127202.
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 

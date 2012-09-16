@@ -1,3 +1,16 @@
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip fast/events/message-port-constructor-for-deleted-document.html
+        https://bugs.webkit.org/show_bug.cgi?id=96885
+
+        Unreviewed EFL gardening.
+
+        Causes assertion failure in MessagePort::contextDestroyed in
+        http/tests/security/MessagePort/event-listener-context.html, usually
+        attributed to later tests. We need to skip the test for now.
+
+        * platform/efl/TestExpectations:
+
 2012-09-15  Mike West  <mkwst@chromium.org>
 
         Break on inline scripts blocked by CSP.
