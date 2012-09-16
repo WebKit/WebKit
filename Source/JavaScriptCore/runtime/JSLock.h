@@ -58,6 +58,10 @@ namespace JSC {
     public:
         JS_EXPORT_PRIVATE GlobalJSLock();
         JS_EXPORT_PRIVATE ~GlobalJSLock();
+
+        static void initialize();
+    private:
+        static Mutex* s_sharedInstanceLock;
     };
 
     class JSLockHolder {
@@ -91,12 +95,6 @@ namespace JSC {
         unsigned dropAllLocksUnconditionally();
         void grabAllLocks(unsigned lockCount);
 
-        SpinLock m_spinLock;
-        Mutex m_lock;
-        ThreadIdentifier m_ownerThread;
-        intptr_t m_lockCount;
-        unsigned m_lockDropDepth;
-
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
@@ -108,6 +106,13 @@ namespace JSC {
             intptr_t m_lockCount;
             RefPtr<JSGlobalData> m_globalData;
         };
+
+    private:
+        SpinLock m_spinLock;
+        Mutex m_lock;
+        ThreadIdentifier m_ownerThread;
+        intptr_t m_lockCount;
+        unsigned m_lockDropDepth;
     };
 
 } // namespace

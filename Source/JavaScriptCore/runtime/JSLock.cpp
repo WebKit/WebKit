@@ -33,21 +33,21 @@
 
 namespace JSC {
 
-// JSLock is only needed to support an obsolete execution model where JavaScriptCore
-// automatically protected against concurrent access from multiple threads.
-// So it's safe to disable it on non-mac platforms where we don't have native pthreads.
-#if (OS(DARWIN) || USE(PTHREADS))
-
-static pthread_mutex_t sharedInstanceLock = PTHREAD_MUTEX_INITIALIZER;
+Mutex* GlobalJSLock::s_sharedInstanceLock = 0;
 
 GlobalJSLock::GlobalJSLock()
 {
-    pthread_mutex_lock(&sharedInstanceLock);
+    s_sharedInstanceLock->lock();
 }
 
 GlobalJSLock::~GlobalJSLock()
 {
-    pthread_mutex_unlock(&sharedInstanceLock);
+    s_sharedInstanceLock->unlock();
+}
+
+void GlobalJSLock::initialize()
+{
+    s_sharedInstanceLock = new Mutex();
 }
 
 JSLockHolder::JSLockHolder(ExecState* exec)
@@ -215,96 +215,5 @@ JSLock::DropAllLocks::~DropAllLocks()
 {
     m_globalData->apiLock().grabAllLocks(m_lockCount);
 }
-
-#else // (OS(DARWIN) || USE(PTHREADS))
-
-GlobalJSLock::GlobalJSLock()
-{
-}
-
-GlobalJSLock::~GlobalJSLock()
-{
-}
-
-JSLockHolder::JSLockHolder(JSGlobalData*)
-{
-}
-
-JSLockHolder::JSLockHolder(JSGlobalData&)
-{
-}
-
-JSLockHolder::JSLockHolder(ExecState*)
-{
-}
-
-JSLockHolder::~JSLockHolder()
-{
-}
-
-JSLock::JSLock()
-{
-}
-
-JSLock::~JSLock()
-{
-}
-
-bool JSLock::currentThreadIsHoldingLock()
-{
-    return true;
-}
-
-void JSLock::lock()
-{
-}
-
-void JSLock::unlock()
-{
-}
-
-void JSLock::lock(ExecState*)
-{
-}
-
-void JSLock::unlock(ExecState*)
-{
-}
-
-void JSLock::lock(JSGlobalData&)
-{
-}
-
-void JSLock::unlock(JSGlobalData&)
-{
-}
-
-unsigned JSLock::dropAllLocks()
-{
-    return 0;
-}
-
-unsigned JSLock::dropAllLocksUnconditionally()
-{
-    return 0;
-}
-
-void JSLock::grabAllLocks(unsigned)
-{
-}
-
-JSLock::DropAllLocks::DropAllLocks(ExecState*)
-{
-}
-
-JSLock::DropAllLocks::DropAllLocks(JSGlobalData*)
-{
-}
-
-JSLock::DropAllLocks::~DropAllLocks()
-{
-}
-
-#endif // (OS(DARWIN) || USE(PTHREADS))
 
 } // namespace JSC

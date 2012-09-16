@@ -1,3 +1,25 @@
+2012-09-15  Mark Lam  <mark.lam@apple.com>
+
+        Fixed JSLock to use the platform abstraction for Mutex instead of
+        depending on pthreads.
+        https://bugs.webkit.org/show_bug.cgi?id=96858.
+
+        Reviewed by Filip Pizlo.
+
+        This fixes a synchronization problem on the Windows port and makes
+        it more reliable when running the layout tests.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSLock.cpp:
+        (JSC):
+        (JSC::GlobalJSLock::GlobalJSLock):
+        (JSC::GlobalJSLock::~GlobalJSLock):
+        (JSC::GlobalJSLock::initialize):
+        * runtime/JSLock.h:
+        (GlobalJSLock):
+        (JSLock):
+
 2012-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         Structure check hoisting fails to consider the possibility of conflicting checks on the source of the first assignment to the hoisted variable
