@@ -1,5 +1,17 @@
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Mark inspector/debugger/dynamic-script-tag.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=96887
+
+        Unreviewed EFL gardening.
+
+        Mark inspector/debugger/dynamic-script-tag.html as flaky
+        in EFL's TestExpectations.
+
+        * platform/efl/TestExpectations:
+
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] 3 spatial navigation tests can be unskipped after r128644
         https://bugs.webkit.org/show_bug.cgi?id=96880
 

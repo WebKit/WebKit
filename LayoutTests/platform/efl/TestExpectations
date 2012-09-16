@@ -198,6 +198,7 @@ BUGWK91958 : http/tests/inspector-enabled/injected-script-discard.html = TEXT PA
 BUGWK85615 : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWKEFL : http/tests/inspector/search/resources-search-match-index.html = TEXT PASS
 BUGWK93820 : inspector/console/console-format-collections.html = TEXT PASS
+BUGWK96886 : inspector/debugger/dynamic-script-tag.html = TEXT PASS
 BUGWKEFL : inspector/profiler/heap-snapshot.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-enum-stability.html = TEXT PASS
 BUGWK95066 : inspector/styles/media-queries.html = TEXT PASS
