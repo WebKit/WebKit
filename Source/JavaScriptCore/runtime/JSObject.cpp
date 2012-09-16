@@ -49,7 +49,8 @@ namespace JSC {
 
 // We keep track of the size of the last array after it was grown. We use this
 // as a simple heuristic for as the value to grow the next array from size 0.
-// This value is capped by the constant FIRST_VECTOR_GROW defined above.
+// This value is capped by the constant FIRST_VECTOR_GROW defined in
+// ArrayConventions.h.
 static unsigned lastArraySize = 0;
 
 JSCell* getCallableObjectSlow(JSCell* cell)
