@@ -1,3 +1,20 @@
+2012-09-17  Mike West  <mkwst@chromium.org>
+
+        Don't GC img elements blocked by CSP until error events fire.
+        https://bugs.webkit.org/show_bug.cgi?id=94677
+
+        Reviewed by Jochen Eisinger.
+
+        * fast/events/onerror-img-after-gc.html:
+        * fast/events/onerror-img-after-gc-expected.txt:
+        * http/tests/security/contentSecurityPolicy/img-blocked-no-gc-crash.html:
+        * http/tests/security/contentSecurityPolicy/img-blocked-no-gc-crash-expected.txt:
+            Explicitly triggering GC before the error in the hopes of proving
+            that we don't crash anymore.
+        * platform/gtk/TestExpectations:
+        * platform/qt/Skipped:
+            Unskipping no-longer-crashing test.
+
 2012-09-17  Philip Rogers  <pdr@google.com>
 
         Make SVGPathSegList.append O(1) instead of O(n)

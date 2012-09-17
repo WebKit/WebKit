@@ -83,9 +83,7 @@ public:
 
     bool complete() const;
 
-    // FIXME: Why do we have two names for the same thing?
-    bool hasPendingLoadEvent() const { return m_imageLoader.hasPendingLoadEvent(); }
-    bool hasPendingActivity() const { return m_imageLoader.hasPendingLoadEvent(); }
+    bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
 
     virtual bool canContainRangeEndPoint() const { return false; }
 

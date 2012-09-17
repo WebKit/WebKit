@@ -66,7 +66,7 @@ public:
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
-    bool hasPendingLoadEvent() const { return m_hasPendingLoadEvent; }
+    bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
 
     void dispatchPendingEvent(ImageEventSender*);
 

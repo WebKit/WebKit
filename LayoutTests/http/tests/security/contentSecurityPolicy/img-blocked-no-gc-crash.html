@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<meta http-equiv="X-WebKit-CSP" content="img-src 'none'; script-src 'unsafe-inline'">
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function test() {
+        (function () {
+            var img = document.createElement('img');
+            img.onload = function () {
+                alert('FAIL (1/1)');
+                finishTesting();
+            };
+            img.onerror = function () {
+                alert('PASS (1/1)');
+                finishTesting();
+            };
+            img.src = "../resources/abe.png";
+        })();
+        gc();
+    }
+
+    function finishTesting() {
+        if (window.testRunner)
+            setTimeout(function () { testRunner.notifyDone(); }, 0);
+        return true;
+    }
+</script>
+</head>
+<body onload='test();'>
+    <p>
+        This test ensures that blocking an image via CSP doesn't crash if GC
+        executes before the error event fires.
+    </p>
+</body>
+</html>

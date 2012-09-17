@@ -630,8 +630,6 @@ BUGWK61118 : fullscreen/full-screen-restrictions.html = TIMEOUT
 
 BUGWK85700 : fullscreen/non-ancestor-iframe.html = TIMEOUT
 
-BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TIMEOUT
-
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
 
 BUGWK72698 : media/audio-garbage-collect.html = TIMEOUT
