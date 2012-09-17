@@ -1,3 +1,23 @@
+2012-09-17  Leo Franchi  <lfranchi@kde.org>
+
+        [Qt] Inspector WebSocket backend protocol update
+        https://bugs.webkit.org/show_bug.cgi?id=77031
+
+        Also adds support for multi-frame messages and non-text messages.
+        Thanks to Jocelyn Turcotte for most of the WebSocket update code!
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/InspectorServerQt.cpp:
+        (WebCore):
+        (WebCore::generateWebSocketChallengeResponse):
+        (WebCore::InspectorServerRequestHandlerQt::tcpReadyRead):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketSend):
+        (WebCore::applyMask):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketReadyRead):
+        * WebCoreSupport/InspectorServerQt.h:
+        (InspectorServerRequestHandlerQt):
+
 2012-09-15  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] QDoc fixes for Qt 5 documentation

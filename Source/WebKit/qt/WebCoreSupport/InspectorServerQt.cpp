@@ -34,51 +34,26 @@
 #include <QUrl>
 #include <QWidget>
 #include <qendian.h>
-#include <wtf/MD5.h>
+#include <wtf/SHA1.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 /*!
-    Computes the WebSocket handshake response given the two challenge numbers and key3.
+    Computes the WebSocket handshake response given the input key
  */
-static void generateWebSocketChallengeResponse(uint32_t number1, uint32_t number2, const unsigned char key3[8], unsigned char response[16])
+static QByteArray generateWebSocketChallengeResponse(const QByteArray& key)
 {
-    uint8_t challenge[16];
-    qToBigEndian<qint32>(number1, &challenge[0]);
-    qToBigEndian<qint32>(number2, &challenge[4]);
-    memcpy(&challenge[8], key3, 8);
-    MD5 md5;
-    md5.addBytes(challenge, sizeof(challenge));
-    Vector<uint8_t, 16> digest;
-    md5.checksum(digest);
-    memcpy(response, digest.data(), 16);
-}
-
-/*!
-    Parses and returns a WebSocket challenge number according to the
-    method specified in the WebSocket protocol.
-
-    The field contains numeric digits interspersed with spaces and
-    non-numeric digits. The protocol ignores the characters that are
-    neither digits nor spaces. The digits are concatenated and
-    interpreted as a long int. The result is this number divided by
-    the number of spaces.
- */
-static quint32 parseWebSocketChallengeNumber(QString field)
-{
-    QString nString;
-    int numSpaces = 0;
-    for (int i = 0; i < field.size(); i++) {
-        QChar c = field[i];
-        if (c == QLatin1Char(' '))
-            numSpaces++;
-        else if ((c >= QLatin1Char('0')) && (c <= QLatin1Char('9')))
-            nString.append(c);
-    }
-    quint32 num = nString.toULong();
-    quint32 result = (numSpaces ? (num / numSpaces) : num);
-    return result;
+    SHA1 sha1;
+    Vector<uint8_t, 20> digest;
+    Vector<char> encoded;
+    QByteArray toHash("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+    toHash.prepend(key);
+    sha1.addBytes((uint8_t*)toHash.data(), toHash.size());
+    sha1.computeHash(digest);
+    base64Encode((char*)digest.data(), digest.size(), encoded);
+    return QByteArray(encoded.data(), encoded.size());
 }
 
 static InspectorServerQt* s_inspectorServer;
@@ -192,7 +167,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                 m_path = header.path();
                 m_contentType = header.contentType().toLatin1();
                 m_contentLength = header.contentLength();
-                if (header.hasKey(QLatin1String("Upgrade")) && (header.value(QLatin1String("Upgrade")) == QLatin1String("WebSocket")))
+                if (header.hasKey(QLatin1String("Upgrade")) && (header.value(QLatin1String("Upgrade")) == QLatin1String("websocket")))
                     isWebSocket = true;
 
                 m_data.clear();
@@ -211,23 +186,14 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                 m_tcpConnection->disconnect(SIGNAL(readyRead()));
                 connect(m_tcpConnection, SIGNAL(readyRead()), SLOT(webSocketReadyRead()), Qt::QueuedConnection);
 
-                QByteArray key3 = m_tcpConnection->read(8);
-
-                quint32 number1 = parseWebSocketChallengeNumber(header.value(QLatin1String("Sec-WebSocket-Key1")));
-                quint32 number2 = parseWebSocketChallengeNumber(header.value(QLatin1String("Sec-WebSocket-Key2")));
-
-                char responseData[16];
-                generateWebSocketChallengeResponse(number1, number2, (unsigned char*)key3.data(), (unsigned char*)responseData);
-                QByteArray response(responseData, sizeof(responseData));
+                QByteArray key = header.value(QLatin1String("Sec-WebSocket-Key")).toLatin1();
+                QString accept = QString::fromLatin1(generateWebSocketChallengeResponse(key));
 
                 WebKit::QHttpResponseHeader responseHeader(101, QLatin1String("WebSocket Protocol Handshake"), 1, 1);
                 responseHeader.setValue(QLatin1String("Upgrade"), header.value(QLatin1String("Upgrade")));
                 responseHeader.setValue(QLatin1String("Connection"), header.value(QLatin1String("Connection")));
-                responseHeader.setValue(QLatin1String("Sec-WebSocket-Origin"), header.value(QLatin1String("Origin")));
-                responseHeader.setValue(QLatin1String("Sec-WebSocket-Location"), (QLatin1String("ws://") + header.value(QLatin1String("Host")) + m_path));
-                responseHeader.setContentLength(response.size());
+                responseHeader.setValue(QLatin1String("Sec-WebSocket-Accept"), accept);
                 m_tcpConnection->write(responseHeader.toString().toLatin1());
-                m_tcpConnection->write(response);
                 m_tcpConnection->flush();
 
                 if ((words.size() == 4)
@@ -306,24 +272,41 @@ void InspectorServerRequestHandlerQt::tcpConnectionDisconnected()
     m_tcpConnection = 0;
 }
 
-int InspectorServerRequestHandlerQt::webSocketSend(QByteArray payload)
+int InspectorServerRequestHandlerQt::webSocketSend(const QString& message)
 {
-    Q_ASSERT(m_tcpConnection);
-    m_tcpConnection->putChar(0x00);
-    int nBytes = m_tcpConnection->write(payload);
-    m_tcpConnection->putChar(0xFF);
-    m_tcpConnection->flush();
-    return nBytes;
+    QByteArray payload = message.toUtf8();
+    return webSocketSend(payload.data(), payload.size());
 }
 
 int InspectorServerRequestHandlerQt::webSocketSend(const char* data, size_t length)
 {
     Q_ASSERT(m_tcpConnection);
-    m_tcpConnection->putChar(0x00);
+    m_tcpConnection->putChar(0x81);
+    if (length <= 125)
+        m_tcpConnection->putChar(static_cast<uint8_t>(length));
+    else if (length <= pow(2, 16)) {
+        m_tcpConnection->putChar(126);
+        quint16 length16 = qToBigEndian<quint16>(static_cast<quint16>(length));
+        m_tcpConnection->write(reinterpret_cast<char*>(&length16), 2);
+    } else {
+        m_tcpConnection->putChar(127);
+        quint64 length64 = qToBigEndian<quint64>(static_cast<quint64>(length));
+        m_tcpConnection->write(reinterpret_cast<char*>(&length64), 8);
+    }
     int nBytes = m_tcpConnection->write(data, length);
-    m_tcpConnection->putChar(0xFF);
     m_tcpConnection->flush();
     return nBytes;
+}
+
+static QByteArray applyMask(const QByteArray& payload, const QByteArray& maskingKey)
+{
+    Q_ASSERT(maskingKey.size() == 4);
+    QByteArray unmaskedPayload;
+    for (int i = 0; i < payload.size(); ++i) {
+        char unmaskedByte = payload[i] ^ maskingKey[i % 4];
+        unmaskedPayload.append(unmaskedByte);
+    }
+    return unmaskedPayload;
 }
 
 void InspectorServerRequestHandlerQt::webSocketReadyRead()
@@ -333,33 +316,43 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
         return;
     QByteArray content = m_tcpConnection->read(m_tcpConnection->bytesAvailable());
     m_data.append(content);
-    while (m_data.size() > 0) {
-        // first byte in websocket frame should be 0
-        Q_ASSERT(!m_data[0]);
-
-        // Start of WebSocket frame is indicated by 0
-        if (m_data[0]) {
-            qCritical() <<  "webSocketReadyRead: unknown frame type" << m_data[0];
-            m_data.clear();
-            m_tcpConnection->close();
-            return;
+    while (m_data.size() > 0) {        
+        const bool isMasked = m_data[1] & 0x80;
+        quint64 payloadLen = m_data[1] & 0x7F;
+        int pos = 2;
+        
+        if (payloadLen == 126) {
+            payloadLen = qFromBigEndian<quint16>(*reinterpret_cast<quint16*>(m_data.mid(pos, 2).data()));
+            pos = 4;
+        } else if (payloadLen == 127) {
+            payloadLen = qFromBigEndian<quint64>(*reinterpret_cast<quint64*>(m_data.mid(pos, 8).data()));
+            pos = 8;
         }
-
-        // End of WebSocket frame indicated by 0xff.
-        int pos = m_data.indexOf(0xff, 1);
-        if (pos < 1)
-            return;
-
-        // After above checks, length will be >= 0.
-        size_t length = pos - 1;
-        if (length <= 0)
-            return;
-
-        QByteArray payload = m_data.mid(1, length);
-
+        
+        QByteArray payload;
+        if (isMasked) {
+            QByteArray maskingKey = m_data.mid(pos, 4);
+            pos += 4;
+            payload = applyMask(m_data.mid(pos, payloadLen), maskingKey);
+        } else
+            payload = m_data.mid(pos, payloadLen);
+        
+        // Handle fragmentation
+        if (!(m_data[0] & 0x80)) { // Non-last fragmented payload
+            m_fragmentedPayload.append(payload);                 
+            m_data = m_data.mid(pos + payloadLen);
+            continue;
+        }
+        
+        if (!(m_data[0] & 0x0F)) { // Last fragment
+            m_fragmentedPayload.append(payload);   
+            payload = m_fragmentedPayload;
+            m_fragmentedPayload.clear();
+        }
+        
         // Remove this WebSocket message from m_data (payload, start-of-frame byte, end-of-frame byte).
         // Truncate data before delivering message in case of re-entrancy.
-        m_data = m_data.mid(length + 2);
+        m_data = m_data.mid(pos + payloadLen);
         
 #if ENABLE(INSPECTOR)
         if (m_inspectorClient) {
