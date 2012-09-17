@@ -1008,6 +1008,18 @@ BUGWK94877 : fast/forms/listbox-hit-test-zoomed.html = MISSING
 BUGWK94880 : fast/forms/search-cancel-button-style-sharing.html = MISSING
 BUGWK94880 : fast/forms/search-rtl.html = MISSING
 
+// New windows are created with wrong size
+BUGWK53959 : fast/dom/Window/window-resize.html = TEXT
+BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = TEXT
+
+// min-device-width value is incorrect
+BUGWK96920 : fast/media/invalid-lengths.html = TEXT
+BUGWK96920 : fast/media/matchmedium-query-api.html= TEXT
+BUGWK96920 : fast/media/media-query-list-01.html = TEXT
+
+// video.currentSrc is an empty string
+BUGWK96922 : media/video-source-media.html = TEXT
+
 // Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
 BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
 

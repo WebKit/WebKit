@@ -74,10 +74,6 @@ BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
 // EFL's DRT needs CONFIRM NAVIGATION messages
 BUGWK87246 : fast/loader/form-submission-after-beforeunload-cancel.html = TEXT
 
-// New windows are created with wrong size
-BUGWK53959 : fast/dom/Window/window-resize.html = TEXT
-BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = TEXT
-
 // New test introduced in r116694 fails
 BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
 

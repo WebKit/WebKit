@@ -1,5 +1,19 @@
 2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Skip again tests that were unskipped recently
+        https://bugs.webkit.org/show_bug.cgi?id=96923
+
+        Unreviewed EFL gardening.
+
+        Skip again several test cases that were unskipped in
+        r128753 but don't seem to pass on the bots for some
+        reason.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Clean up Skipped list
         https://bugs.webkit.org/show_bug.cgi?id=96918
 
