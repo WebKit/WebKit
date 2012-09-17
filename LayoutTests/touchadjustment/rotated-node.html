@@ -46,7 +46,7 @@
     function testDirectTouches()
     {
         debug('Direct Touches');
-        
+
         testTouchPoint(touchPoint(30, 30, 20), e.rotated);
         testTouchPoint(touchPoint(20, 30, 20), e.rotated);
         testTouchPoint(touchPoint(40, 30, 20), e.rotated);
@@ -75,6 +75,22 @@
         testTouchPoint(touchPoint(70, 60, 20), e.container);
     }
 
+    function testAdjustedPoints()
+    {
+        debug('\nAdjusted point within bounds');
+        var adjustedPoint = adjustTouchPoint(touchPoint(20, 0, 20))
+        shouldBeWithin(adjustedPoint, touchPoint(20, 0, 20));
+
+        adjustedPoint = adjustTouchPoint(touchPoint(60, 60, 20))
+        shouldBeWithin(adjustedPoint, touchPoint(60, 60, 20));
+
+        adjustedPoint = adjustTouchPoint(touchPoint(0, 60, 40, 20))
+        shouldBeWithin(adjustedPoint, touchPoint(0, 60, 40, 20));
+
+        adjustedPoint = adjustTouchPoint(touchPoint(70, 20, 20, 40))
+        shouldBeWithin(adjustedPoint, touchPoint(70, 20, 20, 40));
+    }
+
     function runTests()
     {
         document.addEventListener('click', function() {}, false);
@@ -82,6 +98,7 @@
             description(document.title);
             testDirectTouches();
             testAdjustedTouches();
+            testAdjustedPoints()
             e.container.style.display = 'none';
         }
     }

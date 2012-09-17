@@ -64,7 +64,6 @@ function shouldBeWithin(adjustedPoint, targetArea) {
     }
 }
 
-
 function testTouchPoint(touchpoint, targetNode, allowTextNodes)
 {
     var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
@@ -79,6 +78,12 @@ function testTouchPointContextMenu(touchpoint, targetNode, allowTextNodes)
     if (!allowTextNodes && adjustedNode && adjustedNode.nodeType == 3)
         adjustedNode = adjustedNode.parentNode;
     shouldBeNode(adjustedNode, targetNode);
+}
+
+function adjustTouchPoint(touchpoint)
+{
+    var adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
+    return adjustedPoint;
 }
 
 function adjustTouchPointContextMenu(touchpoint)

@@ -1,3 +1,17 @@
+2012-09-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [TouchAdjustment] Adjusted point outside bounds for non-rectilinear targets
+        https://bugs.webkit.org/show_bug.cgi?id=96098
+
+        Reviewed by Antonio Gomes.
+
+        Expands the test of rotated nodes to also perform checks of the validity of the adjusted points.
+
+        * touchadjustment/resources/touchadjustment.js:
+        (adjustTouchPoint):
+        * touchadjustment/rotated-node-expected.txt:
+        * touchadjustment/rotated-node.html:
+
 2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Clean up Skipped list
