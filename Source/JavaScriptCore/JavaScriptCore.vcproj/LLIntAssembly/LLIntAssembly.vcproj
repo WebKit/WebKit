@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="LLIntAssembly"
+	ProjectGUID="{9221744B-5715-4F56-9590-42F7AB23DD8B}"
+	RootNamespace="LLIntAssembly"
+	Keyword="MakeFileProj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make"
+				ReBuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make clean&#x0D;&#x0A;nmake -f LLIntAssembly.make"
+				CleanCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make clean"
+				Output="LLIntAssembly.h"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make"
+				ReBuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make clean&#x0D;&#x0A;nmake -f LLIntAssembly.make"
+				CleanCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(WebKitOutputDir)\$(ConfigurationName)&#x0D;&#x0A;set PRODUCTION=$(PRODUCTION)&#x0D;&#x0A;nmake /nologo -f LLIntAssembly.make clean"
+				Output="LLIntAssembly.h"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\build-LLIntAssembly.sh"
+			>
+		</File>
+		<File
+			RelativePath=".\LLIntAssembly.make"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

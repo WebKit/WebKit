@@ -961,14 +961,14 @@
 				RelativePath="..\..\runtime\JSString.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\..\runtime\JSStringJoiner.cpp"
-                                >
-                        </File>
-                        <File
-                                RelativePath="..\..\runtime\JSStringJoiner.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\..\runtime\JSStringJoiner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSStringJoiner.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\runtime\JSSymbolTableObject.cpp"
 				>
@@ -2018,7 +2018,71 @@
 			Name="llint"
 			>
 			<File
+				RelativePath="..\..\llint\LLIntCLoop.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntCLoop.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntCommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntData.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\llint\LLIntData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntEntrypoints.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntEntrypoints.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntExceptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntExceptions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntOfflineAsmConfig.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntOpcode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntSlowPaths.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntSlowPaths.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntThunks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LLIntThunks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LowLevelInterpreter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\llint\LowLevelInterpreter.h"
 				>
 			</File>
 		</Filter>
