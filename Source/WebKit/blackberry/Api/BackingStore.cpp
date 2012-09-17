@@ -28,6 +28,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "SurfacePool.h"
 #include "WebPage.h"
@@ -233,6 +234,16 @@ BackingStorePrivate::~BackingStorePrivate()
     m_backState = 0;
 
     pthread_mutex_destroy(&m_mutex);
+}
+
+void BackingStorePrivate::instrumentBeginFrame()
+{
+    WebCore::InspectorInstrumentation::didBeginFrame(WebPagePrivate::core(m_webPage));
+}
+
+void BackingStorePrivate::instrumentCancelFrame()
+{
+    WebCore::InspectorInstrumentation::didCancelFrame(WebPagePrivate::core(m_webPage));
 }
 
 bool BackingStorePrivate::shouldDirectRenderingToWindow() const

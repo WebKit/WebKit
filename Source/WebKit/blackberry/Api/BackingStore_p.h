@@ -101,6 +101,9 @@ public:
     enum TileMatrixDirection { Horizontal, Vertical };
     BackingStorePrivate();
 
+    void instrumentBeginFrame();
+    void instrumentCancelFrame();
+
     // Returns whether direct rendering is explicitly turned on or is
     // required because the surface pool is not large enough to meet
     // the minimum number of tiles required to scroll.

@@ -564,6 +564,8 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
     double time = WTF::currentTime();
 #endif
 
+    m_parent->instrumentBeginFrame();
+
     m_parent->requestLayoutIfNeeded();
 
 #if DEBUG_RENDER_QUEUE
@@ -584,6 +586,8 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
             renderRegularRenderJob();
     } else if (!m_nonVisibleScrollJobs.empty())
         renderNonVisibleScrollJob();
+
+    m_parent->instrumentCancelFrame();
 }
 
 void RenderQueue::renderAllCurrentRegularRenderJobs()

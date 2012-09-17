@@ -1,3 +1,21 @@
+2012-09-17  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] To support "Frames View" of "TimeLine" panel in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=96077
+
+        Reviewed by Rob Buis.
+
+        Invoke the "instrumentBeginFrame" and "instrumentCancelFrame" at the start and end of processing
+        render message to record one time of page's update.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentBeginFrame):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentCancelFrame):
+        * Api/BackingStore_p.h:
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::render):
+
 2012-09-17  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Support copying image data in WebOverlay.
