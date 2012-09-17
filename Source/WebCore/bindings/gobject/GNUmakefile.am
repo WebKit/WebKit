@@ -412,9 +412,9 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLAudioElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLVideoElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLVideoElementPrivate.h
-endif
 
-if ENABLE_VIDEO_TRACK
+# Video Track feature currently depends on HTML Video and is considered unstable.
+if ENABLE_UNSTABLE_FEATURES
 webkitgtk_built_h_api += \
 	$(top_builddir)/DerivedSources/webkit/WebKitDOMTextTrack.h \
 	$(top_builddir)/DerivedSources/webkit/WebKitDOMTextTrackList.h \
@@ -433,8 +433,10 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMTrackEvent.cpp \
 	DerivedSources/webkit/WebKitDOMTrackEventPrivate.h
 endif
+endif
 
-if ENABLE_WEB_TIMING
+# Web Timing feature is currently considered unstable.
+if ENABLE_UNSTABLE_FEATURES
 webkitgtk_built_h_api += \
 	$(top_builddir)/DerivedSources/webkit/WebKitDOMPerformance.h \
 	$(top_builddir)/DerivedSources/webkit/WebKitDOMPerformanceNavigation.h \

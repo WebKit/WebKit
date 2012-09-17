@@ -120,15 +120,6 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/text/enchant
 
 # ---
-# Channel mesaging support
-# ---
-if ENABLE_CHANNEL_MESSAGING
-feature_defines_overrides += ENABLE_CHANNEL_MESSAGING=1
-else
-feature_defines_overrides += ENABLE_CHANNEL_MESSAGING=0
-endif # END ENABLE_CHANNEL_MESSAGING
-
-# ---
 # FreeType font backend
 # ---
 if USE_FREETYPE
@@ -155,33 +146,6 @@ webcoregtk_cppflags += \
 endif # END TARGET_WIN32
 
 # ----
-# HTML Meter Element
-# ----
-if ENABLE_METER_ELEMENT
-feature_defines_overrides += ENABLE_METER_ELEMENT=1
-else
-feature_defines_overrides += ENABLE_METER_ELEMENT=0
-endif # END ENABLE_METER_ELEMENT
-
-# ----
-# HTML Progress Element
-# ----
-if ENABLE_PROGRESS_ELEMENT
-feature_defines_overrides += ENABLE_PROGRESS_ELEMENT=1
-else
-feature_defines_overrides += ENABLE_PROGRESS_ELEMENT=0
-endif # END ENABLE_PROGRESS_ELEMENT
-
-# ----
-# JavaScript Debugger/Profiler
-# ----
-if ENABLE_JAVASCRIPT_DEBUGGER
-feature_defines_overrides += ENABLE_JAVASCRIPT_DEBUGGER=1
-else
-feature_defines_overrides += ENABLE_JAVASCRIPT_DEBUGGER=0
-endif # END ENABLE_JAVASCRIPT_DEBUGGER
-
-# ----
 # Gamepad support
 # ---
 if ENABLE_GAMEPAD
@@ -189,15 +153,6 @@ feature_defines_overrides += ENABLE_GAMEPAD=1
 else
 feature_defines_overrides += ENABLE_GAMEPAD=0
 endif # END ENABLE_GAMEPAD
-
-# ----
-# Database Support
-# ----
-if ENABLE_SQL_DATABASE
-feature_defines_overrides += ENABLE_SQL_DATABASE=1
-else
-feature_defines_overrides += ENABLE_SQL_DATABASE=0
-endif # END ENABLE_SQL_DATABASE
 
 # ----
 # Indexed Database API support
@@ -213,24 +168,6 @@ webcore_cppflags += -DWTF_USE_LEVELDB
 endif # END USE_LEVELDB
 
 # ----
-# DOM mutation observer support
-# ----
-if ENABLE_MUTATION_OBSERVERS
-feature_defines_overrides += ENABLE_MUTATION_OBSERVERS=1
-else
-feature_defines_overrides += ENABLE_MUTATION_OBSERVERS=0
-endif # END ENABLE_MUTATION_OBSERVERS
-
-# ----
-# Icon Database Support
-# ----
-if ENABLE_ICONDATABASE
-feature_defines_overrides += -DENABLE_ICONDATABASE=1
-else
-feature_defines_overrides += -DENABLE_ICONDATABASE=0
-endif # END ENABLE_ICONDATABASE
-
-# ----
 # Video Support
 # ----
 if ENABLE_VIDEO
@@ -241,17 +178,8 @@ webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
 endif # END USE_GSTREAMER
 else
-feature_defines_overrides += ENABLE_VIDEO=0
+feature_defines_overrides += ENABLE_VIDEO=0 ENABLE_VIDEO_TRACK=0
 endif # END ENABLE_VIDEO
-
-# ----
-# Javascript Fullscreen Support
-# ----
-if ENABLE_FULLSCREEN_API
-feature_defines_overrides += ENABLE_FULLSCREEN_API=1
-else
-feature_defines_overrides += ENABLE_FULLSCREEN_API=0
-endif # END ENABLE_FULLSCREEN_API
 
 # ----
 # Filters
@@ -261,15 +189,6 @@ feature_defines_overrides += ENABLE_CSS_FILTERS=1
 else
 feature_defines_overrides += ENABLE_CSS_FILTERS=0
 endif # END ENABLE_CSS_FILTERS
-
-# ----
-# Track Support
-# ----
-if ENABLE_VIDEO_TRACK
-feature_defines_overrides += ENABLE_VIDEO_TRACK=1
-else
-feature_defines_overrides += ENABLE_VIDEO_TRACK=0
-endif # END ENABLE_VIDEO_TRACK
 
 # ----
 # Media Stream Support
@@ -304,33 +223,6 @@ feature_defines_overrides += ENABLE_XSLT=0
 endif # END ENABLE_XSLT
 
 # ----
-# Web Workers support
-# ----
-if ENABLE_WORKERS
-feature_defines_overrides += ENABLE_WORKERS=1
-else
-feature_defines_overrides += ENABLE_WORKERS=0
-endif
-
-# ---
-# Shadow DOM support
-# ---
-if ENABLE_SHADOW_DOM
-feature_defines_overrides += ENABLE_SHADOW_DOM=1
-else
-feature_defines_overrides += ENABLE_SHADOW_DOM=0
-endif
-
-# ---
-# SharedWorker support
-# ---
-if ENABLE_SHARED_WORKERS
-feature_defines_overrides += ENABLE_SHARED_WORKERS=1
-else
-feature_defines_overrides += ENABLE_SHARED_WORKERS=0
-endif
-
-# ----
 # Filters
 # ----
 if ENABLE_FILTERS
@@ -340,32 +232,6 @@ feature_defines_overrides += ENABLE_FILTERS=0
 endif # END ENABLE_FILTERS
 
 # ----
-# CSS box decoration break
-# ----
-if ENABLE_CSS_BOX_DECORATION_BREAK
-feature_defines_overrides += ENABLE_CSS_BOX_DECORATION_BREAK=1
-else
-feature_defines_overrides += ENABLE_CSS_BOX_DECORATION_BREAK=0
-endif # END ENABLE_CSS_BOX_DECORATION_BREAK
-
-# ----
-# Regions
-# ----
-if ENABLE_CSS_REGIONS
-feature_defines_overrides += ENABLE_CSS_REGIONS=1
-else
-feature_defines_overrides += ENABLE_CSS_REGIONS=0
-endif # END ENABLE_CSS_REGIONS
-
-# ----
-# Exclusions
-# ----
-if ENABLE_CSS_EXCLUSIONS
-feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=1
-else
-feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=0
-endif # END ENABLE_CSS_EXCLUSIONS
-
 # Shaders
 # ----
 if ENABLE_CSS_SHADERS
@@ -382,15 +248,6 @@ feature_defines_overrides += ENABLE_GEOLOCATION=1
 else
 feature_defines_overrides += ENABLE_GEOLOCATION=0
 endif # END ENABLE_GEOLOCATION
-
-# ----
-# MathML support
-# ----
-if ENABLE_MATHML
-feature_defines_overrides += ENABLE_MATHML=1
-else
-feature_defines_overrides += ENABLE_MATHML=0
-endif # END ENABLE_MATHML
 
 # MathML tag and attribute names, and element factory
 DerivedSources/WebCore/MathMLElementFactory.h: DerivedSources/WebCore/MathMLElementFactory.cpp
@@ -442,51 +299,6 @@ if USE_WEBAUDIO_GSTREAMER
 webcore_cppflags += -DWTF_USE_WEBAUDIO_GSTREAMER=1
 endif
 
-# ----
-# Web Sockets Support
-# ----
-if ENABLE_WEB_SOCKETS
-feature_defines_overrides += ENABLE_WEB_SOCKETS=1
-else
-feature_defines_overrides += ENABLE_WEB_SOCKETS=0
-endif  # END ENABLE_WEB_SOCKETS
-
-# ---
-# Blob support
-# ---
-if ENABLE_BLOB
-feature_defines_overrides += ENABLE_BLOB=1
-else
-feature_defines_overrides += ENABLE_BLOB=0
-endif  # END ENABLE_BLOB
-
-# ---
-# Legacy vendor prefixes support
-# ---
-if ENABLE_LEGACY_VENDOR_PREFIXES
-feature_defines_overrides += ENABLE_LEGACY_VENDOR_PREFIXES=1
-else
-feature_defines_overrides += ENABLE_LEGACY_VENDOR_PREFIXES=0
-endif  # END ENABLE_LEGACY_VENDOR_PREFIXES
-
-# ---
-# Legacy WebKitBlobBuilder support
-# ---
-if ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
-feature_defines_overrides += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
-else
-feature_defines_overrides += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=0
-endif  # END ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
-
-# ---
-# RequestAnimationFrame support
-# ---
-if ENABLE_REQUEST_ANIMATION_FRAME
-feature_defines_overrides += ENABLE_REQUEST_ANIMATION_FRAME=1
-else
-feature_defines_overrides += ENABLE_REQUEST_ANIMATION_FRAME=0
-endif  # END ENABLE_REQUEST_ANIMATION_FRAME
-
 # ---
 # 3D canvas (WebGL) support
 # ---
@@ -522,42 +334,6 @@ webcore_cppflags += \
 endif  # END USE_CLUTTER
 
 # ---
-# MHTML support
-# ---
-if ENABLE_MHTML
-feature_defines_overrides += ENABLE_MHTML=1
-else
-feature_defines_overrides += ENABLE_MHTML=0
-endif  # END ENABLE_MHTML
-
-# ---
-# Web Timing support
-# ---
-if ENABLE_WEB_TIMING
-feature_defines_overrides += ENABLE_WEB_TIMING=1
-else
-feature_defines_overrides += ENABLE_WEB_TIMING=0
-endif  # END ENABLE_WEB_TIMING
-
-# ---
-# HTML iframe seamless attribute support
-# ---
-if ENABLE_IFRAME_SEAMLESS
-feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=1
-else
-feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=0
-endif  # END ENABLE_IFRAME_SEAMLESS
-
-# ---
-# Link prefetch support
-# ---
-if ENABLE_LINK_PREFETCH
-feature_defines_overrides += ENABLE_LINK_PREFETCH=1
-else
-feature_defines_overrides += ENABLE_LINK_PREFETCH=0
-endif  # END ENABLE_LINK_PREFETCH
-
-# ---
 # Spell check support
 # ---
 if ENABLE_SPELLCHECK
@@ -571,8 +347,11 @@ endif  # END ENABLE_SPELLCHECK
 # If unstable features should not be enabled, their defines should be overriden with a 0 value.
 # ---
 if !ENABLE_UNSTABLE_FEATURES
-# FIXME: List unstable features here once their configuration options are removed.
-feature_defines_unstable +=
+feature_defines_unstable += \
+	ENABLE_MUTATION_OBSERVERS=0 \
+	ENABLE_LINK_PREFETCH=0 \
+	ENABLE_VIDEO_TRACK=0 \
+	ENABLE_WEB_TIMING=0
 endif
 
 

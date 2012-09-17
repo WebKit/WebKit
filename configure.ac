@@ -607,38 +607,6 @@ AC_ARG_ENABLE(accelerated_compositing,
             ])
 AC_MSG_RESULT([$enable_accelerated_compositing])
 
-# check whether to enable channel messaging support
-AC_MSG_CHECKING([whether to enable HTML5 Channel Messaging support])
-AC_ARG_ENABLE(channel_messaging,
-              AC_HELP_STRING([--enable-channel-messaging],
-                             [enable HTML5 channel messaging support [default=yes]]),
-              [],[enable_channel_messaging="yes"])
-AC_MSG_RESULT([$enable_channel_messaging])
-
-# check whether to enable the meter tag
-AC_MSG_CHECKING([whether to enable HTML5 meter tag])
-AC_ARG_ENABLE(meter_tag,
-              AC_HELP_STRING([--enable-meter-tag],
-                             [enable HTML5 meter [default=yes]]),
-              [],[enable_meter_tag="yes"])
-AC_MSG_RESULT([$enable_meter_tag])
-
-# check whether to enable the progress tag
-AC_MSG_CHECKING([whether to enable HTML5 progress tag])
-AC_ARG_ENABLE(progress_tag,
-              AC_HELP_STRING([--enable-progress-tag],
-                             [enable HTML5 progress [default=yes]]),
-              [],[enable_progress_tag="yes"])
-AC_MSG_RESULT([$enable_progress_tag])
-
-# check whether to enable JavaScript debugger/profiler support
-AC_MSG_CHECKING([whether to enable JavaScript debugger/profiler support])
-AC_ARG_ENABLE(javascript_debugger,
-              AC_HELP_STRING([--enable-javascript-debugger],
-                             [enable JavaScript debugger/profiler support [default=yes]]),
-              [],[enable_javascript_debugger="yes"])
-AC_MSG_RESULT([$enable_javascript_debugger])
-
 # check whether to enable Gamepad support
 AC_MSG_CHECKING([whether to enable Gamepad support])
 AC_ARG_ENABLE(gamepad,
@@ -652,14 +620,6 @@ if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
    enable_gamepad=no;
 fi
 
-# check whether to enable DOM mutation observer support
-AC_MSG_CHECKING([whether to enable DOM mutation observer support])
-AC_ARG_ENABLE(mutation_observers,
-              AC_HELP_STRING([--enable-mutation-observers],
-                             [enable DOM mutation observer support [default=no]]),
-              [],[enable_mutation_observers=$enable_unstable_features])
-AC_MSG_RESULT([$enable_mutation_observers])
-
 # check whether to enable the indexed database API
 AC_MSG_CHECKING([whether to enable the indexed database API])
 AC_ARG_ENABLE(indexed_database,
@@ -668,30 +628,6 @@ AC_ARG_ENABLE(indexed_database,
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
 
-# check whether to build with SQL database support
-AC_MSG_CHECKING([whether to enable SQL client-side database storage support])
-AC_ARG_ENABLE(sql_database,
-              AC_HELP_STRING([--enable-sql-database],
-                             [enable SQL client-side database storage support [default=yes]]),
-              [],[enable_sql_database="yes"])
-AC_MSG_RESULT([$enable_sql_database])
-
-# check whether to build with icon database support
-AC_MSG_CHECKING([whether to enable icon database support])
-AC_ARG_ENABLE(icon_database,
-              AC_HELP_STRING([--enable-icon-database],
-                             [enable icon database [default=yes]]),
-              [],[enable_icon_database="yes"])
-AC_MSG_RESULT([$enable_icon_database])
-
-# check whether to enable HTML5 iframe seamless attribute support
-AC_MSG_CHECKING([whether to enable HTML5 iframe seamless attribute support])
-AC_ARG_ENABLE(iframe-seamless,
-              AC_HELP_STRING([--enable-iframe-seamless],
-                             [enable HTML5 iframe seamless attribute support [default=yes]]),
-              [],[enable_iframe_seamless="yes"])
-AC_MSG_RESULT([$enable_iframe_seamless])
-
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
@@ -699,27 +635,6 @@ AC_ARG_ENABLE(video,
                              [enable HTML5 video support [default=yes]]),
               [],[enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
-
-# turn off video features if --disable-video is requested
-if test "$enable_video" = "no"; then
-   enable_video_track=no
-fi
-
-# check whether to enable HTML5 video track support
-AC_MSG_CHECKING([whether to enable HTML5 video track support])
-AC_ARG_ENABLE(video_track,
-              AC_HELP_STRING([--enable-video-track],
-                             [enable HTML5 video track support [default=no]]),
-              [],[enable_video_track=$enable_unstable_features])
-AC_MSG_RESULT([$enable_video_track])
-
-# check whether to enable Javascript Fullscreen API support
-AC_MSG_CHECKING([whether to enable Fullscreen API support])
-AC_ARG_ENABLE(fullscreen_api,
-              AC_HELP_STRING([--enable-fullscreen-api],
-                             [enable the Fullscreen API support [default=yes]]),
-              [],[enable_fullscreen_api="yes"])
-AC_MSG_RESULT([$enable_fullscreen_api])
 
 # check whether to enable media stream support
 AC_MSG_CHECKING([whether to enable media stream support])
@@ -745,22 +660,6 @@ AC_ARG_ENABLE(geolocation,
               [],[enable_geolocation="yes"])
 AC_MSG_RESULT([$enable_geolocation])
 
-# check whether to enable MathML support
-AC_MSG_CHECKING([whether to enable MathML support])
-AC_ARG_ENABLE(mathml,
-              AC_HELP_STRING([--enable-mathml],
-                             [enable support for MathML [default=yes]]),
-              [],[enable_mathml="yes"])
-AC_MSG_RESULT([$enable_mathml])
-
-# check whether to enable MHTML support
-AC_MSG_CHECKING([whether to enable MHTML support])
-AC_ARG_ENABLE(mhtml,
-              AC_HELP_STRING([--enable-mhtml],
-                             [enable support for MHTML [default=yes]]),
-              [],[enable_mhtml="yes"])
-AC_MSG_RESULT([$enable_mhtml])
-
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -769,42 +668,10 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
-# check whether to enable Shadow DOM support
-AC_MSG_CHECKING([whether to enable Shadow DOM support])
-AC_ARG_ENABLE(shadow_dom,
-              AC_HELP_STRING([--enable-shadow-dom],
-                             [enable support for Shadow DOM [default=yes]]),
-              [],[enable_shadow_dom="yes"])
-AC_MSG_RESULT([$enable_shadow_dom])
-
-# check whether to enable SharedWorkers support
-AC_MSG_CHECKING([whether to enable SharedWorkers support])
-AC_ARG_ENABLE(shared_workers,
-              AC_HELP_STRING([--enable-shared-workers],
-                             [enable support for SharedWorkers [default=yes]]),
-              [],[enable_shared_workers="yes"])
-AC_MSG_RESULT([$enable_shared_workers])
-
-# check whether to enable Web Workers support
-AC_MSG_CHECKING([whether to enable Web Workers support])
-AC_ARG_ENABLE(workers,
-              AC_HELP_STRING([--enable-workers],
-                             [enable support for Web Workers [default=yes]]),
-              [],[enable_workers="yes"])
-AC_MSG_RESULT([$enable_workers])
-
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_fonts=no
 fi
-
-# check whether to enable support for CSS box-decoration-break
-AC_MSG_CHECKING([whether to enable support for CSS box-decoration-break])
-AC_ARG_ENABLE(css_box_decoration_break,
-              AC_HELP_STRING([--enable-css-box-decoration-break],
-                             [enable support for CSS box-decoration-break (experimental) [default=yes]]),
-              [],[enable_css_box_decoration_break="yes"])
-AC_MSG_RESULT([$enable_css_box_decoration_break])
 
 # check whether to enable support for filters
 AC_MSG_CHECKING([whether to enable support for filters])
@@ -843,38 +710,6 @@ AC_ARG_ENABLE(web_audio,
                              [enable support for Web Audio [default=no]]),
               [],[enable_web_audio="no"])
 AC_MSG_RESULT([$enable_web_audio])
-
-# check whether to enable Web Timing support
-AC_MSG_CHECKING([whether to enable Web Timing support])
-AC_ARG_ENABLE(web_timing,
-              AC_HELP_STRING([--enable-web-timing],
-                             [enable support for Web Timing [default=no]]),
-              [],[enable_web_timing=$enable_unstable_features])
-AC_MSG_RESULT([$enable_web_timing])
-
-# check whether to enable Blob support
-AC_MSG_CHECKING([whether to enable Blob support])
-AC_ARG_ENABLE(blob,
-              AC_HELP_STRING([--enable-blob],
-                             [enable support for Blob [default=yes]]),
-              [],[enable_blob="yes"])
-AC_MSG_RESULT([$enable_blob])
-
-# check whether to enable Legacy vendor prefix support
-AC_MSG_CHECKING([whether to enable legacy vendor prefix support])
-AC_ARG_ENABLE(legacy_vendor_prefixes,
-              AC_HELP_STRING([--enable-legacy-vendor-prefixes],
-                             [enable support for legacy vendor prefixes [default=yes]]),
-              [],[enable_legacy_vendor_prefixes="yes"])
-AC_MSG_RESULT([$legacy_vendor_prefixes])
-
-# check whether to enable Legacy WebKitBlobBuilder support
-AC_MSG_CHECKING([whether to enable Legacy WebKitBlobBuilder support])
-AC_ARG_ENABLE(legacy_webkit_blob_builder,
-              AC_HELP_STRING([--enable-legacy-webkit-blob-builder],
-                             [enable support for Legacy WebKitBlobBuilder [default=yes]]),
-              [],[enable_legacy_webkit_blob_builder="yes"])
-AC_MSG_RESULT([$legacy_webkit_blob_builder])
 
 # check whether to enable code coverage
 AC_MSG_CHECKING([whether to enable code coverage support])
@@ -934,43 +769,12 @@ if test "$enable_opcode_stats" = "yes"; then
   AC_DEFINE([ENABLE_OPCODE_STATS], [1], [Define to enable Opcode statistics])
 fi
 
-# Link prefetch
-AC_MSG_CHECKING([whether to enable link prefetch support])
-AC_ARG_ENABLE([link-prefetch],
-  [AS_HELP_STRING([--enable-link-prefetch], [Enable Link prefetch support (default: disabled)])],
-  [],[enable_link_prefetch=$enable_unstable_features])
-AC_MSG_RESULT([$enable_link_prefetch])
-
 # GObject Introspection
 AC_MSG_CHECKING([whether to enable GObject introspection support])
 AC_ARG_ENABLE([introspection],
   [AS_HELP_STRING([--enable-introspection],[Enable GObject introspection (default: disabled)])],
   [],[enable_introspection=no])
 AC_MSG_RESULT([$enable_introspection])
-
-# check whether to enable requestAnimationFrame support
-AC_MSG_CHECKING([whether to enable requestAnimationFrame support])
-AC_ARG_ENABLE(request_animation_frame,
-              AC_HELP_STRING([--enable-request-animation-frame],
-                             [enable support for requestAnimationFrame (experimental) [default=yes]]),
-              [],[enable_request_animation_frame="yes"])
-AC_MSG_RESULT([$enable_request_animation_frame])
-
-# check whether to enable CSS Exclusions support
-AC_MSG_CHECKING([whether to enable CSS Exclusions])
-AC_ARG_ENABLE(css_exclusions,
-              AC_HELP_STRING([--enable-css-exclusions],
-                             [enable support for CSS Exclusions [default=yes]]),
-              [],[enable_css_exclusions="yes"])
-AC_MSG_RESULT([$enable_css_exclusions])
-
-# check whether to enable CSS Regions support
-AC_MSG_CHECKING([whether to enable CSS Regions])
-AC_ARG_ENABLE(css_regions,
-              AC_HELP_STRING([--enable-css-regions],
-                             [enable support for CSS Regions [default=yes]]),
-              [],[enable_css_regions="yes"])
-AC_MSG_RESULT([$enable_css_regions])
 
 # Enable css shaders if unstable_features, css_filters and
 # accelerated_compositing are turned on.
@@ -1255,46 +1059,21 @@ AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_UNSTABLE_FEATURES],[test "$enable_unstable_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
-AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
-AM_CONDITIONAL([ENABLE_LEGACY_VENDOR_PREFIXES],[test "$enable_legacy_vendor_prefixes" = "yes"])
-AM_CONDITIONAL([ENABLE_LEGACY_WEBKIT_BLOB_BUILDER],[test "$enable_legacy_webkit_blob_builder" = "yes"])
-AM_CONDITIONAL([ENABLE_METER_ELEMENT],[test "$enable_meter_tag" = "yes"])
-AM_CONDITIONAL([ENABLE_PROGRESS_ELEMENT],[test "$enable_progress_tag" = "yes"])
-AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
-AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
-AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
-AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_BOX_DECORATION_BREAK],[test "$enable_css_box_decoration_break" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
-AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
-AM_CONDITIONAL([ENABLE_MHTML], [test "$enable_mhtml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
-AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
-AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
-AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
-AM_CONDITIONAL([ENABLE_SHADOW_DOM],[test "$enable_shadow_dom" = "yes"])
-AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
-AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
-AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
-AM_CONDITIONAL([ENABLE_LINK_PREFETCH],[test "$enable_link_prefetch" = "yes"])
-AM_CONDITIONAL([ENABLE_REQUEST_ANIMATION_FRAME],[test "$enable_request_animation_frame" = "yes"])
-AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
-AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
 
@@ -1351,42 +1130,17 @@ Build configuration:
 Features:
 =======
  Accelerated Compositing                                  : $enable_accelerated_compositing
- Blob support                                             : $enable_blob
- CSS Exclusions support                                   : $enable_css_exclusions
- CSS Regions support                                      : $enable_css_regions
- CSS box-decoration-break support                         : $enable_css_box_decoration_break
- DOM mutation observer support                            : $enable_mutation_observers
  Filters support                                          : $enable_filters
- Fullscreen API support                                   : $enable_fullscreen_api
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
- HTML5 channel messaging support                          : $enable_channel_messaging
- HTML5 iframe seamless attribute support                  : $enable_iframe_seamless
- HTML5 meter element support                              : $enable_meter_tag
- HTML5 progress element support                           : $enable_progress_tag
- HTML5 track element support                              : $enable_video_track
  HTML5 video element support                              : $enable_video
- Icon database support                                    : $enable_icon_database
  JIT compilation                                          : $enable_jit
- JavaScript debugger/profiler support                     : $enable_javascript_debugger
- Legacy vendor prefix support                             : $enable_legacy_vendor_prefixes
- Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
- Link prefetch support                                    : $enable_link_prefetch
- MHTML support                                            : $enable_mhtml
- MathML support                                           : $enable_mathml
  Media stream support                                     : $enable_media_stream
  Opcode stats                                             : $enable_opcode_stats
- RequestAnimationFrame support                            : $enable_request_animation_frame
- SQL client-side database storage support                 : $enable_sql_database
  SVG fonts support                                        : $enable_svg_fonts
  SVG support                                              : $enable_svg
- Shadow DOM support                                       : $enable_shadow_dom
- SharedWorkers support                                    : $enable_shared_workers
  Spellcheck support                                       : $enable_spellcheck
  Web Audio support                                        : $enable_web_audio
- Web Sockets support                                      : $enable_web_sockets
- Web Timing support                                       : $enable_web_timing
- Web Workers support                                      : $enable_workers
  WebGL                                                    : $enable_webgl
  XSLT support                                             : $enable_xslt
 
