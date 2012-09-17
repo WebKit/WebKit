@@ -695,19 +695,21 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
             continue;
         if (FAILED(detailObj->location(&detail.location)))
             continue;
-        BString userDesc;
+        BSTR userDesc;
         if (FAILED(detailObj->userDescription(&userDesc)))
             continue;
         detail.userDescription = String(userDesc, SysStringLen(userDesc));
+        SysFreeString(userDesc);
 
         COMPtr<IEnumSpellingGuesses> enumGuessesObj;
         if (FAILED(detailObj->guesses(&enumGuessesObj)))
             continue;
         while (true) {
-            BString guess;
+            BSTR guess;
             if (enumGuessesObj->Next(1, &guess, &fetched) != S_OK)
                 break;
             detail.guesses.append(String(guess, SysStringLen(guess)));
+            SysFreeString(guess);
         }
 
         details.append(detail);
@@ -776,10 +778,11 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
 
     while (true) {
         ULONG fetched;
-        BString guess;
+        BSTR guess;
         if (enumGuessesObj->Next(1, &guess, &fetched) != S_OK)
             break;
         guesses.append(String(guess, SysStringLen(guess)));
+        SysFreeString(guess);
     }
 }
 

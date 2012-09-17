@@ -28,7 +28,6 @@
 #include "WebNotificationCenter.h"
 
 #include "WebNotification.h"
-#include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <utility>
 #include <wchar.h>
@@ -161,7 +160,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver(
 HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification( 
     /* [in] */ IWebNotification* notification)
 {
-    BString name;
+    BSTR name;
     HRESULT hr = notification->name(&name);
     if (FAILED(hr))
         return hr;
@@ -172,6 +171,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification(
         return hr;
 
     postNotificationInternal(notification, name, obj.get());
+    SysFreeString(name);
 
     return hr;
 }

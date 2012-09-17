@@ -27,7 +27,6 @@
 #include "WebKitDLL.h"
 #include "MarshallingHelpers.h"
 
-#include <WebCore/BString.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
 #include <wtf/MathExtras.h>
@@ -47,7 +46,7 @@ KURL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 
 BSTR MarshallingHelpers::KURLToBSTR(const KURL& url)
 {
-    return BString(url.string()).release();
+    return SysAllocStringLen(url.string().characters(), url.string().length());
 }
 
 CFURLRef MarshallingHelpers::PathStringToFileCFURLRef(const String& string)
@@ -90,7 +89,20 @@ CFStringRef MarshallingHelpers::LPCOLESTRToCFStringRef(LPCOLESTR str)
 
 BSTR MarshallingHelpers::CFStringRefToBSTR(CFStringRef str)
 {
-    return BString(str).release();
+    if (!str)
+        return 0;
+
+    const UniChar* uniChars = CFStringGetCharactersPtr(str);
+    if (uniChars)
+        return SysAllocStringLen((LPCTSTR)uniChars, CFStringGetLength(str));
+
+    CFIndex length = CFStringGetLength(str);
+    BSTR bstr = SysAllocStringLen(0, length);
+    if (bstr) {
+        CFStringGetCharacters(str, CFRangeMake(0, length), (UniChar*)bstr);
+        bstr[length] = 0;
+    }
+    return bstr;
 }
 
 int MarshallingHelpers::CFNumberRefToInt(CFNumberRef num)
@@ -147,8 +159,9 @@ SAFEARRAY* MarshallingHelpers::stringArrayToSafeArray(CFArrayRef inArray)
     long count = 0;
     for (CFIndex i=0; i<size; i++) {
         CFStringRef item = (CFStringRef) CFArrayGetValueAtIndex(inArray, i);
-        BString bstr(item);
-        ::SafeArrayPutElement(sa, &count, bstr); // SafeArrayPutElement() copies the string correctly.
+        BSTR bstr = CFStringRefToBSTR(item);
+        ::SafeArrayPutElement(sa, &count, bstr);
+        SysFreeString(bstr);    // SafeArrayPutElement() should make a copy of the string
         count++;
     }
     return sa;
@@ -219,9 +232,10 @@ CFArrayRef MarshallingHelpers::safeArrayToStringArray(SAFEARRAY* inArray)
     if (len > 0) {
         items = new CFStringRef[len];
         for (; lBound <= uBound; lBound++) {
-            BString str;
+            BSTR str;
             hr = ::SafeArrayGetElement(inArray, &lBound, &str);
             items[lBound] = BSTRToCFStringRef(str);
+            SysFreeString(str);
         }
     }
     CFArrayRef result = CFArrayCreate(0, (const void**)items, len, &kCFTypeArrayCallBacks);

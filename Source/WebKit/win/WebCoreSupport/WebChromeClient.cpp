@@ -410,15 +410,17 @@ bool WebChromeClient::runJavaScriptPrompt(Frame*, const String& message, const S
 
     TimerBase::fireTimersInNestedEventLoop();
 
-    BString resultBSTR;
+    BSTR resultBSTR = 0;
     if (FAILED(ui->runJavaScriptTextInputPanelWithPrompt(m_webView, BString(message), BString(defaultValue), &resultBSTR)))
         return false;
 
-    if (!resultBSTR)
-        return false;
+    if (resultBSTR) {
+        result = String(resultBSTR, SysStringLen(resultBSTR));
+        SysFreeString(resultBSTR);
+        return true;
+    }
 
-    result = String(resultBSTR, SysStringLen(resultBSTR));
-    return true;
+    return false;
 }
 
 void WebChromeClient::setStatusbarText(const String& statusText)

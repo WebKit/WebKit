@@ -106,7 +106,7 @@ BString::BString(CFStringRef cfstr)
 
 BString::~BString()
 {
-    clear();
+    SysFreeString(m_bstr);
 }
 
 BString::BString(const BString& other)
@@ -119,13 +119,9 @@ BString::BString(const BString& other)
 
 void BString::adoptBSTR(BSTR bstr)
 {
-    clear();
+    if (m_bstr)
+        SysFreeString(m_bstr);
     m_bstr = bstr;
-}
-
-void BString::clear()
-{
-    SysFreeString(m_bstr);
 }
 
 BString& BString::operator=(const BString& other)

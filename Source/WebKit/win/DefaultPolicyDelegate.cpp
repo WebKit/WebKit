@@ -27,7 +27,6 @@
 #include "WebKitDLL.h"
 #include "DefaultPolicyDelegate.h"
 
-#include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -117,7 +116,7 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForNavigationAction
         else if (navType == WebNavigationTypePlugInRequest)
             listener->use();
         else {
-            BString url;
+            BSTR url;
             // A file URL shouldn't fall through to here, but if it did,
             // it would be a security risk to open it.
             if (SUCCEEDED(request->URL(&url)) && !String(url, SysStringLen(url)).startsWith("file:")) {
@@ -125,6 +124,7 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForNavigationAction
                 ;
             }
             listener->ignore();
+            SysFreeString(url);
         }
     }
     return S_OK;
@@ -152,7 +152,7 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForMIMEType(
     if (FAILED(webView->canShowMIMEType(type, &canShowMIMEType)))
         canShowMIMEType = FALSE;
 
-    BString url;
+    BSTR url;
     request->URL(&url);
 
     if (String(url, SysStringLen(url)).startsWith("file:")) {
@@ -171,6 +171,7 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::decidePolicyForMIMEType(
         listener->use();
     else
         listener->ignore();
+    SysFreeString(url);
     return S_OK;
 }
 
@@ -179,13 +180,15 @@ HRESULT STDMETHODCALLTYPE DefaultPolicyDelegate::unableToImplementPolicyWithErro
     /*[in]*/ IWebError* error, 
     /*[in]*/ IWebFrame* frame)
 {
-    BString errorStr;
+    BSTR errorStr;
     error->localizedDescription(&errorStr);
 
-    BString frameName;
+    BSTR frameName;
     frame->name(&frameName);
 
     LOG_ERROR("called unableToImplementPolicyWithError:%S inFrame:%S", errorStr ? errorStr : TEXT(""), frameName ? frameName : TEXT(""));
+    SysFreeString(errorStr);
+    SysFreeString(frameName);
 
     return S_OK;
 }

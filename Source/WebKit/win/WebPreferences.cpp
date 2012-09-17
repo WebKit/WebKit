@@ -349,10 +349,10 @@ LONGLONG WebPreferences::longlongValueForKey(CFStringRef key)
 
 void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
 {
-    BString val;
-    val.adoptBSTR(stringValueForKey(key));
+    BSTR val = stringValueForKey(key);
     if (val && !wcscmp(val, value))
         return;
+    SysFreeString(val);
     
     RetainPtr<CFStringRef> valueRef(AdoptCF,
         CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)wcslen(value), kCFAllocatorMalloc));

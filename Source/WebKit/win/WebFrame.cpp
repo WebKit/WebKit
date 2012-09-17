@@ -1442,10 +1442,11 @@ HRESULT WebFrame::canProvideDocumentSource(bool* result)
     COMPtr<IWebURLResponse> urlResponse;
     hr = dataSource->response(&urlResponse);
     if (SUCCEEDED(hr) && urlResponse) {
-        BString mimeTypeBStr;
+        BSTR mimeTypeBStr;
         if (SUCCEEDED(urlResponse->MIMEType(&mimeTypeBStr))) {
             String mimeType(mimeTypeBStr, SysStringLen(mimeTypeBStr));
             *result = mimeType == "text/html" || WebCore::DOMImplementation::isXMLMIMEType(mimeType);
+            SysFreeString(mimeTypeBStr);
         }
     }
     return hr;
