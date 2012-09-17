@@ -1,6 +1,31 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script>
+
+    function buildAccessibilityTree(accessibilityObject, indent, targetObject, targetString) {
+        var str = "";
+        for (var i = 0; i < indent; i++)
+            str += "    ";
+        str += accessibilityObject.role;
+        str += " " + accessibilityObject.stringValue;
+        if (targetObject && accessibilityObject.isEqual(targetObject))
+            str += "     " + targetString;
+        str += "\n";
+        document.getElementById("tree").innerText += str;
+
+        if (accessibilityObject.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var count = accessibilityObject.childrenCount;
+        for (var i = 0; i < count; ++i) {
+            if (!buildAccessibilityTree(accessibilityObject.childAtIndex(i), indent + 1, targetObject, targetString))
+                return false;
+        }
+
+        return true;
+    }
+</script>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body id="body">
@@ -10,28 +35,37 @@
     <input id="overnight" type="radio" name="shipping" value="overnight" />Overnight
 </fieldset>
 
+<div>End of test</div>
+
 <p id="description"></p>
+<pre id="tree"></pre>
 <div id="console"></div>
 
 <script>
 
-    description("This tests that a fieldset's title ui element is the legend's static text.");
+    description("This tests that a fieldset's title ui element is the legend.");
+
     if (window.accessibilityController) {
+        document.body.focus();
+        var body = accessibilityController.focusedElement;
+        var fieldset = body.childAtIndex(0);
+        var titleUIElement = fieldset.titleUIElement();
 
-        if (window.accessibilityController) {
+        // Print out the tree of accessible objects, indicating the titleUIElement so
+        // that each platform can verify their expected object has been found
+        buildAccessibilityTree(body, 0, titleUIElement, "<< fieldset's titleUIElement");
 
-            var body = document.getElementById("body");
-            body.focus();
+        // Verify that we have gotten the titleUIElement and it has the expected text,
+        // which should be in the last descendant regardless of platform.
+        shouldBeTrue("titleUIElement != null");
+        var titleUIElementText = titleUIElement;
+        while (titleUIElementText && titleUIElementText.childrenCount)
+            titleUIElementText = titleUIElementText.childAtIndex(0); 
 
-            var fieldset = accessibilityController.focusedElement.childAtIndex(0);
-            var titleUIElement = fieldset.titleUIElement();
-            shouldBe("titleUIElement.role", "'AXRole: AXGroup'");
-            shouldBe("titleUIElement.childAtIndex(0).role", "'AXRole: AXStaticText'");
-            shouldBe("titleUIElement.childAtIndex(0).stringValue", "'AXValue: Choose a shipping method:'");
-        }
+        shouldBe("titleUIElementText.stringValue", "'AXValue: Choose a shipping method:'");
     }
 </script>
 
-<script src="../../../fast/js/resources/js-test-post.js"></script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -89,6 +89,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleLandmarkMain,
     WebAccessibilityRoleLandmarkNavigation,
     WebAccessibilityRoleLandmarkSearch,
+    WebAccessibilityRoleLegend,
     WebAccessibilityRoleLink,
     WebAccessibilityRoleList,
     WebAccessibilityRoleListBox,
