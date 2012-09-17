@@ -40,7 +40,11 @@
 namespace WebCore {
 
 struct SameSizeAsCSSRule : public RefCounted<SameSizeAsCSSRule> {
+#if USE(JSC)
+    char bitfields;
+#else
     unsigned bitfields;
+#endif
     void* pointerUnion;
 };
 
