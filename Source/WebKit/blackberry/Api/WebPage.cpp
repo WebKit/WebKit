@@ -3814,54 +3814,21 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     if (atLeft)
         anchor.setX(0);
 
-    double clampedScale;
-
     // Try and zoom here with clamping on.
+    // FIXME: Determine why the above comment says "clamping on", yet we
+    //   don't set enforceScaleClamping to true.
+    // FIXME: Determine why ensureContentVisible() is only called for !success
+    //   in the direct-rendering case, but in all cases otherwise. Chances are
+    //   one of these is incorrect and we can unify two branches into one.
     if (m_backingStore->d->shouldDirectRenderingToWindow()) {
         bool success = zoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, true /* forceRendering */);
         if (!success && ensureFocusElementVisible)
             ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
 
-    } else if (shouldZoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, &clampedScale)) {
-
-        // For some reason, the bitmap zoom wants an anchor in backingstore coordinates!
-        // this is different from zoomAboutPoint, which wants content coordinates.
-        // See RIM Bug #641.
-
-        FloatPoint transformedAnchor = mapToTransformedFloatPoint(anchor);
-        FloatPoint transformedScrollPosition = mapToTransformedFloatPoint(scrollPosition());
-
-        // Prohibit backingstore from updating the window overtop of the bitmap.
-        m_backingStore->d->suspendScreenAndBackingStoreUpdates();
-
-        // Need to invert the previous transform to anchor the viewport.
-        double zoomFraction = clampedScale / transformationMatrix()->m11();
-
-        // Anchor offset from scroll position in float.
-        FloatPoint anchorOffset(transformedAnchor.x() - transformedScrollPosition.x(),
-                transformedAnchor.y() - transformedScrollPosition.y());
-
-        IntPoint srcPoint(
-                static_cast<int>(roundf(transformedAnchor.x() - anchorOffset.x() / zoomFraction)),
-                static_cast<int>(roundf(transformedAnchor.y() - anchorOffset.y() / zoomFraction)));
-
-        const IntRect viewportRect = IntRect(IntPoint::zero(), transformedViewportSize());
-        const IntRect dstRect = viewportRect;
-
-        // This is the rect to pass as the actual source rect in the backingstore
-        // for the transform given by zoom.
-        IntRect srcRect(srcPoint.x(),
-                srcPoint.y(),
-                viewportRect.width() / zoomFraction,
-                viewportRect.height() / zoomFraction);
-        m_backingStore->d->blitContents(dstRect, srcRect);
-
-        zoomAboutPoint(clampedScale, anchor, false /*enforceScaleClamping*/, true /*forceRendering*/);
-
-        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
-
+    } else if (zoomAboutPoint(scale, anchor, false /*enforceScaleClamping*/, true /*forceRendering*/)) {
         if (ensureFocusElementVisible)
             ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
+
     } else {
 
         // Suspend all screen updates to the backingstore.

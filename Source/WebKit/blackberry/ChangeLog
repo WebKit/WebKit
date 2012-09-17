@@ -1,3 +1,31 @@
+2012-09-17  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Remove dysfunctional zoom blit in setViewportSize().
+        https://bugs.webkit.org/show_bug.cgi?id=96954
+        PR 178411
+
+        Reviewed by Antonio Gomes.
+
+        The blitContents() call removed by this patch used to
+        be part of scheduleZoomAboutPoint(). Its goal was to
+        display a preview of the zoomed contents, primarily
+        when auto-zoomed after rotation. Nested inside a pair
+        of screen suspend/resume calls, it has been a pointless
+        no-op for a while.
+
+        Antonio's recent change to remove scheduleZoomAboutPoint()
+        and call zoomAboutPoint() from setViewportSize() directly
+        (the only call site) obsoletes the call completely.
+        The zoomAboutPoint() call itself will cause a re-render
+        and blit right away, so we don't care about any preview.
+        zoomAboutPoint() will also take care of the necessary
+        screen/backingstore suspension.
+
+        The result is a vastly simplified block of code.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-09-17  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] [FullScreen] entering/leaving fullscreen results in temporary glitches on the screen
