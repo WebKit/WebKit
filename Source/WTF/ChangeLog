@@ -1,3 +1,10 @@
+2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed compilation fix.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::reportObjectMemoryUsage):
+
 2012-09-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: automatically detect if class has reportMemoryUsage method

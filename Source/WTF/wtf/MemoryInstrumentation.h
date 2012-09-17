@@ -123,7 +123,7 @@ private:
     }
 
     template<typename T, typename Type>
-    static void reportObjectMemoryUsage(const T* const& object, MemoryObjectInfo* memoryObjectInfo, ...)
+    static void reportObjectMemoryUsage(const T* const&, MemoryObjectInfo* memoryObjectInfo, ...)
     {
         memoryObjectInfo->reportObjectInfo<T>(0, sizeof(T));
     }
