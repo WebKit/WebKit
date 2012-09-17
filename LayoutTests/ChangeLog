@@ -1,5 +1,17 @@
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Skip http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+        https://bugs.webkit.org/show_bug.cgi?id=96895
+
+        Unreviewed EFL gardening.
+
+        Skip http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html for
+        EFL port since it sometimes asserts in MessagePort::contextDestroyed.
+
+        * platform/efl/TestExpectations:
+
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Mark inspector/elements/delete-from-document.html as flaky
         https://bugs.webkit.org/show_bug.cgi?id=96897
 
