@@ -1,3 +1,22 @@
+2012-09-17  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Remove legacy two-phase open() API members
+        https://bugs.webkit.org/show_bug.cgi?id=96802
+
+        Reviewed by Tony Chang.
+
+        Following http://webkit.org/b/90411 and subsequent cleanup on the Chromium side,
+        these entry points are no longer needed.
+
+        * public/WebIDBDatabase.h: Delete old second-phase open(db-callbacks)
+        * public/WebIDBFactory.h: Delete old first-phase open() w/o db-callbacks
+        * src/WebIDBDatabaseImpl.cpp: No longer need to account for a close between phases.
+        (WebKit::WebIDBDatabaseImpl::WebIDBDatabaseImpl):
+        (WebKit::WebIDBDatabaseImpl::close):
+        (WebKit::WebIDBDatabaseImpl::forceClose):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+
 2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Temporary disable visited set counter check.

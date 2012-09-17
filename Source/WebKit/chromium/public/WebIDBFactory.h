@@ -55,10 +55,6 @@ public:
 
     virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // FIXME: Remove this overload after WK90411 cleanup is complete on the Chromium side.
-    // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
-
     // The WebKit implementation of open ignores the WebFrame* parameter.
     virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
