@@ -117,7 +117,7 @@ PassRefPtr<IDBAny> IDBDatabase::version() const
     int64_t intVersion = m_metadata.intVersion;
     if (intVersion == IDBDatabaseMetadata::NoIntVersion)
         return IDBAny::createString(m_metadata.version);
-    return IDBAny::create(SerializedScriptValue::numberValue(intVersion));
+    return IDBAny::create(intVersion);
 }
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)

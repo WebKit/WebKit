@@ -27,7 +27,6 @@
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "SerializedScriptValue.h"
 #include "V8PerIsolateData.h"
 #include "V8Utilities.h"
 
@@ -40,41 +39,42 @@ using namespace WebCore;
 
 namespace {
 
-PassRefPtr<IDBKey> checkKeyFromValueAndKeyPathInternal(SerializedScriptValue* value, const String& keyPath)
+PassRefPtr<IDBKey> checkKeyFromValueAndKeyPathInternal(const ScriptValue& value, const String& keyPath)
 {
     IDBKeyPath idbKeyPath(keyPath);
     EXPECT_TRUE(idbKeyPath.isValid());
-    return createIDBKeyFromSerializedValueAndKeyPath(value, idbKeyPath);
+    
+    return createIDBKeyFromScriptValueAndKeyPath(value, idbKeyPath);
 }
 
-void checkKeyPathNullValue(SerializedScriptValue* value, const String& keyPath)
+void checkKeyPathNullValue(const ScriptValue& value, const String& keyPath)
 {
     RefPtr<IDBKey> idbKey = checkKeyFromValueAndKeyPathInternal(value, keyPath);
     ASSERT_FALSE(idbKey.get());
 }
 
-PassRefPtr<SerializedScriptValue> injectKey(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+bool injectKey(PassRefPtr<IDBKey> key, ScriptValue& value, const String& keyPath)
 {
     IDBKeyPath idbKeyPath(keyPath);
     EXPECT_TRUE(idbKeyPath.isValid());
-    return injectIDBKeyIntoSerializedValue(key, value, idbKeyPath);
+    return injectIDBKeyIntoScriptValue(key, value, idbKeyPath);
 }
 
-void checkInjection(PassRefPtr<IDBKey> prpKey, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+void checkInjection(PassRefPtr<IDBKey> prpKey, ScriptValue& value, const String& keyPath)
 {
     RefPtr<IDBKey> key = prpKey;
-    RefPtr<SerializedScriptValue> newValue = injectKey(key, value, keyPath);
-    ASSERT_TRUE(newValue);
-    RefPtr<IDBKey> extractedKey = checkKeyFromValueAndKeyPathInternal(newValue.get(), keyPath);
+    bool result = injectKey(key, value, keyPath);
+    ASSERT_TRUE(result);
+    RefPtr<IDBKey> extractedKey = checkKeyFromValueAndKeyPathInternal(value, keyPath);
     EXPECT_TRUE(key->isEqual(extractedKey.get()));
 }
 
-void checkInjectionFails(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+void checkInjectionFails(PassRefPtr<IDBKey> key, ScriptValue& value, const String& keyPath)
 {
     EXPECT_FALSE(injectKey(key, value, keyPath));
 }
 
-void checkKeyPathStringValue(SerializedScriptValue* value, const String& keyPath, const String& expected)
+void checkKeyPathStringValue(const ScriptValue& value, const String& keyPath, const String& expected)
 {
     RefPtr<IDBKey> idbKey = checkKeyFromValueAndKeyPathInternal(value, keyPath);
     ASSERT_TRUE(idbKey.get());
@@ -82,7 +82,7 @@ void checkKeyPathStringValue(SerializedScriptValue* value, const String& keyPath
     ASSERT_TRUE(expected == idbKey->string());
 }
 
-void checkKeyPathNumberValue(SerializedScriptValue* value, const String& keyPath, int expected)
+void checkKeyPathNumberValue(const ScriptValue& value, const String& keyPath, int expected)
 {
     RefPtr<IDBKey> idbKey = checkKeyFromValueAndKeyPathInternal(value, keyPath);
     ASSERT_TRUE(idbKey.get());
@@ -98,10 +98,10 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
-    RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(object);
+    ScriptValue scriptValue(object);
 
-    checkKeyPathStringValue(serializedScriptValue.get(), "foo", "zoo");
-    checkKeyPathNullValue(serializedScriptValue.get(), "bar");
+    checkKeyPathStringValue(scriptValue, "foo", "zoo");
+    checkKeyPathNullValue(scriptValue, "bar");
 }
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
@@ -112,10 +112,10 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::Number::New(456));
 
-    RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(object);
+    ScriptValue scriptValue(object);
 
-    checkKeyPathNumberValue(serializedScriptValue.get(), "foo", 456);
-    checkKeyPathNullValue(serializedScriptValue.get(), "bar");
+    checkKeyPathNumberValue(scriptValue, "foo", 456);
+    checkKeyPathNullValue(scriptValue, "bar");
 }
 
 TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
@@ -128,10 +128,10 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
     object->Set(v8::String::New("foo"), subProperty);
 
-    RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(object);
+    ScriptValue scriptValue(object);
 
-    checkKeyPathStringValue(serializedScriptValue.get(), "foo.bar", "zee");
-    checkKeyPathNullValue(serializedScriptValue.get(), "bar");
+    checkKeyPathStringValue(scriptValue, "foo.bar", "zee");
+    checkKeyPathNullValue(scriptValue, "bar");
 }
 
 TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
@@ -142,10 +142,11 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "bar");
-    checkInjection(IDBKey::createNumber(1234), SerializedScriptValue::create(object), "bar");
+    ScriptValue foozoo(object);
+    checkInjection(IDBKey::createString("myNewKey"), foozoo, "bar");
+    checkInjection(IDBKey::createNumber(1234), foozoo, "bar");
 
-    checkInjectionFails(IDBKey::createString("key"), SerializedScriptValue::create(object), "foo.bar");
+    checkInjectionFails(IDBKey::createString("key"), foozoo, "foo.bar");
 }
 
 TEST(InjectIDBKeyTest, SubProperty)
@@ -158,15 +159,16 @@ TEST(InjectIDBKeyTest, SubProperty)
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
     object->Set(v8::String::New("foo"), subProperty);
 
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo.baz");
-    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(object), "foo.baz");
-    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "foo.baz");
-    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "bar");
-    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), SerializedScriptValue::create(object), "foo.baz");
-    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), SerializedScriptValue::create(object), "bar");
+    ScriptValue scriptObject(object);
+    checkInjection(IDBKey::createString("myNewKey"), scriptObject, "foo.baz");
+    checkInjection(IDBKey::createNumber(789), scriptObject, "foo.baz");
+    checkInjection(IDBKey::createDate(4567), scriptObject, "foo.baz");
+    checkInjection(IDBKey::createDate(4567), scriptObject, "bar");
+    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), scriptObject, "foo.baz");
+    checkInjection(IDBKey::createArray(IDBKey::KeyArray()), scriptObject, "bar");
 
-    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.bar.baz");
-    checkInjection(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");
+    checkInjectionFails(IDBKey::createString("zoo"), scriptObject, "foo.bar.baz");
+    checkInjection(IDBKey::createString("zoo"), scriptObject, "foo.xyz.foo");
 }
 
 } // namespace

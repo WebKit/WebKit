@@ -113,6 +113,7 @@ protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
     virtual bool shouldEnqueueEvent() const;
+    void onSuccessInternal(const ScriptValue&);
 
     RefPtr<IDBAny> m_result;
     unsigned short m_errorCode;
@@ -131,7 +132,7 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     PassRefPtr<IDBCursor> getResultCursor();
-    void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
+    void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const ScriptValue&);
 
     RefPtr<IDBAny> m_source;
     const IDBTransactionBackendInterface::TaskType m_taskType;
@@ -146,7 +147,7 @@ private:
     RefPtr<IDBCursor> m_pendingCursor;
     RefPtr<IDBKey> m_cursorKey;
     RefPtr<IDBKey> m_cursorPrimaryKey;
-    RefPtr<SerializedScriptValue> m_cursorValue;
+    ScriptValue m_cursorValue;
     bool m_didFireUpgradeNeededEvent;
 
     EventTargetData m_eventTargetData;

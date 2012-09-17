@@ -1,3 +1,24 @@
+2012-09-17  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Use ScriptValue instead of SerializedScriptValue for get/openCursor
+        https://bugs.webkit.org/show_bug.cgi?id=95409
+
+        Reviewed by Kentaro Hara.
+
+        This removes a bunch of tests that have been migrated to
+        LayoutTests, in https://bugs.webkit.org/show_bug.cgi?id=96818.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::checkKeyFromValueAndKeyPathInternal):
+        (WebCore::checkKeyPathNullValue):
+        (WebCore::injectKey):
+        (WebCore::checkInjection):
+        (WebCore::checkInjectionFails):
+        (WebCore::checkKeyPathStringValue):
+        (WebCore::checkKeyPathNumberValue):
+        (WebCore::TEST):
+        * tests/IDBKeyPathTest.cpp:
+
 2012-09-17  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Fix cases where find-in-page doesn't send a final update

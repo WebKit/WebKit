@@ -209,25 +209,6 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& valu
     return createIDBKeyFromScriptValueAndKeyPath(value, keyPath.string());
 }
 
-static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const String& keyPath)
-{
-    Vector<String> keyPathElements;
-    IDBKeyPathParseError error;
-    IDBParseKeyPath(keyPath, keyPathElements, error);
-    ASSERT(error == IDBKeyPathParseErrorNone);
-
-    RefPtr<SerializedScriptValue> value = prpValue;
-
-    v8::HandleScope handleScope;
-    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
-
-    v8::Handle<v8::Value> v8Value(value->deserialize());
-    v8::Handle<v8::Value> v8Key(getNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size()));
-    if (v8Key.IsEmpty())
-        return 0;
-    return createIDBKeyFromValue(v8Key);
-}
-
 // FIXME: The only reason this exists is because we need a v8::Context and scope inside a timer. Is there a better / more general way to do this?
 ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPtr<SerializedScriptValue> prpValue)
 {
@@ -236,32 +217,9 @@ ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPt
     return ScriptValue(prpValue->deserialize());
 }
 
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const IDBKeyPath& keyPath)
+bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)
 {
-    IDB_TRACE("createIDBKeyFromSerializedValueAndKeyPath");
-    ASSERT(!keyPath.isNull());
-
-    RefPtr<SerializedScriptValue> value = prpValue;
-
-    if (keyPath.type() == IDBKeyPath::ArrayType) {
-        IDBKey::KeyArray result;
-        const Vector<String>& array = keyPath.array();
-        for (size_t i = 0; i < array.size(); ++i) {
-            RefPtr<IDBKey> key = createIDBKeyFromSerializedValueAndKeyPath(value, array[i]);
-            if (!key)
-                return 0;
-            result.append(key);
-        }
-        return IDBKey::createArray(result);
-    }
-
-    ASSERT(keyPath.type() == IDBKeyPath::StringType);
-    return createIDBKeyFromSerializedValueAndKeyPath(value, keyPath.string());
-}
-
-PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const IDBKeyPath& keyPath)
-{
-    IDB_TRACE("injectIDBKeyIntoSerializedValue");
+    IDB_TRACE("injectIDBKeyIntoScriptValue");
 
     ASSERT(keyPath.type() == IDBKeyPath::StringType);
     Vector<String> keyPathElements;
@@ -275,15 +233,15 @@ PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDB
     v8::HandleScope handleScope;
     v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
-    v8::Handle<v8::Value> v8Value(value->deserialize());
+    v8::Handle<v8::Value> v8Value(value.v8Value());
     v8::Handle<v8::Value> parent(ensureNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1));
     if (parent.IsEmpty())
-        return 0;
+        return false;
 
     if (!set(parent, keyPathElements.last(), toV8(key.get())))
-        return 0;
+        return false;
 
-    return SerializedScriptValue::create(v8Value);
+    return true;
 }
 
 bool canInjectIDBKeyIntoScriptValue(const ScriptValue& scriptValue, const IDBKeyPath& keyPath)

@@ -214,7 +214,7 @@ PassRefPtr<IDBCursor> IDBRequest::getResultCursor()
     return 0;
 }
 
-void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
+void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, const ScriptValue& value)
 {
     ASSERT(m_readyState == PENDING);
     m_cursorKey = key;
@@ -276,12 +276,13 @@ void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
+void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> serializedValue)
 {
     IDB_TRACE("IDBRequest::onSuccess(IDBCursor)");
     if (!shouldEnqueueEvent())
         return;
 
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedValue);
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     RefPtr<IDBCursor> cursor;
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
@@ -302,7 +303,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
     if (idbKey && idbKey->isValid())
         m_result = IDBAny::create(idbKey);
     else
-        m_result = IDBAny::create(SerializedScriptValue::undefinedValue());
+        m_result = IDBAny::createInvalid();
     enqueueEvent(createSuccessEvent());
 }
 
@@ -337,9 +338,8 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
     if (!shouldEnqueueEvent())
         return;
 
-    m_result = IDBAny::create(serializedScriptValue);
-    m_pendingCursor.clear();
-    enqueueEvent(createSuccessEvent());
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedScriptValue);
+    onSuccessInternal(value);
 }
 
 #ifndef NDEBUG
@@ -364,30 +364,32 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
 #ifndef NDEBUG
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
-    RefPtr<SerializedScriptValue> value = prpSerializedScriptValue;
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), prpSerializedScriptValue);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
-    RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(value, keyPath);
     ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
 #endif
-    RefPtr<SerializedScriptValue> valueAfterInjection = injectIDBKeyIntoSerializedValue(primaryKey, value, keyPath);
-    ASSERT(valueAfterInjection);
-    if (!valueAfterInjection) {
-        // Checks in put() ensure this should only happen if I/O error occurs.
-        onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error inserting generated key into the object."));
-        return;
-    }
-    value = valueAfterInjection;
-    onSuccess(value.release());
+    bool injected = injectIDBKeyIntoScriptValue(primaryKey, value, keyPath);
+    ASSERT_UNUSED(injected, injected);
+    onSuccessInternal(value);
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
+void IDBRequest::onSuccessInternal(const ScriptValue& value)
+{
+    m_result = IDBAny::create(value);
+    m_pendingCursor.clear();
+    enqueueEvent(createSuccessEvent());
+}
+
+void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> serializedValue)
 {
     IDB_TRACE("IDBRequest::onSuccess(key, primaryKey, value)");
     if (!shouldEnqueueEvent())
         return;
 
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedValue);
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());
@@ -456,7 +458,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (event->type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
         if (cursorToNotify)
-            cursorToNotify->setValueReady(m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue.release());
+            cursorToNotify->setValueReady(m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
     }
 
     if (event->type() == eventNames().upgradeneededEvent) {

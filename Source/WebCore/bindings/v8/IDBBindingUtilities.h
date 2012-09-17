@@ -40,10 +40,7 @@ class SerializedScriptValue;
 
 PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
 
-// FIXME: remove the SerializedValue versions when their use is finally removed in https://bugs.webkit.org/show_bug.cgi?id=95409.
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue>, const IDBKeyPath&);
-PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const IDBKeyPath&);
-
+bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey>, ScriptValue&, const IDBKeyPath&);
 PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue&, const IDBKeyPath&);
 bool canInjectIDBKeyIntoScriptValue(const ScriptValue&, const IDBKeyPath&);
 ScriptValue deserializeIDBValue(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>);

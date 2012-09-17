@@ -340,9 +340,8 @@ private:
             RefPtr<IDBKey> primaryKey = cursor->primaryKey();
             RefPtr<IDBAny> valueAny = cursor->value();
 
-            ASSERT(valueAny->type() == IDBAny::SerializedScriptValueType);
-            RefPtr<SerializedScriptValue> serializedValue = valueAny->serializedScriptValue();
-            ScriptValue value(deserializeIDBValue(context, serializedValue));
+            ASSERT(valueAny->type() == IDBAny::ScriptValueType);
+            ScriptValue value = valueAny->scriptValue();
 
             IDBObjectStore::IndexKeys indexKeys;
             generateIndexKeysForValue(m_indexMetadata, value, &indexKeys);

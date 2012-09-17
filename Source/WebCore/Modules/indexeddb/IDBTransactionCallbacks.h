@@ -31,7 +31,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "SerializedScriptValue.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

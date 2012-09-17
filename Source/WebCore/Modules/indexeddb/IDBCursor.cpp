@@ -38,7 +38,6 @@
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
-#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -260,28 +259,25 @@ void IDBCursor::close()
     m_request.clear();
 }
 
-void IDBCursor::setValueReady(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> prpValue)
+void IDBCursor::setValueReady(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
 {
     m_currentKey = key;
     m_currentPrimaryKey = primaryKey;
 
-    RefPtr<SerializedScriptValue> value = prpValue;
     if (!isKeyCursor()) {
         RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
         const IDBObjectStoreMetadata metadata = objectStore->metadata();
         if (metadata.autoIncrement && !metadata.keyPath.isNull()) {
 #ifndef NDEBUG
-            RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, metadata.keyPath);
+            RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(value, metadata.keyPath);
             ASSERT(!expectedKey || expectedKey->isEqual(m_currentPrimaryKey.get()));
 #endif
-            RefPtr<SerializedScriptValue> valueAfterInjection = injectIDBKeyIntoSerializedValue(m_currentPrimaryKey, value, metadata.keyPath);
-            ASSERT(valueAfterInjection);
+            bool injected = injectIDBKeyIntoScriptValue(m_currentPrimaryKey, value, metadata.keyPath);
             // FIXME: There is no way to report errors here. Move this into onSuccessWithContinuation so that we can abort the transaction there. See: https://bugs.webkit.org/show_bug.cgi?id=92278
-            if (valueAfterInjection)
-                value = valueAfterInjection;
+            ASSERT_UNUSED(injected, injected);
         }
     }
-    m_currentValue = IDBAny::create(value.release());
+    m_currentValue = IDBAny::create(value);
 
     m_gotValue = true;
     m_valueIsDirty = true;
