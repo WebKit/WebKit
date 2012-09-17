@@ -131,6 +131,8 @@ private:
     size_t m_reportedCapacity;
 };
 
+HAS_IMMORTAL_STRUCTURE(SparseArrayValueMap);
+
 } // namespace JSC
 
 #endif // SparseArrayValueMap_h

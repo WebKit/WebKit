@@ -59,6 +59,8 @@ namespace JSC {
 
     JSRopeString* jsStringBuilder(JSGlobalData*);
 
+    HAS_IMMORTAL_STRUCTURE(JSString);
+
     class JSString : public JSCell {
     public:
         friend class JIT;
@@ -320,6 +322,8 @@ namespace JSC {
         
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };
+
+    HAS_IMMORTAL_STRUCTURE(JSRopeString);
 
     JSString* asString(JSValue);
 

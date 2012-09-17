@@ -23,8 +23,7 @@ public:
     void reset();
     void canonicalizeCellLivenessData();
     size_t cellSize() { return m_cellSize; }
-    bool cellsNeedDestruction() { return m_cellsNeedDestruction; }
-    bool onlyContainsStructures() { return m_onlyContainsStructures; }
+    MarkedBlock::DestructorType destructorType() { return m_destructorType; }
     void* allocate(size_t);
     Heap* heap() { return m_heap; }
     
@@ -32,7 +31,7 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures);
+    void init(Heap*, MarkedSpace*, size_t cellSize, MarkedBlock::DestructorType);
 
     bool isPagedOut(double deadline);
    
@@ -49,8 +48,7 @@ private:
     MarkedBlock* m_blocksToSweep;
     DoublyLinkedList<MarkedBlock> m_blockList;
     size_t m_cellSize;
-    bool m_cellsNeedDestruction;
-    bool m_onlyContainsStructures;
+    MarkedBlock::DestructorType m_destructorType;
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
@@ -59,20 +57,18 @@ inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)
     , m_blocksToSweep(0)
     , m_cellSize(0)
-    , m_cellsNeedDestruction(true)
-    , m_onlyContainsStructures(false)
+    , m_destructorType(MarkedBlock::None)
     , m_heap(0)
     , m_markedSpace(0)
 {
 }
 
-inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures)
+inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, MarkedBlock::DestructorType destructorType)
 {
     m_heap = heap;
     m_markedSpace = markedSpace;
     m_cellSize = cellSize;
-    m_cellsNeedDestruction = cellsNeedDestruction;
-    m_onlyContainsStructures = onlyContainsStructures;
+    m_destructorType = destructorType;
 }
 
 inline void* MarkedAllocator::allocate(size_t bytes)

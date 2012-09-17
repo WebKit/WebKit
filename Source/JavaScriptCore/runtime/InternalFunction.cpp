@@ -32,10 +32,10 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(InternalFunction);
 
-const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
+const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->globalData(), structure)
 {
 }
 

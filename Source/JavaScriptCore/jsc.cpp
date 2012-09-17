@@ -176,6 +176,7 @@ public:
     {
         GlobalObject* object = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
         object->finishCreation(globalData, arguments);
+        globalData.heap.addFinalizer(object, destroy);
         return object;
     }
 
@@ -243,6 +244,12 @@ protected:
         putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier.string(), function, NoIntrinsic, function));
     }
 };
+
+
+namespace JSC {
+NEEDS_DESTRUCTOR(GlobalObject, false);
+};
+
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 

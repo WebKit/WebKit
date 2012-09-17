@@ -123,6 +123,8 @@ namespace JSC {
         OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
     };
 
+    HAS_IMMORTAL_STRUCTURE(RegExp);
+
 } // namespace JSC
 
 #endif // RegExp_h

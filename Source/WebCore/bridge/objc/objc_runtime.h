@@ -90,9 +90,9 @@ private:
     RetainPtr<ObjectStructPtr> _array;
 };
 
-class ObjcFallbackObjectImp : public JSNonFinalObject {
+class ObjcFallbackObjectImp : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
 
     static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const String& propertyName)
     {

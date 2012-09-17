@@ -35,7 +35,7 @@ using namespace WebCore;
 
 namespace JSC {
 
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
 RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
     : JSArray(exec->globalData(), structure, 0)
@@ -57,7 +57,7 @@ RuntimeArray::~RuntimeArray()
 
 void RuntimeArray::destroy(JSCell* cell)
 {
-    static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
+    jsCast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
 JSValue RuntimeArray::lengthGetter(ExecState*, JSValue slotBase, PropertyName)

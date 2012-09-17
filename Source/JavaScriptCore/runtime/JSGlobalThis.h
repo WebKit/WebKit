@@ -26,13 +26,13 @@
 #ifndef JSGlobalThis_h
 #define JSGlobalThis_h
 
-#include "JSObject.h"
+#include "JSDestructibleObject.h"
 
 namespace JSC {
 
-class JSGlobalThis : public JSNonFinalObject {
+class JSGlobalThis : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
 
     static JSGlobalThis* create(JSGlobalData& globalData, Structure* structure)
     {
@@ -52,7 +52,7 @@ public:
 
 protected:
     JSGlobalThis(JSGlobalData& globalData, Structure* structure)
-        : JSNonFinalObject(globalData, structure)
+        : JSDestructibleObject(globalData, structure)
     {
     }
 

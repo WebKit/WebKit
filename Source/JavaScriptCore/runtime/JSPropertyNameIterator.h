@@ -104,6 +104,8 @@ namespace JSC {
         OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
     };
 
+    HAS_IMMORTAL_STRUCTURE(JSPropertyNameIterator);
+
     inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
     {
         ASSERT(!isDictionary());

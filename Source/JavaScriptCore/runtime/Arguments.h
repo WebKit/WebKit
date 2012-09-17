@@ -26,6 +26,7 @@
 
 #include "CodeOrigin.h"
 #include "JSActivation.h"
+#include "JSDestructibleObject.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
@@ -57,9 +58,9 @@ namespace JSC {
         WriteBarrier<JSFunction> callee;
     };
 
-    class Arguments : public JSNonFinalObject {
+    class Arguments : public JSDestructibleObject {
     public:
-        typedef JSNonFinalObject Base;
+        typedef JSDestructibleObject Base;
 
         static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
         {
@@ -154,13 +155,13 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame)
-        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
-        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
     }

@@ -115,7 +115,9 @@ public:
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<String>& arguments)
     {
-        return new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        GlobalObject* globalObject = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        globalData.heap.addFinalizer(globalObject, destroy);
+        return globalObject;
     }
 
     static const ClassInfo s_info;
@@ -132,6 +134,10 @@ protected:
         UNUSED_PARAM(arguments);
     }
 };
+
+namespace JSC {
+NEEDS_DESTRUCTOR(GlobalObject, false);
+}
 
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);

@@ -36,6 +36,7 @@
 
 namespace JSC {
 
+    class JSDestructibleObject;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
     class PropertyDescriptor;
@@ -321,6 +322,23 @@ namespace JSC {
     };
 #endif
 
+    template<class T>
+    struct HasImmortalStructure {
+        static const bool value = false;
+    };
+
+#define HAS_IMMORTAL_STRUCTURE(klass) \
+    template <> \
+    struct HasImmortalStructure<klass> {\
+        static const bool value = true;\
+    }
+
+#define NEEDS_DESTRUCTOR(klass, v) \
+    template <> \
+    struct NeedsDestructor<klass> {\
+        static const bool value = v;\
+    }
+
     template<typename T>
     void* allocateCell(Heap& heap)
     {
@@ -329,12 +347,12 @@ namespace JSC {
         heap.globalData()->setInitializingObjectClass(&T::s_info);
 #endif
         JSCell* result = 0;
-        if (NeedsDestructor<T>::value)
-            result = static_cast<JSCell*>(heap.allocateWithDestructor(sizeof(T)));
-        else {
-            ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
+        if (NeedsDestructor<T>::value && HasImmortalStructure<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithImmortalStructureDestructor(sizeof(T)));
+        else if (NeedsDestructor<T>::value && !HasImmortalStructure<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithNormalDestructor(sizeof(T)));
+        else
             result = static_cast<JSCell*>(heap.allocateWithoutDestructor(sizeof(T)));
-        }
         result->clearStructure();
         return result;
     }
@@ -348,8 +366,10 @@ namespace JSC {
         heap.globalData()->setInitializingObjectClass(&T::s_info);
 #endif
         JSCell* result = 0;
-        if (NeedsDestructor<T>::value)
-            result = static_cast<JSCell*>(heap.allocateWithDestructor(size));
+        if (NeedsDestructor<T>::value && HasImmortalStructure<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithImmortalStructureDestructor(size));
+        else if (NeedsDestructor<T>::value && !HasImmortalStructure<T>::value)
+            result = static_cast<JSCell*>(heap.allocateWithNormalDestructor(size));
         else {
             ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
             result = static_cast<JSCell*>(heap.allocateWithoutDestructor(size));
@@ -369,7 +389,7 @@ namespace JSC {
         ASSERT(!from || from->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
         return static_cast<To>(from);
     }
-
+    
     template<typename To>
     inline To jsCast(JSValue from)
     {

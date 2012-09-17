@@ -50,8 +50,9 @@ static JSValue regExpObjectSource(ExecState*, JSValue, PropertyName);
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(RegExpObject);
 
-const ClassInfo RegExpObject::s_info = { "RegExp", &JSNonFinalObject::s_info, 0, ExecState::regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
+const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, 0, ExecState::regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
 
 /* Source for RegExpObject.lut.h
 @begin regExpTable

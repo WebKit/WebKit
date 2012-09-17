@@ -327,6 +327,8 @@ namespace JSC {
 
     class SharedSymbolTable : public JSCell, public SymbolTable {
     public:
+        typedef JSCell Base;
+
         static SharedSymbolTable* create(JSGlobalData& globalData)
         {
             SharedSymbolTable* sharedSymbolTable = new (NotNull, allocateCell<SharedSymbolTable>(globalData.heap)) SharedSymbolTable(globalData);
@@ -380,7 +382,9 @@ namespace JSC {
         int m_captureStart;
         int m_captureEnd;
     };
-    
+   
+    HAS_IMMORTAL_STRUCTURE(SharedSymbolTable);
+ 
 } // namespace JSC
 
 #endif // SymbolTable_h

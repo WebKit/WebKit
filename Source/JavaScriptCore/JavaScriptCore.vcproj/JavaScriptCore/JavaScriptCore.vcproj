@@ -841,6 +841,10 @@
 				RelativePath="..\..\runtime\JSDateMath.h"
 				>
 			</File>
+            <File
+                RelativePath="..\..\runtime\JSDestructibleObject.h"
+                >
+            </File>
 			<File
 				RelativePath="..\..\runtime\JSFunction.cpp"
 				>

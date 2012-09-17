@@ -32,9 +32,9 @@
 namespace JSC {
 namespace Bindings {
 
-class RuntimeObject : public JSNonFinalObject {
+class RuntimeObject : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
 
     static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     {

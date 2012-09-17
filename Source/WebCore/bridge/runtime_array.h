@@ -43,6 +43,7 @@ public:
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
         RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure);
         runtimeArray->finishCreation(exec->globalData(), array);
+        exec->globalData().heap.addFinalizer(runtimeArray, destroy);
         return runtimeArray;
     }
 
@@ -88,6 +89,8 @@ private:
 
     BindingsArray* m_array;
 };
+
+NEEDS_DESTRUCTOR(RuntimeArray, false);
     
 } // namespace JSC
 
