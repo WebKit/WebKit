@@ -10418,12 +10418,12 @@ static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned l
     const Property* hashTableEntry = findProperty(name, length);
     const CSSPropertyID propertyID = hashTableEntry ? static_cast<CSSPropertyID>(hashTableEntry->id) : CSSPropertyInvalid;
 
-    // 600 is comfortably larger than numCSSProperties to allow for growth
-    static const int CSSPropertyHistogramSize = 600;
-    COMPILE_ASSERT(CSSPropertyHistogramSize > numCSSProperties, number_of_css_properties_exceed_CSSPropertyHistogramSize);
-
-    if (hasPrefix(buffer, length, "-webkit-") && propertyID != CSSPropertyInvalid)
-        HistogramSupport::histogramEnumeration("CSS.PrefixUsage", max(1, propertyID - firstCSSProperty), CSSPropertyHistogramSize);
+    static const int cssPropertyHistogramSize = numCSSProperties;
+    if (hasPrefix(buffer, length, "-webkit-") && propertyID != CSSPropertyInvalid) {
+        int histogramValue = propertyID - firstCSSProperty;
+        ASSERT(0 <= histogramValue && histogramValue < cssPropertyHistogramSize);
+        HistogramSupport::histogramEnumeration("CSS.PrefixUsage", histogramValue, cssPropertyHistogramSize);
+    }
 
     return propertyID;
 }
