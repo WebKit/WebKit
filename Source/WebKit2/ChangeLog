@@ -1,3 +1,15 @@
+2012-09-17  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96936
+        Opt into layers for fixed positioned elements for TiledDrawingArea
+
+        Reviewed by Tim Horton.
+
+        This code already exists in DrawingAreaImpl, and we need it for 
+        TiledCoreAnimationDrawingArea as well.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2012-09-17  Anders Carlsson  <andersca@apple.com>
 
         Don't load a blocked plug-in if a non-blocked version of the same plug-in exists

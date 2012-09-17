@@ -208,6 +208,12 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
     ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), scrollingPerformanceLoggingEnabled));
 
+    // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
+    // As a part of that work, we have to composite fixed position elements, and we have to allow those
+    // elements to create a stacking context.
+    m_webPage->corePage()->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
+    m_webPage->corePage()->settings()->setFixedPositionCreatesStackingContext(true);
+
     bool showDebugBorders = m_webPage->corePage()->settings()->showDebugBorders();
 
     if (showDebugBorders == !!m_debugInfoLayer)
