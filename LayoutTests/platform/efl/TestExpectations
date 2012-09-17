@@ -931,9 +931,6 @@ BUGWK91477 : fast/multicol/shrink-to-column-height-for-pagination.html = MISSING
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = TEXT
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html = TEXT
 
-// Failing after r123145 on EFL, GTK and QT.
-BUGWK91843 : http/tests/security/cross-frame-access-put.html = TEXT
-
 // Failing after r123379 on EFL and GTK.
 BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 

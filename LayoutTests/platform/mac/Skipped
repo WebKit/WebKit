@@ -713,9 +713,6 @@ fast/frames/flattening/frameset-flattening-subframesets.html
 # https://bugs.webkit.org/show_bug.cgi?id=82750
 http/tests/navigation/javascriptlink-frames.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82751
-http/tests/security/cross-frame-access-put.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=82752
 plugins/netscape-dom-access-and-reload.html
 

@@ -1,3 +1,25 @@
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] http/tests/security/cross-frame-access-put.html failing after r123145
+        https://bugs.webkit.org/show_bug.cgi?id=91843
+
+        Reviewed by Adam Barth.
+
+        Since r123145, window.top is not longer replaceable in JSC, to bring it
+        in line with other browsers. The http/tests/security/cross-frame-access-put.html
+        now needs to be updated because it is still testing the window.top setter.
+
+        Thanks to this fix, we can now get rid of the platform-specific results for
+        ports using JSC.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/cross-frame-access-put.html:
+        * platform/chromium/http/tests/security/cross-frame-access-put-expected.txt:
+        * platform/efl/TestExpectations: Unskip test case.
+        * platform/gtk/http/tests/security/cross-frame-access-put-expected.txt: Removed.
+        * platform/mac/Skipped: Unskip test case.
+        * platform/qt/http/tests/security/cross-frame-access-put-expected.txt: Removed.
+
 2012-09-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Group selectors to highlight matched selector in the Styles pane of Elements Panel
