@@ -1,3 +1,14 @@
+2012-09-17  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move a FilterOperationsTest and WebInputEventConversionTest back to webkit_unittest_files variable
+        https://bugs.webkit.org/show_bug.cgi?id=96964
+
+        Reviewed by Adrienne Walker.
+
+        These targets are really webkit unit tests and shouldn't be guarded by use_libcc_for_compositor.
+
+        * WebKit.gypi:
+
 2012-09-17  Rick Byers  <rbyers@chromium.org>
 
         Send GestureTapDownCancel to WebCore
