@@ -61,17 +61,10 @@ http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/security/drag-drop-different-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 
-# EFL's DRT needs CONFIRM NAVIGATION messages
-fast/loader/form-submission-after-beforeunload-cancel.html
-
-# EFL's DRT needs a PlainTextController implementation
-editing/text-iterator/basic-iteration.html
-
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
 
 # EFL's LayoutTestController does not implement keepWebHistory
-fast/history/visited-generated-content-test.html
 fast/history/visited-link-background-color.html
 fast/history/window-open.html
 
@@ -96,27 +89,12 @@ editing/style
 # EFL's LayoutTestController overridePreference does not implement WebKitUsePreHTML5ParserQuirks preference
 fast/parser/pre-html5-parser-quirks.html
 
-# Fallback resource wasn't used for a redirect to a resource with another origin
-http/tests/appcache/fallback.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
-media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
-media/video-controls-zoomed.html
 media/video-volume-slider.html
 
 # EFL's LayoutTestController does not implement authenticateSession
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-
-# viewport meta tag tests that fail on the bot for yet unknown reasons
-fast/viewport/viewport-125.html
-
-# viewport meta tag tests that failed because window.devicePixelRatio is not implemented
-fast/viewport/viewport-133.html
-
-# Frame::findString does nothing on pages that prevent selection
-# https://bugs.webkit.org/show_bug.cgi?id=40361
-editing/text-iterator/findString-selection-disabled.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
@@ -129,9 +107,6 @@ fast/js/i18n-bindings-locale.html
 
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
-
-# BUG: Missing DRT API.
-http/tests/loading/preload-slow-loading.php
 
 # BUG: No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
@@ -204,10 +179,6 @@ canvas/philip/tests/2d.path.rect.zero.6.html
 # BUG: Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
 fast/forms/input-text-click-outside.html
 
-# The same bug description applies to the EFL port (gradient instead of solid color in the rectangle).
-# https://bugs.webkit.org/show_bug.cgi?id=58309
-fast/canvas/DrawImageSinglePixelStretch.html
-
 # Rendering of multipart images is broken: this test times out
 # https://bugs.webkit.org/show_bug.cgi?id=54251
 http/tests/multipart/invalid-image-data-standalone.html
@@ -253,15 +224,6 @@ compositing/geometry/vertical-scroll-composited.html
 
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html
-
-# BUG: new windows are being created with wrong sizes
-fast/dom/Window/window-resize-and-move-arguments.html
-
-# BUG: resized windows have wrong sizes
-fast/dom/Window/window-resize.html
-
-# BUG: window has wrong pixel and color depth
-fast/dom/Window/window-screen-properties.html
 
 # BUG: wrong test result, window should not have been scrolled
 fast/events/attempt-scroll-with-no-scrollbars.html
@@ -361,9 +323,6 @@ fast/frames/flattening/iframe-flattening-simple.html
 # BUG: text opacity not being interpreted correctly
 fast/text/complex-text-opacity.html
 
-# BUG: wrong rendering inside the boxes
-fast/text/emphasis.html
-
 # BUG: international characters not being rendered correctly. they probably need a proper font.
 fast/overflow/scroll-div-hide-show.html
 fast/text/international/arabic-justify.html
@@ -401,20 +360,8 @@ fast/forms/range/input-appearance-range-rtl.html
 fast/text/international/bidi-menulist.html
 fast/text/international/pop-up-button-text-alignment-and-direction.html
 
-# BUG: need to check if width=0 makes sense here
-fast/text/international/vertical-text-metrics-test.html
-
-# BUG: second box not rendered correctly
-fast/writing-mode/text-orientation-basic.html
-
 # BUG: volume control rendered when there is no audio
 media/video-no-audio.html
-
-# BUG: Only works if --gui is passed (due to the current implementation of PlatformScreenEfl::screenRect).
-fast/media/invalid-lengths.html
-fast/media/matchmedium-query-api.html
-fast/media/media-query-list-01.html
-media/video-source-media.html
 
 # BUG: video sizes not being set properly
 media/video-size-intrinsic-scale.html
@@ -452,12 +399,6 @@ mathml/presentation/row.xhtml
 
 # BUG: Integral symbol is drawn almost like a straight line.
 mathml/presentation/over.xhtml
-
-# BUG: there should be no scrollbars.
-mathml/presentation/style.xhtml
-
-# BUG: tiled backing store takes too long.
-compositing/tiling/crash-huge-layer.html
 
 # Flaky tests (text diff mismatch)
 http/tests/navigation/document-location-mouseover.html

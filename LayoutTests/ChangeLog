@@ -1,5 +1,26 @@
 2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Clean up Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=96914
+
+        Unreviewed EFL gardening.
+
+        Clean up the EFL Skipped list. Unskip several test cases that
+        are now passing and provide baselines for some of them.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/text/emphasis-expected.png: Added.
+        * platform/efl/fast/text/emphasis-expected.txt: Added.
+        * platform/efl/fast/text/international/vertical-text-metrics-test-expected.txt: Added.
+        * platform/efl/fast/writing-mode/text-orientation-basic-expected.png: Added.
+        * platform/efl/fast/writing-mode/text-orientation-basic-expected.txt: Added.
+        * platform/efl/mathml/presentation/style-expected.png: Added.
+        * platform/efl/mathml/presentation/style-expected.txt: Added.
+
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] autoscroll-in-textarea.html fails on EFL
         https://bugs.webkit.org/show_bug.cgi?id=94150
 

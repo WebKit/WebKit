@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {html} at (0,0) size 800x102
+    RenderBody {body} at (8,16) size 784x70
+      RenderBlock {p} at (0,0) size 784x23
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,39) size 784x31
+        RenderText {#text} at (0,3) size 332x19
+          text run at (0,3) width 332: "Square root, green on yellow, padded and bordered: "
+layer at (8,20) size 29x19
+  RenderMathMLMath {math} at (0,4) size 29x19 [padding: 0 1 0 1]
+    RenderInline {mi} at (0,0) size 7x25
+      RenderText {#text} at (1,-6) size 7x25
+        text run at (1,-6) width 7: "x"
+    RenderMathMLOperator {mo} at (8,2) size 12x10 [padding: 0 1 0 0]
+      RenderMathMLBlock (inline-block) {mo} at (0,0) size 11x10
+        RenderText {mo} at (0,-8) size 11x25
+          text run at (0,-8) width 11: "+"
+    RenderInline {mn} at (0,0) size 8x25
+      RenderText {#text} at (20,-6) size 8x25
+        text run at (20,-6) width 8: "1"
+layer at (340,55) size 46x31
+  RenderMathMLMath {math} at (332,0) size 46x31 [padding: 0 1 0 1]
+    RenderMathMLSquareRoot {msqrt} at (1,0) size 44x31 [color=#008000] [bgcolor=#FFFF00] [border: (1px solid #008000) (2px solid #008000) (3px solid #008000) (4px solid #008000)] [intrinsic + CSS padding: 6 6 9 24]
+      RenderMathMLRow (anonymous) at (28,7) size 8x12
+        RenderInline {mn} at (0,0) size 8x25
+          RenderText {#text} at (0,-6) size 8x25
+            text run at (0,-6) width 8: "2"

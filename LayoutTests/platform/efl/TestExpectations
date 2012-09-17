@@ -1042,6 +1042,8 @@ BUGWK96881 : userscripts/user-script-plugin-document.html = TEXT
 // EFL does not yet support global selection
 BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT
 
+// Gradient instead of solid color in the rectangle
+BUGWK54251 : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 
 // Fails after r128270.
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
