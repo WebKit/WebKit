@@ -907,9 +907,6 @@ BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-1.html = PASS
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
 
-// These tests do not seem to fail anywhere else.
-BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
-
 // Flexbox test failing on EFL.
 BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 
