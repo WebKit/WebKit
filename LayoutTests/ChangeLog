@@ -1,3 +1,16 @@
+2012-09-17  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Enable shape-inside for percentage lengths based on logical height
+        https://bugs.webkit.org/show_bug.cgi?id=93547
+
+        Reviewed by Levi Weintraub.
+
+        Test that shape percentage-based measurements resolve correctly. Some testing is
+        already covered by shape-inside-percentage-auto.html.
+
+        * fast/exclusions/shape-inside/shape-inside-percentage-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-percentage.html: Added.
+
 2012-09-17  Ojan Vafai  <ojan@chromium.org>
 
         Cleanup the final instance of BUGUSERNAME.

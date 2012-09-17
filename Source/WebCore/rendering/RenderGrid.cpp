@@ -71,7 +71,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (logicalWidthChangedInRegions())
             relayoutChildren = true;
     }
-    computeInitialRegionRangeForBlock();
+    updateRegionsAndExclusionsLogicalSize();
 
     LayoutSize previousSize = size();
 

@@ -3726,16 +3726,22 @@ void RenderBox::clearLayoutOverflow()
     m_overflow->setLayoutOverflow(borderBoxRect());
 }
 
-static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
+inline static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
+{
+    return RenderBox::percentageLogicalHeightIsResolvableFromBlock(box->containingBlock(), box->isOutOfFlowPositioned());
+}
+
+bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool isOutOfFlowPositioned)
 {
     // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
     // block that may have a specified height and then use it. In strict mode, this violates the
     // specification, which states that percentage heights just revert to auto if the containing
     // block has an auto height. We still skip anonymous containing blocks in both modes, though, and look
     // only at explicit containers.
-    const RenderBlock* cb = box->containingBlock();
+    const RenderBlock* cb = containingBlock;
+    bool inQuirksMode = cb->document()->inQuirksMode();
     while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto()) {
-        if (!box->document()->inQuirksMode() && !cb->isAnonymousBlock())
+        if (!inQuirksMode && !cb->isAnonymousBlock())
             break;
         cb = cb->containingBlock();
     }
@@ -3757,10 +3763,10 @@ static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
     if (cb->style()->logicalHeight().isFixed())
         return true;
     if (cb->style()->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight)
-        return percentageLogicalHeightIsResolvable(cb);
-    if (cb->isRenderView() || (cb->isBody() && box->document()->inQuirksMode()) || isOutOfFlowPositionedWithSpecifiedHeight)
+        return percentageLogicalHeightIsResolvableFromBlock(cb->containingBlock(), cb->isOutOfFlowPositioned());
+    if (cb->isRenderView() || inQuirksMode || isOutOfFlowPositionedWithSpecifiedHeight)
         return true;
-    if (cb->isRoot() && box->isOutOfFlowPositioned()) {
+    if (cb->isRoot() && isOutOfFlowPositioned) {
         // Match the positioned objects behavior, which is that positioned objects will fill their viewport
         // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
         return true;

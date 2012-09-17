@@ -491,13 +491,14 @@ protected:
     }
 #endif
 
-    void computeInitialRegionRangeForBlock();
+    void updateRegionsAndExclusionsLogicalSize();
     void computeRegionRangeForBlock();
 
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
 
 private:
 #if ENABLE(CSS_EXCLUSIONS)
+    void computeExclusionShapeSize();
     void updateWrapShapeInfoAfterStyleChange(const BasicShape*, const BasicShape* oldWrapShape);
 #endif
     virtual RenderObjectChildList* virtualChildren() { return children(); }

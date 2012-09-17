@@ -1394,20 +1394,45 @@ void RenderBlock::updateWrapShapeInfoAfterStyleChange(const BasicShape* wrapShap
 }
 #endif
 
-void RenderBlock::computeInitialRegionRangeForBlock()
+void RenderBlock::updateRegionsAndExclusionsLogicalSize()
 {
-    if (inRenderFlowThread()) {
-        // Set our start and end regions. No regions above or below us will be considered by our children. They are
-        // effectively clamped to our region range.
-        LayoutUnit oldHeight =  logicalHeight();
-        LayoutUnit oldLogicalTop = logicalTop();
-        setLogicalHeight(MAX_LAYOUT_UNIT / 2);
-        updateLogicalHeight();
-        enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
-        setLogicalHeight(oldHeight);
-        setLogicalTop(oldLogicalTop);
+#if ENABLE(CSS_EXCLUSIONS)
+    if (!inRenderFlowThread() && !wrapShapeInfo())
+#else
+    if (!inRenderFlowThread())
+#endif
+        return;
+
+    LayoutUnit oldHeight = logicalHeight();
+    LayoutUnit oldTop = logicalTop();
+
+    // Compute the maximum logical height content may cause this block to expand to
+    // FIXME: These should eventually use the const computeLogicalHeight rather than updateLogicalHeight
+    setLogicalHeight(MAX_LAYOUT_UNIT / 2);
+    updateLogicalHeight();
+
+#if ENABLE(CSS_EXCLUSIONS)
+    computeExclusionShapeSize();
+#endif
+
+    // Set our start and end regions. No regions above or below us will be considered by our children. They are
+    // effectively clamped to our region range.
+    computeRegionRangeForBlock();
+
+    setLogicalHeight(oldHeight);
+    setLogicalTop(oldTop);
+}
+
+#if ENABLE(CSS_EXCLUSIONS)
+void RenderBlock::computeExclusionShapeSize()
+{
+    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
+    if (wrapShapeInfo) {
+        bool percentageLogicalHeightResolvable = percentageLogicalHeightIsResolvableFromBlock(this, false);
+        wrapShapeInfo->computeShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : ZERO_LAYOUT_UNIT);
     }
 }
+#endif
 
 void RenderBlock::computeRegionRangeForBlock()
 {
@@ -1491,12 +1516,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         if (logicalWidthChangedInRegions())
             relayoutChildren = true;
     }
-    computeInitialRegionRangeForBlock();
-#if ENABLE(CSS_EXCLUSIONS)
-    // FIXME: Bug 93547: Resolve logical height for percentage based vertical lengths
-    if (WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo())
-        wrapShapeInfo->computeShapeSize(logicalWidth(), 0);
-#endif
+    updateRegionsAndExclusionsLogicalSize();
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
