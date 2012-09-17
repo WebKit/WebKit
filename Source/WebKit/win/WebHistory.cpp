@@ -36,6 +36,7 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HistoryPropertyList.h>
 #include <WebCore/KURL.h>
@@ -612,14 +613,13 @@ HRESULT STDMETHODCALLTYPE WebHistory::historyAgeInDaysLimit(
 HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
 {
     HRESULT hr = S_OK;
-    BSTR urlBStr = 0;
+    BString urlBStr;
 
     hr = entry->URLString(&urlBStr);
     if (FAILED(hr))
         return hr;
 
     RetainPtr<CFStringRef> urlString(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(urlBStr));
-    SysFreeString(urlBStr);
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
@@ -646,13 +646,12 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     if (!entry)
         return E_FAIL;
 
-    BSTR urlBStr = 0;
+    BString urlBStr;
     hr = entry->URLString(&urlBStr);
     if (FAILED(hr))
         return hr;
 
     RetainPtr<CFStringRef> urlString(AdoptCF, MarshallingHelpers::BSTRToCFStringRef(urlBStr));
-    SysFreeString(urlBStr);
 
     COMPtr<IWebHistoryItem> oldEntry((IWebHistoryItem*) CFDictionaryGetValue(
         m_entriesByURL.get(), urlString.get()));

@@ -52,11 +52,13 @@ namespace WebCore {
         ~BString();
 
         void adoptBSTR(BSTR);
+        void clear();
 
         BString(const BString&);
         BString& operator=(const BString&);
         BString& operator=(const BSTR&);
 
+        BSTR* operator&() { ASSERT(!m_bstr); return &m_bstr; }
         operator BSTR() const { return m_bstr; }
 
         BSTR release() { BSTR result = m_bstr; m_bstr = 0; return result; }
