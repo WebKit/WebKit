@@ -238,7 +238,7 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& ob
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer)
+    if (owningType == byPointer && !visited(object))
         countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
@@ -246,7 +246,7 @@ void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, Memory
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer)
+    if (owningType == byPointer && !visited(object))
         countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
@@ -254,9 +254,9 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Memory
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (!object || visited(object))
-        return;
     if (owningType == byReference)
+        return;
+    if (!object || visited(object))
         return;
     countObjectSize(ownerObjectType, sizeof(T));
 }

@@ -275,5 +275,56 @@ TEST(MemoryInstrumentationTest, visitStrings)
     }
 }
 
+
+class TwoPointersToRefPtr {
+public:
+    TwoPointersToRefPtr(const RefPtr<StringImpl>& value) : m_ptr1(&value), m_ptr2(&value)  { }
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        info.addMember(m_ptr1);
+        info.addMember(m_ptr2);
+    }
+
+    const RefPtr<StringImpl>* m_ptr1;
+    const RefPtr<StringImpl>* m_ptr2;
+};
+
+TEST(MemoryInstrumentationTest, refPtrPtr)
+{
+    RefPtr<StringImpl> refPtr;
+    TwoPointersToRefPtr root(refPtr);
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    impl.addRootObject(root);
+    EXPECT_EQ(sizeof(RefPtr<StringImpl>), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(1, visitedObjects.size());
+}
+
+class TwoPointersToOwnPtr {
+public:
+    TwoPointersToOwnPtr(const OwnPtr<NotInstrumented>& value) : m_ptr1(&value), m_ptr2(&value)  { }
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        info.addMember(m_ptr1);
+        info.addMember(m_ptr2);
+    }
+
+    const OwnPtr<NotInstrumented>* m_ptr1;
+    const OwnPtr<NotInstrumented>* m_ptr2;
+};
+
+TEST(MemoryInstrumentationTest, ownPtrPtr)
+{
+    OwnPtr<NotInstrumented> ownPtr;
+    TwoPointersToOwnPtr root(ownPtr);
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    impl.addRootObject(root);
+    EXPECT_EQ(sizeof(OwnPtr<NotInstrumented>), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(1, visitedObjects.size());
+}
+
 } // namespace
 
