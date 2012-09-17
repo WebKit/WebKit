@@ -28,9 +28,12 @@
 
 namespace WebKit {
 
+struct WebCompositorFrameAck;
+
 class WebCompositorOutputSurfaceClient {
 public:
     virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) = 0;
+    virtual void onSendFrameToParentCompositorAck(const WebCompositorFrameAck&) { }
 
 protected:
     ~WebCompositorOutputSurfaceClient() { }

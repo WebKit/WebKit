@@ -1,3 +1,19 @@
+2012-09-17  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add onSendFrameToParentCompositorAck to WebCompositorOutputSurfaceClient
+        https://bugs.webkit.org/show_bug.cgi?id=96850
+
+        Reviewed by James Robinson.
+
+        Hook for the WebCompositorOutputSurface::sendFrameToParent ack.
+        Also changes WebCompositorFrame from a class to a struct.
+
+        * chromium/public/WebCompositorOutputSurface.h:
+        (WebKit):
+        * chromium/public/WebCompositorOutputSurfaceClient.h:
+        (WebKit):
+        (WebCompositorOutputSurfaceClient):
+
 2012-09-17  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] WebCompositorOutputSurface software API

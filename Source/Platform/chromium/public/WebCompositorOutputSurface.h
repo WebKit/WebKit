@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-class WebCompositorFrame;
+struct WebCompositorFrame;
 class WebGraphicsContext3D;
 class WebCompositorSoftwareOutputDevice;
 class WebCompositorOutputSurfaceClient;
