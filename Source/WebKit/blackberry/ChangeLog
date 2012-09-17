@@ -1,3 +1,23 @@
+2012-09-17  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] [FullScreen] entering/leaving fullscreen results in temporary glitches on the screen
+        https://bugs.webkit.org/show_bug.cgi?id=96927
+        PR #180866
+
+        Reviewed by Yong Li.
+
+        Suspend backing store and screen updates while entering fullscreen,
+        and only resume at the end, when viewport is resized.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::enterFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::exitFullScreenForElement):
+
 2012-09-17  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Fix compile problems in WebKit/blackberry

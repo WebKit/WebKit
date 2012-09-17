@@ -735,6 +735,11 @@ bool ChromeClientBlackBerry::supportsFullScreenForElement(const WebCore::Element
 
 void ChromeClientBlackBerry::enterFullScreenForElement(WebCore::Element* element)
 {
+    // To avoid glitches on the screen when entering fullscreen, lets suspend the
+    // Backing Store screen updates and only resume at the next call of WebPagePrivate::setViewportSize.
+    m_webPagePrivate->m_isTogglingFullScreenState = true;
+    m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
     element->document()->webkitWillEnterFullScreenForElement(element);
     m_webPagePrivate->enterFullScreenForElement(element);
     element->document()->webkitDidEnterFullScreenForElement(element);
@@ -743,6 +748,9 @@ void ChromeClientBlackBerry::enterFullScreenForElement(WebCore::Element* element
 
 void ChromeClientBlackBerry::exitFullScreenForElement(WebCore::Element*)
 {
+    m_webPagePrivate->m_isTogglingFullScreenState = true;
+    m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
     // The element passed into this function is not reliable, i.e. it could
     // be null. In addition the parameter may be disappearing in the future.
     // So we use the reference to the element we saved above.
