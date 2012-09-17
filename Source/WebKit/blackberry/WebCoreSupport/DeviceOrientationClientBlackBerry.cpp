@@ -69,7 +69,7 @@ DeviceOrientationData* DeviceOrientationClientBlackBerry::lastOrientation() cons
 
 void DeviceOrientationClientBlackBerry::onOrientation(const BlackBerry::Platform::DeviceOrientationEvent* event)
 {
-    m_currentOrientation = DeviceOrientation::create(true, event->alpha, true, event->beta, true, event->gamma);
+    m_currentOrientation = DeviceOrientationData::create(true, event->alpha, true, event->beta, true, event->gamma);
     if (!m_controller)
         return;
 

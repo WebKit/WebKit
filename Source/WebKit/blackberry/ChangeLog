@@ -1,3 +1,29 @@
+2012-09-17  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Fix compile problems in WebKit/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=96926
+
+        Reviewed by Antonio Gomes.
+
+        This code is slightly out of date and so will not compile, fix it.
+
+        * WebCoreSupport/BatteryClientBlackBerry.cpp:
+        (WebCore::BatteryClientBlackBerry::BatteryClientBlackBerry):
+        * WebCoreSupport/BatteryClientBlackBerry.h:
+        (WebKit):
+        * WebCoreSupport/CredentialTransformData.h:
+        * WebCoreSupport/DeviceOrientationClientBlackBerry.cpp:
+        (DeviceOrientationClientBlackBerry::onOrientation):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isDateTimeInputField):
+        (BlackBerry::WebKit::DOMSupport::isTextBasedContentEditableElement):
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests):
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+
 2012-09-17  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] BackingStorePrivate::resumeScreenAndBackingStoreUpdates more atomic

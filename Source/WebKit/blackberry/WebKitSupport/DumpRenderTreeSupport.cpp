@@ -28,7 +28,6 @@
 #include "JSCSSStyleDeclaration.h"
 #include "JSElement.h"
 #include "Page.h"
-#include "ViewportArguments.h"
 #include "WebPage_p.h"
 #include "bindings/js/GCController.h"
 #include <JavaScriptCore/APICast.h>
@@ -86,7 +85,7 @@ bool DumpRenderTreeSupport::linksIncludedInFocusChain()
 
 int DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(WebPage* webPage)
 {
-    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController(corePage(webPage))->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(GeolocationController::from(corePage(webPage))->client());
     return mockClient->numberOfPendingPermissionRequests();
 }
 

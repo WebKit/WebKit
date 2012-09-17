@@ -19,6 +19,7 @@
 
 #include "PagePopupBlackBerry.h"
 
+#include "DocumentLoader.h"
 #include "EmptyClients.h"
 #include "FrameView.h"
 #include "JSDOMBinding.h"

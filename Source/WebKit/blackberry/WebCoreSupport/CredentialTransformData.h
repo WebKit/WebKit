@@ -26,8 +26,6 @@
 
 namespace WebCore {
 
-class HTMLFormElement;
-
 struct CredentialTransformData {
     // If the provided form is suitable for password completion, isValid() will
     // return true;

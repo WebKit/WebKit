@@ -170,11 +170,11 @@ bool isDateTimeInputField(const Element* element)
     const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
 
     // The following types have popup's.
-    if (inputElement->isDateControl()
-        || inputElement->isDateTimeControl()
-        || inputElement->isDateTimeLocalControl()
-        || inputElement->isTimeControl()
-        || inputElement->isMonthControl())
+    if (inputElement->isDateField()
+        || inputElement->isDateTimeField()
+        || inputElement->isDateTimeLocalField()
+        || inputElement->isTimeField()
+        || inputElement->isMonthField())
             return true;
 
     return false;
@@ -249,7 +249,7 @@ bool isTextBasedContentEditableElement(Element* element)
     if (!element)
         return false;
 
-    if (element->isReadOnlyFormControl() || !element->isEnabledFormControl())
+    if (element->isReadOnlyNode() || !element->isEnabledFormControl())
         return false;
 
     if (isPopupInputField(element))

@@ -22,13 +22,14 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "BatteryController.h"
+#include "WebPage_p.h"
 #include <stdio.h>
 
 namespace WebCore {
 
 BatteryClientBlackBerry::BatteryClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
     : m_webPagePrivate(webPagePrivate)
-    : m_tracker(0)
+    , m_tracker(0)
 {
 }
 

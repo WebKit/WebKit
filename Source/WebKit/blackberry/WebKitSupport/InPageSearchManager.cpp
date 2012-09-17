@@ -27,6 +27,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "Range.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "Timer.h"
 #include "WebPage_p.h"
@@ -325,7 +326,7 @@ void InPageSearchManager::scopeStringMatches(const String& text, bool reset, boo
             resultRange->ownerDocument()->markers()->addTextMatchMarker(resultRange.get(), foundActiveMatch);
 
         searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
-        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        ShadowRoot* shadowTreeRoot = searchRange->shadowRoot();
         if (searchRange->collapsed(ec) && shadowTreeRoot)
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
         m_resumeScopingFromRange = resultRange;

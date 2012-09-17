@@ -26,6 +26,12 @@
 #include <BlackBerryPlatformBatteryStatusTracker.h>
 #include <BlackBerryPlatformBatteryStatusTrackerListener.h>
 
+namespace BlackBerry {
+namespace WebKit {
+class WebPagePrivate;
+}
+}
+
 namespace WebCore {
 
 class BatteryStatus;
