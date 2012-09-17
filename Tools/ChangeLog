@@ -1,3 +1,36 @@
+2012-09-17  Philip Rogers  <pdr@google.com>
+
+        Teach style checker about preprocessor directive indentation rules
+        https://bugs.webkit.org/show_bug.cgi?id=96874
+
+        Reviewed by Adam Barth.
+
+        Preprocessor directives (#ifdef, #include, #define, etc.) should not be indented.
+        This is not explicit in our style guide but is generally followed in our code.
+        Searching for violations in our codebase shows these are rarely indented:
+            #include - indented in 6 files
+            #ifdef - indented in 0 files
+            #ifndef - indented in 1 file
+            #define - indented in 11 files
+            #if - indented in 7 files
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_directive_indentation):
+
+            This is the simple test where we look for spaces followed by a #.
+
+        (check_style):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
+            A few tests needed to be modified because they had unintentionally indented
+            preprocessor directives.
+
+        (CppStyleTest.test_build_class.Foo):
+        (CppStyleTest.test_build_class):
+        (CppStyleTest.test_build_class.DERIVE_FROM_GOO):
+        (WebKitStyleTest.test_line_breaking):
+        (WebKitStyleTest.test_directive_indentation):
+
 2012-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Auto-generate the module pri file for QtWebKit

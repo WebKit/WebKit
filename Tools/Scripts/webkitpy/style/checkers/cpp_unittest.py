@@ -2086,13 +2086,13 @@ class CppStyleTest(CppStyleTestBase):
         # Here is an example where the linter gets confused, even though
         # the code doesn't violate the style guide.
         self.assert_multi_line_lint(
-            '''class Foo
-            #ifdef DERIVE_FROM_GOO
-              : public Goo {
-            #else
-              : public Hoo {
-            #endif
-              };''',
+            'class Foo\n'
+            '#ifdef DERIVE_FROM_GOO\n'
+            '    : public Goo {\n'
+            '#else\n'
+            '    : public Hoo {\n'
+            '#endif\n'
+            '};',
             'Failed to find complete declaration of class Foo'
             '  [build/class] [5]')
 
@@ -3821,7 +3821,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'More than one command on the same line  [whitespace/newline] [4]')
         # Ignore preprocessor if's.
         self.assert_multi_line_lint(
-            '    #if (condition) || (condition2)\n',
+            '#if (condition) || (condition2)\n',
             '')
 
         # 2. An else statement should go on the same line as a preceding
@@ -4391,6 +4391,12 @@ class WebKitStyleTest(CppStyleTestBase):
             'if (UNLIKELY(foo == NULL))',
             'Use 0 instead of NULL.  [readability/null] [5]')
 
+    def test_directive_indentation(self):
+        self.assert_lint(
+            "    #if FOO",
+            "preprocessor directives (e.g., #ifdef, #define, #import) should never be indented."
+            "  [whitespace/indent] [4]",
+            "foo.cpp")
 
     def test_using_std(self):
         self.assert_lint(

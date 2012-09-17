@@ -2040,6 +2040,26 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
             break;
 
 
+def check_directive_indentation(clean_lines, line_number, file_state, error):
+    """Looks for indentation of preprocessor directives.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    indented_preprocessor_directives = match(r'\s+#', line)
+    if not indented_preprocessor_directives:
+        return
+
+    error(line_number, 'whitespace/indent', 4, 'preprocessor directives (e.g., #ifdef, #define, #import) should never be indented.')
+
+
 def check_using_std(clean_lines, line_number, file_state, error):
     """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
 
@@ -2581,6 +2601,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
 
     # Some more style checks
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
+    check_directive_indentation(clean_lines, line_number, file_state, error)
     check_using_std(clean_lines, line_number, file_state, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
