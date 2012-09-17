@@ -1313,7 +1313,7 @@ _llint_op_get_by_val:
     loadi 12[PC], t3
     loadConstantOrVariablePayload(t3, Int32Tag, t1, .opGetByValSlow)
     loadp JSObject::m_butterfly[t0], t3
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opGetByValSlow
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
     loadi 4[PC], t0
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
