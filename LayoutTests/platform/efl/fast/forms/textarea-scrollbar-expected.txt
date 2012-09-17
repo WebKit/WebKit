@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         text run at (0,0) width 442: "This tests that a scrollbar will appear when text overflows the textarea "
       RenderBR {BR} at (442,15) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (10,28) size 202x118 clip at (10,28) size 187x118 scrollHeight 172
-  RenderTextControl {TEXTAREA} at (2,20) size 202x118 [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (4,6) size 180x162
+layer at (10,28) size 201x114 clip at (11,29) size 184x112 scrollHeight 166
+  RenderTextControl {TEXTAREA} at (2,20) size 201x114 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 180x162
       RenderText {#text} at (0,0) size 9x73
         text run at (0,0) width 9: "1"
         text run at (9,0) width 0: " "

@@ -1,3 +1,57 @@
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] autoscroll-in-textarea.html fails on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=94150
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several test cases that are passing now that textareas
+        are rendered correctly.
+
+        Rebaseline several test cases due to the textarea rendering
+        change.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/input/reveal-caret-of-multiline-input-expected.png:
+        * platform/efl/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/efl/fast/block/margin-collapse/103-expected.png:
+        * platform/efl/fast/block/margin-collapse/103-expected.txt:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/efl/fast/dynamic/008-expected.png:
+        * platform/efl/fast/dynamic/008-expected.txt:
+        * platform/efl/fast/forms/text-control-intrinsic-widths-expected.txt:
+        * platform/efl/fast/forms/textAreaLineHeight-expected.png:
+        * platform/efl/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/efl/fast/forms/textarea-align-expected.png:
+        * platform/efl/fast/forms/textarea-align-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/efl/fast/forms/textarea-scroll-height-expected.png: Added.
+        * platform/efl/fast/forms/textarea-scroll-height-expected.txt: Added.
+        * platform/efl/fast/forms/textarea-scrollbar-expected.png:
+        * platform/efl/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/efl/fast/forms/textarea-scrolled-type-expected.png: Added.
+        * platform/efl/fast/forms/textarea-scrolled-type-expected.txt: Added.
+        * platform/efl/fast/forms/textarea-setinnerhtml-expected.png:
+        * platform/efl/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/efl/fast/forms/textarea-width-expected.png:
+        * platform/efl/fast/forms/textarea-width-expected.txt:
+        * platform/efl/fast/overflow/overflow-x-y-expected.png:
+        * platform/efl/fast/overflow/overflow-x-y-expected.txt:
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.png:
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/efl/fast/parser/open-comment-in-textarea-expected.png:
+        * platform/efl/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.png:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/efl/fast/table/003-expected.png:
+        * platform/efl/fast/table/003-expected.txt:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.txt:
+
 2012-09-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: XHR replay fixes: should remove replayed xhr from memory cache, should not assert.

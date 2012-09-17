@@ -6,9 +6,9 @@ layer at (0,0) size 785x600
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 312x19
           text run at (0,0) width 312: "The body should always have a vertical scrollbar."
-      RenderBlock (anonymous) at (0,218) size 769x68
-        RenderText {#text} at (206,50) size 4x19
-          text run at (206,50) width 4: " "
+      RenderBlock (anonymous) at (0,218) size 769x64
+        RenderText {#text} at (205,46) size 4x19
+          text run at (205,46) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 300x100 clip at (8,26) size 285x100 scrollHeight 325
   RenderBlock {DIV} at (0,18) size 300x100
@@ -72,13 +72,13 @@ layer at (8,126) size 300x100 clip at (8,126) size 300x85 scrollWidth 1184
       text run at (0,0) width 486: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (486,0) width 324: "X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (810,0) width 374: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll"
-layer at (10,243) size 202x46 clip at (10,243) size 187x46
-  RenderTextControl {TEXTAREA} at (2,17) size 202x46 [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (4,6) size 180x18
+layer at (10,243) size 201x42 clip at (11,244) size 184x40
+  RenderTextControl {TEXTAREA} at (2,17) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 180x18
       RenderText {#text} at (0,0) size 118x19
         text run at (0,0) width 118: "Textarea y-scroll"
-layer at (220,228) size 202x61 clip at (220,228) size 202x46
-  RenderTextControl {TEXTAREA} at (212,2) size 202x61 [bgcolor=#FFFFFF]
-    RenderBlock {DIV} at (4,6) size 195x18
+layer at (219,228) size 201x57 clip at (220,229) size 199x40
+  RenderTextControl {TEXTAREA} at (211,2) size 201x57 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 195x18
       RenderText {#text} at (0,0) size 118x19
         text run at (0,0) width 118: "Textarea x-scroll"

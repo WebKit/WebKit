@@ -893,9 +893,8 @@ bool RenderThemeEfl::paintTextField(RenderObject* object, const PaintInfo& info,
     return paintThemePart(object, TextField, info, rect);
 }
 
-void RenderThemeEfl::adjustTextAreaStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const
 {
-    adjustTextFieldStyle(styleResolver, style, element);
 }
 
 bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, const IntRect& rect)
