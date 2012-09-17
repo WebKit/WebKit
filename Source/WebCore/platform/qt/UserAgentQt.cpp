@@ -22,13 +22,13 @@
 
 #include "UserAgentQt.h"
 
-#include <QCoreApplication>
+#include <QGuiApplication>
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#if defined Q_OS_WIN32
+#if OS(WINDOWS)
 #include <SystemInfo.h>
-#endif // Q_OS_WIN32
+#endif // OS(WINDOWS)
 
 namespace WebCore {
 
@@ -62,18 +62,15 @@ String UserAgentQt::standardUserAgent(const String &applicationNameForUserAgent,
 
         // Platform.
         ua = ua.arg(QLatin1String(
-#ifdef Q_WS_MAC
+#if OS(MAC_OS_X)
             "Macintosh; "
-#elif defined Q_WS_QWS
-            "QtEmbedded; "
-#elif defined Q_WS_WIN
+#elif OS(WINDOWS)
             // Nothing.
-#elif defined Q_WS_X11
-            "X11; "
 #else
-            "Unknown; "
+            (QGuiApplication::platformName() == QLatin1String("xcb")) ? "X11; " : "Unknown; "
 #endif
         ));
+
 
         // Security strength.
         QString securityStrength;
@@ -84,82 +81,48 @@ String UserAgentQt::standardUserAgent(const String &applicationNameForUserAgent,
 
         // Operating system.
         ua = ua.arg(QLatin1String(
-#ifdef Q_OS_AIX
+#if OS(AIX)
             "AIX"
-#elif defined Q_OS_WIN32
+#elif OS(WINDOWS)
             windowsVersionForUAString().latin1().data()
-#elif defined Q_OS_DARWIN
-#ifdef __i386__ || __x86_64__
+#elif OS(MAC_OS_X)
+#ifdef CPU(X86) || CPU(X86_64)
             "Intel Mac OS X"
 #else
             "PPC Mac OS X"
 #endif
 
-#elif defined Q_OS_BSDI
-            "BSD"
-#elif defined Q_OS_BSD4
-            "BSD Four"
-#elif defined Q_OS_CYGWIN
-            "Cygwin"
-#elif defined Q_OS_DGUX
-            "DG/UX"
-#elif defined Q_OS_DYNIX
-            "DYNIX/ptx"
-#elif defined Q_OS_FREEBSD
+#elif OS(FREEBSD)
             "FreeBSD"
-#elif defined Q_OS_HPUX
-            "HP-UX"
-#elif defined Q_OS_HURD
+#elif OS(HURD)
             "GNU Hurd"
-#elif defined Q_OS_IRIX
-            "SGI Irix"
-#elif defined Q_OS_LINUX
+#elif OS(LINUX)
 
-#if defined(__x86_64__)
+#if CPU(X86_64)
             "Linux x86_64"
-#elif defined(__i386__)
+#elif CPU(X86)
             "Linux i686"
 #else
             "Linux"
 #endif
 
-#elif defined Q_OS_LYNX
-            "LynxOS"
-#elif defined Q_OS_NETBSD
+#elif OS(NETBSD)
             "NetBSD"
-#elif defined Q_OS_OS2
-            "OS/2"
-#elif defined Q_OS_OPENBSD
+#elif OS(OPENBSD)
             "OpenBSD"
-#elif defined Q_OS_OS2EMX
-            "OS/2"
-#elif defined Q_OS_OSF
-            "HP Tru64 UNIX"
-#elif defined Q_OS_QNX6
-            "QNX RTP Six"
-#elif defined Q_OS_QNX
+#elif OS(QNX)
             "QNX"
-#elif defined Q_OS_RELIANT
-            "Reliant UNIX"
-#elif defined Q_OS_SCO
-            "SCO OpenServer"
-#elif defined Q_OS_SOLARIS
+#elif OS(SOLARIS)
             "Sun Solaris"
-#elif defined Q_OS_ULTRIX
-            "DEC Ultrix"
-#elif defined Q_OS_UNIX
+#elif OS(UNIX) // FIXME Looks like all unix variants above are the only cases where OS_UNIX is set.
             "UNIX BSD/SYSV system"
-#elif defined Q_OS_UNIXWARE
-            "UnixWare Seven, Open UNIX Eight"
 #else
             "Unknown"
 #endif
         ));
 
         // WebKit version.
-        // FIXME "+" in the version string?
-        QString version = QString(QLatin1String("%1.%2")).arg(QString::number(webkitMajorVersion),
-                                                               QString::number(webkitMinorVersion));
+        QString version = QString::number(webkitMajorVersion) + QLatin1Char('.') + QString::number(webkitMinorVersion);
         ua = ua.arg(version, version);
     }
 
