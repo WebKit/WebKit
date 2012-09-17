@@ -251,6 +251,12 @@ string getOrientation(const WebAccessibilityObject& object)
     return "AXOrientation: AXHorizontalOrientation";
 }
 
+string getValueDescription(const WebAccessibilityObject& object)
+{
+    string valueDescription = object.valueDescription().utf8();
+    return valueDescription.insert(0, "AXValueDescription: ");
+}
+
 string getAttributes(const WebAccessibilityObject& object)
 {
     // FIXME: Concatenate all attributes of the AccessibilityObject.
@@ -303,6 +309,7 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindProperty("intValue", &AccessibilityUIElement::intValueGetterCallback);
     bindProperty("minValue", &AccessibilityUIElement::minValueGetterCallback);
     bindProperty("maxValue", &AccessibilityUIElement::maxValueGetterCallback);
+    bindProperty("valueDescription", &AccessibilityUIElement::valueDescriptionGetterCallback);
     bindProperty("childrenCount", &AccessibilityUIElement::childrenCountGetterCallback);
     bindProperty("insertionPointLineNumber", &AccessibilityUIElement::insertionPointLineNumberGetterCallback);
     bindProperty("selectedTextRange", &AccessibilityUIElement::selectedTextRangeGetterCallback);
@@ -450,6 +457,11 @@ void AccessibilityUIElement::minValueGetterCallback(CppVariant* result)
 void AccessibilityUIElement::maxValueGetterCallback(CppVariant* result)
 {
     result->set(accessibilityObject().maxValueForRange());
+}
+
+void AccessibilityUIElement::valueDescriptionGetterCallback(CppVariant* result)
+{
+    result->set(getValueDescription(accessibilityObject()));
 }
 
 void AccessibilityUIElement::childrenCountGetterCallback(CppVariant* result)
