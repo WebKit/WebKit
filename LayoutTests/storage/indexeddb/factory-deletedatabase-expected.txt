@@ -20,6 +20,7 @@ store.get('key')
 PASS event.target.result is "value"
 db.setVersion('new version')
 request = indexedDB.deleteDatabase('database-to-delete')
+PASS request.result is undefined.
 indexedDB.open('database-to-delete')
 db = event.target.result
 db.setVersion('new version')

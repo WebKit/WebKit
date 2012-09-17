@@ -67,6 +67,7 @@ function deleteDatabase()
 
 function reopenDatabase()
 {
+    shouldBeUndefined("request.result");
     request = evalAndLog("indexedDB.open('database-to-delete')");
     request.onsuccess = startSetVersionAgain;
     request.onerror = unexpectedErrorCallback;

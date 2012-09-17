@@ -550,7 +550,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     m_id = InvalidId;
     m_intVersion = IDBDatabaseMetadata::NoIntVersion;
     m_objectStores.clear();
-    callbacks->onSuccess(SerializedScriptValue::nullValue());
+    callbacks->onSuccess(SerializedScriptValue::undefinedValue());
 }
 
 void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)

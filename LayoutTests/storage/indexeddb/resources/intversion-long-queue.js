@@ -109,7 +109,7 @@ function deleteDatabaseSuccessCallback(evt)
     preamble(evt);
     shouldBeNonNull("event.oldVersion");
     shouldBeNull("event.newVersion");
-    shouldBeNull("event.target.result");
+    shouldBeUndefined("event.target.result");
 }
 
 var gotUpgradeNeededEvent = false;

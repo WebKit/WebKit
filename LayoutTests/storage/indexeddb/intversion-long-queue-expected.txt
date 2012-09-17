@@ -63,7 +63,7 @@ FAIL event.version should be undefined. Was
 deleteDatabaseSuccessCallback():
 FAIL event.oldVersion should be non-null. Was undefined
 FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
-PASS event.target.result is null
+PASS event.target.result is undefined.
 
 upgradeNeededCallback():
 gotUpgradeNeededEvent = true

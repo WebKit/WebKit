@@ -1,3 +1,19 @@
+2012-09-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Result of IDBFactory.deleteDatabase() should be undefined, not null
+        https://bugs.webkit.org/show_bug.cgi?id=96538
+
+        Reviewed by Tony Chang.
+
+        Check result of IDBFactory.deleteDatabase() - one updated assertion, one added assertion.
+
+        * storage/indexeddb/factory-deletedatabase-expected.txt:
+        * storage/indexeddb/intversion-long-queue-expected.txt:
+        * storage/indexeddb/resources/factory-deletedatabase.js: Add new assertion.
+        (reopenDatabase):
+        * storage/indexeddb/resources/intversion-long-queue.js: Update existing assertion.
+        (deleteDatabaseSuccessCallback):
+
 2012-09-17  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96942
