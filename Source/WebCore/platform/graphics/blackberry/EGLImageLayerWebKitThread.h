@@ -56,7 +56,7 @@ private:
     bool m_needsDisplay;
     unsigned m_frontBufferTexture;
     unsigned m_fbo;
-    unsigned m_shader;
+    unsigned m_program;
     void* m_image;
     Vector<void*> m_garbage;
     IntSize m_size;

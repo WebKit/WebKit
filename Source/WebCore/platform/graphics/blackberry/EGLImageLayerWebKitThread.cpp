@@ -45,7 +45,7 @@ EGLImageLayerWebKitThread::EGLImageLayerWebKitThread(LayerType type)
     , m_needsDisplay(false)
     , m_frontBufferTexture(0)
     , m_fbo(0)
-    , m_shader(0)
+    , m_program(0)
     , m_image(0)
 {
     layerCompositingThread()->setClient(m_client.get());
@@ -58,7 +58,7 @@ EGLImageLayerWebKitThread::~EGLImageLayerWebKitThread()
     // before we get this far.
     ASSERT(!m_frontBufferTexture);
     ASSERT(!m_fbo);
-    ASSERT(!m_shader);
+    ASSERT(!m_program);
     ASSERT(!m_image);
 }
 
@@ -123,8 +123,8 @@ void EGLImageLayerWebKitThread::deleteFrontBuffer()
     m_frontBufferTexture = 0;
     glDeleteFramebuffers(1, &m_fbo);
     m_fbo = 0;
-    glDeleteShader(m_shader);
-    m_shader = 0;
+    glDeleteProgram(m_program);
+    m_program = 0;
 
     // The image is in our EGLImageLayerCompositingThreadClient's custody
     // at this point, and that object is responsible for deleting it.
@@ -216,15 +216,15 @@ void EGLImageLayerWebKitThread::createShaderIfNeeded()
         "  gl_FragColor = texture2D(s_texture, v_texCoord); \n"
         "}                                                  \n";
 
-    if (!m_shader) {
-        m_shader = LayerRenderer::loadShaderProgram(vertexShaderString, fragmentShaderStringRGBA);
-        if (!m_shader)
+    if (!m_program) {
+        m_program = LayerRenderer::loadShaderProgram(vertexShaderString, fragmentShaderStringRGBA);
+        if (!m_program)
             return;
-        glBindAttribLocation(m_shader, GLES2Program::PositionAttributeIndex, "a_position");
-        glBindAttribLocation(m_shader, GLES2Program::TexCoordAttributeIndex, "a_texCoord");
-        glLinkProgram(m_shader);
-        unsigned samplerLocation = glGetUniformLocation(m_shader, "s_texture");
-        glUseProgram(m_shader);
+        glBindAttribLocation(m_program, GLES2Program::PositionAttributeIndex, "a_position");
+        glBindAttribLocation(m_program, GLES2Program::TexCoordAttributeIndex, "a_texCoord");
+        glLinkProgram(m_program);
+        unsigned samplerLocation = glGetUniformLocation(m_program, "s_texture");
+        glUseProgram(m_program);
         glUniform1i(samplerLocation, 0);
     }
 }
@@ -255,7 +255,7 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
 
     glViewport(0, 0, m_size.width(), m_size.height());
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glUseProgram(m_shader);
+    glUseProgram(m_program);
     glBindTexture(GL_TEXTURE_2D, backBufferTexture);
     glColorMask(true, true, true, true);
 
