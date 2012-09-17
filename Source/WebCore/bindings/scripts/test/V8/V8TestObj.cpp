@@ -26,6 +26,7 @@
 #include "DOMStringList.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "FeatureObserver.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "IDBBindingUtilities.h"
@@ -227,6 +228,7 @@ static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
 static v8::Handle<v8::Value> testObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.testObjAttr._get");
+    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
     TestObj* imp = V8TestObj::toNative(info.Holder());
     return toV8(imp->testObjAttr(), info.Holder(), info.GetIsolate());
 }
@@ -234,6 +236,7 @@ static v8::Handle<v8::Value> testObjAttrAttrGetter(v8::Local<v8::String> name, c
 static void testObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.testObjAttr._set");
+    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setTestObjAttr(WTF::getPtr(v));
@@ -1094,6 +1097,7 @@ static v8::Handle<v8::Value> MethodWithArgsCallback(const v8::Arguments& args)
 static v8::Handle<v8::Value> objMethodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.objMethod");
+    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return toV8(imp->objMethod(), args.Holder(), args.GetIsolate());
 }
@@ -1928,7 +1932,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"unsignedLongLongAttr", TestObjV8Internal::unsignedLongLongAttrAttrGetter, TestObjV8Internal::unsignedLongLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttr' (Type: 'attribute' ExtAttr: '')
     {"stringAttr", TestObjV8Internal::stringAttrAttrGetter, TestObjV8Internal::stringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: '')
+    // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: 'V8MeasureAs')
     {"testObjAttr", TestObjV8Internal::testObjAttrAttrGetter, TestObjV8Internal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'XMLObjAttr' (Type: 'attribute' ExtAttr: '')
     {"XMLObjAttr", TestObjV8Internal::XMLObjAttrAttrGetter, TestObjV8Internal::XMLObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
@@ -2122,7 +2126,7 @@ COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCh
 v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.Constructor");
-
+    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 

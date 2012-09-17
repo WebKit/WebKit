@@ -27051,6 +27051,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\FeatureObserver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\FeatureObserver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\FocusController.cpp"
 				>
 			</File>

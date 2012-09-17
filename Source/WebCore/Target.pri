@@ -865,6 +865,7 @@ SOURCES += \
     page/DragController.cpp \
     page/EventHandler.cpp \
     page/EventSource.cpp \
+    page/FeatureObserver.cpp \
     page/FocusController.cpp \
     page/Frame.cpp \
     page/FrameActionScheduler.cpp \

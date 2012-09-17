@@ -49,7 +49,7 @@ module test {
         attribute long long                longLongAttr;
         attribute unsigned long long       unsignedLongLongAttr;
         attribute DOMString                stringAttr;
-        attribute TestObj                  testObjAttr;
+        attribute [V8MeasureAs=TestFeature] TestObj testObjAttr;
 
         JS, V8
         // WK_ucfirst, WK_lcfirst exceptional cases.
@@ -75,7 +75,7 @@ module test {
         void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
         long    longMethod();
         long    longMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
-        TestObj objMethod();
+        [V8MeasureAs=TestFeature] TestObj objMethod();
         TestObj objMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
         void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
@@ -97,7 +97,7 @@ module test {
 
         // 'Custom' extended attribute
         attribute [Custom] long            customAttr;
-        [Custom] void customMethod();
+        [Custom, V8MeasureAs=CustomTestFeature] void customMethod();
         [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
         void addEventListener(in DOMString type, 

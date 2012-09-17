@@ -210,7 +210,7 @@ static const V8DOMConfiguration::BatchedCallback V8TestSerializedScriptValueInte
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.Constructor");
-
+    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 

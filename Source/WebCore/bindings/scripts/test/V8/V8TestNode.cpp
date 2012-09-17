@@ -43,7 +43,7 @@ template <typename T> void V8_USE(T) { }
 v8::Handle<v8::Value> V8TestNode::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestNode.Constructor");
-
+    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 

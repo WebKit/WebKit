@@ -21,6 +21,7 @@
 #ifndef Page_h
 #define Page_h
 
+#include "FeatureObserver.h"
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
 #include "LayoutTypes.h"
@@ -196,6 +197,8 @@ namespace WebCore {
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
         BackForwardController* backForward() const { return m_backForwardController.get(); }
+
+        FeatureObserver* featureObserver() { return &m_featureObserver; }
 
         enum ViewMode {
             ViewModeInvalid,
@@ -390,6 +393,8 @@ namespace WebCore {
 
         EditorClient* m_editorClient;
         ValidationMessageClient* m_validationMessageClient;
+
+        FeatureObserver m_featureObserver;
 
         int m_frameCount;
         String m_groupName;

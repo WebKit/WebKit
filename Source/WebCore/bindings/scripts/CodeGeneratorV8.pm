@@ -813,6 +813,18 @@ static v8::Handle<v8::Value> ${implClassName}ConstructorGetter(v8::Local<v8::Str
 END
 }
 
+sub GenerateFeatureObservation
+{
+    my $measureAs = shift;
+
+    if ($measureAs) {
+        AddToImplIncludes("FeatureObserver.h");
+        return "    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::${measureAs});\n";
+    }
+
+    return "";
+}
+
 sub GenerateNormalAttrGetter
 {
     my $attribute = shift;
@@ -836,8 +848,9 @@ sub GenerateNormalAttrGetter
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${attrName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS(\"DOM.$implClassName.$attrName._get\");
+    INC_STATS("DOM.$implClassName.$attrName._get");
 END
+    push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
 
     if ($svgNativeType) {
         my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
@@ -1085,6 +1098,7 @@ static void ${implClassName}ReplaceableAttrSetter(v8::Local<v8::String> name, v8
 {
     INC_STATS("DOM.$implClassName.replaceable._set");
 END
+    push(@implContentDecls, GenerateFeatureObservation($dataNode->extendedAttributes->{"V8MeasureAs"}));
 
     if ($implClassName eq "DOMWindow" || $dataNode->extendedAttributes->{"CheckSecurity"}) {
         AddToImplIncludes("Frame.h");
@@ -1117,6 +1131,7 @@ sub GenerateNormalAttrSetter
 
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
     push(@implContentDecls, "    INC_STATS(\"DOM.$implClassName.$attrName._set\");\n");
+    push(@implContentDecls, GenerateFeatureObservation($attribute->signature->extendedAttributes->{"V8MeasureAs"}));
 
     # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
     # interface type, then if the incoming value does not implement that interface, a TypeError is
@@ -1423,6 +1438,7 @@ static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
     INC_STATS(\"DOM.$implClassName.$name\");
 END
+    push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
 
     foreach my $overload (@{$function->{overloads}}) {
         my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($overload);
@@ -1473,6 +1489,7 @@ static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
     INC_STATS(\"DOM.$implClassName.$name\");
 END
+    push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
 
     push(@implContentDecls, GenerateArgumentsCountCheck($function, $dataNode));
 
@@ -1799,13 +1816,15 @@ sub GenerateConstructorCallback
         }
     }
 
+    my $maybeObserveFeature = GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"});
+
     my @beforeArgumentList;
     my @afterArgumentList;
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${implClassName}.Constructor");
-
+    ${maybeObserveFeature}
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 
@@ -1976,6 +1995,8 @@ sub GenerateNamedConstructorCallback
         }
     }
 
+    my $maybeObserveFeature = GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"});
+
     my @beforeArgumentList;
     my @afterArgumentList;
 
@@ -1996,7 +2017,7 @@ END
 static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${implClassName}.Constructor");
-
+    ${maybeObserveFeature}
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 
