@@ -1,3 +1,22 @@
+2012-09-17  Bo Liu  <boliu@chromium.org>
+
+        Fix LoadImagesAutomatically cache behavior
+        https://bugs.webkit.org/show_bug.cgi?id=96829
+
+        Reviewed by Adam Barth.
+
+        I broke the caching behavior of LoadImagesAutomatically in
+        http://trac.webkit.org/changeset/128645
+
+        This restores the original behavior that AutoLoadImage does not block
+        loads from memory cache.
+
+        * fast/loader/display-image-unset-allows-cached-image-load-expected.txt: Added.
+        * fast/loader/display-image-unset-allows-cached-image-load.html: Added.
+        * fast/loader/resources/image1.html: Added.
+        * fast/loader/resources/image2.html: Added.
+        * platform/wk2/Skipped:
+
 2012-09-17  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt]REGRESSION(r128699): It made 2 fast/js/dfg tests assert

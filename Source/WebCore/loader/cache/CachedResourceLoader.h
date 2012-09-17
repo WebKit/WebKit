@@ -98,7 +98,6 @@ public:
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
 
-    bool imagesEnabled() const { return m_imagesEnabled; }
     void setImagesEnabled(bool);
 
     bool shouldDeferImageLoad(const KURL&) const;
@@ -141,6 +140,7 @@ private:
     void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();
 
+    bool clientAllowsImage(const KURL&) const;
     void reloadImagesIfNotDeferred();
     
     HashSet<String> m_validatedURLs;

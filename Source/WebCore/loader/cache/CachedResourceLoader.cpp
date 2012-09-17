@@ -532,7 +532,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // Do not load from cache if images are not enabled. The load for this image will be blocked
     // in requestImage.
-    if (existingResource->type() == CachedResource::ImageResource && shouldDeferImageLoad(existingResource->url()))
+    if (existingResource->type() == CachedResource::ImageResource && !clientAllowsImage(existingResource->url()))
         return Reload;
     
     // Don't reload resources while pasting.
@@ -646,12 +646,14 @@ void CachedResourceLoader::setImagesEnabled(bool enable)
     reloadImagesIfNotDeferred();
 }
 
+bool CachedResourceLoader::clientAllowsImage(const KURL& url) const
+{
+    return !frame() || frame()->loader()->client()->allowImage(m_imagesEnabled, url);
+}
+
 bool CachedResourceLoader::shouldDeferImageLoad(const KURL& url) const
 {
-    if (frame() && !frame()->loader()->client()->allowImage(m_imagesEnabled, url))
-        return true;
-
-    return !m_autoLoadImages;
+    return !clientAllowsImage(url) || !m_autoLoadImages;
 }
 
 void CachedResourceLoader::reloadImagesIfNotDeferred()

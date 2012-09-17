@@ -201,6 +201,7 @@ fast/canvas/webgl/webgl-array-invalid-ranges.html
 fast/canvas/webgl/webgl-specific.html
 fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
+fast/loader/display-image-unset-allows-cached-image-load.html
 fast/text/zero-font-size.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
