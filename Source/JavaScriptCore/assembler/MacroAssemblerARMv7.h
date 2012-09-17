@@ -313,6 +313,14 @@ public:
     {
         m_assembler.orr(dest, dest, src);
     }
+    
+    void or32(RegisterID src, AbsoluteAddress dest)
+    {
+        move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
+        load32(addressTempRegister, dataTempRegister);
+        or32(src, dataTempRegister);
+        store32(dataTempRegister, addressTempRegister);
+    }
 
     void or32(TrustedImm32 imm, RegisterID dest)
     {

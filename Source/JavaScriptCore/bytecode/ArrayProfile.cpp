@@ -43,6 +43,11 @@ void ArrayProfile::computeUpdatedPrediction(OperationInProgress operation)
         m_lastSeenStructure = 0;
     }
     
+    if (hasTwoOrMoreBitsSet(m_observedArrayModes)) {
+        m_structureIsPolymorphic = true;
+        m_expectedStructure = 0;
+    }
+    
     if (operation == Collection
         && m_expectedStructure
         && !Heap::isMarked(m_expectedStructure)) {

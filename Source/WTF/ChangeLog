@@ -1,3 +1,16 @@
+2012-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Array profiling has convergence issues
+        https://bugs.webkit.org/show_bug.cgi?id=96891
+
+        Reviewed by Gavin Barraclough.
+
+        Added functions for testing if something is a power of 2.
+
+        * wtf/MathExtras.h:
+        (hasZeroOrOneBitsSet):
+        (hasTwoOrMoreBitsSet):
+
 2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: now when we can detect instrumented classes we can

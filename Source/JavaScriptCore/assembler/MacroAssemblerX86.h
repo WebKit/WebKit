@@ -84,6 +84,11 @@ public:
         m_assembler.orl_im(imm.m_value, address.m_ptr);
     }
     
+    void or32(RegisterID reg, AbsoluteAddress address)
+    {
+        m_assembler.orl_rm(reg, address.m_ptr);
+    }
+    
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.subl_im(imm.m_value, address.m_ptr);

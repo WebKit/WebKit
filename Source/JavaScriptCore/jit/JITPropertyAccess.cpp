@@ -111,10 +111,8 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
-#endif
-    addSlowCase(branchTest8(Zero, Address(regT2, Structure::indexingTypeOffset()), TrustedImm32(HasArrayStorage)));
+    emitArrayProfilingSite(regT2, regT3, currentInstruction[4].u.arrayProfile);
+    addSlowCase(branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage)));
 
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     addSlowCase(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
@@ -236,10 +234,8 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     zeroExtend32ToPtr(regT1, regT1);
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
-#endif
-    addSlowCase(branchTest8(Zero, Address(regT2, Structure::indexingTypeOffset()), TrustedImm32(HasArrayStorage)));
+    emitArrayProfilingSite(regT2, regT3, currentInstruction[4].u.arrayProfile);
+    addSlowCase(branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage)));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     addSlowCase(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
@@ -656,13 +652,10 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     StructureStubInfo* stubInfo = &m_codeBlock->getStubInfo(returnAddress);
 
     // Check eax is an array
-    loadPtr(Address(regT0, JSCell::structureOffset()), regT3);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT3, m_codeBlock->getOrAddArrayProfile(stubInfo->bytecodeIndex)->addressOfLastSeenStructure());
-#endif
-    load8(Address(regT3, Structure::indexingTypeOffset()), regT3);
-    Jump failureCases1 = branchTest32(Zero, regT3, TrustedImm32(IsArray));
-    Jump failureCases2 = branchTest32(Zero, regT3, TrustedImm32(HasArrayStorage));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    emitArrayProfilingSiteForBytecodeIndex(regT2, regT1, stubInfo->bytecodeIndex);
+    Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
+    Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage));
 
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);

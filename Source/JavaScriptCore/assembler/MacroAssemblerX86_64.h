@@ -75,6 +75,12 @@ public:
         or32(imm, Address(scratchRegister));
     }
 
+    void or32(RegisterID reg, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister);
+        or32(reg, Address(scratchRegister));
+    }
+
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister);

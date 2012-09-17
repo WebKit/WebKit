@@ -541,6 +541,11 @@ public:
             m_formatter.immediate32(imm);
         }
     }
+
+    void orl_rm(RegisterID src, const void* addr)
+    {
+        m_formatter.oneByteOp(OP_OR_EvGv, src, addr);
+    }
 #endif
 
     void subl_rr(RegisterID src, RegisterID dst)

@@ -294,6 +294,16 @@ inline bool isWithinIntRange(float x)
     return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
 }
 
+template<typename T> inline bool hasZeroOrOneBitsSet(T value)
+{
+    return !((value - 1) & value);
+}
+
+template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
+{
+    return !hasZeroOrOneBitsSet(value);
+}
+
 #if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
 using std::isfinite;
 #if !COMPILER_QUIRK(GCC11_GLOBAL_ISINF_ISNAN)

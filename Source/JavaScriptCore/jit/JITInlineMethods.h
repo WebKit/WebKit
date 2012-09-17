@@ -529,7 +529,31 @@ inline void JIT::emitValueProfilingSite()
 {
     emitValueProfilingSite(m_bytecodeOffset);
 }
+#endif // ENABLE(VALUE_PROFILER)
+
+inline void JIT::emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile* arrayProfile)
+{
+    RegisterID structure = structureAndIndexingType;
+    RegisterID indexingType = structureAndIndexingType;
+    
+    if (canBeOptimized()) {
+        storePtr(structure, arrayProfile->addressOfLastSeenStructure());
+        load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
+        move(TrustedImm32(1), scratch);
+        lshift32(indexingType, scratch);
+        or32(scratch, AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+    } else
+        load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
+}
+
+inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex)
+{
+#if ENABLE(VALUE_PROFILER)
+    emitArrayProfilingSite(structureAndIndexingType, scratch, m_codeBlock->getOrAddArrayProfile(bytecodeIndex));
+#else
+    emitArrayProfilingSite(structureAndIndexingType, scratch, 0);
 #endif
+}
 
 #if USE(JSVALUE32_64)
 

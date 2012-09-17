@@ -210,10 +210,8 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT1, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
-#endif
-    addSlowCase(branchTest8(Zero, Address(regT1, Structure::indexingTypeOffset()), TrustedImm32(HasArrayStorage)));
+    emitArrayProfilingSite(regT1, regT3, currentInstruction[4].u.arrayProfile);
+    addSlowCase(branchTest32(Zero, regT1, TrustedImm32(HasArrayStorage)));
     
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
@@ -269,10 +267,8 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT1, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
-#endif
-    addSlowCase(branchTest8(Zero, Address(regT1, Structure::indexingTypeOffset()), TrustedImm32(HasArrayStorage)));
+    emitArrayProfilingSite(regT1, regT3, currentInstruction[4].u.arrayProfile);
+    addSlowCase(branchTest32(Zero, regT1, TrustedImm32(HasArrayStorage)));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
 
@@ -617,10 +613,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     
     // Check for array
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-#if ENABLE(VALUE_PROFILER)
-    storePtr(regT2, m_codeBlock->getOrAddArrayProfile(stubInfo->bytecodeIndex)->addressOfLastSeenStructure());
-#endif
-    load8(Address(regT2, Structure::indexingTypeOffset()), regT3);
+    emitArrayProfilingSiteForBytecodeIndex(regT2, regT3, stubInfo->bytecodeIndex);
     Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
     Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage));
     

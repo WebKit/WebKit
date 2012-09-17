@@ -1023,12 +1023,9 @@ _llint_op_get_array_length:
     loadp 32[PB, PC, 8], t1
     loadConstantOrVariableCell(t0, t3, .opGetArrayLengthSlow)
     loadp JSCell::m_structure[t3], t2
-    if VALUE_PROFILER
-        storep t2, ArrayProfile::m_lastSeenStructure[t1]
-    end
-    loadb Structure::m_indexingType[t2], t1
-    btiz t1, IsArray, .opGetArrayLengthSlow
-    btiz t1, HasArrayStorage, .opGetArrayLengthSlow
+    arrayProfile(t2, t1, t0)
+    btiz t2, IsArray, .opGetArrayLengthSlow
+    btiz t2, HasArrayStorage, .opGetArrayLengthSlow
     loadis 8[PB, PC, 8], t1
     loadp 64[PB, PC, 8], t2
     loadp JSObject::m_butterfly[t3], t0
@@ -1152,16 +1149,14 @@ _llint_op_put_by_id_transition_normal_out_of_line:
 _llint_op_get_by_val:
     traceExecution()
     loadis 16[PB, PC, 8], t2
-    loadis 24[PB, PC, 8], t3
     loadConstantOrVariableCell(t2, t0, .opGetByValSlow)
+    loadp JSCell::m_structure[t0], t2
+    loadp 32[PB, PC, 8], t3
+    arrayProfile(t2, t3, t1)
+    loadis 24[PB, PC, 8], t3
+    btiz t2, HasArrayStorage, .opGetByValSlow
     loadConstantOrVariableInt32(t3, t1, .opGetByValSlow)
     sxi2p t1, t1
-    loadp JSCell::m_structure[t0], t3
-    loadp 32[PB, PC, 8], t2
-    if VALUE_PROFILER
-        storep t3, ArrayProfile::m_lastSeenStructure[t2]
-    end
-    btbz Structure::m_indexingType[t3], HasArrayStorage, .opGetByValSlow
     loadp JSObject::m_butterfly[t0], t3
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
     loadis 8[PB, PC, 8], t0
@@ -1235,15 +1230,13 @@ _llint_op_put_by_val:
     traceExecution()
     loadis 8[PB, PC, 8], t0
     loadConstantOrVariableCell(t0, t1, .opPutByValSlow)
+    loadp JSCell::m_structure[t1], t2
+    loadp 32[PB, PC, 8], t0
+    arrayProfile(t2, t0, t3)
+    btiz t2, HasArrayStorage, .opPutByValSlow
     loadis 16[PB, PC, 8], t0
     loadConstantOrVariableInt32(t0, t2, .opPutByValSlow)
     sxi2p t2, t2
-    loadp JSCell::m_structure[t1], t3
-    loadp 32[PB, PC, 8], t0
-    if VALUE_PROFILER
-        storep t3, ArrayProfile::m_lastSeenStructure[t0]
-    end
-    btbz Structure::m_indexingType[t3], HasArrayStorage, .opPutByValSlow
     loadp JSObject::m_butterfly[t1], t0
     biaeq t2, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
     btpz ArrayStorage::m_vector[t0, t2, 8], .opPutByValEmpty

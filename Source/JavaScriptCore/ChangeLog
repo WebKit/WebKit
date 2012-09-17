@@ -1,3 +1,52 @@
+2012-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Array profiling has convergence issues
+        https://bugs.webkit.org/show_bug.cgi?id=96891
+
+        Reviewed by Gavin Barraclough.
+
+        Now each array profiling site merges in the indexing type it observed into
+        the m_observedArrayModes bitset. The ArrayProfile also uses this to detect
+        cases where the structure must have gone polymorphic (if the bitset is
+        polymorphic then the structure must be). This achieves something like the
+        best of both worlds: on the one hand, we get a probabilistic structure that
+        we can use to optimize the monomorphic structure case, but on the other hand,
+        we get an accurate view of the set of types that were encountered.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or32):
+        (MacroAssemblerARMv7):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::or32):
+        (MacroAssemblerX86):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::or32):
+        (MacroAssemblerX86_64):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::orl_rm):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::addressOfArrayModes):
+        (JSC::ArrayProfile::structureIsPolymorphic):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC):
+        (JSC::JIT::emitArrayProfilingSite):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-09-17  Mark Lam  <mark.lam@apple.com>
 
         Not reviewed. Added svn:eol-style native to unbreak some build bots.

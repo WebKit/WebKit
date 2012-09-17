@@ -187,6 +187,20 @@ macro slowPathForCall(advance, slowPath)
         end)
 end
 
+macro arrayProfile(structureAndIndexingType, profile, scratch)
+    const structure = structureAndIndexingType
+    const indexingType = structureAndIndexingType
+    if VALUE_PROFILER
+        storep structure, ArrayProfile::m_lastSeenStructure[profile]
+        loadb Structure::m_indexingType[structure], indexingType
+        move 1, scratch
+        lshifti indexingType, scratch
+        ori scratch, ArrayProfile::m_observedArrayModes[profile]
+    else
+        loadb Structure::m_indexingType[structure], indexingType
+    end
+end
+
 macro checkSwitchToJIT(increment, action)
     if JIT_ENABLED
         loadp CodeBlock[cfr], t0

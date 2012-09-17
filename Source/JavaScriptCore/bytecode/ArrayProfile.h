@@ -70,6 +70,7 @@ public:
     unsigned bytecodeOffset() const { return m_bytecodeOffset; }
     
     Structure** addressOfLastSeenStructure() { return &m_lastSeenStructure; }
+    ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
     
     void observeStructure(Structure* structure)
     {
@@ -79,7 +80,10 @@ public:
     void computeUpdatedPrediction(OperationInProgress operation = NoOperation);
     
     Structure* expectedStructure() const { return m_expectedStructure; }
-    bool structureIsPolymorphic() const { return m_structureIsPolymorphic; }
+    bool structureIsPolymorphic() const
+    {
+        return m_structureIsPolymorphic;
+    }
     bool hasDefiniteStructure() const
     {
         return !structureIsPolymorphic() && m_expectedStructure;

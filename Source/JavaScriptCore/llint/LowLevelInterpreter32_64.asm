@@ -1176,12 +1176,9 @@ _llint_op_get_array_length:
     loadp 16[PC], t1
     loadConstantOrVariablePayload(t0, CellTag, t3, .opGetArrayLengthSlow)
     loadp JSCell::m_structure[t3], t2
-    if VALUE_PROFILER
-        storep t2, ArrayProfile::m_lastSeenStructure[t1]
-    end
-    loadb Structure::m_indexingType[t2], t1
-    btiz t1, IsArray, .opGetArrayLengthSlow
-    btiz t1, HasArrayStorage, .opGetArrayLengthSlow
+    arrayProfile(t2, t1, t0)
+    btiz t2, IsArray, .opGetArrayLengthSlow
+    btiz t2, HasArrayStorage, .opGetArrayLengthSlow
     loadi 4[PC], t1
     loadp 32[PC], t2
     loadp JSObject::m_butterfly[t3], t0
@@ -1308,15 +1305,13 @@ _llint_op_put_by_id_transition_normal_out_of_line:
 _llint_op_get_by_val:
     traceExecution()
     loadi 8[PC], t2
-    loadi 12[PC], t3
     loadConstantOrVariablePayload(t2, CellTag, t0, .opGetByValSlow)
+    loadp JSCell::m_structure[t0], t2
+    loadp 16[PC], t3
+    arrayProfile(t2, t3, t1)
+    btiz t2, HasArrayStorage, .opGetByValSlow
+    loadi 12[PC], t3
     loadConstantOrVariablePayload(t3, Int32Tag, t1, .opGetByValSlow)
-    loadp JSCell::m_structure[t0], t3
-    loadp 16[PC], t2
-    if VALUE_PROFILER
-        storep t3, ArrayProfile::m_lastSeenStructure[t2]
-    end
-    btpz Structure::m_indexingType[t3], HasArrayStorage, .opGetByValSlow
     loadp JSObject::m_butterfly[t0], t3
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opGetByValSlow
     loadi 4[PC], t0
@@ -1392,14 +1387,12 @@ _llint_op_put_by_val:
     traceExecution()
     loadi 4[PC], t0
     loadConstantOrVariablePayload(t0, CellTag, t1, .opPutByValSlow)
+    loadp JSCell::m_structure[t1], t2
+    loadp 16[PC], t0
+    arrayProfile(t2, t0, t3)
+    btiz t2, HasArrayStorage, .opPutByValSlow
     loadi 8[PC], t0
     loadConstantOrVariablePayload(t0, Int32Tag, t2, .opPutByValSlow)
-    loadp JSCell::m_structure[t1], t3
-    loadp 16[PC], t0
-    if VALUE_PROFILER
-        storep t3, ArrayProfile::m_lastSeenStructure[t0]
-    end
-    btpz Structure::m_indexingType[t3], HasArrayStorage, .opPutByValSlow
     loadp JSObject::m_butterfly[t1], t0
     biaeq t2, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
     bieq ArrayStorage::m_vector + TagOffset[t0, t2, 8], EmptyValueTag, .opPutByValEmpty
