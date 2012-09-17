@@ -1,3 +1,21 @@
+2012-09-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf test results is incomprehensive
+        https://bugs.webkit.org/show_bug.cgi?id=94668
+
+        Reviewed by Eric Seidel.
+
+        Overhauled the results page to have a tabular view. Clicking on each row shows a flot graph we used to have.
+        For each run and test, we show the mean value with the standard deviation along with the percent difference
+        against the reference run chosen by the user if the difference is statistically significant; it also indicates
+        whether the new value is progression or not.
+
+        The unit of each test is adjusted automatically using SI prefixes (Kilo, Mega, Milli), and rows can be sorted
+        by each column. Time and memory results are separated into two tabs.
+
+        * resources/jquery.tablesorter.min.js: Added.
+        * resources/results-template.html:
+
 2012-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use performance.webkitNow in PerfTestRunner

@@ -6,12 +6,15 @@
 <script src="https://trac.webkit.org/browser/trunk/PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js?format=txt"></script>
 <script src="%AbsolutePathToWebKitTrunk%/PerformanceTests/resources/jquery.flot.min.js"></script>
 <script src="https://trac.webkit.org/browser/trunk/PerformanceTests/resources/jquery.flot.min.js?format=txt"></script>
+<script src="%AbsolutePathToWebKitTrunk%/PerformanceTests/resources/jquery.tablesorter.min.js"></script>
+<script src="https://trac.webkit.org/browser/trunk/PerformanceTests/resources/jquery.tablesorter.min.js?format=txt"></script>
 <script id="json" type="application/json">%PeformanceTestsResultsJSON%</script>
 <style type="text/css">
 
 section {
-    display: inline-block;
-    padding: 0 10px;
+    background: white;
+    padding: 10px;
+    position: relative;
 }
 
 section h1 {
@@ -27,79 +30,235 @@ section .tooltip {
     padding: 0px 5px;
 }
 
+body {
+    padding: 0px;
+    margin: 0px;
+    font-family: sans-serif;
+}
+
+table {
+    background: white;
+    width: 100%;
+}
+
+table, td, th {
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+tr.even {
+    background: #f6f6f6;
+}
+
+table td {
+    position: relative;
+    font-family: monospace;
+}
+
+th, td {
+    cursor: pointer;
+    cursor: hand;
+}
+
+th {
+    background: #e6eeee;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(244, 244, 244)), to(rgb(217, 217, 217)));
+    border: 1px solid #ccc;
+}
+
+th:after {
+    content: ' \25B8';
+}
+
+th.headerSortUp:after {
+    content: ' \25BE';
+}
+
+th.headerSortDown:after {
+    content: ' \25B4';
+}
+
+td.comparison, td.result {
+    text-align: right;
+}
+
+td.better {
+    color: #6c6;
+}
+
+td.worse {
+    color: #c66;
+}
+
+.checkbox {
+    display: inline-block;
+    background: #eee;
+    background: -webkit-gradient(linear, left bottom, left top, from(rgb(220, 220, 220)), to(rgb(200, 200, 200)));
+    border: inset 1px #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: small;
+    cursor: pointer;
+    cursor: hand;
+    -webkit-user-select: none;
+    font-weight: bold;
+}
+
+.checkbox span {
+    display: inline-block;
+    line-height: 100%;
+    padding: 5px 8px;
+    border: outset 1px transparent;
+}
+
+.checkbox .checked {
+    background: #e6eeee;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(235, 235, 235)));
+    border: outset 1px #eee;
+    border-radius: 5px;
+}
+
 </style>
 </head>
 <body>
-<div id="container"></div>
+<div style="padding: 0 10px;">
+Result <span id="time-memory" class="checkbox"><span class="checked">Time</span><span>Memory</span></span>
+Reference <span id="reference" class="checkbox"></span>
+</div>
 <script>
 
-function createPlot(testName) {
-    var section = $('<section><h1></h1><div class="plot"></div>'
-        + '<span class="tooltip"></span><section>');
-    var unit = testUnits[testName];
-    section.children('.plot').css({'width': 100 * maxLength + 'px', 'height': '300px'});
-    section.children('h1').html(testName + (unit ? ' (' + unit + ')' : ''));
-    $('#container').append(section);
-    
-    attachPlot(testName, section);
+$(document).ready(function () {
+    $('.checkbox').each(function (index, checkbox) {
+        $(checkbox).children('span').click(function (event) {
+            if ($(this).hasClass('checked'))
+                return;
+            $(checkbox).children('span').removeClass('checked');
+            $(this).addClass('checked');
+            $(checkbox).trigger('change', $(this));
+        });
+    });
+})
+
+</script>
+<table id="container"></table>
+<script>
+
+function TestResult(associatedTest, result, associatedRun) {
+    this.unit = function () { return result.unit; }
+    this.test = function () { return associatedTest; }
+    this.unscaledMean = function () { return result.avg; }
+    this.mean = function () { return associatedTest.scalingFactor() * result.avg; }
+    this.min = function () { return associatedTest.scalingFactor() * result.min; }
+    this.max = function () { return associatedTest.scalingFactor() * result.max; }
+    this.stdev = function () { return associatedTest.scalingFactor() * result.stdev; }
+    this.stdevRatio = function () { return result.stdev / result.avg; }
+    this.percentDifference = function(other) { return (other.mean() - this.mean()) / this.mean(); }
+    this.isStatisticallySignificant = function (other) {
+        var diff = Math.abs(other.mean() - this.mean());
+        return diff > this.stdev() && diff > other.stdev();
+    }
+    this.run = function () { return associatedRun; }
 }
 
-function attachPlot(testName, section, minIsZero) {
-    var averages = testResults[testName];
-    var color = 'rgb(230,50,50)';
+function TestRun(entry) {
+    this.description = function () { return entry['description']; }
+    this.webkitRevision = function () { return entry['webkit-revision']; }
+    this.label = function () {
+        var label = 'r' + this.webkitRevision();
+        if (this.description())
+            label += ' &dash; ' + this.description();
+        return label;
+    }
+}
 
-    var minMaxOptions = {lines: {show:true, lineWidth: 0},
-        color: color,
-        points: {show: true, radius: 1},
-        bars: {show: false}};
+function PerfTest(name) {
+    var testResults = [];
+    var cachedUnit = null;
+    var cachedScalingFactor = null;
 
-    function makeLowPlot(id, data) { return $.extend(true, {}, minMaxOptions, {id: id, data: data}); }    
-    function makeHighPlot(from, to, fill, data) { return $.extend(true, {}, minMaxOptions,
-        {id: to, data: data}); }
+    // We can't do this in TestResult because all results for each test need to share the same unit and the same scaling factor.
+    function computeScalingFactorIfNeeded() {
+        // FIXME: We shouldn't be adjusting units on every test result.
+        // We can only do this on the first test.
+        if (!testResults.length || cachedUnit)
+            return;
 
-    var plotData = [
-        makeLowPlot('min', testResultsMin[testName]),
-        makeHighPlot('min', 'max', 0.2, testResultsMax[testName]),
-        makeLowPlot('-&#963;', testResultsStdevLow[testName]), // small letter sgima.
-        makeHighPlot('-&#963;', '+&#963;', 0.4, testResultsStdevHigh[testName]),
-        {data: averages, color: color}];
+        var unit = testResults[0].unit(); // FIXME: We should verify that all results have the same unit.
+        var mean = testResults[0].unscaledMean(); // FIXME: We should look at all values.
+        var kilo = unit == 'bytes' ? 1024 : 1000;
+        if (mean > 10 * kilo * kilo && unit != 'ms') {
+            cachedScalingFactor = 1 / kilo / kilo;
+            cachedUnit = 'M ' + unit;
+        } else if (mean > 10 * kilo) {
+            cachedScalingFactor = 1 / kilo;
+            cachedUnit = unit == 'ms' ? 's' : ('K ' + unit);
+        } else {
+            cachedScalingFactor = 1;
+            cachedUnit = unit;
+        }
+    }
+
+    this.name = function () { return name; }
+    this.isMemoryTest = function () { return name.indexOf(':') >= 0; }
+    this.addResult = function (newResult) {
+        testResults.push(newResult);
+        cachedUnit = null;
+        cachedScalingFactor = null;
+    }
+    this.results = function () { return testResults; }
+    this.scalingFactor = function() {
+        computeScalingFactorIfNeeded();
+        return cachedScalingFactor;
+    }
+    this.unit = function () {
+        computeScalingFactorIfNeeded();
+        return cachedUnit;
+    }
+    this.smallerIsBetter = function () { return this.unit() == 'ms' || this.unit() == 'bytes'; }
+}
+
+var plotColor = 'rgb(230,50,50)';
+var subpointsPlotOptions = {
+    lines: {show:true, lineWidth: 0},
+    color: plotColor,
+    points: {show: true, radius: 1},
+    bars: {show: false}};
+
+var mainPlotOptions = {
+    xaxis: {
+        min: -0.5,
+        tickSize: 1,
+    },
+    crosshair: { mode: 'y' },
+    series: { shadowSize: 0 },
+    bars: {show: true, align: 'center', barWidth: 0.5},
+    lines: { show: false },
+    points: { show: true },
+    grid: {
+        borderWidth: 2,
+        backgroundColor: '#fff',
+        hoverable: true,
+        autoHighlight: false,
+    }
+};
+
+function createPlot(container, test) {
+    var section = $('<section><div class="plot"></div>'
+        + '<span class="tooltip"></span></section>');
+    section.children('.plot').css({'width': 100 * test.results().length + 'px', 'height': '300px'});
+    $(container).append(section);
 
     var plotContainer = section.children('.plot');
-    $.plot(plotContainer, plotData, {
-        xaxis: {
-            min: averages[0][0] - 0.5,
-            max: averages[averages.length - 1][0] + 0.5,
-            tickSize: 1,
-            ticks: averages.map(function (value, index) {
-                var label = 'r' + webkitRevisions[index];
-                if (descriptions[index])
-                    label += ' &dash; ' + descriptions[index]
-                return [index, label];
-            }),
-        },
-        yaxis: {
-            min: minIsZero ? 0 : Math.min.apply(Math, $.map(testResultsMin[testName], function (entry) { return entry[1]; })) * 0.98,
-            max: Math.max.apply(Math, $.map(testResultsMax[testName], function (entry) { return entry[1]; })) * (minIsZero ? 1.1 : 1.01),
-        },
-        crosshair: { mode: 'y' },
-        series: { shadowSize: 0 },
-        bars: {show: true, align: 'center', barWidth: 0.5},
-        lines: { show: false },
-        points: { show: true },
-        grid: {
-            borderWidth: 2,
-            backgroundColor: '#fff',
-            hoverable: true,
-            autoHighlight: false,
-        }
-    });
+    var minIsZero = true;
+    attachPlot(test, plotContainer, minIsZero);
 
     var tooltip = section.children('.tooltip');
     plotContainer.bind('plothover', function (event, position, item) {
         if (item) {
             var postfix = item.series.id ? ' (' + item.series.id + ')' : '';
             tooltip.html(item.datapoint[1].toPrecision(4) + postfix);
-            tooltip.css({left: item.pageX - tooltip.outerWidth() / 2, top: item.pageY + 10});
+            var sectionOffset = $(section).offset();
+            tooltip.css({left: item.pageX - sectionOffset.left - tooltip.outerWidth() / 2, top: item.pageY - sectionOffset.top + 10});
             tooltip.fadeIn(200);
         } else
             tooltip.hide();
@@ -107,51 +266,159 @@ function attachPlot(testName, section, minIsZero) {
     plotContainer.mouseout(function () {
         tooltip.hide();
     });
-
     plotContainer.click(function (event) {
         event.preventDefault();
-        attachPlot(testName, section, !minIsZero);
+        minIsZero = !minIsZero;
+        attachPlot(test, plotContainer, minIsZero);
+    });
+
+    return section;
+}
+
+function attachPlot(test, plotContainer, minIsZero) {
+    var results = test.results();
+
+    function makeSubpoints(id, callback) { return $.extend(true, {}, subpointsPlotOptions, {id: id, data: results.map(callback)}); }
+    var plotData = [
+        makeSubpoints('min', function (result, index) { return [index, result.min()]; }),
+        makeSubpoints('max', function (result, index) { return [index, result.max()]; }),
+        makeSubpoints('-&#963;', function (result, index) { return [index, result.mean() - result.stdev()]; }),
+        makeSubpoints('+&#963;', function (result, index) { return [index, result.mean() + result.stdev()]; }),
+        {data: results.map(function (result, index) { return [index, result.mean()]; }), color: plotColor}];
+
+    var currentPlotOptions = $.extend(true, {}, mainPlotOptions, {yaxis: {
+        min: minIsZero ? 0 : Math.min.apply(Math, results.map(function (result, index) { return result.min(); })) * 0.98,
+        max: Math.max.apply(Math, results.map(function (result, index) { return result.max(); })) * (minIsZero ? 1.1 : 1.01)}});
+
+    currentPlotOptions.xaxis.max = results.length - 0.5;
+    currentPlotOptions.xaxis.ticks = results.map(function (result, index) { return [index, result.run().label()]; });
+
+    $.plot(plotContainer, plotData, currentPlotOptions);
+}
+
+function toFixedWidthPrecision(value) {
+    var decimal = value.toFixed(2);
+    return decimal;
+}
+
+function formatPercentage(fraction) {
+    var percentage = fraction * 100;
+    return (fraction * 100).toFixed(2) + '%';
+}
+
+function createTable(tests, runs, shouldIgnoreMemory, referenceIndex) {
+    $('#container').html('<thead><tr><th>Test</th><th>Unit</th>' + runs.map(function (run, index) {
+        return '<th colspan="' + (index == referenceIndex ? 2 : 3) + '" class="{sorter: \'comparison\'}">' + run.label() + '</th>';
+    }).reduce(function (markup, cell) { return markup + cell; }, '') + '</tr></head><tbody></tbody>');
+
+    var testNames = [];
+    for (testName in tests)
+        testNames.push(testName);
+
+    testNames.sort().map(function (testName) {
+        var test = tests[testName];
+        if (test.isMemoryTest() != shouldIgnoreMemory)
+            createTableRow(test, test.results()[referenceIndex]);
+    });
+
+    $('#container').tablesorter({widgets: ['zebra']});
+}
+
+function createTableRow(test, referenceResult) {
+    var tableRow = $('<tr><td class="test">' + test.name() + '</td><td class="unit">' + test.unit() + '</td></tr>');
+
+    tableRow.append(test.results().map(function (result, index) {
+        var secondCell = '';
+        var hiddenValue = '';
+        if (result !== referenceResult) {
+            var percentDifference = referenceResult.percentDifference(result);
+            var better = test.smallerIsBetter() ? percentDifference < 0 : percentDifference > 0;
+            var comparison = '';
+            var className = 'comparison';
+            if (referenceResult.isStatisticallySignificant(result)) {
+                comparison = formatPercentage(Math.abs(percentDifference)) + (better ? ' Better' : ' Worse&nbsp;');
+                className += better ? ' better' : ' worse';
+            }
+            hiddenValue = '<span style="display: none">|' + comparison + '</span>';
+            secondCell = '</td><td class="' + className + '">' + comparison;
+        }
+
+        // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
+        return '<td class="result">' + toFixedWidthPrecision(result.mean()) + hiddenValue + '</td><td class="stdev">&plusmn; '
+            + formatPercentage(result.stdevRatio()) + secondCell + '</td>';
+    }).reduce(function (markup, cell) { return markup + cell; }, ''));
+
+    $('#container').children('tbody').last().append(tableRow);
+
+    tableRow.click(function (event) {
+        if (event.target != tableRow[0] && event.target.parentNode != tableRow[0])
+            return;
+
+        event.preventDefault();
+
+        var firstCell = tableRow.children('td').first();
+        if (firstCell.children('section').length) {
+            firstCell.children('section').remove();
+            tableRow.children('td').css({'padding-bottom': ''});
+        } else {
+            var plot = createPlot(firstCell, test);
+            plot.css({'position': 'absolute', 'z-index': 2});
+            var offset = tableRow.offset();
+            offset.left += 1;
+            offset.top += tableRow.outerHeight();
+            plot.offset(offset);
+            tableRow.children('td').css({'padding-bottom': plot.outerHeight() + 5});
+        }
+
+        return false;
     });
 }
 
-var results = JSON.parse(document.getElementById('json').textContent);
-var tests = [];
-var testResults = {}, testResultsMin = {}, testResultsMax = {}, testResultsStdevLow = {}, testResultsStdevHigh = {};
-var testUnits = {};
-var webkitRevisions = [];
-var descriptions = [];
-var maxLength = 0;
-$.each(results, function (index, entry) {
-    webkitRevisions.push(entry['webkit-revision']);
-    descriptions.push(entry['description']);
-    $.each(entry.results, function (test, result) {
-        if (tests.indexOf(test) < 0)
-            tests.push(test);
-        if (!testResults[test]) {
-            testResults[test] = [];
-            testResultsMin[test] = [];
-            testResultsMax[test] = [];
-            testResultsStdevLow[test] = [];
-            testResultsStdevHigh[test] = [];
-        }
-        if (typeof result == 'number')
-            testResults[test].push([index, result]);
-        else {
-            testResults[test].push([index, result['avg']]);
-            if ('min' in result)
-                testResultsMin[test].push([index, result['min']]);
-            if ('max' in result)
-                testResultsMax[test].push([index, result['max']]);
-            if ('stdev' in result) {
-                testResultsStdevLow[test].push([index, result['avg'] - result['stdev']]);
-                testResultsStdevHigh[test].push([index, result['avg'] + result['stdev']]);
-            }
-        }
-        maxLength = Math.max(maxLength, testResults[test].length);
-        testUnits[test] = result.unit;
+function init() {
+    $.tablesorter.addParser({
+        id: 'comparison',
+        is: function(s) {
+            return s.indexOf('|') >= 0;
+        },
+        format: function(s) {
+            var parsed = parseFloat(s.substring(s.indexOf('|') + 1));
+            return isNaN(parsed) ? 0 : parsed;
+        },
+        type: 'numeric',
     });
-});
-$.each(tests.sort(), function (index, test) { createPlot(test); });
+
+    var runs = [];
+    var tests = {};
+    $.each(JSON.parse(document.getElementById('json').textContent), function (index, entry) {
+        var run = new TestRun(entry);
+        runs.push(run);
+        $.each(entry.results, function (test, result) {
+            if (!tests[test])
+                tests[test] = new PerfTest(test);
+            tests[test].addResult(new TestResult(tests[test], result, run));
+        });
+    });
+
+    var shouldIgnoreMemory= true;
+    var referenceIndex = 0;
+    createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+
+    $('#time-memory').bind('change', function (event, checkedElement) {
+        shouldIgnoreMemory = checkedElement.textContent == 'Time';
+        createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+    });
+
+    runs.map(function (run, index) {
+        $('#reference').append('<span value="' + index + '"' + (index == referenceIndex ? ' class="checked"' : '') + '>' + run.label() + '</span>');
+    })
+
+    $('#reference').bind('change', function (event, checkedElement) {
+        referenceIndex = parseInt(checkedElement.getAttribute('value'));
+        createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+    });
+}
+
+init();
 
 </script>
 </body>
