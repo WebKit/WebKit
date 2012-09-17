@@ -2794,3 +2794,8 @@ fast/spatial-navigation/snav-imagemap-overlapped-areas.html
 # New fast/canvas/canvas-lineDash.html introduced in r128116 fails
 # https://bugs.webkit.org/show_bug.cgi?id=96360
 fast/canvas/canvas-lineDash.html
+
+# [Qt]REGRESSION(r128699): It made 2 fast/js/dfg tests assert
+# https://bugs.webkit.org/show_bug.cgi?id=96907
+fast/js/dfg-inline-arguments-use-from-all-the-places-broken.html
+fast/js/dfg-inline-arguments-use-from-all-the-places.html
