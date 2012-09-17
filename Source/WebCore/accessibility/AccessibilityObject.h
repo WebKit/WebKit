@@ -143,6 +143,7 @@ enum AccessibilityRole {
     LandmarkMainRole,
     LandmarkNavigationRole,
     LandmarkSearchRole,
+    LegendRole,
     LinkRole,
     ListRole,
     ListBoxRole,

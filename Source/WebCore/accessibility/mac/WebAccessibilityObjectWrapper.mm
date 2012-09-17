@@ -1579,7 +1579,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SpinButtonRole, NSAccessibilityIncrementorRole },
         { FooterRole, NSAccessibilityGroupRole },
         { ToggleButtonRole, NSAccessibilityButtonRole },
-        { CanvasRole, NSAccessibilityImageRole }
+        { CanvasRole, NSAccessibilityImageRole },
+        { LegendRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

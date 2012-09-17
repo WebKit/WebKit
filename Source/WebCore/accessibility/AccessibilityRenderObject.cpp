@@ -3192,6 +3192,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return ListMarkerRole;
     if (node && node->hasTagName(buttonTag))
         return buttonRoleType();
+    if (node && node->hasTagName(legendTag))
+        return LegendRole;
     if (m_renderer->isText())
         return StaticTextRole;
     if (cssBox && cssBox->isImage()) {
