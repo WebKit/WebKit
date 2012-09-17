@@ -1,3 +1,10 @@
+2012-09-17  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96942
+        [Mac] Failing test http/tests/inspector/network/network-xhr-replay.html
+
+        * platform/mac/Skipped: Skipping a test for the newly added feature.
+
 2012-09-17  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Enable shape-inside for percentage lengths based on logical height
