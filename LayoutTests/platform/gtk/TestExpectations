@@ -365,7 +365,6 @@ BUGWK73528 SKIP : networkinformation/event-after-navigation.html = TEXT
 // Touch adjustment not enabled
 BUGWK78801 : touchadjustment = TEXT
 BUGWK78801 : touchadjustment/iframe.html = TIMEOUT
-BUGWK78801 : touchadjustment/iframe-boundary.html = TIMEOUT
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
@@ -555,13 +554,7 @@ BUGWK91314 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGWK94119 : storage/websql/database-lock-after-reload.html = TEXT PASS
 
-BUGWK93727 RELEASE : fast/events/keyevent-iframe-removed-crash.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-legacy.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-not-allowed.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
-BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
+BUGWK93812 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TIMEOUT PASS
 
 BUGWK95430 : fast/layers/scroll-no-visible-content-but-visible-descendant.html = IMAGE PASS
 
@@ -1361,16 +1354,15 @@ BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 
 BUGWK96196 : accessibility/spinbutton-value.html = TEXT
 
-BUGWK96226 : fast/spatial-navigation/snav-div-overflow-scrol-hidden.html = TEXT
-BUGWK96226 : fast/spatial-navigation/snav-fully-aligned-vertically.html = TEXT
-BUGWK96226 : fast/spatial-navigation/snav-imagemap-overlapped-areas.html = TEXT
-
 BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
-
 
 BUGWK73003 DEBUG : editing/spelling/spellcheck-async.html = TEXT
 BUGWK73003 DEBUG : editing/spelling/spellcheck-paste.html = PASS
 BUGWK50740 DEBUG : editing/spelling/spellcheck-queue.html = TEXT
+
+BUGWK96899 : fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html = TEXT
+
+BUGWK96900 : fast/text/stale-TextLayout-from-first-line.html = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

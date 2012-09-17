@@ -1,3 +1,16 @@
+2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing stale expectations for already fixed regressions.
+
+        Adding two failure expectations for tests added in r128645 and r128713.
+
+        Rebaselining fast/css/word-space-extra.html after r128692.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+
 2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Several CSS tests need rebaseline after r126911
