@@ -56,7 +56,8 @@ class Node
             $activeBackend = name
             send("lower" + name)
         rescue => e
-            raise "Got error #{e} at #{codeOriginString}"
+            e.message << "At #{codeOriginString}"
+            raise e
         end
     end
 end
