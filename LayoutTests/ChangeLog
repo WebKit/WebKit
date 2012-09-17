@@ -1,3 +1,20 @@
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Several CSS tests need rebaseline after r126911
+        https://bugs.webkit.org/show_bug.cgi?id=96898
+
+        Unreviewed EFL gardening.
+
+        Rebaseline 3 CSS tests due to r126911.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/efl/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        * platform/efl/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/efl/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * platform/efl/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png:
+        * platform/efl/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+
 2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
