@@ -1,3 +1,20 @@
+2012-09-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: automatically detect if class has reportMemoryUsage method
+        https://bugs.webkit.org/show_bug.cgi?id=96756
+
+        Reviewed by Alexander Pavlov.
+
+        Test that reportMemoryUsage method will be called on the instrumented object
+        even if it is a template.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore):
+        (InstrumentedTemplate):
+        (WebCore::InstrumentedTemplate::InstrumentedTemplate):
+        (WebCore::InstrumentedTemplate::reportMemoryUsage):
+        (WebCore::TEST):
+
 2012-09-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: OwnPtr and RefPtr reported by pointer can be double counted by the memory instrumentation

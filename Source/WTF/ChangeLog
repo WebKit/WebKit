@@ -1,3 +1,25 @@
+2012-09-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: automatically detect if class has reportMemoryUsage method
+        https://bugs.webkit.org/show_bug.cgi?id=96756
+
+        Reviewed by Alexander Pavlov.
+
+        Implemeted automatic selector of the memory reporting method. If
+        an object has reportMemoryUsage method then call it. Otherwise
+        count only object's self size. As the next step we will delete
+        addInstrumentedMember and addInstrumentedObjectImpl and will
+        have only addMember and addObjectImpl that would automatically
+        call reportMemoryUsage if it is present.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::selectInstrumentationMethod):
+        (MemoryInstrumentation):
+        (WTF::MemoryInstrumentation::reportObjectMemoryUsage):
+        (WTF::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        (WTF::::process):
+
 2012-09-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: OwnPtr and RefPtr reported by pointer can be double counted by the memory instrumentation

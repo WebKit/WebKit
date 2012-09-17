@@ -50,6 +50,7 @@ namespace {
 
 class NotInstrumented {
 public:
+    NotInstrumented(const char* = 0) { }
     char m_data[42];
 };
 
@@ -275,7 +276,6 @@ TEST(MemoryInstrumentationTest, visitStrings)
     }
 }
 
-
 class TwoPointersToRefPtr {
 public:
     TwoPointersToRefPtr(const RefPtr<StringImpl>& value) : m_ptr1(&value), m_ptr2(&value)  { }
@@ -324,6 +324,46 @@ TEST(MemoryInstrumentationTest, ownPtrPtr)
     impl.addRootObject(root);
     EXPECT_EQ(sizeof(OwnPtr<NotInstrumented>), impl.reportedSizeForAllTypes());
     EXPECT_EQ(1, visitedObjects.size());
+}
+
+template<typename T>
+class InstrumentedTemplate {
+public:
+    template<typename V>
+    InstrumentedTemplate(const V& value) : m_value(value) { }
+
+    template<typename MemoryObjectInfo>
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        info.addMember(m_value);
+    }
+
+    T m_value;
+};
+
+TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
+{
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+
+        OwnPtr<InstrumentedTemplate<String> > value = adoptPtr(new InstrumentedTemplate<String>(""));
+        InstrumentedOwner<InstrumentedTemplate<String>* > root(value.get());
+        impl.addRootObject(root);
+        EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+
+        OwnPtr<InstrumentedTemplate<NotInstrumented> > value = adoptPtr(new InstrumentedTemplate<NotInstrumented>(""));
+        InstrumentedOwner<InstrumentedTemplate<NotInstrumented>* > root(value.get());
+        impl.addRootObject(root);
+        EXPECT_EQ(sizeof(InstrumentedTemplate<NotInstrumented>), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(1, visitedObjects.size());
+    }
 }
 
 } // namespace
