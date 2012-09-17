@@ -6497,6 +6497,7 @@
         ],
         'webinspector_elements_js_files': [
             'inspector/front-end/CSSNamedFlowCollectionsView.js',
+            'inspector/front-end/CSSNamedFlowView.js',
             'inspector/front-end/ElementsPanel.js',
             'inspector/front-end/EventListenersSidebarPane.js',
             'inspector/front-end/MetricsSidebarPane.js',
@@ -6667,6 +6668,9 @@
             'inspector/front-end/Images/profilesSilhouette.png',
             'inspector/front-end/Images/programCounterBorder.png',
             'inspector/front-end/Images/radioDot.png',
+            'inspector/front-end/Images/regionEmpty.png',
+            'inspector/front-end/Images/regionFit.png',
+            'inspector/front-end/Images/regionOverset.png',
             'inspector/front-end/Images/resourceCSSIcon.png',
             'inspector/front-end/Images/resourceDocumentIcon.png',
             'inspector/front-end/Images/resourceDocumentIconSmall.png',

@@ -128,20 +128,15 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         for (var i = 0; i < flow.regions.length; ++i)
             this._regionNodes[flow.regions[i].nodeId] = flowHash;
 
-        var container = document.createElement("div");
-        container.createChild("div", "selection");
-        container.createChild("span", "title").createChild("span").textContent = flow.name;
+        var flowTreeItem = new WebInspector.FlowTreeElement(flowContainer);
+        flowTreeItem.onselect = this._selectNamedFlowTab.bind(this, flowHash);
 
-        var flowTreeElement = new TreeElement(container, flowContainer);
-        if (flow.overset)
-            flowTreeElement.title.addStyleClass("named-flow-overflow")
-
-        flowContainer.flowTreeElement = flowTreeElement;
+        flowContainer.flowTreeItem = flowTreeItem;
         this._namedFlows[flowHash] = flowContainer;
 
         if (!this._flowTree.children.length)
             this._setSidebarHasContent(true);
-        this._flowTree.appendChild(flowTreeElement);
+        this._flowTree.appendChild(flowTreeItem);
     },
 
     /**
@@ -151,7 +146,9 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
     {
         var flowContainer = this._namedFlows[flowHash];
 
-        this._flowTree.removeChild(flowContainer.flowTreeElement);
+        if (this._tabbedPane._tabsById[flowHash])
+            this._tabbedPane.closeTab(flowHash);
+        this._flowTree.removeChild(flowContainer.flowTreeItem);
 
         var flow = flowContainer.flow;
         for (var i = 0; i < flow.content.length; ++i)
@@ -189,12 +186,10 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         for (var i = 0; i < flow.regions.length; ++i)
             this._regionNodes[flow.regions[i].nodeId] = flowHash;
 
-        if (flow.overset !== oldFlow.overset) {
-            if (flow.overset)
-                flowContainer.flowTreeElement.title.addStyleClass("named-flow-overflow");
-            else
-                flowContainer.flowTreeElement.title.removeStyleClass("named-flow-overflow");
-        }
+        flowContainer.flowTreeItem.setOverset(flow.overset);
+
+        if (flowContainer.flowView)
+            flowContainer.flowView.flow = flow;
     },
 
     /**
@@ -268,6 +263,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
     _showNamedFlow: function(flowHash)
     {
         this._selectNamedFlowInSidebar(flowHash);
+        this._selectNamedFlowTab(flowHash);
     },
 
     /**
@@ -275,7 +271,26 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
      */
     _selectNamedFlowInSidebar: function(flowHash)
     {
-        this._namedFlows[flowHash].flowTreeElement.select(true);
+        this._namedFlows[flowHash].flowTreeItem.select(true);
+    },
+
+    /**
+     * @param {string} flowHash
+     */
+    _selectNamedFlowTab: function(flowHash)
+    {
+        var flowContainer = this._namedFlows[flowHash];
+
+        if (this._tabbedPane.selectedTabId === flowHash)
+            return;
+
+        if (!this._tabbedPane.selectTab(flowHash)) {
+            if (!flowContainer.flowView)
+                flowContainer.flowView = new WebInspector.CSSNamedFlowView(flowContainer.flow);
+
+            this._tabbedPane.appendTab(flowHash, flowContainer.flow.name, flowContainer.flowView);
+            this._tabbedPane.selectTab(flowHash);
+        }
     },
 
     /**
@@ -285,6 +300,22 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
     {
         var node = /** @type {WebInspector.DOMNode} */ event.data;
         this._showNamedFlowForNode(node);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _tabSelected: function(event)
+    {
+        this._selectNamedFlowInSidebar(event.data.tabId);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _tabClosed: function(event)
+    {
+        this._namedFlows[event.data.tabId].flowTreeItem.deselect();
     },
 
     /**
@@ -323,6 +354,9 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, this._regionLayoutUpdated, this);
 
         WebInspector.panel("elements").treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
+
+        this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
+        this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
     },
 
     willHide: function()
@@ -334,7 +368,49 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, this._regionLayoutUpdated, this);
 
         WebInspector.panel("elements").treeOutline.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
+
+        this._tabbedPane.removeEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
+        this._tabbedPane.removeEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
     }
 }
 
 WebInspector.CSSNamedFlowCollectionsView.prototype.__proto__ = WebInspector.SplitView.prototype;
+
+/**
+ * @constructor
+ * @extends {TreeElement}
+ */
+WebInspector.FlowTreeElement = function(flowContainer)
+{
+    var container = document.createElement("div");
+    container.createChild("div", "selection");
+    container.createChild("span", "title").createChild("span").textContent = flowContainer.flow.name;
+
+    TreeElement.call(this, container, flowContainer, false);
+
+    this._overset = false;
+    this.setOverset(flowContainer.flow.overset);
+}
+
+WebInspector.FlowTreeElement.prototype = {
+    /**
+     * @param {boolean} newOverset
+     */
+    setOverset: function(newOverset)
+    {
+        if (this._overset === newOverset)
+            return;
+
+        if (newOverset) {
+            this.title.addStyleClass("named-flow-overflow");
+            this.tooltip = WebInspector.UIString("Overflows.");
+        } else {
+            this.title.removeStyleClass("named-flow-overflow");
+            this.tooltip = "";
+        }
+
+        this._overset = newOverset;
+    }
+}
+
+WebInspector.FlowTreeElement.prototype.__proto__ = TreeElement.prototype;

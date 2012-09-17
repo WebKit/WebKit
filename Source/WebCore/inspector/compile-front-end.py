@@ -180,6 +180,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "CSSNamedFlowCollectionsView.js",
+            "CSSNamedFlowView.js",
             "ElementsPanel.js",
             "ElementsPanelDescriptor.js",
             "EventListenersSidebarPane.js",

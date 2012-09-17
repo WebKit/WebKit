@@ -64,14 +64,34 @@
     position: relative;
 }
 
-.css-named-flow-collections-view .split-view-sidebar-left .named-flow-overflow::before {
-    content: url(Images/namedFlowOverflow.png);
+.css-named-flow-collections-view .split-view-sidebar-left .named-flow-overflow::before, .css-named-flow-collections-view .region-empty:before, .css-named-flow-collections-view .region-fit::before, .css-named-flow-collections-view .region-overset::before {
     cursor: default;
     float: left;
     height: 10px;
-    margin: 2px 3px 0px -13px;
+    margin-top: 1px;
     opacity: 0.75;
     position: relative;
     vertical-align: middle;
     z-index: 1;
+}
+
+.css-named-flow-collections-view .split-view-sidebar-left .named-flow-overflow::before {
+    content: url(Images/namedFlowOverflow.png);
+    margin: 2px 3px 0px -13px;
+}
+
+.css-named-flow-collections-view .region-empty::before {
+    content: url(Images/regionEmpty.png);
+}
+
+.css-named-flow-collections-view .region-fit::before {
+    content: url(Images/regionFit.png);
+}
+
+.css-named-flow-collections-view .region-overset::before {
+    content: url(Images/regionOverset.png);
+}
+
+.css-named-flow-collections-view .split-view-contents .named-flow-element {
+    margin: 0px 0px 0px -24px;
 }

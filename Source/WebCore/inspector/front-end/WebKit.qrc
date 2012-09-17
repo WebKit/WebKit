@@ -32,6 +32,7 @@
     <file>CSSCompletions.js</file>
     <file>CSSKeywordCompletions.js</file>
     <file>CSSNamedFlowCollectionsView.js</file>
+    <file>CSSNamedFlowView.js</file>
     <file>CSSSelectorProfileView.js</file>
     <file>CSSStyleModel.js</file>
     <file>cm/codemirror.css</file>
@@ -307,6 +308,9 @@
     <file>Images/profilesSilhouette.png</file>
     <file>Images/programCounterBorder.png</file>
     <file>Images/radioDot.png</file>
+    <file>Images/regionEmpty.png</file>
+    <file>Images/regionFit.png</file>
+    <file>Images/regionOverset.png</file>
     <file>Images/resourceCSSIcon.png</file>
     <file>Images/resourceDocumentIcon.png</file>
     <file>Images/resourceDocumentIconSmall.png</file>

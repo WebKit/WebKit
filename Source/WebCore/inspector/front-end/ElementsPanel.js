@@ -29,6 +29,7 @@
  */
 
 importScript("CSSNamedFlowCollectionsView.js");
+importScript("CSSNamedFlowView.js");
 importScript("EventListenersSidebarPane.js");
 importScript("MetricsSidebarPane.js");
 importScript("PropertiesSidebarPane.js");

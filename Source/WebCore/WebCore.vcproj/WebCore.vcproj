@@ -76034,6 +76034,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CSSNamedFlowView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\cssNamedFlows.css"
 					>
 				</File>
