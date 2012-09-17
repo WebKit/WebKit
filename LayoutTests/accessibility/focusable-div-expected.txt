@@ -1,0 +1,20 @@
+A
+B
+C
+This test makes sure that a generic focusable div can get accessibility focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement == link is true
+PASS lastChar(axLink.title) is "A"
+PASS document.activeElement == div is true
+PASS lastChar(axDiv.title) is "B"
+PASS document.activeElement == div2 is true
+PASS lastChar(axDiv2.title) is "C"
+PASS document.activeElement == div3 is true
+PASS lastChar(axDiv3.description) is "D"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
