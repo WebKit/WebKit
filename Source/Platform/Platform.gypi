@@ -46,6 +46,7 @@
             'chromium/public/WebCommon.h',
             'chromium/public/WebCompositor.h',
             'chromium/public/WebCompositorSupport.h',
+            'chromium/public/WebCompositorSoftwareOutputDevice.h',
             'chromium/public/WebCompositorOutputSurface.h',
             'chromium/public/WebCompositorOutputSurfaceClient.h',
             'chromium/public/WebContentLayer.h',

@@ -30,6 +30,7 @@ namespace WebKit {
 
 class WebCompositorFrame;
 class WebGraphicsContext3D;
+class WebCompositorSoftwareOutputDevice;
 class WebCompositorOutputSurfaceClient;
 
 // Represents the output surface for a compositor. The compositor owns
@@ -59,14 +60,14 @@ public:
 
     virtual const Capabilities& capabilities() const = 0;
 
-    // Obtains the context associated with this output surface. In the event of a lost context, the
-    // entire output surface should be recreated.
+    // Obtain the 3d context or the software device associated with this output surface. Either of these may return a null pointer, but not both.
+    // In the event of a lost context, the entire output surface should be recreated.
     virtual WebGraphicsContext3D* context3D() const = 0;
+    virtual WebCompositorSoftwareOutputDevice* softwareDevice() const { return 0; }
 
     // Sends frame data to the parent compositor. This should only be called
     // when capabilities().hasParentCompositor.
     virtual void sendFrameToParentCompositor(const WebCompositorFrame&) = 0;
-
 };
 
 }

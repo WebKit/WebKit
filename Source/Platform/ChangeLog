@@ -1,3 +1,25 @@
+2012-09-17  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] WebCompositorOutputSurface software API
+        https://bugs.webkit.org/show_bug.cgi?id=96851
+
+        Reviewed by James Robinson.
+
+        This adds a software-based output option to
+        WebCompositorOutputSurface, for use with the new software compositor.
+        If returns a "tear-off" which provides a WebImage object that can be
+        written to or read.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorOutputSurface.h:
+        (WebKit):
+        (WebCompositorOutputSurface):
+        (WebKit::WebCompositorOutputSurface::surfaceSoftware):
+        * chromium/public/WebCompositorOutputSurfaceSoftware.h: Added.
+        (WebKit):
+        (WebCompositorOutputSurfaceSoftware):
+        (WebKit::WebCompositorOutputSurfaceSoftware::~WebCompositorOutputSurfaceSoftware):
+
 2012-09-14  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add the ubercomp WebDelegatedRendererLayer
