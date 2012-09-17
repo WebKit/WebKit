@@ -1294,6 +1294,19 @@ const AtomicString& AccessibilityObject::invalidStatus() const
     return ariaInvalid;
 }
  
+bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
+{
+    Node* elementNode = node();
+    if (!elementNode)
+        return false;
+    
+    if (!elementNode->isElementNode())
+        return false;
+    
+    Element* element = static_cast<Element*>(elementNode);
+    return element->fastHasAttribute(attribute);
+}
+    
 const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
     Node* elementNode = node();
