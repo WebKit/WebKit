@@ -264,6 +264,20 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
     return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopNode);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+static inline bool shouldGesturesTriggerActive()
+{
+    // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
+    // rely on them to set the active state. Unfortunately there's no generic way to
+    // know in advance what event types are supported.
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 #if !PLATFORM(MAC)
 
 inline bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
@@ -2400,9 +2414,20 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     if (gestureEvent.type() == PlatformEvent::GestureScrollEnd || gestureEvent.type() == PlatformEvent::GestureScrollUpdate)
         eventTarget = m_scrollGestureHandlingNode.get();
 
-    if (!eventTarget) {
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::TouchEvent;
+    if (gestureEvent.type() == PlatformEvent::GestureTapDown)
+        hitType |= HitTestRequest::Active;
+    else if (gestureEvent.type() == PlatformEvent::GestureTap || gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
+        hitType |= HitTestRequest::Release;
+    else
+        hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
+
+    if (!shouldGesturesTriggerActive())
+        hitType |= HitTestRequest::ReadOnly;
+
+    if (!eventTarget || !(hitType & HitTestRequest::ReadOnly)) {
         IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
-        HitTestResult result = hitTestResultAtPoint(hitTestPoint, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active);
+        HitTestResult result = hitTestResultAtPoint(hitTestPoint, false, false, DontHitTestScrollbars, hitType);
         eventTarget = result.targetNode();
     }
 
@@ -2440,6 +2465,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     case PlatformEvent::GesturePinchBegin:
     case PlatformEvent::GesturePinchEnd:
     case PlatformEvent::GesturePinchUpdate:
+    case PlatformEvent::GestureTapDownCancel:
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -3573,6 +3599,11 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             ASSERT_NOT_REACHED();
             break;
         }
+
+#if ENABLE(GESTURE_EVENTS)
+        if (shouldGesturesTriggerActive())
+            hitType |= HitTestRequest::ReadOnly;
+#endif
 
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;

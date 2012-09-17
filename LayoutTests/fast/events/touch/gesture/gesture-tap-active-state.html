@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../js/resources/js-test-pre.js"></script>
+<style type="text/css">
+#box {
+    background-color: blue;
+    width: 300px;
+    height: 100px;
+}
+
+#box:active {
+    background-color: red;
+}
+
+</style>
+<body>
+<div id="box">Gestures go here</div>
+
+<p id="description"></p>
+<p>See https://bugs.webkit.org/show_bug.cgi?id=96060 for details</p>
+
+<div id="console"></div>
+
+<script>
+var color;
+function isBoxActive()
+{
+    // These need to match the background-color used above, after round-tripping.
+    var defaultColor = "rgb(0, 0, 255)";
+    var activeColor = "rgb(255, 0, 0)";
+
+    var b = document.getElementById('box');
+    color = window.getComputedStyle(b).backgroundColor;
+    if (color == activeColor)
+      return true;
+    if (color != defaultColor)
+      testFailed('Got unexpected backgroundColor: ' + color);
+    return false;
+}
+
+description("Tests that tap gesture events set and clear the active state of elements.");
+
+function runTests()
+{
+    if (!window.eventSender) {
+        debug('This test requires DRT.');
+        return;
+    }
+
+    if (!eventSender.gestureTapDown) {
+        debug('GestureTapDown is not supported by this platform');
+        return;
+    }
+
+    debug("Verify active isn't initially set");
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify tapdown,tap sets and clears active");
+    eventSender.gestureTapDown(50, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTap(50, 50);
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify tapdown,tapcancel on the element sets and clears active");
+    eventSender.gestureTapDown(50, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTapCancel(50, 50);
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify tap elsewhere still clears active");
+    eventSender.gestureTapDown(50, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTap(400, 250);
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify tapCancel elsewhere still clears active");
+    eventSender.gestureTapDown(50, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTapCancel(400, 250);
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify that touchstart doesn't trigger active state");
+    eventSender.addTouchPoint(50, 50);
+    eventSender.touchStart();
+    shouldBeFalse("isBoxActive()");
+    eventSender.releaseTouchPoint(0);
+    eventSender.touchEnd();
+
+    debug("Verify that touchstart/touchend doesn't cancel active");
+    eventSender.gestureTapDown(50, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.addTouchPoint(50, 50);
+    eventSender.touchStart();
+    shouldBeTrue("isBoxActive()");
+    eventSender.releaseTouchPoint(0);
+    eventSender.touchEnd();
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTap(50, 50);
+    shouldBeFalse("isBoxActive()");
+}
+
+runTests();
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>

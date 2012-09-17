@@ -765,15 +765,12 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_client->cancelScheduledContentIntents();
     case WebInputEvent::GestureScrollEnd:
     case WebInputEvent::GestureScrollUpdate:
+    case WebInputEvent::GestureTapCancel:
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
     }
-    case WebInputEvent::GestureTapCancel:
-        // FIXME: Update WebCore to handle this event after chromium has been updated to send it
-        // http://wkb.ug/96060
-        return false;
     default:
         ASSERT_NOT_REACHED();
     }

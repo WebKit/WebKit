@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../js/resources/js-test-pre.js"></script>
+<style type="text/css">
+#frame {
+    position: absolute;
+    top: 300px;
+    left: 400px;
+    height: 3000px;
+}
+
+</style>
+<body>
+<iframe src='resources/gesture-tap-active-state-iframe-inner.html' id='frame'>
+</iframe>
+
+<p id="description"></p>
+<p>See https://bugs.webkit.org/show_bug.cgi?id=96060 for details</p>
+
+<div id="console"></div>
+
+<script>
+
+description("Tests that tap gesture events set and clear the active state of elements, even when inside an iframe and the document is scrolled.");
+
+var isBoxActive;
+function runTests(ba)
+{
+    isBoxActive = ba;
+
+    if (!window.eventSender) {
+        debug('This test requires DRT.');
+        return;
+    }
+
+    if (!eventSender.gestureTapDown) {
+        debug('GestureTapDown is not supported by this platform');
+        return;
+    }
+    
+    // Scroll so the box is at the top
+    window.scrollTo(0, 400);
+
+    debug("Verify active isn't initially set");
+    shouldBeFalse("isBoxActive()");
+
+    debug("Verify tapdown,tap sets and clears active");
+    eventSender.gestureTapDown(450, 50);
+    shouldBeTrue("isBoxActive()");
+    eventSender.gestureTap(450, 50);
+    shouldBeFalse("isBoxActive()");
+
+    isSuccessfullyParsed();
+    testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+</script>
+</body>
+</html>

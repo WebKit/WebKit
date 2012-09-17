@@ -1,0 +1,33 @@
+Gestures go here
+Tests that tap gesture events set and clear the active state of elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+See https://bugs.webkit.org/show_bug.cgi?id=96060 for details
+
+Verify active isn't initially set
+PASS isBoxActive() is false
+Verify tapdown,tap sets and clears active
+PASS isBoxActive() is true
+PASS isBoxActive() is false
+Verify tapdown,tapcancel on the element sets and clears active
+PASS isBoxActive() is true
+PASS isBoxActive() is false
+Verify tap elsewhere still clears active
+PASS isBoxActive() is true
+PASS isBoxActive() is false
+Verify tapCancel elsewhere still clears active
+PASS isBoxActive() is true
+PASS isBoxActive() is false
+Verify that touchstart doesn't trigger active state
+PASS isBoxActive() is false
+Verify that touchstart/touchend doesn't cancel active
+PASS isBoxActive() is true
+PASS isBoxActive() is true
+PASS isBoxActive() is true
+PASS isBoxActive() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -106,6 +106,7 @@ public:
     void gestureScrollUpdate(const CppArgumentList&, CppVariant*);
     void gestureTap(const CppArgumentList&, CppVariant*);
     void gestureTapDown(const CppArgumentList&, CppVariant*);
+    void gestureTapCancel(const CppArgumentList&, CppVariant*);
     void gestureLongPress(const CppArgumentList&, CppVariant*);
     void gestureTwoFingerTap(const CppArgumentList&, CppVariant*);
     void gestureEvent(WebKit::WebInputEvent::Type, const CppArgumentList&);

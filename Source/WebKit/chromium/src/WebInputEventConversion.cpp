@@ -162,6 +162,9 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         m_type = PlatformEvent::GestureTapDown;
         m_area = IntSize(e.data.tapDown.width, e.data.tapDown.height);
         break;
+    case WebInputEvent::GestureTapCancel:
+        m_type = PlatformEvent::GestureTapDownCancel;
+        break;
     case WebInputEvent::GestureDoubleTap:
         m_type = PlatformEvent::GestureDoubleTap;
         break;

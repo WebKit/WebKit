@@ -1,3 +1,23 @@
+2012-09-17  Rick Byers  <rbyers@chromium.org>
+
+        Send GestureTapDownCancel to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=96060
+
+        Reviewed by Antonio Gomes.
+
+        Plumb WebInputEvent::GetsureTapCancel to
+        PlatformInputEvent::GestureTapDownCancel.  After all the chromium code
+        was landed, it was suggested that 'TapDownCancel' was a better name
+        than 'TapCancel' since you can't cancel a Tap.  I'm not changing the
+        WebInputEvent definition here because that would be a breaking change
+        to chromium, but I can do that as a series of follow-up CLs.
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2012-09-17  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Use ScriptValue instead of SerializedScriptValue for get/openCursor

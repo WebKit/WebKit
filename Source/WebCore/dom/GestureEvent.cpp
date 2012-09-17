@@ -58,6 +58,7 @@ PassRefPtr<GestureEvent> GestureEvent::create(PassRefPtr<AbstractView> view, con
     case PlatformEvent::GesturePinchBegin:
     case PlatformEvent::GesturePinchEnd:
     case PlatformEvent::GesturePinchUpdate:
+    case PlatformEvent::GestureTapDownCancel:
     default:
         return 0;
     }
