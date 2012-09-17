@@ -1,3 +1,16 @@
+2012-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Crash if we fail to allocate memory for the argument encoder buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=88367
+
+        Reviewed by Andreas Kling.
+        <rdar://problem/11488239>
+
+        Since there's no way to recover from malloc returning null here, just crash.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::grow):
+
 2012-09-17  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96936
