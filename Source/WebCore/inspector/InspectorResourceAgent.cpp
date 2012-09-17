@@ -617,6 +617,10 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
     if (!xhrReplayData)
         return;
 
+    CachedResource* cachedResource = memoryCache()->resourceForURL(xhrReplayData->url());
+    if (cachedResource)
+        memoryCache()->remove(cachedResource);
+
     xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), code);
     HTTPHeaderMap::const_iterator end = xhrReplayData->headers().end();
     for (HTTPHeaderMap::const_iterator it = xhrReplayData->headers().begin(); it!= end; ++it)

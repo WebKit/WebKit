@@ -1,3 +1,14 @@
+2012-09-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: XHR replay fixes: should remove replayed xhr from memory cache, should not assert.
+        https://bugs.webkit.org/show_bug.cgi?id=96904
+
+        Reviewed by Yury Semikhatsky.
+
+        Re-enabled http/tests/inspector/network/network-xhr-replay.html test.
+
+        * http/tests/inspector/network/network-xhr-replay.html: Renamed from LayoutTests/http/tests/inspector/network/network-xhr-replay.html_disabled.
+
 2012-09-17  Alejandro Piñeiro  <apinheiro@igalia.com>
 
         AX: Regression (r126369) - toggle buttons no longer return accessible titles

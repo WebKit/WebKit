@@ -684,7 +684,7 @@ void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCod
 
 void XMLHttpRequest::sendFromInspector(PassRefPtr<FormData> formData, ExceptionCode& ec)
 {
-    m_requestEntityBody = formData ? formData->deepCopy() : FormData::create();
+    m_requestEntityBody = formData ? formData->deepCopy() : 0;
     createRequest(ec);
     m_exceptionCode = ec;
 }
