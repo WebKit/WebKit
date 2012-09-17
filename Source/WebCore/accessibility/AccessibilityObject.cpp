@@ -1556,6 +1556,14 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
     
     return SortDirectionNone;
 }
+
+bool AccessibilityObject::supportsRangeValue() const
+{
+    return isProgressIndicator()
+        || isSlider()
+        || isScrollbar()
+        || isSpinButton();
+}
     
 bool AccessibilityObject::supportsARIAExpanded() const
 {

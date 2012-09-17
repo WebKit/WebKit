@@ -1156,8 +1156,7 @@ AccessibilityButtonState AccessibilityRenderObject::checkboxOrRadioValue() const
 
 String AccessibilityRenderObject::valueDescription() const
 {
-    // Only sliders and progress bars support value descriptions currently.
-    if (!isProgressIndicator() && !isSlider())
+    if (!isARIARange())
         return String();
     
     return getAttribute(aria_valuetextAttr).string();
@@ -1167,10 +1166,18 @@ float AccessibilityRenderObject::stepValueForRange() const
 {
     return getAttribute(stepAttr).toFloat();
 }
+
+bool AccessibilityRenderObject::isARIARange() const
+{
+    return m_ariaRole == ProgressIndicatorRole
+        || m_ariaRole == SliderRole
+        || m_ariaRole == ScrollBarRole
+        || m_ariaRole == SpinButtonRole;
+}
     
 float AccessibilityRenderObject::valueForRange() const
 {
-    if (!isProgressIndicator() && !isSlider() && !isScrollbar())
+    if (!isARIARange())
         return 0.0f;
 
     return getAttribute(aria_valuenowAttr).toFloat();
@@ -1178,7 +1185,7 @@ float AccessibilityRenderObject::valueForRange() const
 
 float AccessibilityRenderObject::maxValueForRange() const
 {
-    if (!isProgressIndicator() && !isSlider())
+    if (!isARIARange())
         return 0.0f;
 
     return getAttribute(aria_valuemaxAttr).toFloat();
@@ -1186,7 +1193,7 @@ float AccessibilityRenderObject::maxValueForRange() const
 
 float AccessibilityRenderObject::minValueForRange() const
 {
-    if (!isProgressIndicator() && !isSlider())
+    if (!isARIARange())
         return 0.0f;
 
     return getAttribute(aria_valueminAttr).toFloat();
@@ -1398,7 +1405,7 @@ String AccessibilityRenderObject::title() const
     default:
         break;
     }
-    
+   
     if (isHeading() || isLink())
         return textUnderElement();
 
@@ -3140,6 +3147,10 @@ bool AccessibilityRenderObject::isGenericFocusableElement() const
     if (isControl())
         return false;
 
+    // If it has an aria role, it's not generic.
+    if (m_ariaRole != UnknownRole)
+        return false;
+
     // If the content editable attribute is set on this element, that's the reason
     // it's focusable, and existing logic should handle this case already - so it's not a
     // generic focusable element.
@@ -3376,6 +3387,7 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
     case SliderRole:
     case ImageRole:
     case ProgressIndicatorRole:
+    case SpinButtonRole:
     // case SeparatorRole:
         return true;
     default:

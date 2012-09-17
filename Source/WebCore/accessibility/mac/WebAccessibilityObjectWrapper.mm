@@ -1999,7 +1999,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }
-        if (m_object->isProgressIndicator() || m_object->isSlider() || m_object->isScrollbar())
+        if (m_object->supportsRangeValue())
             return [NSNumber numberWithFloat:m_object->valueForRange()];
         if (m_object->roleValue() == SliderThumbRole)
             return [NSNumber numberWithFloat:m_object->parentObject()->valueForRange()];
