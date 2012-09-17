@@ -1492,7 +1492,7 @@ String AccessibilityRenderObject::accessibilityDescription() const
         return ariaDescription;
     
     Node* node = m_renderer->node();
-    if (isImage() || isInputImage() || isNativeImage()) {
+    if (isImage() || isInputImage() || isNativeImage() || isCanvas()) {
         if (node && node->isHTMLElement()) {
             const AtomicString& alt = toHTMLElement(node)->getAttribute(altAttr);
             if (alt.isEmpty())
@@ -1984,13 +1984,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
                 return true;
         }
         
-        if (node && node->hasTagName(canvasTag)) {
-            RenderHTMLCanvas* canvas = toRenderHTMLCanvas(m_renderer);
-            if (canvas->height() <= 1 || canvas->width() <= 1)
-                return true;
-            return false;
-        }
-        
         if (isNativeImage()) {
             // check for one-dimensional image
             RenderImage* image = toRenderImage(m_renderer);
@@ -2005,7 +1998,16 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         }
         return false;
     }
-    
+
+    if (isCanvas()) {
+        if (canvasHasFallbackContent())
+            return false;
+        RenderHTMLCanvas* canvas = toRenderHTMLCanvas(m_renderer);
+        if (canvas->height() <= 1 || canvas->width() <= 1)
+            return true;
+        // Otherwise fall through; use presence of help text, title, or description to decide.
+    }
+
     if (isWebArea() || m_renderer->isListMarker())
         return false;
     
@@ -3187,7 +3189,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return ImageRole;
     }
     if (node && node->hasTagName(canvasTag))
-        return ImageRole;
+        return CanvasRole;
 
     if (cssBox && cssBox->isRenderView())
         return WebAreaRole;
@@ -3432,10 +3434,6 @@ bool AccessibilityRenderObject::canHaveChildren() const
     if (!m_renderer)
         return false;
     
-    // Canvas is a special case; its role is ImageRole but it is allowed to have children.
-    if (node() && node()->hasTagName(canvasTag))
-        return true;
-
     // Elements that should not have children
     switch (roleValue()) {
     case ImageRole:

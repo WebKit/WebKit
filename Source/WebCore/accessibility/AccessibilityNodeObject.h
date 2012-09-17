@@ -66,6 +66,8 @@ public:
     
     virtual bool isAccessibilityNodeObject() const { return true; }
 
+    virtual bool canvasHasFallbackContent() const;
+
     virtual bool canSetFocusAttribute() const;
     
     virtual AccessibilityObject* firstChild() const;
