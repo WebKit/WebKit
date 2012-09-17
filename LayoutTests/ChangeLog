@@ -1,3 +1,21 @@
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Clean up Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=96918
+
+        Unreviewed EFL gardening.
+
+        Unskip several test cases that are now passing for
+        EFL port.
+
+        * platform/efl/Skipped:
+        * platform/efl/editing/input/caret-at-the-edge-of-input-expected.png: Added.
+        * platform/efl/editing/input/caret-at-the-edge-of-input-expected.txt: Added.
+        * platform/efl/editing/unsupported-content/list-delete-001-expected.png:
+        * platform/efl/editing/unsupported-content/list-type-after-expected.png:
+        * platform/efl/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/efl/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+
 2012-09-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [TouchAdjustment] Adjusted point outside bounds for non-rectilinear targets

@@ -633,9 +633,6 @@ svg/hixie/perf/006.xml
 tables/mozilla/
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
-editing/input/reveal-contenteditable-on-input-vertically.html
-editing/input/reveal-edit-on-input-vertically.html
-fast/loader/onload-willSendRequest-null-for-frame.html
 fast/overflow/overflow-height-float-not-removed-crash3.html
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 http/tests/cache/subresource-expiration-1.html
@@ -643,10 +640,8 @@ http/tests/cache/subresource-expiration-2.html
 http/tests/cache/subresource-failover-to-network.html
 http/tests/cache/subresource-multiple-instances.html
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
-http/tests/loading/nested_bad_objects.php
 http/tests/misc/401-alternative-content.php
 http/tests/misc/copy-resolves-urls.html
-http/tests/misc/SVGFont-delayed-load.html
 http/tests/misc/iframe-invalid-source-crash.html
 http/tests/misc/submit-post-keygen.html
 http/tests/navigation/forward-and-cancel.html
@@ -663,36 +658,19 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
-http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
 http/tests/security/cookies/first-party-cookie-allow-xslt.xml
 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
-http/tests/security/cross-frame-access-protocol-explicit-domain.html
-http/tests/security/cross-frame-access-protocol.html
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
-http/tests/security/local-user-CSS-from-remote.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-script-in-iframe.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 http/tests/security/no-referrer.html
 http/tests/security/originHeader/origin-header-for-empty.html
 http/tests/security/originHeader/origin-header-for-https.html
 http/tests/security/redirect-BLOCKED-to-localURL.html
-http/tests/security/referrer-policy-https-always.html
-http/tests/security/referrer-policy-https-default.html
-http/tests/security/referrer-policy-https-never.html
-http/tests/security/referrer-policy-https-origin.html
-http/tests/security/referrer-policy-redirect.html
 http/tests/security/referrer-policy-redirect-link.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
-http/tests/ssl/referer-301.html
-http/tests/ssl/referer-303.html
-http/tests/ssl/verify-ssl-enabled.php
 http/tests/workers/terminate-during-sync-operation.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
@@ -717,7 +695,6 @@ animations/additive-transform-animations.html
 animations/animation-border-overflow.html
 animations/animation-add-events-in-handler.html
 animations/cross-fade-webkit-mask-box-image.html
-editing/input/caret-at-the-edge-of-input.html
 editing/unsupported-content/list-delete-001.html 
 editing/unsupported-content/list-delete-003.html 
 editing/unsupported-content/list-type-after.html 
@@ -762,10 +739,6 @@ fast/events/drag-dataTransferItemList-file-handling.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
-
-# http://webkit.org/b/35981
-# Needs a text rebaseline: 30px height difference.
-fast/block/basic/fieldset-stretch-to-legend.html
 
 # following tests started failing on EFL afrer r122952.
 http/tests/inspector/inspect-element.html
