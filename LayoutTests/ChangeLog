@@ -1,3 +1,11 @@
+2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a platform-specific baseline required after r128376.
+
+        * platform/gtk/accessibility/svg-image-expected.txt: Added.
+
 2012-09-17  Mike West  <mkwst@chromium.org>
 
         Don't GC img elements blocked by CSP until error events fire.
