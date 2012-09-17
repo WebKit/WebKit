@@ -49,6 +49,8 @@ namespace WebCore {
         // This can be called when WTF thread is tearing down.
         // We assume that all child threads running V8 instances are created by WTF.
         virtual ~ScopedDOMDataStore();
+
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
     };
 
 } // namespace WebCore

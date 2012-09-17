@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ScopedDOMDataStore.h"
 
+#include "WebCoreMemoryInstrumentation.h"
+
 namespace WebCore {
 
 ScopedDOMDataStore::ScopedDOMDataStore()
@@ -48,6 +50,16 @@ ScopedDOMDataStore::~ScopedDOMDataStore()
     delete m_activeDomNodeMap;
     delete m_domObjectMap;
     delete m_activeDomObjectMap;
+}
+
+void ScopedDOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
+    DOMDataStore::reportMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_domNodeMap);
+    info.addInstrumentedMember(m_activeDomNodeMap);
+    info.addInstrumentedMember(m_domObjectMap);
+    info.addInstrumentedMember(m_activeDomObjectMap);
 }
 
 } // namespace WebCore

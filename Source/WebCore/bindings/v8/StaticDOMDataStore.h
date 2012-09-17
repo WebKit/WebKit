@@ -49,6 +49,8 @@ public:
     StaticDOMDataStore();
     virtual ~StaticDOMDataStore();
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     IntrusiveDOMWrapperMap m_staticDomNodeMap;
     IntrusiveDOMWrapperMap m_staticActiveDomNodeMap;

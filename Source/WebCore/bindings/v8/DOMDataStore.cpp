@@ -122,10 +122,10 @@ void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addInstrumentedMember(m_domNodeMap);
-    info.addInstrumentedMember(m_activeDomNodeMap);
-    info.addInstrumentedMember(m_domObjectMap);
-    info.addInstrumentedMember(m_activeDomObjectMap);
+    info.addWeakPointer(m_domNodeMap);
+    info.addWeakPointer(m_activeDomNodeMap);
+    info.addWeakPointer(m_domObjectMap);
+    info.addWeakPointer(m_activeDomObjectMap);
 }
 
 // Called when the object is near death (not reachable from JS roots).
