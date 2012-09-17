@@ -1,5 +1,22 @@
 2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Add baseline for text/shaping tests
+        https://bugs.webkit.org/show_bug.cgi?id=96902
+
+        Unreviewed EFL gardening.
+
+        Add baseline for text/shaping test cases and unskip
+        them for EFL port now that the issue has been fixed
+        in r122562.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/efl/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/efl/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/efl/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] fast/multicol/span/generated-child-split-flow-crash.html fails
         https://bugs.webkit.org/show_bug.cgi?id=88031
 

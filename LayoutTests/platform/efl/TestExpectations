@@ -926,9 +926,6 @@ BUGWK91359 : css3/flexbox/flexbox-overflow-auto.html = IMAGE
 // Looks like missing multipart/x-mixed-replace support in libsoup. Failing on both GTK and EFL.
 BUGWK68979 : http/tests/multipart/multipart-replace-non-html-content.php = TEXT
 
-// Skip tests in fast/text/shaping
-BUGWK90951 SKIP : fast/text/shaping = PASS
-
 // Test added by Mac port, rendering results totally different on EFL.
 BUGWK91477 : fast/multicol/shrink-to-column-height-for-pagination.html = MISSING
 
