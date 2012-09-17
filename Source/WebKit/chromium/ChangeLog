@@ -1,5 +1,12 @@
 2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed. Temporary disable visited set counter check.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+
+2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: NMI: now when we can detect instrumented classes we can
         remove addInstrumentedMember and use addMember for everything.
         https://bugs.webkit.org/show_bug.cgi?id=96913
