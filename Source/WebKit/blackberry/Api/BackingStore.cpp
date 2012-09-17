@@ -360,9 +360,14 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
     --m_suspendScreenUpdates;
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
 
+#if USE(ACCELERATED_COMPOSITING)
+    // This will also blit since we set the OSDS flag above.
+    m_webPage->d->commitRootLayerIfNeeded();
+#else
     // Do some blitting if necessary.
     if ((op == BackingStore::Blit || op == BackingStore::RenderAndBlit) && !shouldDirectRenderingToWindow())
         blitVisibleContents();
+#endif
 }
 
 void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,

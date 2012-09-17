@@ -1,3 +1,25 @@
+2012-09-17  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] BackingStorePrivate::resumeScreenAndBackingStoreUpdates more atomic
+        https://bugs.webkit.org/show_bug.cgi?id=96925
+
+        [FullScreen] entering/leaving fullscreen results in temporary glitches on the screen (part 2/3)
+        PR #180866
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        Paraphrasing Arvid "resumeBackingStore will be a truly atomic operation.
+        Well more atomic than it was before, with regards to a mix of accelerated and
+        non-accelerated compositing content".
+
+        I.e. by committing the root layer (if needed) when resuming the Backing
+        Store, we call blitVisibleContents right way, so we are actually shortcutting when
+        AC content will get on screen.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+
 2012-09-17  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] To support "Frames View" of "TimeLine" panel in Inspector
