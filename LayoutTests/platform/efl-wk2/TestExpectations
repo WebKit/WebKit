@@ -59,6 +59,7 @@ BUGWKEFL : inspector/styles/commit-selector.html = TEXT PASS
 BUGWKEFL : inspector/styles/force-pseudo-state.html = TEXT PASS
 BUGWKEFL : inspector/styles/styles-add-invalid-property.html = TEXT PASS
 BUGWKEFL : inspector/styles/perform-undo-perform-of-mergable-action.html = TEXT PASS
+BUGWKEFL : inspector/elements/delete-from-document.html = TEXT PASS
 BUGWKEFL : inspector/elements/insert-node.html = TEXT PASS
 BUGWKEFL : inspector/elements/elements-inspect-iframe-from-different-domain.html = TEXT PASS
 BUGWKEFL : inspector/elements/elements-panel-styles.html = TEXT PASS

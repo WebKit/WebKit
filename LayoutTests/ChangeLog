@@ -1,3 +1,15 @@
+2012-09-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Mark inspector/elements/delete-from-document.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=96897
+
+        Unreviewed EFL gardening.
+
+        Mark inspector/elements/delete-from-document.html as flaky.
+        It sometimes times out of the WK2-EFL bot.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         Unreviewed gardening. Rebaseline after r128691
