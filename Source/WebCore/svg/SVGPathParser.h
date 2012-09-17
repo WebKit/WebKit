@@ -38,7 +38,7 @@ class SVGPathParser {
 public:
     SVGPathParser();
 
-    bool parsePathDataFromSource(PathParsingMode pathParsingMode);
+    bool parsePathDataFromSource(PathParsingMode, bool checkForInitialMoveTo = true);
     void setCurrentConsumer(SVGPathConsumer* consumer) { m_consumer = consumer; }
     void setCurrentSource(SVGPathSource* source) { m_source = source; }
     void cleanup();

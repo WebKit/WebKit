@@ -21,6 +21,7 @@
 #define SVGPathSegList_h
 
 #if ENABLE(SVG)
+#include "SVGListProperty.h"
 #include "SVGPathSeg.h"
 #include "SVGPropertyTraits.h"
 
@@ -41,7 +42,7 @@ public:
     String valueAsString() const;
 
     // Only used by SVGPathSegListPropertyTearOff.
-    void commitChange(SVGElement* contextElement);
+    void commitChange(SVGElement* contextElement, ListModification);
 
 private:
     SVGPathSegRole m_role;

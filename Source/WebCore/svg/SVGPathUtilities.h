@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGPathByteStream.h"
 #include "SVGPathConsumer.h"
+#include "SVGPathSeg.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ bool buildPathFromByteStream(SVGPathByteStream*, Path&);
 
 // SVGPathSegList/String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream*, PathParsingMode);
+bool appendSVGPathByteStreamFromSVGPathSeg(PassRefPtr<SVGPathSeg>, SVGPathByteStream*, PathParsingMode);
 bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream*, PathParsingMode);
 
 // SVGPathByteStream/SVGPathSegList -> String

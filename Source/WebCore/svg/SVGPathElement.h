@@ -93,7 +93,7 @@ public:
 
     SVGPathByteStream* pathByteStream() const;
 
-    void pathSegListChanged(SVGPathSegRole);
+    void pathSegListChanged(SVGPathSegRole, ListModification = ListModificationUnknown);
 
     virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
 

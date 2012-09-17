@@ -140,6 +140,28 @@ bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPat
     return ok;
 }
 
+bool appendSVGPathByteStreamFromSVGPathSeg(PassRefPtr<SVGPathSeg> pathSeg, SVGPathByteStream* result, PathParsingMode parsingMode)
+{
+    ASSERT(result);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
+    ASSERT(parsingMode == UnalteredParsing);
+
+    SVGPathSegList appendedItemList(PathSegUnalteredRole);
+    appendedItemList.append(pathSeg);
+    OwnPtr<SVGPathByteStream> appendedByteStream = SVGPathByteStream::create();
+
+    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(appendedByteStream.get());
+    OwnPtr<SVGPathSegListSource> source = SVGPathSegListSource::create(appendedItemList);
+    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
+    bool ok = parser->parsePathDataFromSource(parsingMode, false);
+    parser->cleanup();
+
+    if (ok)
+        result->append(appendedByteStream.get());
+
+    return ok;
+}
+
 bool buildPathFromByteStream(SVGPathByteStream* stream, Path& result)
 {
     ASSERT(stream);

@@ -333,14 +333,18 @@ SVGPathSegListPropertyTearOff* SVGPathElement::animatedNormalizedPathSegList()
     return 0;
 }
 
-void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
+void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification listModification)
 {
     switch (role) {
     case PathSegNormalizedRole:
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
         break;
     case PathSegUnalteredRole:
-        buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
+        if (listModification == ListModificationAppend) {
+            ASSERT(!m_pathSegList.value.isEmpty());
+            appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last(), m_pathByteStream.get(), UnalteredParsing);
+        } else
+            buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
         break;
     case PathSegUndefinedRole:
         return;

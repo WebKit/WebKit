@@ -28,6 +28,14 @@
 
 namespace WebCore {
 
+enum ListModification {
+    ListModificationUnknown = 0,
+    ListModificationInsert = 1,
+    ListModificationReplace = 2,
+    ListModificationRemove = 3,
+    ListModificationAppend = 4
+};
+
 template<typename PropertyType>
 class SVGAnimatedListPropertyTearOff;
 
@@ -390,7 +398,7 @@ public:
         // Append the value at the end of the list.
         m_values->append(newItem);
 
-        commitChange();
+        commitChange(ListModificationAppend);
         return newItem;
     }
 
@@ -416,7 +424,7 @@ public:
         m_values->append(newItem->propertyReference());
         m_wrappers->append(newItem);
 
-        commitChange();
+        commitChange(ListModificationAppend);
         return newItem.release();
     }
 
@@ -448,6 +456,11 @@ protected:
     }
 
     virtual void commitChange() = 0;
+    virtual void commitChange(ListModification)
+    {
+        commitChange();
+    }
+
     virtual void processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) = 0;
     virtual void processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify) = 0;
 

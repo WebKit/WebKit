@@ -282,7 +282,7 @@ bool SVGPathParser::parseArcToSegment()
     return true;
 }
 
-bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode)
+bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode, bool checkForInitialMoveTo)
 {
     ASSERT(m_source);
     ASSERT(m_consumer);
@@ -303,7 +303,7 @@ bool SVGPathParser::parsePathDataFromSource(PathParsingMode pathParsingMode)
     m_lastCommand = PathSegUnknown;
 
     // Path must start with moveto.
-    if (command != PathSegMoveToAbs && command != PathSegMoveToRel)
+    if (checkForInitialMoveTo && command != PathSegMoveToAbs && command != PathSegMoveToRel)
         return false;
 
     while (true) {

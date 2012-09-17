@@ -140,7 +140,13 @@ private:
     virtual void commitChange()
     {
         ASSERT(m_values);
-        m_values->commitChange(m_animatedProperty->contextElement());
+        m_values->commitChange(m_animatedProperty->contextElement(), ListModificationUnknown);
+    }
+
+    virtual void commitChange(ListModification listModification)
+    {
+        ASSERT(m_values);
+        m_values->commitChange(m_animatedProperty->contextElement(), listModification);
     }
 
     virtual void processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify);
