@@ -1,3 +1,9 @@
+2012-09-17  Ojan Vafai  <ojan@chromium.org>
+
+        Cleanup the final instance of BUGUSERNAME.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip one more crashy test to paint the bot green.
