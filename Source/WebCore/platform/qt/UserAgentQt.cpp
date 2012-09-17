@@ -65,7 +65,7 @@ String UserAgentQt::standardUserAgent(const String &applicationNameForUserAgent,
 #if OS(MAC_OS_X)
             "Macintosh; "
 #elif OS(WINDOWS)
-            // Nothing.
+            ""
 #else
             (QGuiApplication::platformName() == QLatin1String("xcb")) ? "X11; " : "Unknown; "
 #endif
@@ -86,7 +86,7 @@ String UserAgentQt::standardUserAgent(const String &applicationNameForUserAgent,
 #elif OS(WINDOWS)
             windowsVersionForUAString().latin1().data()
 #elif OS(MAC_OS_X)
-#ifdef CPU(X86) || CPU(X86_64)
+#if CPU(X86) || CPU(X86_64)
             "Intel Mac OS X"
 #else
             "PPC Mac OS X"
