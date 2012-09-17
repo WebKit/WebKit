@@ -3608,3 +3608,5 @@ BUGWK96725 LINUX MAC WIN : http/tests/media/media-source/video-media-source-stat
 BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
+// Started failing on r128793
+BUGWK96953 WIN : http/tests/inspector/network/network-xhr-replay.html = TIMEOUT

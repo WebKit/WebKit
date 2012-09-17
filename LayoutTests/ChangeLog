@@ -1,3 +1,9 @@
+2012-09-17  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/TestExpectations: Mark http/tests/inspector/network/network-xhr-replay.html as timing out on chromium win.
+
 2012-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         If a prototype has indexed setters and its instances have indexed storage, then all put_by_val's should have a bad time
