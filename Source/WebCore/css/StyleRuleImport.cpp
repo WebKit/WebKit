@@ -134,9 +134,9 @@ void StyleRuleImport::requestStyleSheet()
 void StyleRuleImport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_strHref);
-    info.addInstrumentedMember(m_mediaQueries);
-    info.addInstrumentedMember(m_styleSheet);
+    info.addMember(m_strHref);
+    info.addMember(m_mediaQueries);
+    info.addMember(m_styleSheet);
 }
 
 } // namespace WebCore

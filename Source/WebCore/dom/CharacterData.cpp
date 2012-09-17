@@ -98,7 +98,7 @@ void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     Node::reportMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_data);
+    info.addMember(m_data);
 }
 
 void CharacterData::appendData(const String& data, ExceptionCode&)

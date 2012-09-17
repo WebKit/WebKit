@@ -361,7 +361,7 @@ void SVGImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     Image::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_chromeClient);
     info.addMember(m_page);
-    info.addInstrumentedMember(m_frameCache);
+    info.addMember(m_frameCache);
 }
 
 }

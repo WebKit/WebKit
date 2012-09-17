@@ -393,9 +393,9 @@ const String& KURLGooglePrivate::string() const
 void KURLGooglePrivate::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addInstrumentedMember(m_utf8);
-    info.addInstrumentedMember(m_string);
-    info.addInstrumentedMember(m_innerURL);
+    info.addMember(m_utf8);
+    info.addMember(m_string);
+    info.addMember(m_innerURL);
 }
 // KURL ------------------------------------------------------------------------
 

@@ -2749,7 +2749,7 @@ PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(co
 void CSSComputedStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_node);
+    info.addMember(m_node);
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

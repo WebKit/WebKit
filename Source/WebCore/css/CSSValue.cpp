@@ -83,7 +83,7 @@ public:
     void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addInstrumentedMember(m_cssText);
+        info.addMember(m_cssText);
     }
 
 private:

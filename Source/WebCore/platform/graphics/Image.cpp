@@ -201,7 +201,7 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addInstrumentedMember(m_data);
+    info.addMember(m_data);
     info.addMember(m_imageObserver);
 }
 

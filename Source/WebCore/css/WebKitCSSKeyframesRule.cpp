@@ -91,7 +91,7 @@ void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObj
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedVector(m_keyframes);
-    info.addInstrumentedMember(m_name);
+    info.addMember(m_name);
 }
 
 WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes* keyframesRule, CSSStyleSheet* parent)
@@ -210,9 +210,9 @@ void WebKitCSSKeyframesRule::reportDescendantMemoryUsage(MemoryObjectInfo* memor
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_keyframesRule);
+    info.addMember(m_keyframesRule);
     info.addInstrumentedVector(m_childRuleCSSOMWrappers);
-    info.addInstrumentedMember(m_ruleListCSSOMWrapper);
+    info.addMember(m_ruleListCSSOMWrapper);
 }
 
 } // namespace WebCore

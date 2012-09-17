@@ -295,14 +295,14 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : immutableElementAttributeDataSize(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
-    info.addInstrumentedMember(m_inlineStyleDecl);
-    info.addInstrumentedMember(m_attributeStyle);
+    info.addMember(m_inlineStyleDecl);
+    info.addMember(m_attributeStyle);
     info.addMember(m_classNames);
-    info.addInstrumentedMember(m_idForStyleResolution);
+    info.addMember(m_idForStyleResolution);
     if (m_isMutable)
         info.addVector(mutableAttributeVector());
     for (unsigned i = 0, len = length(); i < len; i++)
-        info.addInstrumentedMember(*attributeItem(i));
+        info.addMember(*attributeItem(i));
 }
 
 size_t ElementAttributeData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const

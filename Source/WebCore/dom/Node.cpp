@@ -2811,11 +2811,11 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_document);
-    info.addInstrumentedMember(m_next);
-    info.addInstrumentedMember(m_previous);
+    info.addMember(m_document);
+    info.addMember(m_next);
+    info.addMember(m_previous);
     if (m_renderer)
-        info.addInstrumentedMember(m_renderer->style());
+        info.addMember(m_renderer->style());
 }
 
 } // namespace WebCore

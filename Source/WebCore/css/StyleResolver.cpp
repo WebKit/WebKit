@@ -2586,7 +2586,7 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(ruleSet);
+    info.addMember(ruleSet);
 }
 
 static inline void collectFeaturesFromSelector(StyleResolver::Features& features, const CSSSelector* selector)
@@ -5759,7 +5759,7 @@ void StyleResolver::loadPendingResources()
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(properties);
+    info.addMember(properties);
 }
 
 void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -5771,26 +5771,26 @@ void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectIn
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_expression);
+    info.addMember(m_expression);
 }
 
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_style);
-    info.addInstrumentedMember(m_authorStyle);
-    info.addInstrumentedMember(m_userStyle);
-    info.addInstrumentedMember(m_siblingRuleSet);
-    info.addInstrumentedMember(m_uncommonAttributeRuleSet);
+    info.addMember(m_authorStyle);
+    info.addMember(m_userStyle);
+    info.addMember(m_siblingRuleSet);
+    info.addMember(m_uncommonAttributeRuleSet);
     info.addHashMap(m_keyframesRuleMap);
     info.addHashMap(m_matchedPropertiesCache);
     info.addInstrumentedMapValues(m_matchedPropertiesCache);
     info.addVector(m_matchedRules);
 
-    info.addInstrumentedMember(m_ruleList);
+    info.addMember(m_ruleList);
     info.addHashMap(m_pendingImageProperties);
     info.addInstrumentedMapValues(m_pendingImageProperties);
-    info.addInstrumentedMember(m_lineHeightValue);
+    info.addMember(m_lineHeightValue);
     info.addInstrumentedVector(m_viewportDependentMediaQueryResults);
     info.addHashMap(m_styleRuleToCSSOMWrapperMap);
     info.addInstrumentedMapEntries(m_styleRuleToCSSOMWrapperMap);
@@ -5805,10 +5805,10 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif
 
     // FIXME: move this to a place where it would be called only once?
-    info.addInstrumentedMember(defaultStyle);
-    info.addInstrumentedMember(defaultQuirksStyle);
-    info.addInstrumentedMember(defaultPrintStyle);
-    info.addInstrumentedMember(defaultViewSourceStyle);
+    info.addMember(defaultStyle);
+    info.addMember(defaultQuirksStyle);
+    info.addMember(defaultPrintStyle);
+    info.addMember(defaultViewSourceStyle);
 }
 
 } // namespace WebCore

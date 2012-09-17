@@ -87,7 +87,7 @@ public:
 
     template <typename T> void addRootObject(const T& t)
     {
-        addInstrumentedObject(t, 0);
+        addObject(t, 0);
         processDeferredInstrumentedPointers();
     }
 
@@ -141,12 +141,7 @@ private:
         const MemoryObjectType m_ownerObjectType;
     };
 
-    template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType)
-    {
-        OwningTraits<T>::addObject(this, t, ownerObjectType);
-    }
-
-    template<typename T> void addInstrumentedObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addInstrumentedObject(this, t, ownerObjectType); }
+    template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addObject(this, t, ownerObjectType); }
     template<typename HashMapType> void addHashMap(const HashMapType&, MemoryObjectType, bool contentOnly = false);
     template<typename HashSetType> void addHashSet(const HashSetType&, MemoryObjectType, bool contentOnly = false);
     template<typename CollectionType> void addInstrumentedCollection(const CollectionType&, MemoryObjectType, bool contentOnly = false);
@@ -163,10 +158,6 @@ private:
 
     template<typename T>
     struct OwningTraits { // Default byReference implementation.
-        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectType ownerObjectType)
-        {
-            instrumentation->addInstrumentedObjectImpl(&t, ownerObjectType, byReference);
-        }
         static void addObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectType ownerObjectType)
         {
             instrumentation->addObjectImpl(&t, ownerObjectType, byReference);
@@ -175,19 +166,11 @@ private:
 
     template<typename T>
     struct OwningTraits<T*> { // Custom byPointer implementation.
-        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType)
-        {
-            instrumentation->addInstrumentedObjectImpl(t, ownerObjectType, byPointer);
-        }
         static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType ownerObjectType)
         {
             instrumentation->addObjectImpl(t, ownerObjectType, byPointer);
         }
     };
-
-    template<typename T> void addInstrumentedObjectImpl(const T* const&, MemoryObjectType, MemoryOwningType);
-    template<typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
-    template<typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, MemoryObjectType, MemoryOwningType);
 
     template<typename T> void addObjectImpl(const T* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
@@ -205,7 +188,6 @@ public:
         m_objectType = memoryObjectInfo->objectType();
     }
 
-    template<typename M> void addInstrumentedMember(const M& member) { m_memoryInstrumentation->addInstrumentedObject(member, m_objectType); }
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
 
     template<typename HashMapType> void addHashMap(const HashMapType& map) { m_memoryInstrumentation->addHashMap(map, m_objectType, true); }
@@ -231,7 +213,7 @@ private:
 };
 
 template<typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
+void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
     if (owningType == byReference) {
         MemoryObjectInfo memoryObjectInfo(this, ownerObjectType);
@@ -241,22 +223,6 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, Me
             return;
         deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object, ownerObjectType)));
     }
-}
-
-template<typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(*object));
-    addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
-}
-
-template<typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(*object));
-    addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
 template<typename T>
@@ -273,12 +239,6 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Memory
     if (owningType == byPointer && !visited(object))
         countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
-}
-
-template<typename T>
-void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    addInstrumentedObjectImpl(object, ownerObjectType, owningType);
 }
 
 template<typename HashMapType>
@@ -305,7 +265,7 @@ void MemoryInstrumentation::addInstrumentedCollection(const CollectionType& coll
     countObjectSize(ownerObjectType, calculateContainerSize(collection, contentOnly));
     typename CollectionType::const_iterator end = collection.end();
     for (typename CollectionType::const_iterator i = collection.begin(); i != end; ++i)
-        addInstrumentedObject(*i, ownerObjectType);
+        addObject(*i, ownerObjectType);
 }
 
 template<typename MapType>
@@ -313,8 +273,8 @@ void MemoryInstrumentation::addInstrumentedMapEntries(const MapType& map, Memory
 {
     typename MapType::const_iterator end = map.end();
     for (typename MapType::const_iterator i = map.begin(); i != end; ++i) {
-        addInstrumentedObject(i->first, ownerObjectType);
-        addInstrumentedObject(i->second, ownerObjectType);
+        addObject(i->first, ownerObjectType);
+        addObject(i->second, ownerObjectType);
     }
 }
 
@@ -323,7 +283,7 @@ void MemoryInstrumentation::addInstrumentedMapValues(const MapType& map, MemoryO
 {
     typename MapType::const_iterator end = map.end();
     for (typename MapType::const_iterator i = map.begin(); i != end; ++i)
-        addInstrumentedObject(i->second, ownerObjectType);
+        addObject(i->second, ownerObjectType);
 }
 
 template<typename ListHashSetType>

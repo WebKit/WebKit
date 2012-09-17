@@ -439,7 +439,7 @@ void AtomicString::show() const
 void AtomicString::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addInstrumentedMember(m_string);
+    info.addMember(m_string);
 }
 
 } // namespace WTF

@@ -187,7 +187,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-        info.addInstrumentedMember(m_table);
+        info.addMember(m_table);
     }
 
 private:

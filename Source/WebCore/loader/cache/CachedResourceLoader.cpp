@@ -910,8 +910,8 @@ void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addHashMap(m_documentResources);
     for (DocumentResourceMap::const_iterator i = m_documentResources.begin(); i != m_documentResources.end(); ++i) {
-        info.addInstrumentedMember(i->first);
-        info.addInstrumentedMember(i->second);
+        info.addMember(i->first);
+        info.addMember(i->second);
     }
     info.addHashSet(m_validatedURLs);
     if (m_preloads)

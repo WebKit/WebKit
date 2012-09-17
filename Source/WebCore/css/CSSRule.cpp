@@ -214,9 +214,9 @@ void CSSRule::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     if (m_parentIsRule)
-        info.addInstrumentedMember(m_parentRule);
+        info.addMember(m_parentRule);
     else
-        info.addInstrumentedMember(m_parentStyleSheet);
+        info.addMember(m_parentStyleSheet);
 }
 
 } // namespace WebCore

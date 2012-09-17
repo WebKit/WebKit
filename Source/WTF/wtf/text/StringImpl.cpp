@@ -1807,7 +1807,7 @@ void StringImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, 0, selfSize);
 
     if (m_hashAndFlags & BufferSubstring)
-        info.addInstrumentedMember(m_substringBuffer);
+        info.addMember(m_substringBuffer);
     else if (m_hashAndFlags & s_hashFlagHas16BitShadow) // Substring never has its own shadow.
         info.addRawBuffer(m_copyData16, (m_length + (hasTerminatingNullCharacter() ? 1 : 0)) * sizeof(UChar));
 }

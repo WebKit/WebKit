@@ -58,10 +58,10 @@ void StaticDOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     DOMDataStore::reportMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_staticDomNodeMap);
-    info.addInstrumentedMember(m_staticActiveDomNodeMap);
-    info.addInstrumentedMember(m_staticDomObjectMap);
-    info.addInstrumentedMember(m_staticActiveDomObjectMap);
+    info.addMember(m_staticDomNodeMap);
+    info.addMember(m_staticActiveDomNodeMap);
+    info.addMember(m_staticDomObjectMap);
+    info.addMember(m_staticActiveDomObjectMap);
 }
 
 } // namespace WebCore

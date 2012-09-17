@@ -133,8 +133,8 @@ void CSSStyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_styleRule);
-    info.addInstrumentedMember(m_propertiesCSSOMWrapper);
+    info.addMember(m_styleRule);
+    info.addMember(m_propertiesCSSOMWrapper);
 }
 
 } // namespace WebCore

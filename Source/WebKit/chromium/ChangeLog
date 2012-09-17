@@ -1,5 +1,18 @@
 2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: NMI: now when we can detect instrumented classes we can
+        remove addInstrumentedMember and use addMember for everything.
+        https://bugs.webkit.org/show_bug.cgi?id=96913
+
+        Reviewed by Yury Semikhatsky.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedDOM::reportMemoryUsage):
+        (WebCore::NonVirtualInstrumented::reportMemoryUsage):
+        (WebCore::InstrumentedOwner::reportMemoryUsage):
+
+2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed single line fix for mac chromium canary bot.
 
         * tests/MemoryInstrumentationTest.cpp:

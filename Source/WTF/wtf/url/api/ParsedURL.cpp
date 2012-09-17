@@ -178,7 +178,7 @@ String ParsedURL::segment(const URLComponent& component) const
 void ParsedURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addInstrumentedMember(m_spec);
+    info.addMember(m_spec);
 }
 
 #ifndef NDEBUG

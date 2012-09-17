@@ -6249,21 +6249,21 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
 void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addInstrumentedMember(m_styleResolver);
+    info.addMember(m_styleResolver);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addVector(m_customFonts);
-    info.addInstrumentedMember(m_url);
-    info.addInstrumentedMember(m_baseURL);
-    info.addInstrumentedMember(m_baseURLOverride);
-    info.addInstrumentedMember(m_baseElementURL);
-    info.addInstrumentedMember(m_cookieURL);
-    info.addInstrumentedMember(m_firstPartyForCookies);
-    info.addInstrumentedMember(m_documentURI);
-    info.addInstrumentedMember(m_baseTarget);
-    info.addInstrumentedMember(m_frame);
-    info.addInstrumentedMember(m_cachedResourceLoader);
-    info.addInstrumentedMember(m_elemSheet);
-    info.addInstrumentedMember(m_pageUserSheet);
+    info.addMember(m_url);
+    info.addMember(m_baseURL);
+    info.addMember(m_baseURLOverride);
+    info.addMember(m_baseElementURL);
+    info.addMember(m_cookieURL);
+    info.addMember(m_firstPartyForCookies);
+    info.addMember(m_documentURI);
+    info.addMember(m_baseTarget);
+    info.addMember(m_frame);
+    info.addMember(m_cachedResourceLoader);
+    info.addMember(m_elemSheet);
+    info.addMember(m_pageUserSheet);
     if (m_pageGroupUserSheets)
         info.addInstrumentedVectorPtr(m_pageGroupUserSheets);
     if (m_userSheets)
@@ -6271,13 +6271,13 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashSet(m_nodeIterators);
     info.addHashSet(m_ranges);
     info.addListHashSet(m_styleSheetCandidateNodes);
-    info.addInstrumentedMember(m_preferredStylesheetSet);
-    info.addInstrumentedMember(m_selectedStylesheetSet);
-    info.addInstrumentedMember(m_title.string());
-    info.addInstrumentedMember(m_rawTitle.string());
-    info.addInstrumentedMember(m_xmlEncoding);
-    info.addInstrumentedMember(m_xmlVersion);
-    info.addInstrumentedMember(m_contentLanguage);
+    info.addMember(m_preferredStylesheetSet);
+    info.addMember(m_selectedStylesheetSet);
+    info.addMember(m_title.string());
+    info.addMember(m_rawTitle.string());
+    info.addMember(m_xmlEncoding);
+    info.addMember(m_xmlVersion);
+    info.addMember(m_contentLanguage);
     info.addHashMap(m_documentNamedItemCollections);
     info.addHashMap(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -6289,7 +6289,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashSet(m_mediaVolumeCallbackElements);
     info.addHashSet(m_privateBrowsingStateChangedElements);
     info.addHashMap(m_elementsByAccessKey);
-    info.addInstrumentedMember(m_eventQueue);
+    info.addMember(m_eventQueue);
     info.addHashSet(m_mediaCanStartListeners);
     info.addVector(m_pendingTasks);
 }

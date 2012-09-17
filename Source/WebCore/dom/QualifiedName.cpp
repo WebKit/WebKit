@@ -145,17 +145,17 @@ const AtomicString& QualifiedName::localNameUpper() const
 void QualifiedName::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addInstrumentedMember(m_impl);
+    info.addMember(m_impl);
 }
 
 
 void QualifiedName::QualifiedNameImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addInstrumentedMember(m_prefix);
-    info.addInstrumentedMember(m_localName);
-    info.addInstrumentedMember(m_namespace);
-    info.addInstrumentedMember(m_localNameUpper);
+    info.addMember(m_prefix);
+    info.addMember(m_localName);
+    info.addMember(m_namespace);
+    info.addMember(m_localNameUpper);
 }
 
 void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace)

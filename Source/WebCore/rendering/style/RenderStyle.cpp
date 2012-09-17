@@ -1611,8 +1611,8 @@ void RenderStyle::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_background);
     // FIXME: surrond contains some fields e.g. BorderData that might need to be instrumented.
     info.addMember(surround);
-    info.addInstrumentedMember(rareNonInheritedData);
-    info.addInstrumentedMember(rareInheritedData);
+    info.addMember(rareNonInheritedData);
+    info.addMember(rareInheritedData);
     // FIXME: inherited contains StyleImage and Font fields that might need to be instrumented.
     info.addMember(inherited);
     if (m_cachedPseudoStyles)

@@ -360,26 +360,26 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
-    info.addInstrumentedMember(m_frame);
-    info.addInstrumentedMember(m_mainResourceLoader);
+    info.addMember(m_frame);
+    info.addMember(m_mainResourceLoader);
     info.addInstrumentedHashSet(m_subresourceLoaders);
     info.addInstrumentedHashSet(m_multipartSubresourceLoaders);
     info.addInstrumentedHashSet(m_plugInStreamLoaders);
-    info.addInstrumentedMember(m_substituteData);
-    info.addInstrumentedMember(m_pageTitle.string());
-    info.addInstrumentedMember(m_overrideEncoding);
+    info.addMember(m_substituteData);
+    info.addMember(m_pageTitle.string());
+    info.addMember(m_overrideEncoding);
     info.addVector(m_responses);
-    info.addInstrumentedMember(m_originalRequest);
-    info.addInstrumentedMember(m_originalRequestCopy);
-    info.addInstrumentedMember(m_request);
-    info.addInstrumentedMember(m_response);
-    info.addInstrumentedMember(m_lastCheckedRequest);
+    info.addMember(m_originalRequest);
+    info.addMember(m_originalRequestCopy);
+    info.addMember(m_request);
+    info.addMember(m_response);
+    info.addMember(m_lastCheckedRequest);
     info.addInstrumentedVector(m_responses);
     info.addHashMap(m_pendingSubstituteResources);
     info.addInstrumentedHashSet(m_resourcesClientKnowsAbout);
     info.addVector(m_resourcesLoadedFromMemoryCacheForClientNotification);
-    info.addInstrumentedMember(m_clientRedirectSourceForHistory);
-    info.addInstrumentedMember(m_mainResourceData);
+    info.addMember(m_clientRedirectSourceForHistory);
+    info.addMember(m_mainResourceData);
 }
 
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const

@@ -715,7 +715,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 void CSSProperty::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_value);
+    info.addMember(m_value);
 }
 
 } // namespace WebCore

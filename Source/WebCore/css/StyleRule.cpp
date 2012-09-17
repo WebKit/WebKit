@@ -209,8 +209,8 @@ unsigned StyleRule::averageSizeInBytes()
 void StyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_properties);
-    info.addInstrumentedMember(m_selectorList);
+    info.addMember(m_properties);
+    info.addMember(m_selectorList);
 }
 
 StyleRule::StyleRule(int sourceLine)
@@ -272,8 +272,8 @@ void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
 void StyleRulePage::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_properties);
-    info.addInstrumentedMember(m_selectorList);
+    info.addMember(m_properties);
+    info.addMember(m_selectorList);
 }
 
 StyleRuleFontFace::StyleRuleFontFace()
@@ -306,7 +306,7 @@ void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
 void StyleRuleFontFace::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_properties);
+    info.addMember(m_properties);
 }
 
 
@@ -356,7 +356,7 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
 void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_mediaQueries);
+    info.addMember(m_mediaQueries);
 }
 
 StyleRuleRegion::StyleRuleRegion(CSSSelectorVector* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
@@ -374,7 +374,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 void StyleRuleRegion::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_selectorList);
+    info.addMember(m_selectorList);
 }
 
 } // namespace WebCore

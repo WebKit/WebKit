@@ -143,9 +143,9 @@ void CSSCrossfadeValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObje
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_fromValue);
-    info.addInstrumentedMember(m_toValue);
-    info.addInstrumentedMember(m_percentageValue);
+    info.addMember(m_fromValue);
+    info.addMember(m_toValue);
+    info.addMember(m_percentageValue);
     // FIXME: add instrumentation for
     // m_cachedFromImage
     // m_cachedToImage

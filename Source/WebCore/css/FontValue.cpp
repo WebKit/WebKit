@@ -68,12 +68,12 @@ String FontValue::customCssText() const
 void FontValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(style);
-    info.addInstrumentedMember(variant);
-    info.addInstrumentedMember(weight);
-    info.addInstrumentedMember(size);
-    info.addInstrumentedMember(lineHeight);
-    info.addInstrumentedMember(family);
+    info.addMember(style);
+    info.addMember(variant);
+    info.addMember(weight);
+    info.addMember(size);
+    info.addMember(lineHeight);
+    info.addMember(family);
 }
 
 }

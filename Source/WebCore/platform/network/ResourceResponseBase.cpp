@@ -571,11 +571,11 @@ void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 void ResourceResponseBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    info.addInstrumentedMember(m_url);
-    info.addInstrumentedMember(m_mimeType);
-    info.addInstrumentedMember(m_textEncodingName);
-    info.addInstrumentedMember(m_suggestedFilename);
-    info.addInstrumentedMember(m_httpStatusText);
+    info.addMember(m_url);
+    info.addMember(m_mimeType);
+    info.addMember(m_textEncodingName);
+    info.addMember(m_suggestedFilename);
+    info.addMember(m_httpStatusText);
     info.addHashMap(m_httpHeaderFields);
     info.addInstrumentedMapEntries(m_httpHeaderFields);
     info.addMember(m_resourceLoadTiming);

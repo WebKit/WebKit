@@ -58,7 +58,7 @@ private:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-        info.addInstrumentedMember(m_styleSheet);
+        info.addMember(m_styleSheet);
     }
     
     CSSStyleSheet* m_styleSheet;
@@ -181,12 +181,12 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
 void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_contents);
-    info.addInstrumentedMember(m_title);
-    info.addInstrumentedMember(m_mediaQueries);
-    info.addInstrumentedMember(m_ownerNode);
-    info.addInstrumentedMember(m_ownerRule);
-    info.addInstrumentedMember(m_mediaCSSOMWrapper);
+    info.addMember(m_contents);
+    info.addMember(m_title);
+    info.addMember(m_mediaQueries);
+    info.addMember(m_ownerNode);
+    info.addMember(m_ownerRule);
+    info.addMember(m_mediaCSSOMWrapper);
     info.addInstrumentedVector(m_childRuleCSSOMWrappers);
 }
 

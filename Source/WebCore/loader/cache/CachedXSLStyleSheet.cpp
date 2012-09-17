@@ -93,7 +93,7 @@ void CachedXSLStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceXSLT);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_sheet);
+    info.addMember(m_sheet);
     info.addMember(m_decoder);
 }
 

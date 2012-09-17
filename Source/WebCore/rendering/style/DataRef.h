@@ -67,7 +67,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_data);
+        info.addMember(m_data);
     }
 
 private:

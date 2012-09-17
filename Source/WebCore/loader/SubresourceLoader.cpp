@@ -139,8 +139,8 @@ void SubresourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     ResourceLoader::reportMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_resource);
-    info.addInstrumentedMember(m_document);
+    info.addMember(m_resource);
+    info.addMember(m_document);
     info.addMember(m_requestCountTracker);
 }
 

@@ -824,7 +824,7 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
 void String::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addInstrumentedMember(m_impl);
+    info.addMember(m_impl);
 }
 
 // String Operations

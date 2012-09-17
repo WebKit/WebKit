@@ -193,7 +193,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_instrumentedUndefined);
+        info.addMember(m_instrumentedUndefined);
     }
     OwnPtr<InstrumentedUndefined> m_instrumentedUndefined;
 };
@@ -214,7 +214,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_instrumented);
+        info.addMember(m_instrumented);
     }
 
     Instrumented m_instrumented;
@@ -238,7 +238,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_value);
+        info.addMember(m_value);
     }
 
     T m_value;
@@ -352,6 +352,7 @@ TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
         InstrumentedOwner<InstrumentedTemplate<String>* > root(value.get());
         impl.addRootObject(root);
         EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
     }
     {
         VisitedObjects visitedObjects;

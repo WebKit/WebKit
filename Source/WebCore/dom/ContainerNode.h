@@ -105,8 +105,8 @@ public:
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         Node::reportMemoryUsage(memoryObjectInfo);
-        info.addInstrumentedMember(m_firstChild);
-        info.addInstrumentedMember(m_lastChild);
+        info.addMember(m_firstChild);
+        info.addMember(m_lastChild);
     }
 
 protected:

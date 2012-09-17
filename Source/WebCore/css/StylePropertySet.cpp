@@ -1127,7 +1127,7 @@ void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 
     unsigned count = propertyCount();
     for (unsigned i = 0; i < count; ++i)
-        info.addInstrumentedMember(propertyAt(i));
+        info.addMember(propertyAt(i));
 }
 
 // See the function above if you need to update this.

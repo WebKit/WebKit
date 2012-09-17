@@ -82,12 +82,12 @@ String ShadowValue::customCssText() const
 void ShadowValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(x);
-    info.addInstrumentedMember(y);
-    info.addInstrumentedMember(blur);
-    info.addInstrumentedMember(spread);
-    info.addInstrumentedMember(style);
-    info.addInstrumentedMember(color);
+    info.addMember(x);
+    info.addMember(y);
+    info.addMember(blur);
+    info.addMember(spread);
+    info.addMember(style);
+    info.addMember(color);
 }
 
 }

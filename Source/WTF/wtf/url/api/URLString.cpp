@@ -35,7 +35,7 @@ namespace WTF {
 void URLString::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addInstrumentedMember(m_string);
+    info.addMember(m_string);
 }
 
 #ifndef NDEBUG

@@ -1,5 +1,34 @@
 2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: NMI: now when we can detect instrumented classes we can
+        remove addInstrumentedMember and use addMember for everything.
+        https://bugs.webkit.org/show_bug.cgi?id=96913
+
+        Reviewed by Yury Semikhatsky.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::addRootObject):
+        (WTF::MemoryInstrumentation::addObject):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        (WTF):
+        (WTF::MemoryInstrumentation::addInstrumentedCollection):
+        (WTF::MemoryInstrumentation::addInstrumentedMapEntries):
+        (WTF::MemoryInstrumentation::addInstrumentedMapValues):
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::reportMemoryUsage):
+        * wtf/text/CString.h:
+        (WTF::CString::reportMemoryUsage):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reportMemoryUsage):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::reportMemoryUsage):
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::reportMemoryUsage):
+        * wtf/url/api/URLString.cpp:
+        (WTF::URLString::reportMemoryUsage):
+
+2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed compilation fix.
 
         * wtf/MemoryInstrumentation.h:

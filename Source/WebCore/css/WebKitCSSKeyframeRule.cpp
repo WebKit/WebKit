@@ -92,8 +92,8 @@ String StyleKeyframe::cssText() const
 void StyleKeyframe::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedMember(m_properties);
-    info.addInstrumentedMember(m_key);
+    info.addMember(m_properties);
+    info.addMember(m_key);
 }
 
 WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSKeyframesRule* parent)
@@ -120,8 +120,8 @@ void WebKitCSSKeyframeRule::reportDescendantMemoryUsage(MemoryObjectInfo* memory
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_keyframe);
-    info.addInstrumentedMember(m_propertiesCSSOMWrapper);
+    info.addMember(m_keyframe);
+    info.addMember(m_propertiesCSSOMWrapper);
 }
 
 } // namespace WebCore

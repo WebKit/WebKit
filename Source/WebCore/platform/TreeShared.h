@@ -114,7 +114,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_parent);
+        info.addMember(m_parent);
     }
 
 private:

@@ -100,8 +100,8 @@ void CSSCanvasValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectI
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedMember(m_name);
-    info.addInstrumentedMember(m_element);
+    info.addMember(m_name);
+    info.addMember(m_element);
 }
 
 } // namespace WebCore

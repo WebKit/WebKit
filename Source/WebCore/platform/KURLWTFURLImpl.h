@@ -45,8 +45,8 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addInstrumentedMember(m_parsedURL);
-        info.addInstrumentedMember(m_invalidUrlString);
+        info.addMember(m_parsedURL);
+        info.addMember(m_invalidUrlString);
     }
     PassRefPtr<KURLWTFURLImpl> copy() const;
 };
