@@ -1,3 +1,32 @@
+2012-09-17  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96945
+        REGRESSION (r128678): Several tests fail on WK2 bots 
+        (compositing/rtl/rtl-fixed-overflow.html, 
+        compositing/rtl/rtl-fixed.html, 
+        fast/regions/float-pushed-width-change.html, 
+        fast/repaint/fixed-move-after-keyboard-scroll.html)
+
+        Reviewed by Tim Horton.
+
+        These tests are failing after 
+        https://bugs.webkit.org/show_bug.cgi?id=96688 They are failing on WK2 
+        only because that change only forces compositing mode for fixed 
+        position elements in WK2, not WK1. 
+
+        This one is a ref test where the expectation used fixed positioning. 
+        We can avoid using fixed pos and avoid that fact that that creates a 
+        layer in WK2 and use absolute pos instead.
+        * fast/regions/float-pushed-width-change-expected.html:
+
+        These tests just need updated results in the mac-wk2 directory.
+        * platform/mac-wk2/compositing/rtl: Added.
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-expected.txt: Added.
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-overflow-expected.txt: Added.
+        * platform/mac-wk2/fast/repaint: Added.
+        * platform/mac-wk2/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/mac-wk2/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt: Added.
+
 2012-09-17  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, test expectations update.
