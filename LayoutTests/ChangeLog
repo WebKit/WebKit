@@ -1,3 +1,12 @@
+2012-09-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Unreviewed gardening. Rebaseline after r128691
+        https://bugs.webkit.org/show_bug.cgi?id=96892
+
+        Rebaseline fast/css/word-space-extra.html for chromium.
+
+        * platform/chromium-linux/fast/css/word-space-extra-expected.txt: Added.
+
 2012-09-16  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r126763): css1/pseudo/firstline.html fails when using the complex text code path
