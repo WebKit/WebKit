@@ -1,3 +1,12 @@
+2012-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Not reviewed. Added svn:eol-style native to unbreak some build bots.
+        https://bugs.webkit.org/show_bug.cgi?id=96175.
+
+        * JavaScriptCore.vcproj/LLIntAssembly/LLIntAssembly.vcproj: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/LLIntDesiredOffsets/LLIntDesiredOffsets.vcproj: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcproj: Added property svn:eol-style.
+
 2012-09-16  Mark Lam  <mark.lam@apple.com>
 
         Added MSVC project changes to enable building the llint.
