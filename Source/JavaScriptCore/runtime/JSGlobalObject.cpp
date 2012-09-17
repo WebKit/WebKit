@@ -363,13 +363,27 @@ void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)
         return;
     
     JSObject* object = asObject(cell);
-    
-    // We only want to have a bad time in the affected global object, not in the entire
-    // VM.
-    if (object->unwrappedGlobalObject() != m_globalObject)
+
+    // Run this filter first, since it's cheap, and ought to filter out a lot of objects.
+    if (!hasBrokenIndexing(object))
         return;
     
-    if (!hasBrokenIndexing(object))
+    // We only want to have a bad time in the affected global object, not in the entire
+    // VM. But we have to be careful, since there may be objects that claim to belong to
+    // a different global object that has prototypes from our global object.
+    bool foundGlobalObject = false;
+    for (JSObject* current = object; ;) {
+        if (current->unwrappedGlobalObject() == m_globalObject) {
+            foundGlobalObject = true;
+            break;
+        }
+        
+        JSValue prototypeValue = current->prototype();
+        if (prototypeValue.isNull())
+            break;
+        current = asObject(prototypeValue);
+    }
+    if (!foundGlobalObject)
         return;
     
     m_foundObjects.append(object);

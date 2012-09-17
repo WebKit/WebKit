@@ -1,3 +1,26 @@
+2012-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        We don't have a bad enough time if an object's prototype chain crosses global objects
+        https://bugs.webkit.org/show_bug.cgi?id=96962
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/cross-frame-really-bad-time-expected.txt: Added.
+        * fast/js/cross-frame-really-bad-time-with-__proto__-expected.txt: Added.
+        * fast/js/cross-frame-really-bad-time-with-__proto__.html: Added.
+        * fast/js/cross-frame-really-bad-time.html: Added.
+        * fast/js/script-tests/cross-frame-really-bad-time-with-__proto__.js: Added.
+        (foo):
+        (evil):
+        (bar):
+        (done):
+        * fast/js/script-tests/cross-frame-really-bad-time.js: Added.
+        (Cons):
+        (foo):
+        (evil):
+        (bar):
+        (done):
+
 2012-09-17  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96945
