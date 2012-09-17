@@ -1,4 +1,32 @@
 =================
+WebKitGTK+ 1.9.92
+=================
+
+What's new in WebKitGTK+ 1.9.92?
+
+  - Properly expose <legend> elements to ATs.
+  - The new accessibility CanvasRole is now mapped to ATK_ROLE_CANVAS.
+  - Fix the build in Windows platform.
+  - Fix an infinite loop in accessibility code.
+  - Fix the build with GStreamer 0.11.
+  - Fix a crash in network backend with non-UTF8 HTTP header names.
+  - Properly close audio device after playing sound.
+  - Sanitize the suggested filename when building the download
+    destination URI in WebKit2.
+  - Fix a crash in WebKit2 when navigating between pages in the
+    history cache.
+  - Purge unused favicons from IconDatabase after 30 days.
+  - Fix a crash in
+    AccessibilityObject::accessibilityPlatformIncludesObject().
+  - Fix a crash in WebCore::HTMLSelectElement::selectedIndex().
+  - Fix caret-moved events not emitted for certain content.
+  - Fix incorrect/unexpected characters in the text of certain
+    accessibles.
+  - Implement AccessibilityUIElement::titleUIElement() and
+    AccessibilityUIElement::stringValue().
+  - Fix LLint build with -g -02.
+
+=================
 WebKitGTK+ 1.9.91
 =================
 
