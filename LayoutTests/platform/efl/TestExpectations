@@ -918,8 +918,6 @@ BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
 
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
 
-BUGWK90334 : css3/flexbox/anonymous-block.html = IMAGE
-
 // Test started failing after r122681 due to wrong scrollbar positioning
 BUGWK91359 : css3/flexbox/flexbox-overflow-auto.html = IMAGE
 

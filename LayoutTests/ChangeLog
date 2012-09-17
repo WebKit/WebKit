@@ -1,3 +1,15 @@
+2012-09-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip css3/flexbox/anonymous-block.html test case
+        https://bugs.webkit.org/show_bug.cgi?id=96909
+
+        Unreviewed EFL gardening.
+
+        Unskip css3/flexbox/anonymous-block.html for EFL port
+        now that it has been fixed in r121687.
+
+        * platform/efl/TestExpectations:
+
 2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
