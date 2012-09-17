@@ -115,8 +115,14 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
         const PluginModuleInfo& loadedPlugin = alreadyLoadedPlugins[i];
 
         // If a plug-in with the same bundle identifier already exists, we don't want to load it.
-        if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier)
-            return false;
+        // However, if the already existing plug-in is blocked we want to replace it with the new plug-in.
+        if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier) {
+            if (!shouldBlockPlugin(loadedPlugin))
+                return false;
+
+            alreadyLoadedPlugins.remove(i);
+            break;
+        }
     }
 
     // Prefer the Oracle Java plug-in over the Apple java plug-in.

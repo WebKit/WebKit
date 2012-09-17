@@ -1,3 +1,17 @@
+2012-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Don't load a blocked plug-in if a non-blocked version of the same plug-in exists
+        https://bugs.webkit.org/show_bug.cgi?id=96933
+        <rdar://problem/12206720>
+
+        Reviewed by Andreas Kling.
+
+        If a plug-in with the same bundle identifier already exists and it's blocked, remove it and replace it
+        with the other version.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
 2012-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove 'using namespace WebCore' from header file
