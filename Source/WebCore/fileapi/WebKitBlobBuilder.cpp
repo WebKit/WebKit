@@ -33,7 +33,9 @@
 #include "WebKitBlobBuilder.h"
 
 #include "Blob.h"
+#include "Document.h"
 #include "ExceptionCode.h"
+#include "FeatureObserver.h"
 #include "File.h"
 #include "HistogramSupport.h"
 #include "LineEnding.h"
@@ -60,6 +62,11 @@ PassRefPtr<WebKitBlobBuilder> WebKitBlobBuilder::create(ScriptExecutionContext* 
 {
     String message("BlobBuilder is deprecated. Use \"Blob\" constructor instead.");
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, message);
+
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        FeatureObserver::observe(document->domWindow(), FeatureObserver::LegacyBlobBuilder);
+    }
 
     return adoptRef(new WebKitBlobBuilder());
 }
