@@ -385,6 +385,9 @@ private:
     // was searched.
     bool shouldScopeMatches(const WTF::String& searchText);
 
+    // Finishes the current scoping effort and triggers any updates if appropriate.
+    void finishCurrentScopingEffort(int identifier);
+
     // Queue up a deferred call to scopeStringMatches.
     void scopeStringMatchesSoon(
         int identifier, const WebString& searchText, const WebFindOptions&,
@@ -455,6 +458,10 @@ private:
     // Keeps track of whether the scoping effort was completed (the user may
     // interrupt it before it completes by submitting a new search).
     bool m_scopingComplete;
+
+    // Keeps track of whether the last find request completed its scoping effort
+    // without finding any matches in this frame.
+    bool m_lastFindRequestCompletedWithNoMatches;
 
     // Keeps track of when the scoping effort should next invalidate the scrollbar
     // and the frame area.

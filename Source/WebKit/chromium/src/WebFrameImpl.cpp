@@ -1779,17 +1779,15 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                                       const WebFindOptions& options,
                                       bool reset)
 {
-    if (!shouldScopeMatches(searchText))
-        return;
-
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
     if (reset) {
         // This is a brand new search, so we need to reset everything.
         // Scoping is just about to begin.
         m_scopingComplete = false;
+
         // Clear highlighting for this frame.
-        if (frame()->editor()->markedTextMatchesAreHighlighted())
+        if (frame() && frame()->editor()->markedTextMatchesAreHighlighted())
             frame()->page()->unmarkAllTextMatches();
 
         // Clear the tickmarks and results cache.
@@ -1809,6 +1807,14 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             searchText,
             options,
             false); // false=we just reset, so don't do it again.
+        return;
+    }
+
+    if (!shouldScopeMatches(searchText)) {
+        // Note that we want to defer the final update when resetting even if shouldScopeMatches returns false.
+        // This is done in order to prevent sending a final message based only on the results of the first frame
+        // since m_framesScopingCount would be 0 as other frames have yet to reset.
+        finishCurrentScopingEffort(identifier);
         return;
     }
 
@@ -1938,10 +1944,18 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         return; // Done for now, resume work later.
     }
 
+    finishCurrentScopingEffort(identifier);
+}
+
+void WebFrameImpl::finishCurrentScopingEffort(int identifier)
+{
+    WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
+
     // This frame has no further scoping left, so it is done. Other frames might,
     // of course, continue to scope matches.
     m_scopingComplete = true;
     mainFrameImpl->m_framesScopingCount--;
+    m_lastFindRequestCompletedWithNoMatches = !m_lastMatchCount;
 
     // If this is the last frame to finish scoping we need to trigger the final
     // update to be sent.
@@ -1958,6 +1972,9 @@ void WebFrameImpl::cancelPendingScopingEffort()
     m_deferredScopingWork.clear();
 
     m_activeMatchIndexInCurrentFrame = -1;
+
+    if (!m_scopingComplete)
+        m_lastFindRequestCompletedWithNoMatches = false;
 }
 
 void WebFrameImpl::increaseMatchCount(int count, int identifier)
@@ -2330,6 +2347,7 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_totalMatchCount(-1)
     , m_framesScopingCount(-1)
     , m_scopingComplete(false)
+    , m_lastFindRequestCompletedWithNoMatches(false)
     , m_nextInvalidateAfter(0)
     , m_findMatchMarkersVersion(0)
     , m_findMatchRectsAreValid(false)
@@ -2612,9 +2630,9 @@ int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const
 
 bool WebFrameImpl::shouldScopeMatches(const String& searchText)
 {
-    // Don't scope if we can't find a frame or a view or if the frame is not visible.
+    // Don't scope if we can't find a frame or a view.
     // The user may have closed the tab/application, so abort.
-    if (!frame() || !frame()->view() || !hasVisibleContent())
+    if (!frame() || !frame()->view())
         return false;
 
     ASSERT(frame()->document() && frame()->view());
@@ -2622,7 +2640,7 @@ bool WebFrameImpl::shouldScopeMatches(const String& searchText)
     // If the frame completed the scoping operation and found 0 matches the last
     // time it was searched, then we don't have to search it again if the user is
     // just adding to the search string or sending the same search string again.
-    if (m_scopingComplete && !m_lastSearchString.isEmpty() && !m_lastMatchCount) {
+    if (m_lastFindRequestCompletedWithNoMatches && !m_lastSearchString.isEmpty()) {
         // Check to see if the search string prefixes match.
         String previousSearchPrefix =
             searchText.substring(0, m_lastSearchString.length());
