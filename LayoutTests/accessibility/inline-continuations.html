@@ -16,7 +16,7 @@ if (window.testRunner)
    below should be visited only ones traversing the accessibility
    tree.</p>
 
-<div contentEditable="true" id="test"><span>1<div>2</div>3</span><span>4</span><div>5</div></div>
+<div contentEditable="true" id="test"><span>1<div role="group">2</div>3</span><span>4</span><div role="group">5</div></div>
 
 <div id="console"></div>
 
@@ -27,8 +27,8 @@ function nonGroupDescendants(elt)
     var count = elt.childrenCount;
     for (var i = 0; i < count; ++i) {
         var child = elt.childAtIndex(i);
-          if (!child.role.match(/group/i))
-          result++;
+        if (!child.role.match(/group/i))
+            result++;
         result += nonGroupDescendants(child);
     }
     return result;

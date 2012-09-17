@@ -75,6 +75,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleGrowArea,
     WebAccessibilityRoleHeading,
     WebAccessibilityRoleHelpTag,
+    WebAccessibilityRoleHorizontalRule,
     WebAccessibilityRoleIgnored,
     WebAccessibilityRoleImage,
     WebAccessibilityRoleImageMap,
