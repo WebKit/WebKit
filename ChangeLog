@@ -1,3 +1,14 @@
+2012-09-17  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Enable VIDEO_TRACK
+        https://bugs.webkit.org/show_bug.cgi?id=96949
+
+        Reviewed by Antonio Gomes.
+
+        Turn on VIDEO_TRACK feature.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Remove configuration options for stable features that are currently enabled
