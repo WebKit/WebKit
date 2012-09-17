@@ -3259,10 +3259,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // Table sections should be ignored.
     if (m_renderer->isTableSection())
         return IgnoredRole;
-    
-#if PLATFORM(GTK)
+
     if (m_renderer->isHR())
-        return SplitterRole;
+        return HorizontalRuleRole;
 
     if (node && node->hasTagName(pTag))
         return ParagraphRole;
@@ -3275,10 +3274,6 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (node && node->hasTagName(formTag))
         return FormRole;
-#else
-    if (node && node->hasTagName(labelTag))
-        return GroupRole;
-#endif
 
     if (node && node->hasTagName(articleTag))
         return DocumentArticleRole;

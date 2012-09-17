@@ -208,6 +208,16 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("ToggleButton");
     case WebAccessibilityRoleCanvas:
         return result.append("Canvas");
+    case WebAccessibilityRoleParagraph:
+        return result.append("Paragraph");
+    case WebAccessibilityRoleDiv:
+        return result.append("Div");
+    case WebAccessibilityRoleLabel:
+        return result.append("Label");
+    case WebAccessibilityRoleForm:
+        return result.append("Form");
+    case WebAccessibilityRoleHorizontalRule:
+        return result.append("HorizontalRule");
     default:
         // Also matches WebAccessibilityRoleUnknown.
         return result.append("Unknown");
