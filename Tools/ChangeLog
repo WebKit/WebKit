@@ -1,3 +1,11 @@
+2012-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Auto-generate the module pri file for QtWebKit
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/qt_webkit.pri: Removed.
+
 2012-09-14  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: --additional-platform-dir is broken on chromium ports

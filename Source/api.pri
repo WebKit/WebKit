@@ -29,7 +29,6 @@ use?(3D_GRAPHICS): WEBKIT += angle
 load(webkit_modules)
 
 MODULE = webkit
-MODULE_PRI = ../Tools/qmake/qt_webkit.pri
 
 # This is the canonical list of dependencies for the public API of
 # the QtWebKit library, and will end up in the library's prl file.
