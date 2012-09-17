@@ -2907,6 +2907,7 @@ const String& AccessibilityRenderObject::actionVerb() const
     
     switch (roleValue()) {
     case ButtonRole:
+    case ToggleButtonRole:
         return buttonAction;
     case TextFieldRole:
     case TextAreaRole:

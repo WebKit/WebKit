@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script>
+
+function runTest()
+{
+  if (window.accessibilityController) {
+
+    document.getElementById("tbutton").focus();
+    tbutton1 = accessibilityController.focusedElement;
+    debug("Role: " + tbutton1.role);
+    shouldBe("tbutton1.title", "'AXTitle: Toggle button'");
+
+    document.getElementById("button").focus();
+    button = accessibilityController.focusedElement;
+    debug("Role: " + button.role);
+    shouldBe("button.title", "'AXTitle: Button title'");
+  }
+}
+</script>
+
+</head>
+<body id="body" onload="runTest()">
+
+<a id="tbutton" tabindex="0" class="button" role="button" aria-pressed="true">Toggle button</a>
+
+<div>
+<button type="button" id="button" role="button"/>
+<label>Button title</label>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that a toggle button properly exposes the title when there isn't a direct relation and textUnderElement is required to be used.");
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

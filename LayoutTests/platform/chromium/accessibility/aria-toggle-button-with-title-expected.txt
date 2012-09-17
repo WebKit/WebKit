@@ -1,0 +1,12 @@
+Toggle button
+Button title
+This tests that a toggle button properly exposes the title when there isn't a direct relation and textUnderElement is required to be used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Role: AXRole: AXToggleButton
+PASS tbutton1.title is 'AXTitle: Toggle button'
+Role: AXRole: AXButton
+PASS button.title is 'AXTitle: Button title'
+

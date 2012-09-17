@@ -372,7 +372,7 @@ bool AccessibilityNodeObject::isWebArea() const
 
 bool AccessibilityNodeObject::isImageButton() const
 {
-    return isNativeImage() && roleValue() == ButtonRole;
+    return isNativeImage() && isButton();
 }
 
 bool AccessibilityNodeObject::isAnchor() const
@@ -565,7 +565,7 @@ bool AccessibilityNodeObject::isIndeterminate() const
 
 bool AccessibilityNodeObject::isPressed() const
 {
-    if (roleValue() != ButtonRole)
+    if (!isButton())
         return false;
 
     Node* node = this->node();
@@ -875,6 +875,7 @@ Element* AccessibilityNodeObject::actionElement() const
     switch (roleValue()) {
     case ButtonRole:
     case PopUpButtonRole:
+    case ToggleButtonRole:
     case TabRole:
     case MenuItemRole:
     case ListItemRole:
@@ -1212,6 +1213,7 @@ String AccessibilityNodeObject::title() const
     switch (roleValue()) {
     case PopUpButtonRole:
     case ButtonRole:
+    case ToggleButtonRole:
     case CheckBoxRole:
     case ListBoxOptionRole:
     case MenuButtonRole:

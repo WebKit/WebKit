@@ -1254,6 +1254,7 @@ const String& AccessibilityObject::actionVerb() const
 
     switch (roleValue()) {
     case ButtonRole:
+    case ToggleButtonRole:
         return buttonAction;
     case TextFieldRole:
     case TextAreaRole:
@@ -1787,6 +1788,13 @@ AccessibilityRole AccessibilityObject::buttonRoleType() const
     // type.
 
     return ButtonRole;
+}
+
+bool AccessibilityObject::isButton() const
+{
+    AccessibilityRole role = roleValue();
+
+    return role == ButtonRole || role == PopUpButtonRole || role == ToggleButtonRole;
 }
 
 } // namespace WebCore
