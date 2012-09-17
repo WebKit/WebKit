@@ -1,3 +1,21 @@
+2012-09-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove 'using namespace WebCore' from header file
+
+        Broke the build on Mac OS X by causing clashes between Fixed from
+        /usr/include/MacTypes.h and Source/WebCore/platform/Length.h.
+
+        Reviewed by Simon Hausmann..
+
+        * UIProcess/PageViewportController.cpp:
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        (WebKit::PageViewportController::contentsLayoutSize):
+        (WebKit):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2012-09-15  Vivek Galatage  <vivekgalatage@gmail.com>
 
         WinCairo build fix due to missing symbols for setImagesEnabled and setStorageBlockingPolicy

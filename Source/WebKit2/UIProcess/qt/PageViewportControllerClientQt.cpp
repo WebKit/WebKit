@@ -32,6 +32,8 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 static const int kScaleAnimationDurationMillis = 250;

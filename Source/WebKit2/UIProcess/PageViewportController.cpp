@@ -28,6 +28,8 @@
 #include <WebCore/FloatSize.h>
 #include <wtf/MathExtras.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 static inline float bound(float min, float value, float max)

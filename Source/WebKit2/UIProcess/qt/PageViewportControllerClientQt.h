@@ -47,7 +47,7 @@ public:
     PageViewportControllerClientQt(QQuickWebView*, QQuickWebPage*);
     ~PageViewportControllerClientQt();
 
-    virtual void setContentsPosition(const FloatPoint& localPoint);
+    virtual void setContentsPosition(const WebCore::FloatPoint& localPoint);
     virtual void setContentsScale(float localScale, bool treatAsInitialValue);
 
     virtual void didResumeContent();

@@ -32,8 +32,6 @@ class IntPoint;
 class IntSize;
 }
 
-using namespace WebCore;
-
 namespace WebKit {
 
 class WebPageProxy;
@@ -76,11 +74,11 @@ public:
     void suspendContent();
     void resumeContent();
 
-    FloatRect positionRangeForContentAtScale(float viewportScale) const;
+    WebCore::FloatRect positionRangeForContentAtScale(float viewportScale) const;
 
     float convertFromViewport(float value) const { return value / m_devicePixelRatio; }
     float convertToViewport(float value) const { return value * m_devicePixelRatio; }
-    FloatRect convertToViewport(const FloatRect&) const;
+    WebCore::FloatRect convertToViewport(const WebCore::FloatRect&) const;
 
     float innerBoundedContentsScale(float) const;
     float outerBoundedContentsScale(float) const;
@@ -89,7 +87,7 @@ public:
     bool hadUserInteraction() const { return m_hadUserInteraction; }
     bool allowsUserScaling() const { return m_allowsUserScaling; }
 
-    FloatSize contentsLayoutSize() const { return m_rawAttributes.layoutSize; }
+    WebCore::FloatSize contentsLayoutSize() const { return m_rawAttributes.layoutSize; }
     float devicePixelRatio() const { return m_devicePixelRatio; }
     float minimumContentsScale() const { return m_minimumScale; }
     float maximumContentsScale() const { return m_maximumScale; }
@@ -98,21 +96,21 @@ public:
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
     // Notifications to the WebProcess.
-    void setViewportSize(const FloatSize& newSize);
-    void setVisibleContentsRect(const FloatRect& visibleContentsRect, float viewportScale, const FloatPoint& trajectoryVector = FloatPoint::zero());
+    void setViewportSize(const WebCore::FloatSize& newSize);
+    void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float viewportScale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
 
     // Notifications from the WebProcess.
-    void didChangeContentsSize(const IntSize& newSize);
-    void didChangeViewportAttributes(const ViewportAttributes&);
-    void pageDidRequestScroll(const IntPoint& cssPosition);
+    void didChangeContentsSize(const WebCore::IntSize& newSize);
+    void didChangeViewportAttributes(const WebCore::ViewportAttributes&);
+    void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
 private:
-    void syncVisibleContents(const FloatPoint &trajectoryVector = FloatPoint::zero());
+    void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
 
     WebPageProxy* const m_webPageProxy;
     PageViewportControllerClient* m_client;
 
-    ViewportAttributes m_rawAttributes;
+    WebCore::ViewportAttributes m_rawAttributes;
 
     bool m_allowsUserScaling;
     float m_minimumScale;
@@ -123,16 +121,16 @@ private:
     bool m_hasSuspendedContent;
     bool m_hadUserInteraction;
 
-    FloatSize m_viewportSize;
-    FloatSize m_contentsSize;
-    FloatRect m_visibleContentsRect;
+    WebCore::FloatSize m_viewportSize;
+    WebCore::FloatSize m_contentsSize;
+    WebCore::FloatRect m_visibleContentsRect;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
 
     friend class ViewportUpdateDeferrer;
 };
 
 bool fuzzyCompare(float, float, float epsilon);
-FloatPoint boundPosition(const FloatPoint minPosition, const FloatPoint& position, const FloatPoint& maxPosition);
+WebCore::FloatPoint boundPosition(const WebCore::FloatPoint minPosition, const WebCore::FloatPoint& position, const WebCore::FloatPoint& maxPosition);
 
 } // namespace WebKit
 
