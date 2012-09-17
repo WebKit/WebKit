@@ -30,7 +30,7 @@ module window {
         Conditional=INDEXED_DATABASE,
         Supplemental=DOMWindow
     ] DOMWindowIndexedDatabase {
-        readonly attribute IDBFactory webkitIndexedDB;
+        readonly attribute [V8MeasureAs=PrefixedIndexedDB] IDBFactory webkitIndexedDB;
 
         attribute IDBCursorConstructor webkitIDBCursor;
         attribute IDBDatabaseConstructor webkitIDBDatabase;
