@@ -163,9 +163,9 @@ void WebOverlay::removeFromParent()
     d->parent = 0;
 }
 
-void WebOverlay::setContentsToImage(const unsigned char* data, const Platform::IntSize& imageSize)
+void WebOverlay::setContentsToImage(const unsigned char* data, const Platform::IntSize& imageSize, ImageDataAdoptionType adoptionType)
 {
-    d->setContentsToImage(data, imageSize);
+    d->setContentsToImage(data, imageSize, adoptionType);
 }
 
 void WebOverlay::setContentsToColor(int r, int g, int b, int a)
@@ -329,7 +329,7 @@ void WebOverlayPrivateWebKitThread::removeFromParent()
     m_layer->removeFromParent();
 }
 
-void WebOverlayPrivateWebKitThread::setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize)
+void WebOverlayPrivateWebKitThread::setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize, WebOverlay::ImageDataAdoptionType adoptionType)
 {
     notImplemented();
 }
@@ -390,6 +390,7 @@ void WebOverlayLayerCompositingThreadClient::setDrawsContent(bool drawsContent)
 void WebOverlayLayerCompositingThreadClient::invalidate()
 {
     m_texture.clear();
+    clearUploadedContents();
 }
 
 void WebOverlayLayerCompositingThreadClient::setContents(const SkBitmap& contents)
@@ -397,6 +398,12 @@ void WebOverlayLayerCompositingThreadClient::setContents(const SkBitmap& content
     m_contents = contents;
     m_color = Color();
     m_texture.clear();
+    clearUploadedContents();
+}
+
+void WebOverlayLayerCompositingThreadClient::clearUploadedContents()
+{
+    m_uploadedContents = SkBitmap();
 }
 
 void WebOverlayLayerCompositingThreadClient::setContentsToColor(const Color& color)
@@ -404,6 +411,7 @@ void WebOverlayLayerCompositingThreadClient::setContentsToColor(const Color& col
     m_contents = SkBitmap();
     m_color = color;
     m_texture.clear();
+    clearUploadedContents();
 }
 
 void WebOverlayLayerCompositingThreadClient::layerCompositingThreadDestroyed(WebCore::LayerCompositingThread*)
@@ -446,7 +454,8 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
     m_texture = Texture::create();
     m_texture->protect(IntSize(m_contents.width(), m_contents.height()));
     IntRect bitmapRect(0, 0, m_contents.width(), m_contents.height());
-    m_texture->updateContents(m_contents, bitmapRect, bitmapRect, false);
+    m_uploadedContents = m_contents;
+    m_texture->updateContents(m_uploadedContents, bitmapRect, bitmapRect, false);
 }
 
 void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, int positionLocation, int texCoordLocation)
@@ -464,6 +473,7 @@ void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread
 void WebOverlayLayerCompositingThreadClient::deleteTextures(LayerCompositingThread*)
 {
     m_texture.clear();
+    clearUploadedContents();
 }
 
 WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread(PassRefPtr<LayerCompositingThread> layerCompositingThread)
@@ -594,7 +604,7 @@ void WebOverlayPrivateCompositingThread::removeFromParent()
     scheduleCompositingRun();
 }
 
-void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char* data, const IntSize& imageSize)
+void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char* data, const IntSize& imageSize, WebOverlay::ImageDataAdoptionType adoptionType)
 {
     if (!m_layerCompositingThreadClient)
         return;
@@ -608,7 +618,22 @@ void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char*
 
     SkBitmap contents;
     contents.setConfig(SkBitmap::kARGB_8888_Config, imageSize.width(), imageSize.height());
-    contents.setPixels(const_cast<unsigned char*>(data));
+
+    switch (adoptionType) {
+    case WebOverlay::ReferenceImageData:
+        contents.setPixels(const_cast<unsigned char*>(data));
+        break;
+    case WebOverlay::CopyImageData:
+        if (contents.allocPixels()) {
+            contents.lockPixels();
+            size_t bytes = SkBitmap::ComputeSize(SkBitmap::kARGB_8888_Config, imageSize.width(), imageSize.height());
+            memcpy(contents.getPixels(), data, bytes);
+            contents.unlockPixels();
+        }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
     m_layerCompositingThreadClient->setContents(contents);
     m_layerCompositingThread->setNeedsTexture(true);
@@ -733,7 +758,7 @@ void WebOverlay::removeAnimation(const WebString&)
 {
 }
 
-void WebOverlay::setContentsToImage(const unsigned char*, const Platform::IntSize&)
+void WebOverlay::setContentsToImage(const unsigned char*, const Platform::IntSize&, ImageDataAdoptionType)
 {
 }
 

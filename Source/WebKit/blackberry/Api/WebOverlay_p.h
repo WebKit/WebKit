@@ -24,6 +24,7 @@
 #include "GraphicsLayer.h"
 #include "LayerCompositingThread.h"
 #include "Texture.h"
+#include "WebOverlay.h"
 #include "WebOverlayOverride.h"
 
 #include <SkBitmap.h>
@@ -45,7 +46,6 @@ class KeyframeValueList;
 namespace BlackBerry {
 namespace WebKit {
 
-class WebOverlay;
 class WebOverlayClient;
 class WebPagePrivate;
 
@@ -95,7 +95,7 @@ public:
     virtual void addChild(WebOverlayPrivate*) = 0;
     virtual void removeFromParent() = 0;
 
-    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize) = 0;
+    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize, WebOverlay::ImageDataAdoptionType) = 0;
     virtual void setContentsToColor(const WebCore::Color&) = 0;
     virtual void setDrawsContent(bool) = 0;
 
@@ -152,7 +152,7 @@ public:
     virtual void addChild(WebOverlayPrivate*);
     virtual void removeFromParent();
 
-    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize);
+    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize, WebOverlay::ImageDataAdoptionType);
     virtual void setContentsToColor(const WebCore::Color&);
     virtual void setDrawsContent(bool);
 
@@ -202,9 +202,13 @@ public:
     virtual void deleteTextures(WebCore::LayerCompositingThread*);
 
 private:
+    void clearUploadedContents();
+
+private:
     RefPtr<WebCore::Texture> m_texture;
     bool m_drawsContent;
     SkBitmap m_contents;
+    SkBitmap m_uploadedContents;
     WebCore::Color m_color;
     WebCore::LayerCompositingThread* m_layerCompositingThread;
     WebOverlay* m_owner;
@@ -243,7 +247,7 @@ public:
     virtual void addChild(WebOverlayPrivate*);
     virtual void removeFromParent();
 
-    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize);
+    virtual void setContentsToImage(const unsigned char* data, const WebCore::IntSize& imageSize, WebOverlay::ImageDataAdoptionType);
     virtual void setContentsToColor(const WebCore::Color&);
     virtual void setDrawsContent(bool);
 

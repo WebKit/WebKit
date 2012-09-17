@@ -55,6 +55,11 @@ class WebString;
  */
 class BLACKBERRY_EXPORT WebOverlay {
 public:
+    enum ImageDataAdoptionType {
+        ReferenceImageData,
+        CopyImageData
+    };
+
     WebOverlay();
     WebOverlay(WebCore::GraphicsLayerClient*);
     virtual ~WebOverlay();
@@ -94,7 +99,7 @@ public:
     bool addChild(WebOverlay*);
     void removeFromParent();
 
-    void setContentsToImage(const unsigned char* data, const Platform::IntSize& imageSize);
+    void setContentsToImage(const unsigned char* data, const Platform::IntSize& imageSize, ImageDataAdoptionType = ReferenceImageData);
     void setContentsToColor(int r, int g, int b, int a);
     void setDrawsContent(bool);
 

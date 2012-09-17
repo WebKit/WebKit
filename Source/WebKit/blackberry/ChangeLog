@@ -1,3 +1,53 @@
+2012-09-17  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Support copying image data in WebOverlay.
+        https://bugs.webkit.org/show_bug.cgi?id=96684
+        RIM PR 195444
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        The publicly exposed WebOverlay class provides a method
+        setContentsToImage() to assign a pointer to pixel data,
+        which is later used to provide texture data for the
+        underlying compositing layer. This works well for static
+        images that stay in memory and never change, but not
+        so well for images with changing contents or where the
+        image data is being reassigned from different image
+        sources that are not constantly kept around in memory.
+
+        Due to the delayed upload and delayed fetching of
+        EGLImage data by the GPU, we shouldn't assume the caller
+        to know how long the image should be retained. Instead,
+        we should offer another method of setting image data
+        that takes ownership of the pixel data.
+
+        This patch adds an option to setContentsToImage() that
+        copies the passed pixel data and doesn't destroy it
+        until both the texture is destroyed and the image
+        contents are changed. Using this method, the caller can
+        withdraw the passed pixel array right after the
+        setContentsToImage() call without consequences.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlay::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::invalidate):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContents):
+        (WebKit):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::clearUploadedContents):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::deleteTextures):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToImage):
+        * Api/WebOverlay.h:
+        * Api/WebOverlay_p.h:
+        (WebOverlayPrivate):
+        (WebOverlayPrivateWebKitThread):
+        (WebOverlayLayerCompositingThreadClient):
+        (WebOverlayPrivateCompositingThread):
+
 2012-09-14  Dana Jansens  <danakj@chromium.org>
 
         Minimize collisions when hashing pairs
