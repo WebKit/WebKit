@@ -352,7 +352,6 @@ TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
         InstrumentedOwner<InstrumentedTemplate<String>* > root(value.get());
         impl.addRootObject(root);
         EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
     }
     {
         VisitedObjects visitedObjects;

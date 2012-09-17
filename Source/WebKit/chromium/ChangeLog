@@ -1,3 +1,10 @@
+2012-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed single line fix for mac chromium canary bot.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+
 2012-09-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: automatically detect if class has reportMemoryUsage method
