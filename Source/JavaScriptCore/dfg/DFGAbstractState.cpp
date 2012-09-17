@@ -1099,14 +1099,21 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case NewArray:
-    case NewArrayBuffer:
-        node.setCanExit(false);
+        node.setCanExit(true);
         forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructure());
         m_haveStructures = true;
         break;
         
+    case NewArrayBuffer:
+        // Unless we're having a bad time, this node can change its mind about what structure
+        // it uses.
+        node.setCanExit(false);
+        forNode(nodeIndex).set(SpecArray);
+        break;
+
     case NewArrayWithSize:
-        speculateInt32Unary(node);
+        node.setCanExit(true);
+        forNode(node.child1()).filter(SpecInt32);
         forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructure());
         m_haveStructures = true;
         break;

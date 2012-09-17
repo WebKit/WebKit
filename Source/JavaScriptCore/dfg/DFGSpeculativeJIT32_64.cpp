@@ -2741,25 +2741,37 @@ void SpeculativeJIT::compile(Node& node)
             
             // Check if we're writing to a hole; if so increment m_numValuesInVector.
             MacroAssembler::Jump notHoleValue = m_jit.branch32(MacroAssembler::NotEqual, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
-            m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
-
-            // If we're writing to a hole we might be growing the array; 
-            MacroAssembler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, ArrayStorage::lengthOffset()));
-            m_jit.add32(TrustedImm32(1), propertyReg);
-            m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, ArrayStorage::lengthOffset()));
-            m_jit.sub32(TrustedImm32(1), propertyReg);
-
-            lengthDoesNotNeedUpdate.link(&m_jit);
+            MacroAssembler::Jump isHoleValue;
+            if (isSlowPutAccess(arrayMode)) {
+                // This is sort of strange. If we wanted to optimize this code path, we would invert
+                // the above branch. But it's simply not worth it since this only happens if we're
+                // already having a bad time.
+                isHoleValue = m_jit.jump();
+            } else {
+                m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+                
+                // If we're writing to a hole we might be growing the array; 
+                MacroAssembler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, ArrayStorage::lengthOffset()));
+                m_jit.add32(TrustedImm32(1), propertyReg);
+                m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, ArrayStorage::lengthOffset()));
+                m_jit.sub32(TrustedImm32(1), propertyReg);
+                
+                lengthDoesNotNeedUpdate.link(&m_jit);
+            }
             notHoleValue.link(&m_jit);
 
             // Store the value to the array.
             m_jit.store32(valueTagReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
             m_jit.store32(valuePayloadReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
         
-            if (!isInBoundsAccess(node.arrayMode())) {
+            if (!isInBoundsAccess(arrayMode)) {
+                MacroAssembler::JumpList slowCases;
+                slowCases.append(beyondArrayBounds);
+                if (isSlowPutAccess(arrayMode))
+                    slowCases.append(isHoleValue);
                 addSlowPathGenerator(
                     slowPathCall(
-                        beyondArrayBounds, this,
+                        slowCases, this,
                         m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                         NoResult, baseReg, propertyReg, valueTagReg, valuePayloadReg));
             }
@@ -3128,13 +3140,17 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case NewArray: {
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
+        if (!globalObject->isHavingABadTime())
+            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+        
         if (!node.numChildren()) {
             flushRegisters();
             GPRResult result(this);
             GPRResult2 resultTagIgnored(this);
             callOperation(
                 operationNewEmptyArray, resultTagIgnored.gpr(), result.gpr(),
-                m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure());
+                globalObject->arrayStructure());
             cellResult(result.gpr(), m_compileIndex);
             break;
         }
@@ -3167,8 +3183,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRResult2 resultTag(this);
         
         callOperation(
-            operationNewArray, resultTag.gpr(), resultPayload.gpr(),
-            m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure(),
+            operationNewArray, resultTag.gpr(), resultPayload.gpr(), globalObject->arrayStructure(),
             static_cast<void *>(buffer), node.numChildren());
 
         if (scratchSize) {
@@ -3184,6 +3199,10 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case NewArrayWithSize: {
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
+        if (!globalObject->isHavingABadTime())
+            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+        
         SpeculateStrictInt32Operand size(this, node.child1());
         GPRReg sizeGPR = size.gpr();
         flushRegisters();
@@ -3191,7 +3210,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRResult2 resultTagIgnored(this);
         callOperation(
             operationNewArrayWithSize, resultTagIgnored.gpr(), result.gpr(),
-            m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure(), sizeGPR);
+            globalObject->arrayStructure(), sizeGPR);
         cellResult(result.gpr(), m_compileIndex);
         break;
     }

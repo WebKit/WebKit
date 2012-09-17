@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -113,6 +113,12 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 {
     JSGlobalData& globalData = exec->globalData();
 
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
+        putToPrimitiveByIndex(exec, index, value, slot.isStrictMode());
+        return;
+    }
+
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(exec);
     JSValue prototype;
@@ -170,6 +176,21 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     if (slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
+}
+
+void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+{
+    if (propertyName > MAX_ARRAY_INDEX) {
+        PutPropertySlot slot(shouldThrow);
+        putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
+        return;
+    }
+    
+    if (synthesizePrototype(exec)->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow))
+        return;
+    
+    if (shouldThrow)
+        throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
 }
 
 char* JSValue::description() const

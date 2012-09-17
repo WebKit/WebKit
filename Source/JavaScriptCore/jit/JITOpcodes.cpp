@@ -1676,7 +1676,7 @@ void JIT::emit_op_new_array(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int values = currentInstruction[2].u.operand;
 
-    emitAllocateJSArray(values, length, regT0, regT1, regT2);
+    emitAllocateJSArray(values, length, regT0, regT1, regT2, regT3);
     emitStoreCell(dst, regT0); 
 }
 

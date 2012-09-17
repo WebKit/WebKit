@@ -324,7 +324,8 @@ void SpeculativeJIT::checkArray(Node& node)
             m_jit.branchTest8(
                 MacroAssembler::Zero,
                 MacroAssembler::Address(temp.gpr(), Structure::indexingTypeOffset()),
-                MacroAssembler::TrustedImm32(HasArrayStorage)));
+                MacroAssembler::TrustedImm32(
+                    isSlowPutAccess(node.arrayMode()) ? HasSlowPutArrayStorage : HasArrayStorage)));
         
         noResult(m_compileIndex);
         return;
@@ -345,7 +346,8 @@ void SpeculativeJIT::checkArray(Node& node)
         speculationCheck(
             Uncountable, JSValueRegs(), NoNode,
             m_jit.branchTest32(
-                MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(HasArrayStorage)));
+                MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(
+                    isSlowPutAccess(node.arrayMode()) ? HasSlowPutArrayStorage : HasArrayStorage)));
         
         noResult(m_compileIndex);
         return;

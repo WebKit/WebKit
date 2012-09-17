@@ -1,5 +1,191 @@
 2012-09-17  Filip Pizlo  <fpizlo@apple.com>
 
+        If a prototype has indexed setters and its instances have indexed storage, then all put_by_val's should have a bad time
+        https://bugs.webkit.org/show_bug.cgi?id=96596
+
+        Reviewed by Gavin Barraclough.
+
+        Added comprehensive support for accessors and read-only indexed properties on the
+        prototype chain. This is done without any performance regression on benchmarks that
+        we're aware of, by having the entire VM's strategy with respect to arrays tilted
+        heavily in favor of:
+        
+        - The prototype chain of JSArrays never having any accessors or read-only indexed
+          properties. If that changes, you're going to have a bad time.
+        
+        - Prototypes of non-JSArray objects either having no indexed accessors or read-only
+          indexed properties, or, having those indexed accessor thingies inserted before
+          any instance object (i.e. object with that prototype as its prototype) is created.
+          If you add indexed accessors or read-only indexed properties to an object that is
+          already used as a prototype, you're going to have a bad time.
+        
+        See below for the exact definition of having a bad time.
+        
+        Put another way, "fair" uses of indexed accessors and read-only indexed properties
+        are:
+        
+        - Put indexed accessors and read-only indexed properties on an object that is never
+          used as a prototype. This will slow down accesses to that object, but will not
+          have any effect on any other object.
+        
+        - Put those indexed accessor thingies on an object before it is used as a prototype
+          and then start instantiating objects that claim that object as their prototype.
+          This will slightly slow down indexed stores to the instance objects, and greatly
+          slow down all indexed accesses to the prototype, but will have no other effect.
+        
+        In short, "fair" uses only affect the object itself and any instance objects. But
+        if you start using indexed accessors in more eclectic ways, you're going to have
+        a bad time.
+        
+        Specifically, if an object that may be used as a prototype has an indexed accessor
+        added, the VM performs a whole-heap scan to find all objects that belong to the
+        same global object as the prototype you modified. If any of those objects has
+        indexed storage, their indexed storage is put into slow-put mode, just as if their
+        prototype chain had indexed accessors. This will happen even for objects that do
+        not currently have indexed accessors in their prototype chain. As well, all JSArray
+        allocations are caused to create arrays with slow-put storage, and all future
+        allocations of indexed storage for non-JSArray objects are also flipped to slow-put
+        mode. Note there are two aspects to having a bad time: (i) the whole-heap scan and
+        (ii) the poisoning of all indexed storage in the entire global object. (i) is
+        necessary for correctness. If we detect that an object that may be used as a
+        prototype has had an indexed accessor or indexed read-only property inserted into
+        it, then we need to ensure that henceforth all instances of that object inspect
+        the prototype chain whenever an indexed hole is stored to. But by default, indexed
+        stores do no such checking because doing so would be unnecessarily slow. So, we must
+        find all instances of the affected object and flip them into a different array
+        storage mode that omits all hole optimizations. Since prototypes never keep a list
+        of instance objects, the only way to find those objects is a whole-heap scan. But
+        (i) alone would be a potential disaster, if a program frequently allocated an
+        object without indexed accessors, then allocated a bunch of objects that used that
+        one as their prototype, and then added indexed accessors to the prototype. So, to
+        prevent massive heap scan storms in such awkward programs, having a bad time also
+        implies (ii): henceforth *all* objects belonging to that global object will use
+        slow put indexed storage, so that we don't ever have to scan the heap again. Note
+        that here we are using the global object as just an approximation of a program
+        module; it may be worth investigating in the future if other approximations can be
+        used instead.
+
+        * bytecode/ArrayProfile.h:
+        (JSC):
+        (JSC::arrayModeFromStructure):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::isSlowPutAccess):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSArray):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::arrayProtoFuncSort):
+        * runtime/IndexingType.h:
+        (JSC):
+        (JSC::hasIndexedProperties):
+        (JSC::hasIndexingHeader):
+        (JSC::hasArrayStorage):
+        (JSC::shouldUseSlowPut):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::addressOfArrayStructure):
+        (JSC::JSGlobalObject::havingABadTimeWatchpoint):
+        (JSC::JSGlobalObject::isHavingABadTime):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::put):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::resetInheritorID):
+        (JSC::JSObject::inheritorID):
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::unwrappedGlobalObject):
+        (JSC::JSObject::notifyUsedAsPrototype):
+        (JSC::JSObject::createInheritorID):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHole):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::mayBeUsedAsPrototype):
+        (JSObject):
+        (JSC::JSObject::mayInterceptIndexedAccesses):
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::completeInitialization):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::arrayStorage):
+        (JSC::JSObject::arrayStorageOrNull):
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC):
+        (JSC::JSValue::putByIndex):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        (JSC):
+        * runtime/JSValue.h:
+        (JSValue):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayEntry::put):
+        (JSC):
+        * runtime/SparseArrayValueMap.h:
+        (JSC):
+        (SparseArrayEntry):
+        * runtime/Structure.cpp:
+        (JSC::Structure::anyObjectInChainMayInterceptIndexedAccesses):
+        (JSC):
+        (JSC::Structure::suggestedIndexingTransition):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::mayInterceptIndexedAccesses):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+
+2012-09-17  Filip Pizlo  <fpizlo@apple.com>
+
         Array profiling has convergence issues
         https://bugs.webkit.org/show_bug.cgi?id=96891
 

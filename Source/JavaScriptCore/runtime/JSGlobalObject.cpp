@@ -111,6 +111,7 @@ static const int preferredScriptCheckTimeInterval = 1000;
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(globalData, structure, 0)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
+    , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
@@ -230,7 +231,8 @@ void JSGlobalObject::reset(JSValue prototype)
     m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSNonFinalObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
 
     m_arrayPrototype.set(exec->globalData(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
-    m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get()));
+    m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithArrayStorage));
+    m_arrayStructureForSlowPut.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
     m_regExpMatchesArrayStructure.set(exec->globalData(), this, RegExpMatchesArray::createStructure(exec->globalData(), this, m_arrayPrototype.get()));
 
     m_stringPrototype.set(exec->globalData(), this, StringPrototype::create(exec, this, StringPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
@@ -327,6 +329,82 @@ void JSGlobalObject::reset(JSValue prototype)
     }
 
     resetPrototype(exec->globalData(), prototype);
+}
+
+// Private namespace for helpers for JSGlobalObject::haveABadTime()
+namespace {
+
+class ObjectsWithBrokenIndexingFinder : public MarkedBlock::VoidFunctor {
+public:
+    ObjectsWithBrokenIndexingFinder(MarkedArgumentBuffer&, JSGlobalObject*);
+    void operator()(JSCell*);
+
+private:
+    MarkedArgumentBuffer& m_foundObjects;
+    JSGlobalObject* m_globalObject;
+};
+
+ObjectsWithBrokenIndexingFinder::ObjectsWithBrokenIndexingFinder(
+    MarkedArgumentBuffer& foundObjects, JSGlobalObject* globalObject)
+    : m_foundObjects(foundObjects)
+    , m_globalObject(globalObject)
+{
+}
+
+inline bool hasBrokenIndexing(JSObject* object)
+{
+    // This will change if we have more indexing types.
+    return !!(object->structure()->indexingType() & HasArrayStorage);
+}
+
+void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)
+{
+    if (!cell->isObject())
+        return;
+    
+    JSObject* object = asObject(cell);
+    
+    // We only want to have a bad time in the affected global object, not in the entire
+    // VM.
+    if (object->unwrappedGlobalObject() != m_globalObject)
+        return;
+    
+    if (!hasBrokenIndexing(object))
+        return;
+    
+    m_foundObjects.append(object);
+}
+
+} // end private namespace for helpers for JSGlobalObject::haveABadTime()
+
+void JSGlobalObject::haveABadTime(JSGlobalData& globalData)
+{
+    ASSERT(&globalData == &this->globalData());
+    
+    if (isHavingABadTime())
+        return;
+    
+    // Make sure that all allocations or indexed storage transitions that are inlining
+    // the assumption that it's safe to transition to a non-SlowPut array storage don't
+    // do so anymore.
+    m_havingABadTimeWatchpoint->notifyWrite();
+    ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
+    
+    // Make sure that all JSArray allocations that load the appropriate structure from
+    // this object now load a structure that uses SlowPut.
+    m_arrayStructure.set(globalData, this, m_arrayStructureForSlowPut.get());
+    
+    // Make sure that all objects that have indexed storage switch to the slow kind of
+    // indexed storage.
+    MarkedArgumentBuffer foundObjects; // Use MarkedArgumentBuffer because switchToSlowPutArrayStorage() may GC.
+    ObjectsWithBrokenIndexingFinder finder(foundObjects, this);
+    globalData.heap.objectSpace().forEachLiveCell(finder);
+    while (!foundObjects.isEmpty()) {
+        JSObject* object = asObject(foundObjects.last());
+        foundObjects.removeLast();
+        ASSERT(hasBrokenIndexing(object));
+        object->switchToSlowPutArrayStorage(globalData);
+    }
 }
 
 void JSGlobalObject::createThrowTypeError(ExecState* exec)

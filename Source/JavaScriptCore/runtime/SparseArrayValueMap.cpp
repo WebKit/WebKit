@@ -99,33 +99,8 @@ void SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
-
-    if (!(entry.attributes & Accessor)) {
-        if (entry.attributes & ReadOnly) {
-            if (shouldThrow)
-                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-            return;
-        }
-
-        entry.set(exec->globalData(), this, value);
-        return;
-    }
-
-    JSValue accessor = entry.SparseArrayEntry::Base::get();
-    ASSERT(accessor.isGetterSetter());
-    JSObject* setter = asGetterSetter(accessor)->setter();
     
-    if (!setter) {
-        if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
-        return;
-    }
-
-    CallData callData;
-    CallType callType = setter->methodTable()->getCallData(setter, callData);
-    MarkedArgumentBuffer args;
-    args.append(value);
-    call(exec, setter, callType, callData, array, args);
+    entry.put(exec, array, this, value, shouldThrow);
 }
 
 bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
@@ -185,6 +160,36 @@ JSValue SparseArrayEntry::get(ExecState* exec, JSObject* array) const
     CallData callData;
     CallType callType = getter->methodTable()->getCallData(getter, callData);
     return call(exec, getter, callType, callData, array, exec->emptyList());
+}
+
+void SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
+{
+    if (!(attributes & Accessor)) {
+        if (attributes & ReadOnly) {
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
+        }
+
+        set(exec->globalData(), map, value);
+        return;
+    }
+
+    JSValue accessor = Base::get();
+    ASSERT(accessor.isGetterSetter());
+    JSObject* setter = asGetterSetter(accessor)->setter();
+    
+    if (!setter) {
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        return;
+    }
+
+    CallData callData;
+    CallType callType = setter->methodTable()->getCallData(setter, callData);
+    MarkedArgumentBuffer args;
+    args.append(value);
+    call(exec, setter, callType, callData, thisValue, args);
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const

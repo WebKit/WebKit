@@ -144,7 +144,16 @@ namespace JSC {
 
         IndexingType indexingType() const { return m_indexingType & AllArrayTypes; }
         IndexingType indexingTypeIncludingHistory() const { return m_indexingType; }
-
+        
+        bool mayInterceptIndexedAccesses() const
+        {
+            return !!(indexingTypeIncludingHistory() & MayHaveIndexedAccessors);
+        }
+        
+        bool anyObjectInChainMayInterceptIndexedAccesses() const;
+        
+        NonPropertyTransition suggestedIndexingTransition() const;
+        
         JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
         

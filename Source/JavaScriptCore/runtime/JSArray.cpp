@@ -404,7 +404,7 @@ JSValue JSArray::pop(ExecState* exec)
     case ArrayClass:
         return jsUndefined();
         
-    case ArrayWithArrayStorage: {
+    case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES: {
         ArrayStorage* storage = m_butterfly->arrayStorage();
     
         unsigned length = storage->length();
@@ -462,6 +462,16 @@ void JSArray::push(ExecState* exec, JSValue value)
     case ArrayClass: {
         putByIndexBeyondVectorLengthWithArrayStorage(exec, 0, value, true, createInitialArrayStorage(exec->globalData()));
         break;
+    }
+        
+    case ArrayWithSlowPutArrayStorage: {
+        unsigned oldLength = length();
+        if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true)) {
+            if (!exec->hadException() && oldLength < 0xFFFFFFFFu)
+                setLength(exec, oldLength + 1, true);
+            return;
+        }
+        // Fall through.
     }
         
     case ArrayWithArrayStorage: {
@@ -917,7 +927,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     case ArrayClass:
         return;
     
-    case ArrayWithArrayStorage: {
+    case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES: {
         ArrayStorage* storage = m_butterfly->arrayStorage();
         
         WriteBarrier<Unknown>* vector = storage->m_vector;
@@ -947,7 +957,7 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t le
     case ArrayClass:
         return;
         
-    case ArrayWithArrayStorage: {
+    case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES: {
         ArrayStorage* storage = m_butterfly->arrayStorage();
         unsigned i = 0;
         WriteBarrier<Unknown>* vector = storage->m_vector;

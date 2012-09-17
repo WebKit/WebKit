@@ -78,9 +78,9 @@ namespace JSC {
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
         void copyToArguments(ExecState*, CallFrame*, uint32_t length);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayWithArrayStorage);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, indexingType);
         }
         
     protected:

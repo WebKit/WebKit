@@ -47,10 +47,13 @@ enum Mode {
     Generic,
     String,
     ArrayStorage,
+    SlowPutArrayStorage,
     ArrayStorageOutOfBounds,
     ArrayWithArrayStorage,
+    ArrayWithSlowPutArrayStorage,
     ArrayWithArrayStorageOutOfBounds,
     PossiblyArrayWithArrayStorage,
+    PossiblyArrayWithSlowPutArrayStorage,
     PossiblyArrayWithArrayStorageOutOfBounds,
     Arguments,
     Int8Array,
@@ -70,11 +73,14 @@ enum Mode {
 // have the word "ArrayStorage" in them.
 #define NON_ARRAY_ARRAY_STORAGE_MODES                      \
     Array::ArrayStorage:                                   \
+    case Array::SlowPutArrayStorage:                       \
     case Array::ArrayStorageOutOfBounds:                   \
     case Array::PossiblyArrayWithArrayStorage:             \
+    case Array::PossiblyArrayWithSlowPutArrayStorage:      \
     case Array::PossiblyArrayWithArrayStorageOutOfBounds
 #define ARRAY_WITH_ARRAY_STORAGE_MODES                     \
     Array::ArrayWithArrayStorage:                          \
+    case Array::ArrayWithSlowPutArrayStorage:              \
     case Array::ArrayWithArrayStorageOutOfBounds
 #define ALL_ARRAY_STORAGE_MODES                            \
     NON_ARRAY_ARRAY_STORAGE_MODES:                         \
@@ -83,8 +89,13 @@ enum Mode {
     Array::ArrayStorage:                                   \
     case Array::ArrayWithArrayStorage:                     \
     case Array::PossiblyArrayWithArrayStorage
+#define SLOW_PUT_ARRAY_STORAGE_MODES                       \
+    Array::SlowPutArrayStorage:                            \
+    case Array::ArrayWithSlowPutArrayStorage:              \
+    case Array::PossiblyArrayWithSlowPutArrayStorage
 #define OUT_OF_BOUNDS_ARRAY_STORAGE_MODES                  \
-    Array::ArrayStorageOutOfBounds:                        \
+    SLOW_PUT_ARRAY_STORAGE_MODES:                          \
+    case Array::ArrayStorageOutOfBounds:                   \
     case Array::ArrayWithArrayStorageOutOfBounds:          \
     case Array::PossiblyArrayWithArrayStorageOutOfBounds
 
@@ -122,6 +133,16 @@ inline bool isInBoundsAccess(Array::Mode arrayMode)
 {
     switch (arrayMode) {
     case IN_BOUNDS_ARRAY_STORAGE_MODES:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isSlowPutAccess(Array::Mode arrayMode)
+{
+    switch (arrayMode) {
+    case SLOW_PUT_ARRAY_STORAGE_MODES:
         return true;
     default:
         return false;

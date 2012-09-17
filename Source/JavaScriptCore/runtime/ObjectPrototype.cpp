@@ -74,6 +74,7 @@ void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
+    notifyUsedAsPrototype(globalData);
 }
 
 bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

@@ -42,10 +42,16 @@ Array::Mode fromObserved(ArrayModes modes, bool makeSafe)
         return Array::Undecided;
     case asArrayModes(NonArrayWithArrayStorage):
         return makeSafe ? Array::ArrayStorageOutOfBounds : Array::ArrayStorage;
+    case asArrayModes(NonArrayWithSlowPutArrayStorage):
+        return Array::SlowPutArrayStorage;
     case asArrayModes(ArrayWithArrayStorage):
         return makeSafe ? Array::ArrayWithArrayStorageOutOfBounds : Array::ArrayWithArrayStorage;
+    case asArrayModes(ArrayWithSlowPutArrayStorage):
+        return Array::ArrayWithSlowPutArrayStorage;
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
         return makeSafe ? Array::PossiblyArrayWithArrayStorageOutOfBounds : Array::PossiblyArrayWithArrayStorage;
+    case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
+        return Array::PossiblyArrayWithSlowPutArrayStorage;
     default:
         // We know that this is possibly a kind of array for which, though there is no
         // useful data in the array profile, we may be able to extract useful data from
@@ -124,13 +130,27 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::String:
         return isStringSpeculation(value.m_type);
         
-    case NON_ARRAY_ARRAY_STORAGE_MODES:
+    case Array::ArrayStorage:
+    case Array::ArrayStorageOutOfBounds:
+    case Array::PossiblyArrayWithArrayStorage:
+    case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage);
-
-    case ARRAY_WITH_ARRAY_STORAGE_MODES:
+        
+    case Array::SlowPutArrayStorage:
+    case Array::PossiblyArrayWithSlowPutArrayStorage:
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & HasSlowPutArrayStorage);
+        
+    case Array::ArrayWithArrayStorage:
+    case Array::ArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage)
+            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        
+    case Array::ArrayWithSlowPutArrayStorage:
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & HasSlowPutArrayStorage)
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
     case Array::Arguments:
@@ -184,14 +204,20 @@ const char* modeToString(Array::Mode mode)
         return "String";
     case Array::ArrayStorage:
         return "ArrayStorage";
+    case Array::SlowPutArrayStorage:
+        return "SlowPutArrayStorage";
     case Array::ArrayStorageOutOfBounds:
         return "ArrayStorageOutOfBounds";
     case Array::ArrayWithArrayStorage:
         return "ArrayWithArrayStorage";
+    case Array::ArrayWithSlowPutArrayStorage:
+        return "ArrayWithSlowPutArrayStorage";
     case Array::ArrayWithArrayStorageOutOfBounds:
         return "ArrayWithArrayStorageOutOfBounds";
     case Array::PossiblyArrayWithArrayStorage:
         return "PossiblyArrayWithArrayStorage";
+    case Array::PossiblyArrayWithSlowPutArrayStorage:
+        return "PossiblyArrayWithSlowPutArrayStorage";
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return "PossiblyArrayWithArrayStorageOutOfBounds";
     case Array::Arguments:

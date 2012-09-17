@@ -309,6 +309,30 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     return 0;
 }
 
+bool Structure::anyObjectInChainMayInterceptIndexedAccesses() const
+{
+    for (const Structure* current = this; ;) {
+        if (current->mayInterceptIndexedAccesses())
+            return true;
+        
+        JSValue prototype = current->storedPrototype();
+        if (prototype.isNull())
+            return false;
+        
+        current = asObject(prototype)->structure();
+    }
+}
+
+NonPropertyTransition Structure::suggestedIndexingTransition() const
+{
+    ASSERT(!hasIndexedProperties(indexingType()));
+    
+    if (anyObjectInChainMayInterceptIndexedAccesses() || globalObject()->isHavingABadTime())
+        return AllocateSlowPutArrayStorage;
+    
+    return AllocateArrayStorage;
+}
+
 Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
     // If we have a specific function, we may have got to this point if there is

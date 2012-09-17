@@ -118,7 +118,18 @@ namespace JSC {
         bool setPrototypeWithCycleCheck(JSGlobalData&, JSValue prototype);
         
         Structure* inheritorID(JSGlobalData&);
-
+        void notifyUsedAsPrototype(JSGlobalData&);
+        
+        bool mayBeUsedAsPrototype(JSGlobalData& globalData)
+        {
+            return isValidOffset(structure()->get(globalData, globalData.m_inheritorIDKey));
+        }
+        
+        bool mayInterceptIndexedAccesses()
+        {
+            return structure()->mayInterceptIndexedAccesses();
+        }
+        
         JSValue get(ExecState*, PropertyName) const;
         JSValue get(ExecState*, unsigned propertyName) const;
 
@@ -135,11 +146,9 @@ namespace JSC {
         unsigned getArrayLength() const
         {
             switch (structure()->indexingType()) {
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return 0;
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage()->length();
             default:
                 ASSERT_NOT_REACHED();
@@ -150,11 +159,9 @@ namespace JSC {
         unsigned getVectorLength()
         {
             switch (structure()->indexingType()) {
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return 0;
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage()->vectorLength();
             default:
                 ASSERT_NOT_REACHED();
@@ -189,11 +196,9 @@ namespace JSC {
         bool canGetIndexQuickly(unsigned i)
         {
             switch (structure()->indexingType()) {
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return false;
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return i < m_butterfly->arrayStorage()->vectorLength() && m_butterfly->arrayStorage()->m_vector[i];
             default:
                 ASSERT_NOT_REACHED();
@@ -204,8 +209,7 @@ namespace JSC {
         JSValue getIndexQuickly(unsigned i)
         {
             switch (structure()->indexingType()) {
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage()->m_vector[i].get();
             default:
                 ASSERT_NOT_REACHED();
@@ -216,12 +220,15 @@ namespace JSC {
         bool canSetIndexQuickly(unsigned i)
         {
             switch (structure()->indexingType()) {
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return false;
             case NonArrayWithArrayStorage:
             case ArrayWithArrayStorage:
                 return i < m_butterfly->arrayStorage()->vectorLength();
+            case NonArrayWithSlowPutArrayStorage:
+            case ArrayWithSlowPutArrayStorage:
+                return i < m_butterfly->arrayStorage()->vectorLength()
+                    && !!m_butterfly->arrayStorage()->m_vector[i];
             default:
                 ASSERT_NOT_REACHED();
                 return false;
@@ -231,8 +238,7 @@ namespace JSC {
         void setIndexQuickly(JSGlobalData& globalData, unsigned i, JSValue v)
         {
             switch (structure()->indexingType()) {
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage: {
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
                 WriteBarrier<Unknown>& x = m_butterfly->arrayStorage()->m_vector[i];
                 if (!x) {
                     ArrayStorage* storage = m_butterfly->arrayStorage();
@@ -251,8 +257,7 @@ namespace JSC {
         void initializeIndex(JSGlobalData& globalData, unsigned i, JSValue v)
         {
             switch (structure()->indexingType()) {
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage: {
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
                 ArrayStorage* storage = m_butterfly->arrayStorage();
 #if CHECK_ARRAY_CONSISTENCY
                 ASSERT(storage->m_inCompactInitialization);
@@ -276,8 +281,7 @@ namespace JSC {
         void completeInitialization(unsigned newLength)
         {
             switch (structure()->indexingType()) {
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage: {
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
                 ArrayStorage* storage = m_butterfly->arrayStorage();
                 // Check that we have initialized as meny properties as we think we have.
                 UNUSED_PARAM(storage);
@@ -298,11 +302,9 @@ namespace JSC {
         bool inSparseIndexingMode()
         {
             switch (structure()->indexingType()) {
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return false;
-            case NonArrayWithArrayStorage:
-            case ArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage()->inSparseMode();
             default:
                 ASSERT_NOT_REACHED();
@@ -487,6 +489,22 @@ namespace JSC {
             return structure()->globalObject();
         }
         
+        // Does everything possible to return the global object. If it encounters an object
+        // that does not have a global object, it returns 0 instead (for example
+        // JSNotAnObject).
+        JSGlobalObject* unwrappedGlobalObject();
+        
+        void switchToSlowPutArrayStorage(JSGlobalData&);
+        
+        // The receiver is the prototype in this case. The following:
+        //
+        // asObject(foo->structure()->storedPrototype())->attemptToInterceptPutByIndexOnHoleForPrototype(...)
+        //
+        // is equivalent to:
+        //
+        // foo->attemptToInterceptPutByIndexOnHole(...);
+        bool attemptToInterceptPutByIndexOnHoleForPrototype(ExecState*, JSValue thisValue, unsigned propertyName, JSValue, bool shouldThrow);
+        
         static size_t offsetOfInlineStorage();
         
         static ptrdiff_t butterflyOffset()
@@ -522,10 +540,7 @@ namespace JSC {
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*, Butterfly* = 0);
         
-        void resetInheritorID(JSGlobalData& globalData)
-        {
-            removeDirect(globalData, globalData.m_inheritorIDKey);
-        }
+        void resetInheritorID(JSGlobalData&);
         
         void visitButterfly(SlotVisitor&, Butterfly*, size_t storageSize);
 
@@ -533,7 +548,7 @@ namespace JSC {
         // storage. This will assert otherwise.
         ArrayStorage* arrayStorage()
         {
-            ASSERT(structure()->indexingType() | HasArrayStorage);
+            ASSERT(hasArrayStorage(structure()->indexingType()));
             return m_butterfly->arrayStorage();
         }
         
@@ -542,8 +557,7 @@ namespace JSC {
         ArrayStorage* arrayStorageOrNull()
         {
             switch (structure()->indexingType()) {
-            case ArrayWithArrayStorage:
-            case NonArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage();
                 
             default:
@@ -558,12 +572,10 @@ namespace JSC {
         ArrayStorage* ensureArrayStorage(JSGlobalData& globalData)
         {
             switch (structure()->indexingType()) {
-            case ArrayWithArrayStorage:
-            case NonArrayWithArrayStorage:
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
                 return m_butterfly->arrayStorage();
                 
-            case NonArray:
-            case ArrayClass:
+            case ALL_BLANK_INDEXING_TYPES:
                 return createInitialArrayStorage(globalData);
                 
             default:
@@ -592,6 +604,10 @@ namespace JSC {
         void deallocateSparseIndexMap();
         bool defineOwnIndexedProperty(ExecState*, unsigned, PropertyDescriptor&, bool throwException);
         SparseArrayValueMap* allocateSparseIndexMap(JSGlobalData&);
+        
+        void notifyPresenceOfIndexedAccessors(JSGlobalData&);
+        
+        bool attemptToInterceptPutByIndexOnHole(ExecState*, unsigned index, JSValue, bool shouldThrow);
 
     private:
         friend class LLIntOffsetsExtractor;
@@ -822,22 +838,6 @@ inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, Butter
 inline JSValue JSObject::prototype() const
 {
     return structure()->storedPrototype();
-}
-
-inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
-{
-    ASSERT(prototype);
-    setStructure(globalData, Structure::changePrototypeTransition(globalData, structure(), prototype));
-}
-
-inline Structure* JSObject::inheritorID(JSGlobalData& globalData)
-{
-    if (WriteBarrierBase<Unknown>* location = getDirectLocation(globalData, globalData.m_inheritorIDKey)) {
-        Structure* inheritorID = jsCast<Structure*>(location->get());
-        ASSERT(inheritorID->isEmpty());
-        return inheritorID;
-    }
-    return createInheritorID(globalData);
 }
 
 inline bool JSCell::inherits(const ClassInfo* info) const
@@ -1190,8 +1190,7 @@ inline void JSValue::put(ExecState* exec, PropertyName propertyName, JSValue val
 inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     if (UNLIKELY(!isCell())) {
-        PutPropertySlot slot(shouldThrow);
-        putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
+        putToPrimitiveByIndex(exec, propertyName, value, shouldThrow);
         return;
     }
     asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value, shouldThrow);

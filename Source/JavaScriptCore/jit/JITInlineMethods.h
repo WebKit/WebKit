@@ -443,7 +443,7 @@ inline void JIT::emitAllocateBasicStorage(size_t size, ptrdiff_t offsetFromBase,
     subPtr(TrustedImm32(size - offsetFromBase), result);
 }
 
-inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr)
+inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr, RegisterID scratch)
 {
     unsigned initialLength = std::max(length, 4U);
     size_t initialStorage = Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(initialLength));
@@ -453,7 +453,8 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     emitAllocateBasicStorage(initialStorage, sizeof(IndexingHeader), storageResult);
 
     // Allocate the cell for the array.
-    emitAllocateBasicJSObject<JSArray, false>(TrustedImmPtr(m_codeBlock->globalObject()->arrayStructure()), cellResult, storagePtr);
+    loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
+    emitAllocateBasicJSObject<JSArray, false>(scratch, cellResult, storagePtr);
 
     // Store all the necessary info in the ArrayStorage.
     store32(Imm32(length), Address(storageResult, ArrayStorage::lengthOffset()));

@@ -36,6 +36,8 @@
 
 namespace JSC {
 
+class SparseArrayValueMap;
+
 struct SparseArrayEntry : public WriteBarrier<Unknown> {
     typedef WriteBarrier<Unknown> Base;
 
@@ -44,6 +46,7 @@ struct SparseArrayEntry : public WriteBarrier<Unknown> {
     JSValue get(ExecState*, JSObject*) const;
     void get(PropertySlot&) const;
     void get(PropertyDescriptor&) const;
+    void put(ExecState*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
     JSValue getNonSparseMode() const;
 
     unsigned attributes;

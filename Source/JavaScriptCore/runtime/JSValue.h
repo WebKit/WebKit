@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -240,6 +240,7 @@ namespace JSC {
         JSValue get(ExecState*, unsigned propertyName, PropertySlot&) const;
         void put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
         void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+        void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         void putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
         JSObject* toThisObject(ExecState*) const;

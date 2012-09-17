@@ -1,3 +1,36 @@
+2012-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        If a prototype has indexed setters and its instances have indexed storage, then all put_by_val's should have a bad time
+        https://bugs.webkit.org/show_bug.cgi?id=96596
+
+        Reviewed by Gavin Barraclough.
+
+        Removed failing expectation for primitive-property-access-edge-cases, and
+        added more tests to cover the numerical-setter-on-prototype cases.
+
+        * fast/js/array-bad-time-expected.txt: Added.
+        * fast/js/array-bad-time.html: Added.
+        * fast/js/array-slow-put-expected.txt: Added.
+        * fast/js/array-slow-put.html: Added.
+        * fast/js/cross-frame-bad-time-expected.txt: Added.
+        * fast/js/cross-frame-bad-time.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/object-bad-time-expected.txt: Added.
+        * fast/js/object-bad-time.html: Added.
+        * fast/js/object-slow-put-expected.txt: Added.
+        * fast/js/object-slow-put.html: Added.
+        * fast/js/script-tests/array-bad-time.js: Added.
+        * fast/js/script-tests/array-slow-put.js: Added.
+        (foo):
+        * fast/js/script-tests/cross-frame-bad-time.js: Added.
+        (foo):
+        * fast/js/script-tests/object-bad-time.js: Added.
+        (Cons):
+        * fast/js/script-tests/object-slow-put.js: Added.
+        (Cons):
+        (foo):
+        * platform/mac/fast/js/primitive-property-access-edge-cases-expected.txt: Removed.
+
 2012-09-17  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, updating some bug numbers in TestExpectations.

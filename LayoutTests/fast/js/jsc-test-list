@@ -2,6 +2,7 @@ fast/js/add-recovery
 fast/js/apply-varargs
 fast/js/arguments-bad-index
 fast/js/arguments
+fast/js/array-bad-time
 fast/js/array-constructor-host-call
 fast/js/array-defineOwnProperty
 fast/js/array-enumerators-functions
@@ -19,6 +20,7 @@ fast/js/array-proto-func-property-getter-except
 fast/js/array-reduce
 fast/js/array-reduceRight
 fast/js/array-reset-large-index
+fast/js/array-slow-put
 fast/js/array-sort-numericCompare
 fast/js/array-sort-reentrance
 fast/js/array-splice
@@ -229,8 +231,10 @@ fast/js/Object-defineProperties
 fast/js/Object-defineProperty
 fast/js/Object-getOwnPropertyNames
 fast/js/Object-keys
+fast/js/object-bad-time
 fast/js/object-literal-direct-put
 fast/js/object-literal-syntax
+fast/js/object-slow-put
 fast/js/order-of-operations
 fast/js/parse-backslash-before-newline
 fast/js/parse-nan
