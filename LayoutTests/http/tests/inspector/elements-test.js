@@ -118,7 +118,7 @@ InspectorTest.selectNodeAndWaitForStylesWithComputed = function(idValue, callbac
     InspectorTest.selectNodeAndWaitForStyles(idValue, stylesCallback);
 }
 
-InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands)
+InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatched, omitLonghands, includeSelectorGroupMarks)
 {
     function extractText(element)
     {
@@ -127,6 +127,18 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
             return text;
         element = element.querySelector("[data-uncopyable]");
         return element ? element.getAttribute("data-uncopyable") : "";
+    }
+
+    function buildMarkedSelectors(element)
+    {
+        var result = "";
+        for (var node = element.firstChild; node; node = node.nextSibling) {
+            if (node.nodeType === Node.ELEMENT_NODE && node.className === "selector-matches")
+                result += "[$" + node.textContent + "$]";
+            else
+                result += node.textContent;
+        }
+        return result;
     }
 
     var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections;
@@ -145,7 +157,7 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
             var chainEntries = section.titleElement.children;
             for (var j = 0; j < chainEntries.length; ++j) {
                 var chainEntry = chainEntries[j];
-                var entryLine = chainEntry.children[1].textContent;
+                var entryLine = includeSelectorGroupMarks ? buildMarkedSelectors(chainEntry.children[1]) : chainEntry.children[1].textContent;
                 if (chainEntry.children[2])
                     entryLine += " " + chainEntry.children[2].textContent;
                 entryLine += " (" + extractText(chainEntry.children[0]) + ")";

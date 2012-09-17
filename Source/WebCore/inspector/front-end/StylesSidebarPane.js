@@ -358,6 +358,7 @@ WebInspector.StylesSidebarPane.prototype = {
         var usedProperties = {};
         this._markUsedProperties(styleRules, usedProperties);
         this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, 0, null);
+        var responsesLeft = this.sections[0].length;
         var anchorElement = this.sections[0].inheritedPropertiesSeparatorElement;
 
         if (styles.computedStyle)        
@@ -380,9 +381,28 @@ WebInspector.StylesSidebarPane.prototype = {
             usedProperties = {};
             this._markUsedProperties(styleRules, usedProperties);
             this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, pseudoId, anchorElement);
+            responsesLeft += this.sections[pseudoId].length;
         }
 
-        this._nodeStylesUpdatedForTest(node, true);
+        // Mark matching selectors in comma-delimited selector groups.
+        var boundMarkCallback = markCallback.bind(this);
+        for (var id in this.sections) {
+            var sectionsForPseudoId = this.sections[id].slice();
+            for (var j = 0; j < sectionsForPseudoId.length; ++j) {
+                var section = sectionsForPseudoId[j];
+                if (!section.styleRule || section.isBlank || section.styleRule.computedStyle || section.styleRule.isAttribute) {
+                    boundMarkCallback();
+                    continue;
+                }
+                section._markMatchedSelectorsInGroup(boundMarkCallback);
+            }
+        }
+
+        function markCallback()
+        {
+            if (!(--responsesLeft))
+                this._nodeStylesUpdatedForTest(node, true);
+        }
     },
 
     _nodeStylesUpdatedForTest: function(node, rebuild)
@@ -464,7 +484,7 @@ WebInspector.StylesSidebarPane.prototype = {
             var separatorInserted = false;
             if (parentStyles.inlineStyle) {
                 if (this._containsInherited(parentStyles.inlineStyle)) {
-                    var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: parentStyles.inlineStyle, isAttribute: true, isInherited: true };
+                    var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: parentStyles.inlineStyle, isAttribute: true, isInherited: true, parentNode: parentNode };
                     if (!separatorInserted) {
                         insertInheritedNodeSeparator(parentNode);
                         separatorInserted = true;
@@ -485,7 +505,7 @@ WebInspector.StylesSidebarPane.prototype = {
                     insertInheritedNodeSeparator(parentNode);
                     separatorInserted = true;
                 }
-                styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, isInherited: true, editable: !!(rule.style && rule.style.id) });
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, media: rule.media, sourceURL: rule.sourceURL, rule: rule, isInherited: true, parentNode: parentNode, editable: !!(rule.style && rule.style.id) });
             }
             parentNode = parentNode.parentNode;
         }
@@ -873,6 +893,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
 
     var selectorContainer = document.createElement("div");
     this._selectorElement = document.createElement("span");
+    this._selectorElement.addStyleClass("selector-matches");
     this._selectorElement.textContent = styleRule.selectorText;
     selectorContainer.appendChild(this._selectorElement);
 
@@ -913,7 +934,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this._selectorContainer = selectorContainer;
 
     if (isInherited)
-        this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not compted style.
+        this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not computed style.
 
     if (!this.editable)
         this.element.addStyleClass("read-only");
@@ -1103,6 +1124,91 @@ WebInspector.StylePropertiesSection.prototype = {
         return null;
     },
 
+    /**
+     * @param {function()=} callback
+     */
+    _markMatchedSelectorsInGroup: function(callback)
+    {
+        var self = this;
+        function mycallback()
+        {
+            if (callback)
+                callback();
+        }
+
+        var selectorText = this._selectorElement.textContent;
+        if (!selectorText || selectorText.indexOf(",") === -1) {
+            mycallback();
+            return;
+        }
+
+        var paneNode = this._parentPane.node;
+        var relatedNode = this.styleRule.parentNode || paneNode;
+        if (!relatedNode) {
+            mycallback();
+            return;
+        }
+
+        function trim(text)
+        {
+            return text.trim();
+        }
+        var selectors = selectorText.split(",").map(trim);
+
+        WebInspector.RemoteObject.resolveNode(relatedNode, "", resolvedCallback);
+        function resolvedCallback(object)
+        {
+            if (!object) {
+                mycallback();
+                return;
+            }
+
+            for (var i = 0, size = selectors.length; i < size; ++i) {
+                var selector = selectors[i];
+                object.callFunctionJSON(matchesSelector, [{ value: selectors[i] }], matchesCallback.bind(this, i));
+            }
+        }
+
+        function matchesSelector(selector)
+        {
+            return this.webkitMatchesSelector(selector);
+        }
+
+        var result = [];
+        var matchFound;
+        function matchesCallback(selectorIndex, matches)
+        {
+            var isLast = selectorIndex === selectors.length - 1;
+            var fragment = document.createDocumentFragment();
+            result[selectorIndex] = fragment;
+
+            var selectorNode;
+            if (matches && paneNode === self._parentPane.node) {
+                selectorNode = document.createElement("span");
+                selectorNode.className = "selector-matches";
+                selectorNode.appendChild(document.createTextNode(selectors[selectorIndex]));
+                matchFound = true;
+            } else
+                selectorNode = document.createTextNode(selectors[selectorIndex]);
+
+            fragment.appendChild(selectorNode);
+            if (!isLast) {
+                fragment.appendChild(document.createTextNode(", "));
+                return;
+            }
+
+            // This check is here in case the element class has been changed from JS during the roundtrip,
+            // so the element matches none of the distinct selectors. Fall back to "all selectors match".
+            if (matchFound) {
+                self._selectorElement.className = "selector";
+                self._selectorElement.removeChildren();
+                for (var i = 0; i < result.length; ++i)
+                    self._selectorElement.appendChild(result[i]);
+            }
+            mycallback();
+        }
+    },
+
     _checkWillCancelEditing: function()
     {
         var willCauseCancelEditing = this._willCauseCancelEditing;
@@ -1233,7 +1339,8 @@ WebInspector.StylePropertiesSection.prototype = {
         if (WebInspector.isBeingEdited(element))
             return;
 
-        this._selectorElement.scrollIntoViewIfNeeded(false);
+        element.scrollIntoViewIfNeeded(false);
+        element.textContent = element.textContent; // Reset selector marks in group.
 
         var config = new WebInspector.EditingConfig(this.editingSelectorCommitted.bind(this), this.editingSelectorCancelled.bind(this));
         WebInspector.startEditing(this._selectorElement, config);
@@ -1243,25 +1350,32 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _moveEditorFromSelector: function(moveDirection)
     {
-        if (!moveDirection)
+
+        if (!moveDirection) {
+            this._markMatchedSelectorsInGroup();
             return;
+        }
 
-        if (moveDirection === "forward") {
-            this.expand();
-            var firstChild = this.propertiesTreeOutline.children[0];
-            while (firstChild && firstChild.inherited)
-                firstChild = firstChild.nextSibling;
-            if (!firstChild)
-                this.addNewBlankProperty().startEditing();
-            else
-                firstChild.startEditing(firstChild.nameElement);
-        } else {
-            var previousSection = this.previousEditableSibling();
-            if (!previousSection)
-                return;
+        this._markMatchedSelectorsInGroup(markCallback.bind(this));
 
-            previousSection.expand();
-            previousSection.addNewBlankProperty().startEditing();
+        function markCallback() {
+            if (moveDirection === "forward") {
+                this.expand();
+                var firstChild = this.propertiesTreeOutline.children[0];
+                while (firstChild && firstChild.inherited)
+                    firstChild = firstChild.nextSibling;
+                if (!firstChild)
+                    this.addNewBlankProperty().startEditing();
+                else
+                    firstChild.startEditing(firstChild.nameElement);
+            } else {
+                var previousSection = this.previousEditableSibling();
+                if (!previousSection)
+                    return;
+
+                previousSection.expand();
+                previousSection.addNewBlankProperty().startEditing();
+            }
         }
     },
 
@@ -1299,7 +1413,9 @@ WebInspector.StylePropertiesSection.prototype = {
 
     editingSelectorCancelled: function()
     {
-        // Do nothing, this is overridden by BlankStylePropertiesSection.
+        // Do nothing but mark the selectors in group if necessary.
+        // This is overridden by BlankStylePropertiesSection.
+        this._markMatchedSelectorsInGroup();
     }
 }
 

@@ -223,6 +223,14 @@
     color: inherit;
 }
 
+.styles-section .selector {
+    color: #777;
+}
+
+.styles-section .selector-matches {
+    color: black;
+}
+
 .styles-section a[data-uncopyable] {
     display: inline-block;
 }

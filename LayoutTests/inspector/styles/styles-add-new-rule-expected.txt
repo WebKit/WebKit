@@ -9,7 +9,7 @@ font-size: 12px;
 
 ======== Matched CSS Rules ========
 [expanded] 
-#inspected  { (inspector-stylesheet:1)
+foo, [$#inspected$], bar  { (inspector-stylesheet:1)
 color: maroon;
 
 [expanded] 

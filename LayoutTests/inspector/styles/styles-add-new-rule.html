@@ -18,6 +18,7 @@ function test()
         // Click "Add new rule".
         document.getElementById("add-style-button-test-id").click();
         var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section._selectorElement.textContent = "foo, " + section._selectorElement.textContent + ", bar";
         section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
         InspectorTest.runAfterPendingDispatches(step2);
     }
@@ -44,7 +45,7 @@ function test()
     function step4()
     {
         InspectorTest.addResult("After adding new rule (inspected):");
-        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.dumpSelectedElementStyles(true, false, true, true);
         InspectorTest.selectNodeAndWaitForStyles("other", step5);
     }
 
