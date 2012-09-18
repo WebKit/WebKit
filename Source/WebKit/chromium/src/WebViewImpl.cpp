@@ -2223,7 +2223,7 @@ WebTextInputType WebViewImpl::textInputType()
     return WebTextInputTypeNone;
 }
 
-bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
+bool WebViewImpl::selectionBounds(WebRect& anchor, WebRect& focus) const
 {
     const Frame* frame = focusedWebCoreFrame();
     if (!frame)
@@ -2233,7 +2233,7 @@ bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
         return false;
 
     if (selection->isCaret()) {
-        start = end = frame->view()->contentsToWindow(selection->absoluteCaretBounds());
+        anchor = focus = frame->view()->contentsToWindow(selection->absoluteCaretBounds());
         return true;
     }
 
@@ -2246,20 +2246,20 @@ bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
                                       selectedRange->startOffset(),
                                       selectedRange->startContainer(),
                                       selectedRange->startOffset()));
-    start = frame->editor()->firstRectForRange(range.get());
+    anchor = frame->editor()->firstRectForRange(range.get());
 
     range = Range::create(selectedRange->endContainer()->document(),
                           selectedRange->endContainer(),
                           selectedRange->endOffset(),
                           selectedRange->endContainer(),
                           selectedRange->endOffset());
-    end = frame->editor()->firstRectForRange(range.get());
+    focus = frame->editor()->firstRectForRange(range.get());
 
-    start = frame->view()->contentsToWindow(start);
-    end = frame->view()->contentsToWindow(end);
+    anchor = frame->view()->contentsToWindow(anchor);
+    focus = frame->view()->contentsToWindow(focus);
 
     if (!frame->selection()->selection().isBaseFirst())
-        std::swap(start, end);
+        std::swap(anchor, focus);
     return true;
 }
 

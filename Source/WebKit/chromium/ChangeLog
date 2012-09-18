@@ -1,3 +1,36 @@
+2012-09-18  Iain Merrick  <husky@google.com>
+
+        [Chromium] Merge moveSelectionStart, moveSelectionEnd, and moveCaret into selectRange
+        https://bugs.webkit.org/show_bug.cgi?id=96508
+
+        Reviewed by Ryosuke Niwa.
+
+        These methods had "start" and "end" parameters, but this is incorrect.
+        selectRange() actually takes base and extent (where the user actually
+        touched), and selectionBounds() returns anchor and focus (base and extent
+        expanded to account for the selection granularity).
+
+        This patch fixes the parameter names, and updates selectRange, its test
+        and its documentation to reflect the correct usage. It also removes
+        moveSelectionStart/moveSelectionEnd/moveCaret (which aren't being used
+        yet), and updates WebFrameTest to show how these can be implemented via
+        selectRange.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::selectionBounds):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::selectionBounds):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+
 2012-09-18  Terry Anderson  <tdanderson@chromium.org>
 
         Roll chromium DEPS to r157342
