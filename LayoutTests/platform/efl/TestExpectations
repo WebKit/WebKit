@@ -1059,6 +1059,3 @@ BUGWK54251 : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 
 // Fails after r128270.
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
-
-// Fails after r128400.
-BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
