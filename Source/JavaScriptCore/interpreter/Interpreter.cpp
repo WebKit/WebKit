@@ -473,7 +473,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->usesArguments()) {
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
             if (activation)
-                jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame->globalData(), jsCast<JSActivation*>(activation));
+                jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
             else
                 jsCast<Arguments*>(arguments)->tearOff(callFrame);
         }
@@ -4508,7 +4508,7 @@ skip_id_custom_self:
         ASSERT(codeBlock->usesArguments());
         if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue()) {
             if (JSValue activationValue = callFrame->r(activation).jsValue())
-                asArguments(argumentsValue)->didTearOffActivation(callFrame->globalData(), asActivation(activationValue));
+                asArguments(argumentsValue)->didTearOffActivation(callFrame, asActivation(activationValue));
             else
                 asArguments(argumentsValue)->tearOff(callFrame);
         }

@@ -2810,28 +2810,24 @@ void SpeculativeJIT::compile(Node& node)
             if (!m_compileOkay)
                 return;
 
-            m_jit.loadPtr(
-                MacroAssembler::Address(baseReg, Arguments::offsetOfData()),
-                scratchReg);
-
             // Two really lame checks.
             speculationCheck(
                 Uncountable, JSValueSource(), NoNode,
                 m_jit.branchPtr(
                     MacroAssembler::AboveOrEqual, propertyReg,
-                    MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, numArguments))));
+                    MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments))));
             speculationCheck(
                 Uncountable, JSValueSource(), NoNode,
                 m_jit.branchTestPtr(
                     MacroAssembler::NonZero,
                     MacroAssembler::Address(
-                        scratchReg, OBJECT_OFFSETOF(ArgumentsData, deletedArguments))));
+                        baseReg, OBJECT_OFFSETOF(Arguments, m_slowArguments))));
     
             m_jit.move(propertyReg, scratch2Reg);
             m_jit.neg32(scratch2Reg);
             m_jit.signExtend32ToPtr(scratch2Reg, scratch2Reg);
             m_jit.loadPtr(
-                MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, registers)),
+                MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
                 scratchReg);
             
             m_jit.storePtr(

@@ -40,6 +40,23 @@ namespace JSC {
     class Watchpoint;
     class WatchpointSet;
 
+    struct SlowArgument {
+        enum Status {
+            Normal = 0,
+            Captured = 1,
+            Deleted = 2
+        };
+
+        SlowArgument()
+            : status(Normal)
+            , indexIfCaptured(0)
+        {
+        }
+
+        Status status;
+        int indexIfCaptured; // If status is 'Captured', indexIfCaptured is our index in the CallFrame.
+    };
+
     static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
     // The bit twiddling in this class assumes that every register index is a
@@ -359,8 +376,13 @@ namespace JSC {
         int captureEnd() { return m_captureEnd; }
         void setCaptureEnd(int captureEnd) { m_captureEnd = captureEnd; }
 
+        int parameterCount() { return m_parameterCountIncludingThis - 1; }
         int parameterCountIncludingThis() { return m_parameterCountIncludingThis; }
         void setParameterCountIncludingThis(int parameterCountIncludingThis) { m_parameterCountIncludingThis = parameterCountIncludingThis; }
+
+        // 0 if we don't capture any arguments; parameterCount() in length if we do.
+        const SlowArgument* slowArguments() { return m_slowArguments.get(); }
+        void setSlowArguments(PassOwnArrayPtr<SlowArgument> slowArguments) { m_slowArguments = slowArguments; }
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
@@ -381,10 +403,12 @@ namespace JSC {
         CaptureMode m_captureMode;
         int m_captureStart;
         int m_captureEnd;
+
+        OwnArrayPtr<SlowArgument> m_slowArguments;
     };
    
     HAS_IMMORTAL_STRUCTURE(SharedSymbolTable);
- 
+
 } // namespace JSC
 
 #endif // SymbolTable_h

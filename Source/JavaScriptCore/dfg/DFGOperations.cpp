@@ -1178,7 +1178,7 @@ void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsC
 {
     ASSERT(exec->codeBlock()->usesArguments());
     if (activationCell) {
-        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec->globalData(), jsCast<JSActivation*>(activationCell));
+        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec, jsCast<JSActivation*>(activationCell));
         return;
     }
     jsCast<Arguments*>(argumentsCell)->tearOff(exec);

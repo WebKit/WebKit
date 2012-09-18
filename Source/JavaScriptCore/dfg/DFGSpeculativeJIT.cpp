@@ -3057,28 +3057,24 @@ void SpeculativeJIT::compileGetByValOnArguments(Node& node)
   
     ASSERT(modeAlreadyChecked(m_state.forNode(node.child1()), Array::Arguments));
     
-    m_jit.loadPtr(
-        MacroAssembler::Address(baseReg, Arguments::offsetOfData()),
-        scratchReg);
-
     // Two really lame checks.
     speculationCheck(
         Uncountable, JSValueSource(), NoNode,
         m_jit.branchPtr(
             MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, numArguments))));
+            MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments))));
     speculationCheck(
         Uncountable, JSValueSource(), NoNode,
         m_jit.branchTestPtr(
             MacroAssembler::NonZero,
             MacroAssembler::Address(
-                scratchReg, OBJECT_OFFSETOF(ArgumentsData, deletedArguments))));
+                baseReg, OBJECT_OFFSETOF(Arguments, m_slowArguments))));
     
     m_jit.move(propertyReg, resultReg);
     m_jit.neg32(resultReg);
     m_jit.signExtend32ToPtr(resultReg, resultReg);
     m_jit.loadPtr(
-        MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, registers)),
+        MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
         scratchReg);
     
 #if USE(JSVALUE32_64)
@@ -3118,18 +3114,14 @@ void SpeculativeJIT::compileGetArgumentsLength(Node& node)
     
     ASSERT(modeAlreadyChecked(m_state.forNode(node.child1()), Array::Arguments));
     
-    m_jit.loadPtr(
-        MacroAssembler::Address(baseReg, Arguments::offsetOfData()),
-        resultReg);
-
     speculationCheck(
         Uncountable, JSValueSource(), NoNode,
         m_jit.branchTest8(
             MacroAssembler::NonZero,
-            MacroAssembler::Address(resultReg, OBJECT_OFFSETOF(ArgumentsData, overrodeLength))));
+            MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_overrodeLength))));
     
     m_jit.load32(
-        MacroAssembler::Address(resultReg, OBJECT_OFFSETOF(ArgumentsData, numArguments)),
+        MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments)),
         resultReg);
     integerResult(resultReg, m_compileIndex);
 }

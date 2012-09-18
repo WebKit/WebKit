@@ -187,7 +187,7 @@ namespace JSC  {
         // Read a register for a non-constant 
         Register& uncheckedR(int);
 
-        // Access to arguments.
+        // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[RegisterFile::ArgumentCount].payload(); }
         static int argumentOffset(int argument) { return s_firstArgumentOffset - argument; }
@@ -207,6 +207,8 @@ namespace JSC  {
         static int thisArgumentOffset() { return argumentOffsetIncludingThis(0); }
         JSValue thisValue() { return this[thisArgumentOffset()].jsValue(); }
         void setThisValue(JSValue value) { this[thisArgumentOffset()] = value; }
+
+        JSValue argumentAfterCapture(size_t argument);
 
         static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize; }
 

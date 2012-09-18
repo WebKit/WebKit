@@ -1544,6 +1544,25 @@ namespace JSC {
     }
 #endif
 
+    inline JSValue ExecState::argumentAfterCapture(size_t argument)
+    {
+        if (argument >= argumentCount())
+             return jsUndefined();
+
+        if (!codeBlock())
+            return this[argumentOffset(argument)].jsValue();
+
+        if (argument >= static_cast<size_t>(codeBlock()->symbolTable()->parameterCount()))
+            return this[argumentOffset(argument)].jsValue();
+
+        const SlowArgument* slowArguments = codeBlock()->symbolTable()->slowArguments();
+        if (!slowArguments || slowArguments[argument].status == SlowArgument::Normal)
+            return this[argumentOffset(argument)].jsValue();
+
+        ASSERT(slowArguments[argument].status == SlowArgument::Captured);
+        return this[slowArguments[argument].indexIfCaptured].jsValue();
+    }
+
 #if ENABLE(DFG_JIT)
     inline void DFGCodeBlocks::mark(void* candidateCodeBlock)
     {

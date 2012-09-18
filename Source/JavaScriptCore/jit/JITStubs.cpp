@@ -2323,7 +2323,7 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
     ASSERT(callFrame->codeBlock()->usesArguments());
     Arguments* arguments = jsCast<Arguments*>(stackFrame.args[0].jsValue());
     if (JSValue activationValue = stackFrame.args[1].jsValue()) {
-        arguments->didTearOffActivation(callFrame->globalData(), jsCast<JSActivation*>(activationValue));
+        arguments->didTearOffActivation(callFrame, jsCast<JSActivation*>(activationValue));
         return;
     }
     arguments->tearOff(callFrame);

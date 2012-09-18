@@ -1475,7 +1475,7 @@ LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
     ASSERT(exec->codeBlock()->usesArguments());
     Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(unmodifiedArgumentsRegister(pc[1].u.operand)).jsValue());
     if (JSValue activationValue = LLINT_OP_C(2).jsValue())
-        arguments->didTearOffActivation(globalData, jsCast<JSActivation*>(activationValue));
+        arguments->didTearOffActivation(exec, jsCast<JSActivation*>(activationValue));
     else
         arguments->tearOff(exec);
     LLINT_END();

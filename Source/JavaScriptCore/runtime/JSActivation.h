@@ -48,7 +48,7 @@ namespace JSC {
 
         static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, FunctionExecutable* functionExecutable)
         {
-            size_t storageSize = JSActivation::storageSize(callFrame, functionExecutable->symbolTable());
+            size_t storageSize = JSActivation::storageSize(functionExecutable->symbolTable());
             JSActivation* activation = new (
                 NotNull,
                 allocateCell<JSActivation>(
@@ -98,8 +98,8 @@ namespace JSC {
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
         static size_t allocationSize(size_t storageSize);
-        static size_t storageSize(CallFrame*, SharedSymbolTable*);
-        static int captureStart(CallFrame*, SharedSymbolTable*);
+        static size_t storageSize(SharedSymbolTable*);
+        static int captureStart(SharedSymbolTable*);
 
         int registerOffset();
         size_t storageSize();
@@ -142,26 +142,26 @@ namespace JSC {
         return false;
     }
 
-    inline int JSActivation::captureStart(CallFrame* callFrame, SharedSymbolTable* symbolTable)
+    inline int JSActivation::captureStart(SharedSymbolTable* symbolTable)
     {
         if (symbolTable->captureMode() == SharedSymbolTable::AllOfTheThings)
-            return -CallFrame::offsetFor(std::max<size_t>(callFrame->argumentCountIncludingThis(), symbolTable->parameterCountIncludingThis()));
+            return -CallFrame::offsetFor(symbolTable->parameterCountIncludingThis());
         return symbolTable->captureStart();
     }
 
-    inline size_t JSActivation::storageSize(CallFrame* callFrame, SharedSymbolTable* symbolTable)
+    inline size_t JSActivation::storageSize(SharedSymbolTable* symbolTable)
     {
-        return symbolTable->captureEnd() - captureStart(callFrame, symbolTable);
+        return symbolTable->captureEnd() - captureStart(symbolTable);
     }
 
     inline int JSActivation::registerOffset()
     {
-        return -captureStart(CallFrame::create(reinterpret_cast<Register*>(m_registers)), symbolTable());
+        return -captureStart(symbolTable());
     }
 
     inline size_t JSActivation::storageSize()
     {
-        return storageSize(CallFrame::create(reinterpret_cast<Register*>(m_registers)), symbolTable());
+        return storageSize(symbolTable());
     }
 
     inline void JSActivation::tearOff(JSGlobalData& globalData)
@@ -216,7 +216,7 @@ namespace JSC {
 
     inline bool JSActivation::isValid(const SymbolTableEntry& entry)
     {
-        if (entry.getIndex() < captureStart(CallFrame::create(reinterpret_cast<Register*>(m_registers)), symbolTable()))
+        if (entry.getIndex() < captureStart(symbolTable()))
             return false;
         if (entry.getIndex() >= symbolTable()->captureEnd())
             return false;

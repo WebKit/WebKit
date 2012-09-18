@@ -423,23 +423,34 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         }
     }
 
-    bool capturesAnyArgument = codeBlock->usesArguments() || codeBlock->usesEval() || m_shouldEmitDebugHooks; // May reify arguments object.
-    if (!capturesAnyArgument && functionBody->hasCapturedVariables()) {
+    bool mayReifyArgumentsObject = codeBlock->usesArguments() || codeBlock->usesEval() || m_shouldEmitDebugHooks;
+    bool capturesAnyArgumentByName = false;
+    if (functionBody->hasCapturedVariables()) {
         FunctionParameters& parameters = *functionBody->parameters();
         for (size_t i = 0; i < parameters.size(); ++i) {
             if (!functionBody->captures(parameters[i]))
                 continue;
-            capturesAnyArgument = true;
+            capturesAnyArgumentByName = true;
             break;
         }
     }
 
-    if (capturesAnyArgument) {
+    if (mayReifyArgumentsObject || capturesAnyArgumentByName) {
         symbolTable->setCaptureMode(SharedSymbolTable::AllOfTheThings);
         symbolTable->setCaptureStart(-CallFrame::offsetFor(symbolTable->parameterCountIncludingThis()));
     } else {
         symbolTable->setCaptureMode(SharedSymbolTable::SomeOfTheThings);
         symbolTable->setCaptureStart(m_codeBlock->m_numVars);
+    }
+
+    if (mayReifyArgumentsObject && capturesAnyArgumentByName) {
+        size_t parameterCount = symbolTable->parameterCount();
+        OwnArrayPtr<SlowArgument> slowArguments = adoptArrayPtr(new SlowArgument[parameterCount]);
+        for (size_t i = 0; i < parameterCount; ++i) {
+            slowArguments[i].status = SlowArgument::Captured;
+            slowArguments[i].indexIfCaptured = CallFrame::argumentOffset(i);
+        }
+        symbolTable->setSlowArguments(slowArguments.release());
     }
 
     RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.
@@ -681,7 +692,7 @@ bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
     SymbolTableEntry entry = symbolTable().get(ident.impl());
     if (entry.isNull())
         return false;
-    
+
     if (m_codeBlock->usesArguments() && m_codeType == FunctionCode)
         return true;
     

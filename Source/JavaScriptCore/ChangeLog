@@ -1,3 +1,99 @@
+2012-09-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored the arguments object so it doesn't dictate closure layout
+        https://bugs.webkit.org/show_bug.cgi?id=96955
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.h:
+        (JSC::ExecState::argumentAfterCapture): Helper function for accessing an
+        argument that has been moved for capture.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Generate metadata for arguments
+        that are captured. We don't move any arguments yet, but we do use this
+        metadata to tell the arguments object if an argument is stored in the
+        activation.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Updated for the arguments object not
+        malloc'ing a separate backing store, and for a rename from deletedArguments
+        to slowArguments.
+
+        * interpreter/CallFrame.h:
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Updated for small interface changes.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        (JSC::Arguments::copyToArguments):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlotByIndex):
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::getOwnPropertyNames):
+        (JSC::Arguments::putByIndex):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deletePropertyByIndex):
+        (JSC::Arguments::deleteProperty):
+        (JSC::Arguments::defineOwnProperty):
+        (JSC::Arguments::tearOff): Moved all data inline into the object, for speed,
+        and refactored all internal argument accesses to use helper functions, so
+        we can change the implementation without changing lots of code.
+
+        (JSC::Arguments::didTearOffActivation): This function needs to account
+        for arguments that were moved by the activation object. We do this accounting
+        through a side vector that tells us where our arguments will be in the
+        activation.
+
+        (JSC::Arguments::tearOffForInlineCallFrame):
+        * runtime/Arguments.h:
+        (Arguments):
+        (JSC::Arguments::length):
+        (JSC::Arguments::isTornOff):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::allocateSlowArguments):
+        (JSC::Arguments::tryDeleteArgument):
+        (JSC::Arguments::trySetArgument):
+        (JSC::Arguments::tryGetArgument):
+        (JSC::Arguments::isDeletedArgument):
+        (JSC::Arguments::isArgument):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        (JSActivation):
+        (JSC::JSActivation::captureStart):
+        (JSC::JSActivation::storageSize):
+        (JSC::JSActivation::registerOffset):
+        (JSC::JSActivation::isValid): The activation object is no longer responsible
+        for copying extra arguments provided by the caller. The argumnents object
+        does this instead. This means we can allocate and initialize an activation
+        without worrying about the call frame's argument count.
+
+        * runtime/SymbolTable.h:
+        (JSC::SlowArgument::SlowArgument):
+        (SlowArgument):
+        (JSC):
+        (JSC::SharedSymbolTable::parameterCount):
+        (SharedSymbolTable):
+        (JSC::SharedSymbolTable::slowArguments):
+        (JSC::SharedSymbolTable::setSlowArguments): Added data structures to back
+        the algorithms above.
+
 2012-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         32-bit LLInt get_by_val does vector length checks incorrectly
