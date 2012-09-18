@@ -1,3 +1,24 @@
+2012-09-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Use UndoStep::editingAction() to set the text of undo/redo actions
+        https://bugs.webkit.org/show_bug.cgi?id=96921
+
+        Reviewed by Ryosuke Niwa.
+
+        Set the text of QUndoCommands we create for undo/redo actions based on the
+        editing action from UndoStep.
+
+        This change is visible using QtTestBrowser, and looking at the Edit menu after
+        doing HTML editing changes. I've used http://simple-rte.rniwa.com for testing.
+
+        * WebCoreSupport/UndoStepQt.cpp:
+        (undoNameForEditAction): This function returns a localized name of the action.
+        (UndoStepQt::UndoStepQt): Set the text based on UndoStep::editingAction.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage):
+        (tst_QWebPage::undoActionHaveCustomText): Create a new test to verify that the text
+        describing the undo action after inserting a text and indenting the text is different.
+
 2012-09-17  Leo Franchi  <lfranchi@kde.org>
 
         [Qt] Inspector WebSocket backend protocol update
