@@ -79,7 +79,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    if (!cachedResourceLoader || !cachedResourceLoader->shouldDeferImageLoad(m_resourceRequest.url()))
+    if (!cachedResourceLoader || cachedResourceLoader->autoLoadImages())
         CachedResource::load(cachedResourceLoader, options);
     else
         setLoading(false);

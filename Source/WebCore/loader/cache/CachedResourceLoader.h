@@ -97,10 +97,6 @@ public:
 
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
-
-    void setImagesEnabled(bool);
-
-    bool shouldDeferImageLoad(const KURL&) const;
     
     CachePolicy cachePolicy() const;
     
@@ -139,9 +135,6 @@ private:
 
     void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();
-
-    bool clientAllowsImage(const KURL&) const;
-    void reloadImagesIfNotDeferred();
     
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
@@ -159,9 +152,8 @@ private:
 
     Timer<CachedResourceLoader> m_garbageCollectDocumentResourcesTimer;
 
-    // 29 bits left
+    // 30 bits left
     bool m_autoLoadImages : 1;
-    bool m_imagesEnabled : 1;
     bool m_allowStaleResources : 1;
 };
 

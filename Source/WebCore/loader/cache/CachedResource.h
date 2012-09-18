@@ -144,7 +144,6 @@ public:
 
     bool isLoading() const { return m_loading; }
     void setLoading(bool b) { m_loading = b; }
-    virtual bool stillNeedsLoad() const { return false; }
 
     SubresourceLoader* loader() { return m_loader.get(); }
 

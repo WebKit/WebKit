@@ -81,7 +81,6 @@ module window {
 #endif
         void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
         void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
-        void setImagesEnabled(in boolean enabled) raises(DOMException);
     };
 }
 

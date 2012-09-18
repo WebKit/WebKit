@@ -99,7 +99,6 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_canStartMedia(page->canStartMedia())
     , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
-    , m_imagesEnabled(settings->areImagesEnabled())
 {
 }
 
@@ -134,7 +133,6 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     page->setCanStartMedia(m_canStartMedia);
     settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
-    settings->setImagesEnabled(m_imagesEnabled);
 }
 
 InternalSettings* InternalSettings::from(Page* page)
@@ -651,12 +649,6 @@ void InternalSettings::setStorageBlockingPolicy(const String& mode, ExceptionCod
 void InternalSettings::setLangAttributeAwareFormControlUIEnabled(bool enabled)
 {
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(enabled);
-}
-
-void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setImagesEnabled(enabled);
 }
 
 }

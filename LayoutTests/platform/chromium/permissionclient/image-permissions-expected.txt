@@ -1,14 +1,10 @@
 PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): true
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): true
 PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif?nocache): false
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif?nocache): false
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
-PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
 PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
 PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/resources/boston.gif): false
 
 
 PASS: first image loaded
+PASS: error event for not cached image
+PASS: error event for image from cache
 

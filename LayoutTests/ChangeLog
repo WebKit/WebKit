@@ -1,3 +1,29 @@
+2012-09-18  Bo Liu  <boliu@chromium.org>
+
+        Revert 128780, 128676, 128645
+        https://bugs.webkit.org/show_bug.cgi?id=97022
+
+        Reviewed by Adam Barth.
+
+        I made these revisions to add in-place reload behavior to ImagesEnabled setting.
+        Reverting this for now due to them causing performance regression in
+        chromium, possibly caused by increased calls to
+        PermissionClient::imageAllowed.
+
+        * fast/loader/display-image-unset-allows-cached-image-load-expected.txt: Removed.
+        * fast/loader/display-image-unset-allows-cached-image-load.html: Removed.
+        * fast/loader/display-image-unset-can-block-image-and-can-reload-in-place-expected.txt: Removed.
+        * fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html: Removed.
+        * fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place-expected.txt: Removed.
+        * fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html: Removed.
+        * fast/loader/resources/image1.html: Removed.
+        * fast/loader/resources/image2.html: Removed.
+        * platform/chromium/http/tests/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions.html:
+        * platform/chromium/permissionclient/resources/image.html:
+        * platform/wk2/Skipped:
+
 2012-09-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] [WK2] Replace Skipped with TestExpectations

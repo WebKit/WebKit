@@ -390,7 +390,7 @@ void CachedResource::didAddClient(CachedResourceClient* c)
         m_clients.add(c);
         m_clientsAwaitingCallback.remove(c);
     }
-    if (!isLoading() && !stillNeedsLoad())
+    if (!isLoading())
         c->notifyFinished(this);
 }
 
