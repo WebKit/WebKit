@@ -1,3 +1,11 @@
+2012-09-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build without the QtQuick module
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-09-18  Stephanie Lewis  <slewis@apple.com>
 
         Build fix after http://trac.webkit.org/projects/webkit/changeset/128852.

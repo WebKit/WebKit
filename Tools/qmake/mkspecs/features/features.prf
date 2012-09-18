@@ -34,6 +34,8 @@ defineTest(detectFeatures) {
     #
 
     haveQtModule(quick): WEBKIT_CONFIG += have_qtquick
+    else: CONFIGURE_WARNINGS += "QtQuick module not found, QML APIs will not be built"
+
     haveQtModule(printsupport): WEBKIT_CONFIG += have_qtprintsupport
     haveQtModule(widgets): WEBKIT_CONFIG += have_qstyle
     haveQtModule(testlib): WEBKIT_CONFIG += have_qttestlib

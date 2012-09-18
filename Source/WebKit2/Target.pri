@@ -617,7 +617,6 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/WebVibrationProvider.cpp \
     UIProcess/WebVibrationProxy.cpp \
-    UIProcess/qt/QtWebContext.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebFullScreenManagerProxyQt.cpp \
@@ -809,7 +808,6 @@ have?(QTQUICK) {
         UIProcess/API/qt/qwebpreferences.cpp \
         UIProcess/API/qt/qwebkittest.cpp \
         UIProcess/qt/PageViewportControllerClientQt.cpp \
-        UIProcess/qt/QtWebError.cpp \
         UIProcess/qt/QtDialogRunner.cpp \
         UIProcess/qt/QtDownloadManager.cpp \
         UIProcess/qt/QtPageClient.cpp \
@@ -821,6 +819,8 @@ have?(QTQUICK) {
         UIProcess/qt/QtPanGestureRecognizer.cpp \
         UIProcess/qt/QtPinchGestureRecognizer.cpp \
         UIProcess/qt/QtTapGestureRecognizer.cpp \
+        UIProcess/qt/QtWebContext.cpp \
+        UIProcess/qt/QtWebError.cpp \
         UIProcess/qt/WebContextMenuProxyQt.cpp \
         UIProcess/qt/WebGeolocationProviderQt.cpp \
         UIProcess/qt/WebPopupMenuProxyQt.cpp \

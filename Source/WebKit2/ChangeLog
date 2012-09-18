@@ -1,3 +1,11 @@
+2012-09-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build without the QtQuick module
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+
 2012-09-17  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add NativeWebTouchEvent and handle the Touch event.
