@@ -34,7 +34,7 @@ namespace JSC {
 
 inline size_t IndexingHeader::preCapacity(Structure* structure)
 {
-    if (LIKELY(!(structure->indexingType() & HasArrayStorage)))
+    if (LIKELY(!hasArrayStorage(structure->indexingType())))
         return 0;
     
     return arrayStorage()->m_indexBias;
@@ -42,7 +42,7 @@ inline size_t IndexingHeader::preCapacity(Structure* structure)
 
 inline size_t IndexingHeader::indexingPayloadSizeInBytes(Structure* structure)
 {
-    if (LIKELY(!(structure->indexingType() & HasArrayStorage)))
+    if (LIKELY(!hasArrayStorage(structure->indexingType())))
         return 0;
     
     return ArrayStorage::sizeFor(arrayStorage()->vectorLength());
