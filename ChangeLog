@@ -1,3 +1,14 @@
+2012-09-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Fix build break because of memory exhausted.
+        https://bugs.webkit.org/show_bug.cgi?id=77327
+
+        Reviewed by Gyuyoung Kim.
+
+        Added to avoid memory exhaustion on 32bit linux debug build.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2012-09-17  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Enable VIDEO_TRACK
