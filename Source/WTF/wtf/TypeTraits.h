@@ -251,7 +251,7 @@ namespace WTF {
     typedef IntegralConstant<bool, true>  true_type;
     typedef IntegralConstant<bool, false> false_type;
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER)
+#if COMPILER(CLANG) || (defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER))
     // VC8 (VS2005) and later have built-in compiler support for HasTrivialConstructor / HasTrivialDestructor,
     // but for some unexplained reason it doesn't work on built-in types.
     template <typename T> struct HasTrivialConstructor : public IntegralConstant<bool, __has_trivial_constructor(T)>{ };

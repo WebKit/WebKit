@@ -33,6 +33,7 @@
 #include "SlotVisitorInlineMethods.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TypeTraits.h>
 
 namespace JSC {
 
@@ -308,18 +309,10 @@ namespace JSC {
         return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
     }
 
-#if COMPILER(CLANG)
     template<class T>
     struct NeedsDestructor {
-        static const bool value = !__has_trivial_destructor(T);
+        static const bool value = !WTF::HasTrivialDestructor<T>::value;
     };
-#else
-    // Write manual specializations for this struct template if you care about non-clang compilers.
-    template<class T>
-    struct NeedsDestructor {
-        static const bool value = true;
-    };
-#endif
 
     template<typename T>
     void* allocateCell(Heap& heap)

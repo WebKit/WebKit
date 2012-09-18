@@ -1,3 +1,14 @@
+2012-09-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Use WTF::HasTrivialDestructor instead of compiler-specific versions in JSC::NeedsDestructor
+        https://bugs.webkit.org/show_bug.cgi?id=96980
+
+        Reviewed by Benjamin Poulain.
+
+        * runtime/JSCell.h:
+        (JSC):
+        (NeedsDestructor):
+
 2012-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFGOperations doesn't use NativeCallFrameTracer in enough places

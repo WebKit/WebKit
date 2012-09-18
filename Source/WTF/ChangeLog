@@ -1,3 +1,13 @@
+2012-09-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Use WTF::HasTrivialDestructor instead of compiler-specific versions in JSC::NeedsDestructor
+        https://bugs.webkit.org/show_bug.cgi?id=96980
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/TypeTraits.h:
+        (WTF):
+
 2012-09-17  Glenn Adams  <glenn@skynav.com>
 
         Including HexNumber.h fails build if hexDigitsForMode is not referenced
