@@ -84,6 +84,7 @@ struct _WebKitWebViewBasePrivate {
     GRefPtr<GtkIMContext> imContext;
     GtkClickCounter clickCounter;
     CString tooltipText;
+    IntRect tooltipArea;
     GtkDragAndDropHelper dragAndDropHelper;
     DragIcon dragIcon;
     IntSize resizerSize;
@@ -502,9 +503,13 @@ static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y,
     if (priv->tooltipText.length() <= 0)
         return FALSE;
 
-    // TODO: set the tip area when WKPageMouseDidMoveOverElementCallback
-    // receives a hit test result.
+    if (!priv->tooltipArea.isEmpty()) {
+        GdkRectangle area = priv->tooltipArea;
+        gtk_tooltip_set_tip_area(tooltip, &area);
+    } else
+        gtk_tooltip_set_tip_area(tooltip, 0);
     gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
+
     return TRUE;
 }
 
@@ -689,6 +694,11 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
     }
 
     gtk_widget_trigger_tooltip_query(GTK_WIDGET(webViewBase));
+}
+
+void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase* webViewBase, const IntRect& tooltipArea)
+{
+    webViewBase->priv->tooltipArea = tooltipArea;
 }
 
 void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, const DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)

@@ -21,8 +21,10 @@
 #define WebHitTestResult_h
 
 #include "APIObject.h"
+#include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/KURL.h>
+#include <WebCore/Node.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -49,9 +51,27 @@ public:
         String linkLabel;
         String linkTitle;
         bool isContentEditable;
+        WebCore::IntRect elementBoundingBox;
 
         Data()
         {
+        }
+
+        WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult& hitTestResult)
+        {
+            WebCore::Node* node = hitTestResult.innerNonSharedNode();
+            if (!node)
+                return WebCore::IntRect();
+
+            WebCore::Frame* frame = node->document()->frame();
+            if (!frame)
+                return WebCore::IntRect();
+
+            WebCore::FrameView* view = frame->view();
+            if (!view)
+                return WebCore::IntRect();
+
+            return view->contentsToWindow(node->pixelSnappedBoundingBox());
         }
 
         explicit Data(const WebCore::HitTestResult& hitTestResult)
@@ -62,6 +82,7 @@ public:
             , linkLabel(hitTestResult.textContent())
             , linkTitle(hitTestResult.titleDisplayString())
             , isContentEditable(hitTestResult.isContentEditable())
+            , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
         {
         }
 
@@ -80,6 +101,8 @@ public:
     String linkTitle() const { return m_data.linkTitle; }
 
     bool isContentEditable() const { return m_data.isContentEditable; }
+
+    WebCore::IntRect elementBoundingBox() const { return m_data.elementBoundingBox; }
 
 private:
     explicit WebHitTestResult(const WebHitTestResult::Data& hitTestResultData)

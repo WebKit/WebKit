@@ -43,6 +43,7 @@ void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(linkLabel);
     encoder->encode(linkTitle);
     encoder->encode(isContentEditable);
+    encoder->encode(elementBoundingBox);
 }
 
 bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTestResult::Data& hitTestResultData)
@@ -53,7 +54,8 @@ bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTes
         || !decoder->decode(hitTestResultData.absoluteMediaURL)
         || !decoder->decode(hitTestResultData.linkLabel)
         || !decoder->decode(hitTestResultData.linkTitle)
-        || !decoder->decode(hitTestResultData.isContentEditable))
+        || !decoder->decode(hitTestResultData.isContentEditable)
+        || !decoder->decode(hitTestResultData.elementBoundingBox))
         return false;
 
     return true;

@@ -1268,6 +1268,8 @@ void webkitWebViewMakePermissionRequest(WebKitWebView* webView, WebKitPermission
 
 void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WKHitTestResultRef wkHitTestResult, unsigned modifiers)
 {
+    webkitWebViewBaseSetTooltipArea(WEBKIT_WEB_VIEW_BASE(webView), toImpl(wkHitTestResult)->elementBoundingBox());
+
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->mouseTargetHitTestResult
         && priv->mouseTargetModifiers == modifiers
