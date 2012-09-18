@@ -1,5 +1,19 @@
 2012-09-17  Dirk Pranke  <dpranke@chromium.org>
 
+        [chromium] ASAN bot is crashing at the end of the run
+        https://bugs.webkit.org/show_bug.cgi?id=96967
+
+        Reviewed by Abhishek Arya.
+
+        The ASAN bot is crashing attempting to decode some output into
+        UTF-8; there's no reason to do this, so let's not do this and
+        see if something else is going on as well.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._get_crash_log):
+
+2012-09-17  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: --results-directory isn't getting printed properly
         https://bugs.webkit.org/show_bug.cgi?id=96965
 
