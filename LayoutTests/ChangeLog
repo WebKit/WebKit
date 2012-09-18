@@ -1,3 +1,17 @@
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip fast/js/global-constructors.html
+        https://bugs.webkit.org/show_bug.cgi?id=96984
+
+        Unreviewed EFL gardening.
+
+        Generate baseline for fast/js/global-constructors.html
+        and unskip test. The only differences in the expected
+        output are due to webkit prefix.
+
+        * fast/js/global-constructors-expected.txt: Added.
+        * platform/efl/Skipped:
+
 2012-09-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Skipped failing tests because eventSender.gestureTap

@@ -702,9 +702,7 @@ editing/unsupported-content/table-delete-001.html
 editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/js/global-constructors.html
 fast/text/unicode-variation-selector.html
-
 http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
 http/tests/cache/post-redirect-get.php
