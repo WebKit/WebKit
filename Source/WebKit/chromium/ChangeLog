@@ -1,3 +1,20 @@
+2012-09-18  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Create a flag to enable PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=96989
+
+        Reviewed by Adam Barth.
+
+        Adding the functionality to separately enable/disable PeerConnection00.
+        For now it is enabled by default.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableDeprecatedPeerConnection):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isDeprecatedPeerConnectionEnabled):
+
 2012-09-18  Iain Merrick  <husky@google.com>
 
         [Chromium] Merge moveSelectionStart, moveSelectionEnd, and moveCaret into selectRange
