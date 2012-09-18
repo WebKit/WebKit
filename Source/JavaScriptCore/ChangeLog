@@ -1,3 +1,16 @@
+2012-09-18  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [Qt] REGRESSION(r128790): It broke the ARM build
+        https://bugs.webkit.org/show_bug.cgi?id=96968
+
+        Reviewed by Filip Pizlo.
+
+        Implement the missing or32 method in the MacroAssemblerARM.h.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::or32):
+        (MacroAssemblerARM):
+
 2012-09-18  Mark Lam  <mark.lam@apple.com>
 
         Fix for WinCairo builds.

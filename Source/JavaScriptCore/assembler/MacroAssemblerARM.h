@@ -212,6 +212,14 @@ public:
         m_assembler.orrs(dest, dest, src);
     }
 
+    void or32(RegisterID src, AbsoluteAddress dest)
+    {
+        move(TrustedImmPtr(dest.m_ptr), ARMRegisters::S0);
+        load32(Address(ARMRegisters::S0), ARMRegisters::S1);
+        or32(src, ARMRegisters::S1);
+        store32(ARMRegisters::S1, ARMRegisters::S0);
+    }
+
     void or32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.orrs(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
