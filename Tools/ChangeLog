@@ -1,3 +1,9 @@
+2012-09-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed update of email addresses for Berlin QtWebKit office.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html failing after r128645
