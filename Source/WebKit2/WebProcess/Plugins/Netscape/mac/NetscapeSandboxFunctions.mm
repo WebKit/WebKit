@@ -94,14 +94,10 @@ static CString readSandboxProfile()
     return result;
 }
 
-NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths[])
+NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], const char* readWritePaths[])
 {
     if (enteredSandbox)
         return NPERR_GENERIC_ERROR;
-
-    CString profile = readSandboxProfile();
-    if (profile.isNull())
-        exit(EX_NOPERM);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
@@ -157,7 +153,7 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
         exit(EX_NOPERM);
     const char* sandboxParameters[] = { "HOME_DIR", homeDirectory, 0, 0 };
 
-    if (!WKEnterPluginSandbox(profile.data(), sandboxParameters, extendedReadOnlyPaths.data(), extendedReadWritePaths.data())) {
+    if (!WKEnterPluginSandbox(sandboxProfile, sandboxParameters, extendedReadOnlyPaths.data(), extendedReadWritePaths.data())) {
         WTFLogAlways("Couldn't initialize sandbox profile\n");
         exit(EX_NOPERM);
     }
@@ -169,7 +165,20 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
 
     free(homeDirectory);
     enteredSandbox = true;
+
+    RetainPtr<NSDictionary> defaults = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"NSUseRemoteSavePanel", nil]);
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults.get()];
+
     return NPERR_NO_ERROR;
+}
+
+NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths[])
+{
+    CString profile = readSandboxProfile();
+    if (profile.isNull())
+        exit(EX_NOPERM);
+
+    return enterSandbox(profile.data(), readOnlyPaths, readWritePaths);
 }
 
 NPError WKN_FileStopAccessing(const char* path)

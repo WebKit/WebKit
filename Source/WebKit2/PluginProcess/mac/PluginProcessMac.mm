@@ -30,6 +30,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "NetscapePlugin.h"
+#import "NetscapeSandboxFunctions.h"
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
@@ -262,6 +263,31 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     m_connection->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
+static void initializeSandbox(const String& pluginPath)
+{
+    RetainPtr<CFStringRef> cfPluginPath = adoptCF(pluginPath.createCFString());
+    RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, cfPluginPath.get(), kCFURLPOSIXPathStyle, false));
+    if (!pluginURL)
+        return;
+
+    RetainPtr<CFBundleRef> pluginBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, pluginURL.get()));
+    if (!pluginBundle)
+        return;
+    
+    CFStringRef bundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
+    if (!bundleIdentifier)
+        return;
+
+    RetainPtr<CFStringRef> sandboxFileName = CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier);
+    RetainPtr<CFURLRef> pluginSandboxDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, CFSTR("/usr/share/sandbox/"), kCFURLPOSIXPathStyle, YES));
+    RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, pluginSandboxDirectory.get()));
+    RetainPtr<NSString> profileString = [[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL];
+    if (!profileString)
+        return;
+
+    enterSandbox([profileString.get() UTF8String], 0, 0);
+}
+
 void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
@@ -273,6 +299,8 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
                                  (NSString *)parameters.parentProcessName];
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
+
+    initializeSandbox(m_pluginPath);
 }
 
 } // namespace WebKit

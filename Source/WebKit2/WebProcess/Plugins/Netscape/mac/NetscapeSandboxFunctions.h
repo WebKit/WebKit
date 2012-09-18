@@ -51,7 +51,10 @@ typedef struct _WKNSandboxFunctions {
     WKN_FileStopAccessingProcPtr fileStopAccessing;
 } WKNSandboxFunctions;
 
+// FIXME: This header is mostly "API", except for the following two functions. We should
+// move the declarations to a seperate header.
 WKNSandboxFunctions* netscapeSandboxFunctions();
+NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], const char* readWritePaths[]);
 
 #ifdef __cplusplus
 }

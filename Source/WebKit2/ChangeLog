@@ -1,3 +1,25 @@
+2012-09-17  Sam Weinig  <sam@webkit.org>
+
+        Add experimental code to enter a sandbox for a plug-in.
+        Based on a patch by Ivan Krstić.
+        <rdar://problem/11823151>
+
+        Reviewed by Anders Carlsson.
+
+        Enter a sandbox for a plug-in if a sandbox profile is found in /usr/share/sandbox/ that
+        has the plug-ins bundle identifier for a name.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeSandbox):
+        (WebKit::PluginProcess::platformInitialize):
+        Enter the sandbox provided if a profile can be found.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        (enterSandbox):
+        Factor out the core sandbox entering logic (so if can be used above) and make sure
+        that Remote Save Panel is enabled.
+
 2012-09-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing the build after http://trac.webkit.org/changeset/128813
