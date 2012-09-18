@@ -1,3 +1,16 @@
+2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed, test expectations update.
+
+        These tests are failing from the beginning (r128802)
+        fast/js/array-bad-time.html
+        fast/js/array-slow-put.html
+        fast/js/cross-frame-bad-time.html
+        fast/js/object-bad-time.html
+        fast/js/object-slow-put.html
+
+        * platform/chromium/TestExpectations:
+
 2012-09-17  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=96688
