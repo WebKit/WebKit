@@ -1,3 +1,10 @@
+2012-09-17  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        Unreviewed gardening, more rebaseline after r128811
+
+        * platform/chromium-win-xp/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-xp/fast/css/shadow-multiple-expected.png: Added.
+
 2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         Unreviewed gardening, rebaseline after r128811
