@@ -1,3 +1,14 @@
+2012-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGOperations doesn't use NativeCallFrameTracer in enough places
+        https://bugs.webkit.org/show_bug.cgi?id=96987
+
+        Reviewed by Mark Hahnenberg.
+
+        Anything that can GC should use it.
+
+        * dfg/DFGOperations.cpp:
+
 2012-09-18  Mark Lam  <mark.lam@apple.com>
 
         Not reviewed. Attempt at greening the WinCairo bot. Touching
