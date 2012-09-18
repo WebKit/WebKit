@@ -196,6 +196,10 @@ static void createWindowsKeyMap()
     windowsKeyMap().set(ASCIILiteral("KP_End"), VK_END);
     windowsKeyMap().set(ASCIILiteral("KP_Insert"), VK_INSERT);
     windowsKeyMap().set(ASCIILiteral("KP_Delete"), VK_DELETE);
+    windowsKeyMap().set(ASCIILiteral("KP_Multiply"), VK_MULTIPLY);
+    windowsKeyMap().set(ASCIILiteral("KP_Subtract"), VK_SUBTRACT);
+    windowsKeyMap().set(ASCIILiteral("KP_Decimal"), VK_DECIMAL);
+    windowsKeyMap().set(ASCIILiteral("KP_Devide"), VK_DIVIDE);
 
     // Set alphabet to the windowsKeyMap.
     addCharactersToWinKeyMap('a', 'z', VK_A);
@@ -203,6 +207,14 @@ static void createWindowsKeyMap()
 
     // Set digits to the windowsKeyMap.
     addCharactersToWinKeyMap('0', '9', VK_0);
+
+    // Set digits of keypad to the windowsKeyMap.
+    for (unsigned i = 0; i < 10; ++i) {
+        StringBuilder builder;
+        builder.appendLiteral("KP_");
+        builder.appendNumber(i);
+        windowsKeyMap().set(builder.toString(), VK_NUMPAD0 + i);
+    }
 
     // Set shifted digits to the windowsKeyMap.
     windowsKeyMap().set(ASCIILiteral("exclam"), VK_1);
