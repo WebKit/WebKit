@@ -86,8 +86,13 @@ static bool contentHeightIsConstrained(const RenderBox* box)
         RenderStyle* style = container->style();
         if (style->overflowY() >= OSCROLL)
             return false;
-        if (style->height().isSpecified() || style->maxHeight().isSpecified())
-            return true;
+        if (style->height().isSpecified() || style->maxHeight().isSpecified()) {
+            // Some sites (e.g. wikipedia) set their html and/or body elements to height:100%,
+            // without intending to constrain the height of the content within them.
+            return !container->isRoot() && !container->isBody();
+        }
+        if (container->isFloatingOrOutOfFlowPositioned())
+            return false;
     }
     return false;
 }

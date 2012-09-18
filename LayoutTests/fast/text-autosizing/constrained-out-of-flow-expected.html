@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; }
+</style>
+
+</head>
+<body>
+
+<div style="max-height: 500px; float: left">
+    This text should not be autosized (its computed font-size should remain 16px), as autosizing usually causes text to wrap onto more lines, which might cause it to overflow the block's max-height (the float:left doesn't affect this).
+</div>
+
+<div style="max-height: 500px; position: absolute; top: 200px">
+    This text should not be autosized (its computed font-size should remain 16px), as autosizing usually causes text to wrap onto more lines, which might cause it to overflow the block's max-height (the position:absolute doesn't affect this).
+</div>
+
+<div style="max-height: 500px; position: fixed; top: 400px">
+    This text should not be autosized (its computed font-size should remain 16px), as autosizing usually causes text to wrap onto more lines, which might cause it to overflow the block's max-height (the position:fixed doesn't affect this).
+</div>
+
+</body>
+</html>

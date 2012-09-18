@@ -1,3 +1,47 @@
+2012-09-18  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Ignore constrained heights in certain circumstances.
+        https://bugs.webkit.org/show_bug.cgi?id=96848
+
+        Reviewed by Julien Chaffraix.
+
+        Added 3 tests, updated 2, and removed 1. See below.
+
+        * fast/text-autosizing/constrained-height-body-expected.html: Added.
+        * fast/text-autosizing/constrained-height-body.html: Added.
+
+            Checks that constrained height html & body are ignored.
+
+        * fast/text-autosizing/constrained-then-overflow-then-positioned-ancestors-expected.html: Removed.
+        * fast/text-autosizing/constrained-then-overflow-then-positioned-ancestors.html: Removed.
+
+            Removed because this situation is no longer possible now that
+            heightless position:absolute elements are always unconstrained.
+
+        * fast/text-autosizing/constrained-out-of-flow-expected.html: Added.
+        * fast/text-autosizing/constrained-out-of-flow.html: Added.
+
+            Checks that floats and out-of-flow positioned elements do not ignore
+            constraints on themselves.
+
+        * fast/text-autosizing/constrained-then-float-ancestors-expected.html: Added.
+        * fast/text-autosizing/constrained-then-float-ancestors.html: Added.
+
+            Checks that floats ignore constraints on ancestors.
+
+        * fast/text-autosizing/constrained-then-position-absolute-ancestors-expected.html:
+        * fast/text-autosizing/constrained-then-position-absolute-ancestors.html:
+
+            Added position:relative to emphasize that the ancestor's constrained
+            height is actually being ignored, not just skipped over; and updated
+            explanation.
+
+        * fast/text-autosizing/constrained-then-position-fixed-ancestors-expected.html:
+        * fast/text-autosizing/constrained-then-position-fixed-ancestors.html:
+
+            Updated explanation (since the test still passes, but for a
+            different reason).
+
 2012-09-18  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg is failing

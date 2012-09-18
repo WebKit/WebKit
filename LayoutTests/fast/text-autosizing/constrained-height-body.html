@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body style="height: 100%">
+
+<div>
+	This text should be autosized to 40px computed font-size, since the constrained height on the html and body elements gets ignored (a hack to fix some sites that appear to set this accidentally).
+</div>
+
+</body>
+</html>

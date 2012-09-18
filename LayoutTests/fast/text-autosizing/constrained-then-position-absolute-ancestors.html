@@ -3,12 +3,12 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
+<style>
 html { font-size: 16px; }
 body { width: 800px; margin: 0; }
 </style>
 
-<script type="text/javascript">
+<script>
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
@@ -20,10 +20,10 @@ if (window.internals) {
 </head>
 <body>
 
-<div style="max-height: 500px">
+<div style="max-height: 500px; position: relative">
     <div style="position: absolute">
         <div>
-            This text should be autosized to 40px computed font-size, since the parent is position:absolute hence the parent's containing block is not the position:static grandparent, but instead the root element, so it is not constrained by the max-height of its grandparent.
+            This text should be autosized to 40px computed font-size, since the parent is position:absolute so the height is considered to be unconstrained (ancestors of the parent are ignored, even if they have position:relative).
         </div>
     </div>
 </div>
