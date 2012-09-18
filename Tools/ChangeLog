@@ -1,3 +1,14 @@
+2012-09-18  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] qt_webkit.pri should not be listed in Tools.pro
+
+        Reviewed and rubber-stamped by Simon Hausmann and Tor Arne Vestbø.
+
+        Since r128751 the module pri file is auto-generated
+        but it was still listed in OTHER_FILES.
+
+        * Tools.pro: Remove unneeded line.
+
 2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with some versions of the gold linker

@@ -31,7 +31,6 @@ OTHER_FILES = \
     $$files(Scripts/webkitperl/*.p[l|m], true) \
     qmake/README \
     qmake/dump-features.pl \
-    qmake/qt_webkit.pri \
     qmake/config.tests/README \
     qmake/config.tests/fontconfig/* \
     qmake/config.tests/gccdepends/* \
