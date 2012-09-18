@@ -1,3 +1,21 @@
+2012-09-18  Ojan Vafai  <ojan@chromium.org>
+
+        Complete some forgotten rebaselines. The new results match other ports/platforms.
+
+        * fast/block/float/024-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/024-expected.txt.
+        * fast/block/margin-collapse/025-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/025-expected.txt.
+        * fast/block/margin-collapse/block-inside-inline/025-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/block-inside-inline/025-expected.txt.
+        * fast/block/margin-collapse/empty-clear-blocks-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/empty-clear-blocks-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/block/float/024-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/chromium-mac/fast/block/float/024-expected.png:
+        * platform/chromium-mac/fast/block/float/024-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/float/024-expected.txt.
+        * platform/chromium-mac/fast/block/margin-collapse/025-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/margin-collapse/025-expected.txt.
+        * platform/chromium-mac/fast/block/margin-collapse/block-inside-inline/025-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt.
+        * platform/chromium-mac/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/chromium-mac/fast/block/margin-collapse/empty-clear-blocks-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/margin-collapse/empty-clear-blocks-expected.txt.
+        * platform/chromium/TestExpectations:
+
 2012-09-18  Bo Liu  <boliu@chromium.org>
 
         Revert 128780, 128676, 128645
