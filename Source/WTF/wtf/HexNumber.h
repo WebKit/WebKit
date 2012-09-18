@@ -31,10 +31,10 @@ enum HexConversionMode {
 
 namespace Internal {
 
-static const char* hexDigitsForMode(HexConversionMode mode)
+const char lowerHexDigits[17] = "0123456789abcdef";
+const char upperHexDigits[17] = "0123456789ABCDEF";
+inline const char* hexDigitsForMode(HexConversionMode mode)
 {
-    static const char lowerHexDigits[17] = "0123456789abcdef";
-    static const char upperHexDigits[17] = "0123456789ABCDEF";
     return mode == Lowercase ? lowerHexDigits : upperHexDigits;
 }
 

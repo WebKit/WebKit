@@ -1,3 +1,19 @@
+2012-09-17  Glenn Adams  <glenn@skynav.com>
+
+        Including HexNumber.h fails build if hexDigitsForMode is not referenced
+        https://bugs.webkit.org/show_bug.cgi?id=96873
+
+        Reviewed by Benjamin Poulain.
+
+        Ensure release build is possible when hexDigitsForMode is not referenced by
+        template expansion.
+
+        * wtf/HexNumber.h:
+        (WTF::Internal::hexDigitsForMode):
+        Change hexDigitsForMode to inline (rather than static). Make string literals
+        {lower,upper}HexDigits non-local and non-static, but const, to which the linker
+        should merge references in the RO data segment.
+
 2012-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         The ThreadRescrictionVerifier should be more forcibly disabled on systems that use threads
