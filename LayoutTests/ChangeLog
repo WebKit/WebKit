@@ -1,3 +1,15 @@
+2012-09-17  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=96688
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        These platform-specific results are not necessary. They are identical to the 
+        cross-platform results.
+        * platform/mac/compositing/rtl: Removed.
+        * platform/mac/compositing/rtl/rtl-fixed-expected.txt: Removed.
+        * platform/mac/compositing/rtl/rtl-fixed-overflow-expected.txt: Removed.
+
 2012-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         We don't have a bad enough time if an object's prototype chain crosses global objects
