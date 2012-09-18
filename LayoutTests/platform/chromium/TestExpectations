@@ -2487,16 +2487,6 @@ BUGWK74137 WIN LION : fast/regions/region-overflow-auto-overflow-hidden.html = M
 BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = IMAGE+TEXT
 BUGWK74137 WIN LION : fast/regions/region-overflow-auto-overflow-visible.html = MISSING
 
-// CSS3 filters needs rebaselines on windows after 94372
-BUGWK82783 WIN : css3/filters/filter-change-repaint.html = IMAGE
-BUGWK82783 WIN : css3/filters/filter-change-repaint-composited.html = IMAGE
-BUGWK82783 WIN : css3/filters/filter-repaint-composited-fallback-crash.html = IMAGE
-BUGWK82783 WIN : css3/filters/filter-repaint-composited-fallback.html = IMAGE
-BUGWK82783 WIN : css3/filters/filter-repaint-child-layers.html = IMAGE
-BUGWK82783 WIN : css3/filters/effect-brightness.html = IMAGE
-BUGWK82783 WIN : css3/filters/crash-hw-sw-switch.html = IMAGE
-BUGWK82783 WIN : css3/filters/effect-brightness-clamping.html = IMAGE
-
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = IMAGE
 

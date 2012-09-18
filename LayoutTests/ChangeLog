@@ -1,3 +1,18 @@
+2012-09-18  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaseline tests. Mostly failing due to slight pixel differences.
+        * platform/chromium-win/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-expected.png:
+        These two results are darker now, but this matches the mac/linux results.
+
+        * platform/chromium-win/css3/filters/filter-change-repaint-composited-expected.png: Added.
+        * platform/chromium-win/css3/filters/filter-change-repaint-expected.png: Added.
+        * platform/chromium-win/css3/filters/filter-repaint-child-layers-expected.png: Added.
+        * platform/chromium-win/css3/filters/filter-repaint-composited-fallback-crash-expected.png: Added.
+        * platform/chromium-win/css3/filters/filter-repaint-composited-fallback-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping large number of tests that have been failing on Windows.
