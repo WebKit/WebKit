@@ -1319,18 +1319,6 @@ BUGWK85107 : svg/as-image/animated-svg-as-image.html = PASS IMAGE
 
 BUGWK93589 : svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg = TIMEOUT PASS TEXT
 
-// Need rebaseline for slight pixel changes
-BUGWK95238 : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
-BUGWK95238 : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
-BUGWK95238 : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
-BUGWK95238 : svg/custom/feComponentTransfer-Linear.svg = IMAGE
-BUGWK95238 : svg/custom/feComponentTransfer-Table.svg = IMAGE
-BUGWK95238 : svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html = IMAGE
-BUGWK95238 : svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html = IMAGE
-BUGWK95238 : css3/filters/effect-reference-ordering.html = IMAGE
-BUGWK95238 : css3/filters/effect-combined.html = IMAGE
-BUGWK95238 : css3/filters/effect-opacity.html = IMAGE
-
 // -----------------------------------------------------------------
 // End SVG TESTS
 // -----------------------------------------------------------------

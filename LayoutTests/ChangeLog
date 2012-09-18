@@ -1,3 +1,42 @@
+2012-09-18  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaseline tests failing due to expected slight pixel differences.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/chromium-mac/css3/filters/effect-combined-expected.png:
+        * platform/chromium-mac/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/chromium-win/css3/filters/effect-combined-expected.png:
+        * platform/chromium-win/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Tables without any descendant and auto logical width should have a 0px logical width
