@@ -369,7 +369,7 @@ defineReplace(javascriptFeatureDefines) {
 defineReplace(setEnvironmentVariable) {
   variable = $$1
   value = $$2
-  win32 {
+  win_cmd_shell {
       return((set \"$$variable=$$value\"))
   }
   return(export \"$$variable=$$value\")

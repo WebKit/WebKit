@@ -1,3 +1,13 @@
+2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Prospective Qt/Windows cross-compiling fix
+
+        Reviewed by Tor Arne Vestbø.
+
+        The win32 scope is not set when cross-compiling from Linux to Windows.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-18  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Remove background view on EWebLauncher and MiniBrowser
