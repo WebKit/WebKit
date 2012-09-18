@@ -6154,8 +6154,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
         return;
 
     Node* innerNodeInDocument = result.innerNode();
-    while (innerNodeInDocument && innerNodeInDocument->document() != this)
-        innerNodeInDocument = innerNodeInDocument->document()->ownerElement();
+    ASSERT(!innerNodeInDocument || innerNodeInDocument->document() == this);
 
     Node* oldActiveNode = activeNode();
     if (oldActiveNode && !request.active()) {
