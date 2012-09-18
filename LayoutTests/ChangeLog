@@ -1,3 +1,11 @@
+2012-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed gardening after http://trac.webkit.org/changeset/128928
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/Skipped:
+
 2012-09-18  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Ignore constrained heights in certain circumstances.

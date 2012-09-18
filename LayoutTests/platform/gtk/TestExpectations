@@ -1359,8 +1359,6 @@ BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 
 BUGWK96196 : accessibility/spinbutton-value.html = TEXT
 
-BUGWK96605 : fast/js/primitive-property-access-edge-cases.html = TEXT
-
 BUGWK73003 DEBUG : editing/spelling/spellcheck-async.html = TEXT
 BUGWK73003 DEBUG : editing/spelling/spellcheck-paste.html = PASS
 BUGWK50740 DEBUG : editing/spelling/spellcheck-queue.html = TEXT
