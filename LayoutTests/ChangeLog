@@ -1,3 +1,12 @@
+2012-09-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Avoid using a deprecated extension API parameter in test to avoid console warning,
+        that break expectations on EFL due to EFL's DRT logging inspector console output to test
+        expectations.
+
+        * inspector/extensions/extensions-audits-api.html:
+        * platform/efl/TestExpectations:
+
 2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Gardening.

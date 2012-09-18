@@ -20,7 +20,7 @@ function extension_testAuditsAPI(nextTest)
             results.done();
         });
     }
-    var category = webInspector.audits.addCategory("Extension audits", 20);
+    var category = webInspector.audits.addCategory("Extension audits");
     category.onAuditStarted.addListener(onStartAuditCategory);
     output("Added audit category, result dump follows:");
     dumpObject(category);
