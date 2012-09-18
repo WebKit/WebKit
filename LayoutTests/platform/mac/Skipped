@@ -1087,5 +1087,9 @@ plugins/form-value.html
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
 plugins/npruntime/invoke-failure.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=93589
+# Very flaky, often failing on retry, too.
+svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
+
 # Unknown failures.
 http/tests/multipart/invalid-image-data-standalone.html
