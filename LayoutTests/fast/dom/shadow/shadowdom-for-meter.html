@@ -8,6 +8,9 @@
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var shadowRoot = new WebKitShadowRoot(host);
 shadowRoot.innerHTML = "<shadow></shadow><span>(after)</span>";
 </script>

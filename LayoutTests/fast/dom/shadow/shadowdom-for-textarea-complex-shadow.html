@@ -16,6 +16,9 @@ textarea {
 </form>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var p = document.createElement('p');
 p.innerHTML = "paragraph<b>bold</b>paragraph";
 host.appendChild(p);

@@ -7,6 +7,9 @@
     <img id="host">
 </div>
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 description("Tests to ensure that an img element receives a load event, but an inner image element in shadow DOM subtree does not receive.");
 
 if (window.testRunner) {

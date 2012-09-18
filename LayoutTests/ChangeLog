@@ -1,3 +1,52 @@
+2012-09-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Disable adding an AuthorShadowRoot to replaced elements.
+        https://bugs.webkit.org/show_bug.cgi?id=96978
+
+        Reviewed by Hajime Morita.
+
+        Since we don't support AuthorShadowRoot for replaced elements for now, we enable a flat to
+        support AuthorShadowRoot in these tests.
+
+        Also, we have a test to check to reject adding ShadowRoot to repalced elements.
+
+        * fast/dom/shadow/select-image-with-shadow.html:
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-disable.html: Checks WebKit rejects adding ShadowRoot to repalced elements.
+        * fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html:
+        * fast/dom/shadow/shadowdom-for-image-alt-update.html:
+        * fast/dom/shadow/shadowdom-for-image-alt.html:
+        * fast/dom/shadow/shadowdom-for-image-content.html:
+        * fast/dom/shadow/shadowdom-for-image-dynamic.html:
+        * fast/dom/shadow/shadowdom-for-image-event-click.html:
+        * fast/dom/shadow/shadowdom-for-image-event.html:
+        * fast/dom/shadow/shadowdom-for-image-in-shadowdom.html:
+        * fast/dom/shadow/shadowdom-for-image-map.html:
+        * fast/dom/shadow/shadowdom-for-image-style.html:
+        * fast/dom/shadow/shadowdom-for-image-with-multiple-shadow.html:
+        * fast/dom/shadow/shadowdom-for-image-with-pseudo-id.html:
+        * fast/dom/shadow/shadowdom-for-image-with-width-and-height.html:
+        * fast/dom/shadow/shadowdom-for-image.html:
+        * fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html:
+        * fast/dom/shadow/shadowdom-for-keygen-without-shadow.html:
+        * fast/dom/shadow/shadowdom-for-meter-dynamic.html:
+        * fast/dom/shadow/shadowdom-for-meter-multiple.html:
+        * fast/dom/shadow/shadowdom-for-meter-with-style.html:
+        * fast/dom/shadow/shadowdom-for-meter-without-appearance.html:
+        * fast/dom/shadow/shadowdom-for-meter-without-shadow-element.html:
+        * fast/dom/shadow/shadowdom-for-meter.html:
+        * fast/dom/shadow/shadowdom-for-object-only-shadow.html:
+        * fast/dom/shadow/shadowdom-for-progress-dynamic.html:
+        * fast/dom/shadow/shadowdom-for-progress-multiple.html:
+        * fast/dom/shadow/shadowdom-for-progress-with-style.html:
+        * fast/dom/shadow/shadowdom-for-progress-without-appearance.html:
+        * fast/dom/shadow/shadowdom-for-progress-without-shadow-element.html:
+        * fast/dom/shadow/shadowdom-for-progress.html:
+        * fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html:
+        * fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html:
+        * fast/dom/shadow/shadowdom-for-textarea-without-shadow.html:
+        * fast/dom/shadow/shadowdom-for-textarea.html:
+
 2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html failing after r128645

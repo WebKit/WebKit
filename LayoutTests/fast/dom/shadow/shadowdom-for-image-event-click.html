@@ -11,6 +11,9 @@
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();

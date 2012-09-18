@@ -10,6 +10,9 @@
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 function addShadowDOM(host) {
     var shadowRoot = new WebKitShadowRoot(host);
     shadowRoot.innerHTML = "(before)<shadow></shadow>(after)<content></content>";

@@ -9,6 +9,9 @@
 <textarea id="host" rows="4" cols="30" placeholder="This is a placeholder text."></textarea>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var shadowRoot1 = new WebKitShadowRoot(host);
 shadowRoot1.appendChild(document.createTextNode('before'));
 shadowRoot1.appendChild(document.createElement('shadow'));

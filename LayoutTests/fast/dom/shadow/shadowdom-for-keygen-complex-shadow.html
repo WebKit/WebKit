@@ -7,6 +7,9 @@
 </form>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 host.appendChild(document.createTextNode('foobar'));
 
 var shadowRoot = new WebKitShadowRoot(host);

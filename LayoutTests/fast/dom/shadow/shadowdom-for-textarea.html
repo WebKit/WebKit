@@ -8,6 +8,9 @@
 </form>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var shadowRoot = new WebKitShadowRoot(host);
 
 var div = document.createElement('div');

@@ -8,6 +8,9 @@
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
 var shadowRoot = new WebKitShadowRoot(host);
 shadowRoot.innerHTML = "<span>no progress</span>"
 </script>

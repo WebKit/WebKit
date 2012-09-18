@@ -24,7 +24,6 @@ var elementsToSuccess = [
     document.createElement('span'),
     document.createElement('a'),
     document.createElement('section'),
-    document.createElement('textarea')
 ];
 
 var elementsToFail = [
@@ -32,7 +31,19 @@ var elementsToFail = [
     document.getElementById('tref'),
     document.createElement('audio'),
     document.createElement('video'),
-    document.createElement('select')
+    document.createElement('select'),
+    document.createElement('img'),
+    document.createElement('textarea'),
+    document.createElement('iframe'),
+    document.createElement('canvas'),
+    document.createElement('meter'),
+    document.createElement('progress'),
+    document.createElement('object'),
+    document.createElement('embed'),
+    document.createElement('keygen'),
+    document.createElement('video'),
+    document.createElement('audio'),
+    document.createElement('fieldset'),
 ];
 
 for (var i = 0; i < elementsToSuccess.length; ++i) {

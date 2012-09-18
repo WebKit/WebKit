@@ -97,6 +97,8 @@ protected:
 private:
     virtual void createShadowSubtree();
 
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+
     // Implementation of ImageLoaderClient
     Element* sourceElement() { return this; }
     Element* imageElement();

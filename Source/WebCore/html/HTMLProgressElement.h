@@ -55,6 +55,7 @@ private:
     virtual ~HTMLProgressElement();
 
     virtual void willAddAuthorShadowRoot() OVERRIDE;
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     virtual bool supportLabels() const OVERRIDE { return true; }
 
