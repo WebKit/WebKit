@@ -23,6 +23,7 @@
 
 #include "WebPageProxy.h"
 #include <Evas.h>
+#include <WKEinaSharedString.h>
 #include <WebCore/TextDirection.h>
 #include <WebKit2/WKBase.h>
 #include <wtf/Vector.h>
@@ -102,5 +103,9 @@ bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView);
 
 void ewk_view_popup_menu_request(Evas_Object* ewkView, WebKit::WebPopupMenuProxyEfl* popupMenu, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
 void ewk_view_webprocess_crashed(Evas_Object* ewkView);
+
+void ewk_view_run_javascript_alert(Evas_Object* ewkView, const WKEinaSharedString& message);
+bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, const WKEinaSharedString& message);
+WKEinaSharedString ewk_view_run_javascript_prompt(Evas_Object* ewkView, const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
 
 #endif // ewk_view_private_h

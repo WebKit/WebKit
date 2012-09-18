@@ -1,3 +1,30 @@
+2012-09-17  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Add javascript popup API.
+        https://bugs.webkit.org/show_bug.cgi?id=95672
+
+        Reviewed by Gyuyoung Kim.
+
+        Add smart class member function for javascript alert(), confirm() and prompt().
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_run_javascript_alert):
+        (ewk_view_run_javascript_confirm):
+        (ewk_view_run_javascript_prompt):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_ui_client.cpp:
+        (runJavaScriptAlert):
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+        (ewk_view_ui_client_attach):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        Added unit test for javascript popup smart class member function.
+        (checkAlert):
+        (TEST_F):
+        (checkConfirm):
+        (checkPrompt):
+
 2012-09-17  Regina Chung  <heejin.r.chung@samsung.com>
 
         [EFL][WK2] Regression (r128163)
