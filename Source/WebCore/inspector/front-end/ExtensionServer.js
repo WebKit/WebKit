@@ -610,6 +610,11 @@ WebInspector.ExtensionServer.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged,
             this._inspectedURLChanged, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
+        this._initDone = true;
+        if (this._pendingExtensions) {
+            this._pendingExtensions.forEach(this._innerAddExtension, this);
+            delete this._pendingExtensions;
+        }
         InspectorExtensionRegistry.getExtensionsAsync();
     },
 
@@ -652,11 +657,22 @@ WebInspector.ExtensionServer.prototype = {
      */
     _addExtensions: function(extensions)
     {
-        for (var i = 0; i < extensions.length; ++i)
-            this._addExtension(extensions[i]);
+        extensions.forEach(this._addExtension, this);
     },
 
     _addExtension: function(extensionInfo)
+    {
+        if (this._initDone) {
+            this._innerAddExtension(extensionInfo);
+            return;
+        }
+        if (this._pendingExtensions)
+            this._pendingExtensions.push(extensionInfo);
+        else
+            this._pendingExtensions = [extensionInfo];
+    },
+
+    _innerAddExtension: function(extensionInfo)
     {
         const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
         var startPage = extensionInfo.startPage;
