@@ -806,6 +806,7 @@ struct Node {
         case ValueToInt32:
         case UInt32ToNumber:
         case DoubleAsInt32:
+        case PhantomArguments:
             return true;
         case Phantom:
         case Nop:
