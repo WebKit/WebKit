@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 565x19
           text run at (0,0) width 565: "In this sample, the H3s should be nested. This matches Firefox, IE, and the HTML5 spec."
-      RenderBlock {H3} at (0,37) size 784x294 [border: (2px solid #FF0000)]
+      RenderBlock {H3} at (0,36) size 784x294 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (4,4) size 776x22
           RenderInline {I} at (0,0) size 33x22
             RenderText {#text} at (0,0) size 33x22

@@ -1,3 +1,108 @@
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Rebaseline several test cases in Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=97000
+
+        Unreviewed EFL gardening.
+
+        Rebaseline several test cases an unskip them.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/efl/animations/additive-transform-animations-expected.txt: Added.
+        * platform/efl/animations/cross-fade-webkit-mask-box-image-expected.png: Added.
+        * platform/efl/animations/cross-fade-webkit-mask-box-image-expected.txt: Added.
+        * platform/efl/fast/events/offsetX-offsetY-expected.txt: Removed.
+        * platform/efl/fast/events/pointer-events-2-expected.png:
+        * platform/efl/fast/events/pointer-events-2-expected.txt:
+        * platform/efl/fast/forms/001-expected.png:
+        * platform/efl/fast/forms/001-expected.txt:
+        * platform/efl/fast/forms/float-before-fieldset-expected.png:
+        * platform/efl/fast/forms/float-before-fieldset-expected.txt:
+        * platform/efl/fast/forms/form-element-geometry-expected.png:
+        * platform/efl/fast/forms/form-element-geometry-expected.txt:
+        * platform/efl/fast/forms/input-baseline-expected.png:
+        * platform/efl/fast/forms/input-baseline-expected.txt:
+        * platform/efl/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/efl/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/efl/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/efl/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/efl/fast/forms/mailto/advanced-get-expected.txt: Added.
+        * platform/efl/fast/forms/mailto/advanced-put-expected.txt: Added.
+        * platform/efl/fast/forms/placeholder-position-expected.png:
+        * platform/efl/fast/forms/placeholder-position-expected.txt:
+        * platform/efl/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/efl/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-pseudo-style-expected.png:
+        * platform/efl/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/efl/fast/gradients/generated-gradients-expected.png:
+        * platform/efl/fast/gradients/generated-gradients-expected.txt:
+        * platform/efl/fast/gradients/radial-centered-expected.png:
+        * platform/efl/fast/gradients/radial-centered-expected.txt:
+        * platform/efl/fast/inline-block/contenteditable-baseline-expected.png:
+        * platform/efl/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/efl/fast/inline/continuation-outlines-with-layers-2-expected.png:
+        * platform/efl/fast/inline/continuation-outlines-with-layers-2-expected.txt:
+        * platform/efl/fast/inline/inline-box-background-expected.png:
+        * platform/efl/fast/inline/inline-box-background-expected.txt:
+        * platform/efl/fast/inline/inline-box-background-long-image-expected.png:
+        * platform/efl/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/efl/fast/inline/inline-box-background-repeat-x-expected.png:
+        * platform/efl/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/efl/fast/inline/inline-box-background-repeat-y-expected.png:
+        * platform/efl/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/efl/fast/invalid/nestedh3s-expected.png:
+        * platform/efl/fast/invalid/nestedh3s-expected.txt:
+        * platform/efl/fast/overflow/overflow-float-stacking-expected.png:
+        * platform/efl/fast/overflow/overflow-float-stacking-expected.txt:
+        * platform/efl/fast/overflow/overflow-stacking-expected.png:
+        * platform/efl/fast/overflow/overflow-stacking-expected.txt:
+        * platform/efl/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/efl/fast/repaint/block-layout-inline-children-replaced-expected.txt:
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.txt:
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.txt:
+        * platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/efl/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/efl/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/efl/fast/repaint/repaint-svg-after-style-change-expected.png: Added.
+        * platform/efl/fast/repaint/repaint-svg-after-style-change-expected.txt: Added.
+        * platform/efl/fast/repaint/table-section-repaint-expected.txt:
+        * platform/efl/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/efl/fast/repaint/transform-absolute-in-positioned-container-expected.txt:
+        * platform/efl/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/efl/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/efl/fast/table/027-expected.png:
+        * platform/efl/fast/table/027-expected.txt:
+        * platform/efl/fast/table/027-vertical-expected.png:
+        * platform/efl/fast/table/027-vertical-expected.txt:
+        * platform/efl/fast/table/032-expected.png:
+        * platform/efl/fast/table/032-expected.txt:
+        * platform/efl/fast/table/040-expected.png:
+        * platform/efl/fast/table/040-expected.txt:
+        * platform/efl/fast/table/040-vertical-expected.png:
+        * platform/efl/fast/table/040-vertical-expected.txt:
+        * platform/efl/fast/table/absolute-table-at-bottom-expected.png:
+        * platform/efl/fast/table/absolute-table-at-bottom-expected.txt:
+        * platform/efl/fast/table/border-collapsing/004-expected.png:
+        * platform/efl/fast/table/border-collapsing/004-expected.txt:
+        * platform/efl/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/efl/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/efl/fast/table/dynamic-caption-add-before-child-expected.png:
+        * platform/efl/fast/table/dynamic-caption-add-before-child-expected.txt:
+        * platform/efl/fast/table/frame-and-rules-expected.png:
+        * platform/efl/fast/table/frame-and-rules-expected.txt:
+        * platform/efl/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/efl/fast/table/multiple-captions-display-expected.txt:
+        * platform/efl/media/video-colorspace-yuv420-expected.png: Added.
+        * platform/efl/media/video-colorspace-yuv420-expected.txt: Added.
+        * platform/efl/media/video-colorspace-yuv422-expected.png: Added.
+        * platform/efl/media/video-colorspace-yuv422-expected.txt: Added.
+        * platform/efl/perf/nested-combined-selectors-expected.txt: Added.
+        * platform/efl/userscripts/script-run-at-end-expected.txt: Added.
+
 2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Gardening after r128802.

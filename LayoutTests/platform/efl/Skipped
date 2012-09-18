@@ -90,7 +90,6 @@ editing/style
 fast/parser/pre-html5-parser-quirks.html
 
 # EFL's LayoutTestController does not implement shadowPseudoId
-media/video-controls-visible-audio-only.html
 media/video-volume-slider.html
 
 # EFL's LayoutTestController does not implement authenticateSession
@@ -230,9 +229,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
-
-# BUG: encoding-related problems
-fast/xsl/sort-locale.xml
 
 # BUG: <canvas>'s toDataURL has problems with non-image/png mimetypes
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html
@@ -418,13 +414,10 @@ svg/as-image/image-respects-deviceScaleFactor.html
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
+# Hits Cairo assertion
+fast/repaint/moving-shadow-on-container.html
+
 # Needs a rebaseline
-fast/events/dont-loose-last-event.html
-fast/events/drag-and-drop-set-drag-data-arguments.html
-fast/events/drag-link.html
-fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
-fast/events/moving-text-should-fire-drop-and-dragend-events.html
-fast/events/offsetX-offsetY.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
@@ -435,71 +428,14 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
-fast/events/pointer-events-2.html
-fast/events/remove-target-with-shadow-in-drag.html
-fast/forms/001.html
-fast/forms/float-before-fieldset.html
-fast/forms/form-element-geometry.html
-fast/forms/input-baseline.html
-fast/forms/input-paste-undo.html
-fast/forms/input-placeholder-visibility-1.html
-fast/forms/input-step-as-double.html
-fast/forms/input-text-scroll-left-on-blur.html
-fast/forms/mailto/advanced-get.html
-fast/forms/mailto/advanced-put.html
 fast/forms/number/number-spinbutton-in-multi-column.html
-fast/forms/placeholder-position.html
-fast/forms/placeholder-pseudo-style.html
-fast/forms/radio/radio_checked_name.html
 fast/forms/select/listbox-in-multi-column.html
-fast/forms/textarea-placeholder-pseudo-style.html
-fast/frames/frame-set-rotation-hit.html
-fast/frames/frame-set-scaling-hit.html
-fast/gradients/generated-gradients.html
-fast/gradients/radial-centered.html
-fast/harness/user-preferred-language.html
-fast/inline-block/contenteditable-baseline.html
-fast/inline/continuation-outlines-with-layers-2.html
 fast/inline/continuation-outlines-with-layers.html
-fast/inline/inline-box-background-long-image.html
-fast/inline/inline-box-background-repeat-x.html
-fast/inline/inline-box-background-repeat-y.html
-fast/inline/inline-box-background.html
-fast/invalid/nestedh3s.html
 fast/invalid/residual-style.html
 fast/js/constructor-length.html
-fast/loader/local-CSS-from-local.html
-fast/loader/local-JavaScript-from-local.html
-fast/loader/local-image-from-local.html
-fast/overflow/overflow-float-stacking.html
-fast/overflow/overflow-stacking.html
-fast/preloader/first-base-tag-scanned-wins.html
-fast/preloader/first-base-tag-wins.html
-fast/preloader/understands-base-tag.html
-fast/repaint/block-layout-inline-children-replaced.html
-fast/repaint/japanese-rl-selection-clear.html
 fast/repaint/japanese-rl-selection-repaint-in-regions.html
-fast/repaint/japanese-rl-selection-repaint.html
-fast/repaint/line-flow-with-floats-in-regions.html
-fast/repaint/moving-shadow-on-container.html
-fast/repaint/moving-shadow-on-path.html
 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
 fast/repaint/region-painting-via-layout.html
-fast/repaint/repaint-svg-after-style-change.html
-fast/repaint/table-section-repaint.html
-fast/repaint/transform-absolute-in-positioned-container.html
-fast/replaced/width100percent-searchfield.html
-fast/table/027.html
-fast/table/027-vertical.html
-fast/table/032.html
-fast/table/040-vertical.html
-fast/table/040.html
-fast/table/absolute-table-at-bottom.html
-fast/table/border-collapsing/004-vertical.html
-fast/table/border-collapsing/004.html
-fast/table/dynamic-caption-add-before-child.xhtml
-fast/table/frame-and-rules.html
-fast/table/multiple-captions-display.xhtml
 fast/table/prepend-in-anonymous-table.html
 fast/text/basic/011.html
 fast/text/basic/013.html
@@ -635,10 +571,7 @@ tables/mozilla/
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 fast/overflow/overflow-height-float-not-removed-crash3.html
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
-http/tests/cache/subresource-expiration-1.html
-http/tests/cache/subresource-expiration-2.html
 http/tests/cache/subresource-failover-to-network.html
-http/tests/cache/subresource-multiple-instances.html
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
 http/tests/misc/401-alternative-content.php
 http/tests/misc/copy-resolves-urls.html
@@ -686,15 +619,7 @@ xmlviewer/extensions-api.html
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html
 
-# Touch adjustment not enabled
-# https://bugs.webkit.org/show_bug.cgi?id=78801
-touchadjustment
-
 # There are no expected result set yet.
-animations/additive-transform-animations.html
-animations/animation-border-overflow.html
-animations/animation-add-events-in-handler.html
-animations/cross-fade-webkit-mask-box-image.html
 editing/unsupported-content/list-delete-001.html 
 editing/unsupported-content/list-delete-003.html 
 editing/unsupported-content/list-type-after.html 
@@ -704,15 +629,6 @@ editing/unsupported-content/table-delete-003.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/text/unicode-variation-selector.html
 http/tests/cache/history-only-cached-subresource-loads.html
-http/tests/cache/cancel-during-revalidation-succeeded.html
-http/tests/cache/post-redirect-get.php
-media/video-colorspace-yuv420.html
-media/video-colorspace-yuv422.html
-perf/nested-combined-selectors.html
-userscripts/script-run-at-end.html
-
-# This test requires flac codec
-media/media-can-play-flac-audio.html
 
 # Requires ENABLE(FILE_SYSTEM)
 fast/forms/file/input-file-entries.html

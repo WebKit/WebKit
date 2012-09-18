@@ -103,7 +103,11 @@ BUGWK86623 : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-in-shadow.html = TEXT
 BUGWK86623 : fast/events/drag-display-none-element.html = TEXT
 BUGWK86623 : fast/events/drag-in-frames.html = TEXT
+BUGWK86623 : fast/events/drag-link.html = TEXT
 BUGWK86623 : fast/events/drag-parent-node.html = TEXT
+BUGWK86623 : fast/events/moving-text-should-fire-drop-and-dragend-events.html = TEXT
+BUGWK86623 : fast/events/moving-text-should-fire-drop-and-dragend-events-2.html = TEXT
+BUGWK86623 : fast/events/remove-target-with-shadow-in-drag.html = TEXT
 BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
 // Missing drag'n'drop, needs baselines
@@ -367,6 +371,7 @@ BUGWK84338 : editing/style/apply-through-end-of-document.html = TEXT
 BUGWK84338 : editing/style/non-inheritable-styles.html = TEXT
 BUGWK84338 : editing/style/smoosh-styles-003.html = TEXT
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
+BUGWK84338 : fast/forms/input-paste-undo.html = TEXT
 BUGWK84338 : fast/forms/plaintext-mode-2.html = MISSING
 BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
@@ -620,6 +625,9 @@ BUGWK49142 : fast/css/style-scoped = TEXT
 BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
+
+// These tests require TOUCH_ADJUSTMENT flag to be enabled
+BUGWK78801 SKIP : touchadjustment = PASS
 
 // Tracking corner not being painted for TextArea.
 BUGWK85484 : fast/css/resize-corner-tracking-transformed.html = TEXT
@@ -904,6 +912,9 @@ BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 // These tests cause flakiness (extra console messages in output)
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-1.html = PASS
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
+
+// The sort order is incorrect in the output.
+BUGWK30620 : fast/xsl/sort-locale.xml = TEXT
 
 // Flexbox test failing on EFL.
 BUGWK88984 : css3/flexbox/flexitem.html = TEXT
