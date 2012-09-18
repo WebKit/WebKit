@@ -3617,3 +3617,4 @@ BUGWK96596 : fast/js/cross-frame-bad-time.html = TEXT
 BUGWK96596 : fast/js/object-bad-time.html = TEXT
 BUGWK96596 : fast/js/object-slow-put.html = TEXT
 BUGWK96962 : fast/js/cross-frame-really-bad-time.html = TEXT
+BUGWK96962 : fast/js/cross-frame-really-bad-time-with-__proto__.html = TEXT
