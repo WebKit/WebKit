@@ -1993,6 +1993,7 @@ BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = PASS TEXT
 BUGWK72901 RELEASE SLOW : perf/array-push-pop.html = PASS
 BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
 BUGWK63057 RELEASE : perf/adding-radio-buttons.html = TEXT PASS
+BUGWK96977 RELEASE SNOWLEOPARD : perf/nested-combined-selectors.html = TEXT PASS
 
 // Failing after http://trac.webkit.org/changeset/65665/
 

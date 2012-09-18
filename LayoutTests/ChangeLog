@@ -1,3 +1,11 @@
+2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, mark perf/nested-combined-selectors.html is flaky
+
+        perf/nested-combined-selectors.html is flaky on Chromium Mac 10.6
+
+        * platform/chromium/TestExpectations:
+
 2012-09-17  Stephanie Lewis  <slewis@apple.com>
 
         Rebaseline after http://trac.webkit.org/projects/webkit/changeset/128837.
