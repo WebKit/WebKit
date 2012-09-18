@@ -214,6 +214,8 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (scrollOffset.isZero())
         return;
 
+    ASSERT(!scrollRect.isEmpty());
+
     if (!m_scrolledRect.isEmpty() && m_scrolledRect != scrollRect)
         resetScrolledRect();
 

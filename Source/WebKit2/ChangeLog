@@ -1,3 +1,19 @@
+2012-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Division by zero crash in BackingStore::scroll
+        https://bugs.webkit.org/show_bug.cgi?id=97046
+        <rdar://problem/11722564>
+
+        Reviewed by Dan Bernstein.
+
+        It appears that DrawingAreaImpl::scroll can be called with an empty scroll rect. Do nothing
+        if that's the case. Also, assert that the scrolling rect in BackingStoreMac is never empty.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::scroll):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll):
+
 2012-09-18  Bo Liu  <boliu@chromium.org>
 
         Revert 128780, 128676, 128645
