@@ -1,3 +1,49 @@
+2012-09-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining MathML tests' baselines after r128837.
+
+        * platform/gtk/mathml/presentation/attributes-expected.png:
+        * platform/gtk/mathml/presentation/attributes-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.png:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-expected.png:
+        * platform/gtk/mathml/presentation/fractions-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/mo-expected.png:
+        * platform/gtk/mathml/presentation/mo-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/gtk/mathml/presentation/over-expected.png:
+        * platform/gtk/mathml/presentation/over-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.png:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/mathml/presentation/row-alignment-expected.png:
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/row-expected.png:
+        * platform/gtk/mathml/presentation/row-expected.txt:
+        * platform/gtk/mathml/presentation/style-expected.png:
+        * platform/gtk/mathml/presentation/style-expected.txt:
+        * platform/gtk/mathml/presentation/sub-expected.png:
+        * platform/gtk/mathml/presentation/sub-expected.txt:
+        * platform/gtk/mathml/presentation/subsup-expected.png:
+        * platform/gtk/mathml/presentation/subsup-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.png:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.png:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+        * platform/gtk/mathml/presentation/tokenElements-expected.txt:
+        * platform/gtk/mathml/presentation/under-expected.png:
+        * platform/gtk/mathml/presentation/under-expected.txt:
+        * platform/gtk/mathml/presentation/underover-expected.png:
+        * platform/gtk/mathml/presentation/underover-expected.txt:
+        * platform/gtk/mathml/xHeight-expected.png: Added.
+        * platform/gtk/mathml/xHeight-expected.txt:
+
 2012-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Flag auto-height regions

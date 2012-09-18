@@ -8,13 +8,14 @@ layer at (0,0) size 800x102
           text run at (0,0) width 76: "superscript: "
         RenderMathMLMath {math} at (76,0) size 15x16 [padding: 0 1 0 1]
           RenderMathMLSubSup {msup} at (1,0) size 13x16
-            RenderMathMLBlock (anonymous, inline-block) at (0,7) size 7x9
-              RenderInline {mi} at (0,0) size 7x25
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x16 [padding: 7 0 0 0]
+              RenderBlock {mi} at (0,7) size 7x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderInline {mn} at (0,0) size 6x19
-              RenderText {#text} at (7,-4) size 6x19
-                text run at (7,-4) width 6: "2"
+            RenderMathMLBlock (anonymous, flex) at (7,0) size 6x16
+              RenderBlock {mn} at (0,0) size 6x10
+                RenderText {#text} at (0,-4) size 6x19
+                  text run at (0,-4) width 6: "2"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,34) size 784x36
         RenderText {#text} at (0,0) size 26x19
@@ -26,13 +27,14 @@ layer at (0,0) size 800x102
           text run at (97,0) width 13: " - "
           text run at (110,0) width 384: "mathml.css: Add more { white-space: nowrap } declarations:"
         RenderBR {br} at (494,0) size 0x19
-        RenderMathMLMath {math} at (0,21) size 814x13 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msup} at (1,0) size 812x13
-            RenderMathMLBlock (anonymous, inline-block) at (0,4) size 407x9
-              RenderInline {mi} at (0,0) size 407x25
+        RenderMathMLMath {math} at (0,20) size 814x14 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 812x14
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 407x14 [padding: 5 0 0 0]
+              RenderBlock {mi} at (0,5) size 407x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderInline {mi} at (0,0) size 405x19
-              RenderText {#text} at (407,-7) size 5x19
-                text run at (407,-7) width 5: "y"
+            RenderMathMLBlock (anonymous, flex) at (407,0) size 405x14
+              RenderBlock {mi} at (0,0) size 405x9
+                RenderText {#text} at (0,-7) size 5x19
+                  text run at (0,-7) width 5: "y"
         RenderText {#text} at (0,0) size 0x0
