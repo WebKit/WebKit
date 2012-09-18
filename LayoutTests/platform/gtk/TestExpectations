@@ -469,6 +469,13 @@ BUGWK90957 RELEASE : fast/js/random-array-gc-stress.html = CRASH PASS
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
 
+BUGWK97001 : storage/websql/execute-sql-args.html = CRASH PASS
+BUGWK97001 DEBUG : fast/js/array-slow-put.html = CRASH PASS
+BUGWK97001 DEBUG : fast/js/object-bad-time.html = CRASH PASS
+BUGWK97001 DEBUG : fast/js/Object-defineProperty.html = CRASH PASS
+BUGWK97001 DEBUG : ietestcenter/Javascript/15.4.4.15-8-b-i-5.html = CRASH PASS
+BUGWK97001 DEBUG : ietestcenter/Javascript/15.4.4.14-9-b-i-6.html = CRASH PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
