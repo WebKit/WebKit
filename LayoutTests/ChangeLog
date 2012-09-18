@@ -1,5 +1,24 @@
 2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Unreviewed gardening.
+
+        Update some pixel expectations after a long time.
+        japanese-lr-selection-expected.png now actually shows a selection
+        background, some shadows are displayed properly and some fonts
+        have had rendering adjustments.
+
+        * platform/efl/fast/writing-mode/basic-vertical-line-expected.png:
+        * platform/efl/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png:
+        * platform/efl/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/efl/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/efl/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/efl/fast/writing-mode/english-bt-text-expected.png:
+        * platform/efl/fast/writing-mode/english-rl-text-expected.png:
+        * platform/efl/fast/writing-mode/fieldsets-expected.png:
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.png:
+
+2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Gardening after r128802.
 
         * platform/efl/TestExpectations: Unskip test that is now passing.
