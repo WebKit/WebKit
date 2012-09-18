@@ -1,3 +1,11 @@
+2012-09-17  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        [Chromium] Unreviewed gardening, test expectations update.
+
+        fast/js/cross-frame-really-bad-time.html is failing from the beginning (r128816)
+
+        * platform/chromium/TestExpectations:
+
 2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed, test expectations update.

@@ -3611,9 +3611,9 @@ BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.inter
 // Started failing on r128793
 BUGWK96953 WIN : http/tests/inspector/network/network-xhr-replay.html = TIMEOUT
 
-// Failing from the beginning (r128802)
 BUGWK96596 : fast/js/array-bad-time.html = TEXT
 BUGWK96596 : fast/js/array-slow-put.html = TEXT
 BUGWK96596 : fast/js/cross-frame-bad-time.html = TEXT
 BUGWK96596 : fast/js/object-bad-time.html = TEXT
 BUGWK96596 : fast/js/object-slow-put.html = TEXT
+BUGWK96962 : fast/js/cross-frame-really-bad-time.html = TEXT
