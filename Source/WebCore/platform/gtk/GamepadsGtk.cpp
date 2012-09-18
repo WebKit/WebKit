@@ -91,7 +91,7 @@ gboolean GamepadDeviceGtk::readCallback(GObject* pollableStream, gpointer data)
     if (error)
         return g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK);
 
-    ASSERT(len == sizeof(event));
+    ASSERT_UNUSED(len, len == sizeof(event));
     gamepadDevice->updateForEvent(event);
     return TRUE;
 }
