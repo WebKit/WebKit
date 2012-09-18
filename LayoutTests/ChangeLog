@@ -1,3 +1,10 @@
+2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening after r128802.
+
+        * platform/efl/TestExpectations: Temporarily skip a few JS tests
+        which are crashing after r128802.
+
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] min-device-width failures in media tests
