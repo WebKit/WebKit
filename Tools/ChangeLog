@@ -1,5 +1,19 @@
 2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Fix build with some versions of the gold linker
+
+        Reviewed by Tor Arne Vestbø.
+
+        Don't unconditionally pass --no-keep-memory to the linker, some versions might not support it.
+        Instead run a compile/link test first to see if it works.
+
+        * qmake/config.tests/gnuld/gnuld.pro: Added.
+        * qmake/config.tests/gnuld/main.cpp: Added.
+        (main):
+        * qmake/mkspecs/features/unix/default_post.prf:
+
+2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Remove forced use of gold.
 
         Reviewed by Tor Arne Vestbø.
