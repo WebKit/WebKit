@@ -1,3 +1,18 @@
+2012-09-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] run-webkit-tests unable to find TestExpectations for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=96998
+
+        Reviewed by Philippe Normand.
+
+        We should look for TestExpectations files in all the locations where
+        we currently look for Skipped files. This will allow
+        run-webkit-tests to look for TestExpectations files in
+        platform/gtk-wk2 and platform/wk2 if the "-2" flag is used.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.expectations_files):
+
 2012-09-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build without the QtQuick module

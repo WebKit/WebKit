@@ -38,6 +38,9 @@ from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 class GtkPort(Port, PulseAudioSanitizer):
     port_name = "gtk"
 
+    def expectations_files(self):
+        return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in self._skipped_file_search_paths()]
+
     def _port_flag_for_scripts(self):
         return "--gtk"
 
