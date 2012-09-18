@@ -180,7 +180,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle(
         printf("%s - didReceiveTitle: %S\n", descriptionSuitableForTestResult(frame).c_str(), title);
 
     if (::gTestRunner->dumpTitleChanges() && !done)
-        printf("TITLE CHANGED: %S\n", title ? title : L"");
+        printf("TITLE CHANGED: '%S'\n", title ? title : L"");
     return S_OK;
 }
 

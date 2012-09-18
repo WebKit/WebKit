@@ -1006,9 +1006,9 @@ void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFram
     if (!InjectedBundle::shared().testRunner()->shouldDumpTitleChanges())
         return;
 
-    InjectedBundle::shared().stringBuilder()->appendLiteral("TITLE CHANGED: ");
+    InjectedBundle::shared().stringBuilder()->appendLiteral("TITLE CHANGED: '");
     InjectedBundle::shared().stringBuilder()->append(toWTFString(title));
-    InjectedBundle::shared().stringBuilder()->append('\n');
+    InjectedBundle::shared().stringBuilder()->appendLiteral("'\n");
 }
 
 void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundleScriptWorldRef world)

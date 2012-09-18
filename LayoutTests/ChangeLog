@@ -1,3 +1,20 @@
+2012-09-18  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Title string should be changed when document.title is set to ''.
+        https://bugs.webkit.org/show_bug.cgi?id=96793
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added layout tests for assigning empty string to title text.
+        And modified expected results according to the change of
+        dumpTitleChanges.
+
+        * fast/dom/title-text-property-2-expected.txt: Modified expected result.
+        * fast/dom/title-text-property-assigning-empty-string-expected.txt: Added.
+        * fast/dom/title-text-property-assigning-empty-string.html: Added.
+        * fast/dom/title-text-property-expected.txt: Modified expected result.
+        * fast/dom/title-text-property.html: Apply modified dumpTitleChanges.
+
 2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More unreviewed rebaseline after r128906.

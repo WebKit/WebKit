@@ -737,14 +737,12 @@ void DocumentLoader::stopRecordingResponses()
 
 void DocumentLoader::setTitle(const StringWithDirection& title)
 {
-    if (title.isEmpty())
+    if (m_pageTitle == title)
         return;
 
-    if (m_pageTitle != title) {
-        frameLoader()->willChangeTitle(this);
-        m_pageTitle = title;
-        frameLoader()->didChangeTitle(this);
-    }
+    frameLoader()->willChangeTitle(this);
+    m_pageTitle = title;
+    frameLoader()->didChangeTitle(this);
 }
 
 KURL DocumentLoader::urlForHistory() const

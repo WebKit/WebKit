@@ -4,10 +4,10 @@
 <script>
 function debugOutput(str) {
     text = document.createTextNode(str);
-    debugDiv = document.getElementById('debugDiv');
-    div = document.createElement ('div');
+    console = document.getElementById('console');
+    div = document.createElement('div');
     div.appendChild(text);
-    debugDiv.appendChild(div);
+    console.appendChild(div);
 }
 
 function runTests() {
@@ -17,25 +17,25 @@ function runTests() {
     }
 
     titleElem = document.getElementsByTagName('title').item(0);
-    debugOutput ('Original title is: ' + titleElem.text);
+    debugOutput('Original title is: \'' + titleElem.text + '\'');
 
     newTitle = 'This is the new title';
-    debugOutput ('Setting new title to: ' + newTitle);
+    debugOutput('Setting new title to: \'' + newTitle + '\'');
     titleElem.text = newTitle;
 
-    debugOutput ('New title is: ' + titleElem.text);
+    debugOutput('New title is: \'' + titleElem.text + '\'');
 }
 
 function test() {
     t = document.getElementsByTagName('title').item(0);
-    alert (t.text);
+    alert(t.text);
     t.text = 'new title';
-    alert (t.text);
+    alert(t.text);
 }
 </script>
 </head>
 <body onload='runTests();'>
-<div id='debugDiv'>
+<div id='console'>
 </div>
 </body>
 </html>

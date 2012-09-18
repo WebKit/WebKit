@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+function runTests() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpTitleChanges();
+    }
+
+    document.title = 'New non-empty title';
+    document.title = '';
+}
+</script>
+</head>
+<body onload='runTests();'>
+</body>
+</html>

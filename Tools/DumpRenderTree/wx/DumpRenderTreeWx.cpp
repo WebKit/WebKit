@@ -129,7 +129,7 @@ public:
     void OnReceivedTitleEvent(WebViewReceivedTitleEvent& event)
     {
         if (gTestRunner->dumpTitleChanges() && !done)
-            wxFprintf(stdout, "TITLE CHANGED: %S\n", event.GetTitle());
+            wxFprintf(stdout, "TITLE CHANGED: '%S'\n", event.GetTitle());
     }
     
     void OnWindowObjectClearedEvent(WebViewWindowObjectClearedEvent& event)

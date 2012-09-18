@@ -944,7 +944,7 @@ static gboolean webViewScriptConfirm(WebKitWebView* view, WebKitWebFrame* frame,
 static void webViewTitleChanged(WebKitWebView* view, WebKitWebFrame* frame, const gchar* title, gpointer data)
 {
     if (gTestRunner->dumpTitleChanges() && !done)
-        printf("TITLE CHANGED: %s\n", title ? title : "");
+        printf("TITLE CHANGED: '%s'\n", title ? title : "");
 }
 
 static bool webViewNavigationPolicyDecisionRequested(WebKitWebView* view, WebKitWebFrame* frame,

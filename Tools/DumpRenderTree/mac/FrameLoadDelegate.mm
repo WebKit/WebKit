@@ -344,7 +344,7 @@
     }
 
     if (gTestRunner->dumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", [title UTF8String]);
+        printf("TITLE CHANGED: '%s'\n", [title UTF8String]);
 }
 
 - (void)webView:(WebView *)sender didReceiveServerRedirectForProvisionalLoadForFrame:(WebFrame *)frame

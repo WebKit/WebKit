@@ -513,7 +513,7 @@ void DumpRenderTreeChrome::onFrameTitleChanged(void*, Evas_Object* frame, void* 
     }
 
     if (!done && gTestRunner->dumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", (titleText && titleText->string) ? titleText->string : "");
+        printf("TITLE CHANGED: '%s'\n", (titleText && titleText->string) ? titleText->string : "");
 
     if (!done && gTestRunner->dumpHistoryDelegateCallbacks())
         printf("WebView updated the title for history URL \"%s\" to \"%s\".\n", ewk_frame_uri_get(frame)

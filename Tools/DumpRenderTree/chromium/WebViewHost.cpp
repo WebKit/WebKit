@@ -1192,7 +1192,7 @@ void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTe
     }
 
     if (testRunner()->shouldDumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", title8.data());
+        printf("TITLE CHANGED: '%s'\n", title8.data());
 
     setPageTitle(title);
     testRunner()->setTitleTextDirection(direction);

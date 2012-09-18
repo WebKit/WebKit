@@ -360,3 +360,27 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
     ASSERT_TRUE(fullScreenCallbackCalled);
     checkFullScreenProperty(webView(), false);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
+{
+    const char* titleChangedHTML =
+        "<!doctype html><head><title>Title before changed</title></head>"
+        "<body onload=\"document.title='Title after changed';\"></body>";
+    ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
+    waitUntilTitleChangedTo("Title after changed");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "Title after changed");
+
+    titleChangedHTML =
+        "<!doctype html><head><title>Title before changed</title></head>"
+        "<body onload=\"document.title='';\"></body>";
+    ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
+    waitUntilTitleChangedTo("");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "");
+
+    titleChangedHTML =
+        "<!doctype html><head><title>Title before changed</title></head>"
+        "<body onload=\"document.title=null;\"></body>";
+    ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
+    waitUntilTitleChangedTo("");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "");
+}

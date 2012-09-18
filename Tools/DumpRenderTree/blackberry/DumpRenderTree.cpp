@@ -637,7 +637,7 @@ void DumpRenderTree::didReceiveTitleForFrame(const String& title, WebCore::Frame
         printf("%s - didReceiveTitle: %s\n", drtFrameDescription(frame).utf8().data(), title.utf8().data());
 
     if (gTestRunner->dumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", title.utf8().data());
+        printf("TITLE CHANGED: '%s'\n", title.utf8().data());
 }
 
 // ChromeClient delegates.

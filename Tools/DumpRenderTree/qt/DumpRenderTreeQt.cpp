@@ -1002,7 +1002,7 @@ void DumpRenderTree::dump()
 void DumpRenderTree::titleChanged(const QString &s)
 {
     if (m_controller->shouldDumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", s.toUtf8().data());
+        printf("TITLE CHANGED: '%s'\n", s.toUtf8().data());
 }
 
 void DumpRenderTree::connectFrame(QWebFrame *frame)
