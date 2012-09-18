@@ -27,13 +27,13 @@
 #define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include "runtime/JSDestructibleObject.h"
+#include <runtime/JSObject.h>
 
 namespace JSC {
 
-class JSCallbackConstructor : public JSDestructibleObject {
+class JSCallbackConstructor : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
     static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {

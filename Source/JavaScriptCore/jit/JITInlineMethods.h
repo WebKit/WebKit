@@ -405,13 +405,11 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
+template <typename ClassType, bool destructor, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
 {
     MarkedAllocator* allocator = 0;
-    if (destructorType == MarkedBlock::Normal)
-        allocator = &m_globalData->heap.allocatorForObjectWithNormalDestructor(sizeof(ClassType));
-    else if (destructorType == MarkedBlock::ImmortalStructure)
-        allocator = &m_globalData->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(ClassType));
+    if (destructor)
+        allocator = &m_globalData->heap.allocatorForObjectWithDestructor(sizeof(ClassType));
     else
         allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
     loadPtr(&allocator->m_freeList.head, result);
@@ -430,7 +428,7 @@ template <typename ClassType, MarkedBlock::DestructorType destructorType, typena
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
 {
-    emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None, T>(structure, result, scratch);
+    emitAllocateBasicJSObject<JSFinalObject, false, T>(structure, result, scratch);
 }
 
 inline void JIT::emitAllocateBasicStorage(size_t size, ptrdiff_t offsetFromBase, RegisterID result)
@@ -456,7 +454,7 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
 
     // Allocate the cell for the array.
     loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
-    emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(scratch, cellResult, storagePtr);
+    emitAllocateBasicJSObject<JSArray, false>(scratch, cellResult, storagePtr);
 
     // Store all the necessary info in the ArrayStorage.
     store32(Imm32(length), Address(storageResult, ArrayStorage::lengthOffset()));

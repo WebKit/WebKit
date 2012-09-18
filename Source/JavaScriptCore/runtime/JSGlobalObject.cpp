@@ -228,7 +228,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_callbackFunctionStructure.set(exec->globalData(), this, JSCallbackFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     m_argumentsStructure.set(exec->globalData(), this, Arguments::createStructure(exec->globalData(), this, m_objectPrototype.get()));
     m_callbackConstructorStructure.set(exec->globalData(), this, JSCallbackConstructor::createStructure(exec->globalData(), this, m_objectPrototype.get()));
-    m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSDestructibleObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
+    m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSNonFinalObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
 
     m_arrayPrototype.set(exec->globalData(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
     m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithArrayStorage));

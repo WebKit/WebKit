@@ -830,6 +830,11 @@ void Heap::addCompiledCode(ExecutableBase* executable)
     m_compiledCode.append(executable);
 }
 
+bool Heap::isSafeToSweepStructures()
+{
+    return !m_sweeper || m_sweeper->structuresCanBeSwept();
+}
+
 void Heap::didStartVMShutdown()
 {
     m_activityCallback->didStartVMShutdown();

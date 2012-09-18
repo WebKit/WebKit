@@ -31,7 +31,6 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(ErrorPrototype);
 
 static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 

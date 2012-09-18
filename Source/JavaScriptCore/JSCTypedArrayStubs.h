@@ -26,7 +26,7 @@
 #ifndef JSCTypedArrayStubs_h
 #define JSCTypedArrayStubs_h
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include "ObjectPrototype.h"
 #include <wtf/Float32Array.h>
 #include <wtf/Float64Array.h>
@@ -42,9 +42,9 @@
 namespace JSC {
     
 #define TYPED_ARRAY(name, type) \
-class JS##name##Array : public JSDestructibleObject { \
+class JS##name##Array : public JSNonFinalObject { \
 public: \
-    typedef JSDestructibleObject Base; \
+    typedef JSNonFinalObject Base; \
     static JS##name##Array* create(JSC::Structure* structure, JSGlobalObject* globalObject, PassRefPtr<name##Array> impl) \
     { \
         JS##name##Array* ptr = new (NotNull, JSC::allocateCell<JS##name##Array>(globalObject->globalData().heap)) JS##name##Array(structure, globalObject, impl); \

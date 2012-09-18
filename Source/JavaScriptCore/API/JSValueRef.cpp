@@ -131,8 +131,8 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
     if (JSObject* o = jsValue.getObject()) {
         if (o->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
-        if (o->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
-            return jsCast<JSCallbackObject<JSDestructibleObject>*>(o)->inherits(jsClass);
+        if (o->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
+            return jsCast<JSCallbackObject<JSNonFinalObject>*>(o)->inherits(jsClass);
     }
     return false;
 }

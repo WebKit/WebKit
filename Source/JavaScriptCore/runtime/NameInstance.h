@@ -26,14 +26,14 @@
 #ifndef NameInstance_h
 #define NameInstance_h
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 #include "PrivateName.h"
 
 namespace JSC {
 
-class NameInstance : public JSDestructibleObject {
+class NameInstance : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
     static const ClassInfo s_info;
 

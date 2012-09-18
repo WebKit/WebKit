@@ -48,6 +48,7 @@ static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
     : HeapTimer(heap->globalData(), runLoop)
     , m_currentBlockToSweepIndex(0)
+    , m_structuresCanBeSwept(false)
 {
 }
 
@@ -71,6 +72,7 @@ void IncrementalSweeper::cancelTimer()
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : HeapTimer(heap->globalData())
     , m_currentBlockToSweepIndex(0)
+    , m_structuresCanBeSwept(false)
 {
 }
 
@@ -117,6 +119,10 @@ void IncrementalSweeper::sweepNextBlock()
 {
     while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
         MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex++];
+        if (block->onlyContainsStructures())
+            m_structuresCanBeSwept = true;
+        else
+            ASSERT(!m_structuresCanBeSwept);
 
         if (!block->needsSweeping())
             continue;
@@ -133,12 +139,14 @@ void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>& blockSnapsho
     CopyFunctor functor(m_blocksToSweep);
     m_globalData->heap.objectSpace().forEachBlock(functor);
     m_currentBlockToSweepIndex = 0;
+    m_structuresCanBeSwept = false;
     scheduleTimer();
 }
 
 void IncrementalSweeper::willFinishSweeping()
 {
     m_currentBlockToSweepIndex = 0;
+    m_structuresCanBeSwept = true;
     m_blocksToSweep.clear();
     if (m_globalData)
         cancelTimer();
@@ -148,6 +156,7 @@ void IncrementalSweeper::willFinishSweeping()
 
 IncrementalSweeper::IncrementalSweeper(JSGlobalData* globalData)
     : HeapTimer(globalData)
+    , m_structuresCanBeSwept(false)
 {
 }
 
@@ -162,10 +171,12 @@ IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
 
 void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)
 {
+    m_structuresCanBeSwept = false;
 }
 
 void IncrementalSweeper::willFinishSweeping()
 {
+    m_structuresCanBeSwept = true;
 }
 
 void IncrementalSweeper::sweepNextBlock()
@@ -173,5 +184,10 @@ void IncrementalSweeper::sweepNextBlock()
 }
 
 #endif
+
+bool IncrementalSweeper::structuresCanBeSwept()
+{
+    return m_structuresCanBeSwept;
+}
 
 } // namespace JSC

@@ -24,16 +24,16 @@
 #ifndef InternalFunction_h
 #define InternalFunction_h
 
+#include "JSObject.h"
 #include "Identifier.h"
-#include "JSDestructibleObject.h"
 
 namespace JSC {
 
     class FunctionPrototype;
 
-    class InternalFunction : public JSDestructibleObject {
+    class InternalFunction : public JSNonFinalObject {
     public:
-        typedef JSDestructibleObject Base;
+        typedef JSNonFinalObject Base;
 
         static JS_EXPORTDATA const ClassInfo s_info;
 

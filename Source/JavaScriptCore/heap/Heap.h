@@ -112,8 +112,7 @@ namespace JSC {
         
         MarkedAllocator& firstAllocatorWithoutDestructors() { return m_objectSpace.firstAllocator(); }
         MarkedAllocator& allocatorForObjectWithoutDestructor(size_t bytes) { return m_objectSpace.allocatorFor(bytes); }
-        MarkedAllocator& allocatorForObjectWithNormalDestructor(size_t bytes) { return m_objectSpace.normalDestructorAllocatorFor(bytes); }
-        MarkedAllocator& allocatorForObjectWithImmortalStructureDestructor(size_t bytes) { return m_objectSpace.immortalStructureDestructorAllocatorFor(bytes); }
+        MarkedAllocator& allocatorForObjectWithDestructor(size_t bytes) { return m_objectSpace.destructorAllocatorFor(bytes); }
         CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
         CheckedBoolean tryAllocateStorage(size_t, void**);
         CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
@@ -169,6 +168,7 @@ namespace JSC {
         void didAbandon(size_t);
 
         bool isPagedOut(double deadline);
+        bool isSafeToSweepStructures();
         void didStartVMShutdown();
 
     private:
@@ -184,9 +184,9 @@ namespace JSC {
         template<typename T> friend void* allocateCell(Heap&);
         template<typename T> friend void* allocateCell(Heap&, size_t);
 
-        void* allocateWithImmortalStructureDestructor(size_t); // For use with special objects whose Structures never die.
-        void* allocateWithNormalDestructor(size_t); // For use with objects that inherit directly or indirectly from JSDestructibleObject.
-        void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
+        void* allocateWithDestructor(size_t);
+        void* allocateWithoutDestructor(size_t);
+        void* allocateStructure(size_t);
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -361,16 +361,10 @@ namespace JSC {
         return forEachProtectedCell(functor);
     }
 
-    inline void* Heap::allocateWithNormalDestructor(size_t bytes)
+    inline void* Heap::allocateWithDestructor(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        return m_objectSpace.allocateWithNormalDestructor(bytes);
-    }
-    
-    inline void* Heap::allocateWithImmortalStructureDestructor(size_t bytes)
-    {
-        ASSERT(isValidAllocation(bytes));
-        return m_objectSpace.allocateWithImmortalStructureDestructor(bytes);
+        return m_objectSpace.allocateWithDestructor(bytes);
     }
     
     inline void* Heap::allocateWithoutDestructor(size_t bytes)
@@ -379,6 +373,11 @@ namespace JSC {
         return m_objectSpace.allocateWithoutDestructor(bytes);
     }
    
+    inline void* Heap::allocateStructure(size_t bytes)
+    {
+        return m_objectSpace.allocateStructure(bytes);
+    }
+ 
     inline CheckedBoolean Heap::tryAllocateStorage(size_t bytes, void** outPtr)
     {
         return m_storageSpace.tryAllocate(bytes, outPtr);

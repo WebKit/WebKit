@@ -2189,14 +2189,12 @@ public:
    
     // It is NOT okay for the structure and the scratch register to be the same thing because if they are then the Structure will 
     // get clobbered. 
-    template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> 
+    template <typename ClassType, bool destructor, typename StructureType> 
     void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         MarkedAllocator* allocator = 0;
-        if (destructorType == MarkedBlock::Normal)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithNormalDestructor(sizeof(ClassType));
-        else if (destructorType == MarkedBlock::ImmortalStructure)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(ClassType));
+        if (destructor)
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithDestructor(sizeof(ClassType));
         else
             allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
 
@@ -2218,7 +2216,7 @@ public:
     template<typename T>
     void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        return emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None>(structure, resultGPR, scratchGPR, slowPath);
+        return emitAllocateBasicJSObject<JSFinalObject, false>(structure, resultGPR, scratchGPR, slowPath);
     }
 
 #if USE(JSVALUE64) 

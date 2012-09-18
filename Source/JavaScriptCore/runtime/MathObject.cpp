@@ -33,7 +33,6 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(MathObject);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(MathObject);
 
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(ExecState*);
@@ -60,7 +59,9 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
 
 namespace JSC {
 
-const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, ExecState::mathTable, CREATE_METHOD_TABLE(MathObject) };
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(MathObject);
+
+const ClassInfo MathObject::s_info = { "Math", &JSNonFinalObject::s_info, 0, ExecState::mathTable, CREATE_METHOD_TABLE(MathObject) };
 
 /* Source for MathObject.lut.h
 @begin mathTable

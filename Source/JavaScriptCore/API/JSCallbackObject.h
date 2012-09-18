@@ -133,7 +133,13 @@ public:
         callbackObject->finishCreation(exec);
         return callbackObject;
     }
-    static JSCallbackObject<Parent>* create(JSGlobalData&, JSClassRef, Structure*);
+    static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
+    {
+        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+        callbackObject->finishCreation(globalData);
+        return callbackObject;
+    }
+
     void setPrivate(void* data);
     void* getPrivate();
 
@@ -210,8 +216,6 @@ private:
 
     OwnPtr<JSCallbackObjectData> m_callbackObjectData;
 };
-
-NEEDS_DESTRUCTOR(JSCallbackObject<JSGlobalObject>, false);
 
 } // namespace JSC
 

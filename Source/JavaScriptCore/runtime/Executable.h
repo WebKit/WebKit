@@ -257,8 +257,6 @@ namespace JSC {
 #endif
     };
 
-    HAS_IMMORTAL_STRUCTURE(ExecutableBase);
-
     class NativeExecutable : public ExecutableBase {
         friend class JIT;
         friend class LLIntOffsetsExtractor;
@@ -340,8 +338,6 @@ namespace JSC {
         
         Intrinsic m_intrinsic;
     };
-
-    HAS_IMMORTAL_STRUCTURE(NativeExecutable);
 
     class ScriptExecutable : public ExecutableBase {
     public:
@@ -471,8 +467,6 @@ namespace JSC {
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
 
-    HAS_IMMORTAL_STRUCTURE(EvalExecutable);
-
     class ProgramExecutable : public ScriptExecutable {
         friend class LLIntOffsetsExtractor;
     public:
@@ -539,8 +533,6 @@ namespace JSC {
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
-
-    HAS_IMMORTAL_STRUCTURE(ProgramExecutable);
 
     class FunctionExecutable : public ScriptExecutable {
         friend class JIT;
@@ -762,8 +754,6 @@ namespace JSC {
         WriteBarrier<JSString> m_nameValue;
         WriteBarrier<SharedSymbolTable> m_symbolTable;
     };
-
-    HAS_IMMORTAL_STRUCTURE(FunctionExecutable);
 
     inline JSFunction::JSFunction(JSGlobalData& globalData, FunctionExecutable* executable, JSScope* scope)
         : Base(globalData, scope->globalObject()->functionStructure())

@@ -56,6 +56,7 @@ public:
     void startSweeping(const HashSet<MarkedBlock*>& blockSnapshot);
     virtual void doWork();
     void sweepNextBlock();
+    bool structuresCanBeSwept();
     void willFinishSweeping();
 
 private:
@@ -77,6 +78,7 @@ private:
     IncrementalSweeper(JSGlobalData*);
     
 #endif
+    bool m_structuresCanBeSwept;
 };
 
 } // namespace JSC

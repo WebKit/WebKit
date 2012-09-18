@@ -83,7 +83,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsClass)
         return toRef(constructEmptyObject(exec));
 
-    JSCallbackObject<JSDestructibleObject>* object = JSCallbackObject<JSDestructibleObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
+    JSCallbackObject<JSNonFinalObject>* object = JSCallbackObject<JSNonFinalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))
         object->setPrototype(exec->globalData(), prototype);
 
@@ -341,8 +341,8 @@ void* JSObjectGetPrivate(JSObjectRef object)
     
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
         return jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
-    if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
-        return jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivate();
+    if (jsObject->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
+        return jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->getPrivate();
     
     return 0;
 }
@@ -355,8 +355,8 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
-    if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivate(data);
+    if (jsObject->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
+        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
         
@@ -372,8 +372,8 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
     Identifier name(propertyName->identifier(&exec->globalData()));
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
         result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
-    else if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
-        result = jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivateProperty(name);
+    else if (jsObject->inherits(&JSCallbackObject<JSNonFinalObject>::s_info))
+        result = jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->getPrivateProperty(name);
     return toRef(exec, result);
 }
 
@@ -388,8 +388,8 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
         return true;
     }
-    if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
+    if (jsObject->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
+        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->setPrivateProperty(exec->globalData(), name, jsValue);
         return true;
     }
     return false;
@@ -405,8 +405,8 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
-    if (jsObject->inherits(&JSCallbackObject<JSDestructibleObject>::s_info)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->deletePrivateProperty(name);
+    if (jsObject->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
+        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
     return false;

@@ -28,26 +28,26 @@
 
 #include "IncrementalSweeper.h"
 #include "JSCell.h"
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(const PageAllocationAligned& allocation, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+MarkedBlock* MarkedBlock::create(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures)
 {
-    return new (NotNull, allocation.base()) MarkedBlock(allocation, allocator, cellSize, destructorType);
+    return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize, cellsNeedDestruction, onlyContainsStructures);
 }
 
-MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures)
     : HeapBlock<MarkedBlock>(allocation)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
-    , m_destructorType(destructorType)
-    , m_allocator(allocator)
+    , m_cellsNeedDestruction(cellsNeedDestruction)
+    , m_onlyContainsStructures(onlyContainsStructures)
     , m_state(New) // All cells start out unmarked.
-    , m_weakSet(allocator->heap()->globalData())
+    , m_weakSet(heap->globalData())
 {
-    ASSERT(allocator);
+    ASSERT(heap);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 }
 
@@ -65,11 +65,11 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
     cell->zap();
 }
 
-template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode, MarkedBlock::DestructorType dtorType>
+template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode, bool destructorCallNeeded>
 MarkedBlock::FreeList MarkedBlock::specializedSweep()
 {
     ASSERT(blockState != Allocated && blockState != FreeListed);
-    ASSERT(!(dtorType == MarkedBlock::None && sweepMode == SweepOnly));
+    ASSERT(destructorCallNeeded || sweepMode != SweepOnly);
 
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
@@ -82,7 +82,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
 
         JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
 
-        if (dtorType != MarkedBlock::None && blockState != New)
+        if (destructorCallNeeded && blockState != New)
             callDestructor(cell);
 
         if (sweepMode == SweepToFreeList) {
@@ -103,23 +103,21 @@ MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
 
     m_weakSet.sweep();
 
-    if (sweepMode == SweepOnly && m_destructorType == MarkedBlock::None)
+    if (sweepMode == SweepOnly && !m_cellsNeedDestruction)
         return FreeList();
 
-    if (m_destructorType == MarkedBlock::ImmortalStructure)
-        return sweepHelper<MarkedBlock::ImmortalStructure>(sweepMode);
-    if (m_destructorType == MarkedBlock::Normal)
-        return sweepHelper<MarkedBlock::Normal>(sweepMode);
-    return sweepHelper<MarkedBlock::None>(sweepMode);
+    if (m_cellsNeedDestruction)
+        return sweepHelper<true>(sweepMode);
+    return sweepHelper<false>(sweepMode);
 }
 
-template<MarkedBlock::DestructorType dtorType>
+template<bool destructorCallNeeded>
 MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
 {
     switch (m_state) {
     case New:
         ASSERT(sweepMode == SweepToFreeList);
-        return specializedSweep<New, SweepToFreeList, dtorType>();
+        return specializedSweep<New, SweepToFreeList, destructorCallNeeded>();
     case FreeListed:
         // Happens when a block transitions to fully allocated.
         ASSERT(sweepMode == SweepToFreeList);
@@ -128,9 +126,10 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
         ASSERT_NOT_REACHED();
         return FreeList();
     case Marked:
+        ASSERT(!m_onlyContainsStructures || heap()->isSafeToSweepStructures());
         return sweepMode == SweepToFreeList
-            ? specializedSweep<Marked, SweepToFreeList, dtorType>()
-            : specializedSweep<Marked, SweepOnly, dtorType>();
+            ? specializedSweep<Marked, SweepToFreeList, destructorCallNeeded>()
+            : specializedSweep<Marked, SweepOnly, destructorCallNeeded>();
     }
 
     ASSERT_NOT_REACHED();

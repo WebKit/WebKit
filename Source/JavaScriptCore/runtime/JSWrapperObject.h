@@ -22,15 +22,15 @@
 #ifndef JSWrapperObject_h
 #define JSWrapperObject_h
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
     // This class is used as a base for classes such as String,
     // Number, Boolean and Date which are wrappers for primitive types.
-    class JSWrapperObject : public JSDestructibleObject {
+    class JSWrapperObject : public JSNonFinalObject {
     public:
-        typedef JSDestructibleObject Base;
+        typedef JSNonFinalObject Base;
 
         JSValue internalValue() const;
         void setInternalValue(JSGlobalData&, JSValue);
@@ -51,7 +51,7 @@ namespace JSC {
     };
 
     inline JSWrapperObject::JSWrapperObject(JSGlobalData& globalData, Structure* structure)
-        : JSDestructibleObject(globalData, structure)
+        : JSNonFinalObject(globalData, structure)
     {
     }
 

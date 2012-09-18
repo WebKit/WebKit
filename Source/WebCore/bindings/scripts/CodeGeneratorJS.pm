@@ -742,7 +742,6 @@ sub GenerateHeader
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
         push(@headerContent, "        ptr->finishCreation(globalData, windowShell);\n");
-        push(@headerContent, "        globalData.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
@@ -750,7 +749,6 @@ sub GenerateHeader
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
         push(@headerContent, "        ptr->finishCreation(globalData);\n");
-        push(@headerContent, "        globalData.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"}) {
@@ -1009,14 +1007,6 @@ sub GenerateHeader
     }
 
     push(@headerContent, "};\n\n");
-
-    if ($interfaceName eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@headerContent, "} // namespace WebCore\n\n");
-        push(@headerContent, "namespace JSC {\n");
-        push(@headerContent, "NEEDS_DESTRUCTOR(WebCore::${className}, false);\n\n");
-        push(@headerContent, "} // namespace JSC\n\n");
-        push(@headerContent, "namespace WebCore {\n\n");
-    }
 
     if ($dataNode->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSCell* cell, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");

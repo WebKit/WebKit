@@ -35,10 +35,10 @@ using namespace WebCore;
 namespace JSC {
 namespace Bindings {
 
-const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeObject) };
+const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeObject) };
 
 RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
-    : JSDestructibleObject(globalObject->globalData(), structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , m_instance(instance)
 {
 }

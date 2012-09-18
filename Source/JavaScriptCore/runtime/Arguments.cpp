@@ -35,7 +35,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(Arguments);
 
-const ClassInfo Arguments::s_info = { "Arguments", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(Arguments) };
+const ClassInfo Arguments::s_info = { "Arguments", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(Arguments) };
 
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

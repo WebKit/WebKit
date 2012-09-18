@@ -473,7 +473,16 @@ namespace JSC {
         unsigned m_staticFunctionReified;
     };
 
-    HAS_IMMORTAL_STRUCTURE(Structure);
+    template <> inline void* allocateCell<Structure>(Heap& heap)
+    {
+#if ENABLE(GC_VALIDATION)
+        ASSERT(!heap.globalData()->isInitializingObject());
+        heap.globalData()->setInitializingObjectClass(&Structure::s_info);
+#endif
+        JSCell* result = static_cast<JSCell*>(heap.allocateStructure(sizeof(Structure)));
+        result->clearStructure();
+        return result;
+    }
 
     inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType)
     {
@@ -617,6 +626,15 @@ namespace JSC {
             m_structure.setEarlyValue(globalData, this, structure);
         // Very first set of allocations won't have a real structure.
         ASSERT(m_structure || !globalData.structureStructure);
+    }
+
+    inline const ClassInfo* JSCell::classInfo() const
+    {
+#if ENABLE(GC_VALIDATION)
+        return m_structure.unvalidatedGet()->classInfo();
+#else
+        return m_structure->classInfo();
+#endif
     }
 
 } // namespace JSC

@@ -82,8 +82,6 @@ namespace JSC {
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
     };
 
-    HAS_IMMORTAL_STRUCTURE(StructureChain);
-
 } // namespace JSC
 
 #endif // StructureChain_h

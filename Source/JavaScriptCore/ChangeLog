@@ -1,3 +1,151 @@
+2012-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r128826 and r128813.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC):
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        * API/JSCallbackConstructor.h:
+        (JSCallbackConstructor):
+        * API/JSCallbackObject.cpp:
+        (JSC):
+        (JSC::::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::create):
+        (JSCallbackObject):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * GNUmakefile.list.am:
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        * heap/Heap.cpp:
+        (JSC::Heap::isSafeToSweepStructures):
+        (JSC):
+        * heap/Heap.h:
+        (JSC::Heap::allocatorForObjectWithDestructor):
+        (Heap):
+        (JSC::Heap::allocateWithDestructor):
+        (JSC::Heap::allocateStructure):
+        (JSC):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::willFinishSweeping):
+        (JSC::IncrementalSweeper::structuresCanBeSwept):
+        (JSC):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::cellsNeedDestruction):
+        (JSC::MarkedAllocator::onlyContainsStructures):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedBlock.h:
+        (JSC):
+        (MarkedBlock):
+        (JSC::MarkedBlock::cellsNeedDestruction):
+        (JSC::MarkedBlock::onlyContainsStructures):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (Subspace):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::destructorAllocatorFor):
+        (JSC::MarkedSpace::allocateWithDestructor):
+        (JSC::MarkedSpace::allocateStructure):
+        (JSC::MarkedSpace::forEachBlock):
+        * heap/SlotVisitor.cpp:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC::JIT::emitAllocateJSArray):
+        * jsc.cpp:
+        (GlobalObject::create):
+        * runtime/Arguments.cpp:
+        (JSC):
+        * runtime/Arguments.h:
+        (Arguments):
+        (JSC::Arguments::Arguments):
+        * runtime/ErrorPrototype.cpp:
+        (JSC):
+        * runtime/Executable.h:
+        * runtime/InternalFunction.cpp:
+        (JSC):
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        (InternalFunction):
+        * runtime/JSCell.h:
+        (JSC):
+        (JSC::allocateCell):
+        * runtime/JSDestructibleObject.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::createRareDataIfNeeded):
+        (JSC::JSGlobalObject::create):
+        * runtime/JSGlobalThis.h:
+        (JSGlobalThis):
+        (JSC::JSGlobalThis::JSGlobalThis):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSScope.cpp:
+        (JSC):
+        * runtime/JSString.h:
+        (JSC):
+        * runtime/JSWrapperObject.h:
+        (JSWrapperObject):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/MathObject.cpp:
+        (JSC):
+        * runtime/NameInstance.h:
+        (NameInstance):
+        * runtime/RegExp.h:
+        * runtime/RegExpObject.cpp:
+        (JSC):
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.h:
+        (JSC::Structure):
+        (JSC::JSCell::classInfo):
+        (JSC):
+        * runtime/StructureChain.h:
+        * runtime/SymbolTable.h:
+        * testRegExp.cpp:
+        (GlobalObject::create):
+
 2012-09-17  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored the arguments object so it doesn't dictate closure layout
