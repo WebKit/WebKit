@@ -1,5 +1,20 @@
 2012-09-17  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: remove "unexpected EOF" warnings
+        https://bugs.webkit.org/show_bug.cgi?id=96970
+
+        Reviewed by Ojan Vafai.
+
+        After debugging this a bit, it looks like there aren't any cases
+        that I can reproduce where a read() of zero indicates something
+        actually wrong; either it is a prelude to a crash, or a false
+        negative. So, I'm removing these warnings and adding a comment.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+
+2012-09-17  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] ASAN bot is crashing at the end of the run
         https://bugs.webkit.org/show_bug.cgi?id=96967
 

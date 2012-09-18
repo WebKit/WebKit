@@ -228,24 +228,21 @@ class ServerProcess(object):
             raise
 
         try:
+            # Note that we may get no data during read() even though
+            # select says we got something; see the select() man page
+            # on linux. I don't know if this happens on Mac OS and
+            # other Unixen as well, but we don't bother special-casing
+            # Linux because it's relatively harmless either way.
             if out_fd in read_fds:
                 data = self._proc.stdout.read()
-                if not data and not stopping:
-                    if self._treat_no_data_as_crash or self._proc.poll() is not None:
-                        _log.warning('unexpected EOF of stdout, %s crashed' % self._name)
-                        self._crashed = True
-                    else:
-                        _log.warning('unexpected EOF of stdout, %s is still alive' % self._name)
+                if not data and not stopping and (self._treat_no_data_as_crash or self._proc.poll()):
+                    self._crashed = True
                 self._output += data
 
             if err_fd in read_fds:
                 data = self._proc.stderr.read()
-                if not data and not stopping:
-                    if self._treat_no_data_as_crash or self._proc.poll() is not None:
-                        _log.warning('unexpected EOF on stderr, %s crashed' % self._name)
-                        self._crashed = True
-                    else:
-                        _log.warning('unexpected EOF on stderr, %s is still alive' % self._name)
+                if not data and not stopping and (self._treat_no_data_as_crash or self._proc.poll()):
+                    self._crashed = True
                 self._error += data
         except IOError, e:
             # We can ignore the IOErrors because we will detect if the subporcess crashed
