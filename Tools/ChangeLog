@@ -1,3 +1,21 @@
+2012-09-17  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: --results-directory isn't getting printed properly
+        https://bugs.webkit.org/show_bug.cgi?id=96965
+
+        Reviewed by Ojan Vafai.
+
+        options.results_directory isn't actually initialized with the
+        default values until after we call print_config(), so this
+        changes things to print the value directly.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_config):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_config):
+
 2012-09-17  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Enable VIDEO_TRACK

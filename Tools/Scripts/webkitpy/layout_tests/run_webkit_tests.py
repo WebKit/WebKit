@@ -105,7 +105,7 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         unexpected_result_count = -1
 
         manager = Manager(port, options, printer)
-        printer.print_config()
+        printer.print_config(port.results_directory())
 
         unexpected_result_count = manager.run(args)
         _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)

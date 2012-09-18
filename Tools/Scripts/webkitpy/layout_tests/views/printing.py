@@ -83,10 +83,10 @@ class Printer(object):
     def __del__(self):
         self.cleanup()
 
-    def print_config(self):
+    def print_config(self, results_directory):
         self._print_default("Using port '%s'" % self._port.name())
         self._print_default("Test configuration: %s" % self._port.test_configuration())
-        self._print_default("Placing test results in %s" % self._options.results_directory)
+        self._print_default("Placing test results in %s" % results_directory)
 
         # FIXME: should these options be in printing_options?
         if self._options.new_baseline:

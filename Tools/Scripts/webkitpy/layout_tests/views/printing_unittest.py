@@ -114,17 +114,23 @@ class  Testprinter(unittest.TestCase):
     def test_print_config(self):
         printer, err, out = self.get_printer()
         # FIXME: it's lame that i have to set these options directly.
-        printer._options.results_directory = '/tmp'
         printer._options.pixel_tests = True
         printer._options.new_baseline = True
         printer._options.time_out_ms = 6000
         printer._options.slow_time_out_ms = 12000
-        printer.print_config()
+        printer.print_config('/tmp')
+        self.assertTrue("Using port 'test-mac-leopard'" in err.getvalue())
+        self.assertTrue('Test configuration: <leopard, x86, release>' in err.getvalue())
+        self.assertTrue('Placing test results in /tmp' in err.getvalue())
         self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
+        self.assertTrue('Using Release build' in err.getvalue())
+        self.assertTrue('Pixel tests enabled' in err.getvalue())
+        self.assertTrue('Command line:' in err.getvalue())
+        self.assertTrue('Regular timeout: ' in err.getvalue())
 
         self.reset(err)
         printer._options.quiet = True
-        printer.print_config()
+        printer.print_config('/tmp')
         self.assertFalse('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
 
     def test_print_one_line_summary(self):
