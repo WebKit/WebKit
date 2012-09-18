@@ -49,6 +49,7 @@ FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
+    , m_autoLogicalHeightRegionsCount(0)
 {
 }
 
@@ -97,6 +98,8 @@ void FlowThreadController::styleDidChange()
 void FlowThreadController::layoutRenderNamedFlowThreads()
 {
     ASSERT(m_renderNamedFlowThreadList);
+
+    ASSERT(isAutoLogicalHeightRegionsFlagConsistent());
 
     // Remove the left-over flow threads.
     RenderNamedFlowThreadList toRemoveList;
@@ -155,5 +158,22 @@ void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
     it->second->unregisterNamedFlowContentNode(contentNode);
     m_mapNamedFlowContentNodes.remove(contentNode);
 }
+
+#ifndef NDEBUG
+bool FlowThreadController::isAutoLogicalHeightRegionsFlagConsistent() const
+{
+    if (!hasRenderNamedFlowThreads())
+        return !hasAutoLogicalHeightRegions();
+
+    // Count the number of auto height regions
+    unsigned autoLogicalHeightRegions = 0;
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        autoLogicalHeightRegions += flowRenderer->autoLogicalHeightRegionsCount();
+    }
+
+    return autoLogicalHeightRegions == m_autoLogicalHeightRegionsCount;
+}
+#endif
 
 } // namespace WebCore

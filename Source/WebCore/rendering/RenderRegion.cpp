@@ -49,6 +49,7 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_parentNamedFlowThread(0)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
+    , m_hasAutoLogicalHeight(false)
     , m_regionState(RegionUndefined)
 {
 }
@@ -172,6 +173,23 @@ void RenderRegion::checkRegionStyle()
     m_flowThread->checkRegionsWithStyling();
 }
 
+void RenderRegion::updateRegionHasAutoLogicalHeightFlag()
+{
+    ASSERT(m_flowThread);
+
+    if (!isValid())
+        return;
+
+    bool didHaveAutoLogicalHeight = m_hasAutoLogicalHeight;
+    m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
+    if (m_hasAutoLogicalHeight != didHaveAutoLogicalHeight) {
+        if (m_hasAutoLogicalHeight)
+            view()->flowThreadController()->incrementAutoLogicalHeightRegions();
+        else
+            view()->flowThreadController()->decrementAutoLogicalHeightRegions();
+    }
+}
+
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
@@ -185,6 +203,7 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 
     checkRegionStyle();
+    updateRegionHasAutoLogicalHeightFlag();
 }
 
 void RenderRegion::layout()
@@ -282,12 +301,24 @@ void RenderRegion::attachRegion()
     // The region just got attached to the flow thread, lets check whether
     // it has region styling rules associated.
     checkRegionStyle();
+
+    if (!isValid())
+        return;
+
+    m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
+    if (hasAutoLogicalHeight())
+        view()->flowThreadController()->incrementAutoLogicalHeightRegions();
 }
 
 void RenderRegion::detachRegion()
 {
-    if (m_flowThread)
+    if (m_flowThread) {
         m_flowThread->removeRegionFromThread(this);
+        if (hasAutoLogicalHeight()) {
+            ASSERT(isValid());
+            view()->flowThreadController()->decrementAutoLogicalHeightRegions();
+        }
+    }
     m_flowThread = 0;
 }
 

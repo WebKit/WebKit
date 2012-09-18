@@ -131,6 +131,10 @@ public:
 
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
+#ifndef NDEBUG
+    unsigned autoLogicalHeightRegionsCount() const;
+#endif
+
 protected:
     virtual const char* renderName() const = 0;
 

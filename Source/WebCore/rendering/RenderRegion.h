@@ -114,6 +114,14 @@ public:
     // or columns added together.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
 
+    bool shouldHaveAutoLogicalHeight() const
+    {
+        bool hasSpecifiedEndpointsForHeight = style()->logicalTop().isSpecified() && style()->logicalBottom().isSpecified();
+        bool hasAnchoredEndpointsForHeight = isOutOfFlowPositioned() && hasSpecifiedEndpointsForHeight;
+        return style()->logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
+    }
+    bool hasAutoLogicalHeight() const { return m_hasAutoLogicalHeight; }
+
     // The top of the nearest page inside the region. For RenderRegions, this is just the logical top of the
     // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
     // page.
@@ -154,6 +162,7 @@ private:
     void printRegionObjectsStyles();
 
     void checkRegionStyle();
+    void updateRegionHasAutoLogicalHeightFlag();
 
 protected:
     RenderFlowThread* m_flowThread;
@@ -185,8 +194,9 @@ private:
     typedef HashMap<const RenderObject*, ObjectRegionStyleInfo > RenderObjectRegionStyleMap;
     RenderObjectRegionStyleMap m_renderObjectRegionStyle;
 
-    bool m_isValid;
-    bool m_hasCustomRegionStyle;
+    bool m_isValid : 1;
+    bool m_hasCustomRegionStyle : 1;
+    bool m_hasAutoLogicalHeight : 1;
     RegionState m_regionState;
 };
 

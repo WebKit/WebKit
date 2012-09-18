@@ -2489,6 +2489,8 @@ BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = PASS IMAGE
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE
 
+BUGWK96267 : fast/regions/autoheight-regions-mark.html = PASS
+
 BUGWK74137 SNOWLEOPARD : fast/regions/outline-sides-in-region.html = PASS TIMEOUT
 BUGWK83824 MAC : fast/regions/region-overflow-break.html = IMAGE
 BUGWK74137 : fast/regions/float-pushed-width-change.html = PASS IMAGE

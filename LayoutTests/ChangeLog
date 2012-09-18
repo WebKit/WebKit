@@ -1,3 +1,18 @@
+2012-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Flag auto-height regions
+        https://bugs.webkit.org/show_bug.cgi?id=96267
+
+        Reviewed by Julien Chaffraix.
+
+        The regions having auto logical height should be flagged so that their height will computed as part of a 2 pass-layout mechanism.
+        Added a test that checks whether a region in several situations is marked properly.
+
+        * fast/regions/autoheight-regions-mark.html: Added.
+        * platform/mac/fast/regions/autoheight-regions-mark-expected.png: Added.
+        * platform/mac/fast/regions/autoheight-regions-mark-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-18  Shinya Kawanaka  <shinyak@chromium.org>
 
         Disable adding an AuthorShadowRoot to replaced elements.

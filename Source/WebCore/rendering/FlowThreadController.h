@@ -67,6 +67,14 @@ public:
     void registerNamedFlowContentNode(Node*, RenderNamedFlowThread*);
     void unregisterNamedFlowContentNode(Node*);
 
+    bool hasAutoLogicalHeightRegions() const { return m_autoLogicalHeightRegionsCount; }
+    void incrementAutoLogicalHeightRegions() { ++m_autoLogicalHeightRegionsCount; }
+    void decrementAutoLogicalHeightRegions() { ASSERT(m_autoLogicalHeightRegionsCount > 0); --m_autoLogicalHeightRegionsCount; }
+
+#ifndef NDEBUG
+    bool isAutoLogicalHeightRegionsFlagConsistent() const;
+#endif
+
 protected:
     FlowThreadController(RenderView*);
 
@@ -74,6 +82,7 @@ private:
     RenderView* m_view;
     RenderFlowThread* m_currentRenderFlowThread;
     bool m_isRenderNamedFlowThreadOrderDirty;
+    unsigned m_autoLogicalHeightRegionsCount;
     OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
     // maps a content node to its render flow thread.
     HashMap<Node*, RenderNamedFlowThread*> m_mapNamedFlowContentNodes;

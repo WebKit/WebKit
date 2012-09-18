@@ -694,6 +694,8 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
                     }
                     if (renderRegion->hasCustomRegionStyle())
                         ts << " region style: 1";
+                    if (renderRegion->hasAutoLogicalHeight())
+                        ts << " hasAutoLogicalHeight";
                 }
                 if (!renderRegion->isValid())
                     ts << " invalid";

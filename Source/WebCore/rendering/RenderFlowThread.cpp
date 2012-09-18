@@ -754,6 +754,25 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
     return false;
 }
 
+#ifndef NDEBUG
+unsigned RenderFlowThread::autoLogicalHeightRegionsCount() const
+{
+    unsigned autoLogicalHeightRegions = 0;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        const RenderRegion* region = *iter;
+        if (!region->isValid()) {
+            ASSERT(!region->hasAutoLogicalHeight());
+            continue;
+        }
+
+        if (region->hasAutoLogicalHeight())
+            autoLogicalHeightRegions++;
+    }
+
+    return autoLogicalHeightRegions;
+}
+#endif
+
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
         : m_renderFlowThread(renderFlowThread)
 {

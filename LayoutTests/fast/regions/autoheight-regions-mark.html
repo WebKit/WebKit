@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <!-- Tests that regions with auto-height are identified and flagged correctly -->
+    <head>
+        <style>
+            .specifiedWidth { width: 50px; }
+            .specifiedWidth2 { width: 100px; }
+            .specifiedHeight { height: 50px; }
+            .autoHeight { height: auto; }
+
+            #region  { -webkit-flow-from: flow; }
+            #region2  { -webkit-flow-from: flow2; }
+            #region3 { -webkit-flow-from: flow3; position: absolute; top: 50px; bottom: 100px; }
+            #region4 { -webkit-flow-from: flow4; -webkit-writing-mode: vertical-lr; position: absolute; left: 50px; right: 100px; }
+            #region5 { -webkit-flow-from: flow5; }
+            #region6 { -webkit-flow-from: flow6; }
+            #article7 { -webkit-flow-into: flow7; }
+            #region7 { -webkit-flow-from: flow7; }
+            #article8 { -webkit-flow-into: flow8; }
+            #region8 { -webkit-flow-from: flow8; }
+        </style>
+    </head>
+    <body>
+        <!-- A region with specified height should not be marked as having auto height -->
+        <div id="region" class="specifiedWidth specifiedHeight"></div>
+
+        <!-- A region without a specified height should be marked as having auto height -->
+        <div id="region2" class="specifiedWidth"></div>
+
+        <!-- An out of flow region with height auto and specified top/bottom should not be marked
+        as auto-height -->
+        <div id="region3" class="specifiedWidth"></div>
+
+        <!-- An out of flow region with height auto, vertical writing mode, specified left/right should
+        not be marked as auto-height-->
+        <div id="region4" class="specifiedHeight"></div>
+
+        <!-- Dynamic change of height values should mark the regions auto height correctly -->
+        <div id="region5" class="specifiedWidth specifiedHeight"></div>
+        <div id="region6" class="specifiedWidth"></div>
+        <script>
+            document.getElementById("region5").className = "specifiedWidth autoHeight";
+            document.getElementById("region6").className = "specifiedWidth specifiedHeight";
+        </script>
+
+        <!-- An invalid region should not be marked as auto height even if it has height:auto since it will not get
+        any content. Below, region8 is invalid. -->
+        <div id="article8">
+            <div id="region7" class="specifiedWidth"></div>
+        </div>
+        <div id="article7">
+            <div id="region8" class="specifiedWidth"></div>
+        </div>
+        <script>
+            // Changing style for an invalid region should not mark the region as autoHeight.
+            document.getElementById("region8").className = "specifiedWidth2";
+        </script>
+    </body>
+</html>
