@@ -517,7 +517,7 @@ reviewers_list = [
     Reviewer("Sam Weinig", ["sam@webkit.org", "weinig@apple.com"], "weinig"),
     Reviewer("Shinichiro Hamaji", "hamaji@chromium.org", "hamaji"),
     Reviewer("Simon Fraser", "simon.fraser@apple.com", "smfr"),
-    Reviewer("Simon Hausmann", ["hausmann@webkit.org", "hausmann@kde.org", "simon.hausmann@nokia.com"], "tronical"),
+    Reviewer("Simon Hausmann", ["hausmann@webkit.org", "hausmann@kde.org", "simon.hausmann@digia.com"], "tronical"),
     Reviewer("Stephanie Lewis", "slewis@apple.com", "sundiamonde"),
     Reviewer("Stephen White", "senorblanco@chromium.org", "senorblanco"),
     Reviewer("Steve Block", "steveblock@google.com", "steveblock"),
