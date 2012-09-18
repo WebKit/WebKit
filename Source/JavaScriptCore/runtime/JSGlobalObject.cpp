@@ -370,7 +370,7 @@ void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)
     
     // We only want to have a bad time in the affected global object, not in the entire
     // VM. But we have to be careful, since there may be objects that claim to belong to
-    // a different global object that has prototypes from our global object.
+    // a different global object that have prototypes from our global object.
     bool foundGlobalObject = false;
     for (JSObject* current = object; ;) {
         if (current->unwrappedGlobalObject() == m_globalObject) {

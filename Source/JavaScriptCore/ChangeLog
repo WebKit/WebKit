@@ -1,3 +1,10 @@
+2012-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix sloppy English in comment.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC):
+
 2012-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r128826 and r128813.
