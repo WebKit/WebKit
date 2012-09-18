@@ -1,3 +1,28 @@
+2012-09-18  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Use didCancel and didSucceed instead of didCheckCancel and didCheckSucceed
+        https://bugs.webkit.org/show_bug.cgi?id=97033
+
+        Reviewed by Rob Buis.
+
+        Using these preferred public methods (the latter has a note to be made private) ensures that
+        the right SpellChecker object is being called during the callback in spellCheckingRequestProcessed
+        and spellCheckingRequestCancelled.
+
+        Internally reviewed by Mike Fenton.
+
+        By referencing the TextCheckingRequest object's methods, we don't need to keep track of the associated
+        SpellChecker for each request. Removing much of the code that was put in place incorrectly to achieve this.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::getSpellChecker):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-09-18  Jessica Cao  <jecao@rim.com>
 
         [BlackBerry] Date picker isn't inputting after 'OK'
