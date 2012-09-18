@@ -296,7 +296,9 @@ void PlatformCAAnimation::setTimingFunction(const TimingFunction* value, bool re
 
 void PlatformCAAnimation::copyTimingFunctionFrom(const PlatformCAAnimation* value)
 {
-    CACFAnimationSetTimingFunction(m_animation.get(), CACFAnimationGetTimingFunction(value->m_animation.get()));
+    CACFTimingFunctionRef timingFunc = CACFAnimationGetTimingFunction(value->m_animation.get());
+    if (timingFunc)
+        CACFAnimationSetTimingFunction(m_animation.get(), timingFunc);
 }
 
 bool PlatformCAAnimation::isRemovedOnCompletion() const
