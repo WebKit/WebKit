@@ -1,3 +1,17 @@
+2012-09-18  Glenn Adams  <glenn@skynav.com>
+
+        WTFString::show doesn't dump non-ASCII characters in a readable manner
+        https://bugs.webkit.org/show_bug.cgi?id=96749
+
+        Reviewed by Benjamin Poulain.
+
+        Dump non-ASCII characters in a useful form for debugging.
+
+        * wtf/text/WTFString.cpp:
+        (asciiDebug):
+        Dump non-ASCII characters (i.e., UTF-16 code elements) as well as non-printable ASCII characters
+        using \uXXXX format. Also escape \ as \\ in order to remove ambiguity.
+
 2012-09-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Use WTF::HasTrivialDestructor instead of compiler-specific versions in JSC::NeedsDestructor
