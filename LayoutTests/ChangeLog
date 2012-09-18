@@ -1,3 +1,13 @@
+2012-09-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Skipped failing tests because eventSender.gestureTap
+        is not implemented on Qt, ENABLE(SHADOW_DOM) is disabled and
+        WebKitDisplayImagesKey is not supported.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-09-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

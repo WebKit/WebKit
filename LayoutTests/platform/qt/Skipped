@@ -210,6 +210,7 @@ fast/dom/shadow/shadowdom-for-image-alt-update.html
 fast/dom/shadow/shadowdom-for-image-alt.html
 fast/dom/shadow/shadowdom-for-image-content.html
 fast/dom/shadow/shadowdom-for-image-dynamic.html
+fast/dom/shadow/shadowdom-for-image-event.html
 fast/dom/shadow/shadowdom-for-image-event-click.html
 fast/dom/shadow/shadowdom-for-image-in-shadowdom.html
 fast/dom/shadow/shadowdom-for-image-map.html
@@ -1328,6 +1329,7 @@ css3/filters/custom/filter-repaint-custom-rotated.html
 css3/filters/custom/filter-repaint-custom.html
 
 # ERROR: TestRunner::overridePreference() does not support the 'WebKitDisplayImagesKey' preference
+fast/loader/display-image-unset-allows-cached-image-load.html
 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
 
@@ -2425,6 +2427,7 @@ fast/events/touch/gesture/gesture-click.html
 fast/events/touch/gesture/gesture-dblclick.html
 fast/events/touch/gesture/gesture-scroll.html
 fast/events/touch/gesture/touch-gesture-scroll-sideways.html
+fast/events/touch/gesture/gesture-tap-active-state-iframe.html
 
 # new test introduced in r89118, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=62847
