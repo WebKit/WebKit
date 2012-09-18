@@ -192,4 +192,56 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Up
                             event->timestamp);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+static inline WebEvent::Type typeForTouchEvent(Ewk_Touch_Event_Type type)
+{
+    if (type == EWK_TOUCH_START)
+        return WebEvent::TouchStart;
+    if (type == EWK_TOUCH_MOVE)
+        return WebEvent::TouchMove;
+    if (type == EWK_TOUCH_END)
+        return WebEvent::TouchEnd;
+    if (type == EWK_TOUCH_CANCEL)
+        return WebEvent::TouchCancel;
+
+    return WebEvent::NoType;
+}
+
+WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers, const Evas_Point* position, double timestamp)
+{
+    Vector<WebPlatformTouchPoint> touchPoints;
+    WebPlatformTouchPoint::TouchPointState state;
+    const Eina_List* list;
+    void* item;
+    EINA_LIST_FOREACH(points, list, item) {
+        Ewk_Touch_Point* point = static_cast<Ewk_Touch_Point*>(item);
+
+        switch (point->state) {
+        case EVAS_TOUCH_POINT_UP:
+            state = WebPlatformTouchPoint::TouchReleased;
+            break;
+        case EVAS_TOUCH_POINT_MOVE:
+            state = WebPlatformTouchPoint::TouchMoved;
+            break;
+        case EVAS_TOUCH_POINT_DOWN:
+            state = WebPlatformTouchPoint::TouchPressed;
+            break;
+        case EVAS_TOUCH_POINT_STILL:
+            state = WebPlatformTouchPoint::TouchStationary;
+            break;
+        case EVAS_TOUCH_POINT_CANCEL:
+            state = WebPlatformTouchPoint::TouchCancelled;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        touchPoints.append(WebPlatformTouchPoint(point->id, state, IntPoint(point->x, point->y), IntPoint(point->x - position->x, point->y - position->y)));
+    }
+
+    return WebTouchEvent(typeForTouchEvent(type), touchPoints, modifiersForEvent(modifiers), timestamp);
+}
+#endif
+
 } // namespace WebKit

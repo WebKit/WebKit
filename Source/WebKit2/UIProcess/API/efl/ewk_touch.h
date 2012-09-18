@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebTouchEvent_h
-#define NativeWebTouchEvent_h
+#ifndef ewk_touch_h
+#define ewk_touch_h
 
-#include "WebEvent.h"
-
-#if PLATFORM(QT)
-#include <QTouchEvent>
-#elif PLATFORM(EFL)
-#include "ewk_touch.h"
 #include <Evas.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-namespace WebKit {
+/// Represents types of touch event.
+typedef enum {
+    EWK_TOUCH_START,
+    EWK_TOUCH_MOVE,
+    EWK_TOUCH_END,
+    EWK_TOUCH_CANCEL
+} Ewk_Touch_Event_Type;
 
-class NativeWebTouchEvent : public WebTouchEvent {
-public:
-#if PLATFORM(QT)
-    explicit NativeWebTouchEvent(const QTouchEvent*, const QTransform& fromItemTransform);
-#elif PLATFORM(EFL)
-    NativeWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const Evas_Point*, double timestamp);
-#endif
+/// Creates a type name for _Ewk_Touch_Point.
+typedef struct _Ewk_Touch_Point Ewk_Touch_Point;
 
-#if PLATFORM(QT)
-    const QTouchEvent* nativeEvent() const { return &m_nativeEvent; }
-#endif
-
-private:
-#if PLATFORM(QT)
-    const QTouchEvent m_nativeEvent;
-#endif
+/// Represents a touch point.
+struct _Ewk_Touch_Point {
+    int id; /**< identifier of the touch event */
+    int x; /**< the horizontal position of the touch event */
+    int y; /**< the vertical position of the touch event */
+    Evas_Touch_Point_State state; /**< state of the touch event */
 };
 
-} // namespace WebKit
+#ifdef __cplusplus
+}
+#endif
 
-#endif // NativeWebTouchEvent_h
+#endif // ewk_touch_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebTouchEvent_h
-#define NativeWebTouchEvent_h
+#include "config.h"
+#include "NativeWebTouchEvent.h"
 
-#include "WebEvent.h"
+#include "WebEventFactory.h"
 
-#if PLATFORM(QT)
-#include <QTouchEvent>
-#elif PLATFORM(EFL)
-#include "ewk_touch.h"
-#include <Evas.h>
-#endif
+#if ENABLE(TOUCH_EVENTS)
 
 namespace WebKit {
 
-class NativeWebTouchEvent : public WebTouchEvent {
-public:
-#if PLATFORM(QT)
-    explicit NativeWebTouchEvent(const QTouchEvent*, const QTransform& fromItemTransform);
-#elif PLATFORM(EFL)
-    NativeWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const Evas_Point*, double timestamp);
-#endif
-
-#if PLATFORM(QT)
-    const QTouchEvent* nativeEvent() const { return &m_nativeEvent; }
-#endif
-
-private:
-#if PLATFORM(QT)
-    const QTouchEvent m_nativeEvent;
-#endif
-};
+NativeWebTouchEvent::NativeWebTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers, const Evas_Point* position, double timestamp)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(type, points, modifiers, position, timestamp))
+{
+}
 
 } // namespace WebKit
 
-#endif // NativeWebTouchEvent_h
+#endif

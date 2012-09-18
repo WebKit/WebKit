@@ -27,6 +27,7 @@
 #define WebEventFactory_h
 
 #include "WebEvent.h"
+#include "ewk_touch.h"
 #include <Evas.h>
 
 namespace WebKit {
@@ -39,6 +40,9 @@ public:
     static WebWheelEvent createWebWheelEvent(const Evas_Event_Mouse_Wheel*, const Evas_Point*);
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Down*);
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Up*);
+#if ENABLE(TOUCH_EVENTS)
+    static WebTouchEvent createWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const Evas_Point*, double timestamp);
+#endif
 };
 
 } // namespace WebKit

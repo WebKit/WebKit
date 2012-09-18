@@ -1,3 +1,28 @@
+2012-09-17  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add NativeWebTouchEvent and handle the Touch event.
+        https://bugs.webkit.org/show_bug.cgi?id=90662
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement codes to handle touch event for WebKit2 EFL port.
+        Additionally, types and structure for touch event are defined because
+        they are not in the Evas.
+
+        * PlatformEfl.cmake:
+        * Shared/NativeWebTouchEvent.h:
+        (NativeWebTouchEvent):
+        * Shared/efl/NativeWebTouchEventEfl.cpp: Added.
+        (WebKit):
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit):
+        (WebKit::typeForTouchEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/efl/WebEventFactory.h:
+        (WebEventFactory):
+        * UIProcess/API/efl/ewk_touch.h: Added.
+
 2012-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r128826 and r128813.
