@@ -1,3 +1,33 @@
+2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Update MathML expectations after r128837.
+
+        * platform/efl/mathml/presentation/attributes-expected.txt:
+        * platform/efl/mathml/presentation/fenced-expected.txt:
+        * platform/efl/mathml/presentation/fenced-mi-expected.png:
+        * platform/efl/mathml/presentation/fenced-mi-expected.txt:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/presentation/row-alignment-expected.png:
+        * platform/efl/mathml/presentation/row-alignment-expected.txt:
+        * platform/efl/mathml/presentation/style-expected.txt:
+        * platform/efl/mathml/presentation/sub-expected.txt:
+        * platform/efl/mathml/presentation/subsup-expected.png:
+        * platform/efl/mathml/presentation/subsup-expected.txt:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+        * platform/efl/mathml/presentation/tables-expected.png:
+        * platform/efl/mathml/presentation/tables-expected.txt:
+        * platform/efl/mathml/presentation/tokenElements-expected.txt:
+        * platform/efl/mathml/presentation/under-expected.txt:
+        * platform/efl/mathml/presentation/underover-expected.txt:
+        * platform/efl/mathml/xHeight-expected.txt:
+
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unskip fast/js/global-constructors.html
