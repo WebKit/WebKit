@@ -1,5 +1,17 @@
 2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Remove forced use of gold.
+
+        Reviewed by Tor Arne Vestbø.
+
+        The choice of what linker to use with WebKit should be taken by Qt's build system and ideally the same for all
+        modules of Qt. Then in turn it is usually up to the administrator of the machine. Recent Debian based systems
+        often offer the automatic use of gold through a symlink and a dpkg-diversion when installing the gold package.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
+2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Prospective Qt/Windows cross-compiling fix
 
         Reviewed by Tor Arne Vestbø.
