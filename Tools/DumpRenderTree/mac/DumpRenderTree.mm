@@ -153,7 +153,7 @@ static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 
-#if __OBJC2__
+#ifdef __OBJC2__
 static void swizzleAllMethods(Class imposter, Class original)
 {
     unsigned int imposterMethodCount;
@@ -192,7 +192,7 @@ static void poseAsClass(const char* imposter, const char* original)
     Class imposterClass = objc_getClass(imposter);
     Class originalClass = objc_getClass(original);
 
-#if !__OBJC2__
+#ifndef __OBJC2__
     class_poseAs(imposterClass, originalClass);
 #else
 

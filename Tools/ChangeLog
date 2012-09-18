@@ -1,3 +1,12 @@
+2012-09-18  Stephanie Lewis  <slewis@apple.com>
+
+        Build fix after http://trac.webkit.org/projects/webkit/changeset/128852.
+
+        Unreviewed.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (poseAsClass):
+
 2012-09-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed update of email addresses for Berlin QtWebKit office.
