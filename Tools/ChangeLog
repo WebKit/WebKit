@@ -1,5 +1,13 @@
 2012-09-18  Andras Becsi  <andras.becsi@digia.com>
 
+        Update my e-mail address.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2012-09-18  Andras Becsi  <andras.becsi@digia.com>
+
         [Qt] qt_webkit.pri should not be listed in Tools.pro
 
         Reviewed and rubber-stamped by Simon Hausmann and Tor Arne Vestbø.
