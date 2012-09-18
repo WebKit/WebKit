@@ -1,3 +1,27 @@
+2012-09-18  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Prevent scroll adjustment of input fields when region of interest mechanism active
+        https://bugs.webkit.org/show_bug.cgi?id=96750
+
+        Reviewed by Antonio Gomes.
+
+        The region of interest mechanism replaces the scrolling/zooming
+        functionality in InputHandler::ensureFocusTextElementVisible().
+
+        We introduce a new fine-grained setting for the various adjustment
+        modes. The WebKit embedder can disable all scroll types in favor of the
+        region of interest mechanism by using the new setting.
+
+        PR #208387
+
+        Reviewed internally by Mike Fenton.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::configPage):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        * WebKitSupport/InputHandler.h:
+
 2012-09-17  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Remove dysfunctional zoom blit in setViewportSize().

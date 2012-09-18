@@ -1051,7 +1051,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     if (!isActiveTextEdit() || !isInputModeEnabled() || !m_currentFocusElement->document())
         return;
 
-    if (!Platform::Settings::instance()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
+    if (!(Platform::Settings::instance()->allowedScrollAdjustmentForInputFields() & scrollType))
         return;
 
     Frame* elementFrame = m_currentFocusElement->document()->frame();

@@ -139,7 +139,7 @@ static String configPage()
     page += numberToHTMLTr("selectionEnabled", settings->selectionEnabled());
     page += numberToHTMLTr("fineCursorControlEnabled", settings->fineCursorControlEnabled());
     page += numberToHTMLTr("alwaysShowKeyboardOnFocus", settings->alwaysShowKeyboardOnFocus());
-    page += numberToHTMLTr("allowCenterScrollAdjustmentForInputFields", settings->allowCenterScrollAdjustmentForInputFields());
+    page += numberToHTMLTr("allowedScrollAdjustmentForInputFields", settings->allowedScrollAdjustmentForInputFields());
     page += numberToHTMLTr("unrestrictedResizeEvents", settings->unrestrictedResizeEvents());
     page += numberToHTMLTr("isBridgeBrowser", settings->isBridgeBrowser());
     page += numberToHTMLTr("showImageLocationOptionsInGCM", settings->showImageLocationOptionsInGCM());
