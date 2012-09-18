@@ -1,3 +1,14 @@
+2012-09-18  Ojan Vafai  <ojan@chromium.org>
+
+        http://trac.webkit.org/changeset/128912 caused these tests to start failing.
+        Looks like a garden-o-matic/webkit-patch bug.
+
+        * platform/chromium-linux/css3/filters/filter-change-repaint-composited-expected.png: Added.
+        * platform/chromium-linux/css3/filters/filter-change-repaint-expected.png: Added.
+        * platform/chromium-linux/css3/filters/filter-repaint-child-layers-expected.png: Added.
+        * platform/chromium-linux/css3/filters/filter-repaint-composited-fallback-crash-expected.png: Added.
+        * platform/chromium-linux/css3/filters/filter-repaint-composited-fallback-expected.png: Added.
+
 2012-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed gardening after http://trac.webkit.org/changeset/128928
