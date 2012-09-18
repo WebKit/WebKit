@@ -1,3 +1,15 @@
+2012-09-18  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: Set focus on the ExtensionPanel's iframe when it is selected
+        https://bugs.webkit.org/show_bug.cgi?id=96148
+
+        Reviewed by Vsevolod Vlasov.
+
+        Add one line to verify that the panel's document has focus after show
+
+        * inspector/extensions/extensions-panel-expected.txt:
+        * inspector/extensions/extensions-panel.html:
+
 2012-09-18  Ojan Vafai  <ojan@chromium.org>
 
         Rebaseline tests failing due to expected slight pixel differences.

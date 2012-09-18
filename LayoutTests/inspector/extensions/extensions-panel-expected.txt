@@ -22,6 +22,7 @@ Panel created
     show : <function>
 }
 Panel shown
+focused: true
 Extension panel size correct
 RUNNING TEST: extension_testSearch
 Panel hidden

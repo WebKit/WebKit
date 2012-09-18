@@ -41,12 +41,13 @@ WebInspector.ExtensionPanel = function(id, pageURL)
     this._statusBarItems = [];
     var extensionView = new WebInspector.ExtensionView(id, pageURL, "extension panel");
     extensionView.show(this.element);
+    this.setDefaultFocusedElement(extensionView.defaultFocusedElement());
 }
 
 WebInspector.ExtensionPanel.prototype = {
     defaultFocusedElement: function()
     {
-        return this.sidebarTreeElement || this.element;
+        return WebInspector.View.prototype.defaultFocusedElement.call(this);
     },
 
     get statusBarItems()

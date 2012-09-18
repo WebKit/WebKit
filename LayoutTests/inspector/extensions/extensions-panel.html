@@ -65,6 +65,7 @@ function extension_testCreatePanel(nextTest)
             return;
         }
         output("Panel shown");
+        output("focused: " + window.document.hasFocus());
         panel.onShown.removeListener(onPanelShown);
         evaluateOnFrontend("reply(InspectorTest.getPanelSize())", function(result) {
             if (result.width !== window.innerWidth)

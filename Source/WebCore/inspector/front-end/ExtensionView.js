@@ -45,6 +45,7 @@ WebInspector.ExtensionView = function(id, src, className)
     this._iframe.addEventListener("load", this._onLoad.bind(this), false);
     this._iframe.src = src;
     this._iframe.className = className;
+    this.setDefaultFocusedElement(this._iframe);
 
     this.element.appendChild(this._iframe);
 }
