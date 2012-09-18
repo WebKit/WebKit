@@ -37,7 +37,7 @@ class QQuickWebView;
 typedef QQuickWebView* PlatformWKView;
 typedef QQuickView* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__
-#if __OBJC__
+#ifdef __OBJC__
 @class WKView;
 @class WebKitTestRunnerWindow;
 #else
