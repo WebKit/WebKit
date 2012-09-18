@@ -1,4 +1,10 @@
-Fe1xCoxSb2
+Fe
+1
+x
+Co
+x
+Sb
+2
 This tests that a math element will be exposed like an ARIA math element.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

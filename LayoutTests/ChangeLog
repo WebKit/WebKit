@@ -1,3 +1,12 @@
+2012-09-17  Stephanie Lewis  <slewis@apple.com>
+
+        Rebaseline after http://trac.webkit.org/projects/webkit/changeset/128837.
+
+        Unreviewed.
+
+        * http/tests/xmlviewer/dumpAsText/mathml-expected.txt:
+        * platform/mac/accessibility/math-alttext-expected.txt:
+
 2012-09-17  Shinya Kawanaka  <shinyak@chromium.org> 
 
         Unreviewed gardening, more rebaseline after r128811
