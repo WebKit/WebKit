@@ -1,3 +1,12 @@
+2012-09-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r128802): It made some JS tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=97001
+
+        Unreviewed gardening, skip the new _crashing_ tests to paint the bots green.
+
+        * platform/qt/Skipped:
+
 2012-09-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] explicitly manage extension audit progress

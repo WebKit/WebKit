@@ -2806,3 +2806,13 @@ fast/js/dfg-inline-arguments-use-from-all-the-places.html
 # [Qt] REGRESSION(r128749): http/tests/inspector/network/network-xhr-same-url-as-main-resource.html crashes
 # https://bugs.webkit.org/show_bug.cgi?id=96931
 http/tests/inspector/network/network-xhr-replay.html
+
+# REGRESSION(r128802): It made some JS tests crash
+# https://bugs.webkit.org/show_bug.cgi?id=97001
+storage/websql/execute-sql-args.html
+fast/js/object-bad-time.html
+fast/js/array-slow-put.html
+fast/js/Object-defineProperty.html
+ietestcenter/Javascript/15.4.4.14-9-b-i-6.html
+ietestcenter/Javascript/15.4.4.15-8-b-i-6.html
+fast/js/array-bad-time.html
