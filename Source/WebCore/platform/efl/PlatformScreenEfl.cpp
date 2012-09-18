@@ -114,7 +114,10 @@ bool screenIsMonochrome(Widget* widget)
 FloatRect screenRect(Widget* widget)
 {
 #ifdef HAVE_ECORE_X
-    int width = 0, height = 0;
+    // Fallback to realistic values if the EcoreX call fails
+    // and we cannot accurately detect the screen size.
+    int width = 800;
+    int height = 600;
     CALL_WITH_ECORE_X(ecore_x_screen_size_get(screen, &width, &height));
     UNUSED_PARAM(widget);
     return FloatRect(0, 0, width, height);

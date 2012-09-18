@@ -1,5 +1,18 @@
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] min-device-width failures in media tests
+        https://bugs.webkit.org/show_bug.cgi?id=96920
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several test cases which should pass on the
+        build bots now that we return a realistic screen
+        resolution whenever it cannot be detected.
+
+        * platform/efl/TestExpectations:
+
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Clarify TestExpectations file
         https://bugs.webkit.org/show_bug.cgi?id=97003
 
