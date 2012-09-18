@@ -1,3 +1,16 @@
+2012-09-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] InjectedBundle::booleanForKey() should handle literals effectively
+        https://bugs.webkit.org/show_bug.cgi?id=97014
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        According to http://trac.webkit.org/wiki/EfficientStrings WTF::StringBuilder::appendLiteral() shall
+        be used for literals rather than WTF::StringBuilder::append().
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::booleanForKey):
+
 2012-09-18  Simon Hausmann  <simon.hausmann@digia.com>
 
         Update my e-mail address.

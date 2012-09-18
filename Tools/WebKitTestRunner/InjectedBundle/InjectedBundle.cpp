@@ -209,9 +209,9 @@ bool InjectedBundle::booleanForKey(WKDictionaryRef dictionary, const char* key)
     WKRetainPtr<WKStringRef> wkKey(AdoptWK, WKStringCreateWithUTF8CString(key));
     WKTypeRef value = WKDictionaryGetItemForKey(dictionary, wkKey.get());
     if (WKGetTypeID(value) != WKBooleanGetTypeID()) {
-        stringBuilder()->append("Boolean value for key \"");
+        stringBuilder()->appendLiteral("Boolean value for key \"");
         stringBuilder()->append(key);
-        stringBuilder()->append("\" not found in dictionary\n");
+        stringBuilder()->appendLiteral("\" not found in dictionary\n");
         return false;
     }
     return WKBooleanGetValue(static_cast<WKBooleanRef>(value));
