@@ -299,6 +299,6 @@ messages -> WebPage {
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    WidgetMapped(int64_t id)
+    SetAcceleratedCompositingWindowId(int64_t id)
 #endif
 }

@@ -49,6 +49,7 @@ public:
     void resize(const IntSize& newSize);
     GLContext* context();
     cairo_surface_t* cairoSurfaceForWidget(GtkWidget*);
+    Window windowId() { return m_window; }
 
 private:
     RedirectedXCompositeWindow(const IntSize&);

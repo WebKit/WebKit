@@ -714,7 +714,8 @@ public:
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    void widgetMapped(uint64_t nativeWindowId);
+    void setAcceleratedCompositingWindowId(uint64_t nativeWindowId);
+    void invalidateWidget();
 #endif
 
     void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }

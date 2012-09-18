@@ -458,7 +458,8 @@ public:
     void updateAccessibilityTree();
     bool handleMousePressedEvent(const WebCore::PlatformMouseEvent&);
 #if USE(TEXTURE_MAPPER_GL)
-    void widgetMapped(int64_t nativeWindowHandle);
+    void setAcceleratedCompositingWindowId(int64_t nativeWindowHandle);
+    void invalidateWidget();
 #endif
 #endif
 

@@ -137,6 +137,8 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
 
     Display* display = GLContextGLX::sharedDisplay();
     XResizeWindow(display, m_window, size.width(), size.height());
+
+    XFlush(display);
     glXWaitX();
 
     // This swap is based on code in Chromium. It tries to work-around a bug in the Intel drivers

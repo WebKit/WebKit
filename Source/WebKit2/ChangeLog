@@ -1,3 +1,55 @@
+2012-09-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Use XComposite window for accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=94417
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of rendering directly to the widget's native window, render to an
+        offscreen window redirected to a Pixmap with XComposite.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate): Added a few members necessary to track the 
+        offscreen window.
+        (webkit_web_view_base_init):
+        (renderAcceleratedCompositingResults): Added this helper functions which renders
+        the results of the accelerated compositing operations during the GTK+ draw loop.
+        (webkitWebViewBaseDraw): Call renderAcceleratedCompositingResults when appropriate.
+        (resizeWebKitWebViewBaseFromAllocation): Resize the offscreen window when appropriate.
+        (webkitWebViewBaseSizeAllocate): Do not call resizeWebKitWebViewBaseFromAllocation when
+        the actual size of the widget does not change. This prevents destroying and recreating
+        the offscreen window pixmap when it isn't necessary.
+        (webkitWebViewBaseMap): We no longer send the window id during map, instead it's sent
+        as soon as there is WebPageProxy.
+        (webkitWebViewBaseCreateWebPage): Send the window id of the redirected window to
+        the WebProcess.
+        (queueAnotherDrawOfAcceleratedCompositingResults): Added this helper which works
+        around the issue of slow updates of the pixmap backing the redirected XComposite window.
+        (webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults): Added this method which
+        is what the WebProcess uses to force a redraw on the UIProcess side.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Added new method to the list of private methods.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::isInAcceleratedCompositingMode): Exposed this method publically
+        so that it can be used from WebKitWebViewBase.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Renamed widgetMapped to setAcceleratedCompositingWindowId.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/gtk/WebPageProxyGtk.cpp: Ditto.
+        (WebKit::WebPageProxy::setAcceleratedCompositingWindowId):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::sizeDidChange): Force a composite to the resized window right
+        away so that the new window pixmap is updated before the first draw.
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): If the composition is for a resize,
+        first clear the entire GL context so that we don't see black artifacts during resize.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (LayerTreeHostGtk): Update the signature of  compositeLayersToContext.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::setAcceleratedCompositingWindowId): Added.
+
 2012-09-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128849.
