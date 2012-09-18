@@ -418,7 +418,6 @@ http/tests/websocket/tests/hybi/
 fast/repaint/moving-shadow-on-container.html
 
 # Needs a rebaseline
-fast/events/dont-loose-last-event.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
