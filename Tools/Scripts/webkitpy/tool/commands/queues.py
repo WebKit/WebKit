@@ -201,18 +201,21 @@ class AbstractPatchQueue(AbstractQueue):
         return self._tool.status_server.update_status(self.name, message, patch, results_file)
 
     def _next_patch(self):
-        patch_id = self._tool.status_server.next_work_item(self.name)
-        if not patch_id:
-            return None
-        patch = self._tool.bugs.fetch_attachment(patch_id)
-        if not patch:
-            # FIXME: Using a fake patch because release_work_item has the wrong API.
-            # We also don't really need to release the lock (although that's fine),
-            # mostly we just need to remove this bogus patch from our queue.
-            # If for some reason bugzilla is just down, then it will be re-fed later.
-            patch = Attachment({'id': patch_id}, None)
-            self._release_work_item(patch)
-            return None
+        # FIXME: Bugzilla accessibility should be checked here; if it's unaccessible,
+        # it should return None.
+        patch = None
+        while not patch:
+            patch_id = self._tool.status_server.next_work_item(self.name)
+            if not patch_id:
+                return None
+            patch = self._tool.bugs.fetch_attachment(patch_id)
+            if not patch:
+                # FIXME: Using a fake patch because release_work_item has the wrong API.
+                # We also don't really need to release the lock (although that's fine),
+                # mostly we just need to remove this bogus patch from our queue.
+                # If for some reason bugzilla is just down, then it will be re-fed later.
+                fake_patch = Attachment({'id': patch_id}, None)
+                self._release_work_item(fake_patch)
         return patch
 
     def _release_work_item(self, patch):

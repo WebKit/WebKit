@@ -1,3 +1,21 @@
+2012-09-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        EWS shouldn't sleep if there are new patches in its queue
+        https://bugs.webkit.org/show_bug.cgi?id=83038
+
+        Reviewed by Eric Seidel.
+
+        EWS tries to process a security patch. Of course it can't, because the EWS isn't
+        the member of the security group. But the problem is that after it can't process
+        the attachment, it says that queue is empty (but it isn't!) and it sleeps 2 minutes
+        and push the security patch to the end of the queue.
+        Now it stays in the loop until it finds a patch or the queue gets empty.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractPatchQueue._next_patch):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractPatchQueueTest.test_next_patch):
+
 2012-09-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] InjectedBundle::booleanForKey() should handle literals effectively
