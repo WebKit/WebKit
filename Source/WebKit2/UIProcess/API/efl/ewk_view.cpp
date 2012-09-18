@@ -498,7 +498,10 @@ bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->evasGl, false);
+    if (priv->evasGl) {
+        EINA_LOG_DOM_WARN(_ewk_log_dom, "Accelerated compositing mode already entered.");
+        return false;
+    }
 
     Evas* evas = evas_object_evas_get(ewkView);
     priv->evasGl = evas_gl_new(evas);

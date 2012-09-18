@@ -1,3 +1,18 @@
+2012-09-17  Regina Chung  <heejin.r.chung@samsung.com>
+
+        [EFL][WK2] Regression (r128163)
+        https://bugs.webkit.org/show_bug.cgi?id=96610
+
+        Reviewed by Gyuyoung Kim.
+
+        While removing compile warnings r128163 changed the logic of code for entering 
+        accelerated compositing mode, resulting in never being able to enter it.
+        Changed back to the correct code and fixed the compile warning by using an
+        appropriate EINA macro.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_accelerated_compositing_mode_enter): Changed EINA_SAFETY_ON_NULL_RETURN_VAL to *if* condition statement.
+
 2012-09-17  Sam Weinig  <sam@webkit.org>
 
         Fix the Snow Leopard build.
