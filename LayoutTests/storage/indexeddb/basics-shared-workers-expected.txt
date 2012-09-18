@@ -55,3 +55,4 @@ PASS [Worker] 'onerror' in event.target is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

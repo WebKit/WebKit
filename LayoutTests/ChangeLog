@@ -1,3 +1,10 @@
+2012-09-18  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed, add missing newline to expectation for test only run
+        as part of chromium's content_browsertests.
+
+        * storage/indexeddb/basics-shared-workers-expected.txt:
+
 2012-09-18  Ojan Vafai  <ojan@chromium.org>
 
         Remove lines for tests that haven't failed on any Chromium bot for the last 500 runs.
