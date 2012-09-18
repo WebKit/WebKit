@@ -776,6 +776,8 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
         propertyName = "enable-webgl";
     else if (g_str_equal(originalName.get(), "WebKitWebAudioEnabled"))
         propertyName = "enable-webaudio";
+    else if (g_str_equal(originalName.get(), "WebKitDisplayImagesKey"))
+        propertyName = "auto-load-images";
     else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
         DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(booleanFromValue(valueAsString.get()));
         return;

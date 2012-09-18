@@ -1358,8 +1358,6 @@ BUGWK73003 DEBUG : editing/spelling/spellcheck-async.html = TEXT
 BUGWK73003 DEBUG : editing/spelling/spellcheck-paste.html = PASS
 BUGWK50740 DEBUG : editing/spelling/spellcheck-queue.html = TEXT
 
-BUGWK96899 : fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html = TEXT
-
 BUGWK96900 : fast/text/stale-TextLayout-from-first-line.html = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////

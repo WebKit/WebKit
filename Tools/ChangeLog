@@ -1,3 +1,19 @@
+2012-09-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html failing after r128645
+        https://bugs.webkit.org/show_bug.cgi?id=96899
+
+        Reviewed by Martin Robinson.
+
+        When overriding the 'WebKitDisplayImageKey' preference, use the
+        'auto-load-images' property of WebKitWebSettings as the property which
+        should be updated with the corresponding preference value.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::overridePreference):
+
 2012-09-17  Pratik Solanki  <psolanki@apple.com>
 
         DumpRenderTree and WebKitTestRunner should compile with -Wundef on Mac
