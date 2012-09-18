@@ -157,19 +157,20 @@ BUGWK93470 : fast/dom/title-directionality.html = TEXT
 BUGWKEFL : fast/events/popup-blocking-click-in-iframe.html = TEXT
 
 // WebKitTestRunner eventSender needs touch events support
-BUGWKEFL : fast/events/touch/basic-multi-touch-events-limited.html = TEXT
-BUGWKEFL : fast/events/touch/basic-multi-touch-events.html = TEXT
-BUGWKEFL : fast/events/touch/basic-single-touch-events.html = TEXT
-BUGWKEFL : fast/events/touch/multi-touch-grouped-targets.html = TEXT
-BUGWKEFL : fast/events/touch/send-oncancel-event.html = TEXT
-BUGWKEFL : fast/events/touch/tap-highlight-color.html = TEXT
-BUGWKEFL : fast/events/touch/touch-active-state.html = TEXT
-BUGWKEFL : fast/events/touch/touch-coords-in-zoom-and-scroll.html = TEXT
-BUGWKEFL : fast/events/touch/touch-inside-iframe.html = TEXT
-BUGWKEFL : fast/events/touch/touch-slider.html = TEXT
-BUGWKEFL : fast/events/touch/touch-stale-node-crash.html = TEXT
-BUGWKEFL : fast/events/touch/touch-target-limited.html = TEXT
-BUGWKEFL : fast/events/touch/touch-target.html = TEXT
+BUGWK96465 : fast/events/touch/basic-multi-touch-events-limited.html = TEXT
+BUGWK96465 : fast/events/touch/basic-multi-touch-events.html = TEXT
+BUGWK96465 : fast/events/touch/basic-single-touch-events.html = TEXT
+BUGWK96465 : fast/events/touch/multi-touch-grouped-targets.html = TEXT
+BUGWK96465 : fast/events/touch/send-oncancel-event.html = TEXT
+BUGWK96465 : fast/events/touch/tap-highlight-color.html = TEXT
+BUGWK96465 : fast/events/touch/touch-active-state.html = TEXT
+BUGWK96465 : fast/events/touch/touch-coords-in-zoom-and-scroll.html = TEXT
+BUGWK96465 : fast/events/touch/touch-inside-iframe.html = TEXT
+BUGWK96465 : fast/events/touch/touch-inside-iframe-scrolled.html = TEXT
+BUGWK96465 : fast/events/touch/touch-slider.html = TEXT
+BUGWK96465 : fast/events/touch/touch-stale-node-crash.html = TEXT
+BUGWK96465 : fast/events/touch/touch-target-limited.html = TEXT
+BUGWK96465 : fast/events/touch/touch-target.html = TEXT
 
 // WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
 BUGWKEFL : fast/media/media-query-list-02.html = TEXT
@@ -181,13 +182,13 @@ BUGWKEFL : fast/media/media-query-list-07.html = TEXT
 BUGWKEFL : fast/media/view-mode-media-feature.html = TEXT
 
 // WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
-BUGWKEFL : fast/mutation/end-of-task-delivery.html = TEXT
+BUGWK93979 : fast/mutation/end-of-task-delivery.html = TEXT
 
 // testRunner.setUseDeferredFrameLoading() is not implemented in WK2
 BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT
 
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
-BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
+BUGWK93982 : storage/domstorage/storage-close-database-on-idle.html = TEXT
 
 // Unclassified failures
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
@@ -200,9 +201,6 @@ BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
 BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT
 
-// New test introduced in r128462 fails.
-BUGWK96794 : fast/events/touch/touch-inside-iframe-scrolled.html = TEXT
-
 // Fails after r128056.
-BUGWk96792 : inspector/console/alert-toString-exception.html = TEXT
+BUGWk96794 : inspector/console/alert-toString-exception.html = TEXT
 

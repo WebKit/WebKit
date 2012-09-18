@@ -1,3 +1,15 @@
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Clarify TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=97003
+
+        Unreviewed EFL gardening.
+
+        Slight reorganization and bug numbers updating
+        in EFL WK2 TestExpectations for clarity.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r128802): It made some JS tests crash
