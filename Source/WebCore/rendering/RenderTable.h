@@ -47,6 +47,8 @@ public:
 
     int getColumnPos(unsigned col) const { return m_columnPos[col]; }
 
+    // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns
+    // and rows respectively, not necessarily the horizontal and vertical spacing respectively".
     int hBorderSpacing() const { return m_hSpacing; }
     int vBorderSpacing() const { return m_vSpacing; }
     
@@ -178,10 +180,19 @@ public:
         return c;
     }
 
+    LayoutUnit borderSpacingInRowDirection() const
+    {
+        if (unsigned effectiveColumnCount = numEffCols())
+            return static_cast<LayoutUnit>(effectiveColumnCount + 1) * hBorderSpacing();
+
+        return ZERO_LAYOUT_UNIT;
+    }
+
     LayoutUnit bordersPaddingAndSpacingInRowDirection() const
     {
+        // 'border-spacing' only applies to separate borders (see 17.6.1 The separated borders model).
         return borderStart() + borderEnd() +
-               (collapseBorders() ? ZERO_LAYOUT_UNIT : (paddingStart() + paddingEnd() + static_cast<LayoutUnit>(numEffCols() + 1) * hBorderSpacing()));
+               (collapseBorders() ? ZERO_LAYOUT_UNIT : (paddingStart() + paddingEnd() + borderSpacingInRowDirection()));
     }
 
     // Return the first column or column-group.

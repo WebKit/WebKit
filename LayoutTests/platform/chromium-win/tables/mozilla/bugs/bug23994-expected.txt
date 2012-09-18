@@ -6,5 +6,5 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 9x19
           text run at (0,0) width 9: ">"
-      RenderTable {TABLE} at (0,20) size 2x0
-        RenderBlock {CAPTION} at (0,0) size 2x0
+      RenderTable {TABLE} at (0,20) size 0x0
+        RenderBlock {CAPTION} at (0,0) size 0x0

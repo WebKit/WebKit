@@ -1,3 +1,79 @@
+2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Tables without any descendant and auto logical width should have a 0px logical width
+        https://bugs.webkit.org/show_bug.cgi?id=95521
+
+        Reviewed by Abhishek Arya.
+
+        * fast/table/empty-table-should-take-no-space-expected.html: Added.
+        * fast/table/empty-table-should-take-no-space.html: Added.
+        * fast/table/fixed-table-layout/empty-table-should-take-no-space-fixed-layout-expected.html: Added.
+        * fast/table/fixed-table-layout/empty-table-should-take-no-space-fixed-layout.html: Added.
+        2 new tests to check that empty tables have 0px logical width.
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug56563-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56563-expected.txt:
+        * tables/mozilla/bugs/bug56563-expected.txt:
+        Progression. The table now is 2px wide as it has a 1px right & left border.
+
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        Progression. The changes are due to the tables shrinking which is expected.
+
+        * platform/chromium-linux/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/chromium-mac/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/chromium-win-xp/fast/forms/file-input-disabled-expected.txt:
+        * platform/chromium-win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/chromium-win/fast/invalid/017-expected.txt:
+        * platform/chromium-win/fast/invalid/018-expected.txt:
+        * platform/chromium-win/fast/invalid/020-expected.txt:
+        * platform/chromium-win/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/efl/fast/invalid/017-expected.txt:
+        * platform/efl/fast/invalid/018-expected.txt:
+        * platform/efl/fast/invalid/020-expected.txt:
+        * platform/efl/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/efl/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/gtk/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/gtk/fast/invalid/017-expected.txt:
+        * platform/gtk/fast/invalid/018-expected.txt:
+        * platform/gtk/fast/invalid/020-expected.txt:
+        * platform/gtk/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/gtk/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/mac/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/mac/fast/invalid/017-expected.txt:
+        * platform/mac/fast/invalid/018-expected.txt:
+        * platform/mac/fast/invalid/020-expected.txt:
+        * platform/mac/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/mac/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/qt/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/qt/fast/invalid/017-expected.txt:
+        * platform/qt/fast/invalid/018-expected.txt:
+        * platform/qt/fast/invalid/020-expected.txt:
+        * platform/qt/fast/invalid/table-inside-stray-table-content-expected.txt:
+        * platform/qt/fast/invalid/table-residual-style-crash-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/win/fast/forms/file-input-disabled-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * tables/mozilla/bugs/bug113235-2-expected.txt:
+        Progression. The tables now have a 0px logical width. In some cases, we add the border-spacing in the
+        block-flow direction if we have a row. This is not consistently handled by browsers and not very well
+        defined in CSS.
+
 2012-09-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

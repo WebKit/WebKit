@@ -19,4 +19,4 @@ layer at (0,0) size 800x600
                 RenderText at (0,0) size 62x13
                   text run at (0,0) width 62: "Choose File"
           RenderBR {BR} at (327,52) size 0x0
-        RenderTable {TABLE} at (0,59) size 2x0
+        RenderTable {TABLE} at (0,59) size 0x0
