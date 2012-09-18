@@ -1,5 +1,12 @@
 2012-09-17  Sam Weinig  <sam@webkit.org>
 
+        Fix the Snow Leopard build.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitialize):
+
+2012-09-17  Sam Weinig  <sam@webkit.org>
+
         Add experimental code to enter a sandbox for a plug-in.
         Based on a patch by Ivan Krstić.
         <rdar://problem/11823151>

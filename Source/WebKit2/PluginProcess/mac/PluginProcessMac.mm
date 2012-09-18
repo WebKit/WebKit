@@ -30,7 +30,6 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "NetscapePlugin.h"
-#import "NetscapeSandboxFunctions.h"
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
@@ -39,6 +38,10 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 #import <wtf/HashSet.h>
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#import "NetscapeSandboxFunctions.h"
+#endif
 
 namespace WebKit {
 
@@ -263,6 +266,7 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     m_connection->send(Messages::PluginProcessProxy::SetFullscreenWindowIsShowing(fullscreenWindowIsShowing), 0);
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static void initializeSandbox(const String& pluginPath)
 {
     RetainPtr<CFStringRef> cfPluginPath = adoptCF(pluginPath.createCFString());
@@ -287,6 +291,7 @@ static void initializeSandbox(const String& pluginPath)
 
     enterSandbox([profileString.get() UTF8String], 0, 0);
 }
+#endif
 
 void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
 {
@@ -300,7 +305,9 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     initializeSandbox(m_pluginPath);
+#endif
 }
 
 } // namespace WebKit
