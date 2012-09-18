@@ -1071,3 +1071,6 @@ BUGWK97001 : fast/js/array-slow-put.html = CRASH
 BUGWK97001 : fast/js/object-bad-time.html = CRASH
 BUGWK97001 : ietestcenter/Javascript/15.4.4.14-9-b-i-5.html = CRASH
 BUGWK97001 : ietestcenter/Javascript/15.4.4.15-8-b-i-5.html = CRASH
+
+// Inspector output should not be displayed by DRT/WTR.
+BUGWK97018 : inspector/extensions/extentions-audits-api.html = TEXT

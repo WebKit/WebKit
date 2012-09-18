@@ -1,5 +1,13 @@
 2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Gardening.
+
+        * platform/efl/TestExpectations: Skip
+        inspector/extensions/extensions-audits-api.html while we do not
+        solve the associated bug.
+
+2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unreviewed daily gardening.
 
         Re-skip a few tests which were unskipped in r128880 and r128882
