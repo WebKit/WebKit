@@ -1,3 +1,32 @@
+2012-09-18  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Popup page should reference the client with a weak pointer
+        https://bugs.webkit.org/show_bug.cgi?id=97028
+
+        Reviewed by Rob Buis.
+
+        RIM PR# 209847.
+        Internally reviewed by Mike Fenton.
+
+        Store the pointer in a ref-coutned shared object, and clear the pointer 
+        when the client is going to be destroyed, so it won't be accessed by
+        the JS function afterwards.
+
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::PagePopupBlackBerry):
+        (WebCore::PagePopupBlackBerry::~PagePopupBlackBerry):
+        (WebCore::PagePopupBlackBerry::init):
+        (WebCore::setValueAndClosePopupCallback):
+        (WebCore::popUpExtensionFinalize):
+        (WebCore::PagePopupBlackBerry::installDOMFunction):
+        (WebCore::PagePopupBlackBerry::closePopup):
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+        (SharedClientPointer):
+        (WebCore::PagePopupBlackBerry::SharedClientPointer::SharedClientPointer):
+        (WebCore::PagePopupBlackBerry::SharedClientPointer::clear):
+        (WebCore::PagePopupBlackBerry::SharedClientPointer::get):
+
 2012-09-18  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Prevent scroll adjustment of input fields when region of interest mechanism active

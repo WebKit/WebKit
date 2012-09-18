@@ -21,6 +21,8 @@
 
 #include "IntRect.h"
 #include "PagePopup.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 
 namespace BlackBerry {
@@ -44,13 +46,24 @@ public:
     bool sendCreatePopupWebViewRequest();
     bool init(BlackBerry::WebKit::WebPage*);
     void closePopup();
-    void installDomFunction(Frame*);
     void setRect();
-    void generateHTML(BlackBerry::WebKit::WebPage*);
+
+    class SharedClientPointer : public RefCounted<SharedClientPointer> {
+    public:
+        explicit SharedClientPointer(PagePopupClient* client) : m_client(client) { }
+        void clear() { m_client = 0; }
+        PagePopupClient* get() const { return m_client; }
+    private:
+        PagePopupClient* m_client;
+    };
 
 private:
+    void generateHTML(BlackBerry::WebKit::WebPage*);
+    void installDOMFunction(Frame*);
+
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     OwnPtr<PagePopupClient> m_client;
+    RefPtr<SharedClientPointer> m_sharedClientPointer;
     IntRect m_rect;
 };
 

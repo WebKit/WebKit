@@ -50,12 +50,14 @@ namespace WebCore {
 PagePopupBlackBerry::PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPage, PagePopupClient* client, const IntRect& rect)
     : m_webPagePrivate(webPage)
     , m_client(adoptPtr(client))
+    , m_sharedClientPointer(adoptRef(new PagePopupBlackBerry::SharedClientPointer(client)))
 {
     m_rect = IntRect(rect.x(), rect.y() - URL_BAR_HEIGHT, client->contentSize().width(), client->contentSize().height());
 }
 
 PagePopupBlackBerry::~PagePopupBlackBerry()
 {
+    ASSERT(!m_sharedClientPointer->get());
 }
 
 bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
@@ -67,7 +69,7 @@ bool PagePopupBlackBerry::init(WebPage* webpage)
 {
     generateHTML(webpage);
 
-    installDomFunction(webpage->d->mainFrame());
+    installDOMFunction(webpage->d->mainFrame());
 
     return true;
 }
@@ -107,11 +109,11 @@ static JSValueRef setValueAndClosePopupCallback(JSContextRef context,
     JSStringRelease(string);
     JSObjectRef popUpObject = JSValueToObject(context,
             arguments[argumentCount - 1], 0);
-    PagePopupClient* client =
-            reinterpret_cast<PagePopupClient*>(JSObjectGetPrivate(popUpObject));
+    PagePopupBlackBerry::SharedClientPointer* client = reinterpret_cast<PagePopupBlackBerry::SharedClientPointer*>(JSObjectGetPrivate(popUpObject));
 
-    ASSERT(client);
-    client->setValueAndClosePopup(0, strArgs.data());
+    // Check the weak pointer as the owner page may have destroyed the popup.
+    if (client->get())
+        client->get()->setValueAndClosePopup(0, strArgs.data());
 
     return jsRetVal;
 }
@@ -124,7 +126,9 @@ static void popUpExtensionInitialize(JSContextRef context, JSObjectRef object)
 
 static void popUpExtensionFinalize(JSObjectRef object)
 {
-    UNUSED_PARAM(object);
+    // Clear the reference. See installDOMFunction().
+    PagePopupBlackBerry::SharedClientPointer* client = reinterpret_cast<PagePopupBlackBerry::SharedClientPointer*>(JSObjectGetPrivate(object));
+    client->deref();
 }
 
 static JSStaticFunction popUpExtensionStaticFunctions[] =
@@ -138,7 +142,7 @@ static JSStaticValue popUpExtensionStaticValues[] =
 { 0, 0, 0, 0 }
 };
 
-void PagePopupBlackBerry::installDomFunction(Frame* frame)
+void PagePopupBlackBerry::installDOMFunction(Frame* frame)
 {
     JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
     ASSERT(window);
@@ -165,7 +169,10 @@ void PagePopupBlackBerry::installDomFunction(Frame* frame)
     JSClassRef clientClass = JSClassCreate(&definition);
 
     JSObjectRef clientClassObject = JSObjectMake(context, clientClass, 0);
-    JSObjectSetPrivate(clientClassObject, reinterpret_cast<void*>(m_client.get()));
+
+    // Add a reference. See popUpExtensionFinalize.
+    m_sharedClientPointer->ref();
+    JSObjectSetPrivate(clientClassObject, m_sharedClientPointer.get());
 
     String name("popUp");
 
@@ -178,6 +185,9 @@ void PagePopupBlackBerry::installDomFunction(Frame* frame)
 
 void PagePopupBlackBerry::closePopup()
 {
+    // Prevent the popup page from accessing the client.
+    m_sharedClientPointer->clear();
+
     m_client->didClosePopup();
     m_webPagePrivate->client()->closePopupWebView();
     m_webPagePrivate->m_webPage->popupClosed();
