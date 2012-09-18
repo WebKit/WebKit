@@ -19,6 +19,7 @@ mo interfaceName=MathMLTextElement
 mtext interfaceName=MathMLTextElement
 msub interfaceName=MathMLInlineContainerElement
 msup interfaceName=MathMLInlineContainerElement
+mtable interfaceName=MathMLInlineContainerElement
 
 #if 0 // Curently only for MathMLNames used by HTMLTreeBuilder.
 ms

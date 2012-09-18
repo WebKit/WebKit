@@ -35,21 +35,14 @@ namespace WebCore {
 class RenderMathMLUnderOver : public RenderMathMLBlock {
 public:
     RenderMathMLUnderOver(Element*);
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     
     virtual RenderMathMLOperator* unembellishedOperator();
 
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
     
 private:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-
     virtual const char* renderName() const { return "RenderMathMLUnderOver"; }
 
-    // Omit our underscript and/or overscript. This may return 0 for a non-MathML base (which
-    // won't occur in valid MathML).
-    RenderBoxModelObject* base() const;
-    
     enum UnderOverType { Under, Over, UnderOver };
     UnderOverType m_kind;
 };

@@ -8,26 +8,22 @@ layer at (0,0) size 800x94
           text run at (0,0) width 44: "under: "
         RenderMathMLMath {math} at (44,3) size 12x19 [padding: 0 1 0 1]
           RenderMathMLUnderOver {munder} at (1,0) size 10x19
-            RenderMathMLBlock (anonymous, block) at (0,0) size 10x12
-              RenderInline {mi} at (0,0) size 10x24
-                RenderText {#text} at (0,-6) size 10x24
-                  text run at (0,-6) width 10: "B"
-            RenderMathMLBlock (anonymous, block) at (0,12) size 10x7
-              RenderInline {mi} at (0,0) size 6x18
-                RenderText {#text} at (2,-7) size 6x18
-                  text run at (2,-7) width 6: "x"
+            RenderBlock {mi} at (0,0) size 10x12
+              RenderText {#text} at (0,-6) size 10x24
+                text run at (0,-6) width 10: "B"
+            RenderBlock {mi} at (2,12) size 5x7
+              RenderText {#text} at (0,-7) size 5x18
+                text run at (0,-7) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,38) size 784x24
         RenderText {#text} at (0,0) size 44x18
           text run at (0,0) width 44: "under: "
         RenderMathMLMath {math} at (44,3) size 12x21 [padding: 0 1 0 1]
           RenderMathMLUnderOver {munder} at (1,0) size 10x21
-            RenderMathMLBlock (anonymous, block) at (0,0) size 10x12
-              RenderInline {mi} at (0,0) size 10x24
-                RenderText {#text} at (0,-6) size 10x24
-                  text run at (0,-6) width 10: "B"
-            RenderMathMLBlock (anonymous, block) at (0,12) size 10x9
-              RenderInline {mi} at (0,0) size 8x18
-                RenderText {#text} at (1,-5) size 8x18
-                  text run at (1,-5) width 8: "X"
+            RenderBlock {mi} at (0,0) size 10x12
+              RenderText {#text} at (0,-6) size 10x24
+                text run at (0,-6) width 10: "B"
+            RenderBlock {mi} at (1,12) size 7x9
+              RenderText {#text} at (0,-5) size 7x18
+                text run at (0,-5) width 7: "X"
         RenderText {#text} at (0,0) size 0x0

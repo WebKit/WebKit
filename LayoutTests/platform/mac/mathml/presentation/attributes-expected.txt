@@ -8,101 +8,102 @@ layer at (0,0) size 800x209
           text run at (0,0) width 432: "following elements should appear in blue on an orange background: "
         RenderMathMLMath {math} at (432,0) size 59x23 [bgcolor=#FFA500] [padding: 0 1 0 1]
           RenderMathMLOperator {mo} at (1,1) size 16x18 [color=#0000FF] [padding: 0 1 0 0]
-            RenderMathMLBlock (inline-block) {mo} at (0,0) size 15x18
-              RenderText {mo} at (0,-4) size 15x24
-                text run at (0,-4) width 15: "\x{2211}"
+            RenderMathMLBlock (flex) {mo} at (0,0) size 15x18
+              RenderBlock (anonymous) at (0,0) size 15x18
+                RenderText {mo} at (0,-4) size 15x24
+                  text run at (0,-4) width 15: "\x{2211}"
           RenderMathMLFraction {mfrac} at (17,0) size 13x23 [color=#0000FF]
-            RenderMathMLBlock (anonymous, block) at (0,0) size 13x9 [padding: 0 3 0 3]
-              RenderInline {mi} at (0,0) size 7x24
-                RenderText {#text} at (3,-9) size 7x24
-                  text run at (3,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, block) at (0,9) size 13x14 [padding: 2 3 0 3]
-              RenderInline {mi} at (0,0) size 7x24
-                RenderText {#text} at (3,-7) size 7x24
-                  text run at (3,-7) width 7: "y"
-          RenderInline {mn} at (0,0) size 8x24 [color=#0000FF]
-            RenderText {#text} at (30,-3) size 8x24
-              text run at (30,-3) width 8: "1"
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 13x9 [padding: 0 3 0 3]
+              RenderBlock {mi} at (3,0) size 7x9
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "x"
+            RenderMathMLBlock (anonymous, flex) at (0,9) size 13x14 [padding: 2 3 0 3]
+              RenderBlock {mi} at (3,2) size 7x12
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "y"
+          RenderBlock {mn} at (30,3) size 8x12 [color=#0000FF]
+            RenderText {#text} at (0,-6) size 8x24
+              text run at (0,-6) width 8: "1"
           RenderMathMLSquareRoot {msqrt} at (38,0) size 20x15 [color=#0000FF] [intrinsic padding: 3 0 0 12]
             RenderMathMLRow (anonymous) at (12,3) size 8x12
-              RenderInline {mn} at (0,0) size 8x24
+              RenderBlock {mn} at (0,0) size 8x12
                 RenderText {#text} at (0,-6) size 8x24
                   text run at (0,-6) width 8: "2"
         RenderText {#text} at (491,0) size 4x18
           text run at (491,0) width 4: " "
         RenderMathMLMath {math} at (495,0) size 15x23 [bgcolor=#FFA500] [padding: 0 1 0 1]
           RenderMathMLFraction {mfrac} at (1,0) size 13x23 [color=#0000FF]
-            RenderMathMLBlock (anonymous, block) at (0,0) size 13x9 [padding: 0 3 0 3]
-              RenderInline {mi} at (0,0) size 7x24
-                RenderText {#text} at (3,-9) size 7x24
-                  text run at (3,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, block) at (0,9) size 13x14 [padding: 2 3 0 3]
-              RenderInline {mi} at (0,0) size 7x24
-                RenderText {#text} at (3,-7) size 7x24
-                  text run at (3,-7) width 7: "y"
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 13x9 [padding: 0 3 0 3]
+              RenderBlock {mi} at (3,0) size 7x9
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "x"
+            RenderMathMLBlock (anonymous, flex) at (0,9) size 13x14 [padding: 2 3 0 3]
+              RenderBlock {mi} at (3,2) size 7x12
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "y"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,39) size 784x19
         RenderText {#text} at (0,1) size 348x18
           text run at (0,1) width 348: "following elements should appear with increasing size: "
         RenderMathMLMath {math} at (348,0) size 39x16 [padding: 0 1 0 1]
-          RenderInline {mi} at (0,0) size 5x18
-            RenderText {#text} at (1,2) size 5x18
-              text run at (1,2) width 5: "x"
-          RenderInline {mi} at (0,0) size 7x24
-            RenderText {#text} at (6,-2) size 7x24
-              text run at (6,-2) width 7: "x"
-          RenderInline {mi} at (0,0) size 11x36
-            RenderText {#text} at (13,-10) size 11x36
-              text run at (13,-10) width 11: "x"
-          RenderInline {mi} at (0,0) size 14x49
-            RenderText {#text} at (24,-19) size 14x49
-              text run at (24,-19) width 14: "x"
+          RenderBlock {mi} at (1,9) size 5x7
+            RenderText {#text} at (0,-7) size 5x18
+              text run at (0,-7) width 5: "x"
+          RenderBlock {mi} at (6,7) size 7x9
+            RenderText {#text} at (0,-9) size 7x24
+              text run at (0,-9) width 7: "x"
+          RenderBlock {mi} at (13,4) size 11x12
+            RenderText {#text} at (0,-14) size 11x36
+              text run at (0,-14) width 11: "x"
+          RenderBlock {mi} at (24,0) size 14x16
+            RenderText {#text} at (0,-19) size 14x49
+              text run at (0,-19) width 14: "x"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,74) size 784x18
         RenderText {#text} at (0,0) size 86x18
           text run at (0,0) width 86: "font variants: "
         RenderMathMLMath {math} at (86,2) size 47x13 [padding: 0 1 0 1]
-          RenderInline {mi} at (0,0) size 12x24
-            RenderText {#text} at (1,-5) size 12x24
-              text run at (1,-5) width 12: "A"
-          RenderInline {mi} at (0,0) size 12x24
-            RenderText {#text} at (13,-5) size 12x24
-              text run at (13,-5) width 12: "A"
-          RenderInline {mi} at (0,0) size 10x24
-            RenderText {#text} at (25,-5) size 10x24
-              text run at (25,-5) width 10: "A"
-          RenderInline {mi} at (0,0) size 11x24
-            RenderText {#text} at (35,-5) size 11x24
-              text run at (35,-5) width 11: "A"
+          RenderBlock {mi} at (1,1) size 12x12
+            RenderText {#text} at (0,-6) size 12x24
+              text run at (0,-6) width 12: "A"
+          RenderBlock {mi} at (13,0) size 12x13
+            RenderText {#text} at (0,-5) size 12x24
+              text run at (0,-5) width 12: "A"
+          RenderBlock {mi} at (25,1) size 10x12
+            RenderText {#text} at (0,-6) size 10x24
+              text run at (0,-6) width 10: "A"
+          RenderBlock {mi} at (35,1) size 11x12
+            RenderText {#text} at (0,-6) size 11x24
+              text run at (0,-6) width 11: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,108) size 784x26
         RenderText {#text} at (0,8) size 152x18
           text run at (0,8) width 152: "test font style attributes: "
         RenderMathMLMath {math} at (152,0) size 58x23 [padding: 0 1 0 1]
-          RenderInline {mtext} at (0,0) size 23x49
-            RenderText {#text} at (1,-12) size 23x49
-              text run at (1,-12) width 23: "A"
-          RenderInline {mtext} at (0,0) size 11x18
-            RenderText {#text} at (24,8) size 11x18
-              text run at (24,8) width 11: "A"
-          RenderInline {mtext} at (0,0) size 10x24
-            RenderText {#text} at (35,5) size 10x24
-              text run at (35,5) width 10: "A"
-          RenderInline {mtext} at (0,0) size 12x24
-            RenderText {#text} at (45,5) size 12x24
-              text run at (45,5) width 12: "A"
+          RenderBlock {mtext} at (1,0) size 23x23
+            RenderText {#text} at (0,-12) size 23x49
+              text run at (0,-12) width 23: "A"
+          RenderBlock {mtext} at (24,10) size 11x13
+            RenderText {#text} at (0,-2) size 11x18
+              text run at (0,-2) width 11: "A"
+          RenderBlock {mtext} at (35,11) size 10x12
+            RenderText {#text} at (0,-6) size 10x24
+              text run at (0,-6) width 10: "A"
+          RenderBlock {mtext} at (45,10) size 12x13
+            RenderText {#text} at (0,-5) size 12x24
+              text run at (0,-5) width 12: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,150) size 784x27
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 226x18
             text run at (0,0) width 226: "following element should be inline: "
           RenderMathMLMath {math} at (226,6) size 9x9 [padding: 0 1 0 1]
-            RenderInline {mi} at (0,0) size 7x24
-              RenderText {#text} at (1,-9) size 7x24
-                text run at (1,-9) width 7: "x"
+            RenderBlock {mi} at (1,0) size 7x9
+              RenderText {#text} at (0,-9) size 7x24
+                text run at (0,-9) width 7: "x"
           RenderText {#text} at (235,0) size 234x18
             text run at (235,0) width 234: ", and this one centered on a new line:"
         RenderMathMLMath {math} at (0,18) size 784x9 [padding: 0 1 0 1]
-          RenderInline {mi} at (0,0) size 8x24
-            RenderText {#text} at (388,-9) size 8x24
-              text run at (388,-9) width 8: "x"
+          RenderBlock {mi} at (388,0) size 7x9
+            RenderText {#text} at (0,-9) size 7x24
+              text run at (0,-9) width 7: "x"

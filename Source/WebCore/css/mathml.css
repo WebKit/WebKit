@@ -10,25 +10,55 @@ mtext {
 
 math {
     font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
-    display: inline-block;
-    padding: 0px;
-    text-align: left;
+    display: -webkit-inline-flex !important;
     padding-left: 1px;
     padding-right: 1px;
 }
 
 math[display="block"] {
-    display: block;
+    display: -webkit-flex !important;
+    -webkit-justify-content: center;
     page-break-inside: avoid;
-    margin-bottom: 1em;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    /* -webkit-margin-before: 1em; -- FIXME: Ask www-math for a default MathML stylesheet, including this (or margin-top). */
+    -webkit-margin-after: 1em;
 }
 
 mo, mrow, mfenced, mfrac, msub, msup, msubsup, munder, mover, munderover, msqrt, mroot {
-    display: inline-block;
-    white-space: nowrap;
+    display: -webkit-inline-flex !important;
+}
+math, mrow, mfenced, msqrt, mroot {
+    -webkit-align-items: baseline;
+}
+msqrt > * { /* This rule is needed because of <msqrt>'s anonymous <mrow>. */
+    -webkit-align-self: baseline;
+}
+mo, mfrac, munder, mover, munderover {
+    -webkit-flex-direction: column;
+}
+munder, mover, munderover {
+    -webkit-align-items: center;
+}
+mfrac > * {
+    -webkit-align-self: center;
+}
+mfrac[numalign="left"] > :first-child {
+    -webkit-align-self: flex-start;
+}
+mfrac[numalign="right"] > :first-child {
+    -webkit-align-self: flex-end;
+}
+mfrac[denomalign="left"] > :last-child {
+    -webkit-align-self: flex-start;
+}
+mfrac[denomalign="right"] > :last-child {
+    -webkit-align-self: flex-end;
+}
+msubsup > :last-child, mover > :last-child, munderover > :last-child {
+    -webkit-order: -1;
+}
+
+msub > * + *, msup > * + *, msubsup > * + *, munder > * + *, mover > * + *, munderover > * + * {
+    font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
 }
 
 mfenced {
@@ -45,26 +75,8 @@ mi + mrow {
     margin-left: 0.1em;
 }
 
-msub > * + * {
-    vertical-align: sub;
-    font-size: 0.75em;
-}
-
-msup > * + * {
-    vertical-align: super;
-    font-size: 0.75em;
-}
-
 msubsup > * {
     padding: 0px;
-}
-
-msubsup > * + * {
-    font-size: 0.75em;
-}
-
-munderover > * + *, mover > * + *, munder > * + * {
-    font-size: 0.75em;
 }
 
 mo, mn, mi, mtext {
@@ -73,6 +85,19 @@ mo, mn, mi, mtext {
 
 math > mo, mrow > mo, mfenced > mo {
     padding-right: 0.1em;
+}
+
+mroot {
+    position: relative;
+}
+mroot > * + * {
+    font-size: 0.75em;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding-right: 0.4em;
+    padding-left: 0.2em;
+    padding-bottom: 0.35em;
 }
 
 math[mathvariant="normal"], mstyle[mathvariant="normal"], mo[mathvariant="normal"], mn[mathvariant="normal"], mi[mathvariant="normal"], mtext[mathvariant="normal"], mspace[mathvariant="normal"], ms[mathvariant="normal"] {
@@ -122,24 +147,9 @@ merror {
     background-color: lightYellow;
 }
 
-mroot {
-    position: relative;
-}
-
-mroot > * + * {
-    font-size: 0.75em;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding-right: 0.4em;
-    padding-left: 0.2em;
-    padding-bottom: 0.35em;
-}
-
 mtable {
     display: inline-table;
     text-align: center;
-    vertical-align: middle;
 }
 
 mtr {

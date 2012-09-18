@@ -1,3 +1,60 @@
+2012-09-17  David Barton  <dbarton@mathscribe.com>
+
+        Convert MathML to use flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=96843
+
+        Reviewed by Eric Seidel.
+
+        * mathml/EmptyMFracCrash-expected.txt:
+        * mathml/EmptyMunderOverCrash-expected.txt:
+        * mathml/empty-mroot-crash-expected.txt:
+        * mathml/fenced-whitespace-separators-crash-expected.txt:
+        * mathml/msub-anonymous-child-render-crash-expected.txt:
+        * mathml/msubsup-no-grandchild-expected.txt:
+        * mathml/msubsup-remove-children-expected.txt:
+        * mathml/munderover-remove-children-expected.txt:
+        
+        * mathml/presentation/fenced.xhtml:
+        * mathml/presentation/mo.xhtml:
+        * mathml/presentation/row.xhtml:
+        * mathml/xHeight.xhtml:
+            - The <div>s are wrapped in <mtext> elements to make them valid in MathML, with the intended layout.
+        
+        * platform/mac/mathml/presentation/attributes-expected.png:
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+        * platform/mac/mathml/presentation/fenced-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.png:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/style-expected.png:
+        * platform/mac/mathml/presentation/style-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+        * platform/mac/mathml/presentation/tokenElements-expected.txt:
+        * platform/mac/mathml/presentation/under-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+        * platform/mac/mathml/xHeight-expected.txt:
+
 2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, test expectations update.

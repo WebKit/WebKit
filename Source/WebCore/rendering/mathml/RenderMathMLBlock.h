@@ -29,7 +29,8 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderBlock.h"
+#include "RenderFlexibleBox.h"
+#include "RenderTable.h"
 #include "StyleInheritedData.h"
 
 #define ENABLE_DEBUG_MATH_LAYOUT 0
@@ -38,7 +39,7 @@ namespace WebCore {
     
 class RenderMathMLOperator;
 
-class RenderMathMLBlock : public RenderBlock {
+class RenderMathMLBlock : public RenderFlexibleBox {
 public:
     RenderMathMLBlock(Node* container);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
@@ -84,7 +85,7 @@ public:
 #endif
     
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
-    RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = BLOCK);
+    RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = FLEX);
     
 private:
     virtual const char* renderName() const OVERRIDE;
@@ -118,6 +119,16 @@ inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderMathMLBlock(const RenderMathMLBlock*);
+
+class RenderMathMLTable : public RenderTable {
+public:
+    explicit RenderMathMLTable(Node* node) : RenderTable(node) { }
+    
+    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
+    
+private:
+    virtual const char* renderName() const OVERRIDE { return "RenderMathMLTable"; }
+};
 
 }
 

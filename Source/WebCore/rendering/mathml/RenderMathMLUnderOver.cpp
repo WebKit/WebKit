@@ -49,118 +49,21 @@ RenderMathMLUnderOver::RenderMathMLUnderOver(Element* element)
     }
 }
 
-RenderBoxModelObject* RenderMathMLUnderOver::base() const
-{
-    RenderObject* baseWrapper = firstChild();
-    if ((m_kind == Over || m_kind == UnderOver) && baseWrapper)
-        baseWrapper = baseWrapper->nextSibling();
-    if (!baseWrapper)
-        return 0;
-    RenderObject* base = baseWrapper->firstChild();
-    if (!base || !base->isBoxModelObject())
-        return 0;
-    return toRenderBoxModelObject(base);
-}
-
-void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeChild)
-{    
-    RenderMathMLBlock* row = createAnonymousMathMLBlock();
-    
-    // look through the children for rendered elements counting the blocks so we know what child
-    // we are adding
-    int blocks = 0;
-    RenderObject* current = this->firstChild();
-    while (current) {
-        blocks++;
-        current = current->nextSibling();
-    }
-    
-    switch (blocks) {
-    case 0:
-        // this is the base so just append it
-        RenderBlock::addChild(row, beforeChild);
-        break;
-    case 1:
-        // the under or over
-        row->style()->setTextAlign(CENTER);
-        if (m_kind == Over) {
-            // add the over as first
-            RenderBlock::addChild(row, firstChild());
-        } else {
-            // add the under as last
-            RenderBlock::addChild(row, beforeChild);
-        }
-        break;
-    case 2:
-        // the under or over
-        row->style()->setTextAlign(CENTER);
-        if (m_kind == UnderOver) {
-            // add the over as first
-            RenderBlock::addChild(row, firstChild());
-        } else {
-            // we really shouldn't get here as only munderover should have three children
-            RenderBlock::addChild(row, beforeChild);
-        }
-        break;
-    default:
-        // munderover shouldn't have more than three children. In theory we shouldn't 
-        // get here if the MathML is correctly formed, but that isn't a guarantee.
-        // We will treat this as another under element and they'll get something funky.
-        RenderBlock::addChild(row, beforeChild);
-    }
-    row->addChild(child);    
-}
-
-void RenderMathMLUnderOver::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    
-    RenderObject* base = this->base();
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        ASSERT(child->isAnonymous() && child->style()->refCount() == 1);
-        if (child->firstChild() != base)
-            child->style()->setTextAlign(CENTER);
-    }
-}
-
 RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
 {
-    RenderBoxModelObject* base = this->base();
+    RenderObject* base = firstChild();
     if (!base || !base->isRenderMathMLBlock())
         return 0;
     return toRenderMathMLBlock(base)->unembellishedOperator();
 }
 
-inline int getOffsetHeight(RenderObject* obj) 
+LayoutUnit RenderMathMLUnderOver::firstLineBoxBaseline() const
 {
-    if (obj->isBoxModelObject()) {
-        RenderBoxModelObject* box = toRenderBoxModelObject(obj);
-        return box->pixelSnappedOffsetHeight();
-    }
-   
-    return 0;
-}
-
-LayoutUnit RenderMathMLUnderOver::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    RenderObject* current = firstChild();
-    if (!current || linePositionMode == PositionOfInteriorLineBoxes)
-        return RenderMathMLBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode);
-
-    LayoutUnit baseline = direction == HorizontalLine ? marginTop() : marginRight();
-    switch (m_kind) {
-    case UnderOver:
-    case Over:
-        if (current->nextSibling()) {
-            baseline += getOffsetHeight(current);
-            current = current->nextSibling();
-        }
-        // fall through
-    case Under:
-        ASSERT(current->isRenderBlock());
-        baseline += toRenderBox(current)->firstLineBoxBaseline();
-    }
-
+    if (!firstChildBox())
+        return -1;
+    LayoutUnit baseline = firstChildBox()->firstLineBoxBaseline();
+    if (baseline != -1 && m_kind != Under)
+        baseline += lastChildBox()->pixelSnappedOffsetHeight(); // Add in the overscript's height.
     return baseline;
 }
 

@@ -53,7 +53,7 @@ private:
     // won't occur in valid MathML).
     RenderBoxModelObject* base() const;
     
-    enum SubSupType { Sub, Sup, SubSup };
+    enum SubSupType { Sub, Super, SubSup };
     SubSupType m_kind;
     RenderMathMLBlock* m_scripts;
 };

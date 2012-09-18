@@ -2,6 +2,12 @@ This test passes if it does not crash.
 
 X
 3
-Y3X
+Y
 3
-2Y32
+X
+3
+2
+Y
+3
+2
+

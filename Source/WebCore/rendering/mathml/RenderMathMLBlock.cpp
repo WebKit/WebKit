@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace MathMLNames;
     
 RenderMathMLBlock::RenderMathMLBlock(Node* container) 
-    : RenderBlock(container)
+    : RenderFlexibleBox(container)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
     , m_intrinsicPaddingStart(0)
@@ -144,7 +144,7 @@ void RenderMathMLBlock::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
     m_preferredLogicalHeight = preferredLogicalHeightUnset;
-    RenderBlock::computePreferredLogicalWidths();
+    RenderFlexibleBox::computePreferredLogicalWidths();
 }
 
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
@@ -204,16 +204,21 @@ LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool f
     // return 0 here to match our line-height. This matters when RootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
-    return RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+    
+    LayoutUnit baseline = firstLineBoxBaseline(); // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
+    if (baseline != -1)
+        return baseline;
+    
+    return RenderFlexibleBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 const char* RenderMathMLBlock::renderName() const
 {
     EDisplay display = style()->display();
-    if (display == BLOCK)
-        return isAnonymous() ? "RenderMathMLBlock (anonymous, block)" : "RenderMathMLBlock (block)";
-    if (display == INLINE_BLOCK)
-        return isAnonymous() ? "RenderMathMLBlock (anonymous, inline-block)" : "RenderMathMLBlock (inline-block)";
+    if (display == FLEX)
+        return isAnonymous() ? "RenderMathMLBlock (anonymous, flex)" : "RenderMathMLBlock (flex)";
+    if (display == INLINE_FLEX)
+        return isAnonymous() ? "RenderMathMLBlock (anonymous, inline-flex)" : "RenderMathMLBlock (inline-flex)";
     // |display| should be one of the above.
     ASSERT_NOT_REACHED();
     return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock";
@@ -222,7 +227,7 @@ const char* RenderMathMLBlock::renderName() const
 #if ENABLE(DEBUG_MATH_LAYOUT)
 void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    RenderBlock::paint(info, paintOffset);
+    RenderFlexibleBox::paint(info, paintOffset);
     
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
@@ -253,6 +258,14 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     info.context->drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + baseline));
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
+
+LayoutUnit RenderMathMLTable::firstLineBoxBaseline() const
+{
+    // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBoxBaseline() for baseline alignment, per
+    // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a
+    // single line, whose baseline gives this centering. This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
+    return (logicalHeight() + style()->fontMetrics().xHeight()) / 2;
+}
 
 }    
 

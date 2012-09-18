@@ -78,6 +78,8 @@ RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena* arena, R
         return new (arena) RenderMathMLRoot(this);
     if (hasLocalName(mfencedTag))
         return new (arena) RenderMathMLFenced(this);
+    if (hasLocalName(mtableTag))
+        return new (arena) RenderMathMLTable(this);
 
     return new (arena) RenderMathMLBlock(this);
 }

@@ -83,7 +83,8 @@ void RenderMathMLFenced::updateFromElement()
 
 RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    newStyle->setFlexDirection(FlowColumn);
     newStyle->setPaddingRight(Length(static_cast<int>(gOperatorPadding * style()->fontSize()), Fixed));
     RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(node() /* "almost anonymous" */, uChar);
     newOperator->setStyle(newStyle.release());
@@ -92,9 +93,9 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar)
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderBlock::addChild(createMathMLOperator(m_open), firstChild());
+    RenderMathMLRow::addChild(createMathMLOperator(m_open), firstChild());
     m_closeFenceRenderer = createMathMLOperator(m_close);
-    RenderBlock::addChild(m_closeFenceRenderer);
+    RenderMathMLRow::addChild(m_closeFenceRenderer);
 }
 
 void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -132,25 +133,16 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
         }
     }
     
-    // If we have a block, we'll wrap it in an inline-block.
-    if (child->isBlockFlow() && child->style()->display() != INLINE_BLOCK) {
-        // Block objects wrapper.
-        RenderMathMLBlock* block = createAnonymousMathMLBlock(INLINE_BLOCK);
-        
-        block->addChild(child);
-        child = block;
-    }
-    
     if (beforeChild) {
         // Adding |x| before an existing |y| e.g. in element (y) - first insert our new child |x|, then its separator, to get (x, y).
-        RenderBlock::addChild(child, beforeChild);
+        RenderMathMLRow::addChild(child, beforeChild);
         if (separatorRenderer)
-            RenderBlock::addChild(separatorRenderer, beforeChild);
+            RenderMathMLRow::addChild(separatorRenderer, beforeChild);
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            RenderBlock::addChild(separatorRenderer, m_closeFenceRenderer);
-        RenderBlock::addChild(child, m_closeFenceRenderer);
+            RenderMathMLRow::addChild(separatorRenderer, m_closeFenceRenderer);
+        RenderMathMLRow::addChild(child, m_closeFenceRenderer);
     }
 }
 

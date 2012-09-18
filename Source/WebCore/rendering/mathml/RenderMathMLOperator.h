@@ -45,7 +45,7 @@ public:
     virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
     void stretchToHeight(int pixelHeight);
     
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
         
 protected:
     virtual void computePreferredLogicalWidths() OVERRIDE;

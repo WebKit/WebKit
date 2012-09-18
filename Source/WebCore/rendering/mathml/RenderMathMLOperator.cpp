@@ -223,8 +223,7 @@ void RenderMathMLOperator::updateFromElement()
         
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
-        newStyle->setDisplay(INLINE_BLOCK);
-        newStyle->setVerticalAlign(BASELINE);
+        newStyle->setDisplay(FLEX);
         
         // Check for a stretchable character that is under the minimum height and use the
         // font size to adjust the glyph size.
@@ -335,7 +334,7 @@ PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int /* lineHe
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
-    newStyle->setDisplay(BLOCK);
+    newStyle->setDisplay(FLEX);
     
     FontDescription desc = style()->fontDescription();
     desc.setIsAbsoluteSize(true);
@@ -382,11 +381,11 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int lineHeight, int 
     return container;
 }
 
-LayoutUnit RenderMathMLOperator::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
+LayoutUnit RenderMathMLOperator::firstLineBoxBaseline() const
 {
     if (m_isStacked)
         return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;    
-    return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
+    return RenderMathMLBlock::firstLineBoxBaseline();
 }
     
 }

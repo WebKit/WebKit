@@ -55,7 +55,7 @@ RenderMathMLFraction::RenderMathMLFraction(Element* element)
 void RenderMathMLFraction::fixChildStyle(RenderObject* child)
 {
     ASSERT(child->isAnonymous() && child->style()->refCount() == 1);
-    child->style()->setTextAlign(CENTER);
+    child->style()->setFlexDirection(FlowColumn);
     Length pad(static_cast<int>(style()->fontSize() * gHorizontalPad), Fixed);
     child->style()->setPaddingLeft(pad);
     child->style()->setPaddingRight(pad);
@@ -72,25 +72,9 @@ void RenderMathMLFraction::updateFromElement()
     Element* fraction = static_cast<Element*>(node());
     
     RenderObject* numeratorWrapper = firstChild();
-    String nalign = fraction->getAttribute(MathMLNames::numalignAttr);
-    if (equalIgnoringCase(nalign, "left"))
-        numeratorWrapper->style()->setTextAlign(LEFT);
-    else if (equalIgnoringCase(nalign, "right"))
-        numeratorWrapper->style()->setTextAlign(RIGHT);
-    else
-        numeratorWrapper->style()->setTextAlign(CENTER);
-    
     RenderObject* denominatorWrapper = numeratorWrapper->nextSibling();
     if (!denominatorWrapper)
         return;
-    
-    String dalign = fraction->getAttribute(MathMLNames::denomalignAttr);
-    if (equalIgnoringCase(dalign, "left"))
-        denominatorWrapper->style()->setTextAlign(LEFT);
-    else if (equalIgnoringCase(dalign, "right"))
-        denominatorWrapper->style()->setTextAlign(RIGHT);
-    else
-        denominatorWrapper->style()->setTextAlign(CENTER);
     
     // FIXME: parse units
     String thickness = fraction->getAttribute(MathMLNames::linethicknessAttr);
@@ -112,7 +96,7 @@ void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChi
 {
     RenderMathMLBlock* row = createAnonymousMathMLBlock();
     
-    RenderBlock::addChild(row, beforeChild);
+    RenderMathMLBlock::addChild(row, beforeChild);
     row->addChild(child);
     
     fixChildStyle(row);
@@ -147,7 +131,7 @@ void RenderMathMLFraction::layout()
     if (lastChild() && lastChild()->isRenderBlock())
         m_lineThickness *= ceilf(gFractionBarWidth * style()->fontSize());
 
-    RenderBlock::layout();
+    RenderMathMLBlock::layout();
 }
 
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
@@ -185,7 +169,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
 }
 
-LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
+LayoutUnit RenderMathMLFraction::firstLineBoxBaseline() const
 {
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* numeratorWrapper = toRenderMathMLBlock(firstChild());
@@ -197,7 +181,7 @@ LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, 
         int shift = int(ceil((refStyle->fontMetrics().xHeight() + 1) / 2));
         return numeratorWrapper->pixelSnappedOffsetHeight() + shift;
     }
-    return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
+    return RenderMathMLBlock::firstLineBoxBaseline();
 }
 
 }
