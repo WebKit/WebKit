@@ -103,7 +103,6 @@
             'tests/WebCompositorInputHandlerImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebInputEventConversionTest.cpp',
-            'tests/WebImageTest.cpp',
             'tests/WebMediaPlayerClientImplTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',
             'tests/WebPageSerializerTest.cpp',

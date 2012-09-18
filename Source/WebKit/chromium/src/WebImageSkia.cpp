@@ -31,7 +31,7 @@
 #include "config.h"
 
 #include "Image.h"
-#include "ImageDecoder.h"
+#include "ImageSource.h"
 #include "NativeImageSkia.h"
 #include "SharedBuffer.h"
 
@@ -51,20 +51,19 @@ namespace WebKit {
 
 WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
 {
-    RefPtr<SharedBuffer> buffer = PassRefPtr<SharedBuffer>(data);
-    OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(*buffer.get(), ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)));
-    decoder->setData(buffer.get(), true);
-    if (!decoder->isSizeAvailable())
+    ImageSource source;
+    source.setData(PassRefPtr<SharedBuffer>(data).get(), true);
+    if (!source.isSizeAvailable())
         return WebImage();
 
     // Frames are arranged by decreasing size, then decreasing bit depth.
     // Pick the frame closest to |desiredSize|'s area without being smaller,
     // which has the highest bit depth.
-    const size_t frameCount = decoder->frameCount();
+    const size_t frameCount = source.frameCount();
     size_t index = 0;  // Default to first frame if none are large enough.
     int frameAreaAtIndex = 0;
     for (size_t i = 0; i < frameCount; ++i) {
-        const IntSize frameSize = decoder->frameSizeAtIndex(i);
+        const IntSize frameSize = source.frameSizeAtIndex(i);
         if (WebSize(frameSize) == desiredSize) {
             index = i;
             break;  // Perfect match.
@@ -80,15 +79,11 @@ WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
         }
     }
 
-    ImageFrame* frame = decoder->frameBufferAtIndex(index);
+    OwnPtr<NativeImageSkia> frame = adoptPtr(source.createFrameAtIndex(index));
     if (!frame)
         return WebImage();
 
-    OwnPtr<NativeImageSkia> image = adoptPtr(frame->asNewNativeImage());
-    if (!image)
-        return WebImage();
-
-    return WebImage(image->bitmap());
+    return WebImage(frame->bitmap());
 }
 
 WebVector<WebImage> WebImage::framesFromData(const WebData& data)
@@ -96,31 +91,26 @@ WebVector<WebImage> WebImage::framesFromData(const WebData& data)
     // This is to protect from malicious images. It should be big enough that it's never hit in pracice.
     const size_t maxFrameCount = 8;
 
-    RefPtr<SharedBuffer> buffer = PassRefPtr<SharedBuffer>(data);
-    OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(*buffer.get(), ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)));
-    decoder->setData(buffer.get(), true);
-    if (!decoder->isSizeAvailable())
+    ImageSource source;
+    source.setData(PassRefPtr<SharedBuffer>(data).get(), true);
+    if (!source.isSizeAvailable())
         return WebVector<WebImage>();
 
     // Frames are arranged by decreasing size, then decreasing bit depth.
     // Keep the first frame at every size, has the highest bit depth.
-    const size_t frameCount = decoder->frameCount();
+    const size_t frameCount = source.frameCount();
     IntSize lastSize;
 
     Vector<WebImage> frames;
     for (size_t i = 0; i < std::min(frameCount, maxFrameCount); ++i) {
-        const IntSize frameSize = decoder->frameSizeAtIndex(i);
+        const IntSize frameSize = source.frameSizeAtIndex(i);
         if (frameSize == lastSize)
             continue;
         lastSize = frameSize;
 
-        ImageFrame* frame = decoder->frameBufferAtIndex(i);
-        if (!frame)
-            continue;
-
-        OwnPtr<NativeImageSkia> image = adoptPtr(frame->asNewNativeImage());
-        if (image.get())
-            frames.append(WebImage(image->bitmap()));
+        OwnPtr<NativeImageSkia> frame = adoptPtr(source.createFrameAtIndex(i));
+        if (frame)
+            frames.append(WebImage(frame->bitmap()));
     }
 
     return frames;

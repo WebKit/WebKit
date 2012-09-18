@@ -1,5 +1,21 @@
 2012-09-18  Alpha Lam  <hclam@chromium.org>
 
+        Unreviewed, rolling out r128939.
+        http://trac.webkit.org/changeset/128939
+        https://bugs.webkit.org/show_bug.cgi?id=96135
+
+        Failing test_shell_tests.
+
+        * WebKit.gypi:
+        * src/WebImageSkia.cpp:
+        (WebKit::WebImage::fromData):
+        (WebKit::WebImage::framesFromData):
+        * tests/WebImageTest.cpp: Removed.
+        * tests/data/black-and-white.ico: Removed.
+        * tests/data/white-1x1.png: Removed.
+
+2012-09-18  Alpha Lam  <hclam@chromium.org>
+
         [chromium] WebImage should use ImageDecoder directly
         https://bugs.webkit.org/show_bug.cgi?id=96135
 
