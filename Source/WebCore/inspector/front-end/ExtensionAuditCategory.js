@@ -30,10 +30,11 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.AuditCategory}
  * @param {string} extensionOrigin
  * @param {string} id
  * @param {string} displayName
- * @param {number} ruleCount
+ * @param {number=} ruleCount
  */
 WebInspector.ExtensionAuditCategory = function(extensionOrigin, id, displayName, ruleCount)
 {
@@ -55,42 +56,45 @@ WebInspector.ExtensionAuditCategory.prototype = {
         return this._displayName;
     },
 
-    get ruleCount()
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {function(WebInspector.AuditRuleResult)} ruleResultCallback
+     * @param {function()} categoryDoneCallback
+     * @param {WebInspector.Progress} progress
+     */
+    run: function(requests, ruleResultCallback, categoryDoneCallback, progress)
     {
-        return this._ruleCount;
-    },
-
-    run: function(resources, callback)
-    {
-        new WebInspector.ExtensionAuditCategoryResults(this, callback);
+        var results = new WebInspector.ExtensionAuditCategoryResults(this, ruleResultCallback, categoryDoneCallback, progress);
+        WebInspector.extensionServer.startAuditRun(this, results);
     }
 }
 
 /**
  * @constructor
  * @param {WebInspector.ExtensionAuditCategory} category
- * @param {function(WebInspector.AuditRuleResult)} callback
+ * @param {function(WebInspector.AuditRuleResult)} ruleResultCallback
+ * @param {function()} categoryDoneCallback
+ * @param {WebInspector.Progress} progress
  */
-WebInspector.ExtensionAuditCategoryResults = function(category, callback)
+WebInspector.ExtensionAuditCategoryResults = function(category, ruleResultCallback, categoryDoneCallback, progress)
 {
     this._category = category;
-    this._pendingRules = category.ruleCount;
-    this._ruleCompletionCallback = callback;
+    this._ruleResultCallback = ruleResultCallback;
+    this._categoryDoneCallback = categoryDoneCallback;
+    this._progress = progress;
+    this._progress.setTotalWork(1);
+    this._expectedResults = category._ruleCount;
+    this._actualResults = 0;
 
     this.id = category.id + "-" + ++WebInspector.ExtensionAuditCategoryResults._lastId;
-    WebInspector.extensionServer.startAuditRun(category, this);
 }
 
 WebInspector.ExtensionAuditCategoryResults.prototype = {
-    get complete()
+    done: function()
     {
-        return !this._pendingRules;
-    },
-
-    cancel: function()
-    {
-        while (!this.complete)
-            this._addResult(null);
+        WebInspector.extensionServer.stopAuditRun(this);
+        this._progress.done();
+        this._categoryDoneCallback();
     },
 
     addResult: function(displayName, description, severity, details)
@@ -115,10 +119,21 @@ WebInspector.ExtensionAuditCategoryResults.prototype = {
 
     _addResult: function(result)
     {
-        this._ruleCompletionCallback(result);
-        this._pendingRules--;
-        if (!this._pendingRules)
-            WebInspector.extensionServer.stopAuditRun(this);
+        this._ruleResultCallback(result);
+        ++this._actualResults;
+        if (typeof this._expectedResults === "number") {
+            this._progress.setWorked(this._actualResults / this._expectedResults);
+            if (this._actualResults === this._expectedResults)
+                this.done();
+        }
+    },
+
+    /**
+     * @param {number} progress
+     */
+    updateProgress: function(progress)
+    {
+        this._progress.setWorked(progress);
     },
 
     /**

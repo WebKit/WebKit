@@ -71,6 +71,7 @@ WebInspector.ExtensionServer = function()
     this._registerHandler(commands.Subscribe, this._onSubscribe.bind(this));
     this._registerHandler(commands.Unsubscribe, this._onUnsubscribe.bind(this));
     this._registerHandler(commands.UpdateButton, this._onUpdateButton.bind(this));
+    this._registerHandler(commands.UpdateAuditProgress, this._onUpdateAuditProgress.bind(this));
 
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
@@ -550,12 +551,20 @@ WebInspector.ExtensionServer.prototype = {
         return this._status.OK();
     },
 
+    _onUpdateAuditProgress: function(message)
+    {
+        var auditResult = this._clientObjects[message.resultId];
+        if (!auditResult)
+            return this._status.E_NOTFOUND(message.resultId);
+        auditResult.updateProgress(Math.min(Math.max(0, message.progress), 1));
+    },
+
     _onStopAuditCategoryRun: function(message)
     {
         var auditRun = this._clientObjects[message.resultId];
         if (!auditRun)
             return this._status.E_NOTFOUND(message.resultId);
-        auditRun.cancel();
+        auditRun.done();
     },
 
     _dispatchCallback: function(requestId, port, result)

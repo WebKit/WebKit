@@ -26,6 +26,7 @@ category.onAuditStarted fired, results dump follows:
     createText : <function>
     createURL : <function>
     done : <function>
+    updateProgress : <function>
 }
 {
     children : {

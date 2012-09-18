@@ -98,43 +98,38 @@ WebInspector.AuditsPanel.prototype = {
 
     _executeAudit: function(categories, resultCallback)
     {
-        var requests = WebInspector.networkLog.requests;
-
-        var rulesRemaining = 0;
-        for (var i = 0; i < categories.length; ++i)
-            rulesRemaining += categories[i].ruleCount;
-
-        this._progress.setTotalWork(rulesRemaining);
         this._progress.setTitle(WebInspector.UIString("Running audit"));
-
-        var results = [];
-        var mainResourceURL = WebInspector.inspectedPageURL;
 
         function ruleResultReadyCallback(categoryResult, ruleResult)
         {
-            if (this._progress.isCanceled())
-                return;
-
             if (ruleResult && ruleResult.children)
                 categoryResult.addRuleResult(ruleResult);
 
-            --rulesRemaining;
-            this._progress.worked();
-
-            if (!rulesRemaining || this._progress.isCanceled())
-                resultCallback(mainResourceURL, results);
+            if (this._progress.isCanceled())
+                this._progress.done();
         }
 
-        if (!rulesRemaining || this._progress.isCanceled()) {
-            resultCallback(mainResourceURL, results);
-            return;
+        var results = [];
+        var mainResourceURL = WebInspector.inspectedPageURL;
+        var categoriesDone = 0;
+        function categoryDoneCallback()
+        {
+            if (++categoriesDone !== categories.length)
+                return;
+            this._progress.done();
+            resultCallback(mainResourceURL, results)
         }
 
+        var requests = WebInspector.networkLog.requests.slice();
+        var compositeProgress = new WebInspector.CompositeProgress(this._progress);
+        var subprogresses = [];
+        for (var i = 0; i < categories.length; ++i)
+            subprogresses.push(compositeProgress.createSubProgress());
         for (var i = 0; i < categories.length; ++i) {
             var category = categories[i];
             var result = new WebInspector.AuditCategoryResult(category);
             results.push(result);
-            category.run(requests, ruleResultReadyCallback.bind(this, result), this._progress);
+            category.run(requests, ruleResultReadyCallback.bind(this, result), categoryDoneCallback.bind(this), subprogresses[i]);
         }
     },
 
@@ -270,12 +265,6 @@ WebInspector.AuditCategory.prototype = {
         return this._displayName;
     },
 
-    get ruleCount()
-    {
-        this._ensureInitialized();
-        return this._rules.length;
-    },
-
     addRule: function(rule, severity)
     {
         rule.severity = severity;
@@ -284,14 +273,24 @@ WebInspector.AuditCategory.prototype = {
 
     /**
      * @param {Array.<WebInspector.NetworkRequest>} requests
-     * @param {function()} callback
+     * @param {function(WebInspector.AuditRuleResult)} ruleResultCallback
+     * @param {function()} categoryDoneCallback
      * @param {WebInspector.Progress} progress
      */
-    run: function(requests, callback, progress)
+    run: function(requests, ruleResultCallback, categoryDoneCallback, progress)
     {
         this._ensureInitialized();
+        var remainingRulesCount = this._rules.length;
+        progress.setTotalWork(remainingRulesCount);
+        function callbackWrapper()
+        {
+            ruleResultCallback.apply(this, arguments);
+            progress.worked();
+            if (!--remainingRulesCount)
+                categoryDoneCallback();
+        }
         for (var i = 0; i < this._rules.length; ++i)
-            this._rules[i].run(requests, callback, progress);
+            this._rules[i].run(requests, callbackWrapper, progress);
     },
 
     _ensureInitialized: function()

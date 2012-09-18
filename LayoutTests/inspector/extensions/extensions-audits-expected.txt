@@ -3,6 +3,8 @@ Tests audits support in WebInspector Extensions API
  Started extension.
 Running tests...
 RUNNING TEST: extension_testAudits
+Progress: 50%
+Progress: 75%
   Extension audits
     Failed rule (42)
      this rule always fails

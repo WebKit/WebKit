@@ -105,6 +105,9 @@ WebInspector.ProgressIndicator.prototype = {
 
     done: function()
     {
+        if (this._isDone)
+            return;
+        this._isDone = true;
         this.hide();
         this.dispatchEventToListeners(WebInspector.ProgressIndicator.Events.Done);
     },
