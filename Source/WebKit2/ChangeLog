@@ -1,3 +1,13 @@
+2012-09-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fixing the build after http://trac.webkit.org/changeset/128813
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit):
+        (WebKit::JSNPObject::JSNPObject):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        (JSNPObject):
+
 2012-09-17  Anders Carlsson  <andersca@apple.com>
 
         Crash if we fail to allocate memory for the argument encoder buffer.

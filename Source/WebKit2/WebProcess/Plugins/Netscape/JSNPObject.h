@@ -41,9 +41,9 @@ class NPRuntimeObjectMap;
     
 // JSNPObject is a JSObject that wraps an NPObject.
 
-class JSNPObject : public JSC::JSNonFinalObject {
+class JSNPObject : public JSC::JSDestructibleObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    typedef JSC::JSDestructibleObject Base;
 
     static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     {
