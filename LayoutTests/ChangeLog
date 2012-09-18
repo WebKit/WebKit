@@ -1,3 +1,12 @@
+2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Rebaseline after r128906. All the differences were expected.
+
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/gtk/fast/invalid/residual-style-expected.txt:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+
 2012-09-18  Ojan Vafai  <ojan@chromium.org>
 
         Complete some forgotten rebaselines. The new results match other ports/platforms.
