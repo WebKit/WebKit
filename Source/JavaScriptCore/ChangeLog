@@ -1,3 +1,11 @@
+2012-09-18  Mark Lam  <mark.lam@apple.com>
+
+        Not reviewed. Attempt at greening the WinCairo bot. Touching
+        LowLevelInterpreter.asm to trigger a rebuild of LLIntDesiredOffsets.
+        https://bugs.webkit.org/show_bug.cgi?id=96992.
+
+        * llint/LowLevelInterpreter.asm:
+
 2012-09-18  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [Qt] REGRESSION(r128790): It broke the ARM build

@@ -910,4 +910,3 @@ _llint_op_put_by_id_transition:
 # Indicate the end of LLInt.
 _llint_end:
     crash()
-
