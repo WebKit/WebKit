@@ -365,9 +365,9 @@ feature_defines += $(strip $(foreach bare_define, \
 			$(if $(findstring =$(fvalue),$(define)),$(patsubst %=$(fvalue),%,$(define))) \
 		) \
 	), \
-	$(if $(findstring $(bare_define), $(feature_defines_unstable)), \
+	$(if $(findstring $(bare_define)=, $(feature_defines_unstable)), \
 		$(filter $(bare_define)=%,$(feature_defines_unstable)), \
-		$(if $(findstring $(bare_define), $(feature_defines_overrides)), \
+		$(if $(findstring $(bare_define)=, $(feature_defines_overrides)), \
 			$(filter $(bare_define)=%,$(feature_defines_overrides)), \
 			$(filter $(bare_define)=%,$(feature_defines_defaults)) \
 		) \
