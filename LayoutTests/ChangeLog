@@ -1,3 +1,11 @@
+2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More unreviewed rebaseline after r128906.
+
+        * platform/chromium-mac/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win-xp/fast/invalid/residual-style-expected.txt: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug56563-expected.png: Added.
+
 2012-09-18  Ojan Vafai  <ojan@chromium.org>
 
         http://trac.webkit.org/changeset/128912 caused these tests to start failing.
