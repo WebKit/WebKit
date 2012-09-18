@@ -41,7 +41,6 @@ static int verbose = 0;
 typedef struct _MiniBrowser {
     Ecore_Evas *ee;
     Evas *evas;
-    Evas_Object *bg;
     Evas_Object *browser;
     Url_Bar *url_bar;
 } MiniBrowser;
@@ -85,17 +84,12 @@ static void closeWindow(Ecore_Evas *ee)
 static void on_ecore_evas_resize(Ecore_Evas *ee)
 {
     Evas_Object *webview;
-    Evas_Object *bg;
     int w, h;
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
     /* Resize URL bar */
     url_bar_width_set(browser->url_bar, w);
-
-    bg = evas_object_name_find(ecore_evas_get(ee), "bg");
-    evas_object_move(bg, 0, 0);
-    evas_object_resize(bg, w, h);
 
     webview = evas_object_name_find(ecore_evas_get(ee), "browser");
     evas_object_move(webview, 0, URL_BAR_HEIGHT);
@@ -232,15 +226,6 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
     ecore_evas_callback_delete_request_set(app->ee, closeWindow);
 
     app->evas = ecore_evas_get(app->ee);
-
-    app->bg = evas_object_rectangle_add(app->evas);
-    evas_object_name_set(app->bg, "bg");
-    evas_object_size_hint_weight_set(app->bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    evas_object_move(app->bg, 0, 0);
-    evas_object_resize(app->bg, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    evas_object_color_set(app->bg, 255, 150, 150, 255);
-    evas_object_show(app->bg);
 
     /* Create webview */
     app->browser = ewk_view_add(app->evas);

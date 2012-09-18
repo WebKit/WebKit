@@ -155,7 +155,6 @@ typedef struct _User_Arguments {
 typedef struct _ELauncher {
     Ecore_Evas *ee;
     Evas *evas;
-    Evas_Object *bg;
     Evas_Object *browser;
     Url_Bar *url_bar;
     User_Arguments *userArgs;
@@ -242,7 +241,6 @@ on_ecore_evas_resize(Ecore_Evas *ee)
 {
     ELauncher *app;
     Evas_Object *webview;
-    Evas_Object *bg;
     int w, h;
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
@@ -250,10 +248,6 @@ on_ecore_evas_resize(Ecore_Evas *ee)
     /* Resize URL bar */
     app = find_app_from_ee(ee);
     url_bar_width_set(app->url_bar, w);
-
-    bg = evas_object_name_find(ecore_evas_get(ee), "bg");
-    evas_object_move(bg, 0, 0);
-    evas_object_resize(bg, w, h);
 
     webview = evas_object_name_find(ecore_evas_get(ee), "browser");
     evas_object_move(webview, 0, URL_BAR_HEIGHT);
@@ -690,14 +684,6 @@ browserCreate(const char *url, User_Arguments *userArgs)
 
     if (!app->evas)
         return quit(EINA_FALSE, "ERROR: could not get evas from evas-ecore\n");
-
-    app->bg = evas_object_rectangle_add(app->evas);
-    evas_object_name_set(app->bg, "bg");
-    evas_object_color_set(app->bg, 255, 0, 255, 255);
-    evas_object_move(app->bg, 0, 0);
-    evas_object_resize(app->bg, geometry.w, geometry.h);
-    evas_object_layer_set(app->bg, EVAS_LAYER_MIN);
-    evas_object_show(app->bg);
 
     if (userArgs->backingStore && !strcasecmp(userArgs->backingStore, "tiled")) {
         app->browser = ewk_view_tiled_add(app->evas);

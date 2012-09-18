@@ -1,3 +1,22 @@
+2012-09-18  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Remove background view on EWebLauncher and MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=96905
+
+        Reviewed by Gyuyoung Kim.
+
+        The size of webview was changed after adding url bar.
+        And the background view is not necessary anymore, since it was used for debugging back in the day.
+
+        * EWebLauncher/main.c:
+        (_ELauncher):
+        (on_ecore_evas_resize):
+        (browserCreate):
+        * MiniBrowser/efl/main.c:
+        (_MiniBrowser):
+        (on_ecore_evas_resize):
+        (browserCreate):
+
 2012-09-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] run-webkit-tests unable to find TestExpectations for WK2
