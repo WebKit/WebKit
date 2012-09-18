@@ -1,5 +1,15 @@
 2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Unreviewed daily gardening.
+
+        Re-skip a few tests which were unskipped in r128880 and r128882
+        and still fail both on my machine and on the bots.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
+2012-09-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unskip the right ietestcenter tests after r128802.
 
         * platform/efl/TestExpectations:
