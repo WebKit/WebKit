@@ -1,3 +1,17 @@
+2012-09-18  Jessica Cao  <jecao@rim.com>
+
+        [BlackBerry] Date picker isn't inputting after 'OK'
+        https://bugs.webkit.org/show_bug.cgi?id=97031
+
+        PR208052
+
+        Reviewed by Rob Buis
+
+        Checking for !values.contains("-1") will match valid strings like "2012-09-18". Use value != "-1" instead.
+
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::setValueAndClosePopup):
+
 2012-09-18  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Popup page should reference the client with a weak pointer
