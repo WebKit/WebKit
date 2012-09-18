@@ -1,3 +1,27 @@
+2012-09-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Unreviewed gardening, rebaseline after r128811
+
+        * platform/chromium-linux-x86/fast/writing-mode/english-lr-text-expected.png: Removed.
+        * platform/chromium-linux-x86/transitions/svg-text-shadow-transition-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle-expected.png:
+        * platform/chromium-win-xp/fast/multicol/shadow-breaking-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win-xp/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win-xp/fast/text/stroking-expected.png:
+        * platform/chromium-win-xp/fast/transforms/shadows-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-win-xp/ietestcenter/css3/text/textshadow-002-expected.png: Added.
+        * platform/chromium-win-xp/ietestcenter/css3/text/textshadow-010-expected.png: Added.
+        * platform/chromium-win-xp/svg/css/composite-shadow-text-expected.png:
+        * platform/chromium-win-xp/svg/css/shadow-changes-expected.png:
+        * platform/chromium-win-xp/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-win-xp/svg/css/text-shadow-multiple-expected.png: Added.
+        * platform/chromium-win-xp/transitions/svg-text-shadow-transition-expected.png:
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.png: Removed.
+        * transitions/svg-text-shadow-transition-expected.png: Renamed from LayoutTests/platform/efl/transitions/svg-text-shadow-transition-expected.png.
+
 2012-09-17  David Barton  <dbarton@mathscribe.com>
 
         Convert MathML to use flexboxes
