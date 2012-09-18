@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '157063'
+  'chromium_rev': '157342'
 }
 
 deps = {
@@ -91,6 +91,8 @@ deps = {
 
   'cc':
     Var('chromium_svn')+'/cc@'+Var('chromium_rev'),
+  'google_apis':
+    Var('chromium_svn')+'/google_apis@' + Var('chromium_rev'),
   'gpu':
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
   'ipc':
