@@ -2870,6 +2870,8 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
     Pagination pagination = page->pagination();
     pagination.behavesLikeColumns = behavesLikeColumns;
+
+    page->setPagination(pagination);
 }
 
 - (BOOL)_paginationBehavesLikeColumns
