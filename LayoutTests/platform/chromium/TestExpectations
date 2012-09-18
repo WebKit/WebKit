@@ -1615,9 +1615,6 @@ BUGCR11001 : http/tests/history/back-to-post.php = TIMEOUT
 BUGCR11251 LINUX ANDROID WIN : svg/custom/svg-fonts-in-text-controls.html = TEXT
 BUGCR11251 LINUX ANDROID WIN : fast/forms/textarea-metrics.html = TEXT
 
-// WebKit 45017:45086
-BUGCR15217 : fast/js/dictionary-no-cache.html = PASS TEXT
-
 // WebKit 45086:45111
 BUGCR15270 : fast/js/excessive-comma-usage.html = TEXT
 
@@ -1770,8 +1767,6 @@ BUGCR32900 : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT IMAGE
 // WebKit roll 54059 -> 54075
 BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 
-BUGCR35064 : fast/forms/restore-selection-after-layout.html = PASS TEXT
-
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
 
@@ -1816,14 +1811,7 @@ BUGCR41206 : fast/history/multiple-classes-visited.html = TIMEOUT TEXT
 
 // Tests that work with KURL, but fail with GURL
 BUGWK71758 : fast/url/invalid-urls-utf8.html = TEXT
-BUGWK71758 : fast/url/file.html = TEXT PASS
-BUGWK71758 : fast/url/file-http-base.html = TEXT PASS
-BUGWK71758 : fast/url/host.html = TEXT PASS
 BUGWK71758 : fast/url/idna2003.html = TEXT PASS
-BUGWK71758 : fast/url/port.html = TEXT PASS
-// ^--- When completed please restore this block:
-// // Started failing at r58152
-// BUGWK38038 : fast/url/file-http-base.html = TEXT
 
 // New testRunner function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
@@ -2209,10 +2197,6 @@ BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TIMEOUT TEXT
 
 BUGCR75238 WIN : fast/text/large-text-composed-char.html = IMAGE+TEXT
-// started to time out under Linux Debug at some point after WK r80582
-BUGCR75238 MAC WIN : fast/text/large-text-composed-char-dos.html = TEXT
-BUGCR75238 LINUX ANDROID RELEASE : fast/text/large-text-composed-char-dos.html = TEXT
-BUGCR75426 LINUX ANDROID DEBUG : fast/text/large-text-composed-char-dos.html = TIMEOUT
 
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
@@ -2333,9 +2317,6 @@ BUGCR77574 LINUX ANDROID : fast/writing-mode/fallback-orientation.html = IMAGE
 // Regression in r82056.
 BUGWK56519 SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
 
-// New test added in r82152 and test expectation updated in r82189.
-BUGCR77734 : http/tests/uri/username-with-no-hostname.html = TEXT
-
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = TEXT
 
@@ -2372,9 +2353,6 @@ BUGCR79110 LINUX ANDROID WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE
 
 // Regression caused by r83628.
 BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
-
-// Regression caused by r83669. Seems to be V8 related.
-BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = PASS TEXT
 
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 
@@ -2456,9 +2434,6 @@ BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
 // Random timeouts and failures going back a week.
 BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS TIMEOUT TEXT
 
-BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
-BUGCR83499 : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
-
 BUGCR83504 SLOW WIN : fast/css/custom-font-xheight.html = PASS TEXT
 BUGCR83504 MAC : fast/css/custom-font-xheight.html = PASS TEXT
 
@@ -2502,9 +2477,6 @@ BUGWK62754 SLOW LINUX ANDROID MAC DEBUG : http/tests/misc/object-embedding-svg-d
 BUGWK62754 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = PASS IMAGE
-
-// Strange scrollbar.
-BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
 
@@ -2671,7 +2643,6 @@ BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 // Animations tests use an inherently-flaky timer-based design.
-BUGWK66953 : animations/animation-direction-normal.html = TEXT PASS
 BUGWK66953 MAC DEBUG : animations/change-keyframes.html = TEXT PASS
 BUGWK66953 WIN MAC DEBUG : animations/change-one-anim.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state.html = TEXT PASS
@@ -2708,8 +2679,6 @@ BUGCR108832 SKIP : fast/js/array-splice.html = PASS
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 
-BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
-
 BUGWK75716 LINUX WIN MAC : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
@@ -2717,7 +2686,6 @@ BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 BUGWK75932 : fast/js/array-defineOwnProperty.html = TEXT
 BUGWK75932 : fast/js/mozilla/strict/15.4.4.6.html = TEXT
 
-BUGWK76280 : media/W3C/video/networkState/networkState_during_progress.html = PASS TEXT
 BUGV8_1900 SLOW LINUX DEBUG : inspector/debugger/watch-expressions-panel-switch.html = PASS
 BUGV8_1900 LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = PASS TIMEOUT
 

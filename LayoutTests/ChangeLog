@@ -1,3 +1,8 @@
+2012-09-18  Ojan Vafai  <ojan@chromium.org>
+
+        Remove lines for tests that haven't failed on any Chromium bot for the last 500 runs.
+        * platform/chromium/TestExpectations:
+
 2012-09-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Rebaseline after r128906. All the differences were expected.
