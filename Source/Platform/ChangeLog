@@ -1,3 +1,18 @@
+2012-09-17  Brian Anderson  <brianderson@chromium.org>
+
+        [chromium] Add rendering commit statistics
+        https://bugs.webkit.org/show_bug.cgi?id=96938
+
+        Reviewed by James Robinson.
+
+        Adds total commit time and total commit count to WebRenderingStats.
+        Allows us to caculate average commit time in performance tests.
+
+        * chromium/public/WebRenderingStats.h:
+        (WebRenderingStats):
+        (WebKit::WebRenderingStats::WebRenderingStats):
+        (WebKit::WebRenderingStats::enumerateFields):
+
 2012-09-17  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add onSendFrameToParentCompositorAck to WebCompositorOutputSurfaceClient

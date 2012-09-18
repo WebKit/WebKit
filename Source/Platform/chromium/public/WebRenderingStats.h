@@ -34,6 +34,8 @@ struct WebRenderingStats {
     int droppedFrameCount;
     double totalPaintTimeInSeconds;
     double totalRasterizeTimeInSeconds;
+    double totalCommitTimeInSeconds;
+    size_t totalCommitCount;
 
     WebRenderingStats()
         : numAnimationFrames(0)
@@ -41,6 +43,8 @@ struct WebRenderingStats {
         , droppedFrameCount(0)
         , totalPaintTimeInSeconds(0)
         , totalRasterizeTimeInSeconds(0)
+        , totalCommitTimeInSeconds(0)
+        , totalCommitCount(0)
     {
     }
 
@@ -64,6 +68,8 @@ struct WebRenderingStats {
         enumerator->addInt("droppedFrameCount", droppedFrameCount);
         enumerator->addDouble("totalPaintTimeInSeconds", totalPaintTimeInSeconds);
         enumerator->addDouble("totalRasterizeTimeInSeconds", totalRasterizeTimeInSeconds);
+        enumerator->addDouble("totalCommitTimeInSeconds", totalCommitTimeInSeconds);
+        enumerator->addInt("totalCommitCount", totalCommitCount);
     }
 };
 

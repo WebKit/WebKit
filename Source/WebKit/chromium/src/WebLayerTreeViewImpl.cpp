@@ -195,6 +195,8 @@ void WebLayerTreeViewImpl::renderingStats(WebRenderingStats& stats) const
     stats.droppedFrameCount = ccStats.droppedFrameCount;
     stats.totalPaintTimeInSeconds = ccStats.totalPaintTimeInSeconds;
     stats.totalRasterizeTimeInSeconds = ccStats.totalRasterizeTimeInSeconds;
+    stats.totalCommitTimeInSeconds = ccStats.totalCommitTimeInSeconds;
+    stats.totalCommitCount = ccStats.totalCommitCount;
 }
 
 void WebLayerTreeViewImpl::setFontAtlas(SkBitmap bitmap, WebRect asciiToWebRectTable[128], int fontHeight)
