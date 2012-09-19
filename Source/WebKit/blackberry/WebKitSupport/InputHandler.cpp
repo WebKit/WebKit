@@ -696,6 +696,11 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&
     spellCheckingOptionRequest.startTextPosition = marker->startOffset();
     spellCheckingOptionRequest.endTextPosition = marker->endOffset();
 
+    SpellingLog(LogLevelInfo, "InputHandler::shouldRequestSpellCheckingOptionsForPoint spellCheckingOptionRequest\ntop %d, %d\nbottom %d %d\nMarker start %d end %d"
+                , spellCheckingOptionRequest.caret_rect.caret_top_x, spellCheckingOptionRequest.caret_rect.caret_top_y
+                , spellCheckingOptionRequest.caret_rect.caret_bottom_x, spellCheckingOptionRequest.caret_rect.caret_bottom_y
+                , spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
+
     return true;
 }
 
