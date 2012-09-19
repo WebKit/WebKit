@@ -1,3 +1,20 @@
+2012-09-19  Abbas Sherawala  <asherawala@rim.com>
+
+        [BlackBerry] BackingStorePrivate::resumeScreenAndBackingStoreUpdates more atomic
+        Added a missing 'if' statement.
+        https://bugs.webkit.org/show_bug.cgi?id=96925
+
+        PR #180866
+
+        Internally Reviewed by Antonio Gomes.
+
+        Adding an 'if' statement which should have been in PR # 180866 (SHA:b9c06af395c22e)
+
+        Reviewed by Antonio Gomes.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+
 2012-09-18  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Use didCancel and didSucceed instead of didCheckCancel and didCheckSucceed
