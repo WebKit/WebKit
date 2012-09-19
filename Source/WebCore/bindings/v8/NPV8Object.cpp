@@ -28,7 +28,6 @@
 
 #include "NPV8Object.h"
 
-#include "PlatformSupport.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "NPObjectWrapper.h"
@@ -296,7 +295,8 @@ bool _NPN_InvokeDefault(NPP npp, NPObject* npObject, const NPVariant* arguments,
 
 bool _NPN_Evaluate(NPP npp, NPObject* npObject, NPString* npScript, NPVariant* result)
 {
-    bool popupsAllowed = PlatformSupport::popupsAllowed(npp);
+    // FIXME: Give the embedder a way to control this.
+    bool popupsAllowed = false;
     return _NPN_EvaluateHelper(npp, popupsAllowed, npObject, npScript, result);
 }
 

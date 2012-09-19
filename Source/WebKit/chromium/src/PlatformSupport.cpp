@@ -566,12 +566,6 @@ IntRect PlatformSupport::screenAvailableRect(Widget* widget)
     return client->screenInfo().availableRect;
 }
 
-bool PlatformSupport::popupsAllowed(NPP npp)
-{
-    // FIXME: Give the embedder a way to control this.
-    return false;
-}
-
 #if ENABLE(WORKERS)
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 {
