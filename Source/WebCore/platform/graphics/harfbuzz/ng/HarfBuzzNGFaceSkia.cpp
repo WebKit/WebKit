@@ -68,11 +68,11 @@ static void SkiaGetGlyphWidthAndExtents(SkPaint* paint, hb_codepoint_t codepoint
     if (width)
         *width = SkiaScalarToHarfbuzzPosition(skWidth);
     if (extents) {
+        // Invert y-axis because Skia is y-grows-down but we set up harfbuzz to be y-grows-up.
         extents->x_bearing = SkiaScalarToHarfbuzzPosition(skBounds.fLeft);
-        // The extents are unused in harfbuzz now so we're unsure whether a negation is needed here. Revisit when we're sure.
-        extents->y_bearing = SkiaScalarToHarfbuzzPosition(skBounds.fTop);
+        extents->y_bearing = SkiaScalarToHarfbuzzPosition(-skBounds.fTop);
         extents->width = SkiaScalarToHarfbuzzPosition(skBounds.width());
-        extents->height = SkiaScalarToHarfbuzzPosition(skBounds.height());
+        extents->height = SkiaScalarToHarfbuzzPosition(-skBounds.height());
     }
 }
 
@@ -171,8 +171,6 @@ hb_font_t* HarfBuzzNGFace::createFont()
     m_platformData->setupPaint(paint);
     hb_font_set_funcs(font, harfbuzzSkiaGetFontFuncs(), paint, destroyPaint);
     float size = m_platformData->size();
-    if (floorf(size) == size)
-        hb_font_set_ppem(font, size, size);
     int scale = SkiaScalarToHarfbuzzPosition(size);
     hb_font_set_scale(font, scale, scale);
     hb_font_make_immutable(font);
