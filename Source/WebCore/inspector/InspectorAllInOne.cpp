@@ -38,6 +38,7 @@
 #include "InspectorApplicationCacheAgent.cpp"
 #include "InspectorBaseAgent.cpp"
 #include "InspectorCSSAgent.cpp"
+#include "InspectorCanvasAgent.cpp"
 #include "InspectorClient.cpp"
 #include "InspectorConsoleAgent.cpp"
 #include "InspectorController.cpp"
