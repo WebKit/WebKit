@@ -1,3 +1,17 @@
+2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] fast/forms/select-writing-direction-natural.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=97082
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebChromeClient::selectItemWritingDirectionIsNatural() now returns
+        true for EFL-WK2, consistently with EFL-WK1, so that the style
+        is properly adjusted in RenderMenuList::adjustInnerStyle().
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::selectItemWritingDirectionIsNatural):
+
 2012-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get/set the security policy of a given URI scheme to WebKit2 GTK+

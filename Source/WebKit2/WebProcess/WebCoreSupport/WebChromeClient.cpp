@@ -658,7 +658,7 @@ void WebChromeClient::formStateDidChange(const Node*)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || PLATFORM(EFL)
     return true;
 #else
     return false;
