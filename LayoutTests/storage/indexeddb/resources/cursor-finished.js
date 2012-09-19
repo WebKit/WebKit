@@ -1,5 +1,4 @@
 description("Ensure cursor calls behave as expected after cursor has run to the end.");
-setTimeout(finishJSTest,1000);
 
 function test()
 {
