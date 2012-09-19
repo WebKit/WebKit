@@ -384,3 +384,231 @@ TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
     waitUntilTitleChangedTo("");
     EXPECT_STREQ(ewk_view_title_get(webView()), "");
 }
+
+static struct {
+    const char* expectedMessage;
+    bool called;
+} alertCallbackData;
+
+static struct {
+    const char* expectedMessage;
+    bool result;
+    bool called;
+} confirmCallbackData;
+
+static struct {
+    const char* expectedMessage;
+    const char* expectedDefaultValue;
+    const char* result;
+    bool called;
+} promptCallbackData;
+
+static void checkAlert(Ewk_View_Smart_Data*, const char* message)
+{
+    alertCallbackData.called = true;
+    EXPECT_STREQ(message, alertCallbackData.expectedMessage);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_alert)
+{
+    ewkViewClass()->run_javascript_alert = checkAlert;
+
+    const char* alertHTML = "<!doctype html><body onload=\"alert('Alert message');\"></body>";
+    alertCallbackData.expectedMessage = "Alert message";
+    alertCallbackData.called = false;
+    ewk_view_html_string_load(webView(), alertHTML, 0, 0);
+    waitUntilLoadFinished();
+    EXPECT_EQ(alertCallbackData.called, true);
+
+    alertHTML = "<!doctype html><body onload=\"alert('');\"></body>";
+    alertCallbackData.expectedMessage = "";
+    alertCallbackData.called = false;
+    ewk_view_html_string_load(webView(), alertHTML, 0, 0);
+    waitUntilLoadFinished();
+    EXPECT_EQ(alertCallbackData.called, true);
+
+    alertHTML = "<!doctype html><body onload=\"alert(null);\"></body>";
+    alertCallbackData.expectedMessage = "null";
+    alertCallbackData.called = false;
+    ewk_view_html_string_load(webView(), alertHTML, 0, 0);
+    waitUntilLoadFinished();
+    EXPECT_EQ(alertCallbackData.called, true);
+
+    alertHTML = "<!doctype html><body onload=\"alert();\"></body>";
+    alertCallbackData.expectedMessage = "undefined";
+    alertCallbackData.called = false;
+    ewk_view_html_string_load(webView(), alertHTML, 0, 0);
+    waitUntilLoadFinished();
+    EXPECT_EQ(alertCallbackData.called, true);
+
+    ewkViewClass()->run_javascript_alert = 0;
+
+    alertCallbackData.called = false;
+    ewk_view_html_string_load(webView(), alertHTML, 0, 0);
+    waitUntilLoadFinished();
+    EXPECT_EQ(alertCallbackData.called, false);
+}
+
+static Eina_Bool checkConfirm(Ewk_View_Smart_Data*, const char* message)
+{
+    confirmCallbackData.called = true;
+    EXPECT_STREQ(message, confirmCallbackData.expectedMessage);
+    return confirmCallbackData.result;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
+{
+    ewkViewClass()->run_javascript_confirm = checkConfirm;
+
+    const char* confirmHTML = "<!doctype html><body onload=\"document.title = confirm('Confirm message');\"></body>";
+    confirmCallbackData.expectedMessage = "Confirm message";
+    confirmCallbackData.result = true;
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("true");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "true");
+    EXPECT_EQ(confirmCallbackData.called, true);
+
+    confirmCallbackData.expectedMessage = "Confirm message";
+    confirmCallbackData.result = false;
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("false");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "false");
+    EXPECT_EQ(confirmCallbackData.called, true);
+
+    confirmHTML = "<!doctype html><body onload=\"document.title = confirm('');\"></body>";
+    confirmCallbackData.expectedMessage = "";
+    confirmCallbackData.result = true;
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("true");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "true");
+    EXPECT_EQ(confirmCallbackData.called, true);
+
+    confirmHTML = "<!doctype html><body onload=\"document.title = confirm(null);\"></body>";
+    confirmCallbackData.expectedMessage = "null";
+    confirmCallbackData.result = true;
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("true");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "true");
+    EXPECT_EQ(confirmCallbackData.called, true);
+
+    confirmHTML = "<!doctype html><body onload=\"document.title = confirm();\"></body>";
+    confirmCallbackData.expectedMessage = "undefined";
+    confirmCallbackData.result = true;
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("true");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "true");
+    EXPECT_EQ(confirmCallbackData.called, true);
+
+    ewkViewClass()->run_javascript_confirm = 0;
+
+    confirmCallbackData.called = false;
+    ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
+    waitUntilTitleChangedTo("false");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "false");
+    EXPECT_EQ(confirmCallbackData.called, false);
+}
+
+static const char* checkPrompt(Ewk_View_Smart_Data*, const char* message, const char* defaultValue)
+{
+    promptCallbackData.called = true;
+    EXPECT_STREQ(message, promptCallbackData.expectedMessage);
+    EXPECT_STREQ(defaultValue, promptCallbackData.expectedDefaultValue);
+
+    if (!promptCallbackData.result)
+        return 0;
+
+    return eina_stringshare_add(promptCallbackData.result);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
+{
+    static const char promptMessage[] = "Prompt message";
+    static const char promptResult[] = "Prompt result";
+
+    ewkViewClass()->run_javascript_prompt = checkPrompt;
+
+    const char* promptHTML = "<!doctype html><body onload=\"document.title = prompt('Prompt message', 'Prompt default value');\"></body>";
+    promptCallbackData.expectedMessage = promptMessage;
+    promptCallbackData.expectedDefaultValue = "Prompt default value";
+    promptCallbackData.result = promptResult;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo(promptResult);
+    EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptHTML = "<!doctype html><body onload=\"document.title = prompt('Prompt message', '');\"></body>";
+    promptCallbackData.expectedMessage = promptMessage;
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = promptResult;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo(promptResult);
+    EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptHTML = "<!doctype html><body onload=\"document.title = prompt('Prompt message');\"></body>";
+    promptCallbackData.expectedMessage = promptMessage;
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = promptResult;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo(promptResult);
+    EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptHTML = "<!doctype html><body onload=\"document.title = prompt('');\"></body>";
+    promptCallbackData.expectedMessage = "";
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = promptResult;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo(promptResult);
+    EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptHTML = "<!doctype html><body onload=\"document.title = prompt();\"></body>";
+    promptCallbackData.expectedMessage = "undefined";
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = promptResult;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo(promptResult);
+    EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptHTML = "<html><head><title>Default title</title></head>"
+                 "<body onload=\"var promptResult = prompt('Prompt message');"
+                 "if (promptResult == null) document.title='null';"
+                 "else document.title = promptResult;\"></body></html>";
+    promptCallbackData.expectedMessage = promptMessage;
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = "";
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo("");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "");
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    promptCallbackData.expectedMessage = promptMessage;
+    promptCallbackData.expectedDefaultValue = "";
+    promptCallbackData.result = 0;
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo("null");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "null");
+    EXPECT_EQ(promptCallbackData.called, true);
+
+    ewkViewClass()->run_javascript_prompt = 0;
+
+    promptCallbackData.called = false;
+    ewk_view_html_string_load(webView(), promptHTML, 0, 0);
+    waitUntilTitleChangedTo("null");
+    EXPECT_STREQ(ewk_view_title_get(webView()), "null");
+    EXPECT_EQ(promptCallbackData.called, false);
+}

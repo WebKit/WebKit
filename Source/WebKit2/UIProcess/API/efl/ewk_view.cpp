@@ -1649,3 +1649,48 @@ void ewk_view_webprocess_crashed(Evas_Object* ewkView)
         ewk_view_html_string_load(ewkView, "The web process has crashed.", 0, url.data());
     }
 }
+
+/**
+ * @internal
+ * Calls a smart member function for javascript alert().
+ */
+void ewk_view_run_javascript_alert(Evas_Object* ewkView, const WKEinaSharedString& message)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EINA_SAFETY_ON_NULL_RETURN(smartData->api);
+
+    if (!smartData->api->run_javascript_alert)
+        return;
+
+    smartData->api->run_javascript_alert(smartData, message);
+}
+
+/**
+ * @internal
+ * Calls a smart member function for javascript confirm() and returns a value from the function. Returns false by default.
+ */
+bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, const WKEinaSharedString& message)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
+
+    if (!smartData->api->run_javascript_confirm)
+        return false;
+
+    return smartData->api->run_javascript_confirm(smartData, message);
+}
+
+/**
+ * @internal
+ * Calls a smart member function for javascript prompt() and returns a value from the function. Returns null string by default.
+ */
+WKEinaSharedString ewk_view_run_javascript_prompt(Evas_Object* ewkView, const WKEinaSharedString& message, const WKEinaSharedString& defaultValue)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, WKEinaSharedString());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, WKEinaSharedString());
+
+    if (!smartData->api->run_javascript_prompt)
+        return WKEinaSharedString();
+
+    return WKEinaSharedString::adopt(smartData->api->run_javascript_prompt(smartData, message, defaultValue));
+}

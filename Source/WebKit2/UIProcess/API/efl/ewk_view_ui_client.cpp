@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "WKString.h"
 #include "ewk_view_private.h"
 #include "ewk_view_ui_client_private.h"
 
@@ -43,6 +44,22 @@ static WKPageRef createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEv
      return ewk_view_page_create(toEwkView(clientInfo));
 }
 
+static void runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
+{
+    ewk_view_run_javascript_alert(toEwkView(clientInfo), WKEinaSharedString(alertText));
+}
+
+static bool runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
+{
+    return ewk_view_run_javascript_confirm(toEwkView(clientInfo), WKEinaSharedString(message));
+}
+
+static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
+{
+    WKEinaSharedString value = ewk_view_run_javascript_prompt(toEwkView(clientInfo), WKEinaSharedString(message), WKEinaSharedString(defaultValue));
+    return value ? WKStringCreateWithUTF8CString(value) : 0;
+}
+
 void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageUIClient uiClient;
@@ -51,5 +68,8 @@ void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     uiClient.clientInfo = ewkView;
     uiClient.close = closePage;
     uiClient.createNewPage = createNewPage;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
     WKPageSetPageUIClient(pageRef, &uiClient);
 }
