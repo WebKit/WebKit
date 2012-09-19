@@ -1,5 +1,14 @@
 2012-09-18  Dirk Pranke  <dpranke@chromium.org>
 
+        [chromium] gradient-with-scaled-ancestor passes on mac lion gpu
+        http://bugs.webkit.org/show_bug.cgi?id=96441
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-18  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] Adjust expectation for fast/css/sticky/sticky-left-percentage.html
         http://webkit.org/b/95136
 

@@ -3505,7 +3505,7 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 BUGWK96441 WIN DEBUG : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
-BUGWK96441 : platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
+BUGWK96441 WIN LINUX SNOWLEOPARD : platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
 
 BUGWK96950 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = PASS TEXT
 
