@@ -44,7 +44,8 @@ PassOwnPtr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(const 
 }
 
 RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size)
-    : m_window(0)
+    : m_usableSize(size)
+    , m_window(0)
     , m_parentWindow(0)
     , m_pixmap(0)
     , m_surface(0)
@@ -91,7 +92,6 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size)
     XCompositeRedirectWindow(display, m_window, CompositeRedirectManual);
 
     resize(size);
-    resizeLater(); // Force update of the usable area.
 }
 
 RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
