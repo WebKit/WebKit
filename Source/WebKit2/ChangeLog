@@ -1,3 +1,18 @@
+2012-09-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Implement PageClientImpl::isViewFocused.
+        https://bugs.webkit.org/show_bug.cgi?id=97015
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit2/Efl always returns true for PageClientImpl::isViewFocused.
+        So window.onblur events will not be generated when webview lost focus.
+
+        This patch implements isViewFocused to return the current focus of webview.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isViewFocused):
+
 2012-09-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Title string should be changed when document.title is set to ''.
