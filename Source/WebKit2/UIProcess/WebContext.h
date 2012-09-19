@@ -132,6 +132,10 @@ public:
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
     void setDomainRelaxationForbiddenForURLScheme(const String&);
+    void registerURLSchemeAsLocal(const String&);
+    void registerURLSchemeAsNoAccess(const String&);
+    void registerURLSchemeAsDisplayIsolated(const String&);
+    void registerURLSchemeAsCORSEnabled(const String&);
 
     void addVisitedLink(const String&);
     void addVisitedLinkHash(WebCore::LinkHash);
@@ -295,6 +299,10 @@ private:
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     HashSet<String> m_schemesToRegisterAsSecure;
     HashSet<String> m_schemesToSetDomainRelaxationForbiddenFor;
+    HashSet<String> m_schemesToRegisterAsLocal;
+    HashSet<String> m_schemesToRegisterAsNoAccess;
+    HashSet<String> m_schemesToRegisterAsDisplayIsolated;
+    HashSet<String> m_schemesToRegisterAsCORSEnabled;
 
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;

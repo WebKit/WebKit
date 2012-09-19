@@ -28,6 +28,7 @@
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
+#include <webkit2/WebKitSecurityManager.h>
 #include <webkit2/WebKitURISchemeRequest.h>
 
 G_BEGIN_DECLS
@@ -112,6 +113,9 @@ webkit_web_context_download_uri                     (WebKitWebContext           
 
 WEBKIT_API WebKitCookieManager *
 webkit_web_context_get_cookie_manager               (WebKitWebContext              *context);
+
+WEBKIT_API WebKitSecurityManager *
+webkit_web_context_get_security_manager             (WebKitWebContext              *context);
 
 WEBKIT_API void
 webkit_web_context_set_additional_plugins_directory (WebKitWebContext              *context,

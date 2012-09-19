@@ -60,6 +60,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
+    encoder->encode(urlSchemesRegisteredAsLocal);
+    encoder->encode(urlSchemesRegisteredAsNoAccess);
+    encoder->encode(urlSchemesRegisteredAsDisplayIsolated);
+    encoder->encode(urlSchemesRegisteredAsCORSEnabled);
     encoder->encode(mimeTypesWithCustomRepresentation);
     encoder->encodeEnum(cacheModel);
     encoder->encode(shouldTrackVisitedLinks);
@@ -133,6 +137,14 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.urlSchemesRegisteredAsSecure))
         return false;
     if (!decoder->decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
+        return false;
+    if (!decoder->decode(parameters.urlSchemesRegisteredAsLocal))
+        return false;
+    if (!decoder->decode(parameters.urlSchemesRegisteredAsNoAccess))
+        return false;
+    if (!decoder->decode(parameters.urlSchemesRegisteredAsDisplayIsolated))
+        return false;
+    if (!decoder->decode(parameters.urlSchemesRegisteredAsCORSEnabled))
         return false;
     if (!decoder->decode(parameters.mimeTypesWithCustomRepresentation))
         return false;

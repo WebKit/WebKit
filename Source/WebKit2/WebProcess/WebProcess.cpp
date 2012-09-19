@@ -292,6 +292,26 @@ void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlSchem
     SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
 }
 
+void WebProcess::registerURLSchemeAsLocal(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsLocal(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsNoAccess(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+}
+
 void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);

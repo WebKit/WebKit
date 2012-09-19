@@ -28,6 +28,7 @@
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitRequestManagerClient.h"
+#include "WebKitSecurityManagerPrivate.h"
 #include "WebKitTextChecker.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -95,6 +96,7 @@ struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
 
     GRefPtr<WebKitCookieManager> cookieManager;
+    GRefPtr<WebKitSecurityManager> securityManager;
     WKRetainPtr<WKSoupRequestManagerRef> requestManager;
     URISchemeHandlerMap uriSchemeHandlers;
     URISchemeRequestMap uriSchemeRequests;
@@ -319,6 +321,25 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
         priv->cookieManager = adoptGRef(webkitCookieManagerCreate(WKContextGetCookieManager(priv->context.get())));
 
     return priv->cookieManager.get();
+}
+
+/**
+ * webkit_web_context_get_security_manager:
+ * @context: a #WebKitWebContext
+ *
+ * Get the #WebKitSecurityManager of @context.
+ *
+ * Returns: (transfer none): the #WebKitSecurityManager of @context.
+ */
+WebKitSecurityManager* webkit_web_context_get_security_manager(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+
+    WebKitWebContextPrivate* priv = context->priv;
+    if (!priv->securityManager)
+        priv->securityManager = adoptGRef(webkitSecurityManagerCreate(context));
+
+    return priv->securityManager.get();
 }
 
 /**

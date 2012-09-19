@@ -1,3 +1,86 @@
+2012-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get/set the security policy of a given URI scheme to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=96497
+
+        Reviewed by Martin Robinson.
+
+        Add WebKitSecurityManager object associated to a WebKitWebContext
+        to get/set the security policy of a URI scheme.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode the list of
+        schemes to be reigstered as Local, NoAccess, DisplayIsolated and
+        CORSEnabled.
+        (WebKit::WebProcessCreationParameters::decode): Decode the list of
+        schemes to be reigstered as Local, NoAccess, DisplayIsolated and
+        CORSEnabled.
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters): Add new parameters to be able to
+        register schemes as Local, NoAccess, DisplayIsolated and
+        CORSEnabled.
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp: Added.
+        (webkit_security_manager_init):
+        (webkitSecurityManagerFinalize):
+        (webkit_security_manager_class_init):
+        (webkitSecurityManagerCreate): Private function to create the
+        WebKitSecurityManager object associated to the given
+        WebKitWebContext.
+        (registerSecurityPolicyForURIScheme):
+        (checkSecurityPolicyForURIScheme):
+        (webkit_security_manager_register_uri_scheme_as_local):
+        (webkit_security_manager_uri_scheme_is_local):
+        (webkit_security_manager_register_uri_scheme_as_no_access):
+        (webkit_security_manager_uri_scheme_is_no_access):
+        (webkit_security_manager_register_uri_scheme_as_display_isolated):
+        (webkit_security_manager_uri_scheme_is_display_isolated):
+        (webkit_security_manager_register_uri_scheme_as_secure):
+        (webkit_security_manager_uri_scheme_is_secure):
+        (webkit_security_manager_register_uri_scheme_as_cors_enabled):
+        (webkit_security_manager_uri_scheme_is_cors_enabled):
+        (webkit_security_manager_register_uri_scheme_as_empty_document):
+        (webkit_security_manager_uri_scheme_is_empty_document):
+        * UIProcess/API/gtk/WebKitSecurityManager.h: Added.
+        * UIProcess/API/gtk/WebKitSecurityManagerPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_get_security_manager): Return the
+        WebKitSecurityManager object, creating it before if it doesn't exist.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitSecurityManager.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextSecurityPolicy):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h: Add WebKitSecurityManager.h.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess): Copy new vector
+        schemes.
+        (WebKit::WebContext::registerURLSchemeAsLocal): Send a message to
+        WebProcess to register the given URL scheme as Local.
+        (WebKit::WebContext::registerURLSchemeAsNoAccess): Send a message
+        to WebProcess to register the given URL scheme as NoAccess.
+        (WebKit::WebContext::registerURLSchemeAsDisplayIsolated): Send a
+        message to WebProcess to register the given URL scheme as
+        DisplayIsolated.
+        (WebKit::WebContext::registerURLSchemeAsCORSEnabled): Send a
+        message to WebProcess to register the given URL scheme as
+        CORSEnabled.
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerURLSchemeAsLocal): Register the
+        given URL scheme as Local in the SchemeRegistry.
+        (WebKit::WebProcess::registerURLSchemeAsNoAccess): Register the
+        given URL scheme as NoAccess in the SchemeRegistry.
+        (WebKit::WebProcess::registerURLSchemeAsDisplayIsolated): Register
+        the given URL scheme as DisplayIsolated in the SchemeRegistry.
+        (WebKit::WebProcess::registerURLSchemeAsCORSEnabled): Register the
+        given URL scheme as CORSEnabled in the SchemeRegistry.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Add new messages.
+
 2012-09-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Texmap] Potential crash in TextureMapperLayer because of referencing deleted mask/replica layer

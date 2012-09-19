@@ -40,6 +40,7 @@
     <xi:include href="xml/WebKitContextMenu.xml"/>
     <xi:include href="xml/WebKitContextMenuItem.xml"/>
     <xi:include href="xml/WebKitFormSubmissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityManager.xml"/>
   </chapter>
 
   <index id="index-all">

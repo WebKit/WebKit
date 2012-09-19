@@ -336,6 +336,10 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
+    copyToVector(m_schemesToRegisterAsLocal, parameters.urlSchemesRegisteredAsLocal);
+    copyToVector(m_schemesToRegisterAsNoAccess, parameters.urlSchemesRegisteredAsNoAccess);
+    copyToVector(m_schemesToRegisterAsDisplayIsolated, parameters.urlSchemesRegisteredAsDisplayIsolated);
+    copyToVector(m_schemesToRegisterAsCORSEnabled, parameters.urlSchemesRegisteredAsCORSEnabled);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
@@ -638,6 +642,30 @@ void WebContext::setDomainRelaxationForbiddenForURLScheme(const String& urlSchem
 {
     m_schemesToSetDomainRelaxationForbiddenFor.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme));
+}
+
+void WebContext::registerURLSchemeAsLocal(const String& urlScheme)
+{
+    m_schemesToRegisterAsLocal.add(urlScheme);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsLocal(urlScheme));
+}
+
+void WebContext::registerURLSchemeAsNoAccess(const String& urlScheme)
+{
+    m_schemesToRegisterAsNoAccess.add(urlScheme);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsNoAccess(urlScheme));
+}
+
+void WebContext::registerURLSchemeAsDisplayIsolated(const String& urlScheme)
+{
+    m_schemesToRegisterAsDisplayIsolated.add(urlScheme);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsDisplayIsolated(urlScheme));
+}
+
+void WebContext::registerURLSchemeAsCORSEnabled(const String& urlScheme)
+{
+    m_schemesToRegisterAsCORSEnabled.add(urlScheme);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
 }
 
 void WebContext::setCacheModel(CacheModel cacheModel)

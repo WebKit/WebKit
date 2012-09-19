@@ -47,6 +47,7 @@
 #include <webkit2/WebKitPrintOperation.h>
 #include <webkit2/WebKitResponsePolicyDecision.h>
 #include <webkit2/WebKitScriptDialog.h>
+#include <webkit2/WebKitSecurityManager.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitURIResponse.h>

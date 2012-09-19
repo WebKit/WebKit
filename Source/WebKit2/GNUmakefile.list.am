@@ -118,6 +118,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPrintOperation.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitResponsePolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitScriptDialog.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitSecurityManager.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitSettings.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
@@ -697,6 +698,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitScriptDialog.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitScriptDialog.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitScriptDialogPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitSecurityManager.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitSecurityManager.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitSecurityManagerPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettingsPrivate.h \

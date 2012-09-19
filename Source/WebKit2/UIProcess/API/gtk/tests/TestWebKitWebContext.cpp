@@ -297,6 +297,83 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     soup_message_body_complete(message->response_body);
 }
 
+class SecurityPolicyTest: public Test {
+public:
+    MAKE_GLIB_TEST_FIXTURE(SecurityPolicyTest);
+
+    enum SecurityPolicy {
+        Local = 1 << 1,
+        NoAccess = 1 << 2,
+        DisplayIsolated = 1 << 3,
+        Secure = 1 << 4,
+        CORSEnabled = 1 << 5,
+        EmptyDocument = 1 << 6
+    };
+
+    SecurityPolicyTest()
+        : m_manager(webkit_web_context_get_security_manager(webkit_web_context_get_default()))
+    {
+    }
+
+    void verifyThatSchemeMatchesPolicy(const char* scheme, unsigned policy)
+    {
+        if (policy & Local)
+            g_assert(webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_local(m_manager, scheme));
+        if (policy & NoAccess)
+            g_assert(webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_no_access(m_manager, scheme));
+        if (policy & DisplayIsolated)
+            g_assert(webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_display_isolated(m_manager, scheme));
+        if (policy & Secure)
+            g_assert(webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_secure(m_manager, scheme));
+        if (policy & CORSEnabled)
+            g_assert(webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_cors_enabled(m_manager, scheme));
+        if (policy & EmptyDocument)
+            g_assert(webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
+        else
+            g_assert(!webkit_security_manager_uri_scheme_is_empty_document(m_manager, scheme));
+    }
+
+    WebKitSecurityManager* m_manager;
+};
+
+static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer)
+{
+    // VerifyThatSchemeMatchesPolicy default policy for well known schemes.
+    test->verifyThatSchemeMatchesPolicy("http", SecurityPolicyTest::CORSEnabled);
+    test->verifyThatSchemeMatchesPolicy("https", SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::Secure);
+    test->verifyThatSchemeMatchesPolicy("file", SecurityPolicyTest::Local);
+    test->verifyThatSchemeMatchesPolicy("data", SecurityPolicyTest::NoAccess | SecurityPolicyTest::Secure);
+    test->verifyThatSchemeMatchesPolicy("about", SecurityPolicyTest::NoAccess | SecurityPolicyTest::Secure | SecurityPolicyTest::EmptyDocument);
+
+    // Custom scheme.
+    test->verifyThatSchemeMatchesPolicy("foo", 0);
+
+    webkit_security_manager_register_uri_scheme_as_local(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local);
+    webkit_security_manager_register_uri_scheme_as_no_access(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess);
+    webkit_security_manager_register_uri_scheme_as_display_isolated(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated);
+    webkit_security_manager_register_uri_scheme_as_secure(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure);
+    webkit_security_manager_register_uri_scheme_as_cors_enabled(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure
+                | SecurityPolicyTest::CORSEnabled);
+    webkit_security_manager_register_uri_scheme_as_empty_document(test->m_manager, "foo");
+    test->verifyThatSchemeMatchesPolicy("foo", SecurityPolicyTest::Local | SecurityPolicyTest::NoAccess | SecurityPolicyTest::DisplayIsolated | SecurityPolicyTest::Secure
+                | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -307,6 +384,7 @@ void beforeAll()
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
+    SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
 }
 
 void afterAll()
