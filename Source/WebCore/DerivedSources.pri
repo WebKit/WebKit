@@ -61,7 +61,7 @@ INSPECTOR_OVERLAY_PAGE = $$PWD/inspector/InspectorOverlayPage.html
 
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
-INJECTED_SCRIPT_CANVAS_MODULE_SOURCE = $$PWD/inspector/InjectedScriptCanvasModuleSource.js
+INJECTED_SCRIPT_WEBGL_MODULE_SOURCE = $$PWD/inspector/InjectedScriptWebGLModuleSource.js
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
 
@@ -787,19 +787,19 @@ inspectorOverlayPage.commands = perl $$PWD/inspector/xxd.pl InspectorOverlayPage
 inspectorOverlayPage.add_output_to_sources = false
 GENERATORS += inspectorOverlayPage
 
-# GENERATOR 2: inspector injected script source compiler
+# GENERATOR 2-a: inspector injected script source compiler
 injectedScriptSource.output = InjectedScriptSource.h
 injectedScriptSource.input = INJECTED_SCRIPT_SOURCE
 injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 injectedScriptSource.add_output_to_sources = false
 GENERATORS += injectedScriptSource
 
-# GENERATOR 3: inspector canvas injected script source compiler
-InjectedScriptCanvasModuleSource.output = InjectedScriptCanvasModuleSource.h
-InjectedScriptCanvasModuleSource.input = INJECTED_SCRIPT_CANVAS_MODULE_SOURCE
-InjectedScriptCanvasModuleSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
-InjectedScriptCanvasModuleSource.add_output_to_sources = false
-GENERATORS += InjectedScriptCanvasModuleSource
+# GENERATOR 2-b: inspector webgl injected script source compiler
+InjectedScriptWebGLModuleSource.output = InjectedScriptWebGLModuleSource.h
+InjectedScriptWebGLModuleSource.input = INJECTED_SCRIPT_WEBGL_MODULE_SOURCE
+InjectedScriptWebGLModuleSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptWebGLModuleSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+InjectedScriptWebGLModuleSource.add_output_to_sources = false
+GENERATORS += InjectedScriptWebGLModuleSource
 
 # GENERATOR 4: CSS grammar
 cssbison.output = ${QMAKE_FILE_BASE}.cpp

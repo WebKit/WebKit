@@ -31,7 +31,7 @@
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
 #if ENABLE(WEBGL)
-#include "InspectorCanvasInstrumentation.h"
+#include "InspectorWebGLInstrumentation.h"
 #include "JSWebGLRenderingContext.h"
 #include "ScriptObject.h"
 #include "WebGLContextAttributes.h"

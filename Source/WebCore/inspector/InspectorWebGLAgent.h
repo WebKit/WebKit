@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorCanvasAgent_h
-#define InspectorCanvasAgent_h
+#ifndef InspectorWebGLAgent_h
+#define InspectorWebGLAgent_h
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WEBGL)
 
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
@@ -43,8 +43,8 @@
 
 namespace WebCore {
 
-class InjectedScriptCanvasModule;
 class InjectedScriptManager;
+class InjectedScriptWebGLModule;
 class InspectorState;
 class InstrumentingAgents;
 class Page;
@@ -52,13 +52,13 @@ class ScriptObject;
 
 typedef String ErrorString;
 
-class InspectorCanvasAgent : public InspectorBaseAgent<InspectorCanvasAgent>, public InspectorBackendDispatcher::CanvasCommandHandler {
+class InspectorWebGLAgent : public InspectorBaseAgent<InspectorWebGLAgent>, public InspectorBackendDispatcher::WebGLCommandHandler {
 public:
-    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorWebGLAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorCanvasAgent(instrumentingAgents, state, page, injectedScriptManager));
+        return adoptPtr(new InspectorWebGLAgent(instrumentingAgents, state, page, injectedScriptManager));
     }
-    ~InspectorCanvasAgent();
+    ~InspectorWebGLAgent();
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
@@ -66,16 +66,14 @@ public:
 
     bool enabled() { return m_enabled; }
 
-#if ENABLE(WEBGL)
     ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
-#endif
 
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void dropTraceLog(ErrorString*, const String&);
     virtual void captureFrame(ErrorString*, String*);
-    virtual void getTraceLog(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::TraceLog>&);
+    virtual void getTraceLog(ErrorString*, const String&, RefPtr<TypeBuilder::WebGL::TraceLog>&);
     virtual void replayTraceLog(ErrorString*, const String&, int, String*);
 
     // Called from the injected script.
@@ -83,18 +81,18 @@ public:
     // Called from InspectorInstrumentation
 
 private:
-    InspectorCanvasAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
+    InspectorWebGLAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
 
-    InjectedScriptCanvasModule injectedScriptCanvasModuleForTraceLogId(ErrorString*, const String&);
+    InjectedScriptWebGLModule injectedScriptWebGLModuleForTraceLogId(ErrorString*, const String&);
 
     Page* m_inspectedPage;
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorFrontend::Canvas* m_frontend;
+    InspectorFrontend::WebGL* m_frontend;
     bool m_enabled;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR) && ENABLE(WEBGL)
 
-#endif // !defined(InspectorCanvasAgent_h)
+#endif // !defined(InspectorWebGLAgent_h)

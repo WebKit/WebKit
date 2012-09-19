@@ -40,7 +40,7 @@
 #include "V8CanvasRenderingContext2D.h"
 #include "V8Node.h"
 #if ENABLE(WEBGL)
-#include "InspectorCanvasInstrumentation.h"
+#include "InspectorWebGLInstrumentation.h"
 #include "V8WebGLRenderingContext.h"
 #endif
 #include <wtf/MathExtras.h>

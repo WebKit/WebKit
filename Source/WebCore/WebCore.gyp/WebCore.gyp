@@ -461,30 +461,6 @@
       ]
     },
     {
-      'target_name': 'injected_canvas_script_source',
-      'type': 'none',
-      'actions': [
-        {
-          'action_name': 'generateInjectedScriptCanvasModuleSource',
-          'inputs': [
-            '../inspector/InjectedScriptCanvasModuleSource.js',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptCanvasModuleSource.h',
-          ],
-          'msvs_cygwin_shell': 0,
-          'action': [
-            '<(perl_exe)',
-            '../inspector/xxd.pl',
-            'InjectedScriptCanvasModuleSource_js',
-            '<@(_inputs)',
-            '<@(_outputs)'
-          ],
-          'message': 'Generating InjectedScriptCanvasModuleSource.h from InjectedScriptCanvasModuleSource.js',
-        },
-      ]
-    },
-    {
       'target_name': 'injected_script_source',
       'type': 'none',
       'actions': [
@@ -505,6 +481,30 @@
             '<@(_outputs)'
           ],
           'message': 'Generating InjectedScriptSource.h from InjectedScriptSource.js',
+        },
+      ]
+    },
+    {
+      'target_name': 'injected_webgl_script_source',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateInjectedScriptWebGLModuleSource',
+          'inputs': [
+            '../inspector/InjectedScriptWebGLModuleSource.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptWebGLModuleSource.h',
+          ],
+          'msvs_cygwin_shell': 0,
+          'action': [
+            '<(perl_exe)',
+            '../inspector/xxd.pl',
+            'InjectedScriptWebGLModuleSource_js',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+          'message': 'Generating InjectedScriptWebGLModuleSource.h from InjectedScriptWebGLModuleSource.js',
         },
       ]
     },
@@ -1200,8 +1200,8 @@
         'webcore_bindings_sources',
         'inspector_overlay_page',
         'inspector_protocol_sources',
-        'injected_canvas_script_source',
         'injected_script_source',
+        'injected_webgl_script_source',
         'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
@@ -1327,8 +1327,8 @@
       'type': 'none',
       'dependencies': [
         'debugger_script_source',
-        'injected_canvas_script_source',
         'injected_script_source',
+        'injected_webgl_script_source',
         'inspector_overlay_page',
         'inspector_protocol_sources',
         'webcore_bindings_sources',

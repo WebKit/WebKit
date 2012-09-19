@@ -1,20 +1,20 @@
-var initialize_CanvasWebGLProfilerTest = function() {
+var initialize_WebGLProfilerTest = function() {
 
-InspectorTest.enableCanvasAgent = function(callback)
+InspectorTest.enableWebGLAgent = function(callback)
 {
-    function canvasAgentEnabled(error)
+    function webGLAgentEnabled(error)
     {
         if (!error)
             InspectorTest.safeWrap(callback)();
         else {
-            InspectorTest.addResult("FAILED to enable CanvasAgent: " + error);
+            InspectorTest.addResult("FAILED to enable WebGLAgent: " + error);
             InspectorTest.completeTest();
         }
     }
     try {
-        CanvasAgent.enable(canvasAgentEnabled);
+        WebGLAgent.enable(webGLAgentEnabled);
     } catch (e) {
-        InspectorTest.addResult("Exception while enabling CanvasAgent", e);
+        InspectorTest.addResult("Exception while enabling WebGLAgent", e);
         InspectorTest.completeTest();
     }
 };

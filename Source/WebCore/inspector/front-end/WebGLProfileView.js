@@ -32,24 +32,24 @@
  * @constructor
  * @extends {WebInspector.View}
  */
-WebInspector.CanvasProfileView = function(profile)
+WebInspector.WebGLProfileView = function(profile)
 {
     WebInspector.View.call(this);
-    this.registerRequiredCSS("canvasProfiler.css");
+    this.registerRequiredCSS("webGLProfiler.css");
     this._profile = profile;
-    this.element.addStyleClass("canvas-profile-view");
+    this.element.addStyleClass("webgl-profile-view");
 
     this._traceLogElement = document.createElement("div");
-    this._traceLogElement.className = "canvas-trace-log";
+    this._traceLogElement.className = "webgl-trace-log";
     this._traceLogElement.addEventListener("click", this._onTraceLogItemClick.bind(this), false);
     this.element.appendChild(this._traceLogElement);
 
     var replayImageContainer = document.createElement("div");
-    replayImageContainer.id = "canvas-replay-image-container";
+    replayImageContainer.id = "webgl-replay-image-container";
     this.element.appendChild(replayImageContainer);
 
     this._replayImageElement = document.createElement("image");
-    this._replayImageElement.id = "canvas-replay-image";
+    this._replayImageElement.id = "webgl-replay-image";
     replayImageContainer.appendChild(this._replayImageElement);
 
     this._debugInfoElement = document.createElement("div");
@@ -60,11 +60,11 @@ WebInspector.CanvasProfileView = function(profile)
     this._showTraceLog();
 }
 
-WebInspector.CanvasProfileView.prototype = {
+WebInspector.WebGLProfileView.prototype = {
     dispose: function()
     {
         this._linkifier.reset();
-        CanvasAgent.dropTraceLog(this._profile.traceLogId());
+        WebGLAgent.dropTraceLog(this._profile.traceLogId());
     },
 
     get statusBarItems()
@@ -126,7 +126,7 @@ WebInspector.CanvasProfileView.prototype = {
                 this._traceLogElement.appendChild(traceLogItem);
             }
         }
-        CanvasAgent.getTraceLog(this._profile.traceLogId(), didReceiveTraceLog.bind(this));
+        WebGLAgent.getTraceLog(this._profile.traceLogId(), didReceiveTraceLog.bind(this));
     },
 
     _onTraceLogItemClick: function(e)
@@ -144,30 +144,30 @@ WebInspector.CanvasProfileView.prototype = {
             this._activeTraceLogItem.style.backgroundColor = "yellow";
             this._replayImageElement.src = dataURL;
         }
-        CanvasAgent.replayTraceLog(item.traceLogId, item.stepNo, didReplayTraceLog.bind(this));
+        WebGLAgent.replayTraceLog(item.traceLogId, item.stepNo, didReplayTraceLog.bind(this));
     }
 }
 
-WebInspector.CanvasProfileView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.WebGLProfileView.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
  */
-WebInspector.CanvasProfileType = function()
+WebInspector.WebGLProfileType = function()
 {
-    WebInspector.ProfileType.call(this, WebInspector.CanvasProfileType.TypeId, WebInspector.UIString("Capture Canvas Frame"));
+    WebInspector.ProfileType.call(this, WebInspector.WebGLProfileType.TypeId, WebInspector.UIString("Capture WebGL Frame"));
     this._nextProfileUid = 1;
     // FIXME: enable/disable by a UI action?
-    CanvasAgent.enable();
+    WebGLAgent.enable();
 }
 
-WebInspector.CanvasProfileType.TypeId = "CANVAS_PROFILE";
+WebInspector.WebGLProfileType.TypeId = "WEBGL_PROFILE";
 
-WebInspector.CanvasProfileType.prototype = {
+WebInspector.WebGLProfileType.prototype = {
     get buttonTooltip()
     {
-        return WebInspector.UIString("Capture Canvas Frame.");
+        return WebInspector.UIString("Capture WebGL frame.");
     },
 
     /**
@@ -177,7 +177,7 @@ WebInspector.CanvasProfileType.prototype = {
      */
     buttonClicked: function(profilesPanel)
     {
-        var profileHeader = new WebInspector.CanvasProfileHeader(this, WebInspector.UIString("Trace Log %d", this._nextProfileUid), this._nextProfileUid);
+        var profileHeader = new WebInspector.WebGLProfileHeader(this, WebInspector.UIString("Trace Log %d", this._nextProfileUid), this._nextProfileUid);
         ++this._nextProfileUid;
         profileHeader.isTemporary = true;
         profilesPanel.addProfileHeader(profileHeader);
@@ -186,18 +186,18 @@ WebInspector.CanvasProfileType.prototype = {
             profileHeader._traceLogId = traceLogId;
             profileHeader.isTemporary = false;
         }
-        CanvasAgent.captureFrame(didStartCapturingFrame.bind(this));
+        WebGLAgent.captureFrame(didStartCapturingFrame.bind(this));
         return false;
     },
 
     get treeItemTitle()
     {
-        return WebInspector.UIString("CANVAS PROFILE");
+        return WebInspector.UIString("WEBGL PROFILE");
     },
 
     get description()
     {
-        return WebInspector.UIString("Canvas calls instrumentation");
+        return WebInspector.UIString("WebGL calls instrumentation");
     },
 
     /**
@@ -216,7 +216,7 @@ WebInspector.CanvasProfileType.prototype = {
     createTemporaryProfile: function(title)
     {
         title = title || WebInspector.UIString("Capturing\u2026");
-        return new WebInspector.CanvasProfileHeader(this, title);
+        return new WebInspector.WebGLProfileHeader(this, title);
     },
 
     /**
@@ -226,20 +226,20 @@ WebInspector.CanvasProfileType.prototype = {
      */
     createProfile: function(profile)
     {
-        return new WebInspector.CanvasProfileHeader(this, profile.title, -1);
+        return new WebInspector.WebGLProfileHeader(this, profile.title, -1);
     }
 }
 
-WebInspector.CanvasProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+WebInspector.WebGLProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
 
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.CanvasProfileType} type
+ * @param {WebInspector.WebGLProfileType} type
  * @param {string} title
  * @param {number=} uid
  */
-WebInspector.CanvasProfileHeader = function(type, title, uid)
+WebInspector.WebGLProfileHeader = function(type, title, uid)
 {
     WebInspector.ProfileHeader.call(this, type, title, uid);
 
@@ -249,7 +249,7 @@ WebInspector.CanvasProfileHeader = function(type, title, uid)
     this._traceLogId = null;
 }
 
-WebInspector.CanvasProfileHeader.prototype = {
+WebInspector.WebGLProfileHeader.prototype = {
     /**
      * @return {string?}
      */
@@ -271,8 +271,8 @@ WebInspector.CanvasProfileHeader.prototype = {
      */
     createView: function(profilesPanel)
     {
-        return new WebInspector.CanvasProfileView(this);
+        return new WebInspector.WebGLProfileView(this);
     }
 }
 
-WebInspector.CanvasProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;
+WebInspector.WebGLProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;

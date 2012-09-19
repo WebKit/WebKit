@@ -500,10 +500,10 @@ DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/Inspe
 DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
 DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html
 	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.h
-DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h: $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptCanvasModuleSource_js $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.h
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
 	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
+DerivedSources/WebCore/InjectedScriptWebGLModuleSource.h: $(WebCore)/inspector/InjectedScriptWebGLModuleSource.js
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptWebGLModuleSource_js $(WebCore)/inspector/InjectedScriptWebGLModuleSource.js $(GENSOURCES_WEBCORE)/InjectedScriptWebGLModuleSource.h
 
 if ENABLE_WEB_AUDIO
 # Installing HRTF database wav files
@@ -774,8 +774,8 @@ EXTRA_DIST += \
 	Source/WebCore/html/parser/HTMLEntityNames.in \
 	Source/WebCore/icu/LICENSE \
 	Source/WebCore/inspector/CodeGeneratorInspector.py \
-	Source/WebCore/inspector/InjectedScriptCanvasModuleSource.js \
 	Source/WebCore/inspector/InjectedScriptSource.js \
+	Source/WebCore/inspector/InjectedScriptWebGLModuleSource.js \
 	Source/WebCore/inspector/Inspector.json \
 	Source/WebCore/inspector/Inspector-1.0.json \
 	Source/WebCore/inspector/InspectorOverlayPage.html \

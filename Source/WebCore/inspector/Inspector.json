@@ -3068,7 +3068,7 @@
         ]
     },
     {
-        "domain": "Canvas",
+        "domain": "WebGL",
         "hidden": true,
         "types": [
             {
@@ -3100,11 +3100,11 @@
         "commands": [
             {
                 "name": "enable",
-                "description": "Enables Canvas inspection."
+                "description": "Enables WebGL inspection."
             },
             {
                 "name": "disable",
-                "description": "Disables Canvas inspection."
+                "description": "Disables WebGL inspection."
             },
             {
                 "name": "dropTraceLog",
