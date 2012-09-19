@@ -921,12 +921,7 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
         return false;
 
     float fullScreenMultiplier = determineFullScreenMultiplier(mediaElement);
-    float loaded = 0;
-    // FIXME: replace loaded with commented out one when buffer bug is fixed (see comment in
-    // MediaPlayerPrivateMMrenderer::percentLoaded).
-    // loaded = mediaElement->percentLoaded();
-    if (mediaElement->player() && mediaElement->player()->implementation())
-        loaded = static_cast<MediaPlayerPrivate *>(mediaElement->player()->implementation())->percentLoaded();
+    float loaded = mediaElement->percentLoaded();
     float position = mediaElement->duration() > 0 ? (mediaElement->currentTime() / mediaElement->duration()) : 0;
 
     int x = ceil(rect.x() + 2 * fullScreenMultiplier - fullScreenMultiplier / 2);
