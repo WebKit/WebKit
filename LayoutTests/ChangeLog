@@ -1,5 +1,16 @@
 2012-09-18  Dirk Pranke  <dpranke@chromium.org>
 
+        [chromium] Adjust expectation for fast/css/sticky/sticky-left-percentage.html
+        http://webkit.org/b/95136
+
+        Unreviewed, expectations change.
+
+        The test is only failing on win and linux now.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-18  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] overflow-auto-with-touch-toggle is no longer failing.
         https://bugs.webkit.org/show_bug.cgi?id=94353
 
