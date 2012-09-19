@@ -1,3 +1,28 @@
+2012-09-18  Noel Gordon  <noel.gordon@gmail.com>
+
+        Add partial load tests for PNG images
+        https://bugs.webkit.org/show_bug.cgi?id=95707
+
+        Reviewed by Adam Barth.
+
+        Partial load test: receive a partial number of image bytes and stall forever. The
+        partial image should be decoded and drawn and the blue <img> background should be
+        visible.
+
+        Progressive load test: receive a partial number of image bytes, stall for 1 second
+        and then continue to receive all the image bytes. The entire test image should be
+        decoded and drawn and the blue <img> background should be visible.
+
+        * fast/images/resources/dice.png: Added: test image has alpha transparency.
+        * http/tests/images/png-partial-load-expected.png: Added.
+        * http/tests/images/png-partial-load-expected.txt: Added.
+        * http/tests/images/png-partial-load.html: Added.
+        * http/tests/images/png-progressive-load-expected.png: Added.
+        * http/tests/images/png-progressive-load-expected.txt: Added.
+        * http/tests/images/png-progressive-load.html: Added.
+        * platform/chromium/http/tests/images/png-partial-load-expected.png: Added.
+        * platform/mac/http/tests/images/png-partial-load-expected.png: Added.
+
 2012-09-18  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Notification.requestPermission(function() {alert();}) crashes
