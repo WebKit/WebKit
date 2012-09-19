@@ -34,6 +34,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
+#include <WebCore/UserAgentGtk.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
@@ -47,6 +48,7 @@ struct _WebKitSettingsPrivate {
     CString fantasyFontFamily;
     CString pictographFontFamily;
     CString defaultCharset;
+    CString userAgent;
     bool allowModalDialogs;
     bool zoomTextOnly;
 };
@@ -114,7 +116,8 @@ enum {
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
     PROP_DRAW_COMPOSITING_INDICATORS,
     PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
-    PROP_ENABLE_PAGE_CACHE
+    PROP_ENABLE_PAGE_CACHE,
+    PROP_USER_AGENT
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -244,6 +247,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_PAGE_CACHE:
         webkit_settings_set_enable_page_cache(settings, g_value_get_boolean(value));
+        break;
+    case PROP_USER_AGENT:
+        webkit_settings_set_user_agent(settings, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -378,6 +384,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_PAGE_CACHE:
         g_value_set_boolean(value, webkit_settings_get_enable_page_cache(settings));
+        break;
+    case PROP_USER_AGENT:
+        g_value_set_string(value, webkit_settings_get_user_agent(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1010,6 +1019,26 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          TRUE,
                                                          readWriteConstructParamFlags));
 
+    /**
+     * WebKitSettings:user-agent:
+     *
+     * The user-agent string used by WebKit. Unusual user-agent strings may cause web
+     * content to render incorrectly or fail to run, as many web pages are written to
+     * parse the user-agent strings of only the most popular browsers. Therefore, it's
+     * typically better to not completely override the standard user-agent, but to use
+     * webkit_settings_set_user_agent_with_application_details() instead.
+     *
+     * If this property is set to the empty string or %NULL, it will revert to the standard
+     * user-agent.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_USER_AGENT,
+                                    g_param_spec_string("user-agent",
+                                                        _("User agent string"),
+                                                        _("The user agent string"),
+                                                        0, // A null string forces the standard user agent.
+                                                        readWriteConstructParamFlags));
+
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
 }
 
@@ -1048,8 +1077,13 @@ static void webkit_settings_init(WebKitSettings* settings)
 
 void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WKPageRef wkPage)
 {
-    WKPageGroupSetPreferences(WKPageGetPageGroup(wkPage), settings->priv->preferences.get());
-    WebKit::toImpl(wkPage)->setCanRunModal(settings->priv->allowModalDialogs);
+    WebKitSettingsPrivate* priv = settings->priv;
+    WKPageGroupSetPreferences(WKPageGetPageGroup(wkPage), priv->preferences.get());
+    WebKit::toImpl(wkPage)->setCanRunModal(priv->allowModalDialogs);
+
+    ASSERT(!priv->userAgent.isNull());
+    WKRetainPtr<WKStringRef> userAgent = adoptWK(WKStringCreateWithUTF8CString(priv->userAgent.data()));
+    WKPageSetCustomUserAgent(wkPage, userAgent.get());
 }
 
 /**
@@ -2554,4 +2588,59 @@ void webkit_settings_set_enable_page_cache(WebKitSettings* settings, gboolean en
 
     WKPreferencesSetPageCacheEnabled(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-page-cache");
+}
+
+/**
+ * webkit_settings_get_user_agent:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:user-agent property.
+ *
+ * Returns: The current value of the user-agent property.
+ */
+const char* webkit_settings_get_user_agent(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    ASSERT(!priv->userAgent.isNull());
+    return priv->userAgent.data();
+}
+
+/**
+ * webkit_settings_set_user_agent:
+ * @settings: a #WebKitSettings
+ * @user_agent: (allow-none): The new custom user agent string or %NULL to use the default user agent
+ *
+ * Set the #WebKitSettings:user-agent property.
+ */
+void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAgent)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    CString newUserAgent = (!userAgent || !strlen(userAgent)) ? WebCore::standardUserAgent("").utf8() : userAgent;
+    if (newUserAgent == priv->userAgent)
+        return;
+
+    priv->userAgent = newUserAgent;
+    g_object_notify(G_OBJECT(settings), "user-agent");
+}
+
+/**
+ * webkit_settings_set_user_agent_with_application_details:
+ * @settings: a #WebKitSettings
+ * @application_name: (allow-none): The application name used for the user agent or %NULL to use the default user agent.
+ * @application_version: (allow-none): The application version for the user agent or %NULL to user the default version.
+ *
+ * Set the #WebKitSettings:user-agent property by appending the application details to the default user
+ * agent. If no application name or version is given, the default user agent used will be used. If only
+ * the version is given, the default engine version is used with the given application name.
+ */
+void webkit_settings_set_user_agent_with_application_details(WebKitSettings* settings, const char* applicationName, const char* applicationVersion)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    CString newUserAgent = WebCore::standardUserAgent(String::fromUTF8(applicationName), String::fromUTF8(applicationVersion)).utf8();
+    webkit_settings_set_user_agent(settings, newUserAgent.data());
 }

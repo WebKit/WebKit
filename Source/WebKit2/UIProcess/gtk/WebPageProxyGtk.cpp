@@ -33,6 +33,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/UserAgentGtk.h>
 #include <gtk/gtkx.h>
 
 namespace WebKit {
@@ -44,8 +45,7 @@ GtkWidget* WebPageProxy::viewWidget()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    // FIXME: This should not be hard coded.
-    return "Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.7 (KHTML, like Gecko) Version/5.0 Safari/534.7";
+    return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
 
 void WebPageProxy::getEditorCommandsForKeyEvent(const AtomicString& eventType, Vector<WTF::String>& commandsList)

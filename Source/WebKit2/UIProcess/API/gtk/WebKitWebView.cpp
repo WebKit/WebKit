@@ -248,12 +248,19 @@ static void zoomTextOnlyChanged(WebKitSettings* settings, GParamSpec*, WebKitWeb
     WKPageSetPageAndTextZoomFactors(wkPage, pageZoomLevel, textZoomLevel);
 }
 
+static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
+{
+    WKRetainPtr<WKStringRef> userAgent = adoptWK(WKStringCreateWithUTF8CString(webkit_settings_get_user_agent(settings)));
+    WKPageSetCustomUserAgent(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))), userAgent.get());
+}
+
 static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* settings, WKPageRef wkPage)
 {
     webView->priv->settings = settings;
     webkitSettingsAttachSettingsToPage(webView->priv->settings.get(), wkPage);
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
+    g_signal_connect(settings, "notify::user-agent", G_CALLBACK(userAgentChanged), webView);
 }
 
 static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView)
@@ -261,7 +268,7 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     WebKitSettings* settings = webView->priv->settings.get();
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(allowModalDialogsChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
-
+    g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
 }
 
 static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebKitWebView* webView)

@@ -1,3 +1,39 @@
+2012-09-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [WebKit2] [GTK] Add API for controlling the user agent
+        https://bugs.webkit.org/show_bug.cgi?id=95697
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add API for changing the user agent in WebKit2. This adds two styles of
+        setting the user agent: complete override and a method that just inserts
+        the application name and version, but preserves the carefully crafted user agent
+        in the library.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate): Added a new field to store the user agent.
+        This is stored in the private data structure, because we can only
+        set the user agent when attaching the settings to the page.
+        (webKitSettingsSetProperty): Add hooks for the new user agent property.
+        (webKitSettingsGetProperty): Ditto.
+        (webkit_settings_class_init): Ditto.
+        (webkitSettingsAttachSettingsToPage): Ditto.
+        (webkit_settings_get_user_agent): Added.
+        (webkit_settings_set_user_agent): Added.
+        (webkit_settings_set_user_agent_with_application_name): Added.
+        * UIProcess/API/gtk/WebKitSettings.h: Added new methods.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Update the glue for the settings
+        when attaching and detaching from WebViews.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Added new methods to
+        the documentation.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp: Test the new user agent
+        property.
+        (testWebKitSettingsUserAgent): Ditto.
+        (beforeAll): Ditto.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::standardUserAgent): Now use the shared WebCore
+        code when setting the user agent.
+
 2012-09-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Implement PageClientImpl::isViewFocused.

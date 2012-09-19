@@ -31,9 +31,13 @@
 #include "config.h"
 
 #include "TestMain.h"
+#include "WebViewTest.h"
+#include "WebKitTestServer.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <wtf/gobject/GRefPtr.h>
+
+static WebKitTestServer* gServer;
 
 static void testWebKitSettings(Test*, gconstpointer)
 {
@@ -254,13 +258,81 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
+static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
+{
+    size_t mainResourceDataSize = 0;
+    const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
+    return CString(mainResourceData, mainResourceDataSize);
+}
+
+static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)
+{
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpstr(convertWebViewMainResourceDataToCString(test).data(), ==, userAgent.data());
+}
+
+static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
+{
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
+    CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
+    webkit_web_view_set_settings(test->m_webView, settings.get());
+
+    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Safari"));
+    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Chromium"));
+    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Chrome"));
+
+    webkit_settings_set_user_agent(settings.get(), 0);
+    g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
+    assertThatUserAgentIsSentInHeaders(test, defaultUserAgent.data());
+
+    webkit_settings_set_user_agent(settings.get(), "");
+    g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
+
+    const char* funkyUserAgent = "Funky!";
+    webkit_settings_set_user_agent(settings.get(), funkyUserAgent);
+    g_assert_cmpstr(funkyUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
+    assertThatUserAgentIsSentInHeaders(test, funkyUserAgent);
+
+    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", 0);
+    CString userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
+    g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion.data(), -1, defaultUserAgent.data()), ==, userAgentWithNullVersion.data());
+    g_assert(g_strstr_len(userAgentWithNullVersion.data(), -1, "WebKitGTK+"));
+
+    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", "");
+    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion.data());
+
+    webkit_settings_set_user_agent_with_application_details(settings.get(), "WebCatGTK+", "3.4.5");
+    const char* newUserAgent = webkit_settings_get_user_agent(settings.get());
+    g_assert(g_strstr_len(newUserAgent, -1, "3.4.5"));
+    g_assert(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
+}
+
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+    const char* userAgent = soup_message_headers_get_one(message->request_headers, "User-Agent");
+    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, userAgent, strlen(userAgent));
+    soup_message_body_complete(message->response_body);
+}
+
 void beforeAll()
 {
+    gServer = new WebKitTestServer();
+    gServer->run(serverCallback);
+
     Test::add("WebKitSettings", "webkit-settings", testWebKitSettings);
     Test::add("WebKitSettings", "new-with-settings", testWebKitSettingsNewWithSettings);
+    WebViewTest::add("WebKitSettings", "user-agent", testWebKitSettingsUserAgent);
 }
 
 void afterAll()
 {
+    delete gServer;
 }
 
