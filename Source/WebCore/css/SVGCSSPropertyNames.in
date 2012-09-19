@@ -30,6 +30,7 @@ marker
 marker-end
 marker-mid
 marker-start
+mask-type
 shape-rendering
 stroke
 stroke-dasharray

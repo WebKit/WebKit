@@ -83,6 +83,11 @@ namespace WebCore {
         VE_NON_SCALING_STROKE
     };
 
+    enum EMaskType {
+        MT_LUMINANCE,
+        MT_ALPHA
+    };
+
     class CSSValue;
     class CSSValueList;
     class SVGPaint;

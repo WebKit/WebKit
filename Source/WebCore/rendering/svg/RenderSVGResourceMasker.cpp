@@ -153,8 +153,12 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
     UNUSED_PARAM(colorSpace);
 #endif
 
+    ASSERT(style());
+    ASSERT(style()->svgStyle());
     // Create the luminance mask.
-    maskerData->maskImage->convertToLuminanceMask();
+    if (style()->svgStyle()->maskType() == MT_LUMINANCE)
+        maskerData->maskImage->convertToLuminanceMask();
+
     return true;
 }
 

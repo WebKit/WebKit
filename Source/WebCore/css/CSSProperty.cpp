@@ -683,6 +683,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #if ENABLE(SVG)
     case CSSPropertyClipPath:
     case CSSPropertyMask:
+    case CSSPropertyMaskType:
     case CSSPropertyEnableBackground:
     case CSSPropertyFilter:
     case CSSPropertyFloodColor:

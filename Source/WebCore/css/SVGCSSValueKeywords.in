@@ -4,6 +4,7 @@
 // CSS_PROP_*_COLOR
 //
 aliceblue
+alpha
 antiquewhite
 // aqua
 aquamarine
@@ -88,6 +89,7 @@ lightyellow
 // lime
 limegreen
 linen
+luminance
 magenta
 // maroon
 mediumaquamarine

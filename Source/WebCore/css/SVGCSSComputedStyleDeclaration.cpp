@@ -192,6 +192,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(CSSProp
             return valueForShadow(svgStyle->shadow(), propertyID, style);
         case CSSPropertyVectorEffect:
             return CSSPrimitiveValue::create(svgStyle->vectorEffect());
+        case CSSPropertyMaskType:
+            return CSSPrimitiveValue::create(svgStyle->maskType());
         case CSSPropertyMarker:
         case CSSPropertyEnableBackground:
         case CSSPropertyColorProfile:

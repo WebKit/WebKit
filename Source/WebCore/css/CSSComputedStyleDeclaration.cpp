@@ -377,6 +377,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyMarkerEnd,
     CSSPropertyMarkerMid,
     CSSPropertyMarkerStart,
+    CSSPropertyMaskType,
     CSSPropertyShapeRendering,
     CSSPropertyStroke,
     CSSPropertyStrokeDasharray,
@@ -2613,6 +2614,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyMarkerEnd:
         case CSSPropertyMarkerMid:
         case CSSPropertyMarkerStart:
+        case CSSPropertyMaskType:
         case CSSPropertyShapeRendering:
         case CSSPropertyStroke:
         case CSSPropertyStrokeDasharray:

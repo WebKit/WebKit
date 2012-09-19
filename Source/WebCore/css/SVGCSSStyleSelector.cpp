@@ -582,6 +582,14 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             svgstyle->setVectorEffect(*primitiveValue);
             break;
         }
+        case CSSPropertyMaskType: {
+            HANDLE_INHERIT_AND_INITIAL(maskType, MaskType)
+            if (!primitiveValue)
+                break;
+
+            svgstyle->setMaskType(*primitiveValue);
+            break;
+        }
         default:
             // If you crash here, it's because you added a css property and are not handling it
             // in either this switch statement or the one in StyleResolver::applyProperty

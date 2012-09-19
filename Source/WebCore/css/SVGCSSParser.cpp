@@ -270,6 +270,11 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
             return false;
         }
 
+    case CSSPropertyMaskType: // luminance | alpha | inherit
+        if (id == CSSValueLuminance || id == CSSValueAlpha)
+            valid_primitive = true;
+        break;
+
     /* shorthand properties */
     case CSSPropertyMarker:
     {
