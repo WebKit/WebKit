@@ -1,99 +1,100 @@
-// We divide the EFL WK2 test expectations into several categories:
-// 1. TESTS EXPECTED TO FAIL
-//    Test cases related to features that we don't expect to be activated for EFL WK2 since
-//    the feature implementation in WebKit2 is missing or not complete yet.
-//    If test cases related to a feature cannot be activated since e.g.
-//    * the feature implementation in WebCore is not complete yet
-//    * the feature is not relevant for the EFL port
-//    * the feature is meant to solve a backwards compatibility issue on other platforms
-//    please put them into EFL TestExpectations file.
-//    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
-//    should be moved here.
+# We divide the EFL WK2 test expectations into several categories:
+# 1. TESTS EXPECTED TO FAIL
+#    Test cases related to features that we don't expect to be activated for EFL WK2 since
+#    the feature implementation in WebKit2 is missing or not complete yet.
+#    If test cases related to a feature cannot be activated since e.g.
+#    * the feature implementation in WebCore is not complete yet
+#    * the feature is not relevant for the EFL port
+#    * the feature is meant to solve a backwards compatibility issue on other platforms
+#    please put them into EFL TestExpectations file.
+#    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
+#    should be moved here.
 
-// 2. CRASHES
+# 2. CRASHES
 
-// 3. FLAKY TESTS
+# 3. FLAKY TESTS
 
-// 4. FAILING TESTS
-//    * Interim failures that are moved here for further investigation as a result of daily
-//      gardening. They should be analysed quickly and either resolved or moved to 1).
-//    * Remaining failures that are moved here until further investigation after
-//      unskipping a directory or block of tests in the Skipped list.
-//    * Tests that we expect to pass once the respective fix for DRT is available or
-//      a relevant compile time feature can be enabled for EFL.
+# 4. FAILING TESTS
+#    * Interim failures that are moved here for further investigation as a result of daily
+#      gardening. They should be analysed quickly and either resolved or moved to 1).
+#    * Remaining failures that are moved here until further investigation after
+#      unskipping a directory or block of tests in the Skipped list.
+#    * Tests that we expect to pass once the respective fix for DRT is available or
+#      a relevant compile time feature can be enabled for EFL.
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// TESTS EXPECTED TO FAIL
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS EXPECTED TO FAIL
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// CRASHES
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# CRASHES
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// Crash shared with the GTK+ port
-BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
+# Crash shared with the GTK+ port
+webkit.org/b/30724 [ Debug ] fast/loader/opaque-base-url.html [ Crash ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// FLAKY TESTS
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# FLAKY TESTS
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// Test passes, but editing delegates does not match expected ones
-BUGWKEFL : editing/undo/undo-indent.html = FAIL PASS
-BUGWKEFL : editing/undo/undo-misspellings.html = FAIL PASS
+# Test passes, but editing delegates does not match expected ones
+Bug(EFL) editing/undo/undo-indent.html [ Failure Pass ]
+Bug(EFL) editing/undo/undo-misspellings.html [ Failure Pass ]
 
-BUGWK96641 : media/video-seek-past-end-playing.html = FAIL PASS
-BUGWK96642 : loader/go-back-to-different-window-size.html = FAIL PASS
+webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
+webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Failure Pass ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// FAILING TESTS
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# FAILING TESTS
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
-BUGWK84835 : editing/execCommand/indent-paragraphs.html = FAIL
+# EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
+webkit.org/b/84835 editing/execCommand/indent-paragraphs.html [ Failure ]
 
-// Frame does not get focus as expected
-BUGWK97077 : inspector/extensions/extensions-panel.html = FAIL
+# Frame does not get focus as expected
+webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 
-// Custom font loading delaying text drawing on Canvas
-BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = FAIL
+# Custom font loading delaying text drawing on Canvas
+webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 
-// EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
-BUGWK86460 : http/tests/appcache/origin-usage.html = FAIL
+# EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
+webkit.org/b/86460 http/tests/appcache/origin-usage.html [ Failure ]
 
-// EFL's TestRunner does not implement originsWithApplicationCache
-BUGWK86498 : http/tests/appcache/origins-with-appcache.html = FAIL
+# EFL's TestRunner does not implement originsWithApplicationCache
+webkit.org/b/86498 http/tests/appcache/origins-with-appcache.html [ Failure ]
 
-// Missing showModalDialog implementation
-BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = FAIL
-BUGWK84589 : http/tests/security/cross-frame-access-call.html = FAIL
+# Missing showModalDialog implementation
+webkit.org/b/84589 fast/animation/request-animation-frame-during-modal.html [ Failure ]
+webkit.org/b/84589 http/tests/security/cross-frame-access-call.html [ Failure ]
 
-// Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = FAIL
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = FAIL
+# Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
+webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
+webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
 
-// EFL's DRT needs CONFIRM NAVIGATION messages
-BUGWK87246 : fast/loader/form-submission-after-beforeunload-cancel.html = FAIL
+# EFL's DRT needs CONFIRM NAVIGATION messages
+webkit.org/b/87246 fast/loader/form-submission-after-beforeunload-cancel.html [ Failure ]
 
-// New test introduced in r116694 fails
-BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = FAIL
+# New test introduced in r116694 fails
+webkit.org/b/86182 fast/frames/seamless/seamless-inherited-document-style.html [ Failure ]
 
-// Passes in some machines and fails on other (such as the bots).
-BUGWK97021 : fast/events/dont-loose-last-event.html = FAIL
+# Passes in some machines and fails on other (such as the bots).
+webkit.org/b/97021 fast/events/dont-loose-last-event.html [ Failure ]
 
-// New windows are created with wrong size
-BUGWK53959 : fast/dom/Window/window-resize.html = FAIL
-BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = FAIL
+# New windows are created with wrong size
+webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/53959 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
 
-// Feature not mature yet and disabled by default on WebCore
-BUGWK87088 : fast/js/names.html = FAIL
+# Feature not mature yet and disabled by default on WebCore
+webkit.org/b/87088 fast/js/names.html [ Failure ]
 
-// Failing after 125592
-BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = FAIL
+# Failing after 125592
+webkit.org/b/94194 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Failure ]
 
-// Fail after r128393.
-BUGWK96620 : http/tests/loading/pdf-commit-load-callbacks.html = FAIL
-BUGWK96620 : http/tests/loading/text-content-type-with-binary-extension.html = FAIL
+# Fail after r128393.
+webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
+webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
-// EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements.
-BUGWK82864 : fast/events/keypress-insert-tab.html = FAIL
+# EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements.
+webkit.org/b/82864 fast/events/keypress-insert-tab.html [ Failure ]
+
 

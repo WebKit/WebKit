@@ -1,204 +1,205 @@
-// We divide the EFL WK2 test expectations into several categories:
-// 1. TESTS EXPECTED TO FAIL
-//    Test cases related to features that we don't expect to be activated for EFL WK2 since
-//    the feature implementation in WebKit2 is missing or not complete yet.
-//    If test cases related to a feature cannot be activated since e.g.
-//    * the feature implementation in WebCore is not complete yet
-//    * the feature is not relevant for the EFL port
-//    * the feature is meant to solve a backwards compatibility issue on other platforms
-//    please put them into EFL TestExpectations file.
-//    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
-//    should be moved here.
+# We divide the EFL WK2 test expectations into several categories:
+# 1. TESTS EXPECTED TO FAIL
+#    Test cases related to features that we don't expect to be activated for EFL WK2 since
+#    the feature implementation in WebKit2 is missing or not complete yet.
+#    If test cases related to a feature cannot be activated since e.g.
+#    * the feature implementation in WebCore is not complete yet
+#    * the feature is not relevant for the EFL port
+#    * the feature is meant to solve a backwards compatibility issue on other platforms
+#    please put them into EFL TestExpectations file.
+#    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
+#    should be moved here.
 
-// 2. CRASHES
+# 2. CRASHES
 
-// 3. FLAKY TESTS
+# 3. FLAKY TESTS
 
-// 4. FAILING TESTS
-//    * Interim failures that are moved here for further investigation as a result of daily
-//      gardening. They should be analysed quickly and either resolved or moved to 1).
-//    * Remaining failures that are moved here until further investigation after
-//      unskipping a directory or block of tests in the Skipped list.
-//    * Tests that we expect to pass once the respective fix for DRT is available or
-//      a relevant compile time feature can be enabled for EFL.
+# 4. FAILING TESTS
+#    * Interim failures that are moved here for further investigation as a result of daily
+#      gardening. They should be analysed quickly and either resolved or moved to 1).
+#    * Remaining failures that are moved here until further investigation after
+#      unskipping a directory or block of tests in the Skipped list.
+#    * Tests that we expect to pass once the respective fix for DRT is available or
+#      a relevant compile time feature can be enabled for EFL.
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// TESTS EXPECTED TO FAIL
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS EXPECTED TO FAIL
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// CRASHES
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# CRASHES
+#////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
-BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
+Bug(EFL) fast/dom/register-protocol-handler.html [ Crash ]
+Bug(EFL) fast/dom/unregister-protocol-handler.html [ Crash ]
 
-// WebKitTestRunner needs an implementation for download attribute feature
-// The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
-// anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
-BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-download.html = CRASH
-BUGWKEFL : fast/dom/HTMLAnchorElement/anchor-nodownload-set.html = CRASH
+# WebKitTestRunner needs an implementation for download attribute feature
+# The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
+# anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
+Bug(EFL) fast/dom/HTMLAnchorElement/anchor-download.html [ Crash ]
+Bug(EFL) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// FLAKY TESTS
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# FLAKY TESTS
+#////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKEFL : http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html = PASS CRASH
-BUGWKEFL : inspector/styles/styles-add-new-rule.html = FAIL PASS
-BUGWKEFL : inspector/styles/metrics-box-sizing.html = FAIL PASS
-BUGWKEFL : inspector/styles/inject-stylesheet.html = FAIL PASS
-BUGWKEFL : inspector/styles/css-live-edit.html = FAIL PASS
-BUGWKEFL : inspector/styles/styles-cancel-editing.html = FAIL PASS
-BUGWKEFL : inspector/styles/get-set-stylesheet-text.html = FAIL PASS
-BUGWKEFL : inspector/styles/lazy-computed-style.html = FAIL PASS
-BUGWKEFL : inspector/styles/add-new-rule-inline-style-csp.html = FAIL PASS
-BUGWKEFL : inspector/styles/styles-commit-editing.html = FAIL PASS
-BUGWKEFL : inspector/styles/styles-history.html = FAIL PASS
-BUGWKEFL : inspector/styles/edit-inspector-stylesheet.html = FAIL PASS
-BUGWKEFL : inspector/styles/commit-selector.html = FAIL PASS
-BUGWKEFL : inspector/styles/force-pseudo-state.html = FAIL PASS
-BUGWKEFL : inspector/styles/styles-add-invalid-property.html = FAIL PASS
-BUGWKEFL : inspector/styles/perform-undo-perform-of-mergable-action.html = FAIL PASS
-BUGWKEFL : inspector/elements/delete-from-document.html = FAIL PASS
-BUGWKEFL : inspector/elements/insert-node.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-inspect-iframe-from-different-domain.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-styles.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-selection-on-refresh.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-limited-children.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-reload-assert.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-rewrite-href.html = FAIL PASS
-BUGWKEFL : inspector/elements/event-listener-sidebar.html = FAIL PASS
-BUGWKEFL : inspector/elements/elements-panel-structure.html = FAIL PASS
-BUGWKEFL : inspector/elements/highlight-node-scaled.html = FAIL PASS
-BUGWKEFL : inspector/console/console-format.html = FAIL PASS
-BUGWKEFL : inspector/console/command-line-api-inspect.html = FAIL PASS
-BUGWKEFL : inspector/console/console-api-on-call-frame.html = FAIL PASS
-BUGWKEFL : inspector/console/console-big-array.html = FAIL PASS
-BUGWKEFL : inspector/debugger/debugger-activation-crash2.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = FAIL PASS
-BUGWKEFL : inspector/debugger/debugger-eval-while-paused.html = FAIL PASS
-BUGWKEFL : inspector/debugger/callstack-placards-discarded.html = FAIL PASS
-BUGWKEFL : inspector/debugger/debugger-autocontinue-on-syntax-error.html = FAIL PASS
-BUGWKEFL : inspector/debugger/debugger-activation-crash.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-pause-in-eval-script.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-pause-on-debugger-statement.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-pause-on-failed-assertion.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-proto-property.html = FAIL PASS
-BUGWKEFL : inspector/debugger/debugger-set-breakpoint-regex.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/debugger-step-out.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/pause-in-inline-script.html = FAIL PASS
-BUGWKEFL : inspector/debugger/breakpoint-manager.html = FAIL PASS CRASH
-BUGWKEFL : inspector/debugger/copy-stack-trace.html = FAIL PASS
-BUGWKEFL : inspector/timeline/timeline-animation-frame.html = FAIL PASS
-BUGWKEFL : inspector/timeline/timeline-timer.html = FAIL PASS
-BUGWKEFL : inspector/cookie-parser.html = FAIL PASS
-BUGWKEFL : inspector/profiler/cpu-profiler-profiling.html = FAIL PASS
-BUGWKEFL : inspector/extensions/extensions-resources.html = FAIL PASS
-BUGWKEFL : inspector/extensions/extensions-audits-api.html = FAIL PASS
-BUGWKEFL : inspector/extensions/extensions-reload.html = FAIL PASS
-BUGWKEFL : inspector/editor/highlighter-basics.html = FAIL PASS
-BUGWKEFL : inspector/editor/highlighter-long-line.html = FAIL PASS
-BUGWKEFL : inspector/audits/audits-panel-functional.html = FAIL PASS
-BUGWKEFL : inspector/runtime/runtime-callFunctionOn.html = FAIL PASS
-BUGWKEFL : inspector/storage-panel-dom-storage-update.html = FAIL PASS
-BUGWKEFL : media/video-played-reset.html = FAIL PASS
-BUGWKEFL : fast/encoding/parser-tests-110.html = FAIL PASS
-BUGWKEFL : fast/loader/fragment-after-redirect-gets-back-entry.html = FAIL PASS
-BUGWKEFL : fast/loader/child-frame-add-after-back-forward.html = FAIL PASS
-BUGWKEFL : fast/forms/validation-message-user-modify.html = FAIL PASS
-BUGWKEFL : fast/events/backspace-navigates-back.html = FAIL PASS
-BUGWKEFL : fast/events/onchange-click-hang.html = FAIL PASS
-BUGWKEFL : fast/events/dispatch-message-string-data.html = FAIL PASS
-BUGWKEFL : fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html = IMAGE PASS
-BUGWKEFL : fast/events/domactivate-sets-underlying-click-event-as-handled.html = FAIL PASS
-BUGWKEFL : http/tests/inspector/change-iframe-src.html = FAIL PASS
-BUGWKEFL : http/tests/loading/fire-error-event-empty-404-script.html = FAIL CRASH PASS
-BUGWKEFL : jquery/data.html = FAIL PASS
-BUGWKEFL : jquery/offset.html = FAIL PASS
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html = FAIL PASS CRASH
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html = FAIL PASS CRASH
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html = FAIL PASS CRASH
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html = FAIL PASS CRASH
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html = FAIL PASS CRASH
-BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html = FAIL PASS CRASH
-BUGWKEFL : svg/dom/viewspec-parser-3.html = FAIL PASS
-BUGWKEFL : svg/dom/viewspec-parser-1.html = FAIL PASS
-BUGWKEFL : svg/dom/viewspec-parser-4.html = FAIL PASS
-BUGWKEFL : svg/dom/viewspec-parser-2.html = FAIL PASS
-BUGWKEFL : svg/dom/viewspec-parser-5.html = FAIL PASS
+Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass ]
+Bug(EFL) inspector/styles/styles-add-new-rule.html [ Failure Pass ]
+Bug(EFL) inspector/styles/metrics-box-sizing.html [ Failure Pass ]
+Bug(EFL) inspector/styles/inject-stylesheet.html [ Failure Pass ]
+Bug(EFL) inspector/styles/css-live-edit.html [ Failure Pass ]
+Bug(EFL) inspector/styles/styles-cancel-editing.html [ Failure Pass ]
+Bug(EFL) inspector/styles/get-set-stylesheet-text.html [ Failure Pass ]
+Bug(EFL) inspector/styles/lazy-computed-style.html [ Failure Pass ]
+Bug(EFL) inspector/styles/add-new-rule-inline-style-csp.html [ Failure Pass ]
+Bug(EFL) inspector/styles/styles-commit-editing.html [ Failure Pass ]
+Bug(EFL) inspector/styles/styles-history.html [ Failure Pass ]
+Bug(EFL) inspector/styles/edit-inspector-stylesheet.html [ Failure Pass ]
+Bug(EFL) inspector/styles/commit-selector.html [ Failure Pass ]
+Bug(EFL) inspector/styles/force-pseudo-state.html [ Failure Pass ]
+Bug(EFL) inspector/styles/styles-add-invalid-property.html [ Failure Pass ]
+Bug(EFL) inspector/styles/perform-undo-perform-of-mergable-action.html [ Failure Pass ]
+Bug(EFL) inspector/elements/delete-from-document.html [ Failure Pass ]
+Bug(EFL) inspector/elements/insert-node.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-inspect-iframe-from-different-domain.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-styles.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-selection-on-refresh.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-limited-children.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-reload-assert.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-rewrite-href.html [ Failure Pass ]
+Bug(EFL) inspector/elements/event-listener-sidebar.html [ Failure Pass ]
+Bug(EFL) inspector/elements/elements-panel-structure.html [ Failure Pass ]
+Bug(EFL) inspector/elements/highlight-node-scaled.html [ Failure Pass ]
+Bug(EFL) inspector/console/console-format.html [ Failure Pass ]
+Bug(EFL) inspector/console/command-line-api-inspect.html [ Failure Pass ]
+Bug(EFL) inspector/console/console-api-on-call-frame.html [ Failure Pass ]
+Bug(EFL) inspector/console/console-big-array.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-activation-crash2.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-breakpoints-not-activated-on-reload.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-eval-while-paused.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/callstack-placards-discarded.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-autocontinue-on-syntax-error.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-activation-crash.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-pause-in-eval-script.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-pause-on-debugger-statement.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-pause-on-failed-assertion.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-proto-property.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-set-breakpoint-regex.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/debugger-step-out.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/pause-in-inline-script.html [ Failure Pass ]
+Bug(EFL) inspector/debugger/breakpoint-manager.html [ Crash Failure Pass ]
+Bug(EFL) inspector/debugger/copy-stack-trace.html [ Failure Pass ]
+Bug(EFL) inspector/timeline/timeline-animation-frame.html [ Failure Pass ]
+Bug(EFL) inspector/timeline/timeline-timer.html [ Failure Pass ]
+Bug(EFL) inspector/cookie-parser.html [ Failure Pass ]
+Bug(EFL) inspector/profiler/cpu-profiler-profiling.html [ Failure Pass ]
+Bug(EFL) inspector/extensions/extensions-resources.html [ Failure Pass ]
+Bug(EFL) inspector/extensions/extensions-audits-api.html [ Failure Pass ]
+Bug(EFL) inspector/extensions/extensions-reload.html [ Failure Pass ]
+Bug(EFL) inspector/editor/highlighter-basics.html [ Failure Pass ]
+Bug(EFL) inspector/editor/highlighter-long-line.html [ Failure Pass ]
+Bug(EFL) inspector/audits/audits-panel-functional.html [ Failure Pass ]
+Bug(EFL) inspector/runtime/runtime-callFunctionOn.html [ Failure Pass ]
+Bug(EFL) inspector/storage-panel-dom-storage-update.html [ Failure Pass ]
+Bug(EFL) media/video-played-reset.html [ Failure Pass ]
+Bug(EFL) fast/encoding/parser-tests-110.html [ Failure Pass ]
+Bug(EFL) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass ]
+Bug(EFL) fast/loader/child-frame-add-after-back-forward.html [ Failure Pass ]
+Bug(EFL) fast/forms/validation-message-user-modify.html [ Failure Pass ]
+Bug(EFL) fast/events/backspace-navigates-back.html [ Failure Pass ]
+Bug(EFL) fast/events/onchange-click-hang.html [ Failure Pass ]
+Bug(EFL) fast/events/dispatch-message-string-data.html [ Failure Pass ]
+Bug(EFL) fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure Pass ]
+Bug(EFL) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
+Bug(EFL) http/tests/inspector/change-iframe-src.html [ Failure Pass ]
+Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
+Bug(EFL) jquery/data.html [ Failure Pass ]
+Bug(EFL) jquery/offset.html [ Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html [ Crash Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html [ Crash Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Crash Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Crash Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Crash Failure Pass ]
+Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Crash Failure Pass ]
+Bug(EFL) svg/dom/viewspec-parser-3.html [ Failure Pass ]
+Bug(EFL) svg/dom/viewspec-parser-1.html [ Failure Pass ]
+Bug(EFL) svg/dom/viewspec-parser-4.html [ Failure Pass ]
+Bug(EFL) svg/dom/viewspec-parser-2.html [ Failure Pass ]
+Bug(EFL) svg/dom/viewspec-parser-5.html [ Failure Pass ]
 
-// ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
-BUGWK35220 : inspector/debugger/debugger-no-nested-pause.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-pause-in-internal.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-pause-on-exception.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-reload-on-pause.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-scripts.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-step-in.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/debugger-step-over.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/disable-script.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/function-details.html = FAIL CRASH PASS
-BUGWK35220 : inspector/debugger/script-extract-outline.html = FAIL CRASH PASS
+# ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
+webkit.org/b/35220 inspector/debugger/debugger-no-nested-pause.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-pause-in-internal.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-pause-on-exception.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-reload-on-pause.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-scripts.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-step-in.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/debugger-step-over.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/disable-script.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/function-details.html [ Crash Failure Pass ]
+webkit.org/b/35220 inspector/debugger/script-extract-outline.html [ Crash Failure Pass ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// FAILING TESTS
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# FAILING TESTS
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// WebKitTestRunner needs an implementation for testRunner.queueLoad
-BUGWK42674 : fast/dom/navigation-type-back-forward.html = FAIL
-BUGWK42674 : fast/dom/navigation-type-navigate.html = FAIL
-BUGWK42674 : fast/dom/navigation-type-reload.html = FAIL
-BUGWK42674 : http/tests/navigation/response204.html = FAIL
+# WebKitTestRunner needs an implementation for testRunner.queueLoad
+webkit.org/b/42674 fast/dom/navigation-type-back-forward.html [ Failure ]
+webkit.org/b/42674 fast/dom/navigation-type-navigate.html [ Failure ]
+webkit.org/b/42674 fast/dom/navigation-type-reload.html [ Failure ]
+webkit.org/b/42674 http/tests/navigation/response204.html [ Failure ]
 
-// WebKitTestRunner needs an implementation for testRunner.titleTextDirection
-BUGWK93470 : fast/dom/title-directionality-removeChild.html = FAIL
-BUGWK93470 : fast/dom/title-directionality.html = FAIL
+# WebKitTestRunner needs an implementation for testRunner.titleTextDirection
+webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]
+webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 
-// WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
-BUGWKEFL : fast/events/popup-blocking-click-in-iframe.html = FAIL
+# WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
+Bug(EFL) fast/events/popup-blocking-click-in-iframe.html [ Failure ]
 
-// WebKitTestRunner eventSender needs touch events support
-BUGWK96465 : fast/events/touch/basic-multi-touch-events-limited.html = FAIL
-BUGWK96465 : fast/events/touch/basic-multi-touch-events.html = FAIL
-BUGWK96465 : fast/events/touch/basic-single-touch-events.html = FAIL
-BUGWK96465 : fast/events/touch/multi-touch-grouped-targets.html = FAIL
-BUGWK96465 : fast/events/touch/send-oncancel-event.html = FAIL
-BUGWK96465 : fast/events/touch/tap-highlight-color.html = FAIL
-BUGWK96465 : fast/events/touch/touch-active-state.html = FAIL
-BUGWK96465 : fast/events/touch/touch-coords-in-zoom-and-scroll.html = FAIL
-BUGWK96465 : fast/events/touch/touch-inside-iframe.html = FAIL
-BUGWK96465 : fast/events/touch/touch-inside-iframe-scrolled.html = FAIL
-BUGWK96465 : fast/events/touch/touch-slider.html = FAIL
-BUGWK96465 : fast/events/touch/touch-stale-node-crash.html = FAIL
-BUGWK96465 : fast/events/touch/touch-target-limited.html = FAIL
-BUGWK96465 : fast/events/touch/touch-target.html = FAIL
+# WebKitTestRunner eventSender needs touch events support
+webkit.org/b/96465 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/basic-single-touch-events.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/multi-touch-grouped-targets.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/send-oncancel-event.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/tap-highlight-color.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-active-state.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-inside-iframe.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-inside-iframe-scrolled.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-slider.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-stale-node-crash.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-target-limited.html [ Failure ]
+webkit.org/b/96465 fast/events/touch/touch-target.html [ Failure ]
 
-// WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
-BUGWKEFL : fast/media/media-query-list-02.html = FAIL
-BUGWKEFL : fast/media/media-query-list-03.html = FAIL
-BUGWKEFL : fast/media/media-query-list-04.html = FAIL
-BUGWKEFL : fast/media/media-query-list-05.html = FAIL
-BUGWKEFL : fast/media/media-query-list-06.html = FAIL
-BUGWKEFL : fast/media/media-query-list-07.html = FAIL
-BUGWKEFL : fast/media/view-mode-media-feature.html = FAIL
+# WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
+Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
+Bug(EFL) fast/media/view-mode-media-feature.html [ Failure ]
 
-// WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
-BUGWK93979 : fast/mutation/end-of-task-delivery.html = FAIL
+# WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
+webkit.org/b/93979 fast/mutation/end-of-task-delivery.html [ Failure ]
 
-// testRunner.setUseDeferredFrameLoading() is not implemented in WK2
-BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = FAIL
+# testRunner.setUseDeferredFrameLoading() is not implemented in WK2
+webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
 
-// WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
-BUGWK93982 : storage/domstorage/storage-close-database-on-idle.html = FAIL
+# WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
+webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
-// Unclassified failures
-BUGWKEFL : editing/input/emacs-ctrl-o.html = FAIL
-BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = FAIL
-BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = FAIL
-BUGWKEFL : fast/frames/flattening/iframe-tiny.html = FAIL
-BUGWKEFL : fast/replaced/no-focus-ring-embed.html = FAIL
-BUGWKEFL : fast/replaced/no-focus-ring-object.html = FAIL
-BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = FAIL
-BUGWKEFL : inspector/extensions/extensions-panel.html = FAIL
+# Unclassified failures
+Bug(EFL) editing/input/emacs-ctrl-o.html [ Failure ]
+Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
+Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-tiny.html [ Failure ]
+Bug(EFL) fast/replaced/no-focus-ring-embed.html [ Failure ]
+Bug(EFL) fast/replaced/no-focus-ring-object.html [ Failure ]
+Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
+Bug(EFL) inspector/extensions/extensions-panel.html [ Failure ]
 
-// Fails after r128056.
-BUGWk96794 : inspector/console/alert-toString-exception.html = FAIL
+# Fails after r128056.
+webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]
+
