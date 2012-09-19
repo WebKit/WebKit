@@ -1,3 +1,21 @@
+2012-09-18  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][WTR] CodeGeneratorTestRunner could keep original copyright.
+        https://bugs.webkit.org/show_bug.cgi?id=96181
+
+        Reviewed by Daniel Bates.
+
+        This patch enabled derived files, in DerivedSources/InjectedBundle, to keep original copyright.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (new):
+        (_parseLicenseBlock):
+        (_parseLicenseBlockFromFile):
+        (_defaultLicenseBlock):
+        (_licenseBlock):
+        (_generateHeaderFile):
+        (_generateImplementationFile):
+
 2012-09-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Title string should be changed when document.title is set to ''.

@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2012 Samsung Electronics
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,11 +30,12 @@ package CodeGeneratorTestRunner;
 
 sub new
 {
-    my ($class, $codeGenerator, $outputDir) = @_;
+    my ($class, $codeGenerator, $outputDir, $outputHeaderDir, $layerOnTop, $preprocessor, $writeDependencies, $verbose, $idlFilePath) = @_;
 
     my $reference = {
         codeGenerator => $codeGenerator,
         outputDir => $outputDir,
+        idlFilePath => $idlFilePath,
     };
 
     bless($reference, $class);
@@ -72,12 +74,37 @@ sub _classRefGetter
     return $$self{codeGenerator}->WK_lcfirst(_implementationClassName($idlType)) . "Class";
 }
 
-sub _fileHeaderString
+sub _parseLicenseBlock
 {
-    my ($filename) = @_;
+    my ($fileHandle) = @_;
 
-    # FIXME: We should pull header out of the IDL file to get the copyright
-    # year(s) right.
+    my ($copyright, $readCount, $buffer, $currentCharacter, $previousCharacter);
+    my $startSentinel = "/*";
+    my $lengthOfStartSentinel = length($startSentinel);
+    $readCount = read($fileHandle, $buffer, $lengthOfStartSentinel);
+    return "" if ($readCount < $lengthOfStartSentinel || $buffer ne $startSentinel);
+    $copyright = $buffer;
+
+    while ($readCount = read($fileHandle, $currentCharacter, 1)) {
+        $copyright .= $currentCharacter;
+        return $copyright if $currentCharacter eq "/" && $previousCharacter eq "*";
+        $previousCharacter = $currentCharacter;
+    }
+
+    return "";
+}
+
+sub _parseLicenseBlockFromFile
+{
+    my ($path) = @_;
+    open my $fileHandle, "<", $path or die "Failed to open $path for reading: $!";
+    my $licenseBlock = _parseLicenseBlock($fileHandle);
+    close($fileHandle);
+    return $licenseBlock;
+}
+
+sub _defaultLicenseBlock
+{
     return <<EOF;
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -106,6 +133,16 @@ sub _fileHeaderString
 EOF
 }
 
+sub _licenseBlock
+{
+    my ($self) = @_;
+    return $self->{licenseBlock} if $self->{licenseBlock};
+
+    my $licenseBlock = _parseLicenseBlockFromFile($self->{idlFilePath}) || _defaultLicenseBlock();
+    $self->{licenseBlock} = $licenseBlock;
+    return $licenseBlock;
+}
+
 sub _generateHeaderFile
 {
     my ($self, $interface) = @_;
@@ -117,7 +154,7 @@ sub _generateHeaderFile
     my $implementationClassName = _implementationClassName($idlType);
     my $filename = $className . ".h";
 
-    push(@contents, _fileHeaderString($filename));
+    push(@contents, $self->_licenseBlock());
 
     my $parentClassName = _parentClassName($interface);
 
@@ -184,7 +221,7 @@ sub _generateImplementationFile
     my $implementationClassName = _implementationClassName($idlType);
     my $filename = $className . ".cpp";
 
-    push(@contentsPrefix, _fileHeaderString($filename));
+    push(@contentsPrefix, $self->_licenseBlock());
 
     my $classRefGetter = $self->_classRefGetter($idlType);
     my $parentClassName = _parentClassName($interface);
