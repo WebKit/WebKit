@@ -232,7 +232,17 @@ IDBTransaction::OpenCursorNotifier::OpenCursorNotifier(PassRefPtr<IDBTransaction
 
 IDBTransaction::OpenCursorNotifier::~OpenCursorNotifier()
 {
-    m_transaction->unregisterOpenCursor(m_cursor);
+    if (m_cursor)
+        m_transaction->unregisterOpenCursor(m_cursor);
+}
+
+void IDBTransaction::OpenCursorNotifier::cursorFinished()
+{
+    if (m_cursor) {
+        m_transaction->unregisterOpenCursor(m_cursor);
+        m_cursor = 0;
+        m_transaction.clear();
+    }
 }
 
 void IDBTransaction::registerOpenCursor(IDBCursor* cursor)

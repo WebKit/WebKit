@@ -379,7 +379,10 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
 void IDBRequest::onSuccessInternal(const ScriptValue& value)
 {
     m_result = IDBAny::create(value);
-    m_pendingCursor.clear();
+    if (m_pendingCursor) {
+        m_pendingCursor->close();
+        m_pendingCursor.clear();
+    }
     enqueueEvent(createSuccessEvent());
 }
 

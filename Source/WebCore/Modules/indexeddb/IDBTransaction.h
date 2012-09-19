@@ -86,6 +86,7 @@ public:
     public:
         OpenCursorNotifier(PassRefPtr<IDBTransaction>, IDBCursor*);
         ~OpenCursorNotifier();
+        void cursorFinished();
     private:
         RefPtr<IDBTransaction> m_transaction;
         IDBCursor* m_cursor;

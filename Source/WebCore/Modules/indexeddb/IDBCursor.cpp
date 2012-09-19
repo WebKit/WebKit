@@ -254,9 +254,11 @@ void IDBCursor::postSuccessHandlerCallback()
 
 void IDBCursor::close()
 {
-    ASSERT(m_request);
-    m_request->finishCursor();
-    m_request.clear();
+    m_transactionNotifier.cursorFinished();
+    if (m_request) {
+        m_request->finishCursor();
+        m_request.clear();
+    }
 }
 
 void IDBCursor::setValueReady(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
