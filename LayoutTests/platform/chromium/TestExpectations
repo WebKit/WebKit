@@ -2657,9 +2657,6 @@ BUGWK74662 WIN LINUX ANDROID : fast/text/unicode-variation-selector.html = IMAGE
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = TEXT TIMEOUT
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = TEXT
 
-BUGWK78725 : http/tests/filesystem/workers/resolve-url-sync.html = PASS TIMEOUT
-BUGWK78725 : http/tests/filesystem/workers/resolve-url.html = PASS TIMEOUT
-
 BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT TIMEOUT
 
 // Crashes due to an OOM error on V8.
