@@ -733,7 +733,7 @@ void CachedResourceLoader::preload(CachedResource::Type type, ResourceRequest& r
     UNUSED_PARAM(referencedFromBody);
 
     bool delaySubresourceLoad = true;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(CHROMIUM)
     delaySubresourceLoad = false;
 #endif
     if (delaySubresourceLoad) {
