@@ -332,7 +332,7 @@ modules = [
             "ProfilesPanel.js",
             "ProfileLauncherView.js",
             "TopDownProfileDataGridTree.js",
-            "WebGLProfileView.js",
+            "CanvasProfileView.js",
         ]
     },
     {
@@ -407,15 +407,15 @@ if not process_recursively:
     os.system(command)
     os.system("rm " + inspector_path + "/" + "InjectedScriptSourceTmp.js")
 
-    print "Compiling InjectedScriptWebGLModuleSource.js..."
-    os.system("echo \"var injectedScriptWebGLModuleValue = \" > " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
-    os.system("cat  " + inspector_path + "/" + "InjectedScriptWebGLModuleSource.js" + " >> " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
+    print "Compiling InjectedScriptCanvasModuleSource.js..."
+    os.system("echo \"var injectedScriptCanvasModuleValue = \" > " + inspector_path + "/" + "InjectedScriptCanvasModuleSourceTmp.js")
+    os.system("cat  " + inspector_path + "/" + "InjectedScriptCanvasModuleSource.js" + " >> " + inspector_path + "/" + "InjectedScriptCanvasModuleSourceTmp.js")
     command = compiler_command
     command += "    --externs " + inspector_path + "/" + "InjectedScriptExterns.js" + " \\\n"
     command += "    --module " + jsmodule_name_prefix + "injected_script" + ":" + "1" + " \\\n"
-    command += "        --js " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js" + " \\\n"
+    command += "        --js " + inspector_path + "/" + "InjectedScriptCanvasModuleSourceTmp.js" + " \\\n"
     command += "\n"
     os.system(command)
-    os.system("rm " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
+    os.system("rm " + inspector_path + "/" + "InjectedScriptCanvasModuleSourceTmp.js")
 
 shutil.rmtree(modules_dir)

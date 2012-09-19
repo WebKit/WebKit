@@ -117,7 +117,7 @@ function createAndRunWebGLProgram()
 
 function test()
 {
-    InspectorTest.enableWebGLAgent(step1);
+    InspectorTest.enableCanvasAgent(step1);
     function step1()
     {
         InspectorTest.evaluateInConsole("createAndRunWebGLProgram()", step2);

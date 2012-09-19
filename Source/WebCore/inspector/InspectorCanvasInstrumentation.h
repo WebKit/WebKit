@@ -28,40 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.webgl-profile-view {
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+#ifndef InspectorCanvasInstrumentation_h
+#define InspectorCanvasInstrumentation_h
 
-.webgl-trace-log {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    bottom: 10px;
-    font-size: 13px;
-    overflow: auto;
-    white-space: nowrap;
-    padding: 0 20px;
-}
+#include "InspectorCanvasAgent.h"
+#include "InspectorInstrumentation.h"
+#include "InstrumentingAgents.h"
+#include "ScriptObject.h"
 
-.webgl-trace-log div {
-    padding-bottom: 4px;
-}
+namespace WebCore {
 
-#webgl-replay-image-container {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 10px;
-    background-color: white;
+#if ENABLE(WEBGL)
+ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const ScriptObject& glContext)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
+        InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent();
+        if (canvasAgent && canvasAgent->enabled())
+            return canvasAgent->wrapWebGLRenderingContextForInstrumentation(glContext);
+    }
+#endif
+    return ScriptObject();
 }
+#endif // ENABLE(WEBGL)
 
-#webgl-replay-image {
-    width: 400px;
-    height: 400px;
-    display: block;
-}
+} // namespace WebCore
+
+#endif // !defined(InspectorCanvasInstrumentation_h)

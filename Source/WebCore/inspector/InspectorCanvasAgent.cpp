@@ -30,13 +30,13 @@
 
 #include "config.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(WEBGL)
+#if ENABLE(INSPECTOR)
 
-#include "InspectorWebGLAgent.h"
+#include "InspectorCanvasAgent.h"
 
 #include "InjectedScript.h"
+#include "InjectedScriptCanvasModule.h"
 #include "InjectedScriptManager.h"
-#include "InjectedScriptWebGLModule.h" 
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -46,69 +46,69 @@
 
 namespace WebCore {
 
-namespace WebGLAgentState {
-static const char webGLAgentEnabled[] = "webGLAgentEnabled";
+namespace CanvasAgentState {
+static const char canvasAgentEnabled[] = "canvasAgentEnabled";
 };
 
-InspectorWebGLAgent::InspectorWebGLAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorWebGLAgent>("WebGL", instrumentingAgents, state)
+InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
+    : InspectorBaseAgent<InspectorCanvasAgent>("Canvas", instrumentingAgents, state)
     , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
 {
-    m_instrumentingAgents->setInspectorWebGLAgent(this);
+    m_instrumentingAgents->setInspectorCanvasAgent(this);
 }
 
-InspectorWebGLAgent::~InspectorWebGLAgent()
+InspectorCanvasAgent::~InspectorCanvasAgent()
 {
-    m_instrumentingAgents->setInspectorWebGLAgent(0);
+    m_instrumentingAgents->setInspectorCanvasAgent(0);
 }
 
-void InspectorWebGLAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorCanvasAgent::setFrontend(InspectorFrontend* frontend)
 {
     ASSERT(frontend);
-    m_frontend = frontend->webgl();
+    m_frontend = frontend->canvas();
 }
 
-void InspectorWebGLAgent::clearFrontend()
+void InspectorCanvasAgent::clearFrontend()
 {
     m_frontend = 0;
     disable(0);
 }
 
-void InspectorWebGLAgent::restore()
+void InspectorCanvasAgent::restore()
 {
-    m_enabled = m_state->getBoolean(WebGLAgentState::webGLAgentEnabled);
+    m_enabled = m_state->getBoolean(CanvasAgentState::canvasAgentEnabled);
 }
 
-void InspectorWebGLAgent::enable(ErrorString*)
+void InspectorCanvasAgent::enable(ErrorString*)
 {
     if (m_enabled)
         return;
     m_enabled = true;
-    m_state->setBoolean(WebGLAgentState::webGLAgentEnabled, m_enabled);
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
 }
 
-void InspectorWebGLAgent::disable(ErrorString*)
+void InspectorCanvasAgent::disable(ErrorString*)
 {
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_state->setBoolean(WebGLAgentState::webGLAgentEnabled, m_enabled);
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
 }
 
-void InspectorWebGLAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
+void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
 {
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.dropTraceLog(errorString, traceLogId);
 }
 
-void InspectorWebGLAgent::captureFrame(ErrorString* errorString, String* traceLogId)
+void InspectorCanvasAgent::captureFrame(ErrorString* errorString, String* traceLogId)
 {
     ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
-    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, scriptState);
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
     if (module.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return;
@@ -116,50 +116,52 @@ void InspectorWebGLAgent::captureFrame(ErrorString* errorString, String* traceLo
     module.captureFrame(errorString, traceLogId);
 }
 
-void InspectorWebGLAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::WebGL::TraceLog>& traceLog)
+void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
 {
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.traceLog(errorString, traceLogId, &traceLog);
 }
 
-void InspectorWebGLAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
+void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
 {
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
         module.replayTraceLog(errorString, traceLogId, stepNo, result);
 }
 
-ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
+#if ENABLE(WEBGL)
+ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
     if (glContext.hasNoValue()) {
         ASSERT_NOT_REACHED();
         return ScriptObject();
     }
-    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, glContext.scriptState());
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, glContext.scriptState());
     if (module.hasNoValue()) {
         ASSERT_NOT_REACHED();
         return ScriptObject();
     }
     return module.wrapWebGLContext(glContext);
 }
+#endif
 
-InjectedScriptWebGLModule InspectorWebGLAgent::injectedScriptWebGLModuleForTraceLogId(ErrorString* errorString, const String& traceLogId)
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModuleForTraceLogId(ErrorString* errorString, const String& traceLogId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(traceLogId);
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
-        return InjectedScriptWebGLModule();
+        return InjectedScriptCanvasModule();
     }
-    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, injectedScript.scriptState());
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, injectedScript.scriptState());
     if (module.hasNoValue()) {
         ASSERT_NOT_REACHED();
-        *errorString = "Internal error: no WebGL module";
-        return InjectedScriptWebGLModule();
+        *errorString = "Internal error: no Canvas module";
+        return InjectedScriptCanvasModule();
     }
     return module;
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(WEBGL)
+#endif // ENABLE(INSPECTOR)

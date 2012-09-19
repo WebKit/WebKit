@@ -38,21 +38,21 @@ namespace WebCore {
 
 class InspectorAgent;
 class InspectorApplicationCacheAgent;
-class InspectorPageAgent;
-class InspectorDOMDebuggerAgent;
 class InspectorCSSAgent;
+class InspectorCanvasAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
+class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
 class InspectorFileSystemAgent;
+class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
-class InspectorWebGLAgent;
 class Page;
 class PageRuntimeAgent;
 class WorkerContext;
@@ -87,9 +87,7 @@ public:
 #if ENABLE(WORKERS)
         , m_inspectorWorkerAgent(0)
 #endif
-#if ENABLE(WEBGL)
-        , m_inspectorWebGLAgent(0)
-#endif
+        , m_inspectorCanvasAgent(0)
     { }
     ~InstrumentingAgents() { }
 
@@ -152,10 +150,8 @@ public:
     void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
 #endif
 
-#if ENABLE(WEBGL)
-    InspectorWebGLAgent* inspectorWebGLAgent() const { return m_inspectorWebGLAgent; }
-    void setInspectorWebGLAgent(InspectorWebGLAgent* agent) { m_inspectorWebGLAgent = agent; }
-#endif
+    InspectorCanvasAgent* inspectorCanvasAgent() const { return m_inspectorCanvasAgent; }
+    void setInspectorCanvasAgent(InspectorCanvasAgent* agent) { m_inspectorCanvasAgent = agent; }
 
 private:
     InspectorAgent* m_inspectorAgent;
@@ -183,9 +179,7 @@ private:
 #if ENABLE(WORKERS)
     InspectorWorkerAgent* m_inspectorWorkerAgent;
 #endif
-#if ENABLE(WEBGL)
-    InspectorWebGLAgent* m_inspectorWebGLAgent;
-#endif
+    InspectorCanvasAgent* m_inspectorCanvasAgent;
 };
 
 InstrumentingAgents* instrumentationForPage(Page*);

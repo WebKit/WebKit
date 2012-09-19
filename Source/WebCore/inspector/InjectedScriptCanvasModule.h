@@ -28,30 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorWebGLInstrumentation_h
-#define InspectorWebGLInstrumentation_h
+#ifndef InjectedScriptCanvasModule_h
+#define InjectedScriptCanvasModule_h
 
-#include "InspectorInstrumentation.h"
-#include "InspectorWebGLAgent.h"
-#include "InstrumentingAgents.h"
-#include "ScriptObject.h"
+#include "InjectedScriptModule.h"
+#include "ScriptState.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-#if ENABLE(WEBGL)
-ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const ScriptObject& glContext)
-{
+class InjectedScriptManager;
+class ScriptObject;
+
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
-        InspectorWebGLAgent* webGLAgent = instrumentingAgents->inspectorWebGLAgent();
-        if (webGLAgent && webGLAgent->enabled())
-            return webGLAgent->wrapWebGLRenderingContextForInstrumentation(glContext);
-    }
+
+class InjectedScriptCanvasModule : public InjectedScriptModule {
+public:
+    InjectedScriptCanvasModule();
+    
+    virtual String source() const;
+
+    static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, ScriptState*);
+
+#if ENABLE(WEBGL)
+    ScriptObject wrapWebGLContext(const ScriptObject& glContext);
 #endif
-    return ScriptObject();
-}
-#endif // ENABLE(WEBGL)
+
+    void captureFrame(ErrorString*, String*);
+    void dropTraceLog(ErrorString*, const String&);
+    void traceLog(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::TraceLog>*);
+    void replayTraceLog(ErrorString*, const String&, int, String*);
+};
+
+#endif
 
 } // namespace WebCore
 
-#endif // !defined(InspectorWebGLInstrumentation_h)
+#endif // !defined(InjectedScriptCanvasModule_h)

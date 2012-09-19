@@ -1,3 +1,15 @@
+2012-09-19  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] -> [Canvas] Rename WebGLAgent to CanvasAgent
+        https://bugs.webkit.org/show_bug.cgi?id=96917
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/profiler/webgl/webgl-profiler-get-error.html:
+        * inspector/profiler/webgl/webgl-profiler-test.js:
+        (initialize_CanvasWebGLProfilerTest.InspectorTest.enableCanvasAgent):
+        (initialize_CanvasWebGLProfilerTest):
+
 2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] tables/mozilla tests need rebaseline (Part 1)
