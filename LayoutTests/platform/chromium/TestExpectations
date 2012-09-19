@@ -1831,11 +1831,6 @@ BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.broken.html = TEXT
 
-BUGWK94246 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK94246 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK94246 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
-BUGWK94246 : platform/chromium/virtual/gpu/fast/canvas/canvas-ImageData-behaviour.html = TEXT
-
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
