@@ -3510,8 +3510,6 @@ BUGWK96950 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = 
 
 BUGWK96227 SKIP : fast/js/function-dot-arguments-identity.html = TEXT
 
-BUGWK96524 WIN LINUX DEBUG : fast/filesystem/workers/detached-frame-crash.html = PASS CRASH
-
 BUGWK96835 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PASS
 BUGWK96835 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT PASS
 BUGWK96836 ANDROID LINUX WIN : inspector/debugger/xhr-breakpoints.html = TEXT PASS
