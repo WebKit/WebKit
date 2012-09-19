@@ -1004,6 +1004,9 @@ BUGWK94198 : fast/dom/HTMLInputElement/input-image-alt-text.html = IMAGE
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
+// Failed table/mozilla test, fields are not on the same line
+BUGWK97109 : tables/mozilla/bugs/bug99948.html = PASS
+
 // New test introduced in r125790 fails
 BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
 
