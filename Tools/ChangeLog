@@ -1,5 +1,16 @@
 2012-09-19  Dirk Pranke  <dpranke@chromium.org>
 
+        fix MISSING after TestExpectations conversion
+        https://bugs.webkit.org/show_bug.cgi?id=97148
+
+        Unreviewed, expectations change / build fix.
+
+        * Scripts/convert-test-expectations:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: convert chromium TestExpectations to the new syntax
         https://bugs.webkit.org/show_bug.cgi?id=97139
 

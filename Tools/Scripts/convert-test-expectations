@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# FIXME: Delete this file after all of the TestExpectations are converted.
+
 import sys
 
 from webkitpy.common.host import Host

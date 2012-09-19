@@ -195,10 +195,10 @@ webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.h
 platform/gtk [ Failure ImageOnlyFailure Pass WontFix ]
 platform/mac [ Failure ImageOnlyFailure Pass Timeout WontFix ]
 platform/mac-wk2 [ Failure ImageOnlyFailure Pass Timeout WontFix ]
-platform/qt [ Failure ImageOnlyFailure MISSING Pass WontFix ]
+platform/qt [ Failure ImageOnlyFailure Missing Pass WontFix ]
 platform/qt/plugins/qt-qwidget-plugin.html [ Pass Skip WontFix ]
 platform/qt/fast/forms [ Pass Skip WontFix ]
-[ Mac Win ] platform/chromium-linux [ Failure ImageOnlyFailure MISSING WontFix ]
+[ Mac Win ] platform/chromium-linux [ Failure ImageOnlyFailure Missing WontFix ]
 [ Linux Mac ] platform/win [ Pass Skip WontFix ]
 [ Linux Win Mac ] platform/chromium-android [ Pass Skip WontFix ]
 
@@ -1932,9 +1932,9 @@ webkit.org/b/42769 http/tests/xmlhttprequest/remember-bad-password.html [ Failur
 crbug.com/49970 platform/chromium/plugins/call-as-function.html [ Failure Pass ]
 
 # Application Cache Quotas are N/A to the chromium port.
-webkit.org/b/43459 http/tests/appcache/origin-quota.html [ Failure MISSING WontFix ]
-webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download.html [ Failure MISSING WontFix ]
-webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Failure MISSING WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota.html [ Failure Missing WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download.html [ Failure Missing WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Failure Missing WontFix ]
 
 # Need to support DeviceMotion.
 crbug.com/51416 fast/dom/DeviceMotion/window-property.html [ Failure ]
@@ -2451,9 +2451,9 @@ webkit.org/b/74137 [ SnowLeopard ] fast/regions/outline-sides-in-region.html [ P
 webkit.org/b/83824 [ Mac ] fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
 webkit.org/b/74137 fast/regions/float-pushed-width-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/region-overflow-auto-overflow-hidden.html [ Failure ]
-webkit.org/b/74137 [ Lion Win ] fast/regions/region-overflow-auto-overflow-hidden.html [ MISSING ]
+webkit.org/b/74137 [ Lion Win ] fast/regions/region-overflow-auto-overflow-hidden.html [ Missing ]
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/region-overflow-auto-overflow-visible.html [ Failure ]
-webkit.org/b/74137 [ Lion Win ] fast/regions/region-overflow-auto-overflow-visible.html [ MISSING ]
+webkit.org/b/74137 [ Lion Win ] fast/regions/region-overflow-auto-overflow-visible.html [ Missing ]
 
 # CSS Regions tests for region styling and scoped styles
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
@@ -2504,8 +2504,8 @@ webkit.org/b/65453 [ Mac ] fast/css/outline-auto-empty-rects.html [ ImageOnlyFai
 webkit.org/b/93546 compositing/plugins/no-backing-store.html [ Failure Pass ]
 
 # For some reason, these tests are running as pixel tests most of the time instead of dumping as text.
-webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads.html [ MISSING Pass ]
-webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ MISSING Pass ]
+webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads.html [ Missing Pass ]
+webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Missing Pass ]
 
 webkit.org/b/67915 [ Android Linux Win ] fast/borders/borderRadiusDashed06.html [ ImageOnlyFailure ]
 
@@ -2578,7 +2578,7 @@ webkit.org/b/69998 [ Linux Win ] plugins/refcount-leaks.html [ Failure Pass ]
 # ICC color profiles are not supported on WIN, LINUX, ANDROID so SKIP for now.
 webkit.org/b/70001 [ Android Linux Win ] fast/images/color-jpeg-with-color-profile.html
 # Paletted PNG with ICC color profiles not working.
-webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html [ MISSING Skip ]
+webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html [ Missing Skip ]
 
 # V8 handles stack overflow exceptions differently than JSC
 webkit.org/b/70210 fast/js/stack-overflow-arrity-catch.html [ Failure ]
@@ -2614,13 +2614,13 @@ crbug.com/150682 compositing/geometry/fixed-position-iframe-composited-page-scal
 crbug.com/150682 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
 
 webkit.org/b/70866 [ Android Linux Mac Debug ] fast/forms/form-associated-element-crash3.html [ Pass Timeout ]
-webkit.org/b/72039 [ Release ] fast/forms/form-associated-element-crash3.html [ MISSING Pass ]
-webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-associated-element-crash.html [ MISSING Pass ]
-webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-associated-element-removal.html [ MISSING Pass ]
-webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-attribute-elements-order.html [ MISSING Pass ]
-webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-attribute-elements-order2.html [ MISSING Pass ]
-webkit.org/b/72039 [ Debug ] http/tests/multipart/policy-ignore-crash.php [ MISSING Pass ]
-webkit.org/b/72039 [ Android Linux Release ] fast/forms/formaction-attribute.html [ MISSING Pass ]
+webkit.org/b/72039 [ Release ] fast/forms/form-associated-element-crash3.html [ Missing Pass ]
+webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-associated-element-crash.html [ Missing Pass ]
+webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-associated-element-removal.html [ Missing Pass ]
+webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-attribute-elements-order.html [ Missing Pass ]
+webkit.org/b/72039 [ Android Linux Release ] fast/forms/form-attribute-elements-order2.html [ Missing Pass ]
+webkit.org/b/72039 [ Debug ] http/tests/multipart/policy-ignore-crash.php [ Missing Pass ]
+webkit.org/b/72039 [ Android Linux Release ] fast/forms/formaction-attribute.html [ Missing Pass ]
 webkit.org/b/78620 [ Android Linux Debug ] fast/forms/formaction-attribute.html [ Failure Pass Slow ]
 
 webkit.org/b/70988 [ Mac Win Debug ] fast/forms/submit-to-blank-multiple-times.html [ Failure Pass ]
@@ -3081,7 +3081,7 @@ webkit.org/b/86592 [ Android Linux ] http/tests/xmlhttprequest/xmlhttprequest-un
 webkit.org/b/86592 [ Android Linux ] fast/loader/unload-form-about-blank.html [ Pass Timeout ]
 webkit.org/b/86592 [ Android Linux ] http/tests/xmlhttprequest/zero-length-response-sync.html [ Pass Timeout ]
 
-webkit.org/b/88964 [ Mac ] http/tests/misc/embedCrasher.html [ MISSING Pass ]
+webkit.org/b/88964 [ Mac ] http/tests/misc/embedCrasher.html [ Missing Pass ]
 
 webkit.org/b/86674 [ Debug ] fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml [ Pass Timeout ]
 
@@ -3389,7 +3389,7 @@ webkit.org/b/94521 [ Linux ] fast/loader/loadInProgress.html [ Crash Pass ]
 
 webkit.org/b/94528 [ Mac ] fast/text-autosizing/nested-em-line-height.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/94532 [ Linux ] fast/forms/formmethod-attribute-button-html.html [ MISSING Pass ]
+webkit.org/b/94532 [ Linux ] fast/forms/formmethod-attribute-button-html.html [ Missing Pass ]
 
 webkit.org/b/94660 fast/js/create-lots-of-workers.html [ Crash Pass Timeout ]
 webkit.org/b/95366 [ Debug ] css3/flexbox/flexitem-stretch-image.html [ Failure Pass ]
@@ -3550,4 +3550,5 @@ webkit.org/b/96596 fast/js/object-bad-time.html [ Failure ]
 webkit.org/b/96596 fast/js/object-slow-put.html [ Failure ]
 webkit.org/b/96962 fast/js/cross-frame-really-bad-time.html [ Failure ]
 webkit.org/b/96962 fast/js/cross-frame-really-bad-time-with-__proto__.html [ Failure ]
+
 

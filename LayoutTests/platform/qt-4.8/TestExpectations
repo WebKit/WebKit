@@ -93,7 +93,7 @@ webkit.org/b/6033 css3/filters/multiple-filters-invalidation.html [ ImageOnlyFai
 webkit.org/b/6033 css3/filters/nested-filters.html [ ImageOnlyFailure Pass ]
 webkit.org/b/6033 css3/filters/regions-expanding.html [ ImageOnlyFailure Pass ]
 webkit.org/b/6033 css3/filters/simple-filter-rendering.html [ ImageOnlyFailure Pass ]
-webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ MISSING Pass ]
+webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ Missing Pass ]
 
 # UndoManager is not yet enabled.
 webkit.org/b/87908 editing/undomanager
@@ -166,5 +166,6 @@ webkit.org/b/94004 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnlyFailure ]
 webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
+
 
 

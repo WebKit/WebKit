@@ -277,6 +277,7 @@ class TestExpectationParser(object):
         'Crash': 'CRASH',
         'Failure': 'FAIL',
         'ImageOnlyFailure': 'IMAGE',
+        'Missing': 'MISSING',
         'Pass': 'PASS',
         'Rebaseline': 'REBASELINE',
         'Skip': 'SKIP',

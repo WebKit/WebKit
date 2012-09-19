@@ -111,12 +111,12 @@ webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure 
 webkit.org/b/86623 http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
 
 # Missing drag'n'drop, needs baselines
-webkit.org/b/86623 editing/pasteboard/drag-drop-dead-frame.html [ MISSING ]
-webkit.org/b/86623 editing/pasteboard/drag-drop-modifies-page.html [ MISSING ]
-webkit.org/b/86623 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html [ MISSING ]
-webkit.org/b/86623 editing/pasteboard/drop-text-without-selection.html [ MISSING ]
-webkit.org/b/86623 editing/pasteboard/smart-drag-drop.html [ MISSING ]
-webkit.org/b/86623 editing/pasteboard/subframe-dragndrop-1.html [ MISSING ]
+webkit.org/b/86623 editing/pasteboard/drag-drop-dead-frame.html [ Missing ]
+webkit.org/b/86623 editing/pasteboard/drag-drop-modifies-page.html [ Missing ]
+webkit.org/b/86623 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html [ Missing ]
+webkit.org/b/86623 editing/pasteboard/drop-text-without-selection.html [ Missing ]
+webkit.org/b/86623 editing/pasteboard/smart-drag-drop.html [ Missing ]
+webkit.org/b/86623 editing/pasteboard/subframe-dragndrop-1.html [ Missing ]
 
 # CSS Sticky (-webkit-sticky) not supported by EFL.
 webkit.org/b/95182 fast/css/sticky [ ImageOnlyFailure ]
@@ -135,8 +135,8 @@ Bug(EFL) svg/custom/image-with-prefix-in-webarchive.svg
 Bug(EFL) fast/events/option-tab.html
 
 # These tests are valid for ports where RenderTheme::shouldShowPlaceholderWhenFocused() returns true.
-Bug(EFL) fast/forms/input-placeholder-paint-order.html [ MISSING ]
-Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ MISSING ]
+Bug(EFL) fast/forms/input-placeholder-paint-order.html [ Missing ]
+Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ Missing ]
 
 # Implementing copy{En,De}codedHostName only to test them does not make sense
 webkit.org/b/86080 fast/encoding/idn-security.html [ Failure Skip ]
@@ -154,7 +154,7 @@ webkit.org/b/84186 fast/text-autosizing
 webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
 
 # Subpixel layout is not enabled.
-webkit.org/b/85532 fast/sub-pixel [ MISSING Skip ]
+webkit.org/b/85532 fast/sub-pixel [ Missing Skip ]
 
 # DeviceOrientation support is not enabled by default.
 Bug(EFL) fast/dom/DeviceOrientation [ Failure Skip ]
@@ -300,7 +300,7 @@ webkit.org/b/84333 fast/forms/file/file-input-change-event.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/file-input-reset.html [ ImageOnlyFailure ]
 webkit.org/b/84333 fast/forms/file/get-file-upload.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/input-file-directory-upload.html [ Failure ]
-webkit.org/b/84333 fast/forms/file/input-file-re-render.html [ MISSING ]
+webkit.org/b/84333 fast/forms/file/input-file-re-render.html [ Missing ]
 webkit.org/b/84333 fast/forms/file/input-file-write-files.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/recover-file-input-in-unposted-form.html [ Failure ]
 webkit.org/b/84333 fast/forms/file/selected-files-from-history-state.html [ Failure ]
@@ -313,9 +313,9 @@ webkit.org/b/84333 http/tests/security/clipboard/clipboard-file-access.html [ Fa
 
 # Missing execCommand('copy') and execCommand('paste').
 webkit.org/b/84338 editing/deleting/paste-with-transparent-background-color.html [ Failure ]
-webkit.org/b/84338 editing/execCommand/find-after-replace.html [ Failure MISSING ]
-webkit.org/b/84338 editing/execCommand/paste-1.html [ Failure MISSING ]
-webkit.org/b/84338 editing/execCommand/paste-2.html [ Failure MISSING ]
+webkit.org/b/84338 editing/execCommand/find-after-replace.html [ Failure Missing ]
+webkit.org/b/84338 editing/execCommand/paste-1.html [ Failure Missing ]
+webkit.org/b/84338 editing/execCommand/paste-2.html [ Failure Missing ]
 webkit.org/b/84338 editing/input/paste-text-ending-with-interchange-newline.html [ Failure ]
 webkit.org/b/84338 editing/input/reveal-contenteditable-on-paste-vertically.html [ Failure ]
 webkit.org/b/84338 editing/inserting/insert-3786362-fix.html [ Failure ]
@@ -378,7 +378,7 @@ webkit.org/b/84338 editing/style/non-inheritable-styles.html [ Failure ]
 webkit.org/b/84338 editing/style/smoosh-styles-003.html [ Failure ]
 webkit.org/b/84338 fast/events/clipboard-dataTransferItemList.html [ Failure ]
 webkit.org/b/84338 fast/forms/input-paste-undo.html [ Failure ]
-webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ MISSING ]
+webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Missing ]
 webkit.org/b/84338 fast/forms/textarea-paste-newline.html [ Failure ]
 
 # Missing showModalDialog implementation
@@ -452,7 +452,7 @@ webkit.org/b/79766 compositing/iframes/overlapped-iframe-iframe.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/overlapped-iframe.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/overlapped-nested-iframes.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/page-cache-layer-tree.html [ Failure ]
-webkit.org/b/79766 compositing/iframes/resizer.html [ MISSING ]
+webkit.org/b/79766 compositing/iframes/resizer.html [ Missing ]
 webkit.org/b/79766 compositing/iframes/scrolling-iframe.html [ Failure ]
 webkit.org/b/79766 compositing/images/clip-on-directly-composited-image.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
@@ -467,16 +467,16 @@ webkit.org/b/79766 compositing/layer-creation/scroll-partial-update.html [ Failu
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/translatez-overlap.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/clip-descendents.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ MISSING Skip ]
+webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Missing Skip ]
 webkit.org/b/79766 compositing/overflow/content-gains-scrollbars.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/content-loses-scrollbars.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ MISSING Skip ]
+webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Missing Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ MISSING Skip ]
+webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Missing Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ MISSING Skip ]
+webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ Missing Skip ]
 webkit.org/b/79766 compositing/overflow/resize-painting.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/textarea-scroll-touch.html [ Failure ]
@@ -531,15 +531,15 @@ webkit.org/b/79766 compositing/geometry/bounds-ignores-hidden.html [ Failure ]
 webkit.org/b/86727 compositing/plugins/invalidate_rect.html [ Failure ]
 
 # EFL's LayoutTestController does not implement display
-webkit.org/b/86730 compositing/layer-creation/fixed-position-scroll.html [ MISSING ]
+webkit.org/b/86730 compositing/layer-creation/fixed-position-scroll.html [ Missing ]
 
 # EFL does not support WebGL
 webkit.org/b/77219 compositing/backface-visibility/backface-visibility-webgl.html [ Failure ]
 webkit.org/b/77219 compositing/visibility/visibility-simple-webgl-layer.html [ Failure ]
-webkit.org/b/77219 compositing/webgl/webgl-background-color.html [ MISSING Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-no-alpha.html [ MISSING Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-nonpremultiplied-blend.html [ MISSING Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ MISSING Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-background-color.html [ Missing Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-no-alpha.html [ Missing Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-nonpremultiplied-blend.html [ Missing Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ Missing Skip ]
 webkit.org/b/77219 fast/canvas/webgl [ Failure Skip ]
 webkit.org/b/77219 fast/dom/constructed-objects-prototypes.html [ Failure ]
 webkit.org/b/77219 fast/events/constructors/webgl-context-event-constructor.html [ Failure Skip ]
@@ -672,11 +672,11 @@ webkit.org/b/84835 editing/execCommand/findString-diacriticals.html [ Failure ]
 
 # DRT doesn't check for isPrinting().
 webkit.org/b/87226 printing/iframe-print.html [ Failure ]
-webkit.org/b/87226 printing/media-queries-print.html [ MISSING ]
-webkit.org/b/87226 printing/setPrinting.html [ MISSING ]
-webkit.org/b/87226 printing/simultaneous-position-float-change.html [ MISSING ]
-webkit.org/b/87226 printing/single-line-must-not-be-split-into-two-pages.html [ MISSING ]
-webkit.org/b/87226 printing/width-overflow.html [ MISSING ]
+webkit.org/b/87226 printing/media-queries-print.html [ Missing ]
+webkit.org/b/87226 printing/setPrinting.html [ Missing ]
+webkit.org/b/87226 printing/simultaneous-position-float-change.html [ Missing ]
+webkit.org/b/87226 printing/single-line-must-not-be-split-into-two-pages.html [ Missing ]
+webkit.org/b/87226 printing/width-overflow.html [ Missing ]
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
@@ -743,8 +743,8 @@ webkit.org/b/86091 media/controls-right-click-on-timebar.html [ Failure ]
 webkit.org/b/86091 editing/shadow/rightclick-on-meter-in-shadow-crash.html [ Failure ]
 
 # EFL's EventSender contextClick, needs baselines
-webkit.org/b/86091 editing/selection/5354455-2.html [ MISSING ]
-webkit.org/b/86091 fast/events/context-no-deselect.html [ MISSING ]
+webkit.org/b/86091 editing/selection/5354455-2.html [ Missing ]
+webkit.org/b/86091 fast/events/context-no-deselect.html [ Missing ]
 
 # IETC namespace failures
 webkit.org/b/86137 ietestcenter/css3/namespaces/prefix-007.xml [ ImageOnlyFailure ]
@@ -940,7 +940,7 @@ webkit.org/b/91359 css3/flexbox/flexbox-overflow-auto.html [ ImageOnlyFailure ]
 webkit.org/b/68979 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
 
 # Test added by Mac port, rendering results totally different on EFL.
-webkit.org/b/91477 fast/multicol/shrink-to-column-height-for-pagination.html [ MISSING ]
+webkit.org/b/91477 fast/multicol/shrink-to-column-height-for-pagination.html [ Missing ]
 
 # These tests are failing after r122528.
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure ]
@@ -1016,17 +1016,17 @@ webkit.org/b/94690 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
 webkit.org/b/94788 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 
 # Intrusive theming overrides collide with style-related LayoutTests.
-webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ MISSING ]
-webkit.org/b/85877 fast/forms/select-baseline.html [ MISSING ]
-webkit.org/b/85877 fast/forms/menulist-style-color.html [ MISSING ]
-webkit.org/b/85877 fast/forms/select-style.html [ MISSING ]
+webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ Missing ]
+webkit.org/b/85877 fast/forms/select-baseline.html [ Missing ]
+webkit.org/b/85877 fast/forms/menulist-style-color.html [ Missing ]
+webkit.org/b/85877 fast/forms/select-style.html [ Missing ]
 
 # Test 2 in below test is failing.
-webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ MISSING ]
+webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ Missing ]
 
 # Cancel mark in search field is not working.
-webkit.org/b/94880 fast/forms/search-cancel-button-style-sharing.html [ MISSING ]
-webkit.org/b/94880 fast/forms/search-rtl.html [ MISSING ]
+webkit.org/b/94880 fast/forms/search-cancel-button-style-sharing.html [ Missing ]
+webkit.org/b/94880 fast/forms/search-rtl.html [ Missing ]
 
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
@@ -1067,4 +1067,6 @@ webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]
 
 # Fails after r128270.
 webkit.org/b/96517 fast/events/popup-blocking-timers.html [ Failure ]
+
+
 

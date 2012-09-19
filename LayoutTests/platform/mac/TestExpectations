@@ -227,7 +227,7 @@ webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-surac
 webkit.org/b/89116 svg/filters/feLighting-crash.svg [ ImageOnlyFailure Pass ]
 
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
-webkit.org/b/79682 svg/repaint/text-mask-update.svg [ Failure ImageOnlyFailure MISSING Pass ]
+webkit.org/b/79682 svg/repaint/text-mask-update.svg [ Failure ImageOnlyFailure Missing Pass ]
 
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
@@ -240,7 +240,7 @@ webkit.org/b/85565 fast/css/border-solid-single-edge-antialias.html [ ImageOnlyF
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
-webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ MISSING Pass ]
+webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ Missing Pass ]
 
 # Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
 webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure Skip ]
@@ -302,7 +302,7 @@ webkit.org/b/91969 fast/dom/HTMLProgressElement/progress-writing-mode.html [ Fai
 webkit.org/b/91969 fast/dom/HTMLProgressElement/indeterminate-progress-001.html [ Failure ]
 
 # Needs new image to be checked in for all platforms.
-webkit.org/b/93859 compositing/video/video-controls-layer-creation.html [ MISSING Pass ]
+webkit.org/b/93859 compositing/video/video-controls-layer-creation.html [ Missing Pass ]
 
 # Require rebaseline after bug 93148
 webkit.org/b/93148 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html [ Failure ]
@@ -344,5 +344,6 @@ webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Fai
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
 webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip Timeout ]
+
 
 
