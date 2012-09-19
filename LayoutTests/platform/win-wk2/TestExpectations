@@ -1,2 +1,3 @@
-// This file should contain entries for expectations that are specific
-// to the Apple Windows port running the WebKit2 variant (--webkit-test-runner)
+# This file should contain entries for expectations that are specific
+# to the Apple Windows port running the WebKit2 variant (--webkit-test-runner)
+
