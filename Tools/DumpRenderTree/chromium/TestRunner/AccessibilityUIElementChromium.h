@@ -90,6 +90,7 @@ private:
     void isCollapsedGetterCallback(CppVariant*);
     void hasPopupGetterCallback(CppVariant*);
     void isValidGetterCallback(CppVariant*);
+    void isReadOnlyGetterCallback(CppVariant*);
     void orientationGetterCallback(CppVariant*);
 
     // Bound methods.

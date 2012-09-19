@@ -348,6 +348,7 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindProperty("isCollapsed", &AccessibilityUIElement::isCollapsedGetterCallback);
     bindProperty("hasPopup", &AccessibilityUIElement::hasPopupGetterCallback);
     bindProperty("isValid", &AccessibilityUIElement::isValidGetterCallback);
+    bindProperty("isReadOnly", &AccessibilityUIElement::isReadOnlyGetterCallback);
     bindProperty("orientation", &AccessibilityUIElement::orientationGetterCallback);
 
     //
@@ -582,6 +583,11 @@ void AccessibilityUIElement::hasPopupGetterCallback(CppVariant* result)
 void AccessibilityUIElement::isValidGetterCallback(CppVariant* result)
 {
     result->set(!accessibilityObject().isDetached());
+}
+
+void AccessibilityUIElement::isReadOnlyGetterCallback(CppVariant* result)
+{
+    result->set(accessibilityObject().isReadOnly());
 }
 
 void AccessibilityUIElement::orientationGetterCallback(CppVariant* result)

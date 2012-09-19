@@ -634,8 +634,11 @@ bool AccessibilityNodeObject::isReadOnly() const
     if (node->hasTagName(textareaTag))
         return static_cast<HTMLTextAreaElement*>(node)->readOnly();
 
-    if (node->hasTagName(inputTag))
-        return static_cast<HTMLInputElement*>(node)->readOnly();
+    if (node->hasTagName(inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+        if (input->isTextField())
+            return input->readOnly();
+    }
 
     return !node->rendererIsEditable();
 }

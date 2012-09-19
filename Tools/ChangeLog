@@ -1,3 +1,18 @@
+2012-09-19  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: A few control types are returning the wrong answer for isReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=96735
+
+        Reviewed by Chris Fleizach.
+
+        Exposing isReadOnly in an AccessibilityObject to DumpRenderTree.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::isReadOnlyGetterCallback):
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.h:
+        (AccessibilityUIElement):
+
 2012-09-19  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WTR] Memory leaks in TestRunner::deliverWebIntent()

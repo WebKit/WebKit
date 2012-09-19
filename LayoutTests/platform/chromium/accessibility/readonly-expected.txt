@@ -1,0 +1,89 @@
+Link  Button                 
+Focusable
+Heading
+
+ARIA button
+ARIA toggle button
+ARIA link
+Button
+This tests which elements expose themselves as readonly. Readonly here refers to whether the item is not editable, not whether a control value can be changed vs if it's unavailable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+link1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+button1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+text1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is false
+
+checkbox1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+number1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is false
+
+radio1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+slider1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+submit1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+combobox1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+listbox1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+textarea1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is false
+
+focusable1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+heading1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+aria-button1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+aria-togglebutton1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+aria-link1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is true
+
+contenteditable_root1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is false
+
+contenteditable_button1
+PASS document.activeElement == element is true
+PASS axElement.isReadOnly is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

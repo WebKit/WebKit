@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+<div>
+  <a id="link1" href="#">Link</a>
+  <button id="button1">Button</button>
+  <input id="text1" type="text" value="Value">
+  <input id="checkbox1" type="checkbox" checked>
+  <input id="number1" type="number" value="123">
+  <input id="radio1" type="radio" checked>
+  <input id="slider1" type="range" min="1" max="10" value="5">
+  <input id="submit1" type="submit">
+  <select id="combobox1"><option>1<option selected>2</select>
+  <select multiple id="listbox1"><option>1<option selected>2</select>
+  <textarea id="textarea1">Textarea</textarea>
+  <div id="focusable1" tabindex="0">Focusable</div>
+  <h5 id="heading1" tabindex="0">Heading</h5>
+  <div id="aria-button1" tabindex="0" role="button">ARIA button</div>
+  <div id="aria-togglebutton1" tabindex="0" role="button" aria-pressed="false">ARIA toggle button</div>
+  <div id="aria-link1" tabindex="0" role="link">ARIA link</div>
+  <div id="contenteditable_root1" contentEditable>
+    <button id="contenteditable_button1">Button</button>
+  </div>
+
+</div>
+
+<div id="console"></div>
+<script>
+description("This tests which elements expose themselves as readonly. Readonly here refers to whether the item is not editable, not whether a control value can be changed vs if it's unavailable.");
+
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.dumpAsText();
+
+    function check(id, expected_readonly) {
+        debug(id);
+        window.element = document.getElementById(id);
+        element.focus();
+        shouldBe("document.activeElement == element", "true");
+        window.axElement = accessibilityController.focusedElement;
+
+        shouldBe("axElement.isReadOnly", "" + expected_readonly);
+        debug("");
+    }
+
+    check("link1", true);
+    check("button1", true);
+    check("text1", false);
+    check("checkbox1", true);
+    check("number1", false);
+    check("radio1", true);
+    check("slider1", true);
+    check("submit1", true);
+    check("combobox1", true);
+    check("listbox1", true);
+    check("textarea1", false);
+    check("focusable1", true);
+    check("heading1", true);
+    check("aria-button1", true);
+    check("aria-togglebutton1", true);
+    check("aria-link1", true);
+    check("contenteditable_root1", false);
+    check("contenteditable_button1", false);
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
