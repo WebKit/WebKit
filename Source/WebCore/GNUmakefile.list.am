@@ -19,8 +19,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
+	DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h \
 	DerivedSources/WebCore/InjectedScriptSource.h \
-	DerivedSources/WebCore/InjectedScriptWebGLModuleSource.h \
 	DerivedSources/WebCore/InspectorBackendDispatcher.cpp \
 	DerivedSources/WebCore/InspectorBackendDispatcher.h \
 	DerivedSources/WebCore/InspectorFrontend.cpp \
@@ -3633,20 +3633,23 @@ webcore_sources += \
 	Source/WebCore/inspector/InjectedScript.h \
 	Source/WebCore/inspector/InjectedScriptBase.cpp \
 	Source/WebCore/inspector/InjectedScriptBase.h \
+	Source/WebCore/inspector/InjectedScriptCanvasModule.cpp \
+	Source/WebCore/inspector/InjectedScriptCanvasModule.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \
 	Source/WebCore/inspector/InjectedScriptHost.h \
 	Source/WebCore/inspector/InjectedScriptManager.cpp \
 	Source/WebCore/inspector/InjectedScriptManager.h \
 	Source/WebCore/inspector/InjectedScriptModule.cpp \
 	Source/WebCore/inspector/InjectedScriptModule.h \
-	Source/WebCore/inspector/InjectedScriptWebGLModule.cpp \
-	Source/WebCore/inspector/InjectedScriptWebGLModule.h \
 	Source/WebCore/inspector/InspectorAgent.cpp \
 	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
 	Source/WebCore/inspector/InspectorBaseAgent.cpp \
 	Source/WebCore/inspector/InspectorBaseAgent.h \
+	Source/WebCore/inspector/InspectorCanvasAgent.cpp \
+	Source/WebCore/inspector/InspectorCanvasAgent.h \
+	Source/WebCore/inspector/InspectorCanvasInstrumentation.h \
 	Source/WebCore/inspector/InspectorClient.cpp \
 	Source/WebCore/inspector/InspectorClient.h \
 	Source/WebCore/inspector/InspectorController.cpp \
@@ -3710,9 +3713,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorTimelineAgent.h \
 	Source/WebCore/inspector/InspectorValues.cpp \
 	Source/WebCore/inspector/InspectorValues.h \
-	Source/WebCore/inspector/InspectorWebGLAgent.cpp \
-	Source/WebCore/inspector/InspectorWebGLAgent.h \
-	Source/WebCore/inspector/InspectorWebGLInstrumentation.h \
 	Source/WebCore/inspector/InspectorWorkerAgent.cpp \
 	Source/WebCore/inspector/InspectorWorkerAgent.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \

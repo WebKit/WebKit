@@ -30,36 +30,37 @@
 
 #include "config.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(WEBGL)
+#if ENABLE(INSPECTOR)
 
-#include "InjectedScriptWebGLModule.h"
+#include "InjectedScriptCanvasModule.h"
 
 #include "InjectedScript.h"
+#include "InjectedScriptCanvasModuleSource.h"
 #include "InjectedScriptManager.h"
-#include "InjectedScriptWebGLModuleSource.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 
 namespace WebCore {
 
-InjectedScriptWebGLModule::InjectedScriptWebGLModule()
-    : InjectedScriptModule("InjectedScriptWebGLModule")
+InjectedScriptCanvasModule::InjectedScriptCanvasModule()
+    : InjectedScriptModule("InjectedScriptCanvasModule")
 {
 }
 
-InjectedScriptWebGLModule InjectedScriptWebGLModule::moduleForState(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
+InjectedScriptCanvasModule InjectedScriptCanvasModule::moduleForState(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
 {
-    InjectedScriptWebGLModule result;
+    InjectedScriptCanvasModule result;
     result.ensureInjected(injectedScriptManager, scriptState);
     return result;
 }
 
-String InjectedScriptWebGLModule::source() const
+String InjectedScriptCanvasModule::source() const
 {
-    return String(reinterpret_cast<const char*>(InjectedScriptWebGLModuleSource_js), sizeof(InjectedScriptWebGLModuleSource_js));
+    return String(reinterpret_cast<const char*>(InjectedScriptCanvasModuleSource_js), sizeof(InjectedScriptCanvasModuleSource_js));
 }
 
-ScriptObject InjectedScriptWebGLModule::wrapWebGLContext(const ScriptObject& glContext)
+#if ENABLE(WEBGL)
+ScriptObject InjectedScriptCanvasModule::wrapWebGLContext(const ScriptObject& glContext)
 {
     ScriptFunctionCall function(injectedScriptObject(), "wrapWebGLContext");
     function.appendArgument(glContext);
@@ -71,8 +72,9 @@ ScriptObject InjectedScriptWebGLModule::wrapWebGLContext(const ScriptObject& glC
     }
     return ScriptObject(glContext.scriptState(), resultValue);
 }
+#endif // ENABLE(WEBGL)
 
-void InjectedScriptWebGLModule::captureFrame(ErrorString* errorString, String* traceLogId)
+void InjectedScriptCanvasModule::captureFrame(ErrorString* errorString, String* traceLogId)
 {
     ScriptFunctionCall function(injectedScriptObject(), "captureFrame");
     RefPtr<InspectorValue> resultValue;
@@ -81,7 +83,7 @@ void InjectedScriptWebGLModule::captureFrame(ErrorString* errorString, String* t
         *errorString = "Internal error: captureFrame";
 }
 
-void InjectedScriptWebGLModule::dropTraceLog(ErrorString* errorString, const String& traceLogId)
+void InjectedScriptCanvasModule::dropTraceLog(ErrorString* errorString, const String& traceLogId)
 {
     ScriptFunctionCall function(injectedScriptObject(), "dropTraceLog");
     function.appendArgument(traceLogId);
@@ -92,7 +94,7 @@ void InjectedScriptWebGLModule::dropTraceLog(ErrorString* errorString, const Str
         *errorString = "Internal error: dropTraceLog";
 }
 
-void InjectedScriptWebGLModule::traceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::WebGL::TraceLog>* traceLog)
+void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::Canvas::TraceLog>* traceLog)
 {
     ScriptFunctionCall function(injectedScriptObject(), "traceLog");
     function.appendArgument(traceLogId);
@@ -103,10 +105,10 @@ void InjectedScriptWebGLModule::traceLog(ErrorString* errorString, const String&
             *errorString = "Internal error: traceLog";
         return;
     }
-    *traceLog = TypeBuilder::WebGL::TraceLog::runtimeCast(resultValue);
+    *traceLog = TypeBuilder::Canvas::TraceLog::runtimeCast(resultValue);
 }
 
-void InjectedScriptWebGLModule::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
+void InjectedScriptCanvasModule::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
 {
     ScriptFunctionCall function(injectedScriptObject(), "replayTraceLog");
     function.appendArgument(traceLogId);
@@ -119,4 +121,4 @@ void InjectedScriptWebGLModule::replayTraceLog(ErrorString* errorString, const S
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(WEBGL)
+#endif // ENABLE(INSPECTOR)

@@ -66,7 +66,6 @@
 #include "InspectorStyleTextEditor.cpp"
 #include "InspectorTimelineAgent.cpp"
 #include "InspectorValues.cpp"
-#include "InspectorWebGLAgent.cpp"
 #include "InspectorWorkerAgent.cpp"
 #include "InstrumentingAgents.cpp"
 #include "MemoryInstrumentationImpl.cpp"

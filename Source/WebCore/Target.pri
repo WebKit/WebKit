@@ -732,14 +732,15 @@ SOURCES += \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptBase.cpp \
+    inspector/InjectedScriptCanvasModule.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InjectedScriptManager.cpp \
     inspector/InjectedScriptModule.cpp \
-    inspector/InjectedScriptWebGLModule.cpp \
     inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
     inspector/InspectorBaseAgent.cpp \
     inspector/InspectorCSSAgent.cpp \
+    inspector/InspectorCanvasAgent.cpp \
     inspector/InspectorClient.cpp \
     inspector/InspectorConsoleAgent.cpp \
     inspector/InspectorController.cpp \
@@ -766,7 +767,6 @@ SOURCES += \
     inspector/InspectorStyleTextEditor.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
-    inspector/InspectorWebGLAgent.cpp \
     inspector/InspectorWorkerAgent.cpp \
     inspector/InstrumentingAgents.cpp \
     inspector/MemoryInstrumentationImpl.cpp \
@@ -1857,13 +1857,15 @@ HEADERS += \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptBase.h \
+    inspector/InjectedScriptCanvasModule.h \
     inspector/InjectedScriptHost.h \
     inspector/InjectedScriptManager.h \
     inspector/InjectedScriptModule.h \
-    inspector/InjectedScriptWebGLModule.h \
     inspector/InspectorAgent.h \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBaseAgent.h \
+    inspector/InspectorCanvasAgent.h \
+    inspector/InspectorCanvasInstrumentation.h \
     inspector/InspectorConsoleAgent.h \
     inspector/InspectorConsoleInstrumentation.h \
     inspector/InspectorController.h \
@@ -1892,8 +1894,6 @@ HEADERS += \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorStyleTextEditor.h \
     inspector/InspectorTimelineAgent.h \
-    inspector/InspectorWebGLAgent.h \
-    inspector/InspectorWebGLInstrumentation.h \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \
     inspector/MemoryInstrumentationImpl.h \
