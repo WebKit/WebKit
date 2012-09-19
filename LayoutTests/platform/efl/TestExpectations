@@ -174,7 +174,8 @@ BUGWKEFL SKIP : accessibility = TEXT
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// REGRESSION(r128802): It made some JS tests crash 
+// REGRESSION(r128802): It made some JS tests crash
+BUGWK97001 DEBUG : fast/dom/message-port-deleted-by-accessor.html = CRASH PASS
 BUGWK97001 DEBUG : fast/js/Object-defineProperty.html = CRASH
 BUGWK97001 DEBUG : fast/js/array-bad-time.html = CRASH
 BUGWK97001 DEBUG : fast/js/array-slow-put.html = CRASH
