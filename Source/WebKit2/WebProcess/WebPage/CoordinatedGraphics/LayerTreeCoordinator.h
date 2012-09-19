@@ -127,6 +127,7 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
+    Vector<WebLayerID> m_detachedLayers;
     HashMap<int64_t, int> m_directlyCompositedImageRefCounts;
     Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;
 

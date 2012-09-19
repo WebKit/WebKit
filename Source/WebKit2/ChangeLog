@@ -1,3 +1,20 @@
+2012-09-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Texmap] Potential crash in TextureMapperLayer because of referencing deleted mask/replica layer
+        https://bugs.webkit.org/show_bug.cgi?id=96919
+
+        Reviewed by Noam Rosenthal.
+
+        Delay syncing deleted layers until flushPendingLayerChanges so the UI side state
+        will contain all changes related to the deletion of a layer. This saves us from
+        referencing a deleted layer.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        (WebKit::LayerTreeCoordinator::detachLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-09-19  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] waitUntilTitleChangedTo() and waitUntilLoadFinished() needs timeout.

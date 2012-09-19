@@ -255,6 +255,11 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
         return false;
 
     m_shouldSyncFrame = false;
+
+    for (size_t i = 0; i < m_detachedLayers.size(); ++i)
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
+    m_detachedLayers.clear();
+
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
@@ -326,7 +331,8 @@ void LayerTreeCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 {
     m_registeredLayers.remove(layer);
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(layer->id()));
+    m_detachedLayers.append(layer->id());
+    scheduleLayerFlush();
 }
 
 static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
