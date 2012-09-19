@@ -36,7 +36,7 @@ Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeS
 {
     switch (profile->observedArrayModes()) {
     case 0:
-        return Array::Undecided;
+        return Array::Unprofiled;
     case asArrayModes(NonArray):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
             return Array::BlankToArrayStorage; // FIXME: we don't know whether to go to slow put mode, or not. This is a decent guess.
@@ -86,6 +86,12 @@ Array::Mode refineArrayMode(Array::Mode arrayMode, SpeculatedType base, Speculat
     
     if (!isInt32Speculation(index) || !isCellSpeculation(base))
         return Array::Generic;
+    
+    if (arrayMode == Array::Unprofiled) {
+        // If the indexing type wasn't recorded in the array profile but the values are
+        // base=cell property=int, then we know that this access didn't execute.
+        return Array::ForceExit;
+    }
     
     if (arrayMode != Array::Undecided)
         return arrayMode;
@@ -198,6 +204,7 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
         return isFloat64ArraySpeculation(value.m_type);
         
     case Array::Undecided:
+    case Array::Unprofiled:
         break;
     }
     
@@ -210,6 +217,8 @@ const char* modeToString(Array::Mode mode)
     switch (mode) {
     case Array::Undecided:
         return "Undecided";
+    case Array::Unprofiled:
+        return "Unprofiled";
     case Array::Generic:
         return "Generic";
     case Array::ForceExit:

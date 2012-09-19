@@ -841,6 +841,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(true);
         switch (node.arrayMode()) {
         case Array::Undecided:
+        case Array::Unprofiled:
             ASSERT_NOT_REACHED();
             break;
         case Array::ForceExit:

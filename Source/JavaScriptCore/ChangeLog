@@ -1,5 +1,32 @@
 2012-09-19  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not assume that a ByVal access is generic just because it was unprofiled
+        https://bugs.webkit.org/show_bug.cgi?id=97088
+
+        Reviewed by Geoffrey Garen.
+        
+        We were not disambiguating between "Undecided" in the sense that the array profile
+        has no useful information versus "Undecided" in the sense that the array profile
+        knows that the access has not executed. That's an important distinction, since
+        the former form of "Undecided" means that we should consult value profiling, while
+        the latter means that we should force exit unless the value profiling indicates
+        that the access must be generic (base is not cell or property is not int).
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (JSC::DFG::refineArrayMode):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::canCSEStorage):
+        (JSC::DFG::modeIsSpecific):
+        (JSC::DFG::modeSupportsLength):
+        (JSC::DFG::benefitsFromStructureCheck):
+
+2012-09-19  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not emit PutByVal hole case unless it has to
         https://bugs.webkit.org/show_bug.cgi?id=97080
 
