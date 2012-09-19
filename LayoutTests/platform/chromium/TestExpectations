@@ -1764,9 +1764,6 @@ BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 // WebKit roll 53655 -> 53704
 BUGCR32900 : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT IMAGE
 
-// WebKit roll 54059 -> 54075
-BUGCR33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
-
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
 
