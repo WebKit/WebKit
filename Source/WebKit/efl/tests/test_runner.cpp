@@ -16,6 +16,8 @@
     Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#include "config.h"
+
 #include "UnitTestUtils/EWKTestBase.h"
 #include <getopt.h>
 #include <gtest/gtest.h>
@@ -33,7 +35,6 @@ static void parseCustomArguments(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    atexit(EWKUnitTests::EWKTestBase::shutdownAll);
     parseCustomArguments(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -19,49 +19,29 @@
 #ifndef EWKTestBase_h
 #define EWKTestBase_h
 
-#include <Evas.h>
+#include "EWKTestConfig.h"
+#include "EWKTestView.h"
 #include <gtest/gtest.h>
-
-#define RUN_TEST(args...)   \
-    do {    \
-        ASSERT_EQ(true, EWKTestBase::runTest(args));    \
-    } while (0)
-
-#define START_TEST()    \
-    do {    \
-        EWKTestBase::startTest();   \
-    } while (0)
-
-#define END_TEST()    \
-    do {    \
-        EWKTestBase::endTest(); \
-    } while (0)
-
-#define EFL_INIT_RET()  \
-    do {    \
-        if (!EWKTestBase::init())   \
-            return false;    \
-    } while (0)
-
-#define EFL_INIT()  \
-    do {    \
-        EWKTestBase::init();    \
-    } while (0)
 
 namespace EWKUnitTests {
 
-class EWKTestBase {
-    static bool createTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data);
+class EWKTestBase: public ::testing::Test {
 public:
-    static bool init();
-    static void shutdownAll();
-    static void startTest();
-    static void endTest();
-
-    static bool runTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name = "load,finished", void* event_data = 0);
-    static bool runTest(void (*event_callback)(void*, Evas_Object*, void*), const char* event_name = "load,finished", void* event_data = 0);
-
     static int useX11Window;
+
+    static void onLoadFinished(void* data, Evas_Object* webView, void* eventInfo);
+
+    Evas_Object* webView();
+protected:
+    EWKTestBase();
+
+    virtual void SetUp();
+    virtual void TearDown();
+
+    void loadUrl(const char* url = Config::defaultTestPage);
+    void waitUntilLoadFinished();
+
+    EWKTestView* m_ewkTestView;
 };
 
 }

@@ -19,56 +19,32 @@
 #ifndef EWKTestView_h
 #define EWKTestView_h
 
+#include "EWKTestConfig.h"
 #include <Ecore_Evas.h>
 #include <Evas.h>
-#include <string>
 #include <wtf/OwnPtr.h>
 #include <wtf/efl/RefPtrEfl.h>
 
 namespace EWKUnitTests {
 
-class EWKTestEcoreEvas {
-public:
-    EWKTestEcoreEvas(int useX11Window);
-    EWKTestEcoreEvas(const char* engine_name, int viewport_x, int viewport_y, int viewport_w, int viewport_h, const char* extra_options, int useX11Window);
-
-    Evas* evas();
-    void show();
-
-private:
-    OwnPtr<Ecore_Evas> m_ecoreEvas;
-};
-
 class EWKTestView {
 public:
     enum EwkViewType {
         SingleView = 0,
-        TiledView,
+        TiledView
     };
 
-    explicit EWKTestView(Evas*);
-    EWKTestView(Evas*, const char* url);
-    EWKTestView(Evas*, EwkViewType, const char* url);
-    EWKTestView(Evas*, EwkViewType, const char* url, int width, int height);
+    EWKTestView();
 
     Evas_Object* webView() { return m_webView.get(); }
-    Evas_Object* mainFrame();
-    Evas* evas();
-    void show();
 
-    bool init();
-    void bindEvents(void (*callback)(void*, Evas_Object*, void*), const char* eventName, void* ptr);
-
+    bool init(int useX11Window = 0, EwkViewType testViewType = TiledView, int width = Config::defaultViewWidth, int height = Config::defaultViewHeight);
 private:
     EWKTestView(const EWKTestView&);
-    EWKTestView operator=(const EWKTestView&);
+    EWKTestView& operator=(const EWKTestView&);
 
-    Evas* m_evas;
+    OwnPtr<Ecore_Evas> m_ecoreEvas;
     RefPtr<Evas_Object> m_webView;
-
-    int m_width, m_height;
-    EwkViewType m_defaultViewType;
-    std::string m_url;
 };
 
 }
