@@ -113,7 +113,7 @@ private:
     FakeIDBDatabaseCallbacks() { }
 };
 
-TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
+TEST(IDBDatabaseBackendTest, DISABLED_ConnectionLifecycle)
 {
     RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
     EXPECT_TRUE(backingStore->hasOneRef());
@@ -172,7 +172,7 @@ private:
     WebIDBDatabaseImpl& m_webDatabase;
 };
 
-TEST(IDBDatabaseBackendTest, ForcedClose)
+TEST(IDBDatabaseBackendTest, DISABLED_ForcedClose)
 {
     RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
     EXPECT_TRUE(backingStore->hasOneRef());
