@@ -1,3 +1,21 @@
+2012-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: run-perf-tests no longer reports the total test time
+        https://bugs.webkit.org/show_bug.cgi?id=97138
+
+        Reviewed by Tony Chang.
+
+        Report the finished time as a info-level log as opposed to a debug level log.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.normalizeFinishedTime): Added. It replaces all finished times by 0.1 seconds.
+        (test_run_test_pause_before_testing):
+        (test_run_test_set_for_parser_tests):
+        (test_run_memory_test):
+        (_test_run_with_json_output):
+
 2012-09-19  Dirk Pranke  <dpranke@chromium.org>
 
         Support new TestExpectations format alongside old one

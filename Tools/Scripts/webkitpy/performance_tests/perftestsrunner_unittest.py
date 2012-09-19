@@ -31,6 +31,7 @@
 
 import StringIO
 import json
+import re
 import unittest
 
 from webkitpy.common.host_mock import MockHost
@@ -47,6 +48,9 @@ from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 class MainTest(unittest.TestCase):
     def assertWritten(self, stream, contents):
         self.assertEquals(stream.buflist, contents)
+
+    def normalizeFinishedTime(self, log):
+        return re.sub(r'Finished: [0-9\.]+ s', 'Finished: 0.1 s', log)
 
     class TestDriver:
         def run_test(self, driver_input, stop_when_done):
@@ -234,7 +238,8 @@ max 548000 bytes
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(stderr, "Ready to run test?\n")
-        self.assertEqual(log, "Running inspector/pass.html (1 of 1)\nRESULT group_name: test_name= 42 ms\n\n")
+        self.assertEqual(self.normalizeFinishedTime(log),
+            "Running inspector/pass.html (1 of 1)\nRESULT group_name: test_name= 42 ms\nFinished: 0.1 s\n\n")
 
     def test_run_test_set_for_parser_tests(self):
         runner, port = self.create_runner()
@@ -246,13 +251,15 @@ max 548000 bytes
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
-        self.assertEqual(log, '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+        self.assertEqual(self.normalizeFinishedTime(log), '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
         'RESULT Bindings: event-target-wrapper= 1489.05 ms',
         'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+        'Finished: 0.1 s',
         '',
         'Running Parser/some-parser.html (2 of 2)',
         'RESULT Parser: some-parser= 1100.0 ms',
         'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
+        'Finished: 0.1 s',
         '', '']))
 
     def test_run_memory_test(self):
@@ -267,7 +274,7 @@ max 548000 bytes
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
-        self.assertEqual(log, '\n'.join([
+        self.assertEqual(self.normalizeFinishedTime(log), '\n'.join([
             'Running 1 tests',
             'Running Parser/memory-test.html (1 of 1)',
             'RESULT Parser: memory-test= 1100.0 ms',
@@ -276,6 +283,7 @@ max 548000 bytes
             'median= 829000.0 bytes, stdev= 15000.0 bytes, min= 811000.0 bytes, max= 848000.0 bytes',
             'RESULT Parser: memory-test: Malloc= 532000.0 bytes',
             'median= 529000.0 bytes, stdev= 13000.0 bytes, min= 511000.0 bytes, max= 548000.0 bytes',
+            'Finished: 0.1 s',
             '', '']))
         results = runner.load_output_json()[0]['results']
         self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms'})
@@ -304,14 +312,16 @@ max 548000 bytes
             stdout, stderr, logs = output_capture.restore_output()
 
         if not expected_exit_code:
-            self.assertEqual(logs, '\n'.join([
-                'Running 2 tests',
+            self.assertEqual(self.normalizeFinishedTime(logs),
+                '\n'.join(['Running 2 tests',
                 'Running Bindings/event-target-wrapper.html (1 of 2)',
                 'RESULT Bindings: event-target-wrapper= 1489.05 ms',
                 'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+                'Finished: 0.1 s',
                 '',
                 'Running inspector/pass.html (2 of 2)',
                 'RESULT group_name: test_name= 42 ms',
+                'Finished: 0.1 s',
                 '',
                 '']))
 

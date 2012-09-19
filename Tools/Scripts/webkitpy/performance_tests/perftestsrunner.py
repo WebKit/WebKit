@@ -317,6 +317,6 @@ class PerfTestsRunner(object):
         else:
             _log.error('FAILED')
 
-        _log.debug("Finished: %f s" % (time.time() - start_time))
+        _log.info("Finished: %f s" % (time.time() - start_time))
 
         return new_results != None
