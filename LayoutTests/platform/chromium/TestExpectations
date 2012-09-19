@@ -2653,10 +2653,8 @@ BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
 
 BUGWK74662 WIN LINUX ANDROID : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
-BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS TIMEOUT
-BUGWK74746 : fast/filesystem/workers/file-entry-to-uri-sync.html = PASS TIMEOUT
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = TEXT TIMEOUT
-BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = TEXT TIMEOUT
+BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = TEXT
 
 BUGWK78725 : http/tests/filesystem/workers/resolve-url-sync.html = PASS TIMEOUT
 BUGWK78725 : http/tests/filesystem/workers/resolve-url.html = PASS TIMEOUT
