@@ -2595,6 +2595,24 @@ BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html
 BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-icon-hidpi.html = IMAGE
 BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
 
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/clip-text-in-hidpi.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-as-background.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-background-repeat-without-size.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-background-repeat.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-border-image-comparison.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-border-image-dynamic.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-border-image-simple.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-in-content-dynamic.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-out-of-order.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-simple.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/resize-corner-hidpi.html = IMAGE
+BUGCR150682 : platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html = IMAGE
+BUGCR150682 : compositing/geometry/fixed-position-composited-page-scale.html = IMAGE
+BUGCR150682 : compositing/geometry/fixed-position-iframe-composited-page-scale-down.html = IMAGE
+BUGCR150682 : compositing/geometry/fixed-position-iframe-composited-page-scale.html = IMAGE
+
 BUGWK70866 LINUX ANDROID MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS

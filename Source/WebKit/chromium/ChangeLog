@@ -1,3 +1,25 @@
+2012-09-19  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Store the contents scale factor in PlatformContextSkia on initialization
+        https://bugs.webkit.org/show_bug.cgi?id=96137
+
+        Reviewed by Stephen White.
+
+        Define SK_SUPPORT_HINTING_SCALE_FACTOR by default. This is also used
+        for the skia patch here: https://codereview.appspot.com/6506099/.
+        Also added two new unit tests.
+
+        * features.gypi:
+        * tests/OpaqueRectTrackingContentLayerDelegateTest.cpp:
+        (WebCore):
+        (WebCore::HintingScaleCallback::HintingScaleCallback):
+        (HintingScaleCallback):
+        (WebCore::HintingScaleCallback::operator()):
+        (WebCore::TEST_F):
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-09-19  David Grogan  <dgrogan@chromium.org>
 
         Disable some failing IDB tests
