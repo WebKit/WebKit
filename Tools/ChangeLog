@@ -1,3 +1,18 @@
+2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DRT does not support overriding 'WebKitCSSRegionsEnabled' preference
+        https://bugs.webkit.org/show_bug.cgi?id=97100
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL's DRT now supports overriding the 'WebKitCSSRegionsEnabled'
+        preference, in order to match WebKitTestRunner functionality.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::overridePreference):
+
 2012-09-18  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][WTR] CodeGeneratorTestRunner could keep original copyright.

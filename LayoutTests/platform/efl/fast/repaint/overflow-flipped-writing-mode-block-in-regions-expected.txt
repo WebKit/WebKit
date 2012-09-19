@@ -8,7 +8,7 @@ layer at (100,100) size 104x404
 Flow Threads
   Thread with flow-name 'thread'
     layer at (0,0) size 100x400
-      RenderFlowThread at (0,0) size 100x400
+      RenderNamedFlowThread at (0,0) size 100x400
         RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
           RenderBlock {DIV} at (0,0) size 100x25
             RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

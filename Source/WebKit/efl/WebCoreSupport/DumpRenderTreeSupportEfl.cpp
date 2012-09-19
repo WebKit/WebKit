@@ -342,6 +342,13 @@ void DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(const Evas_Object* ewkVie
     page->settings()->setCSSGridLayoutEnabled(enabled);
 }
 
+void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled)
+{
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    page->settings()->setCSSRegionsEnabled(enabled);
+}
+
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, false);

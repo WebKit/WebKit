@@ -433,9 +433,6 @@ fast/forms/select/listbox-in-multi-column.html
 fast/inline/continuation-outlines-with-layers.html
 fast/invalid/residual-style.html
 fast/js/constructor-length.html
-fast/repaint/japanese-rl-selection-repaint-in-regions.html
-fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
-fast/repaint/region-painting-via-layout.html
 fast/table/prepend-in-anonymous-table.html
 fast/text/basic/011.html
 fast/text/basic/013.html

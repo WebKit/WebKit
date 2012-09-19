@@ -255,8 +255,6 @@ BUGWK87619 : fast/forms/number/number-appearance-spinbutton-disabled-readonly.ht
 BUGWK87619 : fast/forms/number/number-appearance-spinbutton-layer.html = TEXT
 BUGWK87619 : fast/forms/number/number-size.html = TEXT
 
-BUGWK83007 : fast/repaint/region-painting-invalidation.html = TEXT IMAGE IMAGE+TEXT MISSING
-
 // Needs to have PNG generated, which currently fails for this case.
 BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 
