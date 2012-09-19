@@ -332,28 +332,42 @@ bool RenderThemeBlackBerry::paintSearchField(RenderObject* object, const PaintIn
     return paintTextFieldOrTextAreaOrSearchField(object, info, rect);
 }
 
-bool RenderThemeBlackBerry::paintSearchFieldCancelButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+IntRect RenderThemeBlackBerry::convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const
 {
-    ASSERT(object->parent());
-    if (!object->parent() || !object->parent()->isBox())
+    // Compute an offset between the part renderer and the input renderer.
+    LayoutSize offsetFromInputRenderer = -partRenderer->offsetFromAncestorContainer(inputRenderer);
+    // Move the rect into partRenderer's coords.
+    partRect.move(offsetFromInputRenderer);
+    // Account for the local drawing offset.
+    partRect.move(localOffset.x(), localOffset.y());
+
+    return pixelSnappedIntRect(partRect);
+}
+
+
+bool RenderThemeBlackBerry::paintSearchFieldCancelButton(RenderObject* cancelButtonObject, const PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* input = cancelButtonObject->node()->shadowAncestorNode();
+    if (!input->renderer()->isBox())
         return false;
 
-    RenderBox* parentRenderBox = toRenderBox(object->parent());
+    RenderBox* inputRenderBox = toRenderBox(input->renderer());
+    LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
-    IntRect parentBox = parentRenderBox->absoluteContentBox();
-    IntRect bounds = rect;
-    // Make sure the scaled button stays square and fits in its parent's box.
-    bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
-    bounds.setWidth(bounds.height());
-
-    // Put the button in the middle vertically, and round up the value.
-    // So if it has to be one pixel off-center, it would be one pixel closer
-    // to the bottom of the field. This would look better with the text.
-    bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
+    // Make sure the scaled button stays square and will fit in its parent's box.
+    LayoutUnit cancelButtonSize = std::min(inputContentBox.width(), std::min<LayoutUnit>(inputContentBox.height(), r.height()));
+    // Calculate cancel button's coordinates relative to the input element.
+    // Center the button vertically. Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field. This tends to look better with the text.
+    LayoutRect cancelButtonRect(cancelButtonObject->offsetFromAncestorContainer(inputRenderBox).width(),
+                                inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
+                                cancelButtonSize, cancelButtonSize);
+    IntRect paintingRect = convertToPaintingRect(inputRenderBox, cancelButtonObject, cancelButtonRect, r);
 
     static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
     static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
-    paintInfo.context->drawImage(isPressed(object) ? cancelPressedImage : cancelImage, object->style()->colorSpace(), bounds);
+    paintInfo.context->drawImage(isPressed(cancelButtonObject) ? cancelPressedImage : cancelImage,
+                                 cancelButtonObject->style()->colorSpace(), paintingRect);
     return false;
 }
 
