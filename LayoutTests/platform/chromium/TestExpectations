@@ -2608,7 +2608,7 @@ crbug.com/150682 platform/chromium/virtual/gpu/fast/hidpi/image-set-out-of-order
 crbug.com/150682 platform/chromium/virtual/gpu/fast/hidpi/image-set-simple.html [ ImageOnlyFailure ]
 crbug.com/150682 platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ ImageOnlyFailure ]
 crbug.com/150682 platform/chromium/virtual/gpu/fast/hidpi/resize-corner-hidpi.html [ ImageOnlyFailure ]
-crbug.com/150682 platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
+crbug.com/150682 [ Win Linux ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
 crbug.com/150682 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
 crbug.com/150682 compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 crbug.com/150682 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
