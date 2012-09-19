@@ -603,18 +603,21 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
 
 void InputHandler::spellCheckingRequestCancelled(int32_t transactionId)
 {
-    if (transactionId != m_processingTransactionId)
-        SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestCancelled We are out of sync with input service. Expected transaction id %d, received %d.", m_processingTransactionId, transactionId);
-    else
-        SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestCancelled Request with transaction id %d has been cancelled.", transactionId);
+    SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestCancelled Expected transaction id %d, received %d. %s"
+                , transactionId
+                , m_processingTransactionId
+                , transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
+
     m_request->didCancel();
     m_processingTransactionId = -1;
 }
 
 void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
 {
-    if (transactionId != m_processingTransactionId)
-        SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestProcessed We are out of sync with input service. Expected transaction id %d, received %d.", m_processingTransactionId, transactionId);
+    SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestProcessed Expected transaction id %d, received %d. %s"
+                , transactionId
+                , m_processingTransactionId
+                , transactionId == m_processingTransactionId ? "" : "We are out of sync with input service.");
 
     if (!spannableString || !isActiveTextEdit()) {
         SpellingLog(LogLevelWarn, "InputHandler::spellCheckingRequestProcessed Cancelling request with transactionId %d.", transactionId);

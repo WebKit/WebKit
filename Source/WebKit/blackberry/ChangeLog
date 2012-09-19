@@ -1,3 +1,16 @@
+2012-09-19  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Clean up the SpellingLog output
+        https://bugs.webkit.org/show_bug.cgi?id=97129
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+
 2012-09-19  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Add SpellingLog for spell checking options request.
