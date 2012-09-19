@@ -84,10 +84,10 @@ public:
     private:
 #if ENABLE(WEB_PROCESS_SANDBOX)
         Handle* m_data;
+        size_t m_size;
 #else
         Handle m_emptyHandle;
 #endif
-        size_t m_size;
     };
     
     static PassRefPtr<SandboxExtension> create(const Handle&);
