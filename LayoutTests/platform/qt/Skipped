@@ -2803,3 +2803,6 @@ fast/js/dfg-inline-arguments-use-from-all-the-places.html
 # https://bugs.webkit.org/show_bug.cgi?id=96931
 http/tests/inspector/network/network-xhr-replay.html
 
+# [Qt] REGRESSION(r128910): inspector/extensions/extensions-panel.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=97084
+inspector/extensions/extensions-panel.html
