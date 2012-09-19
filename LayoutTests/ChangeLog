@@ -1,3 +1,16 @@
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Move several test cases to efl-wk1 TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=97072
+
+        Unreviewed EFL gardening.
+
+        Move several test cases to efl-wk1 TestExpectations
+        since they don't fail on the WebKit2 bots.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Scrollbar with tickmarks doesn't respond to clicks

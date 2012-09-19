@@ -57,9 +57,6 @@ BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 // EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
 BUGWK86460 : http/tests/appcache/origin-usage.html = TEXT
 
-// EFL's DRT does not support overriding 'WebKitDisplayImagesKey' preference
-BUGWK96883 : fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html = TEXT
-
 // EFL's TestRunner does not implement originsWithApplicationCache
 BUGWK86498 : http/tests/appcache/origins-with-appcache.html = TEXT
 
@@ -76,6 +73,13 @@ BUGWK87246 : fast/loader/form-submission-after-beforeunload-cancel.html = TEXT
 
 // New test introduced in r116694 fails
 BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
+
+// Passes in some machines and fails on other (such as the bots).
+BUGWK97021 : fast/events/dont-loose-last-event.html = TEXT
+
+// New windows are created with wrong size
+BUGWK53959 : fast/dom/Window/window-resize.html = TEXT
+BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = TEXT
 
 // Feature not mature yet and disabled by default on WebCore
 BUGWK87088 : fast/js/names.html = TEXT

@@ -1019,10 +1019,6 @@ BUGWK94877 : fast/forms/listbox-hit-test-zoomed.html = MISSING
 BUGWK94880 : fast/forms/search-cancel-button-style-sharing.html = MISSING
 BUGWK94880 : fast/forms/search-rtl.html = MISSING
 
-// New windows are created with wrong size
-BUGWK53959 : fast/dom/Window/window-resize.html = TEXT
-BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = TEXT
-
 // Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
 BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
 
@@ -1063,5 +1059,3 @@ BUGWK54251 : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 // Fails after r128270.
 BUGWK96517 : fast/events/popup-blocking-timers.html = TEXT
 
-// Passes in some machines and fails on other (such as the bots).
-BUGWK97021 : fast/events/dont-loose-last-event.html = TEXT
