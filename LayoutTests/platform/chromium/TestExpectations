@@ -2372,7 +2372,8 @@ BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
 BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
-BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS TEXT
+BUGCR86340 WIN DEBUG : fast/filesystem/file-writer-write-overlapped.html = PASS TEXT
+BUGCR86340 WIN DEBUG : fast/filesystem/workers/file-writer-write-overlapped.html = PASS TEXT
 
 // These seem to be minor differences (used to be debug only, started failing in release since about r116225).
 BUGWK60135 SNOWLEOPARD : fast/text/international/thai-line-breaks.html = PASS IMAGE
