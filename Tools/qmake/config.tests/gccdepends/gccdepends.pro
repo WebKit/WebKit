@@ -1,6 +1,8 @@
-TEMPLATE = aux
+TEMPLATE = app
 OBJECTS_DIR = obj
-QMAKE_CXXFLAGS += -MD
+CONFIG += GNUmake gcc_MD_depends
+QMAKE_CXXFLAGS += -MP
+TARGET = empty
 
 base_filename = empty
 object_file = $$OBJECTS_DIR/$${base_filename}.o

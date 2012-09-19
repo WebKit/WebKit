@@ -1,3 +1,19 @@
+2012-09-19  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix incremental builds with all-in-one-files and gccdepends
+
+        Reviewed by Tor Arne Vestbø.
+
+        Pass -MP to gcc when we use the gcc depends feature, to ensure that implicit rules
+        are not only created for header files but also for .cpp files. AllInOne.cpp files
+        include other .cpp files, and when those are removed we need those dummy rules to
+        avoid a "No rule to make Foo.cpp required by AllInOne.o" error.
+
+        * qmake/config.tests/gccdepends/empty.cpp:
+        (main):
+        * qmake/config.tests/gccdepends/gccdepends.pro:
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-09-19  Rick Byers  <rbyers@chromium.org>
 
         Do touch adjustment on GestureTapDown
