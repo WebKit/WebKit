@@ -1,3 +1,15 @@
+2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip inspector/extensions/extensions-panel.html
+        https://bugs.webkit.org/show_bug.cgi?id=97078
+
+        Unreviewed EFL gardening.
+
+        Skip inspector/extensions/extensions-panel.html for
+        EFL port since it started failing after r128910.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip several JS tests that crash after r128802

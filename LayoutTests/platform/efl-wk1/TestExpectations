@@ -51,6 +51,9 @@ BUGWK96642 : loader/go-back-to-different-window-size.html = TEXT PASS
 // EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
+// Frame does not get focus as expected
+BUGWK97077 : inspector/extensions/extensions-panel.html = TEXT
+
 // Custom font loading delaying text drawing on Canvas
 BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
