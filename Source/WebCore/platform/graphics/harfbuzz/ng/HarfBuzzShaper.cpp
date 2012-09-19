@@ -229,8 +229,23 @@ FloatPoint HarfBuzzShaper::adjustStartPoint(const FloatPoint& point)
     return point + m_startOffset;
 }
 
+static const SimpleFontData* fontDataForCombiningCharacterSequence(const Font* font, const UChar* characters, size_t length)
+{
+    UErrorCode error = U_ZERO_ERROR;
+    Vector<UChar, 4> normalizedCharacters(length);
+    int32_t normalizedLength = unorm_normalize(characters, length, UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], length, &error);
+    // Should fallback if we have an error or no composition occurred.
+    if (U_FAILURE(error) || (static_cast<size_t>(normalizedLength) == length))
+        return 0;
+    UChar32 normalizedCharacter;
+    size_t index = 0;
+    U16_NEXT(&normalizedCharacters[0], index, static_cast<size_t>(normalizedLength), normalizedCharacter);
+    return font->glyphDataForCharacter(normalizedCharacter, false).fontData;
+}
+
 bool HarfBuzzShaper::collectHarfBuzzRuns()
 {
+    const UChar* normalizedBufferEnd = m_normalizedBuffer.get() + m_normalizedBufferLength;
     SurrogatePairAwareTextIterator iterator(m_normalizedBuffer.get(), 0, m_normalizedBufferLength, m_normalizedBufferLength);
     UChar32 character;
     unsigned clusterLength = 0;
@@ -245,18 +260,40 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
         return false;
 
     do {
+        const UChar* currentCharacterPosition = iterator.characters();
         const SimpleFontData* currentFontData = nextFontData;
         UScriptCode currentScript = nextScript;
 
         for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
-            nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
-            if (nextFontData != currentFontData)
-                break;
+            if (Font::treatAsZeroWidthSpace(character))
+                continue;
+            if (U_GET_GC_MASK(character) & U_GC_M_MASK) {
+                int markLength = clusterLength;
+                const UChar* markCharactersEnd = iterator.characters() + clusterLength;
+                while (markCharactersEnd < normalizedBufferEnd) {
+                    UChar32 nextCharacter;
+                    int nextCharacterLength = 0;
+                    U16_NEXT(markCharactersEnd, nextCharacterLength, normalizedBufferEnd - markCharactersEnd, nextCharacter);
+                    if (!(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK))
+                        break;
+                    markLength += nextCharacterLength;
+                    markCharactersEnd += nextCharacterLength;
+                }
+                nextFontData = fontDataForCombiningCharacterSequence(m_font, currentCharacterPosition, markCharactersEnd - currentCharacterPosition);
+                if (nextFontData)
+                    clusterLength = markLength;
+                else
+                    nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
+            } else
+                nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
+
             nextScript = uscript_getScript(character, &errorCode);
             if (U_FAILURE(errorCode))
                 return false;
-            if ((currentScript != nextScript) && (currentScript != USCRIPT_INHERITED))
+            if ((nextFontData != currentFontData) || ((currentScript != nextScript) && (nextScript != USCRIPT_INHERITED)))
                 break;
+            if (nextScript == USCRIPT_INHERITED)
+                nextScript = currentScript;
         }
         unsigned numCharactersOfCurrentRun = iterator.currentCharacter() - startIndexOfCurrentRun;
         m_harfbuzzRuns.append(HarfBuzzRun::create(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction()));
