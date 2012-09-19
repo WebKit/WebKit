@@ -2594,9 +2594,6 @@ BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html
 BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-icon-hidpi.html = IMAGE
 BUGCR146756 LINUX WIN ANDROID MAC : platform/chromium/virtual/gpu/fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
 
-// Flaky tests from ~r97647
-BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
-
 BUGWK70866 LINUX ANDROID MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
