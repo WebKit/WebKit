@@ -3002,7 +3002,7 @@ BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = 
 
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
 
-BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
+BUGWK84696 SLOW : fast/workers/storage/interrupt-database.html = PASS
 
 BUGWK84720 DEBUG : fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 

@@ -1,5 +1,16 @@
 2012-09-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Adjust expectation for fast/workers/storage/interrupt-database.html
+        https://bugs.webkit.org/show_bug.cgi?id=84696
+
+        Unreviewed, expectations change.
+
+        It looks like this test is just kinda slow and probably won't timeout if we mark it SLOW.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-18  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] word-spacing-characters{,-complex} no longer fail on Mac.
         https://bugs.webkit.org/show_bug.cgi?id=94008
         https://bugs.webkit.org/show_bug.cgi?id=94003
