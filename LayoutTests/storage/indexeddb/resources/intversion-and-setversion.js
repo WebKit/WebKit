@@ -22,8 +22,14 @@ function deleteSuccess(evt) {
     request = evalAndLog("indexedDB.open(dbname)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
-    request.onupgradeneeded = unexpectedUpgradeNeededCallback;
+    request.onupgradeneeded = initialUpgradeNeeded;
     request.onblocked = unexpectedBlockedCallback;
+}
+
+
+function initialUpgradeNeeded(evt)
+{
+    preamble(evt);
 }
 
 function openSuccess(evt)
@@ -32,7 +38,7 @@ function openSuccess(evt)
     debug("");
     debug("openSuccess():");
     db = evalAndLog("db = event.target.result");
-    shouldBeEqualToString("db.version", "");
+    shouldBe("db.version", "1");
     evalAndLog('request = db.setVersion("some version")');
     request.onsuccess = inSetVersion;
     request.onerror = unexpectedErrorCallback;
@@ -85,9 +91,7 @@ function secondOpen(evt)
 
 function firstUpgradeNeeded(evt)
 {
-    event = evt;
-    debug("");
-    debug("firstUpgradeNeeded():");
+    preamble(evt);
     evalAndLog("db = event.target.result");
     shouldBeEqualToString("String(db)", "[object IDBDatabase]");
     shouldBeEqualToString("String(request.transaction)", "[object IDBTransaction]");
@@ -100,49 +104,68 @@ function firstUpgradeNeeded(evt)
 var didTransactionComplete = false;
 function transactionCompleted(evt)
 {
-    event = evt;
-    debug("");
-    debug("transactionCompleted():");
+    preamble(evt);
     evalAndLog("didTransactionComplete = true");
 }
 
 function firstOpenWithVersion(evt)
 {
-    event = evt;
-    debug("");
-    debug("firstOpenWithVersion():");
+    preamble(evt);
     shouldBeTrue("didTransactionComplete");
     evalAndLog("db = event.target.result");
+    evalAndLog("db.onversionchange = versionChangeGoingFromStringToInt");
     shouldBeEqualToString("String(db)", "[object IDBDatabase]");
     shouldBeNull("request.transaction");
     shouldBe("db.version", "2");
     shouldBeEqualToString("String(request)", "[object IDBOpenDBRequest]");
     evalAndLog('request = db.setVersion("string version 2")');
     shouldBeEqualToString("String(request)", "[object IDBVersionChangeRequest]");
+    evalAndLog("request.onsuccess = secondSetVersionCallback");
     request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = unexpectedSuccessCallback;
-    evalAndLog("request.onerror = setVersionNotAllowed");
+    request.onerror = unexpectedErrorCallback;
 }
 
-function setVersionNotAllowed(evt)
+function secondSetVersionCallback(evt)
 {
-    event = evt;
-    debug("");
-    debug("setVersionNotAllowed():");
-    shouldBeEqualToString("event.type", "error");
-    debug("request.webkitErrorMessage = " + request.webkitErrorMessage);
+    preamble(evt);
+    evalAndLog("transaction = event.target.result");
+    evalAndLog("transaction.oncomplete = setIntVersion2");
+}
+
+function setIntVersion2(evt)
+{
+    preamble(evt);
+    evalAndLog("request = indexedDB.open(dbname, 2)");
+    evalAndLog("request.onsuccess = version2ConnectionSuccess");
+    evalAndLog("request.onblocked = version2ConnectionBlocked");
+    request.onerror = unexpectedErrorCallback;
+}
+
+function versionChangeGoingFromStringToInt(evt)
+{
+    preamble(evt);
     evalAndLog("db.close()");
+}
+
+function version2ConnectionBlocked(evt)
+{
+    preamble(evt);
+}
+
+function version2ConnectionSuccess(evt)
+{
+    preamble(evt);
+    evalAndLog("event.target.result.close()");
     evalAndLog("request = indexedDB.open(dbname, 1)");
     evalAndLog("request.onerror = errorWhenTryingLowVersion");
     request.onblocked = unexpectedBlockedCallback;
     request.onsuccess = unexpectedSuccessCallback;
+    request.onupgradeneeded = unexpectedUpgradeNeededCallback;
 }
 
 function errorWhenTryingLowVersion(evt)
 {
-    event = evt;
-    debug("");
-    debug("errorWhenTryingLowVersion():");
+    preamble(evt);
     debug("request.webkitErrorMessage = " + request.webkitErrorMessage);
     evalAndLog("request = indexedDB.open(dbname, 4)");
     request.onblocked = unexpectedBlockedCallback;

@@ -22,7 +22,7 @@ function prepareDatabase()
         request.onerror = unexpectedErrorCallback;
         request.onsuccess = function(e) {
             evalAndLog("db = request.result");
-            shouldBeEqualToString("db.version", "");
+            shouldBe("db.version", "1");
             request = evalAndLog("db.setVersion('1')");
             request.onerror = unexpectedErrorCallback;
             request.onsuccess = function(e) {

@@ -12,7 +12,7 @@ Starting worker: resources/pending-activity.js
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
 [Worker] db = request.result
-PASS [Worker] db.version is ""
+PASS [Worker] db.version is 1
 [Worker] db.setVersion('1')
 [Worker] store = db.createObjectStore('store')
 [Worker] store.put(0, 0)

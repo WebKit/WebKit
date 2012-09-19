@@ -13,7 +13,7 @@ testStoresAndIndexes():
 indexedDB.deleteDatabase('list-ordering')
 indexedDB.open('list-ordering')
 db = request.result
-PASS db.version is ""
+PASS db.version is 1
 db.setVersion('1')
 
 Object stores:

@@ -10,7 +10,7 @@ Prepare Database
 indexedDB.deleteDatabase('noblobs')
 indexedDB.open('noblobs')
 db = request.result
-PASS db.version is ""
+PASS db.version is 1
 db.setVersion('1')
 store = db.createObjectStore('storeName')
 store.put('value', 'key')

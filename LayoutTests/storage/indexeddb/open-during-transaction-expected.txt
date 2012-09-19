@@ -19,7 +19,7 @@ trans = dbc1.transaction('storeName', 'readwrite')
 trans.objectStore('storeName').put('value', 'key')
 
 trying to open the same database
-openreq2 = indexedDB.open('db1')
+openreq2 = indexedDB.open('open-during-transaction1')
 
 trying to open a different database
 openreq3 = indexedDB.open('open-during-transaction2')
@@ -28,12 +28,12 @@ openreq2.onsuccess
 PASS state is "starting"
 state = 'open2complete'
 
+transaction complete
+PASS state is "open2complete"
+
 openreq3.onsuccess
 PASS state is "open2complete"
 state = 'open3complete'
-
-transaction complete
-PASS state is "open3complete"
 PASS successfullyParsed is true
 
 TEST COMPLETE

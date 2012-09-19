@@ -26,7 +26,7 @@ function prepareDatabase()
             evalAndLog("db = request.result");
             db.onerror = unexpectedErrorCallback;
             evalAndLog("db.onversionchange = onVersionChange");
-            shouldBeEqualToString("db.version", "");
+            shouldBe("db.version", "1");
             request = evalAndLog("db.setVersion('1')");
             request.onerror = unexpectedErrorCallback;
             request.onsuccess = function(e) {

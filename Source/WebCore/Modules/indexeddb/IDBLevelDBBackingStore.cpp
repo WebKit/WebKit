@@ -339,8 +339,8 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
 bool IDBLevelDBBackingStore::updateIDBDatabaseIntVersion(int64_t rowId, int64_t intVersion)
 {
     ASSERT(m_currentTransaction);
-    // FIXME: Change this to strictly greater than 0 once we throw TypeError for
-    // bad versions.
+    if (intVersion == IDBDatabaseMetadata::NoIntVersion)
+        intVersion = IDBDatabaseMetadata::DefaultIntVersion;
     ASSERT_WITH_MESSAGE(intVersion >= 0, "intVersion was %lld", static_cast<long long>(intVersion));
     if (!putVarInt(m_currentTransaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion))
         return false;

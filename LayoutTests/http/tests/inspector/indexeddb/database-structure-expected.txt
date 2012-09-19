@@ -18,7 +18,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 1
+    version: 2
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -27,7 +27,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 2
+    version: 3
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -40,7 +40,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 3
+    version: 4
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -57,7 +57,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 4
+    version: 5
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -78,7 +78,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 5
+    version: 6
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -95,7 +95,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 6
+    version: 7
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -108,7 +108,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 7
+    version: 8
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -117,7 +117,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    version: 8
+    version: 9
     objectStores:
 
 

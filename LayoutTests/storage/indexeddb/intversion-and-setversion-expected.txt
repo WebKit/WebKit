@@ -12,9 +12,11 @@ FAIL String(request) should be [object IDBOpenDBRequest]. Was [object IDBVersion
 Call open with no version parameter:
 indexedDB.open(dbname)
 
+initialUpgradeNeeded():
+
 openSuccess():
 db = event.target.result
-PASS db.version is ""
+PASS db.version is 1
 request = db.setVersion("some version")
 
 inSetVersion():
@@ -47,18 +49,31 @@ didTransactionComplete = true
 firstOpenWithVersion():
 PASS didTransactionComplete is true
 db = event.target.result
+db.onversionchange = versionChangeGoingFromStringToInt
 PASS String(db) is "[object IDBDatabase]"
 PASS request.transaction is null
 PASS db.version is 2
 PASS String(request) is "[object IDBOpenDBRequest]"
 request = db.setVersion("string version 2")
 PASS String(request) is "[object IDBVersionChangeRequest]"
-request.onerror = setVersionNotAllowed
+request.onsuccess = secondSetVersionCallback
 
-setVersionNotAllowed():
-PASS event.type is "error"
-request.webkitErrorMessage = You can't use the setVersion function if you've already set the version through an open call.  The current integer version is 2
+secondSetVersionCallback():
+transaction = event.target.result
+transaction.oncomplete = setIntVersion2
+
+setIntVersion2():
+request = indexedDB.open(dbname, 2)
+request.onsuccess = version2ConnectionSuccess
+request.onblocked = version2ConnectionBlocked
+
+versionChangeGoingFromStringToInt():
 db.close()
+
+version2ConnectionBlocked():
+
+version2ConnectionSuccess():
+event.target.result.close()
 request = indexedDB.open(dbname, 1)
 request.onerror = errorWhenTryingLowVersion
 

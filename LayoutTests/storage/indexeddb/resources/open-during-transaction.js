@@ -45,8 +45,8 @@ function startTransaction()
     trans.onerror = unexpectedErrorCallback;
     trans.oncomplete = function (e) {
         debug("transaction complete");
-        shouldBeEqualToString("state", "open3complete");
-        finishJSTest();
+        shouldBeEqualToString("state", "open2complete");
+        debug("");
     };
 
     debug("");
@@ -56,7 +56,7 @@ function startTransaction()
 function tryOpens()
 {
     debug("trying to open the same database");
-    evalAndLog("openreq2 = indexedDB.open('db1')");
+    evalAndLog("openreq2 = indexedDB.open('open-during-transaction1')");
     openreq2.onerror = unexpectedErrorCallback;
     openreq2.onsuccess = function (e) {
         debug("openreq2.onsuccess");
@@ -73,7 +73,7 @@ function tryOpens()
         debug("openreq3.onsuccess");
         shouldBeEqualToString("state", "open2complete");
         evalAndLog("state = 'open3complete'");
-        debug("");
+        finishJSTest();
     }
     debug("");
 }

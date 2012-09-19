@@ -22,7 +22,7 @@ PASS indexedDB.open(dbname, -5) threw TypeError: Type error
 FIXME: Using -1 doesn't throw TypeError but it should
 Expecting TypeError exception from request = indexedDB.open(dbname, -1)
 FAIL No exception thrown!
-FAIL Success function called unexpectedly.
+FAIL onupgradeneeded called unexpectedly
 PASS successfullyParsed is true
 
 TEST COMPLETE

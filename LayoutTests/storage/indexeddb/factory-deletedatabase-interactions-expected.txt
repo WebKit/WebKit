@@ -12,7 +12,7 @@ self.dbname = 'test1'; self.ver = 1; self.steps = []
 'h.open.onsuccess'
 'deleteDatabase()'
 'h.onversionchange'
-    in versionchange, old = "" new = ""
+    in versionchange, old = 1 new = ""
     h closing, but not immediately
 'deleteDatabase().onblocked'
 'h.close'
@@ -25,7 +25,7 @@ self.dbname = 'test2'; self.ver = 1; self.steps = []
 'h.open.onsuccess'
 'deleteDatabase()'
 'h.onversionchange'
-    in versionchange, old = "" new = ""
+    in versionchange, old = 1 new = ""
     h closing immediately
 'h.close'
 'deleteDatabase().onblocked'
@@ -58,7 +58,7 @@ self.dbname = 'test4'; self.ver = 1; self.steps = []
 'h.setVersion'
 'deleteDatabase()'
 'h2.onversionchange'
-    in versionchange, old = "" new = "1"
+    in versionchange, old = 1 new = "1"
 'h.setVersion.onblocked'
 'h3.open'
 'h2.close'

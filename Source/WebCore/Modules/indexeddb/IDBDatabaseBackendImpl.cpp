@@ -127,11 +127,15 @@ PassRefPtr<IDBDatabaseBackendImpl> IDBDatabaseBackendImpl::create(const String& 
     return backend.release();
 }
 
+namespace {
+const char* NoStringVersion = "";
+}
+
 IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_id(InvalidId)
     , m_name(name)
-    , m_version("")
+    , m_version(NoStringVersion)
     , m_intVersion(IDBDatabaseMetadata::NoIntVersion)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
@@ -240,10 +244,6 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Connection was closed before set version transaction was created"));
         return;
     }
-    if (m_intVersion != IDBDatabaseMetadata::NoIntVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, String::format("You can't use the setVersion function if you've already set the version through an open call.  The current integer version is %lld", static_cast<long long>(m_intVersion))));
-        return;
-    }
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
         // Front end ensures the event is not fired at connections that have closePending set.
         if (*it != databaseCallbacks)
@@ -272,7 +272,7 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBDatabaseBackendImpl> database = this;
     if (!transaction->scheduleTask(
             createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
-            createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
+            createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version, m_intVersion))) {
         // FIXME: Remove one of the following lines.
         ASSERT_NOT_REACHED();
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
@@ -284,7 +284,8 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
     int64_t databaseId = database->id();
     database->m_version = version;
-    if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version)) {
+    database->m_intVersion = IDBDatabaseMetadata::NoIntVersion;
+    if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version) || !database->m_backingStore->updateIDBDatabaseIntVersion(databaseId, database->m_intVersion)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
         return;
@@ -437,16 +438,23 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
 {
     ASSERT(m_backingStore.get());
-    if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty())
+    if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty()) {
         m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks));
-    else {
-        if (m_id == InvalidId && !openInternal())
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-        else {
-            m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(databaseCallbacks));
-            callbacks->onSuccess(this);
-        }
+        return;
     }
+    if (m_id == InvalidId && !openInternal()) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        return;
+    }
+    if (m_version == NoStringVersion && m_intVersion == IDBDatabaseMetadata::NoIntVersion) {
+        // Spec says: If no version is specified and no database exists, set
+        // database version to 1. We infer that the database didn't exist from
+        // its lack of either type of version.
+        openConnectionWithVersion(callbacks, databaseCallbacks, 1);
+        return;
+    }
+    m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(databaseCallbacks));
+    callbacks->onSuccess(this);
 }
 
 void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks)
@@ -482,7 +490,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
     OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, transaction);
-    OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetIntVersion, database, m_intVersion);
+    OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version, m_intVersion);
     if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
         // FIXME: Remove one of the following lines.
         ASSERT_NOT_REACHED();
@@ -531,7 +539,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
         // Front end ensures the event is not fired at connections that have closePending set.
-        (*it)->onVersionChange("");
+        (*it)->onVersionChange(NoStringVersion);
     }
     // FIXME: Only fire onBlocked if there are open connections after the
     // VersionChangeEvents are received, not just set up to fire.
@@ -546,7 +554,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
     }
-    m_version = "";
+    m_version = NoStringVersion;
     m_id = InvalidId;
     m_intVersion = IDBDatabaseMetadata::NoIntVersion;
     m_objectStores.clear();
@@ -617,16 +625,11 @@ void IDBDatabaseBackendImpl::addObjectStoreToMap(ScriptExecutionContext*, PassRe
     database->m_objectStores.set(objectStorePtr->name(), objectStorePtr);
 }
 
-void IDBDatabaseBackendImpl::resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& version)
+void IDBDatabaseBackendImpl::resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& previousVersion, int64_t previousIntVersion)
 {
-    database->m_version = version;
+    database->m_version = previousVersion;
+    database->m_intVersion = previousIntVersion;
 }
-
-void IDBDatabaseBackendImpl::resetIntVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t oldVersion)
-{
-    database->m_intVersion = oldVersion;
-}
-
 
 } // namespace WebCore
 

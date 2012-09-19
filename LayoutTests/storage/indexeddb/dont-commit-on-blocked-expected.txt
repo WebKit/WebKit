@@ -10,7 +10,7 @@ request = indexedDB.deleteDatabase('dont-commit-on-blocked')
 request = indexedDB.open('dont-commit-on-blocked')
 db = request.result
 db.onversionchange = onVersionChange
-PASS db.version is ""
+PASS db.version is 1
 db.setVersion('1')
 store = db.createObjectStore('store1')
 
