@@ -118,9 +118,7 @@ FrameLoaderClientBlackBerry::~FrameLoaderClientBlackBerry()
 
 int FrameLoaderClientBlackBerry::playerId() const
 {
-    if (m_webPagePrivate && m_webPagePrivate->m_client)
-        return m_webPagePrivate->m_client->getInstanceId();
-    return 0;
+    return m_webPagePrivate ? m_webPagePrivate->playerID() : 0;
 }
 
 bool FrameLoaderClientBlackBerry::cookiesEnabled() const

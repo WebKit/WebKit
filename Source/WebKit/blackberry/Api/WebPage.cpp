@@ -2058,6 +2058,11 @@ bool WebPagePrivate::setViewMode(ViewMode mode)
     return true; // Needs re-layout!
 }
 
+int WebPagePrivate::playerID() const
+{
+    return m_client ? m_client->getInstanceId() : 0;
+}
+
 void WebPagePrivate::setCursor(PlatformCursor handle)
 {
     if (m_currentCursor.type() != handle.type()) {

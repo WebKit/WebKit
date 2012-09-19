@@ -179,6 +179,7 @@ public:
     WebCore::IntSize absoluteVisibleOverflowSize() const;
 
     // Virtual functions inherited from PageClientBlackBerry.
+    virtual int playerID() const;
     virtual void setCursor(WebCore::PlatformCursor);
     virtual Platform::NetworkStreamFactory* networkStreamFactory();
     virtual Platform::Graphics::Window* platformWindow() const;

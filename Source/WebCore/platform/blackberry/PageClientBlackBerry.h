@@ -49,6 +49,7 @@ public:
         SaveCredentialYes
     };
 
+    virtual int playerID() const = 0;
     virtual void setCursor(WebCore::PlatformCursor) = 0;
     virtual BlackBerry::Platform::NetworkStreamFactory* networkStreamFactory() = 0;
     virtual BlackBerry::Platform::Graphics::Window* platformWindow() const = 0;
