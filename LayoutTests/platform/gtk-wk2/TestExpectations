@@ -37,6 +37,7 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWKGTK SKIP : fast/regions/autoheight-regions-mark.html = TEXT
 BUGWKGTK SKIP : http/tests/security/resources/drag-drop-allowed.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,6 @@ BUGWK63706 : editing/pasteboard/dataTransfer-setData-getData.html = TEXT TIMEOUT
 BUGWK63706 : editing/pasteboard/drag-and-drop-image-contenteditable.html = TEXT TIMEOUT
 BUGWK63706 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = TEXT TIMEOUT
 BUGWK63706 : editing/pasteboard/drag-and-drop-objectimage-contenteditable.html = TEXT TIMEOUT
-BUGWK63706 : editing/pasteboard/drag-drop-dead-frame.html = TEXT
 BUGWK63706 : editing/pasteboard/drag-drop-input-textarea.html = TEXT
 BUGWK63706 : editing/pasteboard/drag-drop-modifies-page.html = TEXT
 BUGWK63706 : editing/pasteboard/drag-drop-url-text.html = TEXT
@@ -76,7 +76,6 @@ BUGWK63706 : editing/selection/contains-boundaries.html = TEXT
 BUGWK63706 : editing/selection/drag-text-delay.html = TEXT
 BUGWK63706 : editing/undo/undo-smart-delete-word.html = TEXT
 BUGWK63706 : fast/block/float/float-in-float-hit-testing.html = TEXT
-BUGWK63706 : fast/events/autoscroll.html = TEXT
 BUGWK63706 : fast/events/bogus-dropEffect-effectAllowed.html = TEXT
 BUGWK63706 : fast/events/content-changed-during-drop.html = TEXT
 BUGWK63706 : fast/events/crash-on-mutate-during-drop.html = TEXT
@@ -96,24 +95,13 @@ BUGWK63706 : fast/events/standalone-image-drag-to-editable.html = TEXT TIMEOUT
 BUGWK63706 : fast/forms/drag-into-textarea.html = TEXT
 BUGWK63706 : fast/forms/drag-out-of-textarea.html = TEXT
 BUGWK63706 : fast/forms/file/input-file-write-files.html = TEXT TIMEOUT
-BUGWK63706 : fast/forms/input-readonly-autoscroll.html = TEXT
-BUGWK63706 : fast/forms/input-text-drag-down.html = TEXT
 BUGWK63706 : fast/forms/range/slider-delete-while-dragging-thumb.html = TEXT
-BUGWK63706 : fast/forms/select-listbox-multiple-no-focusring.html = TEXT
 BUGWK63706 : fast/lists/drag-into-marker.html = TEXT
-BUGWK63706 : fast/repaint/repaint-across-writing-mode-boundary.html = TEXT
-BUGWK63706 : fast/repaint/selection-rl.html = TEXT
-BUGWK63706 : fast/text/atsui-rtl-override-selection.html = TEXT
-BUGWK63706 : fast/writing-mode/horizontal-bt-replaced-selection.html = TEXT
-BUGWK63706 : fast/writing-mode/vertical-lr-replaced-selection.html = TEXT
-BUGWK63706 : fast/writing-mode/vertical-rl-replaced-selection.html = TEXT
 BUGWK63706 : http/tests/misc/bubble-drag-events.html = TEXT
 BUGWK63706 : http/tests/security/drag-over-remote-content-iframe.html = TEXT
 BUGWK63706 : plugins/mouse-events-fixedpos.html = TEXT
 BUGWK63706 : plugins/mouse-events.html = TEXT
-BUGWK63706 : svg/custom/mouse-move-on-svg-container-standalone.svg = TEXT
 BUGWK63706 : svg/custom/mouse-move-on-svg-container.xhtml = TEXT TIMEOUT
-BUGWK63706 : svg/custom/mouse-move-on-svg-root-standalone.svg = TEXT
 BUGWK63706 : svg/custom/mouse-move-on-svg-root.xhtml = TEXT TIMEOUT
 
 // WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
@@ -121,9 +109,6 @@ BUGWKGTK : editing/selection/doubleclick-beside-cr-span.html = TEXT
 BUGWKGTK : editing/selection/doubleclick-whitespace.html = TEXT
 BUGWKGTK : editing/selection/doubleclick-whitespace-crash.html = TEXT
 BUGWKGTK : editing/selection/doubleclick-whitespace-img-crash.html = TEXT
-
-// WebKit2 needs layoutTestController.setSpatialNavigationEnabled
-BUGWKGTK : fast/spatial-navigation/snav-multiple-select-focusring.html = TEXT
 
 // WebKit2 needs layoutTestController.addMockSpeechInputResult
 BUGWKGTK : fast/speech/input-onspeechchange-event.html = TEXT
@@ -147,21 +132,12 @@ BUGWKGTK : editing/selection/extend-after-mouse-selection.html = TEXT
 // WebKit2 needs textInputController.selectedRange
 BUGWKGTK : editing/selection/mixed-editability-10.html = TEXT
 
-// WebKit2 needs layoutTestController.overridePreference
-// https://bugs.webkit.org/show_bug.cgi?id=42197
-BUGWKGTK : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = TEXT
-
 // Implement eventSender.contextClick
 BUGWKGTK : editing/pasteboard/copy-standalone-image-crash.html = TEXT
 BUGWKGTK : editing/selection/empty-cell-right-click.html = TEXT
 BUGWKGTK : editing/selection/button-right-click.html = TEXT
 BUGWKGTK : editing/selection/context-menu-on-text.html = TEXT
 BUGWKGTK : editing/selection/empty-cell-right-click.html = TEXT
-BUGWKGTK : editing/selection/select-across-readonly-input-1.html = TEXT
-BUGWKGTK : editing/selection/select-across-readonly-input-2.html = TEXT
-BUGWKGTK : editing/selection/select-across-readonly-input-3.html = TEXT
-BUGWKGTK : editing/selection/select-across-readonly-input-4.html = TEXT
-BUGWKGTK : editing/selection/select-across-readonly-input-5.html = TEXT
 BUGWKGTK : fast/events/selectstart-prevent-selection-on-right-click.html = TEXT
 BUGWKGTK : fast/events/context-no-deselect.html = TEXT
 BUGWKGTK : fast/events/contextmenu-scrolled-page-with-frame.html = TEXT
@@ -272,44 +248,11 @@ BUGWK42194 : svg/custom/polyline-hittest.svg = TEXT
 // Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// [WK2] [GTK] plugins/destroy-during-npp-new.html segfaults WebKitWebProcess
-// https://bugs.webkit.org/show_bug.cgi?id=69512
-BUGWK69512 : plugins/destroy-during-npp-new.html = CRASH
-
 // accessibility tests failing in WK1 but crashing in WK2
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = CRASH
 BUGWKGTK : accessibility/inline-continuations.html = CRASH
 BUGWKGTK : accessibility/loading-iframe-sends-notification.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/input-slider.html = CRASH
 
-// accessibility tests passing in WK1 but crashing in WK2
-BUGWKGTK : accessibility/accessibility-object-detached.html = CRASH
-BUGWKGTK : accessibility/adjacent-continuations-cause-assertion-failure.html = CRASH
-BUGWKGTK : accessibility/anonymous-render-block-in-continuation-causes-crash.html = CRASH
-BUGWKGTK : accessibility/aria-hidden-updates-alldescendants.html = CRASH
-BUGWKGTK : accessibility/aria-menubar-menuitems.html = CRASH
-BUGWKGTK : accessibility/content-changed-notification-causes-crash.html = CRASH
-BUGWKGTK : accessibility/crash-determining-aria-role-when-label-present.html = CRASH
-BUGWKGTK : accessibility/deleting-iframe-destroys-axcache.html = CRASH
-BUGWKGTK : accessibility/div-within-anchors-causes-crash.html = CRASH
-BUGWKGTK : accessibility/duplicate-child-nodes.html = CRASH
-BUGWKGTK : accessibility/first-letter-text-transform-causes-crash.html = CRASH
-BUGWKGTK : accessibility/iframe-bastardization.html = CRASH
-BUGWKGTK : accessibility/ignore-spacer-elements.html = CRASH
-BUGWKGTK : accessibility/image-link-inline-cont.html = CRASH
-BUGWKGTK : accessibility/image-map-title-causes-crash.html = CRASH
-BUGWKGTK : accessibility/image-map-update-parent-crash.html = CRASH
-BUGWKGTK : accessibility/img-alt-tag-only-whitespace.html = CRASH
-BUGWKGTK : accessibility/img-aria-button-alt-tag.html = CRASH
-BUGWKGTK : accessibility/media-element.html = CRASH
-BUGWKGTK : accessibility/presentational-elements-with-focus.html = CRASH
-BUGWKGTK : accessibility/removed-anonymous-block-child-causes-crash.html = CRASH
-BUGWKGTK : accessibility/table-with-empty-thead-causes-crash.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/aria-list-and-listitem.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/aria-option-role.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/aria-table-hierarchy.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/input-slider.html = CRASH
-BUGWKGTK : platform/gtk/accessibility/table-hierarchy.html = CRASH
 BUGWKGTK : plugins/document-open.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +270,47 @@ BUGWK58337 : fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html = TEXT
 // media/audio-garbage-collect.html is flaky
 // https://bugs.webkit.org/show_bug.cgi?id=72698
 BUGWK72698 : media/audio-garbage-collect.html = TEXT PASS
+
+// Tests showing flakiness in the bot
+BUGWKGTK : editing/selection/click-in-margins-inside-editable-div.html = TEXT PASS
+BUGWKGTK : fast/events/dispatch-message-string-data.html = TEXT PASS
+BUGWKGTK : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TEXT PASS
+BUGWKGTK : fast/events/mouseclick-target-and-positioning.html = TEXT PASS
+BUGWKGTK : fast/events/mouse-drag-from-frame.html = TEXT PASS
+BUGWKGTK : fast/events/mouse-focus-imagemap.html = TEXT PASS
+BUGWKGTK : fast/events/mousemove-after-drag-over-scrollbar.html = TEXT PASS
+BUGWKGTK : fast/events/mouse-moved-remove-frame-crash.html = TEXT PASS
+BUGWKGTK : fast/events/mouseout-dead-node.html = TEXT PASS
+BUGWKGTK : fast/events/mouseout-dead-subframe.html = TEXT PASS
+BUGWKGTK : fast/events/mouseout-on-window.html = TEXT PASS
+BUGWKGTK : fast/events/mouseover-button.html = TEXT PASS
+BUGWKGTK : fast/events/mouseover-mouseout2.html = TEXT PASS
+BUGWKGTK : fast/events/mouseover-mouseout.html = TEXT PASS
+BUGWKGTK : fast/events/mouse-relative-position.html = TEXT PASS
+BUGWKGTK : fast/events/mouseup-outside-document.html = TEXT PASS
+BUGWKGTK : fast/events/multiline-link-arrow-navigation.html = TEXT PASS
+BUGWKGTK : fast/events/node-event-anchor-lock.html = TEXT PASS
+BUGWKGTK : fast/events/onchange-click-hang.html = TEXT PASS
+BUGWKGTK : fast/events/onchange-passwordfield.html = TEXT PASS
+BUGWKGTK : fast/events/onchange-range-slider.html = TEXT PASS
+BUGWKGTK : fast/events/onchange-searchfield.html = TEXT PASS
+BUGWKGTK : fast/events/onchange-select-popup.html = TEXT PASS
+BUGWKGTK : fast/forms/incremental-dom-property.html = TIMEOUT PASS
+BUGWKGTK : fast/forms/select/menulist-type-ahead-find.html = TIMEOUT PASS
+BUGWKGTK : fast/forms/select/optgroup-disabled.html = TIMEOUT PASS
+BUGWKGTK : fast/forms/select-selected.html = TIMEOUT PASS
+BUGWKGTK : fast/js/exceptions-thrown-in-callbacks.html = TEXT PASS
+BUGWKGTK : fast/loader/fragment-after-redirect-gets-back-entry.html = TEXT PASS
+BUGWKGTK : fast/mutation/database-callback-delivery.html = TEXT PASS
+BUGWKGTK : fast/writing-mode/japanese-ruby-horizontal-bt.html = TEXT PASS
+BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-lr.html = TEXT PASS
+BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-rl.html = TEXT PASS
+BUGWKGTK : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = TEXT PASS
+BUGWKGTK : media/video-transformed.html = TEXT PASS
+BUGWKGTK : media/W3C/audio/networkState/networkState_during_loadstart.html = TEXT PASS
+BUGWKGTK : svg/custom/gradient-attr-update.svg = TEXT PASS
+BUGWKGTK : svg/custom/pointer-events-on-svg-with-pointer.xhtml = TEXT PASS
+BUGWKGTK : svg/stroke/non-scaling-stroke-pattern.svg = IMAGE PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
@@ -348,36 +332,37 @@ BUGWK72698 : media/audio-garbage-collect.html = TEXT PASS
 // we have lower values for normal and slow time out.
 // http://webkit.org/b/93973
 BUGWK93973 : fullscreen/anonymous-block-merge-crash.html = TEXT
-BUGWK93973 : fullscreen/full-screen-crash-offsetLeft.html = TEXT
-BUGWK93973 : fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html = TEXT
-BUGWK93973 : fullscreen/full-screen-line-boxes-crash.html = TEXT
-BUGWK93973 : fullscreen/full-screen-render-inline.html = TEXT
-BUGWK93973 : fullscreen/parent-flow-inline-with-block-child.html = TEXT
-BUGWK93973 : fullscreen/full-screen-keyboard-disabled.html = TEXT
-BUGWK93973 : fullscreen/full-screen-request.html = TEXT
+BUGWK93973 : fullscreen/exit-full-screen-iframe.html = TEXT
 BUGWK93973 : fullscreen/full-screen-cancel.html = TEXT
-BUGWK93973 : fullscreen/full-screen-stacking-context.html = TEXT
-BUGWK93973 : fullscreen/full-screen-iframe-zIndex.html = TEXT
-BUGWK93973 : fullscreen/full-screen-remove-ancestor-after.html = TEXT
-BUGWK93973 : fullscreen/full-screen-remove-sibling.html = TEXT
-BUGWK93973 : fullscreen/full-screen-iframe-legacy.html = TEXT
-BUGWK93973 : fullscreen/video-specified-size.html = TEXT
-BUGWK93973 : fullscreen/full-screen-remove-children.html = TEXT
-BUGWK93973 : fullscreen/full-screen-placeholder.html = TEXT
+BUGWK93973 : fullscreen/full-screen-crash-offsetLeft.html = TEXT
 BUGWK93973 : fullscreen/full-screen-css.html = TEXT
-BUGWK93973 : fullscreen/full-screen-zIndex.html = TEXT
-BUGWK93973 : fullscreen/full-screen-remove-ancestor.html = TEXT
-BUGWK93973 : fullscreen/video-controls-override.html = TEXT
-BUGWK93973 : fullscreen/video-controls-timeline.html = TEXT
-BUGWK93973 : fullscreen/full-screen-iframe-allowed.html = TEXT
-BUGWK93973 : fullscreen/full-screen-twice.html = TEXT
-BUGWK93973 : fullscreen/full-screen-remove.html = TEXT
-BUGWK93973 : fullscreen/full-screen-zIndex-after.html = TEXT
 BUGWK93973 : fullscreen/full-screen-element-stack.html = TEXT
 BUGWK93973 : fullscreen/full-screen-fixed-pos-parent.html = TEXT
+BUGWK93973 : fullscreen/full-screen-iframe-allowed.html = TEXT
+BUGWK93973 : fullscreen/full-screen-iframe-legacy.html = TEXT
+BUGWK93973 : fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html = TEXT
+BUGWK93973 : fullscreen/full-screen-iframe-zIndex.html = TEXT
+BUGWK93973 : fullscreen/full-screen-keyboard-disabled.html = TEXT
 BUGWK93973 : fullscreen/full-screen-keyboard-enabled.html = TEXT
+BUGWK93973 : fullscreen/full-screen-line-boxes-crash.html = TEXT
+BUGWK93973 : fullscreen/full-screen-placeholder.html = TEXT
+BUGWK93973 : fullscreen/full-screen-remove-ancestor-after.html = TEXT
+BUGWK93973 : fullscreen/full-screen-remove-ancestor.html = TEXT
+BUGWK93973 : fullscreen/full-screen-remove-children.html = TEXT
+BUGWK93973 : fullscreen/full-screen-remove.html = TEXT
+BUGWK93973 : fullscreen/full-screen-remove-sibling.html = TEXT
+BUGWK93973 : fullscreen/full-screen-render-inline.html = TEXT
+BUGWK93973 : fullscreen/full-screen-request.html = TEXT
 BUGWK93973 : fullscreen/full-screen-restrictions.html = TEXT
+BUGWK93973 : fullscreen/full-screen-stacking-context.html = TEXT
+BUGWK93973 : fullscreen/full-screen-twice.html = TEXT
+BUGWK93973 : fullscreen/full-screen-zIndex-after.html = TEXT
+BUGWK93973 : fullscreen/full-screen-zIndex.html = TEXT
 BUGWK93973 : fullscreen/non-ancestor-iframe.html = TEXT
+BUGWK93973 : fullscreen/parent-flow-inline-with-block-child.html = TEXT
+BUGWK93973 : fullscreen/video-controls-override.html = TEXT
+BUGWK93973 : fullscreen/video-controls-timeline.html = TEXT
+BUGWK93973 : fullscreen/video-specified-size.html = TEXT
 
 // HiDPI - 1 pixel diffs
 // http://webkit.org/b/93978
@@ -431,9 +416,17 @@ BUGWK64135 : fast/dom/frame-loading-via-document-write.html = TEXT
 // Unexplained failures
 BUGWKGTK : accessibility/accessibility-node-memory-management.html = TEXT
 BUGWKGTK : accessibility/accessibility-node-reparent.html = TEXT
+BUGWKGTK : accessibility/adjacent-continuations-cause-assertion-failure.html = TEXT
+BUGWKGTK : accessibility/aria-hidden-updates-alldescendants.html = TEXT
+BUGWKGTK : accessibility/aria-hidden-with-elements.html = TEXT
 BUGWKGTK : accessibility/aria-invalid.html = TEXT
+BUGWKGTK : accessibility/deleting-iframe-destroys-axcache.html = TEXT
+BUGWKGTK : accessibility/div-within-anchors-causes-crash.html = TEXT
+BUGWKGTK : accessibility/ignore-spacer-elements.html = TEXT
 BUGWKGTK : accessibility/img-fallsback-to-title.html = TEXT
-BUGWKGTK : accessibility/legend.html = TEXT
+BUGWKGTK : accessibility/inline-continuations.html = TEXT
+BUGWKGTK : accessibility/loading-iframe-sends-notification.html = TEXT
+BUGWKGTK : accessibility/media-element.html = TEXT
 BUGWKGTK : editing/deleting/delete-ligature-003.html = TEXT
 BUGWKGTK : editing/deleting/paragraph-in-preserveNewline.html = TEXT
 BUGWKGTK : editing/deleting/whitespace-pre-1.html = TEXT
@@ -447,14 +440,19 @@ BUGWKGTK : editing/spelling/spelling-insert-html.html = TEXT
 BUGWKGTK : editing/undo/undo-deleteWord.html = TEXT
 BUGWKGTK : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKGTK : fast/css/disabled-author-styles.html = TEXT
+BUGWKGTK : fast/css/relative-positioned-block-crash.html = TEXT
 BUGWKGTK : fast/dom/rtl-scroll-to-leftmost-and-resize.html = TEXT
 BUGWKGTK : fast/dom/Window/window-postmessage-clone.html = TEXT
 BUGWKGTK : fast/dynamic/window-resize-scrollbars-test.html = TEXT
 BUGWKGTK : fast/events/backspace-navigates-back.html = TEXT
+BUGWKGTK : fast/events/keydown-leftright-keys.html = TEXT
 BUGWKGTK : fast/events/keydown-numpad-keys.html = TEXT
+BUGWKGTK : fast/events/mouse-drag-from-frame-to-other-frame.html = TEXT
+BUGWKGTK : fast/events/remove-target-with-shadow-in-drag.html = TEXT
+BUGWKGTK : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
+BUGWKGTK : fast/events/selectionchange-iframe.html = TEXT
 BUGWKGTK : fast/forms/implicit-submission.html = TEXT
 BUGWKGTK : fast/forms/input-paste-undo.html = TEXT
-BUGWKGTK : fast/forms/legend-access-key.html = TEXT
 BUGWKGTK : fast/forms/listbox-deselect-scroll.html = TEXT
 BUGWKGTK : fast/forms/listbox-selection.html = TEXT
 BUGWKGTK : fast/forms/listbox-typeahead-cyrillic.html = TEXT
@@ -462,6 +460,7 @@ BUGWKGTK : fast/forms/listbox-typeahead-greek.html = TEXT
 BUGWKGTK : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
 BUGWKGTK : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
 BUGWKGTK : fast/forms/select-type-ahead-non-latin.html = TEXT
+BUGWKGTK : fast/invalid/residual-style.html = TEXT
 BUGWKGTK : fast/media/mq-transform-02.html = TEXT
 BUGWKGTK : fast/media/mq-transform-03.html = TEXT
 BUGWKGTK : fast/regions/css-regions-disabled.html = TEXT
@@ -486,8 +485,6 @@ BUGWKGTK : fast/ruby/ruby-simple.html = TEXT
 BUGWKGTK : fast/ruby/ruby-simple-rp.html = TEXT
 BUGWKGTK : fast/ruby/ruby-trailing.html = TEXT
 BUGWKGTK : fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html = TEXT
-BUGWKGTK : fast/text/international/complex-character-based-fallback.html = TEXT
-BUGWKGTK : fast/text/international/thai-line-breaks.html = TEXT
 BUGWKGTK : fast/workers/shared-worker-load-error.html = TEXT
 BUGWKGTK : fast/writing-mode/Kusa-Makura-background-canvas.html = TEXT
 BUGWKGTK : fast/xsl/xslt-missing-namespace-in-xslt.xml = TEXT
@@ -495,6 +492,8 @@ BUGWKGTK : http/tests/local/blob/send-hybrid-blob.html = TEXT
 BUGWKGTK : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT
 BUGWKGTK : http/tests/security/cross-origin-xsl-BLOCKED.html = TEXT
 BUGWKGTK : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = TEXT
+BUGWKGTK : http/tests/security/storage-blocking-strengthened-plugin.html = TEXT
+BUGWKGTK : http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html = TEXT
 BUGWKGTK : http/tests/xmlhttprequest/cache-override.html = TEXT
 BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html = TEXT
 BUGWKGTK : media/track/track-cue-rendering-horizontal.html = TEXT
@@ -502,6 +501,7 @@ BUGWKGTK : media/track/track-cue-rendering-vertical.html = TEXT
 BUGWKGTK : media/video-play-require-user-gesture.html = TEXT
 BUGWKGTK : media/video-zoom-controls.html = TEXT
 BUGWKGTK : platform/gtk/accessibility/entry-and-password.html = TEXT
+BUGWKGTK : platform/gtk/accessibility/input-slider.html = TEXT
 BUGWKGTK : platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html = TEXT
 BUGWKGTK : platform/gtk/editing/pasteboard/middle-button-paste.html = TEXT
 BUGWKGTK : platform/gtk/fast/events/event-sender-metakey.html = TEXT
@@ -515,13 +515,16 @@ BUGWKGTK : plugins/npruntime/browser-object-identity.html = TEXT
 BUGWKGTK : plugins/npruntime/embed-property-equality.html = TEXT
 BUGWKGTK : plugins/reloadplugins-and-pages.html = TEXT
 BUGWKGTK : plugins/resize-from-plugin.html = TEXT
-BUGWKGTK : svg/dom/SVGPathSegList-segment-modification.svg = TEXT
+BUGWKGTK : svg/custom/use-elementInstance-event-target.svg = TEXT
+BUGWKGTK : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT
 BUGWKGTK : svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg = TEXT
 BUGWKGTK : svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg = TEXT
+BUGWKGTK : svg/text/select-textLength-spacing-squeeze-3.svg = TEXT
 BUGWKGTK : svg/text/select-textLength-spacing-stretch-1.svg = TEXT
-BUGWKGTK : svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg = TEXT
-BUGWKGTK : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = TEXT
+BUGWKGTK : svg/text/select-x-list-1.svg = TEXT
 BUGWKGTK : touchadjustment/iframe.html = TEXT
+BUGWKGTK : transitions/extra-transition.html = TEXT
+BUGWKGTK : transitions/interrupted-accelerated-transition.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
