@@ -41,7 +41,6 @@
 #include "MemoryUsageSupport.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformSupport.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
