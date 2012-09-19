@@ -81,7 +81,10 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Unknown:
     case Charset:
     case Keyframe:
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+#if !ENABLE(CSS_REGIONS)
+    case Region:
+#endif
+        ASSERT_NOT_REACHED();
         return;
     }
     ASSERT_NOT_REACHED();

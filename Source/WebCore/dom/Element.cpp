@@ -2033,6 +2033,8 @@ RenderRegion* Element::renderRegion() const
     return 0;
 }
 
+#if ENABLE(CSS_REGIONS)
+
 const AtomicString& Element::webkitRegionOverset() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
@@ -2061,8 +2063,6 @@ const AtomicString& Element::webkitRegionOverset() const
     ASSERT_NOT_REACHED();
     return undefinedState;
 }
-
-#if ENABLE(CSS_REGIONS)
 
 Vector<RefPtr<Range> > Element::webkitGetRegionFlowRanges() const
 {
