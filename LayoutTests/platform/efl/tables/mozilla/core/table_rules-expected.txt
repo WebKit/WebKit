@@ -55,10 +55,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,143) size 784x18
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,161) size 215x42 [border: none]
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (0,0) size 214x41 [border: (1px solid #808080) none (1px solid #808080) none]

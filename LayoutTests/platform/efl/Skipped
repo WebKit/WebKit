@@ -566,7 +566,10 @@ svg/batik/text/textProperties2.svg
 svg/hixie/perf/004.xml
 svg/hixie/perf/005.xml
 svg/hixie/perf/006.xml
-tables/mozilla/
+tables/mozilla/bugs/
+tables/mozilla/images/
+tables/mozilla/marvin/
+tables/mozilla/other/
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 fast/overflow/overflow-height-float-not-removed-crash3.html

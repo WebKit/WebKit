@@ -1,5 +1,87 @@
 2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] tables/mozilla tests need rebaseline (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=97079
+
+        Unreviewed EFL gardening.
+
+        Rebaseline a first part of the tables/mozilla tests
+        and unskip them.
+
+        * platform/efl/Skipped:
+        * platform/efl/tables/mozilla/collapsing_borders/bug127040-expected.png:
+        * platform/efl/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/efl/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/efl/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.png:
+        * platform/efl/tables/mozilla/core/bloomberg-expected.txt: Added.
+        * platform/efl/tables/mozilla/core/borders-expected.png:
+        * platform/efl/tables/mozilla/core/box_sizing-expected.png:
+        * platform/efl/tables/mozilla/core/captions-expected.png:
+        * platform/efl/tables/mozilla/core/captions-expected.txt:
+        * platform/efl/tables/mozilla/core/cell_heights-expected.png:
+        * platform/efl/tables/mozilla/core/cell_heights-expected.txt:
+        * platform/efl/tables/mozilla/core/col_span-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_auto-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_autoFix-expected.txt: Added.
+        * platform/efl/tables/mozilla/core/col_widths_auto_autoFixPer-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_autoPer-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_fix-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_fixPer-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_auto_per-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_auto-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_autoFix-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_autoPer-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_fix-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_fixPer-expected.png:
+        * platform/efl/tables/mozilla/core/col_widths_fix_per-expected.png:
+        * platform/efl/tables/mozilla/core/margins-expected.png:
+        * platform/efl/tables/mozilla/core/margins-expected.txt:
+        * platform/efl/tables/mozilla/core/misc-expected.png:
+        * platform/efl/tables/mozilla/core/misc-expected.txt: Added.
+        * platform/efl/tables/mozilla/core/nested1-expected.png:
+        * platform/efl/tables/mozilla/core/one_row-expected.png:
+        * platform/efl/tables/mozilla/core/row_span-expected.png:
+        * platform/efl/tables/mozilla/core/row_span-expected.txt: Added.
+        * platform/efl/tables/mozilla/core/table_frame-expected.png:
+        * platform/efl/tables/mozilla/core/table_heights-expected.png:
+        * platform/efl/tables/mozilla/core/table_rules-expected.png:
+        * platform/efl/tables/mozilla/core/table_rules-expected.txt:
+        * platform/efl/tables/mozilla/core/table_widths-expected.png:
+        * platform/efl/tables/mozilla/dom/appendCol2-expected.png:
+        * platform/efl/tables/mozilla/dom/appendRowsExpand1-expected.png:
+        * platform/efl/tables/mozilla/dom/appendTbodyExpand1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCellsRebuild1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCellsShrink1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCellsShrink2-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCol1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCol2-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteCol3-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteColGroup1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteColGroup2-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteRowsRebuild1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteRowsShrink1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteTbodyExpand1-expected.png:
+        * platform/efl/tables/mozilla/dom/deleteTbodyRebuild1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCellsExpand1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCellsExpand2-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCellsRebuild1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCellsRebuild2-expected.png:
+        * platform/efl/tables/mozilla/dom/insertColGroups1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertColGroups2-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCols1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCols2-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCols3-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCols4-expected.png:
+        * platform/efl/tables/mozilla/dom/insertCols5-expected.png:
+        * platform/efl/tables/mozilla/dom/insertRowsExpand1-expected.png:
+        * platform/efl/tables/mozilla/dom/insertRowsRebuild1-expected.png:
+        * platform/efl/tables/mozilla/dom/tableDom-expected.png:
+        * platform/efl/tables/mozilla/dom/tableDom-expected.txt:
+
+2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip inspector/extensions/extensions-panel.html
         https://bugs.webkit.org/show_bug.cgi?id=97078
 
