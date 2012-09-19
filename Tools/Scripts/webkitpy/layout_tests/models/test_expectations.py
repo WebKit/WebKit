@@ -254,10 +254,146 @@ class TestExpectationParser(object):
 
         return expectation_line
 
+    # FIXME: Update the original modifiers and remove this once the old syntax is gone.
+    _configuration_tokens_list = [
+        'Mac', 'SnowLeopard', 'Lion', 'MountainLion',
+        'Win', 'XP', 'Vista', 'Win7',
+        'Linux',
+        'Android',
+        'Release',
+        'Debug',
+    ]
+
+    _configuration_tokens = dict((token, token.upper()) for token in _configuration_tokens_list)
+
+    # Note: we can't distinguish audio failures or image+text failures from text-only failures.
+    # FIXME: Update the original modifiers list and remove this once the old syntax is gone.
+    _expectation_tokens = {
+        'WontFix': 'WONTFIX',
+        'Pass': 'PASS',
+        'Failure': 'FAIL',
+        'ImageOnlyFailure': 'IMAGE',
+        'Crash': 'CRASH',
+        'Timeout': 'TIMEOUT',
+        'Slow': 'SLOW',
+    }
+
     @classmethod
     def _tokenize_line_using_new_format(cls, filename, expectation_string, line_number):
-        # FIXME: implement :).
-        raise NotImplementedError
+        """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance using the old format.
+
+        The new format for a test expectation line is:
+
+        [[bugs] [ "[" <configuration modifiers> "]" <name> [ "[" <expectations> "]" ["#" <comment>]
+
+        Any errant whitespace is not preserved.
+
+        """
+        expectation_line = TestExpectationLine()
+        expectation_line.filename = filename
+        expectation_line.line_number = line_number
+
+        comment_index = expectation_string.find("#")
+        if comment_index == -1:
+            comment_index = len(expectation_string)
+        else:
+            expectation_line.comment = expectation_string[comment_index + 1:]
+
+        remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
+        if len(remaining_string) == 0:
+            return expectation_line
+
+        # special-case parsing this so that we fail immediately instead of treating this as a test name
+        if remaining_string.startswith('//'):
+            expectation_line.warnings = ['use "#" instead of "//" for comments']
+            return expectation_line
+
+        bugs = []
+        modifiers = []
+        name = None
+        expectations = []
+        warnings = []
+
+        WEBKIT_BUG_PREFIX = 'webkit.org/b/'
+        CHROMIUM_BUG_PREFIX = 'crbug.com/'
+        V8_BUG_PREFIX = 'code.google.com/p/v8/issues/detail?id='
+
+        tokens = remaining_string.split()
+        state = 'start'
+        for token in tokens:
+            if (token.startswith(WEBKIT_BUG_PREFIX) or
+                token.startswith(CHROMIUM_BUG_PREFIX) or
+                token.startswith(V8_BUG_PREFIX) or
+                token.startswith('Bug(')):
+                if state != 'start':
+                    warnings.append('"%s" is not at the start of the line.' % token)
+                    break
+                if token.startswith(WEBKIT_BUG_PREFIX):
+                    bugs.append(token.replace(WEBKIT_BUG_PREFIX, 'BUGWK'))
+                elif token.startswith(CHROMIUM_BUG_PREFIX):
+                    bugs.append(token.replace(CHROMIUM_BUG_PREFIX, 'BUGCR'))
+                elif token.startswith(V8_BUG_PREFIX):
+                    bugs.append(token.replace(V8_BUG_PREFIX, 'BUGV8_'))
+                else:
+                    match = re.match('Bug\((\w+)\)$', token)
+                    if not match:
+                        warnings.append('unrecognized bug identifier "%s"' % token)
+                        break
+                    else:
+                        bugs.append('BUG' + match.group(1).upper())
+            elif token.startswith('BUG'):
+                warnings.append('unrecognized old-style bug identifier "%s"' % token)
+                break
+            elif token == '[':
+                if state == 'start':
+                    state = 'configuration'
+                elif state == 'name_found':
+                    state = 'expectations'
+                else:
+                    warnings.append('unexpected "["')
+                    break
+            elif token == ']':
+                if state == 'configuration':
+                    state = 'name'
+                elif state == 'expectations':
+                    state = 'done'
+                else:
+                    warnings.append('unexpected "]"')
+                    break
+            elif token in ('//', ':', '='):
+                warnings.append('"%s" is not legal in the new TestExpectations syntax.' % token)
+                break
+            elif state == 'configuration':
+                modifiers.append(cls._configuration_tokens.get(token, token))
+            elif state == 'expectations':
+                if token in ('Rebaseline', 'Skip', 'Slow', 'WontFix'):
+                    modifiers.append(token.upper())
+                else:
+                    expectations.append(cls._expectation_tokens.get(token, token))
+            elif state == 'name_found':
+                warnings.append('expecting "[", "#", or end of line instead of "%s"' % token)
+                break
+            else:
+                name = token
+                state = 'name_found'
+
+        if not warnings:
+            if not name:
+                warnings.append('Did not find a test name.')
+            elif state not in ('name_found', 'done'):
+                warnings.append('Missing a "]"')
+
+        if not expectations:
+            if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers:
+                modifiers.append('SKIP')
+            expectations = ['PASS']
+
+        # FIXME: expectation line should just store bugs and modifiers separately.
+        expectation_line.modifiers = bugs + modifiers
+        expectation_line.expectations = expectations
+        expectation_line.name = name
+        expectation_line.warnings = warnings
+        return expectation_line
 
     @classmethod
     def _split_space_separated(cls, space_separated_string):

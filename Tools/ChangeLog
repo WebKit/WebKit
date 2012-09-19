@@ -1,5 +1,59 @@
 2012-09-19  Dirk Pranke  <dpranke@chromium.org>
 
+        implement first part of support for the new TestExpectations syntax
+        https://bugs.webkit.org/show_bug.cgi?id=96569
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch implements support for parsing a line of the new
+        format for the TestExpectations file and converting it back into
+        the old format for compatibility. This routine is not yet used
+        by anything.
+
+        The new format is documented at:
+          http://trac.webkit.org/wiki/TestExpectations
+
+        but, in short:
+
+          [bugs] [ "[" modifiers "]" ] test_name [ "[" expectations "]" ]
+
+        - Comments are indicated with "#" instead of "//"
+        - If no expectations are specified we default to Skip for
+          compatibility with the Skipped files (these two changes make
+          Skipped files a subset of TestExpectations files)
+
+        - All of the tokens are now CamelCase instead of ALLCAPS.
+        - FAIL -> Failure
+        - IMAGE -> ImageOnlyFailure
+        - WONTFIX -> WontFix
+        - modifiers refer to just the platforms and configurations
+          (release/debug) that the line applies to.
+        - WontFix, Rebaseline, Slow, and Skip move to the right-hand side as
+          expectations
+        - expectations will typically be written out in lexicographic order
+        - We use webkit.org/b/12345, crbug.com/12345, and Bug(dpranke)
+          instead of BUGWK12345, BUGCR12345, and BUGDPRANKE.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectationParser._tokenize_line_using_new_format):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (NewExpectationSyntaxTests):
+        (NewExpectationSyntaxTests.assert_exp):
+        (NewExpectationSyntaxTests.test_bare_name):
+        (NewExpectationSyntaxTests.test_bare_name_and_bugs):
+        (NewExpectationSyntaxTests.test_comments):
+        (NewExpectationSyntaxTests.test_config_modifiers):
+        (NewExpectationSyntaxTests.test_unknown_config):
+        (NewExpectationSyntaxTests.test_unknown_expectation):
+        (NewExpectationSyntaxTests.test_skip):
+        (NewExpectationSyntaxTests.test_slow):
+        (NewExpectationSyntaxTests.test_wontfix):
+        (NewExpectationSyntaxTests.test_blank_line):
+        (NewExpectationSyntaxTests.test_warnings):
+
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: replace TEXT, AUDIO, and IMAGE+TEXT with FAIL
         https://bugs.webkit.org/show_bug.cgi?id=96845
 

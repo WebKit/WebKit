@@ -340,6 +340,68 @@ BUG_TEST WIN : failures/expected/text.html = FAIL
         self.assert_exp('failures/expected/text.html', FAIL)
 
 
+class NewExpectationSyntaxTests(unittest.TestCase):
+    def assert_exp(self, line, bugs=None, modifiers=None, expectations=None, warnings=None, comment=None, name='foo.html'):
+        bugs = bugs or []
+        modifiers = modifiers or []
+        expectations = expectations or []
+        warnings = warnings or []
+        filename = 'TestExpectations'
+        line_number = 1
+        expectation_line = TestExpectationParser._tokenize_line_using_new_format(filename, line, line_number)
+        self.assertEquals(expectation_line.warnings, warnings)
+        self.assertEquals(expectation_line.name, name)
+        self.assertEquals(expectation_line.filename, filename)
+        self.assertEquals(expectation_line.line_number, line_number)
+        if not warnings:
+            self.assertEquals(expectation_line.modifiers, modifiers)
+            self.assertEquals(expectation_line.expectations, expectations)
+
+    def test_bare_name(self):
+        self.assert_exp('foo.html', modifiers=['SKIP'], expectations=['PASS'])
+
+    def test_bare_name_and_bugs(self):
+        self.assert_exp('webkit.org/b/12345 foo.html', modifiers=['BUGWK12345', 'SKIP'], expectations=['PASS'])
+        self.assert_exp('crbug.com/12345 foo.html', modifiers=['BUGCR12345', 'SKIP'], expectations=['PASS'])
+        self.assert_exp('Bug(dpranke) foo.html', modifiers=['BUGDPRANKE', 'SKIP'], expectations=['PASS'])
+        self.assert_exp('crbug.com/12345 crbug.com/34567 foo.html', modifiers=['BUGCR12345', 'BUGCR34567', 'SKIP'], expectations=['PASS'])
+
+    def test_comments(self):
+        self.assert_exp("# comment", name=None, comment="# comment")
+        self.assert_exp("foo.html # comment", comment="# comment", expectations=['PASS'], modifiers=['SKIP'])
+
+    def test_config_modifiers(self):
+        self.assert_exp('[ Mac ] foo.html', modifiers=['MAC', 'SKIP'], expectations=['PASS'])
+        self.assert_exp('[ Mac Vista ] foo.html', modifiers=['MAC', 'VISTA', 'SKIP'], expectations=['PASS'])
+        self.assert_exp('[ Mac ] foo.html [ Failure ] ', modifiers=['MAC'], expectations=['FAIL'])
+
+    def test_unknown_config(self):
+        self.assert_exp('[ Foo ] foo.html ', modifiers=['Foo', 'SKIP'], expectations=['PASS'])
+
+    def test_unknown_expectation(self):
+        self.assert_exp('foo.html [ Audio ]', expectations=['Audio'])
+
+    def test_skip(self):
+        self.assert_exp('foo.html [ Skip ]', modifiers=['SKIP'], expectations=['PASS'])
+
+    def test_slow(self):
+        self.assert_exp('foo.html [ Slow ]', modifiers=['SLOW'], expectations=['PASS'])
+
+    def test_wontfix(self):
+        self.assert_exp('foo.html [ WontFix ]', modifiers=['WONTFIX', 'SKIP'], expectations=['PASS'])
+
+    def test_blank_line(self):
+        self.assert_exp('', name=None)
+
+    def test_warnings(self):
+        self.assert_exp('[ Mac ]', warnings=['Did not find a test name.'], name=None)
+
+        self.assert_exp('[ [', warnings=['unexpected "["'], name=None)
+        self.assert_exp('crbug.com/12345 ]', warnings=['unexpected "]"'], name=None)
+
+        self.assert_exp('foo.html crbug.com/12345 ]', warnings=['"crbug.com/12345" is not at the start of the line.'])
+
+
 class SemanticTests(Base):
     def test_bug_format(self):
         self.assertRaises(ParseError, self.parse_exp, 'BUG1234 : failures/expected/text.html = FAIL', is_lint_mode=True)
