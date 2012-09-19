@@ -1,3 +1,73 @@
+2012-09-19  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Use BString in favour of BSTR to improve memory management
+        https://bugs.webkit.org/show_bug.cgi?id=93128
+
+        Reviewed by Anders Carlsson.
+
+        BString automatically calls SysFreeString() in its destructor which helps
+        avoiding memory leaks. So it should be used instead of BSTR directly.
+        Add operator& to BString to allow its usage for out parameters too (like COMPtr).
+        This fixes already a few memory leaks in the existing code.
+
+        * DefaultPolicyDelegate.cpp:
+        (DefaultPolicyDelegate::decidePolicyForNavigationAction):
+        (DefaultPolicyDelegate::decidePolicyForMIMEType):
+        (DefaultPolicyDelegate::unableToImplementPolicyWithError):
+        * MarshallingHelpers.cpp:
+        (MarshallingHelpers::KURLToBSTR):
+        (MarshallingHelpers::CFStringRefToBSTR):
+        (MarshallingHelpers::stringArrayToSafeArray):
+        (MarshallingHelpers::safeArrayToStringArray):
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::runJavaScriptPrompt):
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::checkGrammarOfString):
+        (WebEditorClient::getGuessesForWord):
+        * WebFrame.cpp:
+        (WebFrame::canProvideDocumentSource):
+        * WebHistory.cpp:
+        (WebHistory::removeItem):
+        (WebHistory::addItem):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::startUpIconDatabase):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::postNotification):
+        * WebPreferences.cpp:
+        (WebPreferences::setStringValue):
+        * WebView.cpp:
+        (toAtomicString):
+        (toString):
+        (toKURL):
+        (PreferencesChangedOrRemovedObserver::onNotify):
+        (WebView::close):
+        (WebView::canShowMIMEType):
+        (WebView::initWithFrame):
+        (WebView::setApplicationNameForUserAgent):
+        (WebView::setCustomUserAgent):
+        (WebView::userAgentForURL):
+        (WebView::setCustomTextEncodingName):
+        (WebView::customTextEncodingName):
+        (WebView::setPreferences):
+        (WebView::searchFor):
+        (WebView::executeCoreCommandByName):
+        (WebView::markAllMatchesForText):
+        (WebView::setGroupName):
+        (WebView::registerURLSchemeAsLocal):
+        (WebView::replaceSelectionWithText):
+        (WebView::onNotify):
+        (WebView::notifyPreferencesChanged):
+        (WebView::MIMETypeForExtension):
+        (WebView::standardUserAgentWithApplicationName):
+        (WebView::addAdditionalPluginDirectory):
+        (WebView::registerEmbeddedViewMIMEType):
+        (WebView::addOriginAccessWhitelistEntry):
+        (WebView::removeOriginAccessWhitelistEntry):
+        (WebView::geolocationDidFailWithError):
+        (WebView::setDomainRelaxationForbiddenForURLScheme):
+        (WebView::setCompositionForTesting):
+        (WebView::confirmCompositionForTesting):
+
 2012-09-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128809.

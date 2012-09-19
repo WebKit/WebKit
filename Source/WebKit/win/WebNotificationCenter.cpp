@@ -28,6 +28,7 @@
 #include "WebNotificationCenter.h"
 
 #include "WebNotification.h"
+#include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <utility>
 #include <wchar.h>
@@ -37,6 +38,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 typedef std::pair<COMPtr<IUnknown>, COMPtr<IWebNotificationObserver> > ObjectObserverPair;
 typedef Vector<ObjectObserverPair> ObjectObserverList;
@@ -160,7 +163,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver(
 HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification( 
     /* [in] */ IWebNotification* notification)
 {
-    BSTR name;
+    BString name;
     HRESULT hr = notification->name(&name);
     if (FAILED(hr))
         return hr;
@@ -171,7 +174,6 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::postNotification(
         return hr;
 
     postNotificationInternal(notification, name, obj.get());
-    SysFreeString(name);
 
     return hr;
 }
