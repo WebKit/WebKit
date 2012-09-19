@@ -42,6 +42,7 @@
 #import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
+#import <wtf/MathExtras.h>
 #import <wtf/UnusedParam.h>
 
 using std::min;
@@ -755,7 +756,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             [caFilter setDefaults];
             
             // The CIHueAdjust value is in radians
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount() * M_PI * 2 / 360] forKey:@"inputAngle"];
+            [caFilter setValue:[NSNumber numberWithFloat:deg2rad(op->amount())] forKey:@"inputAngle"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;

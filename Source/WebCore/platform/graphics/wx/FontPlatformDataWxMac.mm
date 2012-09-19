@@ -29,6 +29,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include <wtf/MathExtras.h>
 #include <wx/defs.h>
 #include <wx/font.h>
 #include <wx/fontutil.h>
@@ -41,12 +42,7 @@
 
 #if !wxCHECK_VERSION(2,9,0) || !wxOSX_USE_COCOA
 
-static inline double DegToRad(double deg)
-{
-    return (deg * M_PI) / 180.0;
-}
-
-static const NSAffineTransformStruct kSlantNSTransformStruct = { 1, 0, tan(DegToRad(11)), 1, 0, 0  };
+static const NSAffineTransformStruct kSlantNSTransformStruct = { 1, 0, tan(deg2rad(11)), 1, 0, 0  };
 
 NSFont* OSXCreateNSFont(const wxNativeFontInfo* info)
 {

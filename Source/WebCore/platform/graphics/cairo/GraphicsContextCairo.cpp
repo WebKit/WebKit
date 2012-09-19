@@ -65,10 +65,6 @@
 
 using namespace std;
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 namespace WebCore {
 
 // A helper which quickly fills a rectangle with a simple color fill.
@@ -353,7 +349,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     float xRadius = .5 * rect.width();
     cairo_translate(cr, rect.x() + xRadius, rect.y() + yRadius);
     cairo_scale(cr, xRadius, yRadius);
-    cairo_arc(cr, 0., 0., 1., 0., 2 * M_PI);
+    cairo_arc(cr, 0., 0., 1., 0., 2 * piFloat);
     cairo_restore(cr);
 
     if (fillColor().alpha()) {
@@ -392,7 +388,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     if (w != h)
         cairo_scale(cr, 1., scaleFactor);
 
-    cairo_arc_negative(cr, x + hRadius, (y + vRadius) * reverseScaleFactor, hRadius, -fa * M_PI/180, -falen * M_PI/180);
+    cairo_arc_negative(cr, x + hRadius, (y + vRadius) * reverseScaleFactor, hRadius, deg2rad(-fa), deg2rad(-falen));
 
     if (w != h)
         cairo_scale(cr, 1., reverseScaleFactor);

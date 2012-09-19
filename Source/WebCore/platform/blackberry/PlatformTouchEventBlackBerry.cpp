@@ -22,11 +22,11 @@
 #include "config.h"
 #include "PlatformTouchEvent.h"
 
-#include <BlackBerryPlatformTouchEvent.h>
-
-#include <wtf/CurrentTime.h>
-
 #if ENABLE(TOUCH_EVENTS)
+
+#include <BlackBerryPlatformTouchEvent.h>
+#include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ PlatformTouchEvent::PlatformTouchEvent(BlackBerry::Platform::TouchEvent* event)
     if (event->hasGesture(BlackBerry::Platform::Gesture::Pinch, &pinch)) {
         BlackBerry::Platform::PinchGestureData* data = static_cast<BlackBerry::Platform::PinchGestureData*>(pinch.m_data);
         if (data) {
-            m_rotation = data->m_angle * 180 / M_PI;
+            m_rotation = rad2deg(data->m_angle);
             m_scale = data->m_scale;
         }
     } else if (event->hasGesture(BlackBerry::Platform::Gesture::DoubleTap))

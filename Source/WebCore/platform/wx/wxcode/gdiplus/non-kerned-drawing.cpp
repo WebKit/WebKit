@@ -29,7 +29,7 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "SimpleFontData.h"
-
+#include <wtf/MathExtras.h>
 #include <wx/defs.h>
 
 #if 1 // !wxUSE_CAIRO
@@ -45,7 +45,7 @@ using namespace std;
 // constants
 //-----------------------------------------------------------------------------
 
-const double RAD2DEG = 180.0 / M_PI;
+const double RAD2DEG = 180.0 / piDouble;
 
 //-----------------------------------------------------------------------------
 // Local functions
@@ -54,8 +54,8 @@ const double RAD2DEG = 180.0 / M_PI;
 static inline double dmin(double a, double b) { return a < b ? a : b; }
 static inline double dmax(double a, double b) { return a > b ? a : b; }
 
-static inline double DegToRad(double deg) { return (deg * M_PI) / 180.0; }
-static inline double RadToDeg(double deg) { return (deg * 180.0) / M_PI; }
+static inline double DegToRad(double deg) { return deg2rad(deg); }
+static inline double RadToDeg(double rad) { return rad2deg(rad); }
 
 #include "wx/msw/private.h"
 

@@ -30,6 +30,7 @@
 #import "FloatConversion.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
+#import <wtf/MathExtras.h>
 #import <wtf/UnusedParam.h>
 
 using namespace WebCore;
@@ -101,7 +102,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (float)currentValue
 {
-    return narrowPrecisionToFloat(0.5 - 0.5 * cos(M_PI * (1 - [self currentProgress])));
+    return narrowPrecisionToFloat(0.5 - 0.5 * cos(piDouble * (1 - [self currentProgress])));
 }
 
 - (NSRect)currentFrame
