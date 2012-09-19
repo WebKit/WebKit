@@ -1,3 +1,20 @@
+2012-09-19  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [gtk] add enable-media-stream to websettings
+        https://bugs.webkit.org/show_bug.cgi?id=94361
+
+        Reviewed by Martin Robinson.
+
+        Applications should be allowed to enable/disable MediaStream on webkitwebsettings.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+
 2012-09-14  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Clear application cache between tests in DumpRenderTree

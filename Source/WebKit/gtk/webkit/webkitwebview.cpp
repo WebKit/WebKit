@@ -80,6 +80,7 @@
 #include "ProgressTracker.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptValue.h"
 #include "Settings.h"
 #include "webkit/WebKitDOMDocumentPrivate.h"
@@ -3430,6 +3431,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 
 #if ENABLE(WEBGL)
     coreSettings->setWebGLEnabled(settingsPrivate->enableWebgl);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled(settingsPrivate->enableMediaStream);
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
