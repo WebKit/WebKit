@@ -39,7 +39,6 @@
 #include "HTMLNames.h"
 #include "MemoryUsageSupport.h"
 #include "MessagePort.h"
-#include "PlatformSupport.h"
 #include "RetainedDOMInfo.h"
 #include "RetainedObjectInfo.h"
 #include "V8AbstractEventListener.h"
