@@ -2414,10 +2414,15 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     if (gestureEvent.type() == PlatformEvent::GestureScrollEnd || gestureEvent.type() == PlatformEvent::GestureScrollUpdate)
         eventTarget = m_scrollGestureHandlingNode.get();
 
+    IntPoint adjustedPoint = gestureEvent.position();
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::TouchEvent;
-    if (gestureEvent.type() == PlatformEvent::GestureTapDown)
+    if (gestureEvent.type() == PlatformEvent::GestureTapDown) {
+#if ENABLE(TOUCH_ADJUSTMENT)
+        if (!gestureEvent.area().isEmpty())
+            adjustGesturePosition(gestureEvent, adjustedPoint);
+#endif
         hitType |= HitTestRequest::Active;
-    else if (gestureEvent.type() == PlatformEvent::GestureTap || gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
+    } else if (gestureEvent.type() == PlatformEvent::GestureTap || gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
         hitType |= HitTestRequest::Release;
     else
         hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
@@ -2426,7 +2431,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         hitType |= HitTestRequest::ReadOnly;
 
     if (!eventTarget || !(hitType & HitTestRequest::ReadOnly)) {
-        IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
+        IntPoint hitTestPoint = m_frame->view()->windowToContents(adjustedPoint);
         HitTestResult result = hitTestResultAtPoint(hitTestPoint, false, false, DontHitTestScrollbars, hitType);
         eventTarget = result.targetNode();
     }
@@ -2574,6 +2579,7 @@ bool EventHandler::adjustGesturePosition(const PlatformGestureEvent& gestureEven
     Node* targetNode = 0;
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureTap:
+    case PlatformEvent::GestureTapDown:
         bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
         break;
     case PlatformEvent::GestureLongPress:

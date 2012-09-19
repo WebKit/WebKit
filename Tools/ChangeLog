@@ -1,3 +1,14 @@
+2012-09-19  Rick Byers  <rbyers@chromium.org>
+
+        Do touch adjustment on GestureTapDown
+        https://bugs.webkit.org/show_bug.cgi?id=96677
+
+        Reviewed by Antonio Gomes.
+
+        Allow radius to be set for GestureTapDown events.
+        * DumpRenderTree/chromium/TestRunner/EventSender.cpp:
+        (EventSender::gestureEvent):
+
 2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT does not support overriding 'WebKitCSSRegionsEnabled' preference
