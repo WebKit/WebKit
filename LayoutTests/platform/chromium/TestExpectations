@@ -3335,8 +3335,6 @@ BUGWK94059 LION RELEASE : editing/selection/move-by-line-001.html = PASS TEXT
 
 BUGWK94060 LINUX : fast/dom/Window/dom-access-from-closure-window.html = PASS TEXT
 
-BUGWK94063 LION : fast/css/nested-rounded-corners.html = IMAGE+TEXT
-
 BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS TEXT
 
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
