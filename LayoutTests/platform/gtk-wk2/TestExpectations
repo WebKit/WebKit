@@ -1,620 +1,621 @@
-// These are the layout test expectations for the WK2 GTK port of WebKit.
-//
-// See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+# These are the layout test expectations for the WK2 GTK port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-// This list is divided into several sections to make it easy for us to triage and close issues.
-// 1. TESTS THAT REQUIRE NEW RESULTS
-// Please don't add any tests to this list. Instead just ping a GTK+ developer
-// to generate results for you.
+# This list is divided into several sections to make it easy for us to triage and close issues.
+# 1. TESTS THAT REQUIRE NEW RESULTS
+# Please don't add any tests to this list. Instead just ping a GTK+ developer
+# to generate results for you.
 
-// 2. EXPECTED FAILURES
-// This list is divided into two parts:
-// a. Tests that we never expect to pass, because they use features we likely
-//    will never implement (Mac-only features, for instance).
-// b. Missing WebCore/WebKit features that we'll want someday.
+# 2. EXPECTED FAILURES
+# This list is divided into two parts:
+# a. Tests that we never expect to pass, because they use features we likely
+#    will never implement (Mac-only features, for instance).
+# b. Missing WebCore/WebKit features that we'll want someday.
 
-// 3. TESTS CRASHING
-// Please open a bug for each test crashing with any important information.
-// These are in a separate section than failing tests, because they should be
-// priority fixes.
+# 3. TESTS CRASHING
+# Please open a bug for each test crashing with any important information.
+# These are in a separate section than failing tests, because they should be
+# priority fixes.
 
-// 4. FLAKY TESTS
-// When appropriate, open a bug for flaky tests with the test diff and information
-// about which bots the test fails on.
+# 4. FLAKY TESTS
+# When appropriate, open a bug for flaky tests with the test diff and information
+# about which bots the test fails on.
 
-// 5. SLOW TESTS
-// These tests are assigned the SLOW modifier to prevent them timing out as they
-// otherwise pass, but take a long time to complete due to the nature of test,
-// debug configuration or some other performance-affecting factor.
+# 5. SLOW TESTS
+# These tests are assigned the SLOW modifier to prevent them timing out as they
+# otherwise pass, but take a long time to complete due to the nature of test,
+# debug configuration or some other performance-affecting factor.
 
-// 6. TESTS FAILING
-// Each test should (eventually) have a bug.
+# 6. TESTS FAILING
+# Each test should (eventually) have a bug.
 
-// 7. TESTS FAILING IN WK1
-// Tests that pass in wk2 but fail in wk1.
+# 7. TESTS FAILING IN WK1
+# Tests that pass in wk2 but fail in wk1.
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Tests that require new results.
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Tests that require new results.
+#////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKGTK SKIP : fast/regions/autoheight-regions-mark.html = FAIL
-BUGWKGTK SKIP : http/tests/security/resources/drag-drop-allowed.html = FAIL
+Bug(GTK) fast/regions/autoheight-regions-mark.html [ Failure Skip ]
+Bug(GTK) http/tests/security/resources/drag-drop-allowed.html [ Failure Skip ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Tests that require new results.
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests that require new results.
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Expected failures
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Expected failures
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// [GTK] Implement drag and drop support in WebKit2
-// https://bugs.webkit.org/show_bug.cgi?id=63706
-// Implement EditingCallbacks deletegates in the WebKitTestRunner
-BUGWK63706 : accessibility/editable-webarea-context-menu-point.html = FAIL
-BUGWK63706 : editing/pasteboard/4947130.html = FAIL
-BUGWK63706 : editing/pasteboard/dataTransfer-setData-getData.html = FAIL TIMEOUT
-BUGWK63706 : editing/pasteboard/drag-and-drop-image-contenteditable.html = FAIL TIMEOUT
-BUGWK63706 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = FAIL TIMEOUT
-BUGWK63706 : editing/pasteboard/drag-and-drop-objectimage-contenteditable.html = FAIL TIMEOUT
-BUGWK63706 : editing/pasteboard/drag-drop-input-textarea.html = FAIL
-BUGWK63706 : editing/pasteboard/drag-drop-modifies-page.html = FAIL
-BUGWK63706 : editing/pasteboard/drag-drop-url-text.html = FAIL
-BUGWK63706 : editing/pasteboard/drag-image-in-about-blank-frame.html = FAIL
-BUGWK63706 : editing/pasteboard/drag-selected-image-to-contenteditable.html = FAIL
-BUGWK63706 : editing/pasteboard/drop-file-svg.html = FAIL
-BUGWK63706 : editing/pasteboard/drop-inputtext-acquires-style.html = FAIL
-BUGWK63706 : editing/pasteboard/drop-link.html = FAIL
-BUGWK63706 : editing/pasteboard/drop-text-events.html = FAIL TIMEOUT
-BUGWK63706 : editing/pasteboard/drop-text-without-selection.html = FAIL
-BUGWK63706 : editing/pasteboard/get-data-text-plain-drop.html = FAIL
-BUGWK63706 : editing/pasteboard/smart-drag-drop.html = FAIL
-BUGWK63706 : editing/pasteboard/subframe-dragndrop-1.html = FAIL
-BUGWK63706 : editing/selection/4895428-1.html = FAIL
-BUGWK63706 : editing/selection/4895428-4.html = FAIL
-BUGWK63706 : editing/selection/contains-boundaries.html = FAIL
-BUGWK63706 : editing/selection/drag-text-delay.html = FAIL
-BUGWK63706 : editing/undo/undo-smart-delete-word.html = FAIL
-BUGWK63706 : fast/block/float/float-in-float-hit-testing.html = FAIL
-BUGWK63706 : fast/events/bogus-dropEffect-effectAllowed.html = FAIL
-BUGWK63706 : fast/events/content-changed-during-drop.html = FAIL
-BUGWK63706 : fast/events/crash-on-mutate-during-drop.html = FAIL
-BUGWK63706 : fast/events/drag-and-drop-dataTransfer-types-nocrash.html = FAIL
-BUGWK63706 : fast/events/drag-and-drop-fire-drag-dragover.html = FAIL
-BUGWK63706 : fast/events/drag-and-drop.html = FAIL TIMEOUT
-BUGWK63706 : fast/events/drag-and-drop-subframe-dataTransfer.html = FAIL TIMEOUT
-BUGWK63706 : fast/events/drag-in-frames.html = FAIL
-BUGWK63706 : fast/events/drag-link.html = FAIL
-BUGWK63706 : fast/events/drag-parent-node.html = FAIL
-BUGWK63706 : fast/events/dropzone-001.html = FAIL TIMEOUT
-BUGWK63706 : fast/events/dropzone-002.html = FAIL
-BUGWK63706 : fast/events/dropzone-003.html = FAIL
-BUGWK63706 : fast/events/ondrop-text-html.html = FAIL
-BUGWK63706 : fast/events/selectstart-by-drag.html = FAIL
-BUGWK63706 : fast/events/standalone-image-drag-to-editable.html = FAIL TIMEOUT
-BUGWK63706 : fast/forms/drag-into-textarea.html = FAIL
-BUGWK63706 : fast/forms/drag-out-of-textarea.html = FAIL
-BUGWK63706 : fast/forms/file/input-file-write-files.html = FAIL TIMEOUT
-BUGWK63706 : fast/forms/range/slider-delete-while-dragging-thumb.html = FAIL
-BUGWK63706 : fast/lists/drag-into-marker.html = FAIL
-BUGWK63706 : http/tests/misc/bubble-drag-events.html = FAIL
-BUGWK63706 : http/tests/security/drag-over-remote-content-iframe.html = FAIL
-BUGWK63706 : plugins/mouse-events-fixedpos.html = FAIL
-BUGWK63706 : plugins/mouse-events.html = FAIL
-BUGWK63706 : svg/custom/mouse-move-on-svg-container.xhtml = FAIL TIMEOUT
-BUGWK63706 : svg/custom/mouse-move-on-svg-root.xhtml = FAIL TIMEOUT
+# [GTK] Implement drag and drop support in WebKit2
+# https://bugs.webkit.org/show_bug.cgi?id=63706
+# Implement EditingCallbacks deletegates in the WebKitTestRunner
+webkit.org/b/63706 accessibility/editable-webarea-context-menu-point.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/4947130.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/dataTransfer-setData-getData.html [ Failure Timeout ]
+webkit.org/b/63706 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure Timeout ]
+webkit.org/b/63706 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure Timeout ]
+webkit.org/b/63706 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Failure Timeout ]
+webkit.org/b/63706 editing/pasteboard/drag-drop-input-textarea.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drag-drop-modifies-page.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drag-drop-url-text.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drag-image-in-about-blank-frame.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drag-selected-image-to-contenteditable.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drop-file-svg.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drop-link.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/drop-text-events.html [ Failure Timeout ]
+webkit.org/b/63706 editing/pasteboard/drop-text-without-selection.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/smart-drag-drop.html [ Failure ]
+webkit.org/b/63706 editing/pasteboard/subframe-dragndrop-1.html [ Failure ]
+webkit.org/b/63706 editing/selection/4895428-1.html [ Failure ]
+webkit.org/b/63706 editing/selection/4895428-4.html [ Failure ]
+webkit.org/b/63706 editing/selection/contains-boundaries.html [ Failure ]
+webkit.org/b/63706 editing/selection/drag-text-delay.html [ Failure ]
+webkit.org/b/63706 editing/undo/undo-smart-delete-word.html [ Failure ]
+webkit.org/b/63706 fast/block/float/float-in-float-hit-testing.html [ Failure ]
+webkit.org/b/63706 fast/events/bogus-dropEffect-effectAllowed.html [ Failure ]
+webkit.org/b/63706 fast/events/content-changed-during-drop.html [ Failure ]
+webkit.org/b/63706 fast/events/crash-on-mutate-during-drop.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-and-drop-fire-drag-dragover.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-and-drop.html [ Failure Timeout ]
+webkit.org/b/63706 fast/events/drag-and-drop-subframe-dataTransfer.html [ Failure Timeout ]
+webkit.org/b/63706 fast/events/drag-in-frames.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-link.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-parent-node.html [ Failure ]
+webkit.org/b/63706 fast/events/dropzone-001.html [ Failure Timeout ]
+webkit.org/b/63706 fast/events/dropzone-002.html [ Failure ]
+webkit.org/b/63706 fast/events/dropzone-003.html [ Failure ]
+webkit.org/b/63706 fast/events/ondrop-text-html.html [ Failure ]
+webkit.org/b/63706 fast/events/selectstart-by-drag.html [ Failure ]
+webkit.org/b/63706 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
+webkit.org/b/63706 fast/forms/drag-into-textarea.html [ Failure ]
+webkit.org/b/63706 fast/forms/drag-out-of-textarea.html [ Failure ]
+webkit.org/b/63706 fast/forms/file/input-file-write-files.html [ Failure Timeout ]
+webkit.org/b/63706 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
+webkit.org/b/63706 fast/lists/drag-into-marker.html [ Failure ]
+webkit.org/b/63706 http/tests/misc/bubble-drag-events.html [ Failure ]
+webkit.org/b/63706 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
+webkit.org/b/63706 plugins/mouse-events-fixedpos.html [ Failure ]
+webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
+webkit.org/b/63706 svg/custom/mouse-move-on-svg-container.xhtml [ Failure Timeout ]
+webkit.org/b/63706 svg/custom/mouse-move-on-svg-root.xhtml [ Failure Timeout ]
 
-// WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
-BUGWKGTK : editing/selection/doubleclick-beside-cr-span.html = FAIL
-BUGWKGTK : editing/selection/doubleclick-whitespace.html = FAIL
-BUGWKGTK : editing/selection/doubleclick-whitespace-crash.html = FAIL
-BUGWKGTK : editing/selection/doubleclick-whitespace-img-crash.html = FAIL
+# WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
+Bug(GTK) editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+Bug(GTK) editing/selection/doubleclick-whitespace.html [ Failure ]
+Bug(GTK) editing/selection/doubleclick-whitespace-crash.html [ Failure ]
+Bug(GTK) editing/selection/doubleclick-whitespace-img-crash.html [ Failure ]
 
-// WebKit2 needs layoutTestController.addMockSpeechInputResult
-BUGWKGTK : fast/speech/input-onspeechchange-event.html = FAIL
-BUGWKGTK : fast/speech/input-ontextinput-event.html = FAIL
-BUGWKGTK : fast/speech/input-readonly-and-disabled.html = FAIL
-BUGWKGTK : fast/speech/input-text-language-tag.html = FAIL
-BUGWKGTK : fast/speech/input-text-speechbutton.html = FAIL
-BUGWKGTK : fast/speech/speech-button-ignore-generated-events.html = FAIL
-BUGWKGTK : fast/speech/speech-input-result-list-not-enough-arguments.html = FAIL
-BUGWKGTK : fast/speech/speech-input-scripting.html = FAIL
+# WebKit2 needs layoutTestController.addMockSpeechInputResult
+Bug(GTK) fast/speech/input-onspeechchange-event.html [ Failure ]
+Bug(GTK) fast/speech/input-ontextinput-event.html [ Failure ]
+Bug(GTK) fast/speech/input-readonly-and-disabled.html [ Failure ]
+Bug(GTK) fast/speech/input-text-language-tag.html [ Failure ]
+Bug(GTK) fast/speech/input-text-speechbutton.html [ Failure ]
+Bug(GTK) fast/speech/speech-button-ignore-generated-events.html [ Failure ]
+Bug(GTK) fast/speech/speech-input-result-list-not-enough-arguments.html [ Failure ]
+Bug(GTK) fast/speech/speech-input-scripting.html [ Failure ]
 
-// WebKit2 needs layoutTestController.setCustomPolicyDelegate
-// https://bugs.webkit.org/show_bug.cgi?id=42546
-BUGWK42546 : fast/loader/policy-delegate-action-hit-test-zoomed.html = FAIL
+# WebKit2 needs layoutTestController.setCustomPolicyDelegate
+# https://bugs.webkit.org/show_bug.cgi?id=42546
+webkit.org/b/42546 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 
-// WebKit2 needs layoutTestController.setEditingBehaviour
-BUGWKGTK : editing/selection/directionality-after-undo-replace.html = FAIL
-BUGWKGTK : editing/selection/5354455-1.html = FAIL
-BUGWKGTK : editing/selection/extend-after-mouse-selection.html = FAIL
+# WebKit2 needs layoutTestController.setEditingBehaviour
+Bug(GTK) editing/selection/directionality-after-undo-replace.html [ Failure ]
+Bug(GTK) editing/selection/5354455-1.html [ Failure ]
+Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
-// WebKit2 needs textInputController.selectedRange
-BUGWKGTK : editing/selection/mixed-editability-10.html = FAIL
+# WebKit2 needs textInputController.selectedRange
+Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 
-// Implement eventSender.contextClick
-BUGWKGTK : editing/pasteboard/copy-standalone-image-crash.html = FAIL
-BUGWKGTK : editing/selection/empty-cell-right-click.html = FAIL
-BUGWKGTK : editing/selection/button-right-click.html = FAIL
-BUGWKGTK : editing/selection/context-menu-on-text.html = FAIL
-BUGWKGTK : editing/selection/empty-cell-right-click.html = FAIL
-BUGWKGTK : fast/events/selectstart-prevent-selection-on-right-click.html = FAIL
-BUGWKGTK : fast/events/context-no-deselect.html = FAIL
-BUGWKGTK : fast/events/contextmenu-scrolled-page-with-frame.html = FAIL
-BUGWKGTK : fast/events/context-onmousedown-event.html = FAIL
-BUGWKGTK : media/controls-right-click-on-timebar.html = FAIL
-BUGWKGTK : svg/custom/use-events-crash.svg = FAIL
+# Implement eventSender.contextClick
+Bug(GTK) editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
+Bug(GTK) editing/selection/empty-cell-right-click.html [ Failure ]
+Bug(GTK) editing/selection/button-right-click.html [ Failure ]
+Bug(GTK) editing/selection/context-menu-on-text.html [ Failure ]
+Bug(GTK) editing/selection/empty-cell-right-click.html [ Failure ]
+Bug(GTK) fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
+Bug(GTK) fast/events/context-no-deselect.html [ Failure ]
+Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
+Bug(GTK) fast/events/context-onmousedown-event.html [ Failure ]
+Bug(GTK) media/controls-right-click-on-timebar.html [ Failure ]
+Bug(GTK) svg/custom/use-events-crash.svg [ Failure ]
 
-// Implement PageClientImpl::registerEditCommand and handling commands functions
-BUGWKGTK : editing/deleting/delete-by-word-002.html = FAIL
-BUGWKGTK : editing/deleting/delete-and-undo.html = FAIL
-BUGWKGTK : editing/undo/undo-delete.html = FAIL
-BUGWKGTK : editing/undo/undo-forward-delete.html = FAIL
-BUGWKGTK : editing/undo/undo-combined-delete-boundary.html = FAIL
-BUGWKGTK : editing/undo/undo-forward-delete-boundary.html = FAIL
-BUGWKGTK : editing/undo/undo-delete-boundary.html = FAIL
-BUGWKGTK : editing/undo/undo-combined-delete.html = FAIL
-BUGWKGTK : editing/undo/undo-typing-001.html = FAIL
-BUGWKGTK : editing/undo/4063751.html = FAIL
-BUGWKGTK : editing/undo/redo-typing-001.html = FAIL
-BUGWKGTK : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = FAIL
-BUGWKGTK : editing/inserting/redo.html = FAIL
-BUGWKGTK : editing/pasteboard/undoable-fragment-removes.html = FAIL
-BUGWKGTK : editing/style/stylewithcss-without-selection.html = FAIL
-BUGWKGTK : editing/undo/5378473.html = FAIL
-BUGWKGTK : editing/undo/redo-split-text-node.html = FAIL
-BUGWKGTK : editing/undo/redo-split-text-with-removal.html = FAIL
-BUGWKGTK : editing/undo/redo-style.html = FAIL
-BUGWKGTK : editing/undo/remove-css-property-and-remove-style.html = FAIL
-BUGWKGTK : editing/undo/replace-by-span-then-remove.html = FAIL
-BUGWKGTK : editing/undo/undo-after-setting-value.html = FAIL
-BUGWKGTK : editing/undo/undo-indent.html = FAIL
-BUGWKGTK : editing/undo/undo-misspellings.html = FAIL
-BUGWKGTK : fast/forms/plaintext-mode-1.html = FAIL
+# Implement PageClientImpl::registerEditCommand and handling commands functions
+Bug(GTK) editing/deleting/delete-by-word-002.html [ Failure ]
+Bug(GTK) editing/deleting/delete-and-undo.html [ Failure ]
+Bug(GTK) editing/undo/undo-delete.html [ Failure ]
+Bug(GTK) editing/undo/undo-forward-delete.html [ Failure ]
+Bug(GTK) editing/undo/undo-combined-delete-boundary.html [ Failure ]
+Bug(GTK) editing/undo/undo-forward-delete-boundary.html [ Failure ]
+Bug(GTK) editing/undo/undo-delete-boundary.html [ Failure ]
+Bug(GTK) editing/undo/undo-combined-delete.html [ Failure ]
+Bug(GTK) editing/undo/undo-typing-001.html [ Failure ]
+Bug(GTK) editing/undo/4063751.html [ Failure ]
+Bug(GTK) editing/undo/redo-typing-001.html [ Failure ]
+Bug(GTK) editing/execCommand/format-block-multiple-paragraphs-in-pre.html [ Failure ]
+Bug(GTK) editing/inserting/redo.html [ Failure ]
+Bug(GTK) editing/pasteboard/undoable-fragment-removes.html [ Failure ]
+Bug(GTK) editing/style/stylewithcss-without-selection.html [ Failure ]
+Bug(GTK) editing/undo/5378473.html [ Failure ]
+Bug(GTK) editing/undo/redo-split-text-node.html [ Failure ]
+Bug(GTK) editing/undo/redo-split-text-with-removal.html [ Failure ]
+Bug(GTK) editing/undo/redo-style.html [ Failure ]
+Bug(GTK) editing/undo/remove-css-property-and-remove-style.html [ Failure ]
+Bug(GTK) editing/undo/replace-by-span-then-remove.html [ Failure ]
+Bug(GTK) editing/undo/undo-after-setting-value.html [ Failure ]
+Bug(GTK) editing/undo/undo-indent.html [ Failure ]
+Bug(GTK) editing/undo/undo-misspellings.html [ Failure ]
+Bug(GTK) fast/forms/plaintext-mode-1.html [ Failure ]
 
-// Implement layoutTestController.setPopupBlockingEnabled and
-// eventSender.scheduleAsynchronousClick support
-BUGWKGTK : fast/events/popup-blocking-click-in-iframe.html = FAIL
+# Implement layoutTestController.setPopupBlockingEnabled and
+# eventSender.scheduleAsynchronousClick support
+Bug(GTK) fast/events/popup-blocking-click-in-iframe.html [ Failure ]
 
-// accessibility tests failing due to missing WKTR features
-BUGWKGTK : accessibility/aria-describedby-on-input.html = FAIL
-BUGWKGTK : accessibility/aria-help.html = FAIL
+# accessibility tests failing due to missing WKTR features
+Bug(GTK) accessibility/aria-describedby-on-input.html [ Failure ]
+Bug(GTK) accessibility/aria-help.html [ Failure ]
 
-// Implement layoutTestController.setViewModeMediaFeature support
-BUGWKGTK : fast/media/media-query-list-02.html = FAIL
-BUGWKGTK : fast/media/media-query-list-03.html = FAIL
-BUGWKGTK : fast/media/media-query-list-04.html = FAIL
-BUGWKGTK : fast/media/media-query-list-05.html = FAIL
-BUGWKGTK : fast/media/media-query-list-06.html = FAIL
-BUGWKGTK : fast/media/media-query-list-07.html = FAIL
-BUGWKGTK : fast/media/view-mode-media-feature.html = FAIL
+# Implement layoutTestController.setViewModeMediaFeature support
+Bug(GTK) fast/media/media-query-list-02.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-03.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-04.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-05.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-07.html [ Failure ]
+Bug(GTK) fast/media/view-mode-media-feature.html [ Failure ]
 
-// Implement testRunner.setAsynchronousSpellCheckingEnabled
-// http://webkit.org/b/81042
-BUGWK81042 : editing/spelling/spellcheck-paste.html = FAIL
-BUGWK81042 : editing/spelling/spellcheck-paste-disabled.html = FAIL
+# Implement testRunner.setAsynchronousSpellCheckingEnabled
+# http://webkit.org/b/81042
+webkit.org/b/81042 editing/spelling/spellcheck-paste.html [ Failure ]
+webkit.org/b/81042 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
 
-// Implement testRunner.numberOfPendingGeolocationPermissionRequests()
-// http://webkit.org/b/93977
-BUGWK93977 : fast/dom/Geolocation/page-reload-cancel-permission-requests.html = FAIL
+# Implement testRunner.numberOfPendingGeolocationPermissionRequests()
+# http://webkit.org/b/93977
+webkit.org/b/93977 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure ]
 
-// Implement eventSender.scheduleAsynchronousKeyDown
-// http://webkit.org/b/93979
-BUGWKGTK : fast/mutation/end-of-task-delivery.html = FAIL TIMEOUT
+# Implement eventSender.scheduleAsynchronousKeyDown
+# http://webkit.org/b/93979
+Bug(GTK) fast/mutation/end-of-task-delivery.html [ Failure Timeout ]
 
-// Implement testRunner.setUseDeferredFrameLoading
-// http://webkit.org/b/93980
-BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = FAIL
+# Implement testRunner.setUseDeferredFrameLoading
+# http://webkit.org/b/93980
+webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
 
-// Implement testRunner.setStorageDatabaseIdleInterval
-// http://webkit.org/b/93982
-BUGWK93982 : storage/domstorage/storage-close-database-on-idle.html = FAIL
+# Implement testRunner.setStorageDatabaseIdleInterval
+# http://webkit.org/b/93982
+webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
-// [Navigation Timing] Remove old-style LayoutTests
-// https://bugs.webkit.org/show_bug.cgi?id=91158
-BUGWK91158 : fast/dom/navigation-type-back-forward.html = FAIL
-BUGWK91158 : fast/dom/navigation-type-navigate.html = FAIL
-BUGWK91158 : fast/dom/navigation-type-reload.html = FAIL
+# [Navigation Timing] Remove old-style LayoutTests
+# https://bugs.webkit.org/show_bug.cgi?id=91158
+webkit.org/b/91158 fast/dom/navigation-type-back-forward.html [ Failure ]
+webkit.org/b/91158 fast/dom/navigation-type-navigate.html [ Failure ]
+webkit.org/b/91158 fast/dom/navigation-type-reload.html [ Failure ]
 
-// https://bugs.webkit.org/show_bug.cgi?id=94549
-BUGWK94549 : fast/forms/file/selected-files-from-history-state.html = FAIL
+# https://bugs.webkit.org/show_bug.cgi?id=94549
+webkit.org/b/94549 fast/forms/file/selected-files-from-history-state.html [ Failure ]
 
-// https://bugs.webkit.org/show_bug.cgi?id=95043
-BUGWK95043 : http/tests/security/local-user-CSS-from-remote.html = FAIL
+# https://bugs.webkit.org/show_bug.cgi?id=95043
+webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
-// EventSender::dumpFilenameBeingDragged not implemented.
-// https://bugs.webkit.org/show_bug.cgi?id=61827
-BUGWK61827 : fast/events/drag-image-filename.html = FAIL
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61827
+webkit.org/b/61827 fast/events/drag-image-filename.html [ Failure ]
 
-// WebKitTestRunner layoutTestController.pathToLocalResource needs to be updated to work with NRWT
-// https://bugs.webkit.org/show_bug.cgi?id=81299
-BUGWK81299 : fast/loader/local-CSS-from-local.html = FAIL
-BUGWK81299 : fast/loader/local-JavaScript-from-local.html = FAIL
-BUGWK81299 : fast/loader/local-image-from-local.html = FAIL
+# WebKitTestRunner layoutTestController.pathToLocalResource needs to be updated to work with NRWT
+# https://bugs.webkit.org/show_bug.cgi?id=81299
+webkit.org/b/81299 fast/loader/local-CSS-from-local.html [ Failure ]
+webkit.org/b/81299 fast/loader/local-JavaScript-from-local.html [ Failure ]
+webkit.org/b/81299 fast/loader/local-image-from-local.html [ Failure ]
 
-// WebKitTestRunner needs a more-complete implementation of eventSender
-// https://bugs.webkit.org/show_bug.cgi?id=42194
-BUGWK42194 : editing/undo/undo-smart-delete-reversed-selection.html = FAIL
-BUGWK42194 : fast/dom/vertical-scrollbar-in-rtl.html = FAIL
-BUGWK42194 : fast/events/5056619.html = FAIL
-BUGWK42194 : http/tests/security/drag-drop-same-unique-origin.html = FAIL
-BUGWK42194 : svg/custom/polyline-hittest.svg = FAIL
+# WebKitTestRunner needs a more-complete implementation of eventSender
+# https://bugs.webkit.org/show_bug.cgi?id=42194
+webkit.org/b/42194 editing/undo/undo-smart-delete-reversed-selection.html [ Failure ]
+webkit.org/b/42194 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/42194 fast/events/5056619.html [ Failure ]
+webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
+webkit.org/b/42194 svg/custom/polyline-hittest.svg [ Failure ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Expected failures
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Expected failures
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Crashing tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Crashing tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKGTK : plugins/document-open.html = CRASH
+Bug(GTK) plugins/document-open.html [ Crash ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Crashing tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Crashing tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Flaky tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Flaky tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// Flakey on both Snow Leopard and Windows 7
-// https://bugs.webkit.org/show_bug.cgi?id=58337
-BUGWK58337 : fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html = FAIL PASS
+# Flakey on both Snow Leopard and Windows 7
+# https://bugs.webkit.org/show_bug.cgi?id=58337
+webkit.org/b/58337 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html [ Failure Pass ]
 
-// media/audio-garbage-collect.html is flaky
-// https://bugs.webkit.org/show_bug.cgi?id=72698
-BUGWK72698 : media/audio-garbage-collect.html = FAIL PASS
+# media/audio-garbage-collect.html is flaky
+# https://bugs.webkit.org/show_bug.cgi?id=72698
+webkit.org/b/72698 media/audio-garbage-collect.html [ Failure Pass ]
 
-// Tests showing flakiness in the bot
-BUGWKGTK : editing/pasteboard/smart-paste-004.html = FAIL PASS
-BUGWKGTK : editing/selection/5057506.html = FAIL PASS
-BUGWKGTK : editing/selection/click-in-margins-inside-editable-div.html = FAIL PASS
-BUGWKGTK : fast/events/dispatch-message-string-data.html = FAIL PASS
-BUGWKGTK : fast/events/domactivate-sets-underlying-click-event-as-handled.html = FAIL PASS
-BUGWKGTK : fast/events/mouseclick-target-and-positioning.html = FAIL PASS
-BUGWKGTK : fast/events/mouse-drag-from-frame.html = FAIL PASS
-BUGWKGTK : fast/events/mouse-focus-imagemap.html = FAIL PASS
-BUGWKGTK : fast/events/mousemove-after-drag-over-scrollbar.html = FAIL PASS
-BUGWKGTK : fast/events/mouse-moved-remove-frame-crash.html = FAIL PASS
-BUGWKGTK : fast/events/mouseout-dead-node.html = FAIL PASS
-BUGWKGTK : fast/events/mouseout-dead-subframe.html = FAIL PASS
-BUGWKGTK : fast/events/mouseout-on-window.html = FAIL PASS
-BUGWKGTK : fast/events/mouseover-button.html = FAIL PASS
-BUGWKGTK : fast/events/mouseover-mouseout2.html = FAIL PASS
-BUGWKGTK : fast/events/mouseover-mouseout.html = FAIL PASS
-BUGWKGTK : fast/events/mouse-relative-position.html = FAIL PASS
-BUGWKGTK : fast/events/mouseup-outside-document.html = FAIL PASS
-BUGWKGTK : fast/events/multiline-link-arrow-navigation.html = FAIL PASS
-BUGWKGTK : fast/events/node-event-anchor-lock.html = FAIL PASS
-BUGWKGTK : fast/events/onchange-click-hang.html = FAIL PASS
-BUGWKGTK : fast/events/onchange-passwordfield.html = FAIL PASS
-BUGWKGTK : fast/events/onchange-range-slider.html = FAIL PASS
-BUGWKGTK : fast/events/onchange-searchfield.html = FAIL PASS
-BUGWKGTK : fast/events/onchange-select-popup.html = FAIL PASS
-BUGWKGTK : fast/forms/incremental-dom-property.html = TIMEOUT PASS
-BUGWKGTK : fast/forms/select/menulist-type-ahead-find.html = TIMEOUT PASS
-BUGWKGTK : fast/forms/select/optgroup-disabled.html = TIMEOUT PASS
-BUGWKGTK : fast/forms/select-selected.html = TIMEOUT PASS
-BUGWKGTK : fast/js/exceptions-thrown-in-callbacks.html = FAIL PASS
-BUGWKGTK : fast/loader/fragment-after-redirect-gets-back-entry.html = FAIL PASS
-BUGWKGTK : fast/mutation/database-callback-delivery.html = FAIL PASS
-BUGWKGTK : fast/writing-mode/japanese-ruby-horizontal-bt.html = FAIL PASS
-BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-lr.html = FAIL PASS
-BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-rl.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/change-version-handle-reuse-worker.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/change-version-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/empty-statement-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/execute-sql-args-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/execute-sql-args-worker.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/multiple-transactions.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/multiple-transactions-on-different-handles.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/multiple-transactions-on-different-handles-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/open-database-empty-version-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/open-database-set-empty-version-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/open-database-while-transaction-in-progress.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/open-database-while-transaction-in-progress-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/read-and-write-transactions-dont-run-together.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/sql-data-types-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/test-authorizer.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/test-authorizer-sync.html = FAIL PASS
-BUGWKGTK : fast/workers/storage/transaction-in-transaction-sync.html = FAIL PASS
-BUGWKGTK : http/tests/security/cross-origin-plugin-allowed.html = FAIL PASS
-BUGWKGTK : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = FAIL PASS
-BUGWKGTK : media/video-transformed.html = FAIL PASS
-BUGWKGTK : media/W3C/audio/networkState/networkState_during_loadstart.html = FAIL PASS
-BUGWKGTK : svg/custom/gradient-attr-update.svg = FAIL PASS
-BUGWKGTK : svg/custom/pointer-events-on-svg-with-pointer.xhtml = FAIL PASS
-BUGWKGTK : svg/custom/pointer-events-on-svg-without-pointer.xhtml = FAIL PASS
-BUGWKGTK : svg/stroke/non-scaling-stroke-pattern.svg = IMAGE PASS
+# Tests showing flakiness in the bot
+Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
+Bug(GTK) editing/selection/5057506.html [ Failure Pass ]
+Bug(GTK) editing/selection/click-in-margins-inside-editable-div.html [ Failure Pass ]
+Bug(GTK) fast/events/dispatch-message-string-data.html [ Failure Pass ]
+Bug(GTK) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseclick-target-and-positioning.html [ Failure Pass ]
+Bug(GTK) fast/events/mouse-drag-from-frame.html [ Failure Pass ]
+Bug(GTK) fast/events/mouse-focus-imagemap.html [ Failure Pass ]
+Bug(GTK) fast/events/mousemove-after-drag-over-scrollbar.html [ Failure Pass ]
+Bug(GTK) fast/events/mouse-moved-remove-frame-crash.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseout-dead-node.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseout-dead-subframe.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseout-on-window.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseover-button.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseover-mouseout2.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseover-mouseout.html [ Failure Pass ]
+Bug(GTK) fast/events/mouse-relative-position.html [ Failure Pass ]
+Bug(GTK) fast/events/mouseup-outside-document.html [ Failure Pass ]
+Bug(GTK) fast/events/multiline-link-arrow-navigation.html [ Failure Pass ]
+Bug(GTK) fast/events/node-event-anchor-lock.html [ Failure Pass ]
+Bug(GTK) fast/events/onchange-click-hang.html [ Failure Pass ]
+Bug(GTK) fast/events/onchange-passwordfield.html [ Failure Pass ]
+Bug(GTK) fast/events/onchange-range-slider.html [ Failure Pass ]
+Bug(GTK) fast/events/onchange-searchfield.html [ Failure Pass ]
+Bug(GTK) fast/events/onchange-select-popup.html [ Failure Pass ]
+Bug(GTK) fast/forms/incremental-dom-property.html [ Pass Timeout ]
+Bug(GTK) fast/forms/select/menulist-type-ahead-find.html [ Pass Timeout ]
+Bug(GTK) fast/forms/select/optgroup-disabled.html [ Pass Timeout ]
+Bug(GTK) fast/forms/select-selected.html [ Pass Timeout ]
+Bug(GTK) fast/js/exceptions-thrown-in-callbacks.html [ Failure Pass ]
+Bug(GTK) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass ]
+Bug(GTK) fast/mutation/database-callback-delivery.html [ Failure Pass ]
+Bug(GTK) fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
+Bug(GTK) fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
+Bug(GTK) fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/change-version-handle-reuse-worker.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/change-version-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/empty-statement-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/execute-sql-args-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/execute-sql-args-worker.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/multiple-transactions.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/multiple-transactions-on-different-handles.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/multiple-transactions-on-different-handles-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/open-database-empty-version-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/open-database-set-empty-version-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/open-database-while-transaction-in-progress-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/read-and-write-transactions-dont-run-together.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/sql-data-types-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/test-authorizer.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/test-authorizer-sync.html [ Failure Pass ]
+Bug(GTK) fast/workers/storage/transaction-in-transaction-sync.html [ Failure Pass ]
+Bug(GTK) http/tests/security/cross-origin-plugin-allowed.html [ Failure Pass ]
+Bug(GTK) http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
+Bug(GTK) media/video-transformed.html [ Failure Pass ]
+Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failure Pass ]
+Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
+Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
+Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
+Bug(GTK) svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Flaky tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Flaky tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Slow tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Slow tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of slow tests
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of slow tests
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Tests failing
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Tests failing
+#////////////////////////////////////////////////////////////////////////////////////////
 
-// Fullscreen tests failing. Some of them are really slow, mark them as SLOW once
-// we have lower values for normal and slow time out.
-// http://webkit.org/b/93973
-BUGWK93973 : fullscreen/anonymous-block-merge-crash.html = FAIL
-BUGWK93973 : fullscreen/exit-full-screen-iframe.html = FAIL
-BUGWK93973 : fullscreen/full-screen-cancel.html = FAIL
-BUGWK93973 : fullscreen/full-screen-crash-offsetLeft.html = FAIL
-BUGWK93973 : fullscreen/full-screen-css.html = FAIL
-BUGWK93973 : fullscreen/full-screen-element-stack.html = FAIL
-BUGWK93973 : fullscreen/full-screen-fixed-pos-parent.html = FAIL
-BUGWK93973 : fullscreen/full-screen-iframe-allowed.html = FAIL
-BUGWK93973 : fullscreen/full-screen-iframe-legacy.html = FAIL
-BUGWK93973 : fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html = FAIL
-BUGWK93973 : fullscreen/full-screen-iframe-zIndex.html = FAIL
-BUGWK93973 : fullscreen/full-screen-keyboard-disabled.html = FAIL
-BUGWK93973 : fullscreen/full-screen-keyboard-enabled.html = FAIL
-BUGWK93973 : fullscreen/full-screen-line-boxes-crash.html = FAIL
-BUGWK93973 : fullscreen/full-screen-placeholder.html = FAIL
-BUGWK93973 : fullscreen/full-screen-remove-ancestor-after.html = FAIL
-BUGWK93973 : fullscreen/full-screen-remove-ancestor.html = FAIL
-BUGWK93973 : fullscreen/full-screen-remove-children.html = FAIL
-BUGWK93973 : fullscreen/full-screen-remove.html = FAIL
-BUGWK93973 : fullscreen/full-screen-remove-sibling.html = FAIL
-BUGWK93973 : fullscreen/full-screen-render-inline.html = FAIL
-BUGWK93973 : fullscreen/full-screen-request.html = FAIL
-BUGWK93973 : fullscreen/full-screen-restrictions.html = FAIL
-BUGWK93973 : fullscreen/full-screen-stacking-context.html = FAIL
-BUGWK93973 : fullscreen/full-screen-twice.html = FAIL
-BUGWK93973 : fullscreen/full-screen-zIndex-after.html = FAIL
-BUGWK93973 : fullscreen/full-screen-zIndex.html = FAIL
-BUGWK93973 : fullscreen/non-ancestor-iframe.html = FAIL
-BUGWK93973 : fullscreen/parent-flow-inline-with-block-child.html = FAIL
-BUGWK93973 : fullscreen/video-controls-override.html = FAIL
-BUGWK93973 : fullscreen/video-controls-timeline.html = FAIL
-BUGWK93973 : fullscreen/video-specified-size.html = FAIL
+# Fullscreen tests failing. Some of them are really slow, mark them as SLOW once
+# we have lower values for normal and slow time out.
+# http://webkit.org/b/93973
+webkit.org/b/93973 fullscreen/anonymous-block-merge-crash.html [ Failure ]
+webkit.org/b/93973 fullscreen/exit-full-screen-iframe.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-cancel.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-crash-offsetLeft.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-css.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-element-stack.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-fixed-pos-parent.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-iframe-allowed.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-iframe-legacy.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-iframe-zIndex.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-keyboard-disabled.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-keyboard-enabled.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-line-boxes-crash.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-placeholder.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-remove-ancestor-after.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-remove-ancestor.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-remove-children.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-remove.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-remove-sibling.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-render-inline.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-request.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-restrictions.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-stacking-context.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-twice.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-zIndex-after.html [ Failure ]
+webkit.org/b/93973 fullscreen/full-screen-zIndex.html [ Failure ]
+webkit.org/b/93973 fullscreen/non-ancestor-iframe.html [ Failure ]
+webkit.org/b/93973 fullscreen/parent-flow-inline-with-block-child.html [ Failure ]
+webkit.org/b/93973 fullscreen/video-controls-override.html [ Failure ]
+webkit.org/b/93973 fullscreen/video-controls-timeline.html [ Failure ]
+webkit.org/b/93973 fullscreen/video-specified-size.html [ Failure ]
 
-// HiDPI - 1 pixel diffs
-// http://webkit.org/b/93978
-BUGWK93978 : fast/hidpi/clip-text-in-hidpi.html = FAIL
-BUGWK93978 : fast/hidpi/image-set-background-dynamic.html = FAIL
-BUGWK93978 : fast/hidpi/image-set-border-image-dynamic.html = FAIL
-BUGWK93978 : fast/hidpi/image-set-in-content-dynamic.html = FAIL
+# HiDPI - 1 pixel diffs
+# http://webkit.org/b/93978
+webkit.org/b/93978 fast/hidpi/clip-text-in-hidpi.html [ Failure ]
+webkit.org/b/93978 fast/hidpi/image-set-background-dynamic.html [ Failure ]
+webkit.org/b/93978 fast/hidpi/image-set-border-image-dynamic.html [ Failure ]
+webkit.org/b/93978 fast/hidpi/image-set-in-content-dynamic.html [ Failure ]
 
-// RenderDeprecatedFlexibleBox showing 20-pixel diffs in WK2 bot
-// http://webkit.org/b/93981
-BUGWK93981 : media/controls-strict.html = FAIL
-BUGWK93981 : media/controls-styling-strict.html = FAIL
-BUGWK93981 : media/controls-without-preload.html = FAIL
-BUGWK93981 : media/media-document-audio-repaint.html = FAIL
-BUGWK93981 : media/video-controls-rendering.html = FAIL
-BUGWK93981 : media/video-display-toggle.html = FAIL
-BUGWK93981 : media/video-no-audio.html = FAIL
-BUGWK93981 : media/video-volume-slider.html = FAIL
+# RenderDeprecatedFlexibleBox showing 20-pixel diffs in WK2 bot
+# http://webkit.org/b/93981
+webkit.org/b/93981 media/controls-strict.html [ Failure ]
+webkit.org/b/93981 media/controls-styling-strict.html [ Failure ]
+webkit.org/b/93981 media/controls-without-preload.html [ Failure ]
+webkit.org/b/93981 media/media-document-audio-repaint.html [ Failure ]
+webkit.org/b/93981 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/93981 media/video-display-toggle.html [ Failure ]
+webkit.org/b/93981 media/video-no-audio.html [ Failure ]
+webkit.org/b/93981 media/video-volume-slider.html [ Failure ]
 
-// Tests showing weird float values instead of integer results
-// http://webkit.org/b/93984
-BUGWK93984 : transitions/change-values-during-transition.html = FAIL
+# Tests showing weird float values instead of integer results
+# http://webkit.org/b/93984
+webkit.org/b/93984 transitions/change-values-during-transition.html [ Failure ]
 
-// Assertion failure in replaySavedEvents
-// http://webkit.org/b/21796
-BUGWK21796 : fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html = FAIL
+# Assertion failure in replaySavedEvents
+# http://webkit.org/b/21796
+webkit.org/b/21796 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Failure ]
 
-// [Qt][GTK][WK2] New http/tests/cache/xhr-vary-header.html fails
-// https://bugs.webkit.org/show_bug.cgi?id=89278
-BUGWK89287 : http/tests/cache/xhr-vary-header.html = FAIL
+# [Qt][GTK][WK2] New http/tests/cache/xhr-vary-header.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89278
+webkit.org/b/89287 http/tests/cache/xhr-vary-header.html [ Failure ]
 
-// [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
-// https://bugs.webkit.org/show_bug.cgi?id=95935
-BUGWK95935 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = FAIL
-BUGWK95935 : http/tests/security/cross-origin-plugin.html = FAIL
+# [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=95935
+webkit.org/b/95935 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
+webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
 
-// REGRESSION (r127202): http/tests/security/inactive-document-with-empty-security-origin.html failing on JSC ports
-// https://bugs.webkit.org/show_bug.cgi?id=95530
-BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = FAIL
+# REGRESSION (r127202): http/tests/security/inactive-document-with-empty-security-origin.html failing on JSC ports
+# https://bugs.webkit.org/show_bug.cgi?id=95530
+webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Failure ]
 
-// https://bugs.webkit.org/show_bug.cgi?id=82672
-BUGWK82672 : http/tests/xmlhttprequest/range-test.html = FAIL
+# https://bugs.webkit.org/show_bug.cgi?id=82672
+webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
-// https://bugs.webkit.org/show_bug.cgi?id=39160
-BUGWK39160 : security/block-test-no-port.html = FAIL
+# https://bugs.webkit.org/show_bug.cgi?id=39160
+webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
-// Some tests rely on a /tmp/LayoutTests symlink pointing to the LayoutTests directory
-// https://bugs.webkit.org/show_bug.cgi?id=64135
-BUGWK64135 : fast/dom/frame-loading-via-document-write.html = FAIL
+# Some tests rely on a /tmp/LayoutTests symlink pointing to the LayoutTests directory
+# https://bugs.webkit.org/show_bug.cgi?id=64135
+webkit.org/b/64135 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
-// Unexplained failures
-BUGWKGTK : accessibility/accessibility-node-memory-management.html = FAIL
-BUGWKGTK : accessibility/accessibility-node-reparent.html = FAIL
-BUGWKGTK : accessibility/adjacent-continuations-cause-assertion-failure.html = FAIL
-BUGWKGTK : accessibility/aria-hidden-updates-alldescendants.html = FAIL
-BUGWKGTK : accessibility/aria-hidden-with-elements.html = FAIL
-BUGWKGTK : accessibility/aria-invalid.html = FAIL
-BUGWKGTK : accessibility/deleting-iframe-destroys-axcache.html = FAIL
-BUGWKGTK : accessibility/div-within-anchors-causes-crash.html = FAIL
-BUGWKGTK : accessibility/ignore-spacer-elements.html = FAIL
-BUGWKGTK : accessibility/img-fallsback-to-title.html = FAIL
-BUGWKGTK : accessibility/inline-continuations.html = FAIL
-BUGWKGTK : accessibility/legend.html = FAIL
-BUGWKGTK : accessibility/loading-iframe-sends-notification.html = FAIL
-BUGWKGTK : accessibility/media-element.html = FAIL
-BUGWKGTK : editing/deleting/delete-ligature-003.html = FAIL
-BUGWKGTK : editing/deleting/paragraph-in-preserveNewline.html = FAIL
-BUGWKGTK : editing/deleting/whitespace-pre-1.html = FAIL
-BUGWKGTK : editing/execCommand/delete-selection-has-style.html = FAIL
-BUGWKGTK : editing/input/emacs-ctrl-o.html = FAIL
-BUGWKGTK : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
-BUGWKGTK : editing/selection/5136696.html = FAIL
-BUGWKGTK : editing/selection/inactive-selection.html = FAIL
-BUGWKGTK : editing/selection/programmatic-selection-on-mac-is-directionless.html = FAIL
-BUGWKGTK : editing/spelling/spelling-insert-html.html = FAIL
-BUGWKGTK : editing/undo/undo-deleteWord.html = FAIL
-BUGWKGTK : fast/css/bidi-override-in-anonymous-block.html = FAIL
-BUGWKGTK : fast/css/disabled-author-styles.html = FAIL
-BUGWKGTK : fast/css/relative-positioned-block-crash.html = FAIL
-BUGWKGTK : fast/dom/rtl-scroll-to-leftmost-and-resize.html = FAIL
-BUGWKGTK : fast/dom/Window/window-postmessage-clone.html = FAIL
-BUGWKGTK : fast/dynamic/window-resize-scrollbars-test.html = FAIL
-BUGWKGTK : fast/events/backspace-navigates-back.html = FAIL
-BUGWKGTK : fast/events/keydown-leftright-keys.html = FAIL
-BUGWKGTK : fast/events/keydown-numpad-keys.html = FAIL
-BUGWKGTK : fast/events/mouse-drag-from-frame-to-other-frame.html = FAIL
-BUGWKGTK : fast/events/remove-target-with-shadow-in-drag.html = FAIL
-BUGWKGTK : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = FAIL
-BUGWKGTK : fast/events/selectionchange-iframe.html = FAIL
-BUGWKGTK : fast/forms/implicit-submission.html = FAIL
-BUGWKGTK : fast/forms/input-paste-undo.html = FAIL
-BUGWKGTK : fast/forms/listbox-deselect-scroll.html = FAIL
-BUGWKGTK : fast/forms/listbox-selection.html = FAIL
-BUGWKGTK : fast/forms/listbox-typeahead-cyrillic.html = FAIL
-BUGWKGTK : fast/forms/listbox-typeahead-greek.html = FAIL
-BUGWKGTK : fast/forms/mailto/formenctype-attribute-button-html.html = FAIL
-BUGWKGTK : fast/forms/mailto/formenctype-attribute-input-html.html = FAIL
-BUGWKGTK : fast/forms/select-type-ahead-non-latin.html = FAIL
-BUGWKGTK : fast/loader/submit-form-while-parsing-2.html = FAIL
-BUGWKGTK : fast/media/mq-transform-02.html = FAIL
-BUGWKGTK : fast/media/mq-transform-03.html = FAIL
-BUGWKGTK : fast/regions/css-regions-disabled.html = FAIL
-BUGWKGTK : fast/regions/css-regions-disabled.html = FAIL
-BUGWKGTK : fast/repaint/fixed-move-after-keyboard-scroll.html = FAIL
-BUGWKGTK : fast/ruby/nested-ruby.html = FAIL
-BUGWKGTK : fast/ruby/ruby-beforeafter.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-insert-rt.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-insert-text1.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-insert-text2.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-insert-text3.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-remove-rt1.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-remove-rt2.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-remove-text1.html = FAIL
-BUGWKGTK : fast/ruby/rubyDOM-remove-text2.html = FAIL
-BUGWKGTK : fast/ruby/ruby-empty-rt.html = FAIL
-BUGWKGTK : fast/ruby/ruby-length.html = FAIL
-BUGWKGTK : fast/ruby/ruby-run-break.html = FAIL
-BUGWKGTK : fast/ruby/ruby-runs.html = FAIL
-BUGWKGTK : fast/ruby/ruby-runs-spans.html = FAIL
-BUGWKGTK : fast/ruby/ruby-simple.html = FAIL
-BUGWKGTK : fast/ruby/ruby-simple-rp.html = FAIL
-BUGWKGTK : fast/ruby/ruby-trailing.html = FAIL
-BUGWKGTK : fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html = FAIL
-BUGWKGTK : fast/workers/shared-worker-load-error.html = FAIL
-BUGWKGTK : fast/writing-mode/Kusa-Makura-background-canvas.html = FAIL
-BUGWKGTK : fast/xsl/xslt-missing-namespace-in-xslt.xml = FAIL
-BUGWKGTK : http/tests/local/blob/send-hybrid-blob.html = FAIL
-BUGWKGTK : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = FAIL
-BUGWKGTK : http/tests/security/cross-origin-xsl-BLOCKED.html = FAIL
-BUGWKGTK : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = FAIL
-BUGWKGTK : http/tests/security/storage-blocking-strengthened-plugin.html = FAIL
-BUGWKGTK : http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html = FAIL
-BUGWKGTK : http/tests/xmlhttprequest/cache-override.html = FAIL
-BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html = FAIL
-BUGWKGTK : media/track/track-cue-rendering-horizontal.html = FAIL
-BUGWKGTK : media/track/track-cue-rendering-vertical.html = FAIL
-BUGWKGTK : media/video-play-require-user-gesture.html = FAIL
-BUGWKGTK : media/video-zoom-controls.html = FAIL
-BUGWKGTK : platform/gtk/accessibility/entry-and-password.html = FAIL
-BUGWKGTK : platform/gtk/accessibility/input-slider.html = FAIL
-BUGWKGTK : platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html = FAIL
-BUGWKGTK : platform/gtk/editing/pasteboard/middle-button-paste.html = FAIL
-BUGWKGTK : platform/gtk/fast/events/event-sender-metakey.html = FAIL
-BUGWKGTK : platform/gtk/fast/forms/menulist-typeahead-find.html = FAIL
-BUGWKGTK : plugins/evaluate-js-after-removing-plugin-element.html = FAIL
-BUGWKGTK : plugins/fullscreen-plugins-dont-reload.html = FAIL
-BUGWKGTK : plugins/keyboard-events.html = FAIL
-BUGWKGTK : plugins/netscape-plugin-setwindow-size-2.html = FAIL
-BUGWKGTK : plugins/npp-set-window-called-during-destruction.html = FAIL
-BUGWKGTK : plugins/npruntime/browser-object-identity.html = FAIL
-BUGWKGTK : plugins/npruntime/embed-property-equality.html = FAIL
-BUGWKGTK : plugins/reloadplugins-and-pages.html = FAIL
-BUGWKGTK : plugins/resize-from-plugin.html = FAIL
-BUGWKGTK : svg/custom/use-elementInstance-event-target.svg = FAIL
-BUGWKGTK : svg/custom/use-instanceRoot-as-event-target.xhtml = FAIL
-BUGWKGTK : svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg = FAIL
-BUGWKGTK : svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg = FAIL
-BUGWKGTK : svg/text/select-textLength-spacing-squeeze-3.svg = FAIL
-BUGWKGTK : svg/text/select-textLength-spacing-stretch-1.svg = FAIL
-BUGWKGTK : svg/text/select-x-list-1.svg = FAIL
-BUGWKGTK : svg/text/select-x-list-with-tspans-1.svg = FAIL
-BUGWKGTK : touchadjustment/iframe.html = FAIL
-BUGWKGTK : transitions/extra-transition.html = FAIL
-BUGWKGTK : transitions/interrupted-accelerated-transition.html = FAIL
+# Unexplained failures
+Bug(GTK) accessibility/accessibility-node-memory-management.html [ Failure ]
+Bug(GTK) accessibility/accessibility-node-reparent.html [ Failure ]
+Bug(GTK) accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
+Bug(GTK) accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
+Bug(GTK) accessibility/aria-hidden-with-elements.html [ Failure ]
+Bug(GTK) accessibility/aria-invalid.html [ Failure ]
+Bug(GTK) accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
+Bug(GTK) accessibility/div-within-anchors-causes-crash.html [ Failure ]
+Bug(GTK) accessibility/ignore-spacer-elements.html [ Failure ]
+Bug(GTK) accessibility/img-fallsback-to-title.html [ Failure ]
+Bug(GTK) accessibility/inline-continuations.html [ Failure ]
+Bug(GTK) accessibility/legend.html [ Failure ]
+Bug(GTK) accessibility/loading-iframe-sends-notification.html [ Failure ]
+Bug(GTK) accessibility/media-element.html [ Failure ]
+Bug(GTK) editing/deleting/delete-ligature-003.html [ Failure ]
+Bug(GTK) editing/deleting/paragraph-in-preserveNewline.html [ Failure ]
+Bug(GTK) editing/deleting/whitespace-pre-1.html [ Failure ]
+Bug(GTK) editing/execCommand/delete-selection-has-style.html [ Failure ]
+Bug(GTK) editing/input/emacs-ctrl-o.html [ Failure ]
+Bug(GTK) editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
+Bug(GTK) editing/selection/5136696.html [ Failure ]
+Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
+Bug(GTK) editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
+Bug(GTK) editing/spelling/spelling-insert-html.html [ Failure ]
+Bug(GTK) editing/undo/undo-deleteWord.html [ Failure ]
+Bug(GTK) fast/css/bidi-override-in-anonymous-block.html [ Failure ]
+Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
+Bug(GTK) fast/css/relative-positioned-block-crash.html [ Failure ]
+Bug(GTK) fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
+Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Failure ]
+Bug(GTK) fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
+Bug(GTK) fast/events/backspace-navigates-back.html [ Failure ]
+Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
+Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
+Bug(GTK) fast/events/mouse-drag-from-frame-to-other-frame.html [ Failure ]
+Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
+Bug(GTK) fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
+Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
+Bug(GTK) fast/forms/implicit-submission.html [ Failure ]
+Bug(GTK) fast/forms/input-paste-undo.html [ Failure ]
+Bug(GTK) fast/forms/listbox-deselect-scroll.html [ Failure ]
+Bug(GTK) fast/forms/listbox-selection.html [ Failure ]
+Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
+Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
+Bug(GTK) fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
+Bug(GTK) fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
+Bug(GTK) fast/forms/select-type-ahead-non-latin.html [ Failure ]
+Bug(GTK) fast/loader/submit-form-while-parsing-2.html [ Failure ]
+Bug(GTK) fast/media/mq-transform-02.html [ Failure ]
+Bug(GTK) fast/media/mq-transform-03.html [ Failure ]
+Bug(GTK) fast/regions/css-regions-disabled.html [ Failure ]
+Bug(GTK) fast/regions/css-regions-disabled.html [ Failure ]
+Bug(GTK) fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
+Bug(GTK) fast/ruby/nested-ruby.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-beforeafter.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-insert-rt.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-insert-text1.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-insert-text2.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-insert-text3.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-remove-rt1.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-remove-rt2.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-remove-text1.html [ Failure ]
+Bug(GTK) fast/ruby/rubyDOM-remove-text2.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-empty-rt.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-length.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-run-break.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-runs.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-runs-spans.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-simple.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-simple-rp.html [ Failure ]
+Bug(GTK) fast/ruby/ruby-trailing.html [ Failure ]
+Bug(GTK) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
+Bug(GTK) fast/workers/shared-worker-load-error.html [ Failure ]
+Bug(GTK) fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
+Bug(GTK) fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
+Bug(GTK) http/tests/local/blob/send-hybrid-blob.html [ Failure ]
+Bug(GTK) http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
+Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
+Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
+Bug(GTK) http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
+Bug(GTK) http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
+Bug(GTK) http/tests/xmlhttprequest/cache-override.html [ Failure ]
+Bug(GTK) http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html [ Failure ]
+Bug(GTK) media/track/track-cue-rendering-horizontal.html [ Failure ]
+Bug(GTK) media/track/track-cue-rendering-vertical.html [ Failure ]
+Bug(GTK) media/video-play-require-user-gesture.html [ Failure ]
+Bug(GTK) media/video-zoom-controls.html [ Failure ]
+Bug(GTK) platform/gtk/accessibility/entry-and-password.html [ Failure ]
+Bug(GTK) platform/gtk/accessibility/input-slider.html [ Failure ]
+Bug(GTK) platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
+Bug(GTK) platform/gtk/editing/pasteboard/middle-button-paste.html [ Failure ]
+Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
+Bug(GTK) platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
+Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
+Bug(GTK) plugins/fullscreen-plugins-dont-reload.html [ Failure ]
+Bug(GTK) plugins/keyboard-events.html [ Failure ]
+Bug(GTK) plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
+Bug(GTK) plugins/npp-set-window-called-during-destruction.html [ Failure ]
+Bug(GTK) plugins/npruntime/browser-object-identity.html [ Failure ]
+Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
+Bug(GTK) plugins/reloadplugins-and-pages.html [ Failure ]
+Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
+Bug(GTK) svg/custom/use-elementInstance-event-target.svg [ Failure ]
+Bug(GTK) svg/custom/use-instanceRoot-as-event-target.xhtml [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure ]
+Bug(GTK) svg/text/select-x-list-1.svg [ Failure ]
+Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
+Bug(GTK) touchadjustment/iframe.html [ Failure ]
+Bug(GTK) transitions/extra-transition.html [ Failure ]
+Bug(GTK) transitions/interrupted-accelerated-transition.html [ Failure ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Tests failing
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests failing
+#////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Tests working in WK2 and failing in WK1
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# Tests working in WK2 and failing in WK1
+#////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKGTK : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS
-BUGWKGTK : editing/pasteboard/paste-global-selection.html = PASS
-BUGWKGTK : editing/selection/select-bidi-run.html = PASS
-BUGWKGTK : fast/animation/request-animation-frame-during-modal.html = PASS
-BUGWKGTK : fast/css/user-drag-none.html = PASS
-BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS
-BUGWK77015 : fast/events/clear-drag-state.html = PASS
-BUGWKGTK : fast/events/clear-edit-drag-state.html = PASS
-BUGWKGTK : fast/events/dont-loose-last-event.html = PASS
-BUGWKGTK : fast/events/drag-selects-image.html = PASS
-BUGWKGTK : fast/forms/text-input-event.html = PASS
-BUGWKGTK : fast/html/set-text-direction.html = PASS
-BUGWKGTK : fast/js/names.html = PASS
-BUGWKGTK : fast/loader/form-submission-after-beforeunload-cancel.html = PASS
-BUGWKGTK : fast/loader/stop-provisional-loads.html = PASS
-BUGWKGTK : fast/preloader/document-write-noscript.html = PASS
-BUGWKGTK : fast/preloader/first-base-tag-scanned-wins.html = PASS
-BUGWKGTK : fast/preloader/first-base-tag-wins.html = PASS
-BUGWKGTK : fast/preloader/image.html = PASS
-BUGWKGTK : fast/preloader/input.html = PASS
-BUGWKGTK : fast/preloader/link.html = PASS
-BUGWKGTK : fast/preloader/noscript.html = PASS
-BUGWKGTK : fast/preloader/style.html = PASS
-BUGWKGTK : fast/preloader/understands-base-tag.html = PASS
-BUGWKGTK : fast/workers/worker-crash-with-invalid-location.html = PASS
-BUGWKGTK : http/tests/appcache/origin-delete.html = PASS
-BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = PASS
-BUGWKGTK : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = PASS
-BUGWKGTK : http/tests/appcache/origin-quota.html = PASS
-BUGWKGTK : http/tests/appcache/origins-with-appcache.html = PASS
-BUGWKGTK : http/tests/appcache/origin-usage.html = PASS
-BUGWKGTK : http/tests/loading/307-after-303-after-post.html = PASS
-BUGWKGTK : http/tests/loading/preload-slow-loading.php = PASS
-BUGWKGTK : http/tests/mime/uppercase-mime-type.html = PASS
-BUGWKGTK : http/tests/misc/policy-delegate-called-twice.html = PASS
-BUGWKGTK : http/tests/misc/prefetch-purpose.html = PASS
-BUGWKGTK : http/tests/misc/window-dot-stop.html = PASS
-BUGWKGTK : http/tests/plugins/npapi-response-headers.html = PASS
-BUGWKGTK : http/tests/security/cross-frame-access-call.html = PASS
-BUGWKGTK : http/tests/security/mixedContent/insecure-iframe-in-main-frame.html = PASS
-BUGWKGTK : http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html = PASS
-BUGWKGTK : http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html = PASS
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html = PASS
-BUGWKGTK : http/tests/security/xssAuditor/script-tag-with-callbacks.html = PASS
-BUGWKGTK : http/tests/xmlhttprequest/abort-should-cancel-load.html = PASS
-BUGWKGTK : http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html = PASS
-BUGWKGTK : http/tests/xmlhttprequest/origin-exact-matching.html = PASS
-BUGWKGTK : plugins/form-value.html = PASS
-BUGWKGTK : plugins/npruntime/delete-plugin-within-getProperty.html = PASS
-BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = PASS
-BUGWKGTK : svg/dom/SVGViewSpec.html = PASS
-BUGWKGTK : svg/dom/viewspec-parser-1.html = PASS
-BUGWKGTK : svg/dom/viewspec-parser-2.html = PASS
-BUGWKGTK : svg/dom/viewspec-parser-3.html = PASS
-BUGWKGTK : svg/dom/viewspec-parser-4.html = PASS
-BUGWKGTK : svg/dom/viewspec-parser-5.html = PASS
+Bug(GTK) canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass ]
+Bug(GTK) editing/pasteboard/paste-global-selection.html [ Pass ]
+Bug(GTK) editing/selection/select-bidi-run.html [ Pass ]
+Bug(GTK) fast/animation/request-animation-frame-during-modal.html [ Pass ]
+Bug(GTK) fast/css/user-drag-none.html [ Pass ]
+Bug(GTK) fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Pass ]
+webkit.org/b/77015 fast/events/clear-drag-state.html [ Pass ]
+Bug(GTK) fast/events/clear-edit-drag-state.html [ Pass ]
+Bug(GTK) fast/events/dont-loose-last-event.html [ Pass ]
+Bug(GTK) fast/events/drag-selects-image.html [ Pass ]
+Bug(GTK) fast/forms/text-input-event.html [ Pass ]
+Bug(GTK) fast/html/set-text-direction.html [ Pass ]
+Bug(GTK) fast/js/names.html [ Pass ]
+Bug(GTK) fast/loader/form-submission-after-beforeunload-cancel.html [ Pass ]
+Bug(GTK) fast/loader/stop-provisional-loads.html [ Pass ]
+Bug(GTK) fast/preloader/document-write-noscript.html [ Pass ]
+Bug(GTK) fast/preloader/first-base-tag-scanned-wins.html [ Pass ]
+Bug(GTK) fast/preloader/first-base-tag-wins.html [ Pass ]
+Bug(GTK) fast/preloader/image.html [ Pass ]
+Bug(GTK) fast/preloader/input.html [ Pass ]
+Bug(GTK) fast/preloader/link.html [ Pass ]
+Bug(GTK) fast/preloader/noscript.html [ Pass ]
+Bug(GTK) fast/preloader/style.html [ Pass ]
+Bug(GTK) fast/preloader/understands-base-tag.html [ Pass ]
+Bug(GTK) fast/workers/worker-crash-with-invalid-location.html [ Pass ]
+Bug(GTK) http/tests/appcache/origin-delete.html [ Pass ]
+Bug(GTK) http/tests/appcache/origin-quota-continued-download.html [ Pass ]
+Bug(GTK) http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Pass ]
+Bug(GTK) http/tests/appcache/origin-quota.html [ Pass ]
+Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Pass ]
+Bug(GTK) http/tests/appcache/origin-usage.html [ Pass ]
+Bug(GTK) http/tests/loading/307-after-303-after-post.html [ Pass ]
+Bug(GTK) http/tests/loading/preload-slow-loading.php [ Pass ]
+Bug(GTK) http/tests/mime/uppercase-mime-type.html [ Pass ]
+Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Pass ]
+Bug(GTK) http/tests/misc/prefetch-purpose.html [ Pass ]
+Bug(GTK) http/tests/misc/window-dot-stop.html [ Pass ]
+Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Pass ]
+Bug(GTK) http/tests/security/cross-frame-access-call.html [ Pass ]
+Bug(GTK) http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Pass ]
+Bug(GTK) http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Pass ]
+Bug(GTK) http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Pass ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Pass ]
+Bug(GTK) http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Pass ]
+Bug(GTK) http/tests/xmlhttprequest/abort-should-cancel-load.html [ Pass ]
+Bug(GTK) http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Pass ]
+Bug(GTK) http/tests/xmlhttprequest/origin-exact-matching.html [ Pass ]
+Bug(GTK) plugins/form-value.html [ Pass ]
+Bug(GTK) plugins/npruntime/delete-plugin-within-getProperty.html [ Pass ]
+Bug(GTK) plugins/plugin-document-load-prevented-userscript.html [ Pass ]
+Bug(GTK) svg/dom/SVGViewSpec.html [ Pass ]
+Bug(GTK) svg/dom/viewspec-parser-1.html [ Pass ]
+Bug(GTK) svg/dom/viewspec-parser-2.html [ Pass ]
+Bug(GTK) svg/dom/viewspec-parser-3.html [ Pass ]
+Bug(GTK) svg/dom/viewspec-parser-4.html [ Pass ]
+Bug(GTK) svg/dom/viewspec-parser-5.html [ Pass ]
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// End of Tests working in WK2 and failing in WK1
-//////////////////////////////////////////////////////////////////////////////////////////
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests working in WK2 and failing in WK1
+#////////////////////////////////////////////////////////////////////////////////////////
+
