@@ -1,3 +1,17 @@
+2012-09-19  Robert Flack  <flackr@chromium.org>
+
+        [chromium] Support high DPI scroll bar on top level web frame.
+        https://bugs.webkit.org/show_bug.cgi?id=95134
+
+        Reviewed by Adrienne Walker.
+
+        Calls setAppliesPageScale(true) on root scrollbar layers as these are not scaled.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::setScrollbarBoundsContainPageScale):
+        (WebKit):
+        (WebKit::NonCompositedContentHost::setViewport):
+
 2012-09-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move notifyJSOutOfMemory out of PlatformSupport
