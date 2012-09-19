@@ -155,7 +155,8 @@ static void normalizeCharacters(const UChar* source, UChar* destination, int len
         UChar32 character;
         int nextPosition = position;
         U16_NEXT(source, nextPosition, length, character);
-        if (Font::treatAsSpace(character))
+        // Don't normalize tabs as they are not treated as spaces for word-end
+        if (Font::treatAsSpace(character) && character != '\t')
             character = ' ';
         else if (Font::treatAsZeroWidthSpaceInComplexScript(character))
             character = zeroWidthSpace;
