@@ -260,7 +260,7 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
         options, parsed_args = parse_args(['--lint-test-files'])
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options=options)
-        port_obj.expectations_dict = lambda: {'': '# syntax error'}
+        port_obj.expectations_dict = lambda: {'': '-- syntax error'}
         res, out, err = run_and_capture(port_obj, options, parsed_args)
 
         self.assertEqual(res, -1)

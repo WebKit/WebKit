@@ -209,10 +209,15 @@ class TestExpectationParser(object):
         if expectation_line.path in self._full_test_list:
             expectation_line.matching_tests.append(expectation_line.path)
 
+    # FIXME: Seems like these should be classmethods on TestExpectationLine instead of TestExpectationParser.
     @classmethod
     def _tokenize_line(cls, filename, expectation_string, line_number):
-        # FIXME: Add in support for the new format as well.
-        return cls._tokenize_line_using_old_format(filename, expectation_string, line_number)
+        expectation_line = cls._tokenize_line_using_new_format(filename, expectation_string, line_number)
+        if expectation_line.is_invalid():
+            old_expectation_line = cls._tokenize_line_using_old_format(filename, expectation_string, line_number)
+            if not old_expectation_line.is_invalid():
+                return old_expectation_line
+        return expectation_line
 
     @classmethod
     def _tokenize_line_using_old_format(cls, filename, expectation_string, line_number):
@@ -265,18 +270,22 @@ class TestExpectationParser(object):
     ]
 
     _configuration_tokens = dict((token, token.upper()) for token in _configuration_tokens_list)
+    _inverted_configuration_tokens = dict((value, name) for name, value in _configuration_tokens.iteritems())
 
-    # Note: we can't distinguish audio failures or image+text failures from text-only failures.
     # FIXME: Update the original modifiers list and remove this once the old syntax is gone.
     _expectation_tokens = {
-        'WontFix': 'WONTFIX',
-        'Pass': 'PASS',
+        'Crash': 'CRASH',
         'Failure': 'FAIL',
         'ImageOnlyFailure': 'IMAGE',
-        'Crash': 'CRASH',
-        'Timeout': 'TIMEOUT',
+        'Pass': 'PASS',
+        'Rebaseline': 'REBASELINE',
+        'Skip': 'SKIP',
         'Slow': 'SLOW',
+        'Timeout': 'TIMEOUT',
+        'WontFix': 'WONTFIX',
     }
+
+    _inverted_expectation_tokens = dict((value, name) for name, value in _expectation_tokens.iteritems())
 
     @classmethod
     def _tokenize_line_using_new_format(cls, filename, expectation_string, line_number):
@@ -290,6 +299,7 @@ class TestExpectationParser(object):
 
         """
         expectation_line = TestExpectationLine()
+        expectation_line.original_string = expectation_string
         expectation_line.filename = filename
         expectation_line.line_number = line_number
 
@@ -444,18 +454,19 @@ class TestExpectationLine(object):
             return self.original_string or ''
 
         if self.name is None:
-            return '' if self.comment is None else "//%s" % self.comment
+            return '' if self.comment is None else "#%s" % self.comment
 
         if test_configuration_converter and self.parsed_bug_modifiers:
             specifiers_list = test_configuration_converter.to_specifiers_list(self.matching_configurations)
             result = []
             for specifiers in specifiers_list:
-                modifiers = self._serialize_parsed_modifiers(test_configuration_converter, specifiers)
-                expectations = self._serialize_parsed_expectations(parsed_expectation_to_string)
+                # FIXME: this is silly that we join the modifiers and then immediately split them.
+                modifiers = self._serialize_parsed_modifiers(test_configuration_converter, specifiers).split()
+                expectations = self._serialize_parsed_expectations(parsed_expectation_to_string).split()
                 result.append(self._format_line(modifiers, self.name, expectations, self.comment))
             return "\n".join(result) if result else None
 
-        return self._format_line(" ".join(self.modifiers), self.name, " ".join(self.expectations), self.comment,
+        return self._format_line(self.modifiers, self.name, self.expectations, self.comment,
             include_modifiers, include_expectations, include_comment)
 
     def to_csv(self):
@@ -479,14 +490,38 @@ class TestExpectationLine(object):
 
     @staticmethod
     def _format_line(modifiers, name, expectations, comment, include_modifiers=True, include_expectations=True, include_comment=True):
+        bugs = []
+        new_modifiers = []
+        new_expectations = []
+        for modifier in modifiers:
+            modifier = modifier.upper()
+            if modifier.startswith('BUGWK'):
+                bugs.append('webkit.org/b/' + modifier.replace('BUGWK', ''))
+            elif modifier.startswith('BUGCR'):
+                bugs.append('crbug.com/' + modifier.replace('BUGCR', ''))
+            elif modifier.startswith('BUG'):
+                # FIXME: we should preserve case once we can drop the old syntax.
+                bugs.append('Bug(' + modifier[3:].lower() + ')')
+            elif modifier in ('SLOW', 'SKIP', 'REBASELINE', 'WONTFIX'):
+                new_expectations.append(TestExpectationParser._inverted_expectation_tokens.get(modifier))
+            else:
+                new_modifiers.append(TestExpectationParser._inverted_configuration_tokens.get(modifier, modifier))
+
+        for expectation in expectations:
+            expectation = expectation.upper()
+            new_expectations.append(TestExpectationParser._inverted_expectation_tokens.get(expectation, expectation))
+
         result = ''
-        if include_modifiers:
-            result += '%s : ' % modifiers.upper()
+        if include_modifiers and (bugs or new_modifiers):
+            if bugs:
+                result += ' '.join(bugs) + ' '
+            if new_modifiers:
+                result += '[ %s ] ' % ' '.join(new_modifiers)
         result += name
-        if include_expectations:
-            result += ' = %s' % expectations.upper()
+        if include_expectations and new_expectations and set(new_expectations) != set(['Skip', 'Pass']):
+            result += ' [ %s ]' % ' '.join(sorted(set(new_expectations)))
         if include_comment and comment is not None:
-            result += " //%s" % comment
+            result += " #%s" % comment
         return result
 
 
@@ -730,21 +765,21 @@ class TestExpectations(object):
     in which case the expectations apply to all test cases in that
     directory and any subdirectory. The format is along the lines of:
 
-      LayoutTests/fast/js/fixme.js = FAIL
-      LayoutTests/fast/js/flaky.js = FAIL PASS
-      LayoutTests/fast/js/crash.js = CRASH TIMEOUT FAIL PASS
+      LayoutTests/fast/js/fixme.js [ Failure ]
+      LayoutTests/fast/js/flaky.js [ Failure Pass ]
+      LayoutTests/fast/js/crash.js [ Crash Failure Pass Timeout ]
       ...
 
     To add modifiers:
-      SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
-      DEBUG : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
-      DEBUG SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
-      LINUX DEBUG SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
-      LINUX WIN : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
+      LayoutTests/fast/js/no-good.js
+      [ Debug ] LayoutTests/fast/js/no-good.js [ Pass Timeout ]
+      [ Debug ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
+      [ Linux Debug ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
+      [ Linux Win ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
 
-    SKIP: Doesn't run the test.
-    SLOW: The test takes a long time to run, but does not timeout indefinitely.
-    WONTFIX: For tests that we never intend to pass on a given platform.
+    Skip: Doesn't run the test.
+    Slow: The test takes a long time to run, but does not timeout indefinitely.
+    WontFix: For tests that we never intend to pass on a given platform (treated like Skip).
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
@@ -753,6 +788,7 @@ class TestExpectations(object):
       -CRASH tests cannot be WONTFIX
     """
 
+    # FIXME: Update to new syntax once the old format is no longer supported.
     EXPECTATIONS = {'pass': PASS,
                     'fail': FAIL,
                     'image': IMAGE,

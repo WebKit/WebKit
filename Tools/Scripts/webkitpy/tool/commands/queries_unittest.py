@@ -178,35 +178,35 @@ class PrintExpectationsTest(unittest.TestCase):
     def test_basic(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = FAIL\n'))
+                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
+                       'failures/expected/text.html [ Failure WontFix ]\n'))
 
     def test_multiple(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-vista\n'
-                       'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = FAIL\n'
+                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
+                       'failures/expected/text.html [ Failure WontFix ]\n'
                        '\n'
                        '// For test-win-win7\n'
-                       'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = FAIL\n'
+                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
+                       'failures/expected/text.html [ Failure WontFix ]\n'
                        '\n'
                        '// For test-win-xp\n'
-                       'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = FAIL\n'),
+                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
+                       'failures/expected/text.html [ Failure WontFix ]\n'),
                        platform='test-win-*')
 
     def test_full(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'WONTFIX : failures/expected/image.html = IMAGE\n'
-                       'WONTFIX : failures/expected/text.html = FAIL\n'),
+                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
+                       'failures/expected/text.html [ Failure WontFix ]\n'),
                       full=True)
 
     def test_exclude(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/text.html = FAIL\n'),
+                       'failures/expected/text.html [ Failure WontFix ]\n'),
                       exclude_keyword=['image'])
 
     def test_include(self):

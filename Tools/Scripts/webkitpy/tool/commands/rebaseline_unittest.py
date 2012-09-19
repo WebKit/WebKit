@@ -67,8 +67,8 @@ class TestRebaseline(unittest.TestCase):
         tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         for path in lion_port.expectations_files():
             tool.filesystem.write_text_file(path, '')
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), """BUGB MAC LINUX XP DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGA DEBUG : fast/css/large-list-of-rules-crash.html = FAIL
+        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
+Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 """)
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/dom/Window/window-postmessage-clone-really-deep-array.html"), "Dummy test contents")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/css/large-list-of-rules-crash.html"), "Dummy test contents")
@@ -81,8 +81,8 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
-        self.assertEqual(new_expectations, """BUGB MAC LINUX XP DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGA DEBUG : fast/css/large-list-of-rules-crash.html = FAIL
+        self.assertEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
+Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 """)
 
     def test_rebaseline_updates_expectations_file(self):
@@ -92,7 +92,7 @@ BUGA DEBUG : fast/css/large-list-of-rules-crash.html = FAIL
 
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
         tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "BUGX MAC : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
 
         expected_logs = """Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
@@ -102,7 +102,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
-        self.assertEqual(new_expectations, "BUGX SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        self.assertEqual(new_expectations, "Bug(x) [ SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_does_not_include_overrides(self):
         command = RebaselineTest()
@@ -111,8 +111,8 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
 
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
         tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "BUGX MAC : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "BUGY MAC : other-test.html = FAIL\n")
+        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
 
         expected_logs = """Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
@@ -122,7 +122,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
-        self.assertEqual(new_expectations, "BUGX SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        self.assertEqual(new_expectations, "Bug(x) [ SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
         command = RebaselineTest()
@@ -331,7 +331,7 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_rebaseline_expectations_noop(self):
-        self._assert_command(RebaselineExpectations(), expected_logs='Did not find any tests marked REBASELINE.\n')
+        self._assert_command(RebaselineExpectations(), expected_logs='Did not find any tests marked Rebaseline.\n')
 
     def test_overrides_are_included_correctly(self):
         command = RebaselineExpectations()
@@ -346,8 +346,8 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         port._filesystem.write_text_file(expectations_path, expectations_contents)
         port.expectations_dict = lambda: {
             expectations_path: expectations_contents,
-            'overrides': ('BUGX REBASELINE : userscripts/another-test.html = FAIL\n'
-                          'BUGY : userscripts/test.html = CRASH\n')}
+            'overrides': ('Bug(x) userscripts/another-test.html [ Failure Rebaseline ]\n'
+                          'Bug(y) userscripts/test.html [ Crash ]\n')}
 
         for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')

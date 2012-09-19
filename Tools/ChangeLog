@@ -1,5 +1,65 @@
 2012-09-19  Dirk Pranke  <dpranke@chromium.org>
 
+        Support new TestExpectations format alongside old one
+        https://bugs.webkit.org/show_bug.cgi?id=96588
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds support for actually reading in lines formatted
+        in the new style, and when we re-serialize/write out the file,
+        all lines will be written in the new style. Note that reading in
+        the old style is still supported, and no updates are being made
+        to the actual TestExpectations files as part of this change.
+
+        This change updates most but not all of the unit tests to use
+        the new syntax. I will update the rest when (or before where
+        possible) I drop support for the old format.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectationParser._tokenize_line):
+        (TestExpectationParser._tokenize_line_using_new_format):
+        (TestExpectationLine.to_string):
+        (TestExpectationLine._format_line):
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_parse_warning):
+        (SkippedTests.test_skipped_entry_dont_exist):
+        (NewExpectationSyntaxTests.test_warnings):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        (RebaseliningTest.test_remove):
+        (RebaseliningTest.test_no_get_rebaselining_failures):
+        (TestExpectationParserTests.test_tokenize_blank):
+        (TestExpectationParserTests.test_tokenize_extra_colon):
+        (TestExpectationParserTests.test_tokenize_missing_equal):
+        (TestExpectationParserTests.test_tokenize_extra_equal):
+        (TestExpectationSerializationTests.test_unparsed_to_string):
+        (TestExpectationSerializationTests.test_unparsed_list_to_string):
+        (TestExpectationSerializationTests.test_parsed_to_string):
+        (TestExpectationSerializationTests.test_format_line):
+        (TestExpectationSerializationTests.test_string_roundtrip):
+        (TestExpectationSerializationTests.test_list_roundtrip):
+        (TestExpectationSerializationTests.test_reconstitute_only_these):
+        (TestExpectationSerializationTests.test_string_whitespace_stripping):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (LintTest.test_lint_test_files__errors):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_basic):
+        (PrintExpectationsTest.test_multiple):
+        (PrintExpectationsTest.test_full):
+        (PrintExpectationsTest.test_exclude):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_expectations_noop):
+        (test_overrides_are_included_correctly):
+
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
         implement first part of support for the new TestExpectations syntax
         https://bugs.webkit.org/show_bug.cgi?id=96569
 
