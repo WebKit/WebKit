@@ -18,7 +18,7 @@ PASS RTCIceCandidate() threw exception TypeError: DOM object constructor cannot 
 PASS new webkitPeerConnection00('STUN foobar.com:12345', function(){}); did not throw exception.
 PASS new SessionDescription(''); did not throw exception.
 PASS new IceCandidate('', ''); did not throw exception.
-PASS new webkitRTCPeerConnection({iceServers:[{uri:'stun://foobar.com:12345'}]}, null); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'stun://foobar.com:12345'}]}, null); did not throw exception.
 PASS new RTCSessionDescription({type:'offer',sdp:'foobar'}); did not throw exception.
 PASS new RTCIceCandidate({candidate:'foo'}); did not throw exception.
 PASS successfullyParsed is true

@@ -27,7 +27,7 @@ shouldThrow("RTCIceCandidate()");
 shouldNotThrow("new webkitPeerConnection00('STUN foobar.com:12345', function(){});");
 shouldNotThrow("new SessionDescription('');");
 shouldNotThrow("new IceCandidate('', '');");
-shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{uri:'stun://foobar.com:12345'}]}, null);");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{url:'stun://foobar.com:12345'}]}, null);");
 shouldNotThrow("new RTCSessionDescription({type:'offer',sdp:'foobar'});");
 shouldNotThrow("new RTCIceCandidate({candidate:'foo'});");
 
