@@ -1,3 +1,23 @@
+2012-09-19  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix crash in WebFrameImpl::loadHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=96352
+
+        Reviewed by Adam Barth.
+
+        We have some crash reports with the following stack:
+          - HistoryItem::shouldDoSameDocumentNavigationTo.
+          - WebFrameImpl::loadHistoryItem
+          ...
+
+        We don't have reproducible steps, and not sure what's the root
+        cause. Anyway we should check nullness of currentItem because
+        HistoryController::m_currentItem can be 0.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadHistoryItem):
+        Check nullness of currentItem.
+
 2012-09-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Scrollbar with tickmarks doesn't respond to clicks
