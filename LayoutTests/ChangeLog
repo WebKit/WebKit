@@ -1,5 +1,18 @@
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Skip several JS tests that crash after r128802
+        https://bugs.webkit.org/show_bug.cgi?id=97074
+
+        Unreviewed EFL gardening.
+
+        Move several JS test cases to TestExpectations because
+        they are consistently crashing on our debug bots
+        after r128802.
+
+        * platform/efl/TestExpectations:
+
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Generate baseline for media/video-controls-visible-audio-only.html
         https://bugs.webkit.org/show_bug.cgi?id=97073
 
