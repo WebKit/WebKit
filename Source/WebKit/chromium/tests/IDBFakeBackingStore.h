@@ -35,38 +35,38 @@ public:
     virtual void getDatabaseNames(Vector<String>& foundNames) OVERRIDE { }
     virtual bool getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundIntVersion, int64_t& foundId) OVERRIDE { return false; }
     virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId) OVERRIDE { return true; }
-    virtual bool updateIDBDatabaseMetaData(int64_t rowId, const String& version) OVERRIDE { return false; }
-    virtual bool updateIDBDatabaseIntVersion(int64_t rowId, int64_t version) OVERRIDE { return false; }
+    virtual bool updateIDBDatabaseMetaData(Transaction*, int64_t rowId, const String& version) OVERRIDE { return false; }
+    virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t version) OVERRIDE { return false; }
     virtual bool deleteDatabase(const String& name) OVERRIDE { return false; }
 
     virtual void getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags) OVERRIDE { }
-    virtual bool createObjectStore(int64_t databaseId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId) OVERRIDE { return false; }
-    virtual void deleteObjectStore(int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
+    virtual bool createObjectStore(Transaction*, int64_t databaseId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId) OVERRIDE { return false; }
+    virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
 
     virtual PassRefPtr<ObjectStoreRecordIdentifier> createInvalidRecordIdentifier() OVERRIDE { return PassRefPtr<ObjectStoreRecordIdentifier>(); }
 
-    virtual String getObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey&) OVERRIDE { return String(); }
-    virtual bool putObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
-    virtual void clearObjectStore(int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
-    virtual void deleteObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*) OVERRIDE { }
-    virtual int64_t getKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId) OVERRIDE { return 0; }
-    virtual bool maybeUpdateKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) OVERRIDE { return false; }
-    virtual bool keyExistsInObjectStore(int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier) OVERRIDE { return false; }
+    virtual String getObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&) OVERRIDE { return String(); }
+    virtual bool putObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
+    virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
+    virtual void deleteObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*) OVERRIDE { }
+    virtual int64_t getKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { return 0; }
+    virtual bool maybeUpdateKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) OVERRIDE { return false; }
+    virtual bool keyExistsInObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier) OVERRIDE { return false; }
 
-    virtual bool forEachObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&) OVERRIDE { return false; }
+    virtual bool forEachObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&) OVERRIDE { return false; }
 
     virtual void getIndexes(int64_t databaseId, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundUniqueFlags, Vector<bool>& foundMultiEntryFlags) OVERRIDE { }
-    virtual bool createIndex(int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& indexId) OVERRIDE { return false; }
-    virtual void deleteIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId) OVERRIDE { }
-    virtual bool putIndexDataForRecord(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
-    virtual bool deleteIndexDataForRecord(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
-    virtual PassRefPtr<IDBKey> getPrimaryKeyViaIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&) OVERRIDE { return PassRefPtr<IDBKey>(); }
-    virtual bool keyExistsInIndex(int64_t databaseid, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey) OVERRIDE { return false; }
+    virtual bool createIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& indexId) OVERRIDE { return false; }
+    virtual void deleteIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId) OVERRIDE { }
+    virtual bool putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
+    virtual bool deleteIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
+    virtual PassRefPtr<IDBKey> getPrimaryKeyViaIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&) OVERRIDE { return PassRefPtr<IDBKey>(); }
+    virtual bool keyExistsInIndex(Transaction*, int64_t databaseid, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey) OVERRIDE { return false; }
 
-    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
-    virtual PassRefPtr<Cursor> openObjectStoreCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
-    virtual PassRefPtr<Cursor> openIndexKeyCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
-    virtual PassRefPtr<Cursor> openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
+    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
+    virtual PassRefPtr<Cursor> openObjectStoreCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
+    virtual PassRefPtr<Cursor> openIndexKeyCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
+    virtual PassRefPtr<Cursor> openIndexCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
 
     virtual PassRefPtr<Transaction> createTransaction() OVERRIDE { return PassRefPtr<Transaction>(); }
 };

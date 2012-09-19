@@ -194,11 +194,11 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     return objectStore.release();
 }
 
-void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore,  PassRefPtr<IDBTransactionBackendImpl> transaction)
+void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     int64_t objectStoreId;
 
-    if (!database->m_backingStore->createObjectStore(database->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
+    if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
         transaction->abort();
         return;
     }
@@ -232,7 +232,7 @@ void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactio
 
 void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
-    database->m_backingStore->deleteObjectStore(database->id(), objectStore->id());
+    database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id());
     transaction->didCompleteTaskEvents();
 }
 
@@ -285,7 +285,7 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     int64_t databaseId = database->id();
     database->m_version = version;
     database->m_intVersion = IDBDatabaseMetadata::NoIntVersion;
-    if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version) || !database->m_backingStore->updateIDBDatabaseIntVersion(databaseId, database->m_intVersion)) {
+    if (!database->m_backingStore->updateIDBDatabaseMetaData(transaction->backingStoreTransaction(), databaseId, database->m_version) || !database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, database->m_intVersion)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
         return;
@@ -293,13 +293,13 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(PassRefPtr<IDBTransactionBackendInterface>(transaction));
 }
 
-void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     int64_t databaseId = database->id();
     int64_t oldVersion = database->m_intVersion;
     ASSERT(version > oldVersion);
     database->m_intVersion = version;
-    if (!database->m_backingStore->updateIDBDatabaseIntVersion(databaseId, database->m_intVersion)) {
+    if (!database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, database->m_intVersion)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
         return;

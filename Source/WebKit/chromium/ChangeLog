@@ -1,3 +1,14 @@
+2012-09-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove "current transaction" concept from backing store
+        https://bugs.webkit.org/show_bug.cgi?id=96663
+
+        Reviewed by Tony Chang.
+
+        Update fake class with new method signatures.
+
+        * tests/IDBFakeBackingStore.h:
+
 2012-09-19  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Store the contents scale factor in PlatformContextSkia on initialization

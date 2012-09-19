@@ -65,6 +65,7 @@ public:
     void addPendingEvents(int);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
+    IDBBackingStore::Transaction* backingStoreTransaction() { return m_transaction.get(); }
 
 private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
