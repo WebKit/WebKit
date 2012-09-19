@@ -470,6 +470,7 @@ BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-t
 BUGWK94458 DEBUG : fast/events/message-port-context-destroyed.html = CRASH PASS
 
 BUGWK97001 : storage/websql/execute-sql-args.html = CRASH PASS
+BUGWK97001 DEBUG : fast/dom/message-port-deleted-by-accessor.html = CRASH PASS
 BUGWK97001 DEBUG : fast/js/array-slow-put.html = CRASH PASS
 BUGWK97001 DEBUG : fast/js/object-bad-time.html = CRASH PASS
 BUGWK97001 DEBUG : fast/js/Object-defineProperty.html = CRASH PASS
