@@ -19,6 +19,7 @@
 #ifndef InputHandler_h
 #define InputHandler_h
 
+#include "FloatPoint.h"
 #include "TextChecking.h"
 
 #include <BlackBerryPlatformInputEvents.h>
@@ -221,6 +222,9 @@ private:
 
     RefPtr<WebCore::TextCheckingRequest> m_request;
     int32_t m_processingTransactionId;
+
+    double m_focusZoomScale;
+    WebCore::FloatPoint m_focusZoomLocation;
 };
 
 }

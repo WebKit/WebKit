@@ -138,6 +138,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_delayKeyboardVisibilityChange(false)
     , m_request(0)
     , m_processingTransactionId(-1)
+    , m_focusZoomScale(0.0)
 {
 }
 
@@ -1125,8 +1126,14 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     // If the text is too small, zoom in to make it a minimum size.
     // The minimum size being defined as 3 mm is a good value based on my observations.
     static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->widthInMMToPixels(3);
-    if (fontHeight && fontHeight < s_minimumTextHeightInPixels)
-        m_webPage->zoomAboutPoint(s_minimumTextHeightInPixels / fontHeight, selectionFocusRect.location());
+    if (fontHeight && fontHeight < s_minimumTextHeightInPixels) {
+        m_focusZoomScale = s_minimumTextHeightInPixels / fontHeight;
+        m_focusZoomLocation = selectionFocusRect.location();
+        m_webPage->zoomAboutPoint(m_focusZoomScale, m_focusZoomLocation);
+    } else {
+        m_focusZoomScale = 0.0;
+        m_focusZoomLocation = WebCore::IntPoint();
+    }
 }
 
 void InputHandler::ensureFocusPluginElementVisible()

@@ -1,3 +1,21 @@
+2012-09-19  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] After zooming into an input field, zoom out when focus is lost.
+        https://bugs.webkit.org/show_bug.cgi?id=97128
+
+        Reviewed by Rob Buis.
+
+        When the page has automatically zoomed in for input
+        focus, unzoom it when input focus is lost or keyboard hidden.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-09-19  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Clean up the SpellingLog output
