@@ -556,6 +556,14 @@ inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndI
 #endif
 }
 
+inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)
+{
+    if (!canBeOptimized())
+        return;
+    
+    store8(TrustedImm32(1), arrayProfile->addressOfMayStoreToHole());
+}
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(int index, RegisterID tag)

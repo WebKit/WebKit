@@ -54,12 +54,15 @@ enum Mode {
     
     // Modes of conventional indexed storage where the check is non side-effecting.
     ArrayStorage,
+    ArrayStorageToHole,
     SlowPutArrayStorage,
     ArrayStorageOutOfBounds,
     ArrayWithArrayStorage,
+    ArrayWithArrayStorageToHole,
     ArrayWithSlowPutArrayStorage,
     ArrayWithArrayStorageOutOfBounds,
     PossiblyArrayWithArrayStorage,
+    PossiblyArrayWithArrayStorageToHole,
     PossiblyArrayWithSlowPutArrayStorage,
     PossiblyArrayWithArrayStorageOutOfBounds,
     
@@ -87,20 +90,28 @@ enum Mode {
 // First: helpers for non-side-effecting checks.
 #define NON_ARRAY_ARRAY_STORAGE_MODES                      \
     Array::ArrayStorage:                                   \
+    case Array::ArrayStorageToHole:                        \
     case Array::SlowPutArrayStorage:                       \
     case Array::ArrayStorageOutOfBounds:                   \
     case Array::PossiblyArrayWithArrayStorage:             \
+    case Array::PossiblyArrayWithArrayStorageToHole:       \
     case Array::PossiblyArrayWithSlowPutArrayStorage:      \
     case Array::PossiblyArrayWithArrayStorageOutOfBounds
 #define ARRAY_WITH_ARRAY_STORAGE_MODES                     \
     Array::ArrayWithArrayStorage:                          \
+    case Array::ArrayWithArrayStorageToHole:               \
     case Array::ArrayWithSlowPutArrayStorage:              \
     case Array::ArrayWithArrayStorageOutOfBounds
 #define ALL_ARRAY_STORAGE_MODES                            \
     NON_ARRAY_ARRAY_STORAGE_MODES:                         \
     case ARRAY_WITH_ARRAY_STORAGE_MODES
+#define ARRAY_STORAGE_TO_HOLE_MODES                        \
+    Array::ArrayStorageToHole:                             \
+    case Array::ArrayWithArrayStorageToHole:               \
+    case Array::PossiblyArrayWithArrayStorageToHole
 #define IN_BOUNDS_ARRAY_STORAGE_MODES                      \
-    Array::ArrayStorage:                                   \
+    ARRAY_STORAGE_TO_HOLE_MODES:                           \
+    case Array::ArrayStorage:                              \
     case Array::ArrayWithArrayStorage:                     \
     case Array::PossiblyArrayWithArrayStorage
 #define SLOW_PUT_ARRAY_STORAGE_MODES                       \
@@ -166,6 +177,18 @@ inline bool isSlowPutAccess(Array::Mode arrayMode)
     switch (arrayMode) {
     case SLOW_PUT_ARRAY_STORAGE_MODES:
     case SLOW_PUT_EFFECTFUL_ARRAY_STORAGE_MODES:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool mayStoreToHole(Array::Mode arrayMode)
+{
+    switch (arrayMode) {
+    case ARRAY_STORAGE_TO_HOLE_MODES:
+    case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
+    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
         return true;
     default:
         return false;

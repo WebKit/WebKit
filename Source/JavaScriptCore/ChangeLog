@@ -1,3 +1,54 @@
+2012-09-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not emit PutByVal hole case unless it has to
+        https://bugs.webkit.org/show_bug.cgi?id=97080
+
+        Reviewed by Geoffrey Garen.
+
+        This causes us to generate less code for typical PutByVal's. But if profiling tells us
+        that the hole case is being hit, we generate the same code as we would have generated
+        before. This seems like a slight speed-up across the board.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::store8):
+        (MacroAssemblerARMv7):
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::store8):
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::store8):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::movb_i8m):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::addressOfMayStoreToHole):
+        (JSC::ArrayProfile::mayStoreToHole):
+        (ArrayProfile):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::mayStoreToHole):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitArrayProfileStoreToHoleSpecialCase):
+        (JSC):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not call out to C++ every time that it tries to put to an object that doesn't yet have array storage

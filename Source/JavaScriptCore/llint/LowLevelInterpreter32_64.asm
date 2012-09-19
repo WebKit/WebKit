@@ -1388,8 +1388,8 @@ _llint_op_put_by_val:
     loadi 4[PC], t0
     loadConstantOrVariablePayload(t0, CellTag, t1, .opPutByValSlow)
     loadp JSCell::m_structure[t1], t2
-    loadp 16[PC], t0
-    arrayProfile(t2, t0, t3)
+    loadp 16[PC], t3
+    arrayProfile(t2, t3, t0)
     btiz t2, HasArrayStorage, .opPutByValSlow
     loadi 8[PC], t0
     loadConstantOrVariablePayload(t0, Int32Tag, t2, .opPutByValSlow)
@@ -1405,6 +1405,7 @@ _llint_op_put_by_val:
     dispatch(5)
 
 .opPutByValEmpty:
+    storeb 1, ArrayProfile::m_mayStoreToHole[t3]
     addi 1, ArrayStorage::m_numValuesInVector[t0]
     bib t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValStoreResult
     addi 1, t2, t1

@@ -1155,6 +1155,15 @@ public:
         m_formatter.immediate32(imm);
     }
 
+#if !CPU(X86_64)
+    void movb_i8m(int imm, const void* addr)
+    {
+        ASSERT(-128 <= imm && imm < 128);
+        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, addr);
+        m_formatter.immediate8(imm);
+    }
+#endif
+
     void movb_i8m(int imm, int offset, RegisterID base)
     {
         ASSERT(-128 <= imm && imm < 128);

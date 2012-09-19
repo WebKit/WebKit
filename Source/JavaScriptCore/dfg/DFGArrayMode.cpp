@@ -42,17 +42,17 @@ Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeS
             return Array::BlankToArrayStorage; // FIXME: we don't know whether to go to slow put mode, or not. This is a decent guess.
         return Array::Undecided;
     case asArrayModes(NonArrayWithArrayStorage):
-        return makeSafe ? Array::ArrayStorageOutOfBounds : Array::ArrayStorage;
+        return makeSafe ? Array::ArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayStorageToHole : Array::ArrayStorage);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
         return Array::SlowPutArrayStorage;
     case asArrayModes(ArrayWithArrayStorage):
-        return makeSafe ? Array::ArrayWithArrayStorageOutOfBounds : Array::ArrayWithArrayStorage;
+        return makeSafe ? Array::ArrayWithArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayWithArrayStorageToHole : Array::ArrayWithArrayStorage);
     case asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return Array::ArrayWithSlowPutArrayStorage;
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
-        return makeSafe ? Array::PossiblyArrayWithArrayStorageOutOfBounds : Array::PossiblyArrayWithArrayStorage;
+        return makeSafe ? Array::PossiblyArrayWithArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::PossiblyArrayWithArrayStorageToHole : Array::PossiblyArrayWithArrayStorage);
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return Array::PossiblyArrayWithSlowPutArrayStorage;
@@ -139,8 +139,10 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
         return isStringSpeculation(value.m_type);
         
     case Array::ArrayStorage:
+    case Array::ArrayStorageToHole:
     case Array::ArrayStorageOutOfBounds:
     case Array::PossiblyArrayWithArrayStorage:
+    case Array::PossiblyArrayWithArrayStorageToHole:
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage);
@@ -151,6 +153,7 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
             && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage));
         
     case Array::ArrayWithArrayStorage:
+    case Array::ArrayWithArrayStorageToHole:
     case Array::ArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage)
@@ -215,18 +218,24 @@ const char* modeToString(Array::Mode mode)
         return "String";
     case Array::ArrayStorage:
         return "ArrayStorage";
+    case Array::ArrayStorageToHole:
+        return "ArrayStorageToHole";
     case Array::SlowPutArrayStorage:
         return "SlowPutArrayStorage";
     case Array::ArrayStorageOutOfBounds:
         return "ArrayStorageOutOfBounds";
     case Array::ArrayWithArrayStorage:
         return "ArrayWithArrayStorage";
+    case Array::ArrayWithArrayStorageToHole:
+        return "ArrayWithArrayStorageToHole";
     case Array::ArrayWithSlowPutArrayStorage:
         return "ArrayWithSlowPutArrayStorage";
     case Array::ArrayWithArrayStorageOutOfBounds:
         return "ArrayWithArrayStorageOutOfBounds";
     case Array::PossiblyArrayWithArrayStorage:
         return "PossiblyArrayWithArrayStorage";
+    case Array::PossiblyArrayWithArrayStorageToHole:
+        return "PossiblyArrayWithArrayStorageToHole";
     case Array::PossiblyArrayWithSlowPutArrayStorage:
         return "PossiblyArrayWithSlowPutArrayStorage";
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:

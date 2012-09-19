@@ -451,6 +451,7 @@ namespace JSC {
 #endif
         void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
         void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);
+        void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 

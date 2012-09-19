@@ -54,6 +54,7 @@ public:
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
         , m_structureIsPolymorphic(false)
+        , m_mayStoreToHole(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_observedArrayModes(0)
     {
@@ -64,6 +65,7 @@ public:
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
         , m_structureIsPolymorphic(false)
+        , m_mayStoreToHole(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_observedArrayModes(0)
     {
@@ -73,6 +75,7 @@ public:
     
     Structure** addressOfLastSeenStructure() { return &m_lastSeenStructure; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
+    bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
     
     void observeStructure(Structure* structure)
     {
@@ -93,6 +96,8 @@ public:
     ArrayModes observedArrayModes() const { return m_observedArrayModes; }
     bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
     
+    bool mayStoreToHole() const { return m_mayStoreToHole; }
+    
 private:
     friend class LLIntOffsetsExtractor;
     
@@ -100,6 +105,7 @@ private:
     Structure* m_lastSeenStructure;
     Structure* m_expectedStructure;
     bool m_structureIsPolymorphic;
+    bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_mayInterceptIndexedAccesses;
     ArrayModes m_observedArrayModes;
 };

@@ -44,6 +44,7 @@ public:
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
+    using MacroAssemblerX86Common::store8;
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::jump;
@@ -130,6 +131,12 @@ public:
     void store32(RegisterID src, void* address)
     {
         m_assembler.movl_rm(src, address);
+    }
+
+    void store8(TrustedImm32 imm, void* address)
+    {
+        ASSERT(-128 <= imm.m_value && imm.m_value < 128);
+        m_assembler.movb_i8m(imm.m_value, address);
     }
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)

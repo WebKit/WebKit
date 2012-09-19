@@ -45,6 +45,7 @@ public:
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
+    using MacroAssemblerX86Common::store8;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::jump;
     using MacroAssemblerX86Common::addDouble;
@@ -113,6 +114,12 @@ public:
     {
         move(TrustedImmPtr(address), scratchRegister);
         store32(imm, scratchRegister);
+    }
+    
+    void store8(TrustedImm32 imm, void* address)
+    {
+        move(TrustedImmPtr(address), scratchRegister);
+        store8(imm, Address(scratchRegister));
     }
 
     Call call()
