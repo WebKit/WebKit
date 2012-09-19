@@ -420,9 +420,9 @@ WebInspector.NetworkRequest.prototype = {
      */
     get requestHeadersText()
     {
-        if (this._requestHeadersText === undefined) {
+        if (typeof this._requestHeadersText === "undefined") {
             this._requestHeadersText = this.requestMethod + " " + this.url + " HTTP/1.1\r\n";
-            for (var i = 0; i < this.requestHeaders; ++i)
+            for (var i = 0; i < this.requestHeaders.length; ++i)
                 this._requestHeadersText += this.requestHeaders[i].name + ": " + this.requestHeaders[i].value + "\r\n";
         }
         return this._requestHeadersText;
@@ -522,9 +522,9 @@ WebInspector.NetworkRequest.prototype = {
      */
     get responseHeadersText()
     {
-        if (this._responseHeadersText === undefined) {
+        if (typeof this._responseHeadersText === "undefined") {
             this._responseHeadersText = "HTTP/1.1 " + this.statusCode + " " + this.statusText + "\r\n";
-            for (var i = 0; i < this.requestHeaders; ++i)
+            for (var i = 0; i < this.responseHeaders.length; ++i)
                 this._responseHeadersText += this.responseHeaders[i].name + ": " + this.responseHeaders[i].value + "\r\n";
         }
         return this._responseHeadersText;
