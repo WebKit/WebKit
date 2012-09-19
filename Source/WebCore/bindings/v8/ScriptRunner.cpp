@@ -47,8 +47,6 @@ v8::Local<v8::Value> ScriptRunner::runCompiledScript(v8::Handle<v8::Script> scri
 
     // Run the script and keep track of the current recursion depth.
     v8::Local<v8::Value> result;
-    v8::TryCatch tryCatch;
-    tryCatch.SetVerbose(true);
     {
         V8RecursionScope recursionScope(context);
         result = script->Run();
@@ -56,12 +54,6 @@ v8::Local<v8::Value> ScriptRunner::runCompiledScript(v8::Handle<v8::Script> scri
 
     if (handleOutOfMemory())
         ASSERT(result.IsEmpty());
-
-    // Handle V8 internal error situation.
-    if (tryCatch.HasCaught()) {
-        ASSERT(result.IsEmpty());
-        return v8::Local<v8::Value>();
-    }
 
     if (result.IsEmpty())
         return v8::Local<v8::Value>();

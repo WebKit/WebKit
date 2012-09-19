@@ -38,6 +38,7 @@
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
 #include "ScriptCallStack.h"
+#include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
@@ -223,7 +224,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
 
     v8::Local<v8::String> scriptString = v8ExternalString(script);
     v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
-    v8::Local<v8::Value> result = runScript(compiledScript);
+    v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
 
     if (!exceptionCatcher.CanContinue()) {
         m_workerContext->script()->forbidExecution();
@@ -254,37 +255,6 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
 void WorkerContextExecutionProxy::setEvalAllowed(bool enable)
 {
     m_disableEvalPending = !enable;
-}
-
-v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Script> script)
-{
-    if (script.IsEmpty())
-        return v8::Local<v8::Value>();
-
-    // Compute the source string and prevent against infinite recursion.
-    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth) {
-        v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        script = ScriptSourceCode::compileScript(code, "", TextPosition::minimumPosition());
-    }
-
-    if (handleOutOfMemory())
-        ASSERT(script.IsEmpty());
-
-    if (script.IsEmpty())
-        return v8::Local<v8::Value>();
-
-    // Run the script and keep track of the current recursion depth.
-    v8::Local<v8::Value> result;
-    {
-        V8RecursionScope recursionScope(m_workerContext);
-        result = script->Run();
-    }
-
-    // Handle V8 internal error situation (Out-of-memory).
-    if (result.IsEmpty())
-        return v8::Local<v8::Value>();
-
-    return result;
 }
 
 void WorkerContextExecutionProxy::trackEvent(Event* event)
