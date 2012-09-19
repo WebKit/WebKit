@@ -3008,7 +3008,7 @@ BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
 BUGWK84802 LINUX WIN DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
 BUGWK93631 ANDROID SLOW : fast/js/random-array-gc-stress.html = PASS
-BUGWK84802 MAC DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS TIMEOUT
+BUGWK84802 MAC DEBUG : fast/js/random-array-gc-stress.html = PASS TIMEOUT
 
 BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
