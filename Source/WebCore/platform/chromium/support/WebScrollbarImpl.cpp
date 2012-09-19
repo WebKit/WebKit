@@ -123,4 +123,14 @@ bool WebScrollbarImpl::isCustomScrollbar() const
     return m_scrollbar->isCustomScrollbar();
 }
 
+bool WebScrollbarImpl::isAlphaLocked() const
+{
+    return m_scrollbar->isAlphaLocked();
+}
+
+void WebScrollbarImpl::setIsAlphaLocked(bool flag)
+{
+    m_scrollbar->setIsAlphaLocked(flag);
+}
+
 } // namespace WebKit

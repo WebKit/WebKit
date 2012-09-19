@@ -59,6 +59,7 @@ CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
     , m_enabled(false)
     , m_isCustomScrollbar(false)
     , m_isOverlayScrollbar(false)
+    , m_isAlphaLocked(false)
 {
 }
 
@@ -210,6 +211,16 @@ WebScrollbar::Orientation CCScrollbarLayerImpl::CCScrollbar::orientation() const
 bool CCScrollbarLayerImpl::CCScrollbar::isCustomScrollbar() const
 {
     return m_owner->m_isCustomScrollbar;
+}
+
+bool CCScrollbarLayerImpl::CCScrollbar::isAlphaLocked() const
+{
+    return m_owner->m_isAlphaLocked;
+}
+
+void CCScrollbarLayerImpl::CCScrollbar::setIsAlphaLocked(bool flag)
+{
+    m_owner->m_isAlphaLocked = flag;
 }
 
 }

@@ -956,6 +956,9 @@ bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scroll
     if (!isScrollbarOverlayAPIAvailable())
         return true;
 
+    if (scrollbar->isAlphaLocked())
+        return true;
+
     // Overlay scrollbars should participate in hit testing whenever they are at all visible.
     ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
     if (!painter)

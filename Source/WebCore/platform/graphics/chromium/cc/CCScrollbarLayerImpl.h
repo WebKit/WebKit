@@ -91,6 +91,8 @@ private:
         virtual WebScrollbar::ScrollbarOverlayStyle scrollbarOverlayStyle() const;
         virtual WebScrollbar::Orientation orientation() const;
         virtual bool isCustomScrollbar() const;
+        virtual bool isAlphaLocked() const OVERRIDE;
+        virtual void setIsAlphaLocked(bool) OVERRIDE;
 
     private:
         CCScrollbarLayerImpl* m_owner;
@@ -122,6 +124,7 @@ private:
     bool m_enabled;
     bool m_isCustomScrollbar;
     bool m_isOverlayScrollbar;
+    bool m_isAlphaLocked;
 };
 
 }

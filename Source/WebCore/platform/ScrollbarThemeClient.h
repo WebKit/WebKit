@@ -85,6 +85,9 @@ public:
 
     virtual bool isOverlayScrollbar() const = 0;
 
+    virtual bool isAlphaLocked() const = 0;
+    virtual void setIsAlphaLocked(bool) = 0;
+
 protected:
     virtual ~ScrollbarThemeClient() { }
 };

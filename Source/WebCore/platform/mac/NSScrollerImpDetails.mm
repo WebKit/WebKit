@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "NSScrollerImpDetails.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -47,6 +48,8 @@ bool isScrollbarOverlayAPIAvailable()
 #endif
 
 NSScrollerStyle recommendedScrollerStyle() {
+    if (Settings::usesOverlayScrollbars())
+        return NSScrollerStyleOverlay;
     if ([NSScroller respondsToSelector:@selector(preferredScrollerStyle)])
         return [NSScroller preferredScrollerStyle];
     return NSScrollerStyleLegacy;

@@ -1,3 +1,14 @@
+2012-09-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Scrollbar with tickmarks doesn't respond to clicks
+        https://bugs.webkit.org/show_bug.cgi?id=96049
+
+        Reviewed by Beth Dakin.
+
+        Update exported symbols.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-18  Bo Liu  <boliu@chromium.org>
 
         Revert 128780, 128676, 128645

@@ -78,6 +78,8 @@ public:
     virtual bool enabled() const OVERRIDE;
     virtual void setEnabled(bool) OVERRIDE;
     virtual bool isOverlayScrollbar() const OVERRIDE;
+    virtual bool isAlphaLocked() const OVERRIDE;
+    virtual void setIsAlphaLocked(bool) OVERRIDE;
 
 private:
     WebKit::WebScrollbar* m_scrollbar;

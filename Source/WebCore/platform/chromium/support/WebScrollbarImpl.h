@@ -54,6 +54,8 @@ public:
     virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const OVERRIDE;
     virtual Orientation orientation() const OVERRIDE;
     virtual bool isCustomScrollbar() const OVERRIDE;
+    virtual bool isAlphaLocked() const OVERRIDE;
+    virtual void setIsAlphaLocked(bool) OVERRIDE;
 
 private:
     RefPtr<WebCore::Scrollbar> m_scrollbar;

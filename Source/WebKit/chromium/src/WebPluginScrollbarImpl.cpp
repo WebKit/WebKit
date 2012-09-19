@@ -268,6 +268,16 @@ bool WebPluginScrollbarImpl::handleInputEvent(const WebInputEvent& event)
     return false;
 }
 
+bool WebPluginScrollbarImpl::isAlphaLocked() const
+{
+    return m_scrollbar->isAlphaLocked();
+}
+
+void WebPluginScrollbarImpl::setIsAlphaLocked(bool flag)
+{
+    return m_scrollbar->setIsAlphaLocked(flag);
+}
+
 bool WebPluginScrollbarImpl::onMouseDown(const WebInputEvent& event)
 {
     WebMouseEvent mousedown = *static_cast<const WebMouseEvent*>(&event);

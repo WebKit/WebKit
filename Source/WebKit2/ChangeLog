@@ -1,3 +1,15 @@
+2012-09-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Scrollbar with tickmarks doesn't respond to clicks
+        https://bugs.webkit.org/show_bug.cgi?id=96049
+
+        Reviewed by Beth Dakin.
+
+        Update exported symbols.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-09-18  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add log macros for EINA_LOG_DOM_XXX series

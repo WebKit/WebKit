@@ -126,6 +126,7 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
         bool hasTickmarks = tickmarks.size() > 0 && scrollbar->orientation() == VerticalScrollbar;
         ScrollbarPainter scrollbarPainter = painterForScrollbar(scrollbar);
         if (hasTickmarks) {
+            scrollbar->setIsAlphaLocked(true);
             oldKnobAlpha = [scrollbarPainter knobAlpha];
             [scrollbarPainter setKnobAlpha:1.0];
             oldTrackAlpha = [scrollbarPainter trackAlpha];
@@ -134,7 +135,8 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
               oldIsExpanded = [scrollbarPainter isExpanded];
               [scrollbarPainter setExpanded:YES];
             }
-        }
+        } else
+            scrollbar->setIsAlphaLocked(false);
 
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(damageRect);

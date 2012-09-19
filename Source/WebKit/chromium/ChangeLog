@@ -1,3 +1,26 @@
+2012-09-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Scrollbar with tickmarks doesn't respond to clicks
+        https://bugs.webkit.org/show_bug.cgi?id=96049
+
+        Reviewed by Beth Dakin.
+
+        Pipe isAlphaLocked and setIsAlphaLocked.
+
+        * src/WebPluginScrollbarImpl.cpp:
+        (WebKit::WebPluginScrollbarImpl::isAlphaLocked):
+        (WebKit):
+        (WebKit::WebPluginScrollbarImpl::setIsAlphaLocked):
+        * src/WebPluginScrollbarImpl.h:
+        (WebPluginScrollbarImpl):
+        * src/WebScrollbarThemeClientImpl.cpp:
+        (WebKit::WebScrollbarThemeClientImpl::isAlphaLocked):
+        (WebKit):
+        (WebKit::WebScrollbarThemeClientImpl::setIsAlphaLocked):
+        * src/WebScrollbarThemeClientImpl.h:
+        (WebScrollbarThemeClientImpl):
+        * tests/ScrollbarLayerChromiumTest.cpp:
+
 2012-09-18  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r128939.

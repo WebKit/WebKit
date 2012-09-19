@@ -548,6 +548,9 @@ namespace WebCore {
         static void setMockScrollbarsEnabled(bool flag);
         static bool mockScrollbarsEnabled();
 
+        static void setUsesOverlayScrollbars(bool flag);
+        static bool usesOverlayScrollbars();
+
         void setVisualWordMovementEnabled(bool enabled) { m_visualWordMovementEnabled = enabled; }
         bool visualWordMovementEnabled() const { return m_visualWordMovementEnabled; }
 
@@ -820,6 +823,7 @@ namespace WebCore {
         static bool gAVFoundationEnabled;
 #endif
         static bool gMockScrollbarsEnabled;
+        static bool gUsesOverlayScrollbars;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

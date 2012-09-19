@@ -218,6 +218,7 @@ EXPORTS
         ?setImagesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?mockScrollbarsEnabled@Settings@WebCore@@SA_NXZ
+        ?setUsesOverlayScrollbars@Settings@WebCore@@SAX_N@Z
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z

@@ -82,6 +82,8 @@ public:
     virtual void scroll(ScrollDirection, ScrollGranularity, float multiplier) OVERRIDE;
     virtual void paint(WebCanvas*, const WebRect&) OVERRIDE;
     virtual bool handleInputEvent(const WebInputEvent&) OVERRIDE;
+    virtual bool isAlphaLocked() const OVERRIDE;
+    virtual void setIsAlphaLocked(bool) OVERRIDE;
 
 private:
     bool onMouseDown(const WebInputEvent&);

@@ -150,6 +150,9 @@ public:
 
     void moveThumb(int pos, bool draggingDocument = false);
 
+    virtual bool isAlphaLocked() const { return m_isAlphaLocked; }
+    virtual void setIsAlphaLocked(bool flag) { m_isAlphaLocked = flag; }
+
 protected:
     Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 
@@ -189,6 +192,8 @@ protected:
     bool m_overlapsResizer;
 
     bool m_suppressInvalidation;
+
+    bool m_isAlphaLocked;
 
 private:
     virtual bool isScrollbar() const { return true; }

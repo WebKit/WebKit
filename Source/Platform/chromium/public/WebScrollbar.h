@@ -106,6 +106,8 @@ public:
     virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const = 0;
     virtual bool isCustomScrollbar() const = 0;
     virtual Orientation orientation() const = 0;
+    virtual bool isAlphaLocked() const { return false; }
+    virtual void setIsAlphaLocked(bool) { }
 };
 
 } // namespace WebKit

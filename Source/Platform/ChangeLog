@@ -1,3 +1,15 @@
+2012-09-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Scrollbar with tickmarks doesn't respond to clicks
+        https://bugs.webkit.org/show_bug.cgi?id=96049
+
+        Reviewed by Beth Dakin.
+
+        Added isAlphaLocked and setIsAlphaLocked.
+
+        * chromium/public/WebScrollbar.h:
+        (WebScrollbar):
+
 2012-09-17  Brian Anderson  <brianderson@chromium.org>
 
         [chromium] Add rendering commit statistics

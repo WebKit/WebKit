@@ -168,6 +168,7 @@ void InternalSettings::reset()
     setUserPreferredLanguages(Vector<String>());
     page()->setPagination(Pagination());
     page()->setPageScaleFactor(1, IntPoint(0, 0));
+    setUsesOverlayScrollbars(false);
 #if ENABLE(PAGE_POPUP)
     m_pagePopupDriver.clear();
     if (page()->chrome())
@@ -234,6 +235,11 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setMockScrollbarsEnabled(enabled);
+}
+
+void InternalSettings::setUsesOverlayScrollbars(bool flag)
+{
+    settings()->setUsesOverlayScrollbars(flag);
 }
 
 void InternalSettings::setPasswordEchoEnabled(bool enabled, ExceptionCode& ec)

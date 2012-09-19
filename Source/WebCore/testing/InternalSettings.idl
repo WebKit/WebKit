@@ -34,6 +34,7 @@ module window {
         void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
         void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
         void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
+        void setUsesOverlayScrollbars(in boolean flag);
         void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
         void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);

@@ -1,3 +1,13 @@
+2012-09-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Scrollbar with tickmarks doesn't respond to clicks
+        https://bugs.webkit.org/show_bug.cgi?id=96049
+
+        Reviewed by Beth Dakin.
+
+        * fast/scrolling/scrollbar-tickmarks-hittest-expected.txt: Added.
+        * fast/scrolling/scrollbar-tickmarks-hittest.html: Added.
+
 2012-09-18  Noel Gordon  <noel.gordon@gmail.com>
 
         Add partial load tests for PNG images

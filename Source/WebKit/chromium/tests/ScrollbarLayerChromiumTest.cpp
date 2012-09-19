@@ -61,6 +61,8 @@ public:
     virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const OVERRIDE { return WebScrollbar::ScrollbarOverlayStyleDefault; }
     virtual bool isCustomScrollbar() const OVERRIDE { return false; }
     virtual Orientation orientation() const OVERRIDE { return WebScrollbar::Horizontal; }
+    virtual bool isAlphaLocked() const OVERRIDE { return false; }
+    virtual void setIsAlphaLocked(bool) OVERRIDE { }
 };
 
 TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
