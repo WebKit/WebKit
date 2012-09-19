@@ -3365,7 +3365,6 @@ BUGWK94353 : compositing/overflow/textarea-scroll-touch.html = TEXT
 // Failing on Linux (Content Shell) only now
 BUGWK94353 LINUX ANDROID : compositing/overflow/nested-scrolling.html = IMAGE+TEXT PASS
 BUGWK94353 : compositing/overflow/overflow-auto-with-touch.html = TEXT
-BUGWK94353 : compositing/overflow/overflow-auto-with-touch-toggle.html = TEXT
 BUGWK94353 : compositing/overflow/overflow-overlay-with-touch.html = TEXT
 
 BUGWK90488 SLOW WIN : http/tests/inspector/network-preflight-options.html = PASS
