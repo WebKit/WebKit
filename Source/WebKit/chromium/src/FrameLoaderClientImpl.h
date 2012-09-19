@@ -61,6 +61,9 @@ public:
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
     virtual void documentElementAvailable();
 
+    // Script in the page tried to allocate too much memory.
+    virtual void didExhaustMemoryAvailableForScript();
+
 #if USE(V8)
     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId);
     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId);

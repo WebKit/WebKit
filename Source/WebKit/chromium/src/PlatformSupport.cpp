@@ -499,17 +499,6 @@ void PlatformSupport::paintThemePart(
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these
 // methods will be deleted.
 
-void PlatformSupport::notifyJSOutOfMemory(Frame* frame)
-{
-    if (!frame)
-        return;
-
-    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
-    if (!webFrame->client())
-        return;
-    webFrame->client()->didExhaustMemoryAvailableForScript(webFrame);
-}
-
 int PlatformSupport::screenHorizontalDPI(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);

@@ -35,7 +35,8 @@
 #include "DOMStringList.h"
 #include "Element.h"
 #include "Frame.h"
-#include "PlatformSupport.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "QualifiedName.h"
 #include "Settings.h"
 #include "V8DOMStringList.h"
@@ -332,7 +333,7 @@ bool handleOutOfMemory()
     frame->script()->windowShell()->destroyGlobal();
 
 #if PLATFORM(CHROMIUM)
-    PlatformSupport::notifyJSOutOfMemory(frame);
+    frame->loader()->client()->didExhaustMemoryAvailableForScript();
 #endif
 
     if (Settings* settings = frame->settings())

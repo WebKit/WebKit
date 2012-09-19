@@ -1,5 +1,22 @@
 2012-09-19  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Move notifyJSOutOfMemory out of PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97116
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+        
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didExhaustMemoryAvailableForScript):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
+2012-09-19  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove unused popupsAllowed function from PlatformSupport
         https://bugs.webkit.org/show_bug.cgi?id=96521
 
