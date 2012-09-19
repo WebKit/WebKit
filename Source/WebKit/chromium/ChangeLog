@@ -1,3 +1,32 @@
+2012-09-19  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] WebImage should use ImageDecoder directly
+        https://bugs.webkit.org/show_bug.cgi?id=96135
+
+        Reviewed by Adam Barth.
+
+        This patch is for preparation of deferred image decoding.
+        ImageSource will be used as a portal to access deferred image decoder
+        by BitmapImage, it should not be accessible through WebKit APIs.
+
+        WebImage now calls ImageDecoder directly which is the actual
+        implementation of an image decoder.
+
+        Tests: WebImageTest.PNGImage
+               WebImageTest.ICOImage
+               WebImageTest.BadImage
+
+        * WebKit.gypi:
+        * src/WebImageSkia.cpp:
+        (WebKit::WebImage::fromData):
+        (WebKit::WebImage::framesFromData):
+        * tests/WebImageTest.cpp: Added.
+        (WebKit):
+        (WebKit::readFile):
+        (WebKit::TEST):
+        * tests/data/black-and-white.ico: Added.
+        * tests/data/white-1x1.png: Added.
+
 2012-09-19  Oli Lan  <olilan@chromium.org>
 
         [chromium] Add a method didHandleGestureEvent to WebViewClient, called from WebViewImpl::handleGestureEvent.
