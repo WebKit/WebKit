@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (!window.Notification)
+    testFailed("window.Notification does not exist.");
+
+window.Notification.requestPermission(function() { });
+testPassed("Notification.requestPermission does not crash.");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

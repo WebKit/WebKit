@@ -44,9 +44,7 @@ v8::Handle<v8::Value> V8Notification::requestPermissionCallback(const v8::Argume
         return v8::Undefined();
     ASSERT(callback);
 
-    Notification* notification = V8Notification::toNative(args.Holder());
-    ScriptExecutionContext* context = notification->scriptExecutionContext();
-    Notification::requestPermission(context, callback.release());
+    Notification::requestPermission(getScriptExecutionContext(), callback.release());
     return v8::Undefined();
 }
 

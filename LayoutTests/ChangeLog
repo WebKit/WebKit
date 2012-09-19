@@ -1,3 +1,15 @@
+2012-09-18  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Notification.requestPermission(function() {alert();}) crashes
+        https://bugs.webkit.org/show_bug.cgi?id=94462
+
+        Reviewed by Adam Barth.
+
+        The added test checks if Notification.requestPermission() does not crash.
+
+        * http/tests/notifications/notification-request-permission-expected.txt: Added.
+        * http/tests/notifications/notification-request-permission.html: Added.
+
 2012-09-18  Dirk Pranke  <dpranke@chromium.org>
 
         Adjust expectation for fast/workers/storage/interrupt-database.html
