@@ -41,8 +41,8 @@ protected:
     virtual void TearDown();
 
     void loadUrlSync(const char* url);
-    void waitUntilLoadFinished();
-    void waitUntilTitleChangedTo(const char* expectedTitle);
+    bool waitUntilLoadFinished(double timeoutSeconds = -1);
+    bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = -1);
     void mouseClick(int x, int y);
 
 private:

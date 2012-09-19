@@ -29,15 +29,6 @@ extern EWK2UnitTest::EWK2UnitTestEnvironment* environment;
 
 namespace EWK2UnitTest {
 
-static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo)
-{
-    UNUSED_PARAM(webView);
-    UNUSED_PARAM(eventInfo);
-
-    bool* loadFinished = static_cast<bool*>(userData);
-    *loadFinished = true;
-}
-
 static Ewk_View_Smart_Class ewk2UnitTestBrowserViewSmartClass()
 {
     static Ewk_View_Smart_Class ewkViewClass = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Browser_View");
@@ -89,40 +80,135 @@ void EWK2UnitTestBase::loadUrlSync(const char* url)
     waitUntilLoadFinished();
 }
 
-void EWK2UnitTestBase::waitUntilLoadFinished()
+struct LoadFinishedData {
+    LoadFinishedData(double timeoutSeconds, Ecore_Task_Cb callback)
+        : loadFinished(false)
+        , timer(0)
+        , didTimeOut(false)
+    {
+        if (timeoutSeconds >= 0)
+            timer = ecore_timer_add(timeoutSeconds, callback, this);
+    }
+
+    ~LoadFinishedData()
+    {
+        if (timer)
+            ecore_timer_del(timer);
+    }
+
+    bool loadFinished;
+    Ecore_Timer* timer;
+    bool didTimeOut;
+};
+
+static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo)
 {
-    bool loadFinished = false;
+    UNUSED_PARAM(webView);
+    UNUSED_PARAM(eventInfo);
 
-    evas_object_smart_callback_add(m_webView, "load,finished", onLoadFinished, &loadFinished);
+    LoadFinishedData* data = static_cast<LoadFinishedData*>(userData);
+    data->loadFinished = true;
 
-    while (!loadFinished)
+    if (data->timer) {
+        ecore_timer_del(data->timer);
+        data->timer = 0;
+    }
+}
+
+static bool timeOutWhileWaitingUntilLoadFinished(void* userData)
+{
+    LoadFinishedData* data = static_cast<LoadFinishedData*>(userData);
+
+    data->timer = 0;
+
+    if (data->loadFinished)
+        return ECORE_CALLBACK_CANCEL;
+
+    data->loadFinished = true;
+    data->didTimeOut = true;
+
+    return ECORE_CALLBACK_CANCEL;
+}
+
+bool EWK2UnitTestBase::waitUntilLoadFinished(double timeoutSeconds)
+{
+    LoadFinishedData data(timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilLoadFinished));
+
+    evas_object_smart_callback_add(m_webView, "load,finished", onLoadFinished, &data);
+
+    while (!data.loadFinished)
         ecore_main_loop_iterate();
 
     evas_object_smart_callback_del(m_webView, "load,finished", onLoadFinished);
+
+    return !data.didTimeOut;
 }
 
 struct TitleChangedData {
+    TitleChangedData(const char* title, double timeoutSeconds, Ecore_Task_Cb callback)
+        : expectedTitle(title)
+        , done(false)
+        , timer(0)
+        , didTimeOut(false)
+    {
+        if (timeoutSeconds >= 0)
+            timer = ecore_timer_add(timeoutSeconds, callback, this);
+    }
+
+    ~TitleChangedData()
+    {
+        if (timer)
+            ecore_timer_del(timer);
+    }
+
     CString expectedTitle;
     bool done;
+    Ecore_Timer* timer;
+    bool didTimeOut;
 };
 
 static void onTitleChanged(void* userData, Evas_Object* webView, void* eventInfo)
 {
     TitleChangedData* data = static_cast<TitleChangedData*>(userData);
 
-    if (!strcmp(ewk_view_title_get(webView), data->expectedTitle.data()))
-        data->done = true;
+    if (strcmp(ewk_view_title_get(webView), data->expectedTitle.data()))
+        return;
+
+    if (data->timer) {
+        ecore_timer_del(data->timer);
+        data->timer = 0;
+    }
+
+    data->done = true;
 }
 
-void EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle)
+static bool timeOutWhileWaitingUntilTitleChangedTo(void* userData)
 {
-    TitleChangedData data = { expectedTitle, false };
+    TitleChangedData* data = static_cast<TitleChangedData*>(userData);
+
+    data->timer = 0;
+
+    if (data->done)
+        return ECORE_CALLBACK_CANCEL;
+
+    data->done = true;
+    data->didTimeOut = true;
+
+    return ECORE_CALLBACK_CANCEL;
+}
+
+bool EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds)
+{
+    TitleChangedData data(expectedTitle, timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilTitleChangedTo));
+
     evas_object_smart_callback_add(m_webView, "title,changed", onTitleChanged, &data);
 
     while (!data.done)
         ecore_main_loop_iterate();
 
     evas_object_smart_callback_del(m_webView, "title,changed", onTitleChanged);
+
+    return !data.didTimeOut;
 }
 
 void EWK2UnitTestBase::mouseClick(int x, int y)

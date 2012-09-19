@@ -1,3 +1,37 @@
+2012-09-19  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] waitUntilTitleChangedTo() and waitUntilLoadFinished() needs timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=96910
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently, the waitUntilTitleChangedTo() and waitUntilLoadFinished()
+        functions doesn't handle timeout by itself.
+        And if there are some failed cases that loading is not finished or
+        title is not changed to the expected string, test case just stopped
+        with timeout and there is no more information about this such as line
+        number.
+
+        To handle timeout status more properly, timeout parameter is added to
+        these functions.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::LoadFinishedData::LoadFinishedData):
+        (LoadFinishedData):
+        (EWK2UnitTest::LoadFinishedData::~LoadFinishedData):
+        (EWK2UnitTest):
+        (EWK2UnitTest::onLoadFinished):
+        (EWK2UnitTest::timeOutWhileWaitingUntilLoadFinished):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilLoadFinished):
+        (EWK2UnitTest::TitleChangedData::TitleChangedData):
+        (TitleChangedData):
+        (EWK2UnitTest::TitleChangedData::~TitleChangedData):
+        (EWK2UnitTest::onTitleChanged):
+        (EWK2UnitTest::timeOutWhileWaitingUntilTitleChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTitleChangedTo):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+
 2012-09-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Add javascript popup API.
