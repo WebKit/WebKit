@@ -248,11 +248,6 @@ BUGWK42194 : svg/custom/polyline-hittest.svg = TEXT
 // Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// accessibility tests failing in WK1 but crashing in WK2
-BUGWKGTK : accessibility/aria-hidden-with-elements.html = CRASH
-BUGWKGTK : accessibility/inline-continuations.html = CRASH
-BUGWKGTK : accessibility/loading-iframe-sends-notification.html = CRASH
-
 BUGWKGTK : plugins/document-open.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -272,6 +267,8 @@ BUGWK58337 : fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html = TEXT
 BUGWK72698 : media/audio-garbage-collect.html = TEXT PASS
 
 // Tests showing flakiness in the bot
+BUGWKGTK : editing/pasteboard/smart-paste-004.html = TEXT PASS
+BUGWKGTK : editing/selection/5057506.html = TEXT PASS
 BUGWKGTK : editing/selection/click-in-margins-inside-editable-div.html = TEXT PASS
 BUGWKGTK : fast/events/dispatch-message-string-data.html = TEXT PASS
 BUGWKGTK : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TEXT PASS
@@ -305,11 +302,30 @@ BUGWKGTK : fast/mutation/database-callback-delivery.html = TEXT PASS
 BUGWKGTK : fast/writing-mode/japanese-ruby-horizontal-bt.html = TEXT PASS
 BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-lr.html = TEXT PASS
 BUGWKGTK : fast/writing-mode/japanese-ruby-vertical-rl.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/change-version-handle-reuse-worker.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/change-version-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/empty-statement-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/execute-sql-args-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/execute-sql-args-worker.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/multiple-transactions.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/multiple-transactions-on-different-handles.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/multiple-transactions-on-different-handles-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/open-database-empty-version-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/open-database-set-empty-version-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/open-database-while-transaction-in-progress.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/open-database-while-transaction-in-progress-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/read-and-write-transactions-dont-run-together.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/sql-data-types-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/test-authorizer.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/test-authorizer-sync.html = TEXT PASS
+BUGWKGTK : fast/workers/storage/transaction-in-transaction-sync.html = TEXT PASS
+BUGWKGTK : http/tests/security/cross-origin-plugin-allowed.html = TEXT PASS
 BUGWKGTK : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = TEXT PASS
 BUGWKGTK : media/video-transformed.html = TEXT PASS
 BUGWKGTK : media/W3C/audio/networkState/networkState_during_loadstart.html = TEXT PASS
 BUGWKGTK : svg/custom/gradient-attr-update.svg = TEXT PASS
 BUGWKGTK : svg/custom/pointer-events-on-svg-with-pointer.xhtml = TEXT PASS
+BUGWKGTK : svg/custom/pointer-events-on-svg-without-pointer.xhtml = TEXT PASS
 BUGWKGTK : svg/stroke/non-scaling-stroke-pattern.svg = IMAGE PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -425,6 +441,7 @@ BUGWKGTK : accessibility/div-within-anchors-causes-crash.html = TEXT
 BUGWKGTK : accessibility/ignore-spacer-elements.html = TEXT
 BUGWKGTK : accessibility/img-fallsback-to-title.html = TEXT
 BUGWKGTK : accessibility/inline-continuations.html = TEXT
+BUGWKGTK : accessibility/legend.html = TEXT
 BUGWKGTK : accessibility/loading-iframe-sends-notification.html = TEXT
 BUGWKGTK : accessibility/media-element.html = TEXT
 BUGWKGTK : editing/deleting/delete-ligature-003.html = TEXT
@@ -460,7 +477,7 @@ BUGWKGTK : fast/forms/listbox-typeahead-greek.html = TEXT
 BUGWKGTK : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
 BUGWKGTK : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
 BUGWKGTK : fast/forms/select-type-ahead-non-latin.html = TEXT
-BUGWKGTK : fast/invalid/residual-style.html = TEXT
+BUGWKGTK : fast/loader/submit-form-while-parsing-2.html = TEXT
 BUGWKGTK : fast/media/mq-transform-02.html = TEXT
 BUGWKGTK : fast/media/mq-transform-03.html = TEXT
 BUGWKGTK : fast/regions/css-regions-disabled.html = TEXT
@@ -522,6 +539,7 @@ BUGWKGTK : svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg = TEXT
 BUGWKGTK : svg/text/select-textLength-spacing-squeeze-3.svg = TEXT
 BUGWKGTK : svg/text/select-textLength-spacing-stretch-1.svg = TEXT
 BUGWKGTK : svg/text/select-x-list-1.svg = TEXT
+BUGWKGTK : svg/text/select-x-list-with-tspans-1.svg = TEXT
 BUGWKGTK : touchadjustment/iframe.html = TEXT
 BUGWKGTK : transitions/extra-transition.html = TEXT
 BUGWKGTK : transitions/interrupted-accelerated-transition.html = TEXT
@@ -540,6 +558,7 @@ BUGWKGTK : editing/selection/select-bidi-run.html = PASS
 BUGWKGTK : fast/animation/request-animation-frame-during-modal.html = PASS
 BUGWKGTK : fast/css/user-drag-none.html = PASS
 BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS
+BUGWK77015 : fast/events/clear-drag-state.html = PASS
 BUGWKGTK : fast/events/clear-edit-drag-state.html = PASS
 BUGWKGTK : fast/events/dont-loose-last-event.html = PASS
 BUGWKGTK : fast/events/drag-selects-image.html = PASS
