@@ -43,46 +43,6 @@ RenderIFrame::RenderIFrame(Element* element)
 {
 }
 
-void RenderIFrame::updateLogicalHeight()
-{
-    RenderPart::updateLogicalHeight();
-    if (!flattenFrame())
-         return;
-
-    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
-    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
-
-    if (isScrollable || !style()->height().isFixed()) {
-        FrameView* view = static_cast<FrameView*>(widget());
-        if (!view)
-            return;
-        int border = borderTop() + borderBottom();
-        setHeight(max<LayoutUnit>(height(), view->contentsHeight() + border));
-    }
-}
-
-void RenderIFrame::updateLogicalWidth()
-{
-    // When we're seamless, we behave like a block. Thankfully RenderBox has all the right logic for this.
-    if (isSeamless())
-        return RenderBox::updateLogicalWidth();
-
-    RenderPart::updateLogicalWidth();
-    if (!flattenFrame())
-        return;
-
-    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
-    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
-
-    if (isScrollable || !style()->width().isFixed()) {
-        FrameView* view = static_cast<FrameView*>(widget());
-        if (!view)
-            return;
-        LayoutUnit border = borderLeft() + borderRight();
-        setWidth(max<LayoutUnit>(width(), view->contentsWidth() + border));
-    }
-}
-
 bool RenderIFrame::shouldComputeSizeAsReplaced() const
 {
     // When we're seamless, we use normal block/box sizing code except when inline.
@@ -189,19 +149,16 @@ void RenderIFrame::layout()
 {
     ASSERT(needsLayout());
 
-    if (flattenFrame()) {
-        RenderPart::updateLogicalWidth();
-        RenderPart::updateLogicalHeight();
-        layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
-        // FIXME: Is early return really OK here? What about transform/overflow code below?
-        return;
-    } else if (isSeamless()) {
+    if (isSeamless()) {
         layoutSeamlessly();
         // Do not return so as to share the layer and overflow updates below.
     } else {
         updateLogicalWidth();
         // No kids to layout as a replaced element.
         updateLogicalHeight();
+
+        if (flattenFrame())
+            layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
     }
 
     m_overflow.clear();
