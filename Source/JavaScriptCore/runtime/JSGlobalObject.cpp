@@ -482,6 +482,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_nameScopeStructure);
     visitor.append(&thisObject->m_argumentsStructure);
     visitor.append(&thisObject->m_arrayStructure);
+    visitor.append(&thisObject->m_arrayStructureForSlowPut);
     visitor.append(&thisObject->m_booleanObjectStructure);
     visitor.append(&thisObject->m_callbackConstructorStructure);
     visitor.append(&thisObject->m_callbackFunctionStructure);
