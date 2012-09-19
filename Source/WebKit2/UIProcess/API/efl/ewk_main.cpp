@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ewk_main.h"
 
+#include "ewk_private.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -53,24 +54,24 @@ int ewk_init(void)
     }
 
     if (!evas_init()) {
-        EINA_LOG_DOM_CRIT(_ewk_log_dom, "could not init evas.");
+        CRITICAL("could not init evas.");
         goto error_evas;
     }
 
     if (!ecore_init()) {
-        EINA_LOG_DOM_CRIT(_ewk_log_dom, "could not init ecore.");
+        CRITICAL("could not init ecore.");
         goto error_ecore;
     }
 
     if (!ecore_evas_init()) {
-        EINA_LOG_DOM_CRIT(_ewk_log_dom, "could not init ecore_evas.");
+        CRITICAL("could not init ecore_evas.");
         goto error_ecore_evas;
     }
 
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate()) {
-        EINA_LOG_DOM_WARN(_ewk_log_dom, "Ecore was not compiled with GLib support, some plugins will not "
+        WRN("Ecore was not compiled with GLib support, some plugins will not "
             "work (ie: Adobe Flash)");
     }
 

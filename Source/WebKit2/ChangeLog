@@ -1,3 +1,19 @@
+2012-09-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add log macros for EINA_LOG_DOM_XXX series
+        https://bugs.webkit.org/show_bug.cgi?id=97061
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL Webkit2 is using the EINA_LOG_DOM_XXX series in several places to log a message on the specified domain and format.
+        This patch adds log macros to simplify these logging codes.
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+        * UIProcess/API/efl/ewk_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_webprocess_crashed):
+
 2012-09-17  Martin Robinson  <mrobinson@igalia.com>
 
         [WebKit2] [GTK] Add API for controlling the user agent

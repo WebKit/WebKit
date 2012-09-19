@@ -1643,7 +1643,7 @@ void ewk_view_webprocess_crashed(Evas_Object* ewkView)
 
     if (!handled) {
         CString url = priv->pageProxy->urlAtProcessExit().utf8();
-        EINA_LOG_DOM_WARN(_ewk_log_dom, "WARNING: The web process experienced a crash on '%s'.\n", url.data());
+        WRN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
 
         // Display an error page
         ewk_view_html_string_load(ewkView, "The web process has crashed.", 0, url.data());
