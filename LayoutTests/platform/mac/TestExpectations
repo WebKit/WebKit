@@ -1,347 +1,348 @@
-// These are the layout test expectations for Apple's Mac port of WebKit.
-//
-// See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+# These are the layout test expectations for Apple's Mac port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-BUGWK76478 : compositing/iframes/repaint-after-losing-scrollbars.html = IMAGE
-BUGWK76489 : compositing/webgl/webgl-reflection.html = IMAGE
+webkit.org/b/76478 compositing/iframes/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
+webkit.org/b/76489 compositing/webgl/webgl-reflection.html [ ImageOnlyFailure ]
 
-// Needs ENABLE_SHADOW_DOM
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = FAIL
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = FAIL
+# Needs ENABLE_SHADOW_DOM
+webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
+webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-outside-shadow.html [ Failure ]
 
-// CSS Variables are not yet enabled.
-BUGWK85580 SKIP : fast/css/variables = PASS
-BUGWK85580 SKIP : inspector/styles/variables = PASS
+# CSS Variables are not yet enabled.
+webkit.org/b/85580 fast/css/variables
+webkit.org/b/85580 inspector/styles/variables
 
-// UndoManager is not yet enabled.
-BUGWK87908 SKIP : editing/undomanager = PASS
+# UndoManager is not yet enabled.
+webkit.org/b/87908 editing/undomanager
 
-// CSS image-resolution is not yet enabled.
-BUGWK85262 SKIP : fast/css/image-resolution = PASS
+# CSS image-resolution is not yet enabled.
+webkit.org/b/85262 fast/css/image-resolution
 
-// CSS image-orientation is not yet enabled.
-BUGWK89052 SKIP : fast/css/image-orientation = PASS
+# CSS image-orientation is not yet enabled.
+webkit.org/b/89052 fast/css/image-orientation
 
-// CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
-BUGWK58491 SKIP : fast/css3-text-decoration = PASS
+# CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
+webkit.org/b/58491 fast/css3-text-decoration
 
-// Our slow tests, in alphabetical order.
-BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = FAIL PASS
+# Our slow tests, in alphabetical order.
+webkit.org/b/57672 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass ]
 
-BUGWK57799 : storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html = FAIL PASS
-BUGWK57799 : storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html = FAIL PASS
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Failure Pass ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Failure Pass ]
 
-// Flaky tests that appear to be fail depending on which earlier tests
-// run in the same process
-BUGWK57688 : fast/text/international/bidi-AN-after-empty-run.html = PASS FAIL
-BUGWK57688 : fast/text/international/bidi-CS-after-AN.html = PASS FAIL
-BUGWK57688 : fast/text/international/thai-line-breaks.html = PASS FAIL
+# Flaky tests that appear to be fail depending on which earlier tests
+# run in the same process
+webkit.org/b/57688 fast/text/international/bidi-AN-after-empty-run.html [ Failure Pass ]
+webkit.org/b/57688 fast/text/international/bidi-CS-after-AN.html [ Failure Pass ]
+webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass ]
 
-// Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
-BUGWK58192 : plugins/npp-set-window-called-during-destruction.html = FAIL PASS
+# Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
+webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 
-// Flaky tests when run multi-process
-BUGWK58192 : fast/dom/frame-loading-via-document-write.html = FAIL PASS
-BUGWK58192 : http/tests/appcache/fail-on-update-2.html = FAIL PASS
-BUGWK58192 : http/tests/appcache/fail-on-update.html = FAIL PASS
-BUGWK58192 : http/tests/inspector/console-websocket-error.html = FAIL PASS
-BUGWK58192 : fast/canvas/webgl/gl-teximage.html = FAIL PASS
-BUGWK58192 : fast/frames/flattening/iframe-flattening-offscreen.html = FAIL PASS
-BUGWK58192 : svg/dom/SVGScriptElement/script-set-href.svg = FAIL PASS
+# Flaky tests when run multi-process
+webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
+webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
+webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
+webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure Pass ]
+webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
+webkit.org/b/58192 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
+webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
-// Flakey cookies tests
-BUGWK73694 : http/tests/cookies/simple-cookies-expired.html = FAIL PASS
-BUGWK73695 : http/tests/cookies/simple-cookies-max-age.html = FAIL PASS
+# Flakey cookies tests
+webkit.org/b/73694 http/tests/cookies/simple-cookies-expired.html [ Failure Pass ]
+webkit.org/b/73695 http/tests/cookies/simple-cookies-max-age.html [ Failure Pass ]
 
-BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed.html = FAIL PASS
+webkit.org/b/69999 [ Release ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Failure Pass ]
 
-BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
+webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-// Need rebaselining after 71244. Also needs rebaseline after 86441.
-BUGWK74432 : fast/borders/border-antialiasing.html = IMAGE
+# Need rebaselining after 71244. Also needs rebaseline after 86441.
+webkit.org/b/74432 fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
 
 
 
-// Rebaseline after bug 71705. All differences are due to the fact that table captions now
-// expand to the full width of the table.
-BUGWK74888 : tables/mozilla/bugs/bug1163-1.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug119786.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug1302.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug222846.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug29058-3.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug48028-1.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug48028-2.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug5838.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug6304.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug8381.html = FAIL
-BUGWK74888 : tables/mozilla/core/captions.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_layers-opacity.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_position-table.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table-cell.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table-column-group.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table-column.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table-row-group.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table-row.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/backgr_simple-table.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/table_frame_border.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/table_frame_box.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/table_rules_all.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/table_rules_none.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/tables_caption_align_bot.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/tables_caption_align_top.html = FAIL
-BUGWK74888 : tables/mozilla/marvin/x_caption_align_bottom.xml = FAIL
-BUGWK74888 : tables/mozilla/marvin/x_caption_align_top.xml = FAIL
-BUGWK74888 : tables/mozilla/marvin/x_caption_class.xml = FAIL
-BUGWK74888 : tables/mozilla/marvin/x_caption_id.xml = FAIL
-BUGWK74888 : tables/mozilla/marvin/x_caption_style.xml = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug10140.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug10216.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug104898.html = FAIL
-BUGWK74888 BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug14007-2.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug29058-2.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-11.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-12.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-13.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-14.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-16.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-17.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-3.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-4.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-5.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-6.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-9.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug91057.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/core/captions1.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/core/captions2.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/core/captions3.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-column.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table-row.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_border-table.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_layers-hide.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_position-table-column.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_frame_vsides.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_left.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_right.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_caption_top.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_rules_cols.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_rules_rows.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/tables_caption_align_left.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/tables_caption_align_right.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/x_caption_align_left.xml = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/x_caption_align_right.xml = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/other/test4.html = FAIL
-BUGWK74888 : tables/mozilla/bugs/bug29157.html = FAIL
-BUGWK74888 : tables/mozilla/other/wa_table_thtd_rowspan.html = FAIL
-BUGWK74888 : tables/mozilla/other/wa_table_tr_align.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/backgr_layers-show.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_frame_lhs.html = FAIL
-BUGWK74888 : tables/mozilla_expected_failures/marvin/table_frame_rhs.html = FAIL
-BUGWK74888 : fast/css/bidi-override-in-anonymous-block.html = FAIL
-BUGWK74888 : fast/dom/HTMLTableElement/colSpan.html = FAIL
-BUGWK74888 : fast/dom/HTMLTableElement/createCaption.html = FAIL
-BUGWK74888 : fast/repaint/table-section-repaint.html = FAIL
-BUGWK74888 : fast/table/frame-and-rules.html = FAIL
+# Rebaseline after bug 71705. All differences are due to the fact that table captions now
+# expand to the full width of the table.
+webkit.org/b/74888 tables/mozilla/bugs/bug1163-1.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug119786.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug1302.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug222846.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug29058-3.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug48028-1.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug48028-2.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug5838.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug6304.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug8381.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/core/captions.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_layers-opacity.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_position-table.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-cell.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-column-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-column.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-row-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-row.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/table_frame_border.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/table_frame_box.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/table_rules_all.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/table_rules_none.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/tables_caption_align_bot.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/tables_caption_align_top.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/x_caption_align_bottom.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/x_caption_align_top.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/x_caption_class.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/x_caption_id.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla/marvin/x_caption_style.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug10140.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug10216.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug104898.html [ Failure ]
+webkit.org/b/74888 webkit.org/b/93148 tables/mozilla_expected_failures/bugs/bug106966.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug14007-2.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug29058-2.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-11.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-12.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-13.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-14.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-16.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-17.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-3.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-4.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-5.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-6.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-9.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug91057.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/core/captions1.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/core/captions2.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/core/captions3.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-column.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-row.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_layers-hide.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-column.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_vsides.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_left.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_right.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_top.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_rules_cols.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_rules_rows.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/tables_caption_align_left.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/tables_caption_align_right.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/x_caption_align_left.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/x_caption_align_right.xml [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/other/test4.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/bugs/bug29157.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/other/wa_table_thtd_rowspan.html [ Failure ]
+webkit.org/b/74888 tables/mozilla/other/wa_table_tr_align.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_layers-show.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_lhs.html [ Failure ]
+webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_rhs.html [ Failure ]
+webkit.org/b/74888 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
+webkit.org/b/74888 fast/dom/HTMLTableElement/colSpan.html [ Failure ]
+webkit.org/b/74888 fast/dom/HTMLTableElement/createCaption.html [ Failure ]
+webkit.org/b/74888 fast/repaint/table-section-repaint.html [ Failure ]
+webkit.org/b/74888 fast/table/frame-and-rules.html [ Failure ]
 
-// Rebaseline required after bug 74874
-BUGWK74874 : fast/table/027.html = FAIL
-BUGWK74874 : fast/table/027-vertical.html = FAIL
+# Rebaseline required after bug 74874
+webkit.org/b/74874 fast/table/027.html [ Failure ]
+webkit.org/b/74874 fast/table/027-vertical.html [ Failure ]
 
-// Need rebaselining. Only FAIL is suppressed because that is all the buildbots check, however
-// images need to be rebaselined too.
-BUGWK69210 SKIP : fast/encoding/utf-16-big-endian.html = FAIL
-BUGWK69210 : fast/encoding/utf-16-little-endian.html = FAIL
-BUGWK69210 : fast/inline/continuation-outlines-with-layers-2.html = FAIL
-// https://bugs.webkit.org/show_bug.cgi?id=81276
-// Allowed to regress to fix a crash.
-BUGWK69210 SKIP : fast/inline/continuation-outlines-with-layers.html = FAIL
-BUGWK69210 : fast/repaint/transform-absolute-in-positioned-container.html = FAIL
+# Need rebaselining. Only FAIL is suppressed because that is all the buildbots check, however
+# images need to be rebaselined too.
+webkit.org/b/69210 fast/encoding/utf-16-big-endian.html [ Failure Skip ]
+webkit.org/b/69210 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/69210 fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
+# https://bugs.webkit.org/show_bug.cgi?id=81276
+# Allowed to regress to fix a crash.
+webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Failure Skip ]
+webkit.org/b/69210 fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
 
-// Tiled-layer compositing tests are flakey.
-BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS FAIL
+# Tiled-layer compositing tests are flakey.
+webkit.org/b/82546 compositing/tiling/crash-reparent-tiled-layer.html [ Failure Pass ]
 
-// Requires rebaseline after bug 83978
-BUGWK83978 SKIP : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = FAIL
+# Requires rebaseline after bug 83978
+webkit.org/b/83978 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html [ Failure Skip ]
 
-BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
-BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
-BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
-BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
-BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
-BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
-BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
-BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
-BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
-BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
-BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
-BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
-BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
-BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
-BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
+webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
+webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
+webkit.org/b/84761 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
+webkit.org/b/84764 ietestcenter/css3/multicolumn/column-width-applies-to-001.htm [ ImageOnlyFailure ]
+webkit.org/b/84767 ietestcenter/css3/multicolumn/column-width-applies-to-002.htm [ ImageOnlyFailure ]
+webkit.org/b/84768 ietestcenter/css3/multicolumn/column-width-applies-to-003.htm [ ImageOnlyFailure ]
+webkit.org/b/84769 ietestcenter/css3/multicolumn/column-width-applies-to-004.htm [ ImageOnlyFailure ]
+webkit.org/b/84770 ietestcenter/css3/multicolumn/column-width-applies-to-007.htm [ ImageOnlyFailure ]
+webkit.org/b/84771 ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure ]
+webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
+webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
+webkit.org/b/84775 ietestcenter/css3/multicolumn/column-width-applies-to-013.htm [ ImageOnlyFailure ]
+webkit.org/b/84776 ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure ]
+webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
+webkit.org/b/84778 ietestcenter/css3/multicolumn/column-width-negative-001.htm [ ImageOnlyFailure ]
 
-BUGWK60731 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
-BUGWK60731 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
-BUGWK60731 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
-BUGWK60731 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
-BUGWK60731 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
+webkit.org/b/60731 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
+webkit.org/b/60731 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
+webkit.org/b/60731 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
+webkit.org/b/60731 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
+webkit.org/b/60731 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
 
-BUGWK85404 : fast/loader/javascript-url-in-embed.html = FAIL PASS
+webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
-BUGWK85408 : svg/batik/text/longTextOnPath.svg = FAIL PASS
+webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 
-// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
-BUGWK89116 : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html = PASS IMAGE
-BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html = PASS IMAGE
-BUGWK89116 : svg/filters/feLighting-crash.svg = PASS IMAGE
+# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
+webkit.org/b/89116 svg/W3C-SVG-1.1/filters-specular-01-f.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html [ ImageOnlyFailure Pass ]
+webkit.org/b/89116 svg/filters/feLighting-crash.svg [ ImageOnlyFailure Pass ]
 
-// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
-BUGWK79682 : svg/repaint/text-mask-update.svg = MISSING FAIL IMAGE PASS
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
+webkit.org/b/79682 svg/repaint/text-mask-update.svg [ Failure ImageOnlyFailure MISSING Pass ]
 
-// IETC flexbox failures
-BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
-BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
+# IETC flexbox failures
+webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
+webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-// Requires rebaseline after bug 85031
-BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
+# Requires rebaseline after bug 85031
+webkit.org/b/85565 fast/css/border-solid-single-edge-antialias.html [ ImageOnlyFailure ]
 
-// Interferes with the tests that should pass
-BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = FAIL
+# Interferes with the tests that should pass
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
 
-// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
-BUGWK6033 : svg/filters/color-interpolation-filters.svg = PASS MISSING
+# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
+webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ MISSING Pass ]
 
-// Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
-BUGWK85308 SKIP : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
-BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+# Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
+webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure Skip ]
+webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFailure ]
 
-// IETC namespace failures
-BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
-BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
-BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
+# IETC namespace failures
+webkit.org/b/86137 ietestcenter/css3/namespaces/prefix-007.xml [ ImageOnlyFailure ]
+webkit.org/b/86139 ietestcenter/css3/namespaces/prefix-010.xml [ ImageOnlyFailure ]
+webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
-// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
-BUGWK84167 : editing/pasteboard/innerText-inline-table.html = FAIL
-BUGWK84167 : editing/selection/iframe.html = FAIL
-BUGWK84167 : editing/selection/inline-table.html = FAIL
-BUGWK84167 : editing/selection/table-caret-3.html = FAIL
-BUGWK84167 : fast/css-generated-content/inline-display-types.html = FAIL
-BUGWK84167 : fast/inline-block/001.html = FAIL
-BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = FAIL
+# Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
+webkit.org/b/84167 editing/pasteboard/innerText-inline-table.html [ Failure ]
+webkit.org/b/84167 editing/selection/iframe.html [ Failure ]
+webkit.org/b/84167 editing/selection/inline-table.html [ Failure ]
+webkit.org/b/84167 editing/selection/table-caret-3.html [ Failure ]
+webkit.org/b/84167 fast/css-generated-content/inline-display-types.html [ Failure ]
+webkit.org/b/84167 fast/inline-block/001.html [ Failure ]
+webkit.org/b/84167 tables/mozilla/bugs/bug2479-2.html [ Failure ]
 
-// Needs rebaseline after bug 86441
-BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
+# Needs rebaseline after bug 86441
+webkit.org/b/86441 fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
 
-// Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
-BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = FAIL
+# Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
+webkit.org/b/85405 tables/mozilla/bugs/bug10296-1.html [ Failure ]
 
-// Safari needs to be fixed after bug 84195 updated the layout tests
-BUGWK85918 : compositing/backface-visibility/backface-visibility-3d.html = IMAGE
-BUGWK85918 : compositing/backface-visibility/backface-visibility-hierarchical-transform.html = IMAGE
-BUGWK85918 : compositing/backface-visibility/backface-visibility-non3d.html = IMAGE
+# Safari needs to be fixed after bug 84195 updated the layout tests
+webkit.org/b/85918 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
+webkit.org/b/85918 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
+webkit.org/b/85918 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
 
-// Disable webaudio codec tests, including proprietary codecs.
-BUGWK88794 SKIP : webaudio/codec-tests = PASS
+# Disable webaudio codec tests, including proprietary codecs.
+webkit.org/b/88794 webaudio/codec-tests
 
-BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = FAIL
+webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
-// Require rebaseline after bug 88171
-BUGWK88171 : fast/block/float/independent-align-positioning.html = FAIL
-BUGWK88171 : fast/block/float/010.html = FAIL
-BUGWK88171 : css1/formatting_model/floating_elements.html = FAIL
+# Require rebaseline after bug 88171
+webkit.org/b/88171 fast/block/float/independent-align-positioning.html [ Failure ]
+webkit.org/b/88171 fast/block/float/010.html [ Failure ]
+webkit.org/b/88171 css1/formatting_model/floating_elements.html [ Failure ]
 
-// Text Autosizing is not enabled.
-BUGWK84186 SKIP : fast/text-autosizing = PASS
+# Text Autosizing is not enabled.
+webkit.org/b/84186 fast/text-autosizing
 
-// Dialog element is not yet enabled.
-BUGWK84635 SKIP : fast/dom/HTMLDialogElement = FAIL
+# Dialog element is not yet enabled.
+webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
 
-// INPUT_TYPE_DATE is not enabled on the Mac
-BUGWK90987 : fast/forms/input-in-table-cell-no-value.html = IMAGE
+# INPUT_TYPE_DATE is not enabled on the Mac
+webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 
-// Skip tests in fast/text/shaping
-BUGWK90951 SKIP : fast/text/shaping = PASS
+# Skip tests in fast/text/shaping
+webkit.org/b/90951 fast/text/shaping
 
-// [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
-BUGWK91552 : fast/text/descent-clip-in-scaled-page.html = IMAGE
+# [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
+webkit.org/b/91552 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
 
-// Needs rebaseline after https://bugs.webkit.org/show_bug.cig?id=91969
-BUGWK91969 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = FAIL
-BUGWK91969 : fast/dom/HTMLProgressElement/progress-writing-mode.html = FAIL
-BUGWK91969 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cig?id=91969
+webkit.org/b/91969 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html [ Failure ]
+webkit.org/b/91969 fast/dom/HTMLProgressElement/progress-writing-mode.html [ Failure ]
+webkit.org/b/91969 fast/dom/HTMLProgressElement/indeterminate-progress-001.html [ Failure ]
 
-// Needs new image to be checked in for all platforms.
-BUGWK93859 : compositing/video/video-controls-layer-creation.html = PASS MISSING
+# Needs new image to be checked in for all platforms.
+webkit.org/b/93859 compositing/video/video-controls-layer-creation.html [ MISSING Pass ]
 
-// Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = FAIL
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html = FAIL
-BUGWK93148 : fast/css/nested-layers-with-hover.html = FAIL
+# Require rebaseline after bug 93148
+webkit.org/b/93148 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html [ Failure ]
+webkit.org/b/93148 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html [ Failure ]
+webkit.org/b/93148 fast/css/nested-layers-with-hover.html [ Failure ]
 
-BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
-// (r124484) inspector/device-orientation-success.html failing on Mac ports
-BUGWK93552 : inspector/device-orientation-success.html = FAIL
+# (r124484) inspector/device-orientation-success.html failing on Mac ports
+webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
-// (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
-BUGWK93636 : http/tests/images/jpg-img-partial-load.html = FAIL
+# (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
+webkit.org/b/93636 http/tests/images/jpg-img-partial-load.html [ Failure ]
 
-// (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
-BUGWK94374 : inspector/timeline/timeline-decode-resize.html = FAIL
+# (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
+webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
-// Flakey WebGL tests
-BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS FAIL
-BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html = PASS FAIL
-BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html = PASS FAIL
-BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html = PASS FAIL
-BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = PASS FAIL
+# Flakey WebGL tests
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Failure Pass ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Failure Pass ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Failure Pass ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Failure Pass ]
+webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Failure Pass ]
 
-//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
-BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = FAIL
-BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = FAIL
-BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = FAIL
+#Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
+webkit.org/b/77754 fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html [ Failure ]
+webkit.org/b/77754 fast/inline/absolute-positioned-inline-in-centred-block.html [ Failure ]
+webkit.org/b/77754 fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failure ]
 
-BUGWK92464 DEBUG : fast/events/tabindex-focus-blur-all.html = CRASH PASS
+webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
 
-//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
-BUGWK80394 : fast/block/float/024.html = FAIL
-BUGWK80394 : fast/block/margin-collapse/empty-clear-blocks.html = FAIL
-BUGWK80394 : fast/block/margin-collapse/025.html = FAIL
-BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = FAIL
+#Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
+webkit.org/b/80394 fast/block/float/024.html [ Failure ]
+webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]
+webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
+webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
 
-// Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
-BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
+# Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
+webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
-BUGWK95501 SKIP : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
+webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip Timeout ]
+
 
