@@ -27,40 +27,11 @@ namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    if (!strcmp(name, "searchCancel") || !strcmp(name, "searchCancelPressed")) {
-        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(IntSize(16, 16));
-        if (!imageBuffer)
-            return 0;
-
-        // Draw a more subtle, gray x-shaped icon.
-        GraphicsContext* context = imageBuffer->context();
-        context->save();
-
-        context->fillRect(FloatRect(0, 0, 16, 16), Color::white, ColorSpaceDeviceRGB);
-
-        if (!strcmp(name, "searchCancel"))
-            context->setFillColor(Color(128, 128, 128), ColorSpaceDeviceRGB);
-        else
-            context->setFillColor(Color(64, 64, 64), ColorSpaceDeviceRGB);
-
-        context->translate(8, 8);
-
-        context->rotate(piDouble / 4.0);
-        context->fillRect(FloatRect(-1, -7, 2, 14));
-
-        context->rotate(-piDouble / 2.0);
-        context->fillRect(FloatRect(-1, -7, 2, 14));
-
-        context->restore();
-        return imageBuffer->copyImage();
-    }
-
     // RESOURCE_PATH is set by CMake in OptionsBlackBerry.cmake
     String fullPath(RESOURCE_PATH);
     String extension(".png");
 
-    fullPath += name;
-    fullPath += extension;
+    fullPath = fullPath + name + extension;
 
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(fullPath);
     if (!buffer)
