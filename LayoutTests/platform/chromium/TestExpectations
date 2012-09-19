@@ -2044,7 +2044,7 @@ BUGCR143476 : fast/js/date-parse-test.html = TEXT
 BUGCR65877 ANDROID : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
-BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 ANDROID : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
@@ -2605,8 +2605,8 @@ BUGWK72039 DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/formaction-attribute.html = MISSING PASS
 BUGWK78620 LINUX ANDROID DEBUG SLOW : fast/forms/formaction-attribute.html = PASS TEXT
 
-BUGWK70988 SNOWLEOPARD DEBUG : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
-BUGWK70988 SNOWLEOPARD DEBUG : fast/overflow/003.xml = PASS TEXT
+BUGWK70988 MAC WIN DEBUG : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
+BUGWK70988 MAC DEBUG : fast/overflow/003.xml = PASS TEXT
 
 BUGWK70988 MAC : jquery/traversing.html = PASS TIMEOUT
 
@@ -2769,7 +2769,7 @@ BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRA
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
 
-BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
+BUGWK81638 MAC DEBUG : editing/selection/iframe.html = IMAGE PASS
 
 BUGWK81276 WIN LINUX ANDROID : fast/inline/continuation-outlines-with-layers.html = IMAGE
 
@@ -2794,7 +2794,7 @@ BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = PASS IMAGE
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = PASS IMAGE
 
-BUGWK81931 SNOWLEOPARD WIN DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
+BUGWK81931 MAC WIN DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
 
 // The majority of these are only failing on the debug bots
@@ -3006,10 +3006,9 @@ BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = 
 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
-// This test has its own idea of "timeout", which is to crash.
 BUGWK84802 LINUX WIN DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
 BUGWK93631 ANDROID SLOW : fast/js/random-array-gc-stress.html = PASS
-BUGWK84802 MAC DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS CRASH
+BUGWK84802 MAC DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS TIMEOUT
 
 BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
@@ -3320,7 +3319,6 @@ BUGWK89826 MAC WIN : fast/css/word-space-extra.html = IMAGE+TEXT
 BUGWK94002 WIN7 : inspector/debugger = PASS TIMEOUT
 
 // Added by bug 89826
-BUGWK94008 WIN : fast/css/word-spacing-characters.html = IMAGE
 BUGWK94003 WIN : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
 BUGWK94010 DEBUG : fast/regex/unicodeCaseInsensitive.html = PASS CRASH
@@ -3472,8 +3470,7 @@ BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT P
 
 BUGWK95588 MAC : fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html = IMAGE
 
-BUGWK95070 LINUX DEBUG : inspector/styles/media-queries.html = TEXT
-BUGWK95070 WIN LINUX RELEASE : inspector/styles/media-queries.html = PASS TEXT
+BUGWK95070 WIN RELEASE : inspector/styles/media-queries.html = PASS TEXT
 
 BUGWK95101 SNOWLEOPARD : fast/text/atsui-bidi-control.html = PASS TIMEOUT
 
