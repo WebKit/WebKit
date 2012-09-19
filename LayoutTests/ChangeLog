@@ -1,5 +1,17 @@
 2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Generate baseline for media/video-controls-visible-audio-only.html
+        https://bugs.webkit.org/show_bug.cgi?id=97073
+
+        Unreviewed EFL gardening.
+
+        Generate missing baseline for media/video-controls-visible-audio-only.html
+        on EFL port.
+
+        * platform/efl/media/video-controls-visible-audio-only-expected.txt: Added.
+
+2012-09-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Move several test cases to efl-wk1 TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=97072
 
