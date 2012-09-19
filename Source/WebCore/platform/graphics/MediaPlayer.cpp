@@ -210,7 +210,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         enginesQueried = true;
 
 #if USE(AVFOUNDATION)
-        if (1 /* @@Settings::isAVFoundationEnabled() @@ */) {
+        if (Settings::isAVFoundationEnabled()) {
 #if PLATFORM(MAC)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #elif PLATFORM(WIN)
