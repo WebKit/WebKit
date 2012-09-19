@@ -54,6 +54,7 @@ public:
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
         , m_structureIsPolymorphic(false)
+        , m_mayInterceptIndexedAccesses(false)
         , m_observedArrayModes(0)
     {
     }
@@ -63,6 +64,7 @@ public:
         , m_lastSeenStructure(0)
         , m_expectedStructure(0)
         , m_structureIsPolymorphic(false)
+        , m_mayInterceptIndexedAccesses(false)
         , m_observedArrayModes(0)
     {
     }
@@ -89,6 +91,7 @@ public:
         return !structureIsPolymorphic() && m_expectedStructure;
     }
     ArrayModes observedArrayModes() const { return m_observedArrayModes; }
+    bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
     
 private:
     friend class LLIntOffsetsExtractor;
@@ -97,6 +100,7 @@ private:
     Structure* m_lastSeenStructure;
     Structure* m_expectedStructure;
     bool m_structureIsPolymorphic;
+    bool m_mayInterceptIndexedAccesses;
     ArrayModes m_observedArrayModes;
 };
 

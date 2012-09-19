@@ -1,5 +1,82 @@
 2012-09-18  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not call out to C++ every time that it tries to put to an object that doesn't yet have array storage
+        https://bugs.webkit.org/show_bug.cgi?id=96983
+
+        Reviewed by Oliver Hunt.
+
+        Introduce more polymorphism into the DFG's array mode support. Use that to
+        introduce the notion of effectul array modes, where the check for the mode
+        will perform actions necessary to ensure that we have the mode we want, if
+        the object is not already in that mode. Also added profiling support for
+        checking if an object is of a type that would not allow us to create array
+        storage (like a typed array or a string for example).
+        
+        This is a ~2x speed-up on loops that transform an object that did not have
+        indexed storage into one that does.
+
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::mayInterceptIndexedAccesses):
+        (ArrayProfile):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (DFG):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::modeUsesButterfly):
+        (JSC::DFG::isSlowPutAccess):
+        (JSC::DFG::benefitsFromStructureCheck):
+        (JSC::DFG::isEffectful):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Arguments.h:
+        (Arguments):
+        * runtime/JSNotAnObject.h:
+        (JSNotAnObject):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::ensureArrayStorage):
+        * runtime/JSString.h:
+        (JSC::JSString::createStructure):
+
+2012-09-18  Filip Pizlo  <fpizlo@apple.com>
+
         Include PhantomArguments in DFGDisassembly
         https://bugs.webkit.org/show_bug.cgi?id=97043
 

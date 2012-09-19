@@ -90,7 +90,7 @@ private:
             if (arrayProfile) {
                 arrayProfile->computeUpdatedPrediction();
                 arrayMode = refineArrayMode(
-                    fromObserved(arrayProfile->observedArrayModes(), false),
+                    fromObserved(arrayProfile, Array::Read, false),
                     m_graph[node.child1()].prediction(),
                     m_graph[m_compileIndex].prediction());
                 if (modeSupportsLength(arrayMode) && arrayProfile->hasDefiniteStructure()) {
@@ -380,6 +380,23 @@ private:
         ASSERT(modeIsSpecific(arrayMode));
         
         m_graph.ref(array);
+
+        if (isEffectful(arrayMode)) {
+            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode), array);
+            arrayify.ref(); // Once because it's used as a butterfly.
+            arrayify.ref(); // And twice because it's must-generate.
+            NodeIndex arrayifyIndex = m_graph.size();
+            m_graph.append(arrayify);
+            m_insertionSet.append(m_indexInBlock, arrayifyIndex);
+            
+            ASSERT(storageCheck == canCSEStorage);
+            ASSERT(shouldGenerate);
+            ASSERT(canCSEStorage(arrayMode));
+            ASSERT(modeUsesButterfly(arrayMode));
+            
+            return arrayifyIndex;
+        }
+        
         Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode), array);
         checkArray.ref();
         NodeIndex checkArrayIndex = m_graph.size();

@@ -863,6 +863,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).makeTop();
             break;
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
             forNode(node.child2()).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
@@ -926,6 +927,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(child2).filter(SpecInt32);
             break;
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
             forNode(child2).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             break;
@@ -1390,6 +1392,20 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         case Array::Float64Array:
             forNode(node.child1()).filter(SpecFloat64Array);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case Arrayify: {
+        switch (node.arrayMode()) {
+        case EFFECTFUL_NON_ARRAY_ARRAY_STORAGE_MODES:
+            node.setCanExit(true);
+            forNode(node.child1()).filter(SpecCell);
+            forNode(nodeIndex).clear();
+            clobberStructures(indexInBlock);
             break;
         default:
             ASSERT_NOT_REACHED();

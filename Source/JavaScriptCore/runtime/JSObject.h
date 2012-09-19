@@ -505,6 +505,25 @@ namespace JSC {
         // foo->attemptToInterceptPutByIndexOnHole(...);
         bool attemptToInterceptPutByIndexOnHoleForPrototype(ExecState*, JSValue thisValue, unsigned propertyName, JSValue, bool shouldThrow);
         
+        // Ensure that the object is in a mode where it has array storage. Use
+        // this if you're about to perform actions that would have required the
+        // object to be converted to have array storage, if it didn't have it
+        // already.
+        ArrayStorage* ensureArrayStorage(JSGlobalData& globalData)
+        {
+            switch (structure()->indexingType()) {
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                return m_butterfly->arrayStorage();
+                
+            case ALL_BLANK_INDEXING_TYPES:
+                return createInitialArrayStorage(globalData);
+                
+            default:
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
+        }
+        
         static size_t offsetOfInlineStorage();
         
         static ptrdiff_t butterflyOffset()
@@ -565,25 +584,6 @@ namespace JSC {
             }
         }
 
-        // Ensure that the object is in a mode where it has array storage. Use
-        // this if you're about to perform actions that would have required the
-        // object to be converted to have array storage, if it didn't have it
-        // already.
-        ArrayStorage* ensureArrayStorage(JSGlobalData& globalData)
-        {
-            switch (structure()->indexingType()) {
-            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-                return m_butterfly->arrayStorage();
-                
-            case ALL_BLANK_INDEXING_TYPES:
-                return createInitialArrayStorage(globalData);
-                
-            default:
-                ASSERT_NOT_REACHED();
-                return 0;
-            }
-        }
-        
         ArrayStorage* createArrayStorage(JSGlobalData&, unsigned length, unsigned vectorLength);
         ArrayStorage* createInitialArrayStorage(JSGlobalData&);
         

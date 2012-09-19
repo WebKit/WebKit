@@ -2563,6 +2563,11 @@ void SpeculativeJIT::compile(Node& node)
         checkArray(node);
         break;
     }
+        
+    case Arrayify: {
+        arrayify(node);
+        break;
+    }
 
     case GetByVal: {
         switch (node.arrayMode()) {
@@ -2603,7 +2608,8 @@ void SpeculativeJIT::compile(Node& node)
             jsValueResult(result.gpr(), m_compileIndex);
             break;
         }
-        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES: {
+        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES: {
             SpeculateCellOperand base(this, node.child1());
             SpeculateStrictInt32Operand property(this, node.child2());
             StorageOperand storage(this, node.child3());
@@ -2723,7 +2729,8 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg propertyReg = property.gpr();
 
         switch (arrayMode) {
-        case ALL_ARRAY_STORAGE_MODES: {
+        case ALL_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES: {
             JSValueOperand value(this, child3);
 
             GPRReg valueReg = value.gpr();

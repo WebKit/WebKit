@@ -592,6 +592,7 @@ private:
 
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
+            case Arrayify:
                 // If we can cheaply prove this is a change to our object's storage, we
                 // can optimize and use its result.
                 if (node.child1() == child1)

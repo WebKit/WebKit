@@ -62,7 +62,7 @@ namespace JSC {
 
      private:
         
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         // JSValue methods
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);

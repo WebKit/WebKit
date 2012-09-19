@@ -1316,6 +1316,14 @@ char* DFG_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     return reinterpret_cast<char*>(result);
 }
 
+char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSObject* object)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
+    return reinterpret_cast<char*>(object->ensureArrayStorage(globalData));
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

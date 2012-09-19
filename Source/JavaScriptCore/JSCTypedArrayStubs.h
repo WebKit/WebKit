@@ -74,7 +74,7 @@ public: \
 protected:\
     JS##name##Array(JSC::Structure*, JSGlobalObject*, PassRefPtr<name##Array>);\
     void finishCreation(JSC::JSGlobalData&);\
-    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;\
+    static const unsigned StructureFlags = JSC::OverridesGetPropertyNames | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags; \
     JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\
     void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\
 };\

@@ -828,26 +828,29 @@ private:
     Array::Mode getArrayMode(ArrayProfile* profile)
     {
         profile->computeUpdatedPrediction();
-        return fromObserved(profile->observedArrayModes(), false);
+        return fromObserved(profile, Array::Read, false);
     }
     
-    Array::Mode getArrayModeAndEmitChecks(ArrayProfile* profile, NodeIndex base)
+    Array::Mode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, NodeIndex base)
     {
         profile->computeUpdatedPrediction();
-        if (profile->hasDefiniteStructure())
-            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
             dataLog("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-        dataLog("Array profile for bc#%u: %p%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->observedArrayModes());
+        dataLog("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses() ? " (may intercept)" : "", profile->observedArrayModes());
 #endif
         
         bool makeSafe =
             m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
             || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
         
-        return fromObserved(profile->observedArrayModes(), makeSafe);
+        Array::Mode result = fromObserved(profile, action, makeSafe);
+        
+        if (profile->hasDefiniteStructure() && benefitsFromStructureCheck(result))
+            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
+        
+        return result;
     }
     
     NodeIndex makeSafe(NodeIndex nodeIndex)
@@ -2188,7 +2191,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
-            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, base);
+            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Read, base);
             NodeIndex property = get(currentInstruction[3].u.operand);
             NodeIndex getByVal = addToGraph(GetByVal, OpInfo(arrayMode), OpInfo(prediction), base, property);
             set(currentInstruction[1].u.operand, getByVal);
@@ -2199,7 +2202,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
 
-            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, base);
+            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Write, base);
             
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);

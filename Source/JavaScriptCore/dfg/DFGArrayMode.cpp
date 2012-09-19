@@ -32,26 +32,39 @@
 
 namespace JSC { namespace DFG {
 
-Array::Mode fromObserved(ArrayModes modes, bool makeSafe)
+Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeSafe)
 {
-    // FIXME: we may want to add some polymorphic support in the future. That's why this
-    // is a switch statement right now.
-    
-    switch (modes) {
+    switch (profile->observedArrayModes()) {
     case 0:
+        return Array::Undecided;
+    case asArrayModes(NonArray):
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+            return Array::BlankToArrayStorage; // FIXME: we don't know whether to go to slow put mode, or not. This is a decent guess.
         return Array::Undecided;
     case asArrayModes(NonArrayWithArrayStorage):
         return makeSafe ? Array::ArrayStorageOutOfBounds : Array::ArrayStorage;
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
+    case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
         return Array::SlowPutArrayStorage;
     case asArrayModes(ArrayWithArrayStorage):
         return makeSafe ? Array::ArrayWithArrayStorageOutOfBounds : Array::ArrayWithArrayStorage;
     case asArrayModes(ArrayWithSlowPutArrayStorage):
+    case asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return Array::ArrayWithSlowPutArrayStorage;
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
         return makeSafe ? Array::PossiblyArrayWithArrayStorageOutOfBounds : Array::PossiblyArrayWithArrayStorage;
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
+    case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return Array::PossiblyArrayWithSlowPutArrayStorage;
+    case asArrayModes(NonArray) | asArrayModes(NonArrayWithArrayStorage):
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+            return Array::BlankToArrayStorage;
+        return Array::Undecided;
+    case asArrayModes(NonArray) | asArrayModes(NonArrayWithSlowPutArrayStorage):
+    case asArrayModes(NonArray) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+            return Array::BlankToSlowPutArrayStorage;
+        return Array::Undecided;
     default:
         // We know that this is possibly a kind of array for which, though there is no
         // useful data in the array profile, we may be able to extract useful data from
@@ -59,11 +72,6 @@ Array::Mode fromObserved(ArrayModes modes, bool makeSafe)
         // the predictions propagator decide later.
         return Array::Undecided;
     }
-}
-
-Array::Mode fromStructure(Structure* structure, bool makeSafe)
-{
-    return fromObserved(arrayModeFromStructure(structure), makeSafe);
 }
 
 Array::Mode refineArrayMode(Array::Mode arrayMode, SpeculatedType base, SpeculatedType index)
@@ -140,7 +148,7 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::SlowPutArrayStorage:
     case Array::PossiblyArrayWithSlowPutArrayStorage:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasSlowPutArrayStorage);
+            && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage));
         
     case Array::ArrayWithArrayStorage:
     case Array::ArrayWithArrayStorageOutOfBounds:
@@ -150,8 +158,11 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
         
     case Array::ArrayWithSlowPutArrayStorage:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasSlowPutArrayStorage)
+            && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage))
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        
+    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+        return false;
         
     case Array::Arguments:
         return isArgumentsSpeculation(value.m_type);
@@ -220,6 +231,10 @@ const char* modeToString(Array::Mode mode)
         return "PossiblyArrayWithSlowPutArrayStorage";
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return "PossiblyArrayWithArrayStorageOutOfBounds";
+    case Array::BlankToArrayStorage:
+        return "BlankToArrayStorage";
+    case Array::BlankToSlowPutArrayStorage:
+        return "BlankToSlowPutArrayStorage";
     case Array::Arguments:
         return "Arguments";
     case Array::Int8Array:

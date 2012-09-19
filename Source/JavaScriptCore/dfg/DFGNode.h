@@ -740,6 +740,7 @@ struct Node {
         case StringCharAt:
         case StringCharCodeAt:
         case CheckArray:
+        case Arrayify:
         case ArrayPush:
         case ArrayPop:
             return true;

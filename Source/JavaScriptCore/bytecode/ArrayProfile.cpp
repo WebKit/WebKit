@@ -32,6 +32,8 @@ void ArrayProfile::computeUpdatedPrediction(OperationInProgress operation)
 {
     if (m_lastSeenStructure) {
         m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
+        m_mayInterceptIndexedAccesses |=
+            m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
         if (!m_structureIsPolymorphic) {
             if (!m_expectedStructure)
                 m_expectedStructure = m_lastSeenStructure;
