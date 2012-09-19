@@ -1,86 +1,87 @@
-// This file should contain only the rules to skip tests about the features not supported
-// or not testable on Android.
-//
-// Other rules should be in TestExpectations.
+# This file should contain only the rules to skip tests about the features not supported
+# or not testable on Android.
+#
+# Other rules should be in TestExpectations.
 
-// Skip tests of other platforms to save time.
-WONTFIX SKIP : platform/gtk = PASS
-WONTFIX SKIP : platform/mac = PASS
-WONTFIX SKIP : platform/mac-wk2 = PASS
-WONTFIX SKIP : platform/qt = PASS
-WONTFIX SKIP : platform/win = PASS
+# Skip tests of other platforms to save time.
+platform/gtk [ Pass Skip WontFix ]
+platform/mac [ Pass Skip WontFix ]
+platform/mac-wk2 [ Pass Skip WontFix ]
+platform/qt [ Pass Skip WontFix ]
+platform/win [ Pass Skip WontFix ]
 
-// Features not supported: http://crbug.com/145338.
-BUGCR145338 SKIP : compositing/plugins = PASS
-BUGCR145338 SKIP : plugins = PASS
-BUGCR145338 SKIP : http/tests/plugins = PASS
-BUGCR145338 SKIP : platform/chromium/compositing/plugins = PASS
-BUGCR145338 SKIP : platform/chromium/plugins = PASS
+# Features not supported: http://crbug.com/145338.
+crbug.com/145338 compositing/plugins
+crbug.com/145338 plugins
+crbug.com/145338 http/tests/plugins
+crbug.com/145338 platform/chromium/compositing/plugins
+crbug.com/145338 platform/chromium/plugins
 
-BUGCR145338 SKIP : fast/dom/Window/Plug-ins.html = PASS
-BUGCR145338 SKIP : fast/frames/sandboxed-iframe-about-blank.html = PASS
-BUGCR145338 SKIP : fast/frames/sandboxed-iframe-navigation-allowed.html = PASS
-BUGCR145338 SKIP : fast/frames/sandboxed-iframe-plugins.html = PASS
-BUGCR145338 SKIP : fast/replaced/invalid-object-with-fallback.html = PASS
-BUGCR145338 SKIP : fast/replaced/object-with-embed-url-param.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/object-src-none-blocked.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/object-src-url-allowed.html = PASS
-BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = PASS
-BUGCR145338 SKIP : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = PASS
-BUGCR145338 SKIP : platform/chromium/permissionclient/plugin-permission.html = PASS
-BUGCR145338 SKIP : userscripts/user-script-plugin-document.html = PASS
+crbug.com/145338 fast/dom/Window/Plug-ins.html
+crbug.com/145338 fast/frames/sandboxed-iframe-about-blank.html
+crbug.com/145338 fast/frames/sandboxed-iframe-navigation-allowed.html
+crbug.com/145338 fast/frames/sandboxed-iframe-plugins.html
+crbug.com/145338 fast/replaced/invalid-object-with-fallback.html
+crbug.com/145338 fast/replaced/object-with-embed-url-param.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html
+crbug.com/145338 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
+crbug.com/145338 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+crbug.com/145338 platform/chromium/permissionclient/plugin-permission.html
+crbug.com/145338 userscripts/user-script-plugin-document.html
 
-BUGCR145338 SKIP : http/tests/inspector = PASS
-BUGCR145338 SKIP : http/tests/inspector-enabled = PASS
-BUGCR145338 SKIP : inspector = PASS
-BUGCR145338 SKIP : platform/chromium/inspector = PASS
+crbug.com/145338 http/tests/inspector
+crbug.com/145338 http/tests/inspector-enabled
+crbug.com/145338 inspector
+crbug.com/145338 platform/chromium/inspector
 
-BUGCR145338 SKIP : accessibility = PASS
-BUGCR145338 SKIP : platform/chromium/accessibility = PASS
+crbug.com/145338 accessibility
+crbug.com/145338 platform/chromium/accessibility
 
-BUGCR145338 SKIP : fast/forms/time-multiple-fields = PASS
-BUGCR145338 SKIP : fast/forms/color = PASS
-BUGCR145338 SKIP : fast/forms/datalist = PASS
-BUGCR145338 SKIP : fast/forms/date = PASS
-BUGCR145338 SKIP : fast/mediastream = PASS
-BUGCR145338 SKIP : fast/notifications = PASS
-BUGCR145338 SKIP : fast/speech = PASS
-BUGCR145338 SKIP : http/tests/notifications = PASS
-BUGCR145338 SKIP : platform/chromium/fast/forms/color = PASS
-BUGCR145338 SKIP : platform/chromium/media/video-capture-preview.html = PASS // Uses mediastream
-BUGCR145338 SKIP : webaudio = PASS
+crbug.com/145338 fast/forms/time-multiple-fields
+crbug.com/145338 fast/forms/color
+crbug.com/145338 fast/forms/datalist
+crbug.com/145338 fast/forms/date
+crbug.com/145338 fast/mediastream
+crbug.com/145338 fast/notifications
+crbug.com/145338 fast/speech
+crbug.com/145338 http/tests/notifications
+crbug.com/145338 platform/chromium/fast/forms/color
+crbug.com/145338 platform/chromium/media/video-capture-preview.html # Uses mediastream
+crbug.com/145338 webaudio
 
-// This test is only for GTK which is not applicable to Android.
-WONTFIX SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
+# This test is only for GTK which is not applicable to Android.
+platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Skip WontFix ]
 
-// Skip webgl tests: http://crbug.com/135877.
-BUGCR135877 SKIP : compositing/webgl = PASS
-BUGCR135877 SKIP : fast/canvas/webgl = PASS
-BUGCR135877 SKIP : http/tests/canvas/webgl = PASS
-BUGCR135877 SKIP : platform/chromium/virtual/gpu/fast/canvas/webgl = PASS
-BUGCR135877 SKIP : platform/chromium/virtual/threaded/compositing/webgl = PASS
+# Skip webgl tests: http://crbug.com/135877.
+crbug.com/135877 compositing/webgl
+crbug.com/135877 fast/canvas/webgl
+crbug.com/135877 http/tests/canvas/webgl
+crbug.com/135877 platform/chromium/virtual/gpu/fast/canvas/webgl
+crbug.com/135877 platform/chromium/virtual/threaded/compositing/webgl
 
-// Causes server error. Not feasible to fix because this is a behavior of Apache server.
-BUGWK95378 WONTFIX SKIP : fast/encoding/percent-escaping.html = PASS
+# Causes server error. Not feasible to fix because this is a behavior of Apache server.
+webkit.org/b/95378 fast/encoding/percent-escaping.html [ Pass Skip WontFix ]
 
-// Tests depending on Bengali, Tamil, Danda fonts
-BUGWK95378 WONTFIX SKIP : fast/text/international/bold-bengali.html = PASS
-BUGWK95378 WONTFIX SKIP : fast/text/international/complex-character-based-fallback.html = PASS
+# Tests depending on Bengali, Tamil, Danda fonts
+webkit.org/b/95378 fast/text/international/bold-bengali.html [ Pass Skip WontFix ]
+webkit.org/b/95378 fast/text/international/complex-character-based-fallback.html [ Pass Skip WontFix ]
 
-// The test creates a temporary file via HTTP POST and access the file as a blob. This is unfeasible.
-BUGWK95378 WONTFIX SKIP : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS
+# The test creates a temporary file via HTTP POST and access the file as a blob. This is unfeasible.
+webkit.org/b/95378 http/tests/local/fileapi/send-sliced-dragged-file.html [ Pass Skip WontFix ]
 
-// The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
-BUGWK95378 WONTFIX SKIP : http/tests/local/fileapi/file-last-modified.html = PASS
+# The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
+webkit.org/b/95378 http/tests/local/fileapi/file-last-modified.html [ Pass Skip WontFix ]
 
-// Android font lacks some plane2 CJK glyphs to pass this test.
-BUGWK95378 WONTFIX SKIP : fast/text/international/plane2.html = PASS
+# Android font lacks some plane2 CJK glyphs to pass this test.
+webkit.org/b/95378 fast/text/international/plane2.html [ Pass Skip WontFix ]
+
