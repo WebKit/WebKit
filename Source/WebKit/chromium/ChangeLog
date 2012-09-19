@@ -1,3 +1,23 @@
+2012-09-19  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Add a method didHandleGestureEvent to WebViewClient, called from WebViewImpl::handleGestureEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=96112
+
+        Reviewed by Adam Barth.
+
+        Adds a new method didHandleGestureEvent to WebViewClient, called from WebViewImpl::handleGestureEvent.
+
+        This will be used by the Android port to implement platform-specific gesture behaviour.
+
+        This is tested by the new test WebViewTest.ClientTapHandlers.
+
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::didHandleGestureEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebViewTest.cpp:
+
 2012-09-19  Robert Flack  <flackr@chromium.org>
 
         [chromium] Support high DPI scroll bar on top level web frame.

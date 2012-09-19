@@ -120,6 +120,40 @@ private:
     bool m_focused;
 };
 
+class TapHandlingWebViewClient : public WebViewClient {
+public:
+    // WebViewClient methods
+    virtual void didHandleGestureEvent(const WebGestureEvent& event, bool handled)
+    {
+        if (event.type == WebInputEvent::GestureTap) {
+            m_tapX = event.x;
+            m_tapY = event.y;
+        } else if (event.type == WebInputEvent::GestureLongPress) {
+            m_longpressX = event.x;
+            m_longpressY = event.y;
+        }
+    }
+
+    // Local methods
+    void reset()
+    {
+        m_tapX = -1;
+        m_tapY = -1;
+        m_longpressX = -1;
+        m_longpressY = -1;
+    }
+    int tapX() { return m_tapX; }
+    int tapY() { return m_tapY; }
+    int longpressX() { return m_longpressX; }
+    int longpressY() { return m_longpressY; }
+
+private:
+    int m_tapX;
+    int m_tapY;
+    int m_longpressX;
+    int m_longpressY;
+};
+
 class WebViewTest : public testing::Test {
 public:
     WebViewTest()
@@ -586,6 +620,30 @@ TEST_F(WebViewTest, DetectContentAroundPosition)
     webView->handleInputEvent(event);
     webkit_support::RunAllPendingMessages();
     EXPECT_TRUE(client.pendingIntentsCancelled());
+    webView->close();
+}
+
+TEST_F(WebViewTest, ClientTapHandling)
+{
+    TapHandlingWebViewClient client;
+    client.reset();
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad("about:blank", true, 0, &client);
+    WebGestureEvent event;
+    event.type = WebInputEvent::GestureTap;
+    event.x = 3;
+    event.y = 8;
+    webView->handleInputEvent(event);
+    webkit_support::RunAllPendingMessages();
+    EXPECT_EQ(3, client.tapX());
+    EXPECT_EQ(8, client.tapY());
+    client.reset();
+    event.type = WebInputEvent::GestureLongPress;
+    event.x = 25;
+    event.y = 7;
+    webView->handleInputEvent(event);
+    webkit_support::RunAllPendingMessages();
+    EXPECT_EQ(25, client.longpressX());
+    EXPECT_EQ(7, client.longpressY());
     webView->close();
 }
 

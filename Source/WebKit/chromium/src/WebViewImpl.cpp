@@ -682,6 +682,7 @@ void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
 #if ENABLE(GESTURE_EVENTS)
 bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 {
+    bool eventSwallowed = false;
     switch (event.type) {
     case WebInputEvent::GestureFlingStart: {
         m_client->cancelScheduledContentIntents();
@@ -692,18 +693,21 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         OwnPtr<PlatformGestureCurve> flingCurve = PlatformGestureCurveFactory::get()->createCurve(event.data.flingStart.sourceDevice, FloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY));
         m_gestureAnimation = ActivePlatformGestureAnimation::create(flingCurve.release(), this);
         scheduleAnimation();
-        return true;
+        eventSwallowed = true;
+        break;
     }
     case WebInputEvent::GestureFlingCancel:
         if (m_gestureAnimation) {
             m_gestureAnimation.clear();
-            return true;
+            eventSwallowed = true;
         }
-        return false;
+        break;
     case WebInputEvent::GestureTap: {
         m_client->cancelScheduledContentIntents();
-        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type))
-            return true;
+        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type)) {
+            eventSwallowed = true;
+            break;
+        }
 
         RefPtr<WebCore::PopupContainer> selectPopup;
         selectPopup = m_selectPopup;
@@ -716,12 +720,14 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
-            if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets))
-                return true;
+            if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets)) {
+                eventSwallowed = true;
+                break;
+            }
         }
 
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        bool gestureHandled = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
 
         if (m_selectPopup && m_selectPopup == selectPopup) {
             // That tap triggered a select popup which is the same as the one that
@@ -731,23 +737,26 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             hideSelectPopup();
         }
 
-        return gestureHandled;
+        break;
     }
     case WebInputEvent::GestureTwoFingerTap:
     case WebInputEvent::GestureLongPress: {
         if (!mainFrameImpl() || !mainFrameImpl()->frameView())
-            return false;
+            break;
 
         m_client->cancelScheduledContentIntents();
-        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type))
-            return true;
+        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type)) {
+            eventSwallowed = true;
+            break;
+        }
 
         m_page->contextMenuController()->clearContextMenu();
         m_contextMenuAllowed = true;
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        bool handled = mainFrameImpl()->frame()->eventHandler()->sendContextMenuEventForGesture(platformEvent);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->sendContextMenuEventForGesture(platformEvent);
         m_contextMenuAllowed = false;
-        return handled;
+
+        break;
     }
     case WebInputEvent::GestureTapDown: {
         m_client->cancelScheduledContentIntents();
@@ -757,7 +766,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             enableTouchHighlight(IntPoint(event.x, event.y));
 #endif
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        break;
     }
     case WebInputEvent::GestureDoubleTap:
     case WebInputEvent::GestureScrollBegin:
@@ -769,12 +779,14 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        break;
     }
     default:
         ASSERT_NOT_REACHED();
     }
-    return false;
+    m_client->didHandleGestureEvent(event, eventSwallowed);
+    return eventSwallowed;
 }
 
 void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters& parameters)
