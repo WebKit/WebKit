@@ -720,6 +720,7 @@
                                 'tests/RenderTableRowTest.cpp',
                                 'tests/URLTestHelpers.cpp',
                                 'tests/WebFrameTest.cpp',
+                                'tests/WebImageTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
                                 'tests/WebViewTest.cpp',
