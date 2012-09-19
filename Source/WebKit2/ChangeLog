@@ -1,3 +1,16 @@
+2012-09-19  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [WTR] Memory leaks in TestRunner::deliverWebIntent()
+        https://bugs.webkit.org/show_bug.cgi?id=97111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix memory leaks in WKBundleIntentCreate() by adopting strings
+        created with WKStringCreateWithUTF8CString().
+
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp:
+        (WKBundleIntentCreate):
+
 2012-09-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] fast/forms/select-writing-direction-natural.html is failing

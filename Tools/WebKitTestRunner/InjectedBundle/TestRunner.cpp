@@ -691,9 +691,14 @@ void TestRunner::deliverWebIntent(JSStringRef action, JSStringRef type, JSString
     WKRetainPtr<WKSerializedScriptValueRef> dataWK(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, data), 0));
 
     WKRetainPtr<WKMutableDictionaryRef> intentInitDict(AdoptWK, WKMutableDictionaryCreate());
-    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("action"), actionWK.get());
-    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("type"), typeWK.get());
-    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("data"), dataWK.get());
+    WKRetainPtr<WKStringRef> actionKey(AdoptWK, WKStringCreateWithUTF8CString("action"));
+    WKDictionaryAddItem(intentInitDict.get(), actionKey.get(), actionWK.get());
+
+    WKRetainPtr<WKStringRef> typeKey(AdoptWK, WKStringCreateWithUTF8CString("type"));
+    WKDictionaryAddItem(intentInitDict.get(), typeKey.get(), typeWK.get());
+
+    WKRetainPtr<WKStringRef> dataKey(AdoptWK, WKStringCreateWithUTF8CString("data"));
+    WKDictionaryAddItem(intentInitDict.get(), dataKey.get(), dataWK.get());
 
     WKRetainPtr<WKBundleIntentRef> wkIntent(AdoptWK, WKBundleIntentCreate(intentInitDict.get()));
     WKBundlePageDeliverIntentToFrame(InjectedBundle::shared().page()->page(), mainFrame, wkIntent.get());

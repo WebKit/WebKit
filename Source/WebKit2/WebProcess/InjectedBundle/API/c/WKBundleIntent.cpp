@@ -33,6 +33,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKDictionary.h"
+#include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebSerializedScriptValue.h"
 
@@ -52,11 +53,14 @@ WKTypeID WKBundleIntentGetTypeID()
 WKBundleIntentRef WKBundleIntentCreate(WKDictionaryRef dictionaryRef)
 {
 #if ENABLE(WEB_INTENTS)
-    WKStringRef action = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("action")));
+    WKRetainPtr<WKStringRef> actionKey(AdoptWK, WKStringCreateWithUTF8CString("action"));
+    WKStringRef action = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, actionKey.get()));
     ASSERT(action);
-    WKStringRef type = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("type")));
+    WKRetainPtr<WKStringRef> typeKey(AdoptWK, WKStringCreateWithUTF8CString("type"));
+    WKStringRef type = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, typeKey.get()));
     ASSERT(type);
-    WKSerializedScriptValueRef data = static_cast<WKSerializedScriptValueRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("data")));
+    WKRetainPtr<WKStringRef> dataKey(AdoptWK, WKStringCreateWithUTF8CString("data"));
+    WKSerializedScriptValueRef data = static_cast<WKSerializedScriptValueRef>(WKDictionaryGetItemForKey(dictionaryRef, dataKey.get()));
     MessagePortArray dummyPorts;
     ExceptionCode ec;
 
