@@ -69,7 +69,7 @@ public:
     bool needsDistribution() const;
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
-    void distributeSelectionsTo(InsertionPoint*, ContentDistribution& pool);
+    void distributeSelectionsTo(InsertionPoint*, const ContentDistribution& pool, Vector<bool>& distributed);
     void distributeNodeChildrenTo(InsertionPoint*, ContainerNode*);
     void invalidateDistributionIn(ContentDistribution*);
 
