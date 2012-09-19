@@ -3203,10 +3203,6 @@ BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-differe
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT PASS
 
-// Hopefully will be fixed when WK bug 91660 is fixed.
-BUGWK90741 MAC : fast/text-autosizing/font-scale-factor.html = IMAGE
-BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
-
 // Flaky
 BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT
 

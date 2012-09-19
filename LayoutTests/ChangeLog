@@ -1,5 +1,14 @@
 2012-09-18  Dirk Pranke  <dpranke@chromium.org>
 
+        [chromium] font-scale-factor.html and simple-paragraph.html are no longer failing.
+        https://bugs.webkit.org/show_bug.cgi?id=90741
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-18  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] fast/table/border-collapsing/cached-69296.html is no longer failing.
         https://bugs.webkit.org/show_bug.cgi?id=70298
 
