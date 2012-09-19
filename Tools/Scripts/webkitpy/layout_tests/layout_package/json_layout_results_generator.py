@@ -40,15 +40,15 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
     # Additional JSON fields.
     WONTFIX = "wontfixCounts"
 
+    # Note that there used to be an "A" for audio failures and a "Z" for IMAGE+TEXT failures.
+
     FAILURE_TO_CHAR = {test_expectations.PASS: json_results_generator.JSONResultsGeneratorBase.PASS_RESULT,
                        test_expectations.SKIP: json_results_generator.JSONResultsGeneratorBase.SKIP_RESULT,
                        test_expectations.CRASH: "C",
                        test_expectations.TIMEOUT: "T",
+                       test_expectations.FAIL: "F",
                        test_expectations.IMAGE: "I",
-                       test_expectations.TEXT: "F",
-                       test_expectations.MISSING: "O",
-                       test_expectations.AUDIO: "A",
-                       test_expectations.IMAGE_PLUS_TEXT: "Z"}
+                       test_expectations.MISSING: "O"}
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,

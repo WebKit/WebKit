@@ -38,62 +38,62 @@ BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // Test passes, but editing delegates does not match expected ones
-BUGWKEFL : editing/undo/undo-indent.html = TEXT PASS
-BUGWKEFL : editing/undo/undo-misspellings.html = TEXT PASS
+BUGWKEFL : editing/undo/undo-indent.html = FAIL PASS
+BUGWKEFL : editing/undo/undo-misspellings.html = FAIL PASS
 
-BUGWK96641 : media/video-seek-past-end-playing.html = TEXT PASS
-BUGWK96642 : loader/go-back-to-different-window-size.html = TEXT PASS
+BUGWK96641 : media/video-seek-past-end-playing.html = FAIL PASS
+BUGWK96642 : loader/go-back-to-different-window-size.html = FAIL PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
-BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
+BUGWK84835 : editing/execCommand/indent-paragraphs.html = FAIL
 
 // Frame does not get focus as expected
-BUGWK97077 : inspector/extensions/extensions-panel.html = TEXT
+BUGWK97077 : inspector/extensions/extensions-panel.html = FAIL
 
 // Custom font loading delaying text drawing on Canvas
-BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
+BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = FAIL
 
 // EFL's TestRunner does not implement applicationCacheDiskUsageForOrigin
-BUGWK86460 : http/tests/appcache/origin-usage.html = TEXT
+BUGWK86460 : http/tests/appcache/origin-usage.html = FAIL
 
 // EFL's TestRunner does not implement originsWithApplicationCache
-BUGWK86498 : http/tests/appcache/origins-with-appcache.html = TEXT
+BUGWK86498 : http/tests/appcache/origins-with-appcache.html = FAIL
 
 // Missing showModalDialog implementation
-BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
-BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT
+BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = FAIL
+BUGWK84589 : http/tests/security/cross-frame-access-call.html = FAIL
 
 // Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = FAIL
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = FAIL
 
 // EFL's DRT needs CONFIRM NAVIGATION messages
-BUGWK87246 : fast/loader/form-submission-after-beforeunload-cancel.html = TEXT
+BUGWK87246 : fast/loader/form-submission-after-beforeunload-cancel.html = FAIL
 
 // New test introduced in r116694 fails
-BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
+BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = FAIL
 
 // Passes in some machines and fails on other (such as the bots).
-BUGWK97021 : fast/events/dont-loose-last-event.html = TEXT
+BUGWK97021 : fast/events/dont-loose-last-event.html = FAIL
 
 // New windows are created with wrong size
-BUGWK53959 : fast/dom/Window/window-resize.html = TEXT
-BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = TEXT
+BUGWK53959 : fast/dom/Window/window-resize.html = FAIL
+BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = FAIL
 
 // Feature not mature yet and disabled by default on WebCore
-BUGWK87088 : fast/js/names.html = TEXT
+BUGWK87088 : fast/js/names.html = FAIL
 
 // Failing after 125592
-BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT
+BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = FAIL
 
 // Fail after r128393.
-BUGWK96620 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
-BUGWK96620 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
+BUGWK96620 : http/tests/loading/pdf-commit-load-callbacks.html = FAIL
+BUGWK96620 : http/tests/loading/text-content-type-with-binary-extension.html = FAIL
 
 // EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements.
-BUGWK82864 : fast/events/keypress-insert-tab.html = TEXT
+BUGWK82864 : fast/events/keypress-insert-tab.html = FAIL
 

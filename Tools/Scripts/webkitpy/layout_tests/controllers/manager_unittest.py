@@ -192,5 +192,5 @@ class ResultSummaryTest(unittest.TestCase):
         port = host.port_factory.get('test')
         port._options.builder_name = 'dummy builder'
         port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), "failures/expected/wontfix.html"), "Dummy test contents")
-        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='BUGX WONTFIX : failures/expected/wontfix.html = TEXT\n')
+        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='BUGX WONTFIX : failures/expected/wontfix.html = FAIL\n')
         self.assertTrue(expected_results['tests']['failures']['expected']['wontfix.html']['wontfix'])

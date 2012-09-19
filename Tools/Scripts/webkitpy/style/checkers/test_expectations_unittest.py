@@ -107,7 +107,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         self.assertTrue(self._error_collector.turned_off_filtering)
 
     def test_valid_expectations(self):
-        self.assert_lines_lint(["BUGCR1234 MAC : passes/text.html = PASS TEXT"], should_pass=True)
+        self.assert_lines_lint(["BUGCR1234 MAC : passes/text.html = PASS FAIL"], should_pass=True)
 
     def test_invalid_expectations(self):
         self.assert_lines_lint(["BUG1234 : passes/text.html = GIVE UP"], should_pass=False)

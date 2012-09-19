@@ -60,7 +60,7 @@ BUGCR145338 SKIP : platform/chromium/media/video-capture-preview.html = PASS // 
 BUGCR145338 SKIP : webaudio = PASS
 
 // This test is only for GTK which is not applicable to Android.
-WONTFIX SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = TEXT
+WONTFIX SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
 // Skip webgl tests: http://crbug.com/135877.
 BUGCR135877 SKIP : compositing/webgl = PASS

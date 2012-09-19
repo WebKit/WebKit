@@ -68,7 +68,7 @@ class TestRebaseline(unittest.TestCase):
         for path in lion_port.expectations_files():
             tool.filesystem.write_text_file(path, '')
         tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), """BUGB MAC LINUX XP DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGA DEBUG : fast/css/large-list-of-rules-crash.html = TEXT
+BUGA DEBUG : fast/css/large-list-of-rules-crash.html = FAIL
 """)
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/dom/Window/window-postmessage-clone-really-deep-array.html"), "Dummy test contents")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/css/large-list-of-rules-crash.html"), "Dummy test contents")
@@ -82,7 +82,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
         self.assertEqual(new_expectations, """BUGB MAC LINUX XP DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGA DEBUG : fast/css/large-list-of-rules-crash.html = TEXT
+BUGA DEBUG : fast/css/large-list-of-rules-crash.html = FAIL
 """)
 
     def test_rebaseline_updates_expectations_file(self):
@@ -112,7 +112,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
         tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "BUGX MAC : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "BUGY MAC : other-test.html = TEXT\n")
+        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "BUGY MAC : other-test.html = FAIL\n")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
 
         expected_logs = """Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
@@ -346,13 +346,13 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         port._filesystem.write_text_file(expectations_path, expectations_contents)
         port.expectations_dict = lambda: {
             expectations_path: expectations_contents,
-            'overrides': ('BUGX REBASELINE : userscripts/another-test.html = TEXT\n'
+            'overrides': ('BUGX REBASELINE : userscripts/another-test.html = FAIL\n'
                           'BUGY : userscripts/test.html = CRASH\n')}
 
         for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')
         port._filesystem.write_text_file(port.layout_tests_dir() + '/userscripts/another-test.html', '')
-        self.assertEquals(command._tests_to_rebaseline(port), {'userscripts/another-test.html': set(['txt'])})
+        self.assertEquals(command._tests_to_rebaseline(port), {'userscripts/another-test.html': set(['png', 'txt', 'wav'])})
         self.assertEquals(port._filesystem.read_text_file(expectations_path), expectations_contents)
 
     def test_rebaseline(self):

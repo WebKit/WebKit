@@ -40,6 +40,10 @@ _log = logging.getLogger(__name__)
 
 
 # Test expectation and modifier constants.
+# TEXT, IMAGE_PLUS_TEXT, and AUDIO are no longer used in new test runs but
+# we keep them around for now so we can parse old results.json entries and to
+# avoid changing the numbering for the constants.
+#
 # FIXME: range() starts with 0 which makes if expectation checks harder
 # as PASS is 0.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
@@ -590,9 +594,9 @@ class TestExpectations(object):
     in which case the expectations apply to all test cases in that
     directory and any subdirectory. The format is along the lines of:
 
-      LayoutTests/fast/js/fixme.js = TEXT
-      LayoutTests/fast/js/flaky.js = TEXT PASS
-      LayoutTests/fast/js/crash.js = CRASH TIMEOUT TEXT PASS
+      LayoutTests/fast/js/fixme.js = FAIL
+      LayoutTests/fast/js/flaky.js = FAIL PASS
+      LayoutTests/fast/js/crash.js = CRASH TIMEOUT FAIL PASS
       ...
 
     To add modifiers:
@@ -608,17 +612,14 @@ class TestExpectations(object):
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
-      -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, or AUDIO.
       -A test can be included twice, but not via the same path.
       -If a test is included twice, then the more precise path wins.
       -CRASH tests cannot be WONTFIX
     """
 
     EXPECTATIONS = {'pass': PASS,
-                    'text': TEXT,
+                    'fail': FAIL,
                     'image': IMAGE,
-                    'image+text': IMAGE_PLUS_TEXT,
-                    'audio': AUDIO,
                     'timeout': TIMEOUT,
                     'crash': CRASH,
                     'missing': MISSING}
@@ -626,15 +627,13 @@ class TestExpectations(object):
     # (aggregated by category, pass/fail/skip, type)
     EXPECTATION_DESCRIPTIONS = {SKIP: ('skipped', 'skipped', ''),
                                 PASS: ('passes', 'passed', ''),
-                                TEXT: ('text failures', 'failed', ' (text diff)'),
+                                FAIL: ('failures', 'failed', ''),
                                 IMAGE: ('image-only failures', 'failed', ' (image diff)'),
-                                IMAGE_PLUS_TEXT: ('both image and text failures', 'failed', ' (both image and text diffs'),
-                                AUDIO: ('audio failures', 'failed', ' (audio diff)'),
                                 CRASH: ('crashes', 'crashed', ''),
                                 TIMEOUT: ('timeouts', 'timed out', ''),
                                 MISSING: ('no expected results found', 'no expected result found', '')}
 
-    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT, TEXT, IMAGE, AUDIO, SKIP)
+    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, FAIL, IMAGE, SKIP)
 
     BUILD_TYPES = ('debug', 'release')
 
@@ -683,23 +682,20 @@ class TestExpectations(object):
         if IMAGE in expected_results:
             expected_results.remove(IMAGE)
             expected_results.add(PASS)
-        if IMAGE_PLUS_TEXT in expected_results:
-            expected_results.remove(IMAGE_PLUS_TEXT)
-            expected_results.add(TEXT)
         return expected_results
 
     @staticmethod
     def has_pixel_failures(actual_results):
-        return IMAGE in actual_results or IMAGE_PLUS_TEXT in actual_results
+        return IMAGE in actual_results or FAIL in actual_results
 
     @staticmethod
     def suffixes_for_expectations(expectations):
         suffixes = set()
-        if expectations.intersection(set([TEXT, IMAGE_PLUS_TEXT])):
-            suffixes.add('txt')
-        if expectations.intersection(set([IMAGE, IMAGE_PLUS_TEXT])):
+        if IMAGE in expectations:
             suffixes.add('png')
-        if AUDIO in expectations:
+        if FAIL in expectations:
+            suffixes.add('txt')
+            suffixes.add('png')
             suffixes.add('wav')
         return set(suffixes)
 
@@ -735,10 +731,7 @@ class TestExpectations(object):
         return self._model
 
     def get_rebaselining_failures(self):
-        return (self._model.get_test_set(REBASELINE, IMAGE) |
-                self._model.get_test_set(REBASELINE, TEXT) |
-                self._model.get_test_set(REBASELINE, IMAGE_PLUS_TEXT) |
-                self._model.get_test_set(REBASELINE, AUDIO))
+        return self._model.get_test_set(REBASELINE, IMAGE) | self._model.get_test_set(REBASELINE, FAIL)
 
     # FIXME: Change the callsites to use TestExpectationsModel and remove.
     def get_expectations(self, test):
@@ -815,7 +808,7 @@ class TestExpectations(object):
         for expectation in self._expectations:
             if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
                 continue
-            if iter(expectation.parsed_expectations).next() not in (TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO):
+            if iter(expectation.parsed_expectations).next() not in (FAIL, IMAGE):
                 continue
             if test_configuration not in expectation.matching_configurations:
                 continue

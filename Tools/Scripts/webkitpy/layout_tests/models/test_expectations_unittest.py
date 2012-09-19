@@ -75,7 +75,7 @@ class Base(unittest.TestCase):
 
     def get_basic_expectations(self):
         return """
-BUG_TEST : failures/expected/text.html = TEXT
+BUG_TEST : failures/expected/text.html = FAIL
 BUG_TEST WONTFIX SKIP : failures/expected/crash.html = CRASH
 BUG_TEST REBASELINE : failures/expected/missing_image.html = MISSING
 BUG_TEST WONTFIX : failures/expected/image_checksum.html = IMAGE
@@ -97,10 +97,27 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
     def assert_bad_expectations(self, expectations, overrides=None):
         self.assertRaises(ParseError, self.parse_exp, expectations, is_lint_mode=True, overrides=overrides)
 
+
+class BasicTests(Base):
+    def test_basic(self):
+        self.parse_exp(self.get_basic_expectations())
+        self.assert_exp('failures/expected/text.html', FAIL)
+        self.assert_exp('failures/expected/image_checksum.html', IMAGE)
+        self.assert_exp('passes/text.html', PASS)
+        self.assert_exp('failures/expected/image.html', PASS)
+
+
+class MiscTests(Base):
+    def test_multiple_results(self):
+        self.parse_exp('BUGX : failures/expected/text.html = FAIL CRASH')
+        self.assertEqual(self._exp.get_expectations(
+            self.get_test('failures/expected/text.html')),
+            set([FAIL, CRASH]))
+
     def test_result_was_expected(self):
         # test basics
         self.assertEquals(TestExpectations.result_was_expected(PASS, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), True)
-        self.assertEquals(TestExpectations.result_was_expected(TEXT, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), False)
+        self.assertEquals(TestExpectations.result_was_expected(FAIL, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), False)
 
         # test handling of SKIPped tests and results
         self.assertEquals(TestExpectations.result_was_expected(SKIP, set([CRASH]), test_needs_rebaselining=False, test_is_skipped=True), True)
@@ -111,36 +128,17 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
         self.assertEquals(TestExpectations.result_was_expected(MISSING, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), False)
 
     def test_remove_pixel_failures(self):
-        self.assertEquals(TestExpectations.remove_pixel_failures(set([TEXT])), set([TEXT]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([FAIL])), set([FAIL]))
         self.assertEquals(TestExpectations.remove_pixel_failures(set([PASS])), set([PASS]))
         self.assertEquals(TestExpectations.remove_pixel_failures(set([IMAGE])), set([PASS]))
-        self.assertEquals(TestExpectations.remove_pixel_failures(set([IMAGE_PLUS_TEXT])), set([TEXT]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([FAIL])), set([FAIL]))
         self.assertEquals(TestExpectations.remove_pixel_failures(set([PASS, IMAGE, CRASH])), set([PASS, CRASH]))
 
     def test_suffixes_for_expectations(self):
-        self.assertEquals(TestExpectations.suffixes_for_expectations(set([TEXT])), set(['txt']))
-        self.assertEquals(TestExpectations.suffixes_for_expectations(set([IMAGE_PLUS_TEXT])), set(['txt', 'png']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([FAIL])), set(['txt', 'png', 'wav']))
         self.assertEquals(TestExpectations.suffixes_for_expectations(set([IMAGE])), set(['png']))
-        self.assertEquals(TestExpectations.suffixes_for_expectations(set([AUDIO])), set(['wav']))
-        self.assertEquals(TestExpectations.suffixes_for_expectations(set([TEXT, IMAGE, CRASH])), set(['txt', 'png']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([FAIL, IMAGE, CRASH])), set(['txt', 'png', 'wav']))
         self.assertEquals(TestExpectations.suffixes_for_expectations(set()), set())
-
-
-class BasicTests(Base):
-    def test_basic(self):
-        self.parse_exp(self.get_basic_expectations())
-        self.assert_exp('failures/expected/text.html', TEXT)
-        self.assert_exp('failures/expected/image_checksum.html', IMAGE)
-        self.assert_exp('passes/text.html', PASS)
-        self.assert_exp('failures/expected/image.html', PASS)
-
-
-class MiscTests(Base):
-    def test_multiple_results(self):
-        self.parse_exp('BUGX : failures/expected/text.html = TEXT CRASH')
-        self.assertEqual(self._exp.get_expectations(
-            self.get_test('failures/expected/text.html')),
-            set([TEXT, CRASH]))
 
     def test_category_expectations(self):
         # This test checks unknown tests are not present in the
@@ -165,7 +163,7 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.parse_exp(self.get_basic_expectations())
         self.assertEquals(self._exp.get_expectations_string(
                           self.get_test('failures/expected/text.html')),
-                          'TEXT')
+                          'FAIL')
 
     def test_expectation_to_string(self):
         # Normal cases are handled by other tests.
@@ -191,9 +189,9 @@ BUGX WONTFIX : failures/expected = IMAGE
             filesystem = self._port.host.filesystem
             filesystem.write_text_file(filesystem.join(self._port.layout_tests_dir(), 'disabled-test.html-disabled'), 'content')
             self.get_test('disabled-test.html-disabled'),
-            self.parse_exp("FOO : failures/expected/text.html = TEXT\n"
+            self.parse_exp("FOO : failures/expected/text.html = FAIL\n"
                 "SKIP : failures/expected/image.html\n"
-                "BUGRNIWA : non-existent-test.html = TEXT\n"
+                "BUGRNIWA : non-existent-test.html = FAIL\n"
                 "BUGRNIWA : disabled-test.html-disabled = IMAGE", is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
@@ -204,7 +202,7 @@ BUGX WONTFIX : failures/expected = IMAGE
             self.assertEqual(str(e), warnings)
 
         try:
-            self.parse_exp('SKIP : failures/expected/text.html = TEXT', is_lint_mode=True)
+            self.parse_exp('SKIP : failures/expected/text.html = FAIL', is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             warnings = u'expectations:1 Test lacks BUG modifier. failures/expected/text.html'
@@ -213,28 +211,28 @@ BUGX WONTFIX : failures/expected = IMAGE
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
         self.assertRaises(ParseError, self.parse_exp,
-            'BUG_TEST MAC : failures/expected/text.html = TEXT\nBUG_TEST MAC : failures/expected/text.html = TEXT',
+            'BUG_TEST MAC : failures/expected/text.html = FAIL\nBUG_TEST MAC : failures/expected/text.html = FAIL',
             is_lint_mode=True)
 
     def test_error_on_different_build_type(self):
         # parse_exp uses a Release port. Assert errors on DEBUG show up in lint mode.
         self.assertRaises(ParseError, self.parse_exp,
-            'BUG_TEST DEBUG : failures/expected/text.html = TEXT\nBUG_TEST DEBUG : failures/expected/text.html = TEXT',
+            'BUG_TEST DEBUG : failures/expected/text.html = FAIL\nBUG_TEST DEBUG : failures/expected/text.html = FAIL',
             is_lint_mode=True)
 
     def test_overrides(self):
-        self.parse_exp("BUG_EXP: failures/expected/text.html = TEXT",
+        self.parse_exp("BUG_EXP: failures/expected/text.html = FAIL",
                        "BUG_OVERRIDE : failures/expected/text.html = IMAGE")
         self.assert_exp('failures/expected/text.html', IMAGE)
 
     def test_overrides__directory(self):
-        self.parse_exp("BUG_EXP: failures/expected/text.html = TEXT",
+        self.parse_exp("BUG_EXP: failures/expected/text.html = FAIL",
                        "BUG_OVERRIDE: failures/expected = CRASH")
         self.assert_exp('failures/expected/text.html', CRASH)
         self.assert_exp('failures/expected/image.html', CRASH)
 
     def test_overrides__duplicate(self):
-        self.assert_bad_expectations("BUG_EXP: failures/expected/text.html = TEXT",
+        self.assert_bad_expectations("BUG_EXP: failures/expected/text.html = FAIL",
                                      "BUG_OVERRIDE : failures/expected/text.html = IMAGE\n"
                                      "BUG_OVERRIDE : failures/expected/text.html = CRASH\n")
 
@@ -244,8 +242,8 @@ BUGX WONTFIX : failures/expected = IMAGE
                 self.get_test(test), result, pixel_tests_enabled)
 
         self.parse_exp(self.get_basic_expectations())
-        self.assertTrue(match('failures/expected/text.html', TEXT, True))
-        self.assertTrue(match('failures/expected/text.html', TEXT, False))
+        self.assertTrue(match('failures/expected/text.html', FAIL, True))
+        self.assertTrue(match('failures/expected/text.html', FAIL, False))
         self.assertFalse(match('failures/expected/text.html', CRASH, True))
         self.assertFalse(match('failures/expected/text.html', CRASH, False))
         self.assertTrue(match('failures/expected/image_checksum.html', IMAGE,
@@ -256,7 +254,7 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.assertTrue(match('passes/text.html', PASS, False))
 
     def test_more_specific_override_resets_skip(self):
-        self.parse_exp("BUGX SKIP : failures/expected = TEXT\n"
+        self.parse_exp("BUGX SKIP : failures/expected = FAIL\n"
                        "BUGX : failures/expected/text.html = IMAGE\n")
         self.assert_exp('failures/expected/text.html', IMAGE)
         self.assertFalse(self._port._filesystem.join(self._port.layout_tests_dir(),
@@ -288,19 +286,19 @@ class SkippedTests(Base):
         self.assertRaises(ParseError, self.check, expectations='BUGX : failures/expected/text.html = text\n', overrides=None, skips=['failures/expected/text.html'], lint=True)
 
     def test_skipped_file_overrides_expectations(self):
-        self.check(expectations='BUGX : failures/expected/text.html = TEXT\n', overrides=None,
+        self.check(expectations='BUGX : failures/expected/text.html = FAIL\n', overrides=None,
                    skips=['failures/expected/text.html'])
 
     def test_skipped_dir_overrides_expectations(self):
-        self.check(expectations='BUGX : failures/expected/text.html = TEXT\n', overrides=None,
+        self.check(expectations='BUGX : failures/expected/text.html = FAIL\n', overrides=None,
                    skips=['failures/expected'])
 
     def test_skipped_file_overrides_overrides(self):
-        self.check(expectations='', overrides='BUGX : failures/expected/text.html = TEXT\n',
+        self.check(expectations='', overrides='BUGX : failures/expected/text.html = FAIL\n',
                    skips=['failures/expected/text.html'])
 
     def test_skipped_dir_overrides_overrides(self):
-        self.check(expectations='', overrides='BUGX : failures/expected/text.html = TEXT\n',
+        self.check(expectations='', overrides='BUGX : failures/expected/text.html = FAIL\n',
                    skips=['failures/expected'])
 
     def test_skipped_entry_dont_exist(self):
@@ -323,38 +321,38 @@ class ExpectationSyntaxTests(Base):
 
     def test_missing_colon(self):
         # This is missing the modifiers and the ':'
-        self.assert_bad_expectations('failures/expected/text.html = TEXT')
+        self.assert_bad_expectations('failures/expected/text.html = FAIL')
 
     def test_too_many_colons(self):
         self.assert_bad_expectations('BUG_TEST: failures/expected/text.html = PASS :')
 
     def test_too_many_equals_signs(self):
-        self.assert_bad_expectations('BUG_TEST: failures/expected/text.html = TEXT = IMAGE')
+        self.assert_bad_expectations('BUG_TEST: failures/expected/text.html = FAIL = IMAGE')
 
     def test_unrecognized_expectation(self):
         self.assert_bad_expectations('BUG_TEST: failures/expected/text.html = UNKNOWN')
 
     def test_macro(self):
         exp_str = """
-BUG_TEST WIN : failures/expected/text.html = TEXT
+BUG_TEST WIN : failures/expected/text.html = FAIL
 """
         self.parse_exp(exp_str)
-        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/text.html', FAIL)
 
 
 class SemanticTests(Base):
     def test_bug_format(self):
-        self.assertRaises(ParseError, self.parse_exp, 'BUG1234 : failures/expected/text.html = TEXT', is_lint_mode=True)
+        self.assertRaises(ParseError, self.parse_exp, 'BUG1234 : failures/expected/text.html = FAIL', is_lint_mode=True)
 
     def test_bad_bugid(self):
         try:
-            self.parse_exp('BUG1234 SLOW : failures/expected/text.html = TEXT', is_lint_mode=True)
+            self.parse_exp('BUG1234 SLOW : failures/expected/text.html = FAIL', is_lint_mode=True)
             self.fail('should have raised an error about a bad bug identifier')
         except ParseError, exp:
             self.assertEquals(len(exp.warnings), 1)
 
     def test_missing_bugid(self):
-        self.parse_exp('SLOW : failures/expected/text.html = TEXT')
+        self.parse_exp('SLOW : failures/expected/text.html = FAIL')
         self.assertTrue(self._exp.has_warnings())
 
     def test_slow_and_timeout(self):
@@ -365,22 +363,22 @@ class SemanticTests(Base):
     def test_rebaseline(self):
         # Can't lint a file w/ 'REBASELINE' in it.
         self.assertRaises(ParseError, self.parse_exp,
-            'BUG_TEST REBASELINE : failures/expected/text.html = TEXT',
+            'BUG_TEST REBASELINE : failures/expected/text.html = FAIL',
             is_lint_mode=True)
 
     def test_duplicates(self):
         self.assertRaises(ParseError, self.parse_exp, """
-BUG_EXP : failures/expected/text.html = TEXT
+BUG_EXP : failures/expected/text.html = FAIL
 BUG_EXP : failures/expected/text.html = IMAGE""", is_lint_mode=True)
 
         self.assertRaises(ParseError, self.parse_exp,
             self.get_basic_expectations(), overrides="""
-BUG_OVERRIDE : failures/expected/text.html = TEXT
+BUG_OVERRIDE : failures/expected/text.html = FAIL
 BUG_OVERRIDE : failures/expected/text.html = IMAGE""", is_lint_mode=True)
 
     def test_missing_file(self):
         # This should log a non-fatal error.
-        self.parse_exp('BUG_TEST : missing_file.html = TEXT')
+        self.parse_exp('BUG_TEST : missing_file.html = FAIL')
         self.assertTrue(self._exp.has_warnings(), 1)
 
 
@@ -389,19 +387,19 @@ class PrecedenceTests(Base):
         # This tests handling precedence of specific lines over directories
         # and tests expectations covering entire directories.
         exp_str = """
-BUGX : failures/expected/text.html = TEXT
+BUGX : failures/expected/text.html = FAIL
 BUGX WONTFIX : failures/expected = IMAGE
 """
         self.parse_exp(exp_str)
-        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/text.html', FAIL)
         self.assert_exp('failures/expected/crash.html', IMAGE)
 
         exp_str = """
 BUGX WONTFIX : failures/expected = IMAGE
-BUGX : failures/expected/text.html = TEXT
+BUGX : failures/expected/text.html = FAIL
 """
         self.parse_exp(exp_str)
-        self.assert_exp('failures/expected/text.html', TEXT)
+        self.assert_exp('failures/expected/text.html', FAIL)
         self.assert_exp('failures/expected/crash.html', IMAGE)
 
     def test_ambiguous(self):
@@ -410,15 +408,15 @@ BUGX : failures/expected/text.html = TEXT
 
     def test_more_modifiers(self):
         self.assert_bad_expectations("BUG_TEST RELEASE : passes/text.html = PASS\n"
-                                     "BUG_TEST WIN RELEASE : passes/text.html = TEXT\n")
+                                     "BUG_TEST WIN RELEASE : passes/text.html = FAIL\n")
 
     def test_order_in_file(self):
-        self.assert_bad_expectations("BUG_TEST WIN RELEASE : passes/text.html = TEXT\n"
+        self.assert_bad_expectations("BUG_TEST WIN RELEASE : passes/text.html = FAIL\n"
                                      "BUG_TEST RELEASE : passes/text.html = PASS\n")
 
     def test_macro_overrides(self):
         self.assert_bad_expectations("BUG_TEST WIN : passes/text.html = PASS\n"
-                                     "BUG_TEST XP : passes/text.html = TEXT\n")
+                                     "BUG_TEST XP : passes/text.html = FAIL\n")
 
 
 class RemoveConfigurationsTest(Base):
@@ -429,14 +427,14 @@ class RemoveConfigurationsTest(Base):
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.expectations_dict = lambda: {"expectations": """BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.expectations_dict = lambda: {"expectations": """BUGX LINUX WIN RELEASE : failures/expected/foo.html = FAIL
 BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
 """}
         expectations = TestExpectations(test_port, self.get_basic_tests())
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
 
-        self.assertEqual("""BUGX LINUX VISTA WIN7 RELEASE : failures/expected/foo.html = TEXT
+        self.assertEqual("""BUGX LINUX VISTA WIN7 RELEASE : failures/expected/foo.html = FAIL
 BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
 """, actual_expectations)
 
@@ -447,7 +445,7 @@ BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.expectations_dict = lambda: {'expectations': """BUGX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.expectations_dict = lambda: {'expectations': """BUGX WIN RELEASE : failures/expected/foo.html = FAIL
 BUGY WIN DEBUG : failures/expected/foo.html = CRASH
 """}
         expectations = TestExpectations(test_port)
@@ -470,7 +468,7 @@ class RebaseliningTest(Base):
         self.assertEqual(expected_overrides, actual_overrides)
 
     def test_remove(self):
-        self.assertRemove('BUGX REBASELINE : failures/expected/text.html = TEXT\n'
+        self.assertRemove('BUGX REBASELINE : failures/expected/text.html = FAIL\n'
                           'BUGY : failures/expected/image.html = IMAGE\n'
                           'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
                           'BUGXO : failures/expected/image.html = CRASH\n',
@@ -619,12 +617,12 @@ class TestExpectationSerializationTests(unittest.TestCase):
         expectation_line.parsed_expectations = set([])
         parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
         self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), '')
-        expectation_line.parsed_expectations = set([IMAGE_PLUS_TEXT])
-        self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), 'image+text')
+        expectation_line.parsed_expectations = set([FAIL])
+        self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), 'fail')
         expectation_line.parsed_expectations = set([PASS, IMAGE])
         self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), 'pass image')
-        expectation_line.parsed_expectations = set([TEXT, PASS])
-        self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), 'pass text')
+        expectation_line.parsed_expectations = set([FAIL, PASS])
+        self.assertEqual(expectation_line._serialize_parsed_expectations(parsed_expectation_to_string), 'pass fail')
 
     def test_serialize_parsed_modifier_string(self):
         expectation_line = TestExpectationLine()

@@ -3,18 +3,18 @@ BUG_QT_SLOW SLOW: fast/workers/worker-multi-startup.html = PASS
 BUG_QT_SLOW SLOW: fast/workers/wrapper-map-gc.html = PASS
 
 // failing tests
-BUG_ARM SKIP: css3/flexbox/flex-algorithm.html = TEXT
-BUG_ARM SKIP: fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
-BUG_ARM SKIP: fast/dom/constructed-objects-prototypes.html = TEXT
-BUG_ARM SKIP: fast/events/constructors/webgl-context-event-constructor.html = TEXT
-BUG_ARM SKIP: fast/js/constructor-length.html = TEXT
-BUG_ARM SKIP: fast/js/dfg-inlining-reg-alloc.html = TEXT
-BUG_ARM SKIP: fast/js/global-constructors.html = TEXT
-BUG_ARM SKIP: fast/multicol/overflow-content.html = TEXT
-BUG_ARM SKIP: http/tests/cache/subresource-expiration-1.html = TEXT
-BUG_ARM SKIP: http/tests/cache/subresource-expiration-2.html = TEXT
-BUG_ARM SKIP: http/tests/cache/subresource-multiple-instances.html = TEXT
-BUG_ARM SKIP: svg/dom/path-parser.html = TEXT
+BUG_ARM SKIP: css3/flexbox/flex-algorithm.html = FAIL
+BUG_ARM SKIP: fast/canvas/canvas-fillRect-gradient-shadow.html = FAIL
+BUG_ARM SKIP: fast/dom/constructed-objects-prototypes.html = FAIL
+BUG_ARM SKIP: fast/events/constructors/webgl-context-event-constructor.html = FAIL
+BUG_ARM SKIP: fast/js/constructor-length.html = FAIL
+BUG_ARM SKIP: fast/js/dfg-inlining-reg-alloc.html = FAIL
+BUG_ARM SKIP: fast/js/global-constructors.html = FAIL
+BUG_ARM SKIP: fast/multicol/overflow-content.html = FAIL
+BUG_ARM SKIP: http/tests/cache/subresource-expiration-1.html = FAIL
+BUG_ARM SKIP: http/tests/cache/subresource-expiration-2.html = FAIL
+BUG_ARM SKIP: http/tests/cache/subresource-multiple-instances.html = FAIL
+BUG_ARM SKIP: svg/dom/path-parser.html = FAIL
 
 // crashing tests
 BUG_ARM SKIP: css3/flexbox/multiline-justify-content.html = CRASH

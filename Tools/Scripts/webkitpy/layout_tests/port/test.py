@@ -260,18 +260,18 @@ def add_unit_tests_to_mock_filesystem(filesystem):
         filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/TestExpectations', """
 WONTFIX : failures/expected/crash.html = CRASH
 WONTFIX : failures/expected/image.html = IMAGE
-WONTFIX : failures/expected/audio.html = AUDIO
+WONTFIX : failures/expected/audio.html = FAIL
 WONTFIX : failures/expected/image_checksum.html = IMAGE
 WONTFIX : failures/expected/mismatch.html = IMAGE
 WONTFIX : failures/expected/missing_check.html = MISSING PASS
 WONTFIX : failures/expected/missing_image.html = MISSING PASS
 WONTFIX : failures/expected/missing_audio.html = MISSING PASS
 WONTFIX : failures/expected/missing_text.html = MISSING PASS
-WONTFIX : failures/expected/newlines_leading.html = TEXT
-WONTFIX : failures/expected/newlines_trailing.html = TEXT
-WONTFIX : failures/expected/newlines_with_excess_CR.html = TEXT
+WONTFIX : failures/expected/newlines_leading.html = FAIL
+WONTFIX : failures/expected/newlines_trailing.html = FAIL
+WONTFIX : failures/expected/newlines_with_excess_CR.html = FAIL
 WONTFIX : failures/expected/reftest.html = IMAGE
-WONTFIX : failures/expected/text.html = TEXT
+WONTFIX : failures/expected/text.html = FAIL
 WONTFIX : failures/expected/timeout.html = TIMEOUT
 WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
 WONTFIX SKIP : failures/expected/keyboard.html = CRASH

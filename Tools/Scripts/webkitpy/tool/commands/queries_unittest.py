@@ -179,34 +179,34 @@ class PrintExpectationsTest(unittest.TestCase):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
                        'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = TEXT\n'))
+                       'failures/expected/text.html = FAIL\n'))
 
     def test_multiple(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-vista\n'
                        'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = TEXT\n'
+                       'failures/expected/text.html = FAIL\n'
                        '\n'
                        '// For test-win-win7\n'
                        'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = TEXT\n'
+                       'failures/expected/text.html = FAIL\n'
                        '\n'
                        '// For test-win-xp\n'
                        'failures/expected/image.html = IMAGE\n'
-                       'failures/expected/text.html = TEXT\n'),
+                       'failures/expected/text.html = FAIL\n'),
                        platform='test-win-*')
 
     def test_full(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
                        'WONTFIX : failures/expected/image.html = IMAGE\n'
-                       'WONTFIX : failures/expected/text.html = TEXT\n'),
+                       'WONTFIX : failures/expected/text.html = FAIL\n'),
                       full=True)
 
     def test_exclude(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/text.html = TEXT\n'),
+                       'failures/expected/text.html = FAIL\n'),
                       exclude_keyword=['image'])
 
     def test_include(self):
@@ -218,7 +218,7 @@ class PrintExpectationsTest(unittest.TestCase):
     def test_csv(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('test-win-xp,failures/expected/image.html,WONTFIX,IMAGE\n'
-                       'test-win-xp,failures/expected/text.html,WONTFIX,TEXT\n'),
+                       'test-win-xp,failures/expected/text.html,WONTFIX,FAIL\n'),
                       csv=True)
 
 

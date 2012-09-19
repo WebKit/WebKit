@@ -100,8 +100,13 @@ class JSONTestResult(object):
         # FIXME: There doesn't seem to be a full list of all possible values of
         # 'actual' anywhere.  However JSONLayoutResultsGenerator.FAILURE_TO_CHAR
         # is a useful reference as that's for "old" style results.json files
+        #
+        # FIXME: TEXT, IMAGE_PLUS_TEXT, and AUDIO are obsolete but we keep them for
+        # now so that we can parse old results.json files.
         if actual == test_expectations.PASS:
             return []
+        elif actual == test_expectations.FAIL:
+            return [test_failures.FailureTextMismatch(), test_failures.FailureImageHashMismatch(), test_failures.FailureAudioMismatch()]
         elif actual == test_expectations.TEXT:
             return [test_failures.FailureTextMismatch()]
         elif actual == test_expectations.IMAGE:

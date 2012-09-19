@@ -1,3 +1,91 @@
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: replace TEXT, AUDIO, and IMAGE+TEXT with FAIL
+        https://bugs.webkit.org/show_bug.cgi?id=96845
+
+        Reviewed by Ojan Vafai.
+
+        In preparation for the new TestExpectations syntax, we replace
+        all TEXT, IMAGE+TEXT, and AUDIO failures with FAIL. This will
+        make switching to the new syntax lossless (i.e., we lose
+        information now, not then).
+
+        Note that we can still parse in results.json files that have the
+        old data for backwards compatibility.
+        
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        (JSONTestResult._failure_types_from_actual_result):
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (ResultsJSONParserTest):
+        (test_basic):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_summarized_results_wontfix):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+        (TestExpectations.remove_pixel_failures):
+        (TestExpectations.has_pixel_failures):
+        (TestExpectations.suffixes_for_expectations):
+        (TestExpectations.get_rebaselining_failures):
+        (TestExpectations.remove_configuration_from_test):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (assert_bad_expectations):
+        (BasicTests):
+        (BasicTests.test_basic):
+        (MiscTests):
+        (MiscTests.test_multiple_results):
+        (MiscTests.test_result_was_expected):
+        (MiscTests.test_remove_pixel_failures):
+        (MiscTests.test_suffixes_for_expectations):
+        (test_get_expectations_string):
+        (test_parse_warning):
+        (test_error_on_different_platform):
+        (test_error_on_different_build_type):
+        (test_overrides):
+        (test_overrides__directory):
+        (test_overrides__duplicate):
+        (test_pixel_tests_flag):
+        (test_more_specific_override_resets_skip):
+        (SkippedTests.test_skipped_file_overrides_expectations):
+        (SkippedTests.test_skipped_dir_overrides_expectations):
+        (SkippedTests.test_skipped_file_overrides_overrides):
+        (SkippedTests.test_skipped_dir_overrides_overrides):
+        (ExpectationSyntaxTests.test_missing_colon):
+        (ExpectationSyntaxTests.test_too_many_equals_signs):
+        (SemanticTests.test_bug_format):
+        (SemanticTests.test_bad_bugid):
+        (SemanticTests.test_missing_bugid):
+        (SemanticTests.test_rebaseline):
+        (test_missing_file):
+        (test_more_modifiers):
+        (test_order_in_file):
+        (test_macro_overrides):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        (RebaseliningTest.test_remove):
+        (TestExpectationSerializationTests.test_serialize_parsed_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (determine_result_type):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (test_test_expectations):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_missing_and_unexpected_results):
+        (MainTest.test_retrying_and_flaky_tests):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_valid_expectations):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_basic):
+        (PrintExpectationsTest.test_multiple):
+        (PrintExpectationsTest.test_full):
+        (PrintExpectationsTest.test_exclude):
+        (PrintExpectationsTest.test_csv):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_does_not_include_overrides):
+        (test_overrides_are_included_correctly):
+
 2012-09-19  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: A few control types are returning the wrong answer for isReadOnly

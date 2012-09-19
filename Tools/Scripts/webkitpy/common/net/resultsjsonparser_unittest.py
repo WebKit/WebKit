@@ -35,33 +35,30 @@ from webkitpy.layout_tests.models import test_failures
 
 class ResultsJSONParserTest(unittest.TestCase):
     # The real files have no whitespace, but newlines make this much more readable.
+
     _example_full_results_json = """ADD_RESULTS({
     "tests": {
         "fast": {
             "dom": {
                 "prototype-inheritance.html": {
                     "expected": "PASS",
-                    "actual": "TEXT"
+                    "actual": "FAIL"
                 },
                 "prototype-banana.html": {
-                    "expected": "TEXT",
+                    "expected": "FAIL",
                     "actual": "PASS"
                 },
                 "prototype-taco.html": {
                     "expected": "PASS",
-                    "actual": "PASS TEXT"
+                    "actual": "PASS FAIL"
                 },
                 "prototype-chocolate.html": {
-                    "expected": "TEXT",
-                    "actual": "TEXT"
+                    "expected": "FAIL",
+                    "actual": "FAIL"
                 },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
-                    "actual": "TEXT PASS"
-                },
-                "prototype-peach.html": {
-                    "expected": "IMAGE+TEXT",
-                    "actual": "TEXT"
+                    "actual": "FAIL PASS"
                 }
             }
         },
@@ -90,7 +87,7 @@ class ResultsJSONParserTest(unittest.TestCase):
     def test_basic(self):
         expected_results = [
             test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 0),
-            test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch()], 0),
+            test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch(), test_failures.FailureImageHashMismatch(), test_failures.FailureAudioMismatch()], 0),
         ]
         results = ResultsJSONParser.parse_results_json(self._example_full_results_json)
         self.assertEqual(expected_results, results)
