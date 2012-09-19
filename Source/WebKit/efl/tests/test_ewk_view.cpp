@@ -19,29 +19,36 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWKTestBase.h"
-#include "UnitTestUtils/EWKTestConfig.h"
 #include <EWebKit.h>
-#include <Ecore.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <gtest/gtest.h>
 
 using namespace EWKUnitTests;
 
 /**
 * @brief Checking whether function properly returns correct value.
 */
-TEST_F(EWKTestBase, ewk_view_editable_get)
+static void ewkViewEditableGetCb(void* eventInfo, Evas_Object* o, void* data)
 {
-    loadUrl();
-    ewk_view_editable_set(webView(), EINA_FALSE);
-    ASSERT_FALSE(ewk_view_editable_get(webView()));
+    ewk_view_editable_set(o, EINA_FALSE);
+    EXPECT_EQ(EINA_FALSE, ewk_view_editable_get(o));
+    END_TEST();
+}
+
+TEST(test_ewk_view, ewk_view_editable_get)
+{
+    RUN_TEST(ewkViewEditableGetCb);
 }
 
 /**
 * @brief Checking whether function returns correct uri string.
 */
-TEST_F(EWKTestBase, ewk_view_uri_get)
+static void ewkViewUriGetCb(void* eventInfo, Evas_Object* o, void* data)
 {
-    loadUrl();
-    EXPECT_STREQ(ewk_view_uri_get(webView()), Config::defaultTestPage);
+    EXPECT_STREQ("http://www.webkit.org/", ewk_view_uri_get(o));
+    END_TEST();
+}
+
+TEST(test_ewk_view, ewk_view_uri_get)
+{
+    RUN_TEST("http://www.webkit.org", ewkViewUriGetCb);
 }

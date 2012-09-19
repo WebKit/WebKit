@@ -19,7 +19,10 @@
 #include "config.h"
 #include "EWKTestBase.h"
 
+#include "EWKTestConfig.h"
+#include "EWKTestView.h"
 #include <EWebKit.h>
+
 #include <Ecore.h>
 #include <Edje.h>
 
@@ -27,52 +30,73 @@ int EWKUnitTests::EWKTestBase::useX11Window;
 
 namespace EWKUnitTests {
 
-EWKTestBase::EWKTestBase()
-    : m_ewkTestView(0)
+bool EWKTestBase::init()
 {
+    if (!ecore_evas_init())
+        return false;
+
+    if (!edje_init()) {
+        ecore_evas_shutdown();
+        return false;
+    }
+
+    int ret = ewk_init();
+    const char* proxyUri = getenv("http_proxy");
+
+    if (ret && proxyUri)
+        ewk_network_proxy_uri_set(proxyUri);
+
+    return ret;
 }
 
-Evas_Object* EWKTestBase::webView()
+void EWKTestBase::shutdownAll()
 {
-    return m_ewkTestView->webView();
+    int count = 0;
+
+    while ((count = ecore_evas_shutdown()) > 0) { }
+    while ((count = edje_shutdown()) > 0) { }
+    while ((count = ewk_shutdown()) > 0) { }
 }
 
-void EWKTestBase::SetUp()
+void EWKTestBase::startTest()
 {
-    ASSERT_GT(ecore_evas_init(), 0);
-    ASSERT_GT(ewk_init(), 0);
-
-    const char* proxyUrl = getenv("http_proxy");
-    if (proxyUrl)
-        ewk_network_proxy_uri_set(proxyUrl);
-
-    m_ewkTestView = new EWKTestView();
+    ecore_main_loop_begin();
 }
 
-void EWKTestBase::TearDown()
-{
-    delete m_ewkTestView;
-    ecore_evas_shutdown();
-    ewk_shutdown();
-}
-
-void EWKTestBase::onLoadFinished(void* data, Evas_Object* webView, void* eventInfo)
+void EWKTestBase::endTest()
 {
     ecore_main_loop_quit();
 }
 
-void EWKTestBase::waitUntilLoadFinished()
+bool EWKTestBase::createTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data)
 {
-    evas_object_smart_callback_add(webView(), "load,finished", onLoadFinished, 0);
-    ecore_main_loop_begin();
-    evas_object_smart_callback_del(webView(), "load,finished", onLoadFinished);
+    EFL_INIT_RET();
+
+    EWKTestEcoreEvas evas(useX11Window);
+    if (!evas.evas())
+        return false;
+    evas.show();
+
+    EWKTestView view(evas.evas(), url);
+    if (!view.init())
+        return false;
+
+    view.bindEvents(event_callback, event_name, event_data);
+    view.show();
+
+    START_TEST();
+
+    return true;
 }
 
-void EWKTestBase::loadUrl(const char* url)
+bool EWKTestBase::runTest(void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data)
 {
-    ASSERT_TRUE(m_ewkTestView->init(useX11Window));
-    ASSERT_TRUE(ewk_view_uri_set(webView(), url));
-    waitUntilLoadFinished();
+    return createTest(Config::defaultTestPage, event_callback, event_name, event_data);
+}
+
+bool EWKTestBase::runTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data)
+{
+    return createTest(url, event_callback, event_name, event_data);
 }
 
 }

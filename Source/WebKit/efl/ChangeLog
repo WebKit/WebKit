@@ -1,3 +1,45 @@
+2012-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r128995.
+        http://trac.webkit.org/changeset/128995
+        https://bugs.webkit.org/show_bug.cgi?id=97114
+
+        Causes the api tests to segfault. (Requested by rakuco on
+        #webkit).
+
+        * tests/UnitTestUtils/EWKTestBase.cpp:
+        (EWKUnitTests::EWKTestBase::init):
+        (EWKUnitTests::EWKTestBase::shutdownAll):
+        (EWKUnitTests::EWKTestBase::startTest):
+        (EWKUnitTests::EWKTestBase::endTest):
+        (EWKUnitTests::EWKTestBase::createTest):
+        (EWKUnitTests):
+        (EWKUnitTests::EWKTestBase::runTest):
+        * tests/UnitTestUtils/EWKTestBase.h:
+        (EWKUnitTests):
+        (EWKTestBase):
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestEcoreEvas::EWKTestEcoreEvas):
+        (EWKUnitTests::EWKTestEcoreEvas::evas):
+        (EWKUnitTests):
+        (EWKUnitTests::EWKTestEcoreEvas::show):
+        (EWKUnitTests::EWKTestView::EWKTestView):
+        (EWKUnitTests::EWKTestView::init):
+        (EWKUnitTests::EWKTestView::show):
+        (EWKUnitTests::EWKTestView::mainFrame):
+        (EWKUnitTests::EWKTestView::evas):
+        (EWKUnitTests::EWKTestView::bindEvents):
+        * tests/UnitTestUtils/EWKTestView.h:
+        (EWKTestEcoreEvas):
+        (EWKUnitTests):
+        (EWKTestView):
+        * tests/test_ewk_view.cpp:
+        (ewkViewEditableGetCb):
+        (TEST):
+        (ewkViewUriGetCb):
+        * tests/test_runner.cpp:
+        (main):
+
 2012-09-19  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL][UT] Refactoring an implementation of testing framework for wk1.
