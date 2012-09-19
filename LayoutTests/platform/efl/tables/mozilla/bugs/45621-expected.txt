@@ -15,7 +15,7 @@ layer at (0,0) size 800x153
         RenderTableSection {TBODY} at (1,1) size 390x54
           RenderTableRow {TR} at (0,2) size 390x50
             RenderTableCell {TD} at (2,2) size 386x50 [bgcolor=#AABBFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (9,11) size 375x28 [color=#202020]
+              RenderTextControl {INPUT} at (9,11) size 375x28 [bgcolor=#FFFFFF]
               RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,114) size 784x18
         RenderBR {BR} at (0,0) size 0x19

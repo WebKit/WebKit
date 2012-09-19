@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {FORM} at (0,70) size 784x136
         RenderBlock {CENTER} at (0,0) size 784x136
-          RenderTable {TABLE} at (80,0) size 624x136 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
-            RenderTableSection {TBODY} at (1,1) size 622x134
-              RenderTableRow {TR} at (0,3) size 622x128
+          RenderTable {TABLE} at (79,0) size 626x136 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
+            RenderTableSection {TBODY} at (1,1) size 624x134
+              RenderTableRow {TR} at (0,3) size 624x128
                 RenderTableCell {TD} at (3,3) size 98x128 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                   RenderTable {TABLE} at (4,4) size 90x120 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                     RenderTableSection {TBODY} at (1,1) size 88x118
@@ -47,34 +47,34 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (3,3) size 65x19
                                 text run at (3,3) width 65: "Directory"
                           RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (104,17) size 515x100 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                  RenderTable {TABLE} at (4,4) size 507x92 [border: (1px outset #808080)]
-                    RenderTableSection {TBODY} at (1,1) size 505x90
-                      RenderTableRow {TR} at (0,4) size 505x50
-                        RenderTableCell {TD} at (4,4) size 398x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
-                          RenderInline {FONT} at (0,0) size 388x15
+                RenderTableCell {TD} at (104,15) size 517x104 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderTable {TABLE} at (4,4) size 509x96 [border: (1px outset #808080)]
+                    RenderTableSection {TBODY} at (1,1) size 507x94
+                      RenderTableRow {TR} at (0,4) size 507x54
+                        RenderTableCell {TD} at (4,4) size 396x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+                          RenderInline {FONT} at (0,0) size 386x15
                             RenderText {#text} at (0,0) size 0x0
-                            RenderTextControl {INPUT} at (7,7) size 384x28 [color=#202020]
+                            RenderTextControl {INPUT} at (7,7) size 382x28 [bgcolor=#FFFFFF]
                             RenderText {#text} at (0,0) size 0x0
                           RenderText {#text} at (0,0) size 0x0
-                        RenderTableCell {TD} at (406,4) size 95x50 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-                          RenderButton {INPUT} at (7,7) size 81x36 [color=#202020]
-                            RenderBlock (anonymous) at (15,8) size 51x18
+                        RenderTableCell {TD} at (404,4) size 99x54 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                          RenderButton {INPUT} at (7,7) size 85x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                            RenderBlock (anonymous) at (17,10) size 51x18
                               RenderText at (0,0) size 51x19
                                 text run at (0,0) width 51: "Search"
                           RenderText {#text} at (0,0) size 0x0
-                      RenderTableRow {TR} at (0,58) size 505x28
-                        RenderTableCell {TD} at (4,58) size 130x28 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderTableRow {TR} at (0,62) size 507x28
+                        RenderTableCell {TD} at (4,62) size 129x28 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 26x19
                             text run at (5,5) width 26: "asdf"
-                        RenderTableCell {TD} at (138,58) size 130x28 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                        RenderTableCell {TD} at (137,62) size 129x28 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 26x19
                             text run at (5,5) width 26: "asdf"
-                        RenderTableCell {TD} at (272,58) size 130x28 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                        RenderTableCell {TD} at (270,62) size 130x28 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 26x19
                             text run at (5,5) width 26: "asdf"
-                        RenderTableCell {TD} at (406,58) size 95x28 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+                        RenderTableCell {TD} at (404,62) size 99x28 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                           RenderText {#text} at (5,5) size 26x19
                             text run at (5,5) width 26: "asdf"
-layer at (213,118) size 377x18
-  RenderBlock {DIV} at (4,6) size 377x18
+layer at (212,116) size 375x18
+  RenderBlock {DIV} at (4,6) size 375x18

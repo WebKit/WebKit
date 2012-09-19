@@ -19,23 +19,23 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (308,20) size 472x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 241x19
                 text run at (2,2) width 241: "foo bar foo bar foo bar foo bar foo bar"
-      RenderBlock (anonymous) at (0,65) size 784x58
+      RenderBlock (anonymous) at (0,65) size 784x62
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,20) size 82x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 52x18
+        RenderButton {INPUT} at (2,20) size 86x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 52x18
             RenderText at (0,0) size 52x19
               text run at (0,0) width 52: "Reload"
-        RenderText {#text} at (86,28) size 8x19
-          text run at (86,28) width 8: "  "
-        RenderButton {INPUT} at (96,20) size 123x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 93x18
+        RenderText {#text} at (90,30) size 8x19
+          text run at (90,30) width 8: "  "
+        RenderButton {INPUT} at (100,20) size 127x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 93x18
             RenderText at (0,0) size 93x19
               text run at (0,0) width 93: "Change Font"
-        RenderText {#text} at (221,28) size 8x19
-          text run at (221,28) width 8: "  "
-        RenderTextControl {INPUT} at (231,22) size 195x28 [bgcolor=#FFFFFF]
+        RenderText {#text} at (229,30) size 8x19
+          text run at (229,30) width 8: "  "
+        RenderTextControl {INPUT} at (239,24) size 193x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-layer at (243,101) size 188x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 188x18
-    RenderText {#text} at (1,0) size 9x19
-      text run at (1,0) width 9: "6"
+layer at (251,103) size 186x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 186x18
+    RenderText {#text} at (0,0) size 9x19
+      text run at (0,0) width 9: "6"

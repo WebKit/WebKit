@@ -10,10 +10,10 @@ layer at (0,0) size 800x585
               RenderTable {TABLE} at (2,2) size 790x559 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 788x557
                   RenderTableRow {TR} at (0,2) size 788x553
-                    RenderTableCell {TD} at (2,4) size 784x549 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderPartObject {IFRAME} at (2,2) size 790x545 [border: (5px solid #0000FF)]
+                    RenderTableCell {TD} at (2,2) size 784x553 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderPartObject {IFRAME} at (2,2) size 790x549 [border: (5px solid #0000FF)]
                         layer at (0,0) size 765x1841
-                          RenderView at (0,0) size 765x535
+                          RenderView at (0,0) size 765x539
                         layer at (0,0) size 765x1840
                           RenderBlock {HTML} at (0,0) size 765x1840
                             RenderBody {BODY} at (0,0) size 765x1840 [bgcolor=#53799F]

@@ -8,11 +8,11 @@ layer at (0,0) size 800x142
           text run at (0,0) width 408: "There should be rules around each row and column group in the "
           text run at (408,0) width 77: "table below."
       RenderTable {table} at (0,34) size 184x84 [border: none]
-        RenderTableCol {colgroup} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {colgroup} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableCol {colgroup} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {colgroup} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableCol {colgroup} at (0,0) size 0x0 [border: (1px solid #000000) none (1px solid #000000)]
+        RenderTableCol {colgroup} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableSection {thead} at (0,0) size 183x21 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {tr} at (0,0) size 183x21
