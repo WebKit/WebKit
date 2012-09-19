@@ -1,42 +1,43 @@
-BUGWK91615: compositing/backface-visibility/backface-visibility-3d.html = IMAGE
-BUGWK91615: compositing/backface-visibility/backface-visibility-hierarchical-transform.html = IMAGE
-BUGWK91615: compositing/backface-visibility/backface-visibility-image.html = IMAGE
-BUGWK91615: compositing/backface-visibility/backface-visibility-non3d.html = IMAGE
-BUGWK91615: compositing/backface-visibility/backface-visibility-simple.html = IMAGE
-BUGWK91615: compositing/culling/filter-occlusion-alpha-large.html = IMAGE
-BUGWK91615: compositing/culling/filter-occlusion-alpha.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-composited-page-scale-down.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-composited-page-scale.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-transform-composited-page-scale-down.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-transform-composited-page-scale.html = IMAGE
-BUGWK91615: compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
-BUGWK91615: compositing/geometry/layer-due-to-layer-children.html = IMAGE
-BUGWK91615: compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGWK91615: compositing/iframes/scroll-fixed-transformed-element.html = IMAGE
-BUGWK91615: compositing/images/direct-pdf-image.html = IMAGE
-BUGWK91615: compositing/layer-creation/fixed-position-and-transform.html = IMAGE
-BUGWK91615: compositing/layer-creation/fixed-position-under-transform.html = IMAGE
-BUGWK91615: compositing/masks/masked-ancestor.html = IMAGE
-BUGWK91615: compositing/overflow/image-load-overflow-scrollbars.html = IMAGE
-BUGWK91615: compositing/overflow/scrollbars-with-clipped-owner.html = IMAGE
-BUGWK91615: compositing/reflections/nested-reflection-mask-change.html = IMAGE
-BUGWK91615: compositing/reflections/nested-reflection-transformed.html = IMAGE
-BUGWK91615: compositing/reflections/nested-reflection-transformed2.html = IMAGE
-BUGWK91615: compositing/repaint/newly-composited-repaint-rect.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-absolute-overflow.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-absolute.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-fixed-overflow-scrolled.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-fixed-overflow.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-fixed.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-iframe-absolute-overflow.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-iframe-fixed-overflow.html = IMAGE
-BUGWK91615: compositing/rtl/rtl-overflow-invalidation.html = IMAGE
-BUGWK91615: compositing/transitions/scale-transition-no-start.html = IMAGE
-BUGWK91615: compositing/transitions/singular-scale-transition.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-iframe-composited-page-scale-down.html = IMAGE
-BUGWK91615: compositing/geometry/fixed-position-iframe-composited-page-scale.html = IMAGE
-BUGWK91615: compositing/culling/filter-occlusion-blur-large.html = IMAGE
-BUGWK91615: compositing/culling/filter-occlusion-blur.html = IMAGE
-BUGWK91615: compositing/flat-with-transformed-child.html = IMAGE
+webkit.org/b/91615 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/backface-visibility/backface-visibility-simple.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/layer-due-to-layer-children.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/iframes/scroll-fixed-transformed-element.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/images/direct-pdf-image.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/layer-creation/fixed-position-under-transform.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/overflow/image-load-overflow-scrollbars.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/overflow/scrollbars-with-clipped-owner.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/reflections/nested-reflection-mask-change.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/reflections/nested-reflection-transformed.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/reflections/nested-reflection-transformed2.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/repaint/newly-composited-repaint-rect.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-absolute-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-absolute.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-fixed-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-fixed.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-iframe-absolute-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-iframe-fixed-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/rtl/rtl-overflow-invalidation.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/transitions/scale-transition-no-start.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/transitions/singular-scale-transition.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
+webkit.org/b/91615 compositing/flat-with-transformed-child.html [ ImageOnlyFailure ]
+
