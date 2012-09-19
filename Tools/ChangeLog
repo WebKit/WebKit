@@ -1,3 +1,15 @@
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: convert chromium TestExpectations to the new syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97139
+
+        Reviewed by Ryosuke Niwa.
+    
+        Add in a file temporarily that does the conversion of
+        test expectations formats
+
+        * Tools/Scripts/convert-test-expectations: Added.
+
 2012-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: run-perf-tests no longer reports the total test time
