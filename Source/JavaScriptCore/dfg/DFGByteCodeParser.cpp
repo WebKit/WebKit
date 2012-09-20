@@ -2714,6 +2714,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_call_varargs: {
             ASSERT(m_inlineStackTop->m_inlineCallFrame);
             ASSERT(currentInstruction[3].u.operand == m_inlineStackTop->m_codeBlock->argumentsRegister());
+            ASSERT(!m_inlineStackTop->m_codeBlock->symbolTable()->slowArguments());
             // It would be cool to funnel this into handleCall() so that it can handle
             // inlining. But currently that won't be profitable anyway, since none of the
             // uses of call_varargs will be inlineable. So we set this up manually and

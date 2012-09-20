@@ -1,0 +1,403 @@
+This tests verifies access to captured arguments via an optimized-away arguments object.
+
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: f(1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+PASS: g(0, 1) should be 1 and is.
+

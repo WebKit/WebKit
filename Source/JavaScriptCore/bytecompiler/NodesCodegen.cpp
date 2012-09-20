@@ -320,7 +320,9 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (m_base->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(m_base)->identifier())) {
+    if (m_base->isResolveNode() 
+        && generator.willResolveToArguments(static_cast<ResolveNode*>(m_base)->identifier())
+        && !generator.symbolTable().slowArguments()) {
         RegisterID* property = generator.emitNode(m_subscript);
         generator.emitExpressionInfo(divot(), startOffset(), endOffset());    
         return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedRegisterForArguments(), property);

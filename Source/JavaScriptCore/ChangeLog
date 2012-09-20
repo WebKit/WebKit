@@ -1,3 +1,61 @@
+2012-09-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored the interpreter and JIT so they don't dictate closure layout
+        https://bugs.webkit.org/show_bug.cgi?id=97221
+
+        Reviewed by Oliver Hunt.
+
+        Capture may change the location of an argument for space efficiency. This
+        patch removes static assumptions about argument location from the interpreter
+        and JIT.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::argumentIndexAfterCapture):
+        (JSC::ExecState::argumentAfterCapture): Factored out a helper function
+        so the compiler could share this logic.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode): Don't emit optimized bracket
+        access on arguments if a parameter has been captured by name. This case is
+        rare and, where I've seen it in the wild, the optimization mostly failed
+        anyway due to arguments escape, so I didn't feel like writing and testing
+        five copies of the code that would handle it in the baseline engines.
+
+        The DFG can still synthesize this optimization even if we don't emit the
+        optimized bytecode for it.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::symbolTableFor):
+        (AssemblyHelpers): Use the right helper function to account for the fact
+        that a parameter may have been captured by name and moved.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): ASSERT that we haven't inlined
+        a .apply on captured arguments. Once we do start inlining such things,
+        we'll need to do a little bit of math here to get them right.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Added support for bracket access on
+        an arguments object where arguments have also been captured by name. We
+        load the true index of the argument from a side vector. Arguments elision
+        is very powerful in the DFG, so I wanted to keep it working, even in this
+        rare case.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::loadVarargs): Use the right helper function to account for the fact
+        that a parameter may have been captured by name and moved.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs): Don't use the inline copy loop if some
+        of our arguments have moved, since it would copy stale values. (We still
+        optimize the actual call, and elide the arguments object.)
+
 2012-09-20  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] r129045 broke the ARM build

@@ -432,6 +432,8 @@ namespace JSC {
 
         unsigned instructionCount() { return m_instructions.size(); }
 
+        int argumentIndexAfterCapture(size_t argument);
+
 #if ENABLE(JIT)
         void setJITCode(const JITCode& code, MacroAssemblerCodePtr codeWithArityCheck)
         {
@@ -1520,6 +1522,18 @@ namespace JSC {
         return baselineCodeBlock;
     }
     
+    inline int CodeBlock::argumentIndexAfterCapture(size_t argument)
+    {
+        if (argument >= static_cast<size_t>(symbolTable()->parameterCount()))
+            return CallFrame::argumentOffset(argument);
+
+        const SlowArgument* slowArguments = symbolTable()->slowArguments();
+        if (!slowArguments || slowArguments[argument].status == SlowArgument::Normal)
+            return CallFrame::argumentOffset(argument);
+
+        ASSERT(slowArguments[argument].status == SlowArgument::Captured);
+        return slowArguments[argument].indexIfCaptured;
+    }
 
     inline Register& ExecState::r(int index)
     {
@@ -1552,15 +1566,7 @@ namespace JSC {
         if (!codeBlock())
             return this[argumentOffset(argument)].jsValue();
 
-        if (argument >= static_cast<size_t>(codeBlock()->symbolTable()->parameterCount()))
-            return this[argumentOffset(argument)].jsValue();
-
-        const SlowArgument* slowArguments = codeBlock()->symbolTable()->slowArguments();
-        if (!slowArguments || slowArguments[argument].status == SlowArgument::Normal)
-            return this[argumentOffset(argument)].jsValue();
-
-        ASSERT(slowArguments[argument].status == SlowArgument::Captured);
-        return this[slowArguments[argument].indexIfCaptured].jsValue();
+        return this[codeBlock()->argumentIndexAfterCapture(argument)].jsValue();
     }
 
 #if ENABLE(DFG_JIT)

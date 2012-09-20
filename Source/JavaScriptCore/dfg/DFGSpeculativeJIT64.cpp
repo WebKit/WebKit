@@ -4122,7 +4122,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRReg indexGPR = index.gpr();
         GPRReg resultGPR = result.gpr();
-        
+
         if (!isEmptySpeculation(
                 m_state.variables().operand(
                     m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
@@ -4150,18 +4150,40 @@ void SpeculativeJIT::compile(Node& node)
                     resultGPR,
                     JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
         }
-            
+
+        JITCompiler::JumpList slowArgument;
+        JITCompiler::JumpList slowArgumentOutOfBounds;
+        if (const SlowArgument* slowArguments = m_jit.symbolTableFor(node.codeOrigin)->slowArguments()) {
+            slowArgumentOutOfBounds.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual, indexGPR,
+                    Imm32(m_jit.symbolTableFor(node.codeOrigin)->parameterCount())));
+
+            COMPILE_ASSERT(sizeof(SlowArgument) == 8, SlowArgument_size_is_eight_bytes);
+            m_jit.move(ImmPtr(slowArguments), resultGPR);
+            m_jit.load32(
+                JITCompiler::BaseIndex(
+                    resultGPR, indexGPR, JITCompiler::TimesEight, 
+                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                resultGPR);
+            m_jit.signExtend32ToPtr(resultGPR, resultGPR);
+            m_jit.loadPtr(
+                JITCompiler::BaseIndex(
+                    GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight, m_jit.offsetOfLocals(node.codeOrigin)),
+                resultGPR);
+            slowArgument.append(m_jit.jump());
+        }
+        slowArgumentOutOfBounds.link(&m_jit);
+
         m_jit.neg32(resultGPR);
         m_jit.signExtend32ToPtr(resultGPR, resultGPR);
             
         m_jit.loadPtr(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight,
-                ((node.codeOrigin.inlineCallFrame
-                  ? node.codeOrigin.inlineCallFrame->stackOffset
-                  : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register)),
+                GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight, m_jit.offsetOfArgumentsIncludingThis(node.codeOrigin)),
             resultGPR);
 
+        slowArgument.link(&m_jit);
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
@@ -4194,15 +4216,36 @@ void SpeculativeJIT::compile(Node& node)
                     JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
         }
         
+        JITCompiler::JumpList slowArgument;
+        JITCompiler::JumpList slowArgumentOutOfBounds;
+        if (const SlowArgument* slowArguments = m_jit.symbolTableFor(node.codeOrigin)->slowArguments()) {
+            slowArgumentOutOfBounds.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual, indexGPR,
+                    Imm32(m_jit.symbolTableFor(node.codeOrigin)->parameterCount())));
+
+            COMPILE_ASSERT(sizeof(SlowArgument) == 8, SlowArgument_size_is_eight_bytes);
+            m_jit.move(ImmPtr(slowArguments), resultGPR);
+            m_jit.load32(
+                JITCompiler::BaseIndex(
+                    resultGPR, indexGPR, JITCompiler::TimesEight, 
+                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                resultGPR);
+            m_jit.signExtend32ToPtr(resultGPR, resultGPR);
+            m_jit.loadPtr(
+                JITCompiler::BaseIndex(
+                    GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight, m_jit.offsetOfLocals(node.codeOrigin)),
+                resultGPR);
+            slowArgument.append(m_jit.jump());
+        }
+        slowArgumentOutOfBounds.link(&m_jit);
+
         m_jit.neg32(resultGPR);
         m_jit.signExtend32ToPtr(resultGPR, resultGPR);
         
         m_jit.loadPtr(
             JITCompiler::BaseIndex(
-                GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight,
-                ((node.codeOrigin.inlineCallFrame
-                  ? node.codeOrigin.inlineCallFrame->stackOffset
-                  : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register)),
+                GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight, m_jit.offsetOfArgumentsIncludingThis(node.codeOrigin)),
             resultGPR);
         
         if (node.codeOrigin.inlineCallFrame) {
@@ -4220,6 +4263,7 @@ void SpeculativeJIT::compile(Node& node)
                     indexGPR));
         }
         
+        slowArgument.link(&m_jit);
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }

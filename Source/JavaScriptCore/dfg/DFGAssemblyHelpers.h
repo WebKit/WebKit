@@ -343,6 +343,25 @@ public:
         return argumentsRegisterFor(codeOrigin.inlineCallFrame);
     }
     
+    SharedSymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
+    {
+        return baselineCodeBlockFor(codeOrigin)->symbolTable();
+    }
+
+    int offsetOfLocals(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return 0;
+        return codeOrigin.inlineCallFrame->stackOffset * sizeof(Register);
+    }
+
+    int offsetOfArgumentsIncludingThis(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register);
+        return (codeOrigin.inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
+    }
+
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
     
     static const double twoToThe32;

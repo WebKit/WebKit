@@ -1,0 +1,39 @@
+<p>This tests verifies access to captured arguments via an optimized-away arguments object.
+</p>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+	document.getElementById("console").appendChild(document.createTextNode(s + "\r\n"));
+}
+
+function shouldBe(a, aDescription, b)
+{
+	if (a == b) {
+		log("PASS: " + aDescription + " should be " + b + " and is.");
+		return;
+	}
+	log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+}
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+}
+
+// In-bounds of declared and passed arguments.
+function f(x) {
+    return arguments[0] || function() { return x; };
+}
+
+// Out-of-bounds of declared arguments, in-bounds of passed arguments.
+function g(x) {
+    return arguments[1] || function() { return x; };
+}
+
+for (var i = 0; i < 200; ++i)
+    shouldBe(f(1), "f(1)", 1);
+
+for (var i = 0; i < 200; ++i)
+    shouldBe(g(0, 1), "g(0, 1)", 1);
+</script>

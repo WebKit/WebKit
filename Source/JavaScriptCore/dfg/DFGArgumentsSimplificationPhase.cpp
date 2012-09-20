@@ -584,8 +584,8 @@ public:
                     node.convertToGetLocalUnlinked(
                         static_cast<VirtualRegister>(
                             node.codeOrigin.inlineCallFrame->stackOffset +
-                            argumentToOperand(index + 1)));
-                    
+                            m_graph.baselineCodeBlockFor(node.codeOrigin)->argumentIndexAfterCapture(index)));
+
                     NodeIndex checkNodeIndex = m_graph.size();
                     m_graph.append(check);
                     insertionSet.append(indexInBlock, checkNodeIndex);

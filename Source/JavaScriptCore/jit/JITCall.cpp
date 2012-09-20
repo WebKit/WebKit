@@ -66,7 +66,11 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
     JumpList slowCase;
     JumpList end;
-    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister()) {
+    bool canOptimize = m_codeBlock->usesArguments()
+        && arguments == m_codeBlock->argumentsRegister()
+        && !m_codeBlock->symbolTable()->slowArguments();
+
+    if (canOptimize) {
         emitGetVirtualRegister(arguments, regT0);
         slowCase.append(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(JSValue()))));
 
@@ -103,7 +107,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         end.append(jump());
     }
 
-    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister())
+    if (canOptimize)
         slowCase.link(this);
 
     JITStubCall stubCall(this, cti_op_load_varargs);
@@ -112,7 +116,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     stubCall.addArgument(Imm32(firstFreeRegister));
     stubCall.call(regT1);
 
-    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister())
+    if (canOptimize)
         end.link(this);
 }
 

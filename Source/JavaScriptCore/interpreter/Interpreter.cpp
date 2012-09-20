@@ -202,7 +202,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
         newCallFrame->setArgumentCountIncludingThis(argumentCountIncludingThis);
         newCallFrame->setThisValue(thisValue);
         for (size_t i = 0; i < callFrame->argumentCount(); ++i)
-            newCallFrame->setArgument(i, callFrame->argument(i));
+            newCallFrame->setArgument(i, callFrame->argumentAfterCapture(i));
         return newCallFrame;
     }
 
