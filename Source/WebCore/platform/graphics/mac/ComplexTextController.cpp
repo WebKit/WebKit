@@ -580,8 +580,14 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 nextCh = *(m_complexTextRuns[r + 1]->characters() + m_complexTextRuns[r + 1]->indexAt(0));
 
             bool treatAsSpace = Font::treatAsSpace(ch);
-            CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
-            CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
+            CGGlyph glyph = glyphs[i];
+            CGSize advance = advances[i];
+            // FIXME: We should find a way to substitute spaces for characters that are treated as spaces
+            // before handing them off to Core Text, so that kerning can be applied as if they were spaces.
+            if (treatAsSpace && ch != ' ') {
+                glyph = fontData->spaceGlyph();
+                advance.width = spaceWidth;
+            }
 
             if (ch == '\t' && m_run.allowTabs())
                 advance.width = m_font.tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
