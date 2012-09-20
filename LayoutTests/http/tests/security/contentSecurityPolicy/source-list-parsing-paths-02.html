@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/multiple-iframe-test.js'></script>
+<script>
+var tests = [
+    ['no', 'script-src 127.0.0.1:*/not-security#query=string', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:*/not-security?query=string', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/security', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/security/', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/security/contentSecurityPolicy', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:8000/security;not-contentSecurityPolicy', 'resources/script.js'],
+];
+</script>
+</head>
+<body onload="test()">
+  <p>
+    Resources should be rejected unless they match a whitelisted path.
+  </p>

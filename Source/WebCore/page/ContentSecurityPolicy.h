@@ -100,7 +100,6 @@ public:
     void gatherReportURIs(DOMStringList&) const;
 
     void reportDuplicateDirective(const String&) const;
-    void reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
     void reportInvalidNonce(const String&) const;
     void reportInvalidPluginTypes(const String&) const;

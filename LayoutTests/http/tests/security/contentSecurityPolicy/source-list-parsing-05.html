@@ -5,15 +5,15 @@
 <script>
 var tests = [
     ['yes', 'script-src 127.0.0.1:*/', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/path', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/path?query=string', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/path#anchor', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:*/path', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:*/path?query=string', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:*/path#anchor', 'resources/script.js'],
     ['yes', 'script-src 127.0.0.1:8000/', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:8000/path', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:8000/path?query=string', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:8000/path#anchor', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:8000/thisisa;pathwithasemicolon', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:8000/this is a path with spaces', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:8000/path', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:8000/path?query=string', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:8000/path#anchor', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:8000/thisisa;pathwithasemicolon', 'resources/script.js'],
+    ['no', 'script-src 127.0.0.1:8000/this is a path with spaces', 'resources/script.js'],
 ];
 </script>
 </head>

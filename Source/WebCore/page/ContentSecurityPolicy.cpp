@@ -71,6 +71,11 @@ bool isSourceCharacter(UChar c)
     return !isASCIISpace(c);
 }
 
+bool isPathComponentCharacter(UChar c)
+{
+    return c != '?' && c != '#';
+}
+
 bool isHostCharacter(UChar c)
 {
     return isASCIIAlphanumeric(c) || c == '-';
@@ -132,10 +137,11 @@ static void skipWhile(const UChar*& position, const UChar* end)
 
 class CSPSource {
 public:
-    CSPSource(const String& scheme, const String& host, int port, bool hostHasWildcard, bool portHasWildcard)
+    CSPSource(const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard)
         : m_scheme(scheme)
         , m_host(host)
         , m_port(port)
+        , m_path(path)
         , m_hostHasWildcard(hostHasWildcard)
         , m_portHasWildcard(portHasWildcard)
     {
@@ -147,7 +153,7 @@ public:
             return false;
         if (isSchemeOnly())
             return true;
-        return hostMatches(url) && portMatches(url);
+        return hostMatches(url) && portMatches(url) && pathMatches(url);
     }
 
 private:
@@ -163,6 +169,16 @@ private:
             return true;
         return m_hostHasWildcard && host.endsWith("." + m_host, false);
 
+    }
+
+    bool pathMatches(const KURL& url) const
+    {
+        if (m_path.isEmpty())
+            return true;
+
+        String path = decodeURLEscapeSequences(url.path());
+
+        return path.startsWith(m_path, false);
     }
 
     bool portMatches(const KURL& url) const
@@ -189,6 +205,7 @@ private:
     String m_scheme;
     String m_host;
     int m_port;
+    String m_path;
 
     bool m_hostHasWildcard;
     bool m_portHasWildcard;
@@ -287,9 +304,7 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
                 continue;
             if (scheme.isEmpty())
                 scheme = m_policy->securityOrigin()->protocol();
-            if (!path.isEmpty())
-                m_policy->reportIgnoredPathComponent(m_directiveName, String(beginSource, position - beginSource), path);
-            m_list.append(CSPSource(scheme, host, port, hostHasWildcard, portHasWildcard));
+            m_list.append(CSPSource(scheme, host, port, path, hostHasWildcard, portHasWildcard));
         } else
             m_policy->reportInvalidSourceExpression(m_directiveName, String(beginSource, position - beginSource));
 
@@ -474,16 +489,23 @@ bool CSPSourceList::parseHost(const UChar* begin, const UChar* end, String& host
     return true;
 }
 
-// FIXME: Deal with an actual path. This just sucks up everything to the end of the string.
 bool CSPSourceList::parsePath(const UChar* begin, const UChar* end, String& path)
 {
     ASSERT(begin <= end);
     ASSERT(path.isEmpty());
 
-    if (begin == end)
+    const UChar* position = begin;
+    skipWhile<isPathComponentCharacter>(position, end);
+    // path/to/file.js?query=string || path/to/file.js#anchor
+    //                ^                               ^
+    if (position < end)
         return false;
 
-    path = String(begin, end - begin);
+    path = decodeURLEscapeSequences(String(begin, end - begin));
+    if (!path.endsWith('/'))
+        path = path + '/';
+
+    ASSERT(position == end && path.endsWith('/'));
     return true;
 }
 
@@ -520,7 +542,7 @@ bool CSPSourceList::parsePort(const UChar* begin, const UChar* end, int& port, b
 
 void CSPSourceList::addSourceSelf()
 {
-    m_list.append(CSPSource(m_policy->securityOrigin()->protocol(), m_policy->securityOrigin()->host(), m_policy->securityOrigin()->port(), false, false));
+    m_list.append(CSPSource(m_policy->securityOrigin()->protocol(), m_policy->securityOrigin()->host(), m_policy->securityOrigin()->port(), String(), false, false));
 }
 
 void CSPSourceList::addSourceStar()
@@ -1547,12 +1569,6 @@ void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& d
 void ContentSecurityPolicy::reportInvalidNonce(const String& nonce) const
 {
     String message = makeString("Ignoring invalid Content Security Policy script nonce: '", nonce, "'.\n");
-    logToConsole(message);
-}
-
-void ContentSecurityPolicy::reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const
-{
-    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains the source '", completeSource, "'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '", path, "' is being ignored. Be careful.");
     logToConsole(message);
 }
 
