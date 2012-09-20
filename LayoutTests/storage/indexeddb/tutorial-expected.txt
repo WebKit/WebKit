@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Please view source for more information on what this is doing and why...
 
 Everything worked!

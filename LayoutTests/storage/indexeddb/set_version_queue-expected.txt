@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 4 open connections try to setVersion at the same time. 3 connections eventually close, allowing 1 setVersion call to proceed.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

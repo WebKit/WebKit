@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test that pending transactions are not completed during recursive JS calls until all JS is finished.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

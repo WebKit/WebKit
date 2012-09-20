@@ -124,6 +124,8 @@ private:
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
+
+    bool m_didSpamConsole;
 };
 
 } // namespace WebCore

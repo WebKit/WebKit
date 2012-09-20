@@ -1,7 +1,11 @@
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback1
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback2
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback3
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback5
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
 Tests IndexedDB tree element on resources panel.
