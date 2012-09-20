@@ -46,8 +46,6 @@
                 'chromium_src_dir': '../../../../..',
             }],
         ],
-
-        'use_libcc_for_compositor%': 0,
     },
     'targets': [
         {
@@ -103,11 +101,6 @@
                             # FIXME: Enable warnings on other platforms.
                             'chromium_code': 1,
                             },
-                        }],
-                        ['use_libcc_for_compositor==0', {
-                            'sources': [
-                                '<@(webkit_compositor_unittest_files)',
-                            ],
                         }],
                     ],
                 }],

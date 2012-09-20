@@ -46,8 +46,6 @@
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
 
-    'use_libcc_for_compositor%': 0,
-
     'enable_wexit_time_destructors': 1,
 
     'use_harfbuzz_ng%': 0,
@@ -1910,19 +1908,6 @@
         '<@(webcore_platform_geometry_files)',
       ],
     },
-    {
-      'target_name': 'webcore_chromium_compositor',
-      'type': 'static_library',
-      'dependencies': [
-        'webcore_prerequisites',
-      ],
-      'defines': [
-        'WEBKIT_IMPLEMENTATION=1',
-      ],
-      'sources': [
-        '<@(webcore_chromium_compositor_files)',
-      ],
-    },
     # The *NEON.cpp files fail to compile when -mthumb is passed. Force
     # them to build in ARM mode.
     # See https://bugs.webkit.org/show_bug.cgi?id=62916.
@@ -2210,11 +2195,6 @@
             'webcore_svg',
           ],
         }],
-        ['use_libcc_for_compositor==0', {
-          'dependencies': [
-            'webcore_chromium_compositor'
-          ],
-        }]
       ],
     },
     {

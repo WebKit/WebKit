@@ -26,9 +26,6 @@
 
 #include "GraphicsLayerChromium.h"
 
-#include "CCLayerTreeHost.h"
-#include "CCLayerTreeHostImpl.h"
-#include "CCSingleThreadProxy.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "Matrix3DTransformOperation.h"
@@ -42,6 +39,7 @@
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayerTreeView.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;

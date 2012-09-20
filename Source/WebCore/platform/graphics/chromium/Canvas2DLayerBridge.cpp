@@ -27,7 +27,6 @@
 
 #include "Canvas2DLayerBridge.h"
 
-#include "CCRendererGL.h" // For the GLC() macro.
 #include "Canvas2DLayerManager.h"
 #include "GrContext.h"
 #include "GraphicsContext3D.h"
@@ -67,15 +66,15 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
 
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
-        GLC(m_context.get(), m_frontBufferTexture = m_context->createTexture());
-        GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_frontBufferTexture));
+        m_frontBufferTexture = m_context->createTexture();
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_frontBufferTexture);
         // Do basic linear filtering on resize.
-        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
         // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
-        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-        GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE));
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+        m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
         if (GrContext* grContext = m_context->grContext())
             grContext->resetContext();
     }
@@ -95,7 +94,7 @@ Canvas2DLayerBridge::~Canvas2DLayerBridge()
     m_layer->setTextureId(0);
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
-        GLC(m_context.get(), m_context->deleteTexture(m_frontBufferTexture));
+        m_context->deleteTexture(m_frontBufferTexture);
         m_context->flush();
     }
 }

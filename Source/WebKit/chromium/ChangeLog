@@ -1,3 +1,110 @@
+2012-09-20  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused copy of chromium compositor implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=97255
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * WebKitUnitTests.gyp:
+        * src/WebAnimationCurveCommon.cpp: Removed.
+        * src/WebAnimationCurveCommon.h: Removed.
+        * src/WebAnimationImpl.cpp: Removed.
+        * src/WebAnimationImpl.h: Removed.
+        * src/WebContentLayerImpl.cpp: Removed.
+        * src/WebContentLayerImpl.h: Removed.
+        * src/WebExternalTextureLayerImpl.cpp: Removed.
+        * src/WebExternalTextureLayerImpl.h: Removed.
+        * src/WebFloatAnimationCurveImpl.cpp: Removed.
+        * src/WebFloatAnimationCurveImpl.h: Removed.
+        * src/WebIOSurfaceLayerImpl.cpp: Removed.
+        * src/WebIOSurfaceLayerImpl.h: Removed.
+        * src/WebImageLayerImpl.cpp: Removed.
+        * src/WebImageLayerImpl.h: Removed.
+        * src/WebLayerImpl.cpp: Removed.
+        * src/WebLayerImpl.h: Removed.
+        * src/WebLayerTreeViewImpl.cpp: Removed.
+        * src/WebLayerTreeViewImpl.h: Removed.
+        * src/WebScrollbarLayerImpl.cpp: Removed.
+        * src/WebScrollbarLayerImpl.h: Removed.
+        * src/WebSolidColorLayerImpl.cpp: Removed.
+        * src/WebSolidColorLayerImpl.h: Removed.
+        * src/WebToCCInputHandlerAdapter.cpp: Removed.
+        * src/WebToCCInputHandlerAdapter.h: Removed.
+        * src/WebTransformAnimationCurveImpl.cpp: Removed.
+        * src/WebTransformAnimationCurveImpl.h: Removed.
+        * src/WebVideoLayerImpl.cpp: Removed.
+        * src/WebVideoLayerImpl.h: Removed.
+        * tests/CCActiveAnimationTest.cpp: Removed.
+        * tests/CCAnimationTestCommon.cpp: Removed.
+        * tests/CCAnimationTestCommon.h: Removed.
+        * tests/CCDamageTrackerTest.cpp: Removed.
+        * tests/CCDelayBasedTimeSourceTest.cpp: Removed.
+        * tests/CCDrawQuadTest.cpp: Removed.
+        * tests/CCFrameRateControllerTest.cpp: Removed.
+        * tests/CCGeometryTestUtils.cpp: Removed.
+        * tests/CCGeometryTestUtils.h: Removed.
+        * tests/CCHeadsUpDisplayTest.cpp: Removed.
+        * tests/CCKeyframedAnimationCurveTest.cpp: Removed.
+        * tests/CCLayerAnimationControllerTest.cpp: Removed.
+        * tests/CCLayerImplTest.cpp: Removed.
+        * tests/CCLayerIteratorTest.cpp: Removed.
+        * tests/CCLayerQuadTest.cpp: Removed.
+        * tests/CCLayerSorterTest.cpp: Removed.
+        * tests/CCLayerTestCommon.cpp: Removed.
+        * tests/CCLayerTestCommon.h: Removed.
+        * tests/CCLayerTreeHostCommonTest.cpp: Removed.
+        * tests/CCLayerTreeHostImplTest.cpp: Removed.
+        * tests/CCLayerTreeHostTest.cpp: Removed.
+        * tests/CCMathUtilTest.cpp: Removed.
+        * tests/CCOcclusionTrackerTest.cpp: Removed.
+        * tests/CCOcclusionTrackerTestCommon.h: Removed.
+        * tests/CCPrioritizedTextureTest.cpp: Removed.
+        * tests/CCQuadCullerTest.cpp: Removed.
+        * tests/CCRenderPassTest.cpp: Removed.
+        * tests/CCRenderSurfaceFiltersTest.cpp: Removed.
+        * tests/CCRenderSurfaceTest.cpp: Removed.
+        * tests/CCRendererGLTest.cpp: Removed.
+        * tests/CCResourceProviderTest.cpp: Removed.
+        * tests/CCSchedulerStateMachineTest.cpp: Removed.
+        * tests/CCSchedulerTest.cpp: Removed.
+        * tests/CCSchedulerTestCommon.h: Removed.
+        * tests/CCScopedTextureTest.cpp: Removed.
+        * tests/CCScrollbarAnimationControllerLinearFadeTest.cpp: Removed.
+        * tests/CCSolidColorLayerImplTest.cpp: Removed.
+        * tests/CCTestCommon.h: Removed.
+        * tests/CCTextureUpdateControllerTest.cpp: Removed.
+        * tests/CCThreadTaskTest.cpp: Removed.
+        * tests/CCThreadedTest.cpp: Removed.
+        * tests/CCThreadedTest.h: Removed.
+        * tests/CCTiledLayerImplTest.cpp: Removed.
+        * tests/CCTiledLayerTestCommon.cpp: Removed.
+        * tests/CCTiledLayerTestCommon.h: Removed.
+        * tests/CCTimerTest.cpp: Removed.
+        * tests/ContentLayerChromiumTest.cpp: Removed.
+        * tests/FakeCCLayerTreeHostClient.h: Removed.
+        * tests/FakeGraphicsContext3DTest.cpp: Removed.
+        * tests/FakeWebScrollbarThemeGeometry.h: Removed.
+        * tests/FloatQuadTest.cpp: Removed.
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/ImageLayerChromiumTest.cpp:
+        * tests/LayerChromiumTest.cpp: Removed.
+        * tests/MockCCQuadCuller.h: Removed.
+        * tests/ScrollbarLayerChromiumTest.cpp: Removed.
+        * tests/TextureCopierTest.cpp: Removed.
+        * tests/TextureLayerChromiumTest.cpp: Removed.
+        * tests/ThrottledTextureUploaderTest.cpp: Removed.
+        * tests/TiledLayerChromiumTest.cpp: Removed.
+        * tests/TreeSynchronizerTest.cpp: Removed.
+        * tests/WebAnimationTest.cpp: Removed.
+        * tests/WebFloatAnimationCurveTest.cpp: Removed.
+        * tests/WebLayerTest.cpp: Removed.
+        * tests/WebLayerTreeViewTest.cpp: Removed.
+        * tests/WebTransformAnimationCurveTest.cpp: Removed.
+        * tests/WebTransformOperationsTest.cpp: Removed.
+        * tests/WebTransformationMatrixTest.cpp: Removed.
+
 2012-09-20  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Extend UserMediaRequest with a ownerDocument method

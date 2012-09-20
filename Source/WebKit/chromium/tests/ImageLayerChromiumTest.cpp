@@ -24,8 +24,6 @@
 
 #include "config.h"
 
-#include "ImageLayerChromium.h"
-
 #include "GraphicsLayer.h"
 #include "GraphicsLayerChromium.h"
 #include "Image.h"

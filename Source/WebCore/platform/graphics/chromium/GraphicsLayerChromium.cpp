@@ -46,7 +46,6 @@
 #include "GraphicsLayerChromium.h"
 
 #include "AnimationTranslationUtil.h"
-#include "ContentLayerChromium.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -70,6 +69,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
