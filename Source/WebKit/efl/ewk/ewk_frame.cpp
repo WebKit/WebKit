@@ -262,7 +262,7 @@ static void _ewk_frame_smart_resize(Evas_Object* ewkFrame, Evas_Coord width, Eva
     evas_object_resize(smartData->region, width, height);
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->region, &x, &y, &width, &height);
-    INF("region=%p, visible=%d, geo=%d,%d + %dx%d",
+    INFO("region=%p, visible=%d, geo=%d,%d + %dx%d",
         smartData->region, evas_object_visible_get(smartData->region), x, y, width, height);
     _ewk_frame_debug(ewkFrame);
 #endif
@@ -1643,7 +1643,7 @@ ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
 
     if (!smartData->frame->document()->isHTMLDocument()) {
         // FIXME: Support others documents.
-        WRN("Only HTML documents are supported");
+        WARN("Only HTML documents are supported");
         return -1;
     }
 
@@ -1794,7 +1794,7 @@ bool ewk_frame_uri_changed(Evas_Object* ewkFrame)
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     WTF::CString uri(smartData->frame->document()->url().string().utf8());
 
-    INF("uri=%s", uri.data());
+    INFO("uri=%s", uri.data());
     if (!uri.data()) {
         ERR("no uri");
         return false;

@@ -1,3 +1,24 @@
+2012-09-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Change the log macro names to be more consistent with EINA LOG
+        https://bugs.webkit.org/show_bug.cgi?id=97158
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Some log macro names in WebKit2 are inconsistent with EINA LOG names
+        such as WRN/INF not WARN/INFO.
+
+          #define WRN(...) EINA_LOG_DOM_WARN(_ewk_log_dom, __VA_ARGS__)
+          #define INF(...) EINA_LOG_DOM_INFO(_ewk_log_dom, __VA_ARGS__)
+
+        This patch changes the such names to be consistent with EINA LOG's names.
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+        * UIProcess/API/efl/ewk_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_webprocess_crashed):
+
 2012-09-20  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Same page navigation does not update view URI

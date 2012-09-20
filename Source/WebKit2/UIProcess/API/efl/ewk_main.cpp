@@ -71,7 +71,7 @@ int ewk_init(void)
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate()) {
-        WRN("Ecore was not compiled with GLib support, some plugins will not "
+        WARN("Ecore was not compiled with GLib support, some plugins will not "
             "work (ie: Adobe Flash)");
     }
 

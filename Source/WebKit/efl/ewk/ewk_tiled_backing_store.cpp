@@ -549,7 +549,7 @@ static void _ewk_tiled_backing_store_render(void* data, Ewk_Tile* tile, const Ei
 {
     Ewk_Tiled_Backing_Store_Data* priv = static_cast<Ewk_Tiled_Backing_Store_Data*>(data);
 
-    INF("TODO %p (visible? %d) [%lu,%lu] %d,%d + %dx%d",
+    INFO("TODO %p (visible? %d) [%lu,%lu] %d,%d + %dx%d",
         tile, tile->visible, tile->column, tile->row, area->x, area->y, area->w, area->h);
 
     if (!tile->visible)
@@ -774,12 +774,12 @@ static void _ewk_tiled_backing_store_smart_hide(Evas_Object* ewkBackingStore)
 
 static void _ewk_tiled_backing_store_recalc_renderers(Ewk_Tiled_Backing_Store_Data* priv, Evas_Coord width, Evas_Coord height, Evas_Coord tileWidth, Evas_Coord tileHeight)
 {
-    INF("ewkBackingStore=%p, new size: %dx%d", priv->self, width, height);
+    INFO("ewkBackingStore=%p, new size: %dx%d", priv->self, width, height);
 
     unsigned long columns = 1 + static_cast<unsigned long>(ceil(width / static_cast<float>(tileWidth)));
     unsigned long rows = 1 + static_cast<unsigned long>(ceil(height / static_cast<float>(tileHeight)));
 
-    INF("ewkBackingStore=%p new grid size columns: %lu, rows: %lu, was %lu, %lu", priv->self, columns, rows, priv->view.columns, priv->view.rows);
+    INFO("ewkBackingStore=%p new grid size columns: %lu, rows: %lu, was %lu, %lu", priv->self, columns, rows, priv->view.columns, priv->view.rows);
 
     if (priv->view.columns == columns && priv->view.rows == rows)
         return;
@@ -1134,7 +1134,7 @@ static void _ewk_tiled_backing_store_smart_calculate_offset_force(Ewk_Tiled_Back
     Evas_Coord deltaX = priv->view.offset.current.x - priv->view.offset.old.x;
     Evas_Coord deltaY = priv->view.offset.current.y - priv->view.offset.old.y;
 
-    INF("ewkBackingStore=%p, offset: %+4d, %+4d (%+4d, %+4d)",
+    INFO("ewkBackingStore=%p, offset: %+4d, %+4d (%+4d, %+4d)",
         priv->self, deltaX, deltaY, priv->view.offset.current.x, priv->view.offset.current.y);
 
     Evas_Coord tileWidth = priv->view.tile.width;
@@ -1160,7 +1160,7 @@ static void _ewk_tiled_backing_store_smart_calculate_offset(Ewk_Tiled_Backing_St
     Evas_Coord deltaX = priv->view.offset.current.x - priv->view.offset.old.x;
     Evas_Coord deltaY = priv->view.offset.current.y - priv->view.offset.old.y;
 
-    INF("ewkBackingStore=%p, offset: %+4d, %+4d (%+4d, %+4d)", priv->self, deltaX, deltaY, priv->view.offset.current.x, priv->view.offset.current.y);
+    INFO("ewkBackingStore=%p, offset: %+4d, %+4d (%+4d, %+4d)", priv->self, deltaX, deltaY, priv->view.offset.current.x, priv->view.offset.current.y);
 
     if (!deltaX && !deltaY)
         return;
@@ -1881,13 +1881,13 @@ bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object* ewkBackingS
 {
     PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv, false);
 
-    INF("priv->model.base.row =%ld, n=%u priv->view.rows=%lu", priv->model.base.row, n, priv->view.rows);
+    INFO("priv->model.base.row =%ld, n=%u priv->view.rows=%lu", priv->model.base.row, n, priv->view.rows);
     unsigned long startRow = priv->model.base.row - n;
     unsigned long startCol = priv->model.base.column - n;
     unsigned long endRow = std::min(priv->model.current.rows - 1, priv->model.base.row + priv->view.rows + n - 1);
     unsigned long endCol = std::min(priv->model.current.columns - 1, priv->model.base.column + priv->view.columns + n - 1);
 
-    INF("startRow=%lu, endRow=%lu, startCol=%lu, endCol=%lu", startRow, endRow, startCol, endCol);
+    INFO("startRow=%lu, endRow=%lu, startCol=%lu, endCol=%lu", startRow, endRow, startCol, endCol);
 
     zoom = ROUNDED_ZOOM(priv->view.tile.width, zoom);
 

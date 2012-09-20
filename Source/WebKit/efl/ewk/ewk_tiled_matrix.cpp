@@ -321,14 +321,14 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
             tileMatrix->stats.tiles.allocated, tileMatrix->stats.tiles.freed, tiles,
             tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed, bytes);
     else if (tiles_leaked || bytes_leaked)
-        WRN("tiled matrix had no leaks: tiles[+%" PRIu64 ",-%" PRIu64 "] "
+        WARN("tiled matrix had no leaks: tiles[+%" PRIu64 ",-%" PRIu64 "] "
             "bytes[+%" PRIu64 ",-%" PRIu64 "], but some other leaked "
             "%" PRIu64 " tiles (%" PRIu64 " bytes)",
             tileMatrix->stats.tiles.allocated, tileMatrix->stats.tiles.freed,
             tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed,
             tiles_leaked, bytes_leaked);
     else
-        INF("tiled matrix had no leaks: tiles[+%" PRIu64 ",-%" PRIu64 "] "
+        INFO("tiled matrix had no leaks: tiles[+%" PRIu64 ",-%" PRIu64 "] "
             "bytes[+%" PRIu64 ",-%" PRIu64 "]",
             tileMatrix->stats.tiles.allocated, tileMatrix->stats.tiles.freed,
             tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed);
@@ -399,7 +399,7 @@ Ewk_Tile* ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix* tileMatrix, unsigned l
 #ifndef NDEBUG
     if (!tile->visible) {
         if (!ewk_tile_unused_cache_tile_get(tileMatrix->tileUnusedCache, tile))
-            WRN("Ewk_Tile was unused but not in cache? bug!");
+            WARN("Ewk_Tile was unused but not in cache? bug!");
     }
 #endif
 
@@ -521,7 +521,7 @@ static bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix* tileMatrix, const Ein
 {
     UNUSED_PARAM(zoom);
     if (area->w <= 0 || area->h <= 0) {
-        WRN("invalid area region: %d,%d+%dx%d.", area->x, area->y, area->w, area->h);
+        WARN("invalid area region: %d,%d+%dx%d.", area->x, area->y, area->w, area->h);
         return false;
     }
 

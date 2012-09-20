@@ -1,3 +1,65 @@
+2012-09-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Change the log macro names to be more consistent with EINA LOG
+        https://bugs.webkit.org/show_bug.cgi?id=97158
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Some log macro names in WebKit1 are inconsistent with EINA LOG names
+        such as WRN/INF not WARN/INFO.
+
+          #define WRN(...) EINA_LOG_DOM_WARN(_ewk_log_dom, __VA_ARGS__)
+          #define INF(...) EINA_LOG_DOM_INFO(_ewk_log_dom, __VA_ARGS__)
+
+        This patch changes the such names to be consistent with EINA LOG's names.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_resize):
+        (ewk_frame_source_get):
+        (ewk_frame_uri_changed):
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_private.h:
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_render):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_tile_exact_get):
+        (_ewk_tile_matrix_slicer_setup):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_add_console_message):
+        (_ewk_view_smart_run_javascript_alert):
+        (_ewk_view_smart_run_javascript_confirm):
+        (_ewk_view_smart_should_interrupt_javascript):
+        (_ewk_view_smart_run_javascript_prompt):
+        (_ewk_view_smart_pre_render_region):
+        (_ewk_view_smart_pre_render_relative_radius):
+        (_ewk_view_smart_pre_render_start):
+        (_ewk_view_smart_pre_render_cancel):
+        (_ewk_view_smart_disable_render):
+        (_ewk_view_smart_enable_render):
+        (ewk_view_bg_color_set):
+        (ewk_view_zoom_set):
+        (ewk_view_zoom_weak_set):
+        (ewk_view_zoom_animated_set):
+        (ewk_view_statusbar_text_set):
+        (ewk_view_exceeded_application_cache_quota):
+        (ewk_view_exceeded_database_quota):
+        (ewk_view_scroll):
+        (ewk_view_popup_new):
+        (ewk_view_popup_destroy):
+        (ewk_view_popup_selected_set):
+        (ewk_view_color_chooser_new):
+        (ewk_view_color_chooser_destroy):
+        (ewk_view_color_chooser_color_set):
+        (ewk_view_color_chooser_changed):
+        (ewk_view_zoom_range_set):
+        * ewk/ewk_view_private.h:
+
 2012-09-19  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix unused parameter compile warnings in WebKit/WebKit2
