@@ -1527,6 +1527,8 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     cspReport->setString("original-policy", header);
     if (blockedURL.isValid())
         cspReport->setString("blocked-uri", document->securityOrigin()->canRequest(blockedURL) ? blockedURL.strippedForUseAsReferrer() : SecurityOrigin::create(blockedURL)->toString());
+    else
+        cspReport->setString("blocked-uri", String());
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
     reportObject->setObject("csp-report", cspReport.release());
