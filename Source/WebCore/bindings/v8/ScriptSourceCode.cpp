@@ -49,6 +49,9 @@ PassOwnPtr<v8::ScriptData> ScriptSourceCode::precompileScript(v8::Handle<v8::Str
         return adoptPtr(v8::ScriptData::New(cachedMetadata->data(), cachedMetadata->size()));
 
     OwnPtr<v8::ScriptData> scriptData = adoptPtr(v8::ScriptData::PreCompile(code));
+    if (!scriptData)
+        return nullptr;
+
     cachedScript->setCachedMetadata(dataTypeID, scriptData->Data(), scriptData->Length());
 
     return scriptData.release();
