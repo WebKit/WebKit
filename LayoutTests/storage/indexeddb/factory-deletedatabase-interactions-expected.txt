@@ -7,9 +7,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+dbname = "factory-deletedatabase-interactions.html"
 
 TEST: deleteDatabase blocked on open handles
-self.dbname = 'test1'; self.ver = 1; self.steps = []
+self.testname = 'test1'; self.ver = 1
 'h.open'
 'h.open.onsuccess'
 'deleteDatabase()'
@@ -19,10 +20,10 @@ self.dbname = 'test1'; self.ver = 1; self.steps = []
 'deleteDatabase().onblocked'
 'h.close'
 'deleteDatabase().onsuccess'
-PASS self.steps.toString() is "h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
+PASS blockedEventFired is true
 
 TEST: deleteDatabase not blocked when handles close immediately
-self.dbname = 'test2'; self.ver = 1; self.steps = []
+self.testname = 'test2'; self.ver = 1
 'h.open'
 'h.open.onsuccess'
 'deleteDatabase()'
@@ -33,10 +34,10 @@ self.dbname = 'test2'; self.ver = 1; self.steps = []
 'deleteDatabase().onblocked'
 'deleteDatabase().onsuccess'
 NOTE: Will FAIL with extra bogus deleteDatabase().onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
-FAIL self.steps.toString() should be h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onsuccess. Was h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onblocked,deleteDatabase().onsuccess.
+FAIL blockedEventFired should be false. Was true.
 
 TEST: deleteDatabase is delayed if a VERSION_CHANGE transaction is running
-self.dbname = 'test3'; self.ver = 1; self.steps = []
+self.testname = 'test3'; self.ver = 1
 'h.open'
 'h.open.onsuccess'
 'h.setVersion'
@@ -49,10 +50,10 @@ self.dbname = 'test3'; self.ver = 1; self.steps = []
 'deleteDatabase().onblocked'
 'h.close'
 'deleteDatabase().onsuccess'
-PASS self.steps.toString() is "h.open,h.open.onsuccess,h.setVersion,deleteDatabase(),h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
+PASS versionChangeComplete is true
 
 TEST: Correct order when there are pending setVersion, delete and open calls.
-self.dbname = 'test4'; self.ver = 1; self.steps = []
+self.testname = 'test4'; self.ver = 1
 'h.open'
 'h.open.onsuccess'
 'h2.open'
@@ -73,7 +74,9 @@ self.dbname = 'test4'; self.ver = 1; self.steps = []
 'h.close'
 'deleteDatabase().onsuccess'
 'h3.open.onsuccess'
-PASS self.steps.toString() is "h.open,h.open.onsuccess,h2.open,h2.open.onsuccess,h.setVersion,deleteDatabase(),h2.onversionchange,h.setVersion.onblocked,h3.open,h2.close,h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess,h3.open.onsuccess"
+PASS versionChangeComplete is true
+PASS blockedEventFired is true
+PASS deleteDatabaseComplete is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

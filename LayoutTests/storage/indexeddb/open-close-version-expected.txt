@@ -12,9 +12,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+dbname = "open-close-version.html"
 
 TEST: setVersion blocked on open handles
-self.dbname = 'test1'; self.ver = 1; self.steps = []
+self.testname = 'test1'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h2.open'
@@ -26,10 +27,10 @@ self.dbname = 'test1'; self.ver = 1; self.steps = []
 'h2.close'
 'h1.setVersion.onsuccess'
 'h1.setVersion.transaction-complete'
-PASS self.steps.toString() is "h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h1.setVersion.onblocked,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete"
+PASS blockedEventFired is true
 
 TEST: setVersion not blocked if handle closed immediately
-self.dbname = 'test2'; self.ver = 1; self.steps = []
+self.testname = 'test2'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h2.open'
@@ -42,10 +43,10 @@ self.dbname = 'test2'; self.ver = 1; self.steps = []
 'h1.setVersion.onsuccess'
 'h1.setVersion.transaction-complete'
 NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
-FAIL self.steps.toString() should be h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete. Was h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.onversionchange,h2.close,h1.setVersion.onblocked,h1.setVersion.onsuccess,h1.setVersion.transaction-complete.
+FAIL blockedEventFired should be false. Was true.
 
 TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - close when blocked
-self.dbname = 'test3'; self.ver = 1; self.steps = []
+self.testname = 'test3'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h2.open'
@@ -63,10 +64,11 @@ self.dbname = 'test3'; self.ver = 1; self.steps = []
 'h1.setVersion.onsuccess'
 'h1.setVersion.transaction-complete'
 'h3.open.onsuccess'
-PASS self.steps.toString() is "h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h2.setVersion,h2.onversionchange,h1.setVersion.onblocked,h1.onversionchange,h2.setVersion.onblocked,h2.close,h3.open,h2.setVersion.onerror,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess"
+PASS blockedEventFired is true
+PASS versionChangeComplete is true
 
 TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - just close
-self.dbname = 'test4'; self.ver = 1; self.steps = []
+self.testname = 'test4'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h2.open'
@@ -79,10 +81,11 @@ self.dbname = 'test4'; self.ver = 1; self.steps = []
 'h1.setVersion.transaction-complete'
 'h3.open.onsuccess'
 NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
-FAIL self.steps.toString() should be h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h3.open,h2.close,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess. Was h1.open,h1.open.onsuccess,h2.open,h2.open.onsuccess,h1.setVersion,h3.open,h2.close,h1.setVersion.onblocked,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h3.open.onsuccess.
+FAIL blockedEventFired should be false. Was true.
+PASS versionChangeComplete is true
 
 TEST: open blocked if a VERSION_CHANGE transaction is running
-self.dbname = 'test5'; self.ver = 1; self.steps = []
+self.testname = 'test5'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h1.setVersion'
@@ -90,10 +93,10 @@ self.dbname = 'test5'; self.ver = 1; self.steps = []
 'h1.setVersion.onsuccess'
 'h1.setVersion.transaction-complete'
 'h2.open.onsuccess'
-PASS self.steps.toString() is "h1.open,h1.open.onsuccess,h1.setVersion,h2.open,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h2.open.onsuccess"
+PASS versionChangeComplete is true
 
 TEST: two setVersions from the same connection
-self.dbname = 'test6'; self.ver = 1; self.steps = []
+self.testname = 'test6'; self.ver = 1
 'h1.open'
 'h1.open.onsuccess'
 'h1.setVersion'
@@ -103,7 +106,7 @@ self.dbname = 'test6'; self.ver = 1; self.steps = []
 half done
 'h1.setVersion.onsuccess'
 'h1.setVersion.transaction-complete'
-PASS self.steps.toString() is "h1.open,h1.open.onsuccess,h1.setVersion,h1.setVersion,h1.setVersion.onsuccess,h1.setVersion.transaction-complete,h1.setVersion.onsuccess,h1.setVersion.transaction-complete"
+PASS versionChangeComplete is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
