@@ -60,11 +60,11 @@ layer at (0,0) size 800x390
                     text run at (58,55) width 143 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0}"
                     text run at (89,73) width 112 RTL: "\x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
                 RenderBlock {DIV} at (0,97) size 202x74 [border: (1px solid #0000FF)]
-                  RenderText {#text} at (1,1) size 176x73
-                    text run at (1,1) width 144: "Lore\x{300}m ipsum"
-                    text run at (1,19) width 169: "dolor sit ame\x{300}t,"
-                    text run at (1,37) width 143: "consectetue\x{300}r"
-                    text run at (1,55) width 176: "adipiscing e\x{300}lit."
+                  RenderText {#text} at (1,1) size 171x73
+                    text run at (1,1) width 139: "Lore\x{300}m ipsum"
+                    text run at (1,19) width 164: "dolor sit ame\x{300}t,"
+                    text run at (1,37) width 138: "consectetue\x{300}r"
+                    text run at (1,55) width 171: "adipiscing e\x{300}lit."
                 RenderBlock {DIV} at (0,176) size 202x74 [border: (1px solid #008000)]
                   RenderText {#text} at (1,1) size 171x73
                     text run at (1,1) width 139: "Lorem ipsum"
