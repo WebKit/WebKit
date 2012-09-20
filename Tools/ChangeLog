@@ -1,3 +1,16 @@
+2012-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129007.
+        http://trac.webkit.org/changeset/129007
+        https://bugs.webkit.org/show_bug.cgi?id=97172
+
+        It broke the build on the Qt bots (Requested by Ossy on
+        #webkit).
+
+        * qmake/config.tests/gccdepends/empty.cpp:
+        * qmake/config.tests/gccdepends/gccdepends.pro:
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should record indivisual value instead of statistics

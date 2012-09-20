@@ -87,9 +87,6 @@ unix:config_gccdepends {
     # We have a compiler that supports the -MD option (and neither
     # teambuilder nor icecream is messing up the .d file output).
     CONFIG += GNUmake gcc_MD_depends
-    # This should really be added to qmake, but for now we add it here.
-    QMAKE_CXXFLAGS += -MP
-    QMAKE_CFLAGS += -MP
 }
 
 !haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
