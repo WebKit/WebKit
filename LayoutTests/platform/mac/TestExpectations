@@ -40,6 +40,9 @@ webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass 
 # Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
 webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 
+# Flakey plugin tests
+webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
+
 # Flaky tests when run multi-process
 webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
