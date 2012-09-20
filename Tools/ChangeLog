@@ -1,3 +1,27 @@
+2012-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-api-tests should not buffer test stdout
+        https://bugs.webkit.org/show_bug.cgi?id=88474
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_test_command): Use os.forkpty() instead of
+        subprocess.Popen() so that gtest sends the output with colors to
+        stdout. Use common.parse_output_lines() to parse the output and
+        write it to stdout while it's read.
+        (TestRunner._run_test_command.parse_line): Parse the line to get
+        the test pid and write the line to stdout.
+        (TestRunner._run_test_command.waitpid): Helper function to call
+        waitpid handling EINTR.
+        (TestRunner._run_test_command.return_code_from_exit_status):
+        Helper function to convert exit status of test commands to a
+        return code.
+        * gtk/common.py:
+        (parse_output_lines): Helper function that uses select to read
+        the given file descriptor and call the given callback for every
+        line read.
+
 2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix initial build

@@ -213,26 +213,60 @@ class TestRunner:
         def alarm_handler(signum, frame):
             raise TestTimeout
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, env=self._test_env)
+        child_pid = [-1]
+        def parse_line(line, child_pid = child_pid):
+            if child_pid[0] == -1:
+                child_pid[0] = self._get_child_pid_from_test_output(line)
+            sys.stdout.write(line)
+
+        def waitpid(pid):
+            while True:
+                try:
+                    return os.waitpid(pid, 0)
+                except (OSError, IOError) as e:
+                    if e.errno == errno.EINTR:
+                        continue
+                    raise
+
+        def return_code_from_exit_status(status):
+            if os.WIFSIGNALED(status):
+                return -os.WTERMSIG(status)
+            elif os.WIFEXITED(status):
+                return os.WEXITSTATUS(status)
+            else:
+                # Should never happen
+                raise RuntimeError("Unknown child exit status!")
+
+        pid, fd = os.forkpty()
+        if pid == 0:
+            os.execvpe(command[0], command, self._test_env)
+            sys.exit(0)
+
         if timeout > 0:
             signal(SIGALRM, alarm_handler)
             alarm(timeout)
 
-        stdout = ""
         try:
-            stdout = p.communicate()[0]
+            common.parse_output_lines(fd, parse_line)
             if timeout > 0:
                 alarm(0)
-            sys.stdout.write(stdout)
-            sys.stdout.flush()
         except TestTimeout:
-            self._kill_process(p.pid)
-            child_pid = self._get_child_pid_from_test_output(stdout)
-            if child_pid > 0:
-                self._kill_process(child_pid)
+            self._kill_process(pid)
+            if child_pid[0] > 0:
+                self._kill_process(child_pid[0])
             raise
 
-        return not p.returncode
+        try:
+            dummy, status = waitpid(pid)
+        except OSError as e:
+            if e.errno != errno.ECHILD:
+                raise
+            # This happens if SIGCLD is set to be ignored or waiting
+            # for child processes has otherwise been disabled for our
+            # process.  This child is dead, we can't get the status.
+            status = 0
+
+        return not return_code_from_exit_status(status)
 
     def _run_test_glib(self, test_program):
         tester_command = ['gtester']

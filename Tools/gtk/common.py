@@ -15,7 +15,9 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+import errno
 import os
+import select
 import subprocess
 import sys
 
@@ -102,3 +104,32 @@ def gtk_version_of_pkg_config_file(pkg_config_path):
     if 'gtk+-3.0' in stdout:
         return 3
     return 2
+
+
+def parse_output_lines(fd, parse_line_callback):
+    output = ''
+    read_set = [fd]
+    while read_set:
+        rlist, wlist, xlist = select.select(read_set, [], [])
+
+        if fd in rlist:
+            try:
+                chunk = os.read(fd, 1024)
+            except OSError as e:
+                if e.errno == errno.EIO:
+                    # Child process finished.
+                    chunk = ''
+                else:
+                    raise e
+            if not chunk:
+                read_set.remove(fd)
+
+            output += chunk
+            while '\n' in output:
+                pos = output.find('\n')
+                parse_line_callback(output[:pos + 1])
+                output = output[pos + 1:]
+
+            if len(chunk) < 1024 and output:
+                parse_line_callback(output)
+                output = ''
