@@ -254,8 +254,6 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     if (m_waitingForUIProcess)
         return false;
 
-    m_shouldSyncFrame = false;
-
     for (size_t i = 0; i < m_detachedLayers.size(); ++i)
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
     m_detachedLayers.clear();

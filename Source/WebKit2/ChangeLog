@@ -1,3 +1,19 @@
+2012-09-20  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CoordinatedGraphics] Don't reset m_shouldSyncFrame in flushPendingLayerChanges
+        https://bugs.webkit.org/show_bug.cgi?id=97108
+
+        Reviewed by Noam Rosenthal.
+
+        Stop ignoring if m_shouldSyncFrame has been set between the two
+        layer flush. It can be set during layout in several situations,
+        for example when a layer is deleted or changed state. We want to
+        send the DidRenderFrame message at the next flush in those situations
+        so the UI process will apply the changes as soon as possible.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+
 2012-09-20  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Check timeout on waitUntilLoadFinished() and waitUntilTitleChangedTo().
