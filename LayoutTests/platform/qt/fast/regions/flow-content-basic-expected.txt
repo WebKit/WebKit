@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x197
+  RenderBlock {HTML} at (0,0) size 800x197
+    RenderBody {BODY} at (8,8) size 784x173
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 724x19
+          text run at (0,0) width 378: "The words \"flow content\" in green should display after this div, "
+          text run at (378,0) width 346: "and there should be two copies of this content that match."
+      RenderRegion {DIV} at (0,19) size 300x100
+      RenderBlock {DIV} at (0,119) size 784x19
+        RenderText {#text} at (0,0) size 724x19
+          text run at (0,0) width 378: "The words \"flow content\" in green should display after this div, "
+          text run at (378,0) width 346: "and there should be two copies of this content that match."
+      RenderBlock {DIV} at (0,154) size 784x19 [color=#008000]
+        RenderBlock {P} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 74x19
+            text run at (0,0) width 74: "flow content"
+Flow Threads
+  Thread with flow-name 'main-thread'
+    layer at (0,0) size 300x100
+      RenderNamedFlowThread at (0,0) size 300x100
+        RenderBlock {DIV} at (0,16) size 300x19 [color=#008000]
+          RenderBlock {P} at (0,0) size 300x19
+            RenderText {#text} at (0,0) size 74x19
+              text run at (0,0) width 74: "flow content"
+  Regions for flow 'main-thread'
+    RenderRegion {DIV} #region1

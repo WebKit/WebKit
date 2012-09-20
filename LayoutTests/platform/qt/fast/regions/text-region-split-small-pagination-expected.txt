@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x276
+  RenderBlock {HTML} at (0,0) size 800x276
+    RenderBody {BODY} at (8,16) size 784x244
+      RenderRegion {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
+      RenderRegion {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
+      RenderRegion {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
+      RenderRegion {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
+Flow Threads
+  Thread with flow-name 'flow'
+    layer at (0,0) size 200x180
+      RenderNamedFlowThread at (0,0) size 200x180
+        RenderBlock {DIV} at (0,30) size 200x119
+          RenderBlock {P} at (0,0) size 200x119
+            RenderInline {B} at (0,0) size 109x19
+              RenderText {#text} at (0,0) size 109x19
+                text run at (0,0) width 109: "Text in region 2."
+            RenderText {#text} at (109,0) size 138x38
+              text run at (109,0) width 29: " This"
+              text run at (0,19) width 94: "paragraph has \""
+            RenderInline {I} at (0,0) size 193x50
+              RenderText {#text} at (94,19) size 193x50
+                text run at (94,19) width 99: "-webkit-region-"
+                text run at (0,50) width 126: "break-after: always"
+            RenderText {#text} at (126,50) size 13x19
+              text run at (126,50) width 13: "\". "
+            RenderInline {B} at (0,0) size 179x69
+              RenderText {#text} at (139,50) size 179x69
+                text run at (139,50) width 40: "There"
+                text run at (0,69) width 160: "should be nothing in this"
+                text run at (0,100) width 138: "region after this line."
+  Regions for flow 'flow'
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3
+    RenderRegion {DIV} #region4

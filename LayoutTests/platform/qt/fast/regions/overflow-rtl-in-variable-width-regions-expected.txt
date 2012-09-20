@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x484
+  RenderBlock {HTML} at (0,0) size 800x484
+    RenderBody {BODY} at (8,16) size 784x460
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 704x38
+          text run at (0,0) width 704: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself"
+          text run at (0,19) width 174: "independently in each region."
+      RenderBlock {DIV} at (0,54) size 784x406
+        RenderRegion {DIV} at (582,0) size 202x102 [border: (1px solid #000000)]
+        RenderRegion {DIV} at (482,102) size 302x182 [border: (1px solid #000000)]
+        RenderRegion {DIV} at (662,284) size 122x122 [border: (1px solid #000000)]
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 300x400
+      RenderNamedFlowThread at (0,0) size 300x400
+        RenderBlock {DIV} at (0,0) size 300x258
+          RenderBlock {DIV} at (5,5) size 290x248 [border: (1px solid #0000FF)]
+    layer at (46,46) size 208x166 clip at (47,47) size 206x164 scrollWidth 500
+      RenderBlock {DIV} at (41,41) size 208x166 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,1) size 500x19
+          RenderText {#text} at (100,0) size 270x19
+            text run at (100,0) width 270: "Clipped line of text that should not be visible."
+        RenderBlock {P} at (1,54) size 206x76
+          RenderText {#text} at (0,0) size 206x76
+            text run at (0,0) width 206: "These lines will not spill out of the"
+            text run at (0,19) width 206: "regions. These lines will not spill"
+            text run at (0,38) width 114: "out of the regions. "
+            text run at (114,38) width 92: "These lines will"
+            text run at (0,57) width 158: "not spill out of the regions."
+        RenderBlock {DIV} at (1,146) size 500x19
+          RenderText {#text} at (0,0) size 270x19
+            text run at (0,0) width 270: "Clipped line of text that should not be visible."
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
+    RenderRegion {DIV} #region3
