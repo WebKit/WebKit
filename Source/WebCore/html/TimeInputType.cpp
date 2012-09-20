@@ -152,6 +152,7 @@ void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
     input->setNeedsStyleRecalc();
     input->dispatchFormControlInputEvent();
     input->dispatchFormControlChangeEvent();
+    input->notifyFormStateChanged();
 }
 
 bool TimeInputType::hasCustomFocusLogic() const
