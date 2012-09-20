@@ -1,3 +1,28 @@
+2012-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129091.
+        http://trac.webkit.org/changeset/129091
+        https://bugs.webkit.org/show_bug.cgi?id=97205
+
+        It broke perf tests everywhere (Requested by Ossy on #webkit).
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+        (PerfTest.parse_output):
+        (PageLoadingPerfTest.run):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_parse_output):
+        (MainTest.test_parse_output_with_failing_line):
+        (TestPageLoadingPerfTest.test_run):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_and_show_results):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_memory_test):
+        (test_run_with_json_output):
+        (test_run_with_description):
+        (test_run_with_slave_config_json):
+        (test_run_with_multiple_repositories):
+
 2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] QtWebKit module header includes private dependencies

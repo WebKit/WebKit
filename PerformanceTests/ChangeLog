@@ -1,3 +1,15 @@
+2012-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129091.
+        http://trac.webkit.org/changeset/129091
+        https://bugs.webkit.org/show_bug.cgi?id=97205
+
+        It broke perf tests everywhere (Requested by Ossy on #webkit).
+
+        * resources/runner.js:
+        (PerfTestRunner.computeStatistics):
+        (PerfTestRunner.printStatistics):
+
 2012-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should record indivisual value instead of statistics

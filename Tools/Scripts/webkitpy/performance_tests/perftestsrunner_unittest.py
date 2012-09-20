@@ -92,7 +92,6 @@ Ignoring warm-up run (1502)
 1471
 
 Time:
-values 1504, 1505, 1510, 1504, 1507, 1509, 1510, 1487, 1488, 1472, 1472, 1488, 1473, 1472, 1475, 1487, 1486, 1486, 1475, 1471 ms
 avg 1489.05 ms
 median 1487 ms
 stdev 14.46 ms
@@ -104,7 +103,6 @@ max 1510 ms
 Ignoring warm-up run (1115)
 
 Time:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ms
 avg 1100 ms
 median 1101 ms
 stdev 11 ms
@@ -116,7 +114,6 @@ max 1120 ms
 Ignoring warm-up run (1115)
 
 Time:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ms
 avg 1100 ms
 median 1101 ms
 stdev 11 ms
@@ -124,7 +121,6 @@ min 1080 ms
 max 1120 ms
 
 JS Heap:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 bytes
 avg 832000 bytes
 median 829000 bytes
 stdev 15000 bytes
@@ -132,7 +128,6 @@ min 811000 bytes
 max 848000 bytes
 
 Malloc:
-values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 bytes
 avg 532000 bytes
 median 529000 bytes
 stdev 13000 bytes
@@ -291,10 +286,9 @@ max 548000 bytes
             'Finished: 0.1 s',
             '', '']))
         results = runner.load_output_json()[0]['results']
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-        self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms', 'values': values})
-        self.assertEqual(results['Parser/memory-test:JSHeap'], {'min': 811000.0, 'max': 848000.0, 'median': 829000.0, 'stdev': 15000.0, 'avg': 832000.0, 'unit': 'bytes', 'values': values})
-        self.assertEqual(results['Parser/memory-test:Malloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes', 'values': values})
+        self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms'})
+        self.assertEqual(results['Parser/memory-test:JSHeap'], {'min': 811000.0, 'max': 848000.0, 'median': 829000.0, 'stdev': 15000.0, 'avg': 832000.0, 'unit': 'bytes'})
+        self.assertEqual(results['Parser/memory-test:Malloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes'})
 
     def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=False, expected_exit_code=0):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
@@ -336,12 +330,6 @@ max 548000 bytes
         return logs
 
     _event_target_wrapper_and_inspector_results = {
-        "Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms",
-           "values": [1504, 1505, 1510, 1504, 1507, 1509, 1510, 1487, 1488, 1472, 1472, 1488, 1473, 1472, 1475, 1487, 1486, 1486, 1475, 1471]},
-        "inspector/pass.html:group_name:test_name": 42}
-
-    # FIXME: Remove this variance once perf-o-matic supported "values".
-    _event_target_wrapper_and_inspector_results_without_values = {
         "Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
         "inspector/pass.html:group_name:test_name": 42}
 
@@ -350,7 +338,7 @@ max 548000 bytes
             '--test-results-server=some.host'])
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(runner.load_output_json(), {
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results_without_values,
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_description(self):
@@ -359,7 +347,7 @@ max 548000 bytes
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(runner.load_output_json(), {
             "timestamp": 123456789, "description": "some description",
-            "results": self._event_target_wrapper_and_inspector_results_without_values,
+            "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def create_runner_and_setup_results_template(self, args=[]):
@@ -449,7 +437,7 @@ max 548000 bytes
         port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(runner.load_output_json(), {
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results_without_values,
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk", "key": "value"})
 
     def test_run_with_bad_slave_config_json(self):
@@ -468,7 +456,7 @@ max 548000 bytes
         port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(runner.load_output_json(), {
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results_without_values,
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "some-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_upload_json(self):
