@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<video controls="" autoplay="" name="media" src="../../../media/content/test.wav"></video>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that the media controls panel has the correct name and role");
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+    var element = webArea.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: panel'");
+    shouldBe("element.title", "'AXTitle: '");
+    element = element.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: tool bar'");
+    shouldBe("element.title", "'AXTitle: media controls'");
+}
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -558,6 +558,8 @@ String localizedMediaControlElementString(const String& name)
         return String::fromUTF8(_("show closed captions"));
     if (name == "HideClosedCaptionsButton")
         return String::fromUTF8(_("hide closed captions"));
+    if (name == "ControlsPanel")
+        return String::fromUTF8(_("media controls"));
 
     ASSERT_NOT_REACHED();
     return String();
