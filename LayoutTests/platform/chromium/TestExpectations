@@ -3551,4 +3551,6 @@ webkit.org/b/96596 fast/js/object-slow-put.html [ Failure ]
 webkit.org/b/96962 fast/js/cross-frame-really-bad-time.html [ Failure ]
 webkit.org/b/96962 fast/js/cross-frame-really-bad-time-with-__proto__.html [ Failure ]
 
+webkit.org/b/97179 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
+
 
