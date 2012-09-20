@@ -445,6 +445,13 @@ public:
         m_assembler.baseIndexTransfer32(ARMAssembler::StoreUint8, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
+    void store8(TrustedImm32 imm, void* address)
+    {
+        move(TrustedImm32(reinterpret_cast<ARMWord>(address)), ARMRegisters::S0);
+        m_assembler.moveImm(imm.m_value, ARMRegisters::S1);
+        m_assembler.dtrUp(ARMAssembler::StoreUint8, ARMRegisters::S1, ARMRegisters::S0, 0);
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         m_assembler.baseIndexTransfer16(ARMAssembler::StoreUint16, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
