@@ -43,7 +43,8 @@
 using namespace std;
 
 static const char optionComplexText[] = "--complex-text";
-static const char optionDumpAllPixels[] = "--dump-all-pixels";
+static const char optionDumpPixels[] = "--pixel-tests";
+static const char optionDumpPixelsShortForm[] = "-p";
 static const char optionNotree[] = "--notree";
 static const char optionThreaded[] = "--threaded";
 static const char optionDebugRenderTree[] = "--debug-render-tree";
@@ -85,7 +86,7 @@ private:
     OwnPtr<MockWebKitPlatformSupport> m_mockPlatform;
 };
 
-static void runTest(TestShell& shell, TestParams& params, const string& inputLine)
+static void runTest(TestShell& shell, TestParams& params, const string& inputLine, const bool forceDumpPixels)
 {
     int oldTimeoutMsec = shell.layoutTestTimeout();
     TestCommand command = parseInputLine(inputLine);
@@ -103,11 +104,11 @@ static void runTest(TestShell& shell, TestParams& params, const string& inputLin
           bool isLastLoad = (i == (v8::Testing::GetStressRuns() - 1));
           shell.setDumpWhenFinished(isLastLoad);
           shell.resetTestController();
-          shell.runFileTest(params, command.shouldDumpPixels);
+          shell.runFileTest(params, command.shouldDumpPixels || forceDumpPixels);
       }
     } else {
       shell.resetTestController();
-      shell.runFileTest(params, command.shouldDumpPixels);
+      shell.runFileTest(params, command.shouldDumpPixels || forceDumpPixels);
     }
     shell.setLayoutTestTimeout(oldTimeoutMsec);
 }
@@ -120,6 +121,7 @@ int main(int argc, char* argv[])
     TestParams params;
     Vector<string> tests;
     bool serverMode = false;
+    bool dumpAllPixels = false;
     bool allowExternalPages = false;
     bool startupDialog = false;
     bool acceleratedCompositingForVideoEnabled = false;
@@ -139,6 +141,8 @@ int main(int argc, char* argv[])
         string argument(argv[i]);
         if (argument == "-")
             serverMode = true;
+        else if (argument == optionDumpPixels || argument == optionDumpPixelsShortForm)
+            dumpAllPixels = true;
         else if (argument == optionNotree)
             params.dumpTree = false;
         else if (argument == optionDebugRenderTree)
@@ -239,14 +243,14 @@ int main(int argc, char* argv[])
                 // Explicitly quit on platforms where EOF is not reliable.
                 if (!strcmp(testString, "QUIT"))
                     break;
-                runTest(shell, params, testString);
+                runTest(shell, params, testString, dumpAllPixels);
             }
         } else if (!tests.size())
             puts("#EOF");
         else {
             params.printSeparators = tests.size() > 1;
             for (unsigned i = 0; i < tests.size(); i++)
-                runTest(shell, params, tests[i]);
+                runTest(shell, params, tests[i], dumpAllPixels);
         }
 
         shell.callJSGC();

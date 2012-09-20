@@ -1,3 +1,20 @@
+2012-09-20  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] DRT does not support --dump-all-pixels flag
+        https://bugs.webkit.org/show_bug.cgi?id=95098
+
+        Reviewed by Dirk Pranke.
+
+        Add support for the --pixel-tests and shorthand -p option in Chromium DumpRenderTree. Use
+        of this flag causes pixel results to be created for all tests, regardless of
+        individual test options. If an individual test provides a pixel hash it will be used,
+        otherwise the hash will be empty. This replaces a previously defined but unused option
+        --dump-all-pixels, and is useful primarily when debugging DRT instances.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest): Add a parameter and code to force pixel results for the test.
+        (main): Add parameter handling for --pixels-test and -p, and remove --dump-all-pixels.
+
 2012-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] run-api-tests should not buffer test stdout
