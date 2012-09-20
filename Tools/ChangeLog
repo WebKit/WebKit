@@ -1,3 +1,13 @@
+2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix production builds
+
+        Unreviewed trivial fix: Follow up r129119 and avoid clobbering LIBS through the use of LIBS_PRIVATE.
+
+        Otherwise the libQtWebKit.prl file for example contains -lWebKit1 -lWebCore, etc.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-20  Dirk Pranke  <dpranke@chromium.org>
 
         REGRESSION: layout test results doesn't show diffs
