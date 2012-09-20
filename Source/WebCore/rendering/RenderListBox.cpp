@@ -173,6 +173,18 @@ void RenderListBox::selectionChanged()
 void RenderListBox::layout()
 {
     RenderBlock::layout();
+
+    if (m_vBar) {
+        bool enabled = numVisibleItems() < numItems();
+        m_vBar->setEnabled(enabled);
+        m_vBar->setSteps(1, max(1, numVisibleItems() - 1), itemHeight());
+        m_vBar->setProportion(numVisibleItems(), numItems());
+        if (!enabled) {
+            scrollToOffsetWithoutAnimation(VerticalScrollbar, 0);
+            m_indexOffset = 0;
+        }
+    }
+
     if (m_scrollToRevealSelectionAfterLayout) {
         LayoutStateDisabler layoutStateDisabler(view());
         scrollToRevealSelection();
@@ -250,25 +262,10 @@ LayoutUnit RenderListBox::listHeight() const
     return itemHeight() * numItems() - rowSpacing;
 }
 
-void RenderListBox::updateLogicalHeight()
+void RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    int toAdd = borderAndPaddingHeight();
- 
-    int itemHeight = RenderListBox::itemHeight();
-    setHeight(itemHeight * size() - rowSpacing + toAdd);
-    
-    RenderBlock::updateLogicalHeight();
-    
-    if (m_vBar) {
-        bool enabled = numVisibleItems() < numItems();
-        m_vBar->setEnabled(enabled);
-        m_vBar->setSteps(1, max(1, numVisibleItems() - 1), itemHeight);
-        m_vBar->setProportion(numVisibleItems(), numItems());
-        if (!enabled) {
-            scrollToOffsetWithoutAnimation(VerticalScrollbar, 0);
-            m_indexOffset = 0;
-        }
-    }
+    LayoutUnit height = itemHeight() * size() - rowSpacing + borderAndPaddingHeight();
+    RenderBox::computeLogicalHeight(height, logicalTop, computedValues);
 }
 
 LayoutUnit RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
