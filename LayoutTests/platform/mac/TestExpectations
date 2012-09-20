@@ -347,3 +347,5 @@ webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-ori
 
 
 
+// Paints black behind the test image instead of the expected green.
+BUGWK95707 : http/tests/images/png-partial-load-no-alpha.html = IMAGE
