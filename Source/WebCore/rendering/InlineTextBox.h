@@ -64,16 +64,18 @@ public:
     void setNextTextBox(InlineTextBox* n) { m_nextTextBox = n; }
     void setPreviousTextBox(InlineTextBox* p) { m_prevTextBox = p; }
 
-    unsigned start() const { return m_start; }
-    unsigned end() const { return m_len ? m_start + m_len - 1 : m_start; }
-    unsigned len() const { return m_len; }
+    unsigned start() const { ASSERT(!isDirty()); return m_start; }
+    unsigned end() const { ASSERT(!isDirty()); return m_len ? m_start + m_len - 1 : m_start; }
+    unsigned len() const { ASSERT(!isDirty()); return m_len; }
 
     void setStart(unsigned start) { m_start = start; }
     void setLen(unsigned len) { m_len = len; }
 
-    void offsetRun(int d) { m_start += d; }
+    void offsetRun(int d) { ASSERT(!isDirty()); m_start += d; }
 
     unsigned short truncation() { return m_truncation; }
+
+    virtual void markDirty(bool dirty = true) OVERRIDE;
 
     using InlineBox::hasHyphen;
     using InlineBox::setHasHyphen;
