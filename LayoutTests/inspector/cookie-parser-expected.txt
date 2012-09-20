@@ -102,7 +102,7 @@ name: Cookie2, value: value2, httpOnly: false, secure: false, session: true, pat
 }
 source: cooke1 = value; expires = Mon, Oct 18 2010 17:00 GMT+0000; Domain   =.example.com
 Cookie2 = value2; Path = /foo; DOMAIN = foo.example.com; HttpOnly; Secure; Discard;
-name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: undefined, domain: .example.com, port: undefined, expires: 1287421200000, size: 82
+name: cooke1, value: value, httpOnly: false, secure: false, session: false, path: undefined, domain: .example.com, port: undefined, expires: 1287421200000, size: 82
 {
     domain : ".example.com"
     expires : "Mon, Oct 18 2010 17:00 GMT+0000"

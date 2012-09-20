@@ -231,7 +231,7 @@ WebInspector.Cookie.prototype = {
     {
         // RFC 2965 suggests using Discard attribute to mark session cookies, but this does not seem to be widely used.
         // Check for absence of explicity max-age or expiry date instead.
-        return  !("expries" in this._attributes || "max-age" in this._attributes);
+        return  !("expires" in this._attributes || "max-age" in this._attributes);
     },
 
     /**
