@@ -130,8 +130,9 @@ private:
 
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode);
+    size_t numberOfInFlowPositionedChildren(const OrderedFlexItemList&) const;
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>&);
-    void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
+    void layoutColumnReverse(const OrderedFlexItemList&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
     void alignFlexLines(OrderIterator&, WTF::Vector<LineContext>&);
     void alignChildren(OrderIterator&, const WTF::Vector<LineContext>&);
     void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);

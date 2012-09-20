@@ -1,0 +1,320 @@
+horizontal-tb ltr row justify-content-flex-start
+PASS
+horizontal-tb ltr row justify-content-flex-end
+PASS
+horizontal-tb ltr row justify-content-center
+PASS
+horizontal-tb ltr row justify-content-space-between
+PASS
+horizontal-tb ltr row justify-content-space-around
+PASS
+horizontal-tb rtl row justify-content-flex-start
+PASS
+horizontal-tb rtl row justify-content-flex-end
+PASS
+horizontal-tb rtl row justify-content-center
+PASS
+horizontal-tb rtl row justify-content-space-between
+PASS
+horizontal-tb rtl row justify-content-space-around
+PASS
+horizontal-tb ltr column justify-content-flex-start
+PASS
+horizontal-tb ltr column justify-content-flex-end
+PASS
+horizontal-tb ltr column justify-content-center
+PASS
+horizontal-tb ltr column justify-content-space-between
+PASS
+horizontal-tb ltr column justify-content-space-around
+PASS
+horizontal-tb rtl column justify-content-flex-start
+PASS
+horizontal-tb rtl column justify-content-flex-end
+PASS
+horizontal-tb rtl column justify-content-center
+PASS
+horizontal-tb rtl column justify-content-space-between
+PASS
+horizontal-tb rtl column justify-content-space-around
+PASS
+horizontal-tb ltr row-reverse justify-content-flex-start
+PASS
+horizontal-tb ltr row-reverse justify-content-flex-end
+PASS
+horizontal-tb ltr row-reverse justify-content-center
+PASS
+horizontal-tb ltr row-reverse justify-content-space-between
+PASS
+horizontal-tb ltr row-reverse justify-content-space-around
+PASS
+horizontal-tb rtl row-reverse justify-content-flex-start
+PASS
+horizontal-tb rtl row-reverse justify-content-flex-end
+PASS
+horizontal-tb rtl row-reverse justify-content-center
+PASS
+horizontal-tb rtl row-reverse justify-content-space-between
+PASS
+horizontal-tb rtl row-reverse justify-content-space-around
+PASS
+horizontal-tb ltr column-reverse justify-content-flex-start
+PASS
+horizontal-tb ltr column-reverse justify-content-flex-end
+PASS
+horizontal-tb ltr column-reverse justify-content-center
+PASS
+horizontal-tb ltr column-reverse justify-content-space-between
+PASS
+horizontal-tb ltr column-reverse justify-content-space-around
+PASS
+horizontal-tb rtl column-reverse justify-content-flex-start
+PASS
+horizontal-tb rtl column-reverse justify-content-flex-end
+PASS
+horizontal-tb rtl column-reverse justify-content-center
+PASS
+horizontal-tb rtl column-reverse justify-content-space-between
+PASS
+horizontal-tb rtl column-reverse justify-content-space-around
+PASS
+horizontal-bt ltr row justify-content-flex-start
+PASS
+horizontal-bt ltr row justify-content-flex-end
+PASS
+horizontal-bt ltr row justify-content-center
+PASS
+horizontal-bt ltr row justify-content-space-between
+PASS
+horizontal-bt ltr row justify-content-space-around
+PASS
+horizontal-bt rtl row justify-content-flex-start
+PASS
+horizontal-bt rtl row justify-content-flex-end
+PASS
+horizontal-bt rtl row justify-content-center
+PASS
+horizontal-bt rtl row justify-content-space-between
+PASS
+horizontal-bt rtl row justify-content-space-around
+PASS
+horizontal-bt ltr column justify-content-flex-start
+PASS
+horizontal-bt ltr column justify-content-flex-end
+PASS
+horizontal-bt ltr column justify-content-center
+PASS
+horizontal-bt ltr column justify-content-space-between
+PASS
+horizontal-bt ltr column justify-content-space-around
+PASS
+horizontal-bt rtl column justify-content-flex-start
+PASS
+horizontal-bt rtl column justify-content-flex-end
+PASS
+horizontal-bt rtl column justify-content-center
+PASS
+horizontal-bt rtl column justify-content-space-between
+PASS
+horizontal-bt rtl column justify-content-space-around
+PASS
+horizontal-bt ltr row-reverse justify-content-flex-start
+PASS
+horizontal-bt ltr row-reverse justify-content-flex-end
+PASS
+horizontal-bt ltr row-reverse justify-content-center
+PASS
+horizontal-bt ltr row-reverse justify-content-space-between
+PASS
+horizontal-bt ltr row-reverse justify-content-space-around
+PASS
+horizontal-bt rtl row-reverse justify-content-flex-start
+PASS
+horizontal-bt rtl row-reverse justify-content-flex-end
+PASS
+horizontal-bt rtl row-reverse justify-content-center
+PASS
+horizontal-bt rtl row-reverse justify-content-space-between
+PASS
+horizontal-bt rtl row-reverse justify-content-space-around
+PASS
+horizontal-bt ltr column-reverse justify-content-flex-start
+PASS
+horizontal-bt ltr column-reverse justify-content-flex-end
+PASS
+horizontal-bt ltr column-reverse justify-content-center
+PASS
+horizontal-bt ltr column-reverse justify-content-space-between
+PASS
+horizontal-bt ltr column-reverse justify-content-space-around
+PASS
+horizontal-bt rtl column-reverse justify-content-flex-start
+PASS
+horizontal-bt rtl column-reverse justify-content-flex-end
+PASS
+horizontal-bt rtl column-reverse justify-content-center
+PASS
+horizontal-bt rtl column-reverse justify-content-space-between
+PASS
+horizontal-bt rtl column-reverse justify-content-space-around
+PASS
+vertical-rl ltr row justify-content-flex-start
+PASS
+vertical-rl ltr row justify-content-flex-end
+PASS
+vertical-rl ltr row justify-content-center
+PASS
+vertical-rl ltr row justify-content-space-between
+PASS
+vertical-rl ltr row justify-content-space-around
+PASS
+vertical-rl rtl row justify-content-flex-start
+PASS
+vertical-rl rtl row justify-content-flex-end
+PASS
+vertical-rl rtl row justify-content-center
+PASS
+vertical-rl rtl row justify-content-space-between
+PASS
+vertical-rl rtl row justify-content-space-around
+PASS
+vertical-rl ltr column justify-content-flex-start
+PASS
+vertical-rl ltr column justify-content-flex-end
+PASS
+vertical-rl ltr column justify-content-center
+PASS
+vertical-rl ltr column justify-content-space-between
+PASS
+vertical-rl ltr column justify-content-space-around
+PASS
+vertical-rl rtl column justify-content-flex-start
+PASS
+vertical-rl rtl column justify-content-flex-end
+PASS
+vertical-rl rtl column justify-content-center
+PASS
+vertical-rl rtl column justify-content-space-between
+PASS
+vertical-rl rtl column justify-content-space-around
+PASS
+vertical-rl ltr row-reverse justify-content-flex-start
+PASS
+vertical-rl ltr row-reverse justify-content-flex-end
+PASS
+vertical-rl ltr row-reverse justify-content-center
+PASS
+vertical-rl ltr row-reverse justify-content-space-between
+PASS
+vertical-rl ltr row-reverse justify-content-space-around
+PASS
+vertical-rl rtl row-reverse justify-content-flex-start
+PASS
+vertical-rl rtl row-reverse justify-content-flex-end
+PASS
+vertical-rl rtl row-reverse justify-content-center
+PASS
+vertical-rl rtl row-reverse justify-content-space-between
+PASS
+vertical-rl rtl row-reverse justify-content-space-around
+PASS
+vertical-rl ltr column-reverse justify-content-flex-start
+PASS
+vertical-rl ltr column-reverse justify-content-flex-end
+PASS
+vertical-rl ltr column-reverse justify-content-center
+PASS
+vertical-rl ltr column-reverse justify-content-space-between
+PASS
+vertical-rl ltr column-reverse justify-content-space-around
+PASS
+vertical-rl rtl column-reverse justify-content-flex-start
+PASS
+vertical-rl rtl column-reverse justify-content-flex-end
+PASS
+vertical-rl rtl column-reverse justify-content-center
+PASS
+vertical-rl rtl column-reverse justify-content-space-between
+PASS
+vertical-rl rtl column-reverse justify-content-space-around
+PASS
+vertical-lr ltr row justify-content-flex-start
+PASS
+vertical-lr ltr row justify-content-flex-end
+PASS
+vertical-lr ltr row justify-content-center
+PASS
+vertical-lr ltr row justify-content-space-between
+PASS
+vertical-lr ltr row justify-content-space-around
+PASS
+vertical-lr rtl row justify-content-flex-start
+PASS
+vertical-lr rtl row justify-content-flex-end
+PASS
+vertical-lr rtl row justify-content-center
+PASS
+vertical-lr rtl row justify-content-space-between
+PASS
+vertical-lr rtl row justify-content-space-around
+PASS
+vertical-lr ltr column justify-content-flex-start
+PASS
+vertical-lr ltr column justify-content-flex-end
+PASS
+vertical-lr ltr column justify-content-center
+PASS
+vertical-lr ltr column justify-content-space-between
+PASS
+vertical-lr ltr column justify-content-space-around
+PASS
+vertical-lr rtl column justify-content-flex-start
+PASS
+vertical-lr rtl column justify-content-flex-end
+PASS
+vertical-lr rtl column justify-content-center
+PASS
+vertical-lr rtl column justify-content-space-between
+PASS
+vertical-lr rtl column justify-content-space-around
+PASS
+vertical-lr ltr row-reverse justify-content-flex-start
+PASS
+vertical-lr ltr row-reverse justify-content-flex-end
+PASS
+vertical-lr ltr row-reverse justify-content-center
+PASS
+vertical-lr ltr row-reverse justify-content-space-between
+PASS
+vertical-lr ltr row-reverse justify-content-space-around
+PASS
+vertical-lr rtl row-reverse justify-content-flex-start
+PASS
+vertical-lr rtl row-reverse justify-content-flex-end
+PASS
+vertical-lr rtl row-reverse justify-content-center
+PASS
+vertical-lr rtl row-reverse justify-content-space-between
+PASS
+vertical-lr rtl row-reverse justify-content-space-around
+PASS
+vertical-lr ltr column-reverse justify-content-flex-start
+PASS
+vertical-lr ltr column-reverse justify-content-flex-end
+PASS
+vertical-lr ltr column-reverse justify-content-center
+PASS
+vertical-lr ltr column-reverse justify-content-space-between
+PASS
+vertical-lr ltr column-reverse justify-content-space-around
+PASS
+vertical-lr rtl column-reverse justify-content-flex-start
+PASS
+vertical-lr rtl column-reverse justify-content-flex-end
+PASS
+vertical-lr rtl column-reverse justify-content-center
+PASS
+vertical-lr rtl column-reverse justify-content-space-between
+PASS
+vertical-lr rtl column-reverse justify-content-space-around
+PASS

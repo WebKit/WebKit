@@ -66,6 +66,10 @@ body {
     direction: ltr;
 }
 
+.wrap {
+    -webkit-flex-wrap: wrap;
+}
+
 .wrap-reverse {
     -webkit-flex-wrap: wrap-reverse;
 }
@@ -104,7 +108,7 @@ body {
 
 <div class='flexbox relative align-center'>
     <div data-offset-x=0 data-offset-y=40></div>
-    <div class='absolute' data-offset-x=20 data-offset-y=50></div>
+    <div class='absolute' data-offset-x=20 data-offset-y=0></div>
     <div data-offset-x=20 data-offset-y=40></div>
     <div class="absolute" style="top: 5px; left: 5px" data-offset-x=5 data-offset-y=5></div>
 </div>
@@ -112,7 +116,7 @@ body {
 <div class="relative">
 <div class='flexbox align-center'>
     <div data-offset-x=10 data-offset-y=40></div>
-    <div class='absolute' data-offset-x=30 data-offset-y=50></div>
+    <div class='absolute' data-offset-x=30 data-offset-y=0></div>
     <div data-offset-x=30 data-offset-y=40></div>
     <div class="absolute" style="top: 5px; left: 5px" data-offset-x=5 data-offset-y=5></div>
 </div>
@@ -139,8 +143,8 @@ body {
 
 <div class='flexbox relative'>
     <div style="margin: auto;" data-offset-x=40 data-offset-y=40></div>
-    <div class="absolute" style="margin: auto;" data-offset-x=100 data-offset-y=50></div>
-    <div class="absolute" style="margin: auto;" data-offset-x=100 data-offset-y=50></div>
+    <div class="absolute" style="margin: auto;" data-offset-x=100 data-offset-y=0></div>
+    <div class="absolute" style="margin: auto;" data-offset-x=100 data-offset-y=0></div>
     <div class="absolute" style="margin: auto; top: 5px; left: 5px" data-offset-x=5 data-offset-y=5></div>
 </div>
 
@@ -148,6 +152,24 @@ body {
     <div style="height: auto" data-offset-x=0 data-offset-y=0 data-expected-height=100></div>
     <div class="absolute" style="height: auto" data-offset-x=20 data-offset-y=0 data-expected-height=0></div>
     <div class="absolute" style="height: auto; top: 5px; left: 5px" data-offset-x=5 data-offset-y=5 data-expected-height=0></div>
+</div>
+
+<div class="flexbox wrap relative">
+  <div style="width: 100px;" data-offset-x=0 data-offset-y=0></div>
+  <div class="absolute" data-offset-x=100 data-offset-y=0></div>
+  <div style="width: 50px;" data-offset-x=0 data-offset-y=50></div>
+  <div class="absolute" data-offset-x=50 data-offset-y=50></div>
+  <div style="width: 50px;" data-offset-x=50 data-offset-y=50></div>
+  <div class="absolute" data-offset-x=100 data-offset-y=50></div>
+</div>
+
+<div class="flexbox wrap relative" style="-webkit-align-items: flex-end">
+  <div style="width: 100px;" data-offset-x=0 data-offset-y=30></div>
+  <div class="absolute" data-offset-x=100 data-offset-y=0></div>
+  <div style="width: 50px;" data-offset-x=0 data-offset-y=80></div>
+  <div class="absolute" data-offset-x=50 data-offset-y=50></div>
+  <div style="width: 50px;" data-offset-x=50 data-offset-y=80></div>
+  <div class="absolute" data-offset-x=100 data-offset-y=50></div>
 </div>
 
 

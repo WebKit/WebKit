@@ -689,14 +689,15 @@ bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(RenderBox* child)
 
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox* child)
 {
-    LayoutUnit childCrossExtent = 0;
-    if (!child->isOutOfFlowPositioned())
-        childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
+    ASSERT(!child->isOutOfFlowPositioned());
+    LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
     return lineCrossAxisExtent - childCrossExtent;
 }
 
 bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace)
 {
+    ASSERT(!child->isOutOfFlowPositioned());
+
     bool isHorizontal = isHorizontalFlow();
     Length start = isHorizontal ? child->style()->marginTop() : child->style()->marginLeft();
     Length end = isHorizontal ? child->style()->marginBottom() : child->style()->marginRight();
@@ -899,7 +900,7 @@ static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, EJu
     if (justifyContent == JustifySpaceAround) {
         if (availableFreeSpace > 0 && numberOfChildren)
             return availableFreeSpace / (2 * numberOfChildren);
-        if (availableFreeSpace < 0)
+        else
             return availableFreeSpace / 2;
     }
     return 0;
@@ -958,25 +959,37 @@ static EAlignItems alignmentForChild(RenderBox* child)
     return align;
 }
 
+size_t RenderFlexibleBox::numberOfInFlowPositionedChildren(const OrderedFlexItemList& children) const
+{
+    size_t count = 0;
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
+        if (!child->isOutOfFlowPositioned())
+            ++count;
+    }
+    return count;
+}
+
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>& lineContexts)
 {
     ASSERT(childSizes.size() == children.size());
 
+    size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, style()->justifyContent(), childSizes.size());
+    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, style()->justifyContent(), numberOfChildrenForJustifyContent);
     if (style()->flexDirection() == FlowRowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent = 0, maxDescent = 0; // Used when align-items: baseline.
     LayoutUnit maxChildCrossAxisExtent = 0;
+    size_t seenInFlowPositionedChildren = 0;
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
         if (child->isOutOfFlowPositioned()) {
             prepareChildForPositionedLayout(child, mainAxisOffset, crossAxisOffset, FlipForRowReverse);
-            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), childSizes.size());
             continue;
         }
         LayoutUnit childPreferredSize = childSizes[i] + mainAxisBorderAndPaddingExtentForChild(child);
@@ -1012,7 +1025,9 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         setFlowAwareLocationForChild(child, childLocation);
         mainAxisOffset += childMainExtent + flowAwareMarginEndForChild(child);
 
-        mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), childSizes.size());
+        ++seenInFlowPositionedChildren;
+        if (seenInFlowPositionedChildren < numberOfChildrenForJustifyContent)
+            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), numberOfChildrenForJustifyContent);
     }
 
     if (isColumnFlow())
@@ -1022,27 +1037,28 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         // We have to do an extra pass for column-reverse to reposition the flex items since the start depends
         // on the height of the flexbox, which we only know after we've positioned all the flex items.
         updateLogicalHeight();
-        layoutColumnReverse(children, childSizes, crossAxisOffset, availableFreeSpace);
+        layoutColumnReverse(children, crossAxisOffset, availableFreeSpace);
     }
 
     lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, children.size(), maxAscent));
     crossAxisOffset += maxChildCrossAxisExtent;
 }
 
-void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
+void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
     // This is similar to the logic in layoutAndPlaceChildren, except we place the children
     // starting from the end of the flexbox. We also don't need to layout anything since we're
     // just moving the children to a new position.
+    size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, style()->justifyContent(), childSizes.size());
+    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, style()->justifyContent(), numberOfChildrenForJustifyContent);
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
+    size_t seenInFlowPositionedChildren = 0;
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
         if (child->isOutOfFlowPositioned()) {
             child->layer()->setStaticBlockPosition(mainAxisOffset);
-            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), childSizes.size());
             continue;
         }
         mainAxisOffset -= mainAxisExtentForChild(child) + flowAwareMarginEndForChild(child);
@@ -1053,7 +1069,10 @@ void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children,
             child->repaintDuringLayoutIfMoved(oldRect);
 
         mainAxisOffset -= flowAwareMarginStartForChild(child);
-        mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), childSizes.size());
+
+        ++seenInFlowPositionedChildren;
+        if (seenInFlowPositionedChildren < numberOfChildrenForJustifyContent)
+            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, style()->justifyContent(), numberOfChildrenForJustifyContent);
     }
 }
 
@@ -1141,6 +1160,12 @@ void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector
 
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next()) {
             ASSERT(child);
+            if (child->isOutOfFlowPositioned()) {
+                if (style()->flexWrap() == FlexWrapReverse)
+                    adjustAlignmentForChild(child, lineCrossAxisExtent);
+                continue;
+            }
+
             if (updateAutoMarginsInCrossAxis(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child)))
                 continue;
 
