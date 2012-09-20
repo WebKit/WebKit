@@ -25,7 +25,6 @@
       testRunner.dumpAsText();
       testRunner.setSpatialNavigationEnabled(true);
       testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-      testRunner.waitUntilDone();
     }
 
     function runTest()
@@ -38,14 +37,13 @@
 
     function testCompleted()
     {
-      var scriptElement = document.createElement("script")
-      scriptElement.src = '../js/resources/js-test-post-async.js'
-      document.body.appendChild(scriptElement);
+      finishJSTest();
     }
 
     window.onload = runTest;
-
+    jsTestIsAsync = true;
     </script>
+    <script src="../js/resources/js-test-post.js"></script>
   </head>
 
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
