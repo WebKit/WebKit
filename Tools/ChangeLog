@@ -1,5 +1,27 @@
 2012-09-19  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: print unexpected results using new TestExpectations syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97159
+
+        Unreviewed, build fix.
+
+        Change new-run-webkit-tests to print out failures using the new
+        syntax when there are unexpected results, e.g.:
+
+        52 tests ran as expected, 19 didn't:
+
+
+        Regressions: Unexpected failures : (2)
+          failures/flaky/text.html [ Failure ]
+          failures/unexpected/text-image-checksum.html [ Failure ]
+
+        and so forth
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_unexpected_results):
+
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
         update flakiness dashboard after cutover to new test expectations syntax
         https://bugs.webkit.org/show_bug.cgi?id=97152
 

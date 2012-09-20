@@ -35,7 +35,7 @@ import optparse
 from webkitpy.tool import grammar
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models.test_expectations import TestExpectations
+from webkitpy.layout_tests.models.test_expectations import TestExpectations, TestExpectationParser
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 
@@ -455,8 +455,9 @@ class Printer(object):
                     actual = result['actual'].split(" ")
                     expected = result['expected'].split(" ")
                     result = TestExpectations.EXPECTATIONS[key.lower()]
-                    new_expectations_list = list(set(actual) | set(expected))
-                    self._print_for_bot("  %s = %s" % (test, " ".join(new_expectations_list)))
+                    # FIXME: clean this up once the old syntax is gone
+                    new_expectations_list = [TestExpectationParser._inverted_expectation_tokens[exp] for exp in list(set(actual) | set(expected))]
+                    self._print_for_bot("  %s [ %s ]" % (test, " ".join(new_expectations_list)))
                 self._print_for_bot("")
             self._print_for_bot("")
 
@@ -467,7 +468,7 @@ class Printer(object):
                 self._print_for_bot("Regressions: Unexpected %s : (%d)" % (descriptions[result][0], len(tests)))
                 tests.sort()
                 for test in tests:
-                    self._print_for_bot("  %s = %s" % (test, key))
+                    self._print_for_bot("  %s [ %s ] " % (test, TestExpectationParser._inverted_expectation_tokens[key]))
                 self._print_for_bot("")
 
         if len(unexpected_results['tests']) and self._options.debug_rwt_logging:
