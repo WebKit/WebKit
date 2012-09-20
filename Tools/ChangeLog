@@ -1,3 +1,14 @@
+2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with MingW
+
+        Reviewed by Tor Arne Vestbø.
+
+        Don't try to compile WebCore, etc. with debug symbols for production
+        builds, it's just too big.
+
+        * qmake/mkspecs/features/production_build.prf:
+
 2012-09-20  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][DRT]DumpRenderTree needs to reset focus state when test starts.

@@ -7,7 +7,7 @@ CONFIG *= use_all_in_one_files
 # resulting in the need of several gigabytes of memory at link-time. Reduce the pressure
 # by compiling any static library like WTF or JSC with release flags instead and keep debug
 # symbols for the static libraries that implement API.
-linux-*:CONFIG(debug, debug|release):contains(TEMPLATE, lib):staticlib {
+linux-*|win32-g++*:CONFIG(debug, debug|release):contains(TEMPLATE, lib):staticlib {
     !equals(TARGET, WebKit2):!equals(TARGET, WebKit1) {
         CONFIG += no_debug_info
         QMAKE_CFLAGS += $$QMAKE_CFLAGS_RELEASE
