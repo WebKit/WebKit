@@ -36,6 +36,7 @@
 #include <QBasicTimer>
 #include <QEvent>
 #include <QEventLoop>
+#include <QGesture>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPoint>
@@ -83,6 +84,9 @@ public Q_SLOTS:
     void clearTouchPoints();
     void releaseTouchPoint(int index);
     void cancelTouchPoint(int index);
+#ifndef QT_NO_GESTURES
+    void gestureTap(int x, int y);
+#endif
 
 protected:
     void timerEvent(QTimerEvent*);
@@ -112,6 +116,10 @@ private:
     QBasicTimer m_clickTimer;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     Qt::KeyboardModifiers m_touchModifiers;
+#ifndef QT_NO_GESTURES
+    QTapGesture m_tapGesture;
+    QList<QGesture*> m_gestures;
+#endif
     bool m_touchActive;
 };
 #endif //  EventSenderQt_h

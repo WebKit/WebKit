@@ -63,6 +63,8 @@ fast/forms/focus-change-on-keypress.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/legend-access-key.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
+# eventSender.gestureTap
+fast/events/touch/gesture/gesture-click.html
 
 svg/custom/use-events-crash.svg
 

@@ -1,3 +1,18 @@
+2012-09-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Add eventSender.gestureTap
+        https://bugs.webkit.org/show_bug.cgi?id=66173
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement support for sending raw QGesture events.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureTap):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+
 2012-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129007.

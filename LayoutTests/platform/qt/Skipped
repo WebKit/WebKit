@@ -2419,9 +2419,6 @@ fast/events/remove-target-in-mouseup.html
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 
-# [Qt] Add eventSender.gestureTap
-# https://bugs.webkit.org/show_bug.cgi?id=66173
-fast/events/touch/gesture/gesture-click.html
 # New tests introduced in https://bugs.webkit.org/show_bug.cgi?id=66272. Needs
 # Qt implementation.
 fast/events/touch/gesture/gesture-dblclick.html
