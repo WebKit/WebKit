@@ -197,12 +197,12 @@ test('allTestsWithSamePlatformAndBuildType', 14, function() {
 });
 
 test('filterBugs',4, function() {
-    var filtered = filterBugs('SKIP BUG123 BUGCR123 BUGWK123 SLOW BUG_TONY DEBUG')
-    equal(filtered.modifiers, 'SKIP SLOW DEBUG');
-    equal(filtered.bugs, 'BUG123 BUGCR123 BUGWK123 BUG_TONY');
+    var filtered = filterBugs('Skip crbug.com/123 webkit.org/b/123 Slow Bug(Tony) Debug')
+    equal(filtered.modifiers, 'Skip Slow Debug');
+    equal(filtered.bugs, 'crbug.com/123 webkit.org/b/123 Bug(Tony)');
 
-    filtered = filterBugs('SKIP SLOW DEBUG')
-    equal(filtered.modifiers, 'SKIP SLOW DEBUG');
+    filtered = filterBugs('Skip Slow Debug')
+    equal(filtered.modifiers, 'Skip Slow Debug');
     equal(filtered.bugs, '');
 });
 

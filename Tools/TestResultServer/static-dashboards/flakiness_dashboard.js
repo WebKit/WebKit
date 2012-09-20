@@ -505,7 +505,7 @@ function getExpectations(test, platform, buildType)
 
 function filterBugs(modifiers)
 {
-    var bugs = modifiers.match(/\bBUG\S*/g);
+    var bugs = modifiers.match(/\b(Bug|webkit.org|crbug.com|code.google.com)\S*/g);
     if (!bugs)
         return {bugs: '', modifiers: modifiers};
     for (var j = 0; j < bugs.length; j++)
@@ -610,7 +610,7 @@ function parsedExpectations()
             'Release': 'RELEASE',
             'Debug': 'DEBUG',
             'Mac': 'MAC',
-            'Win': 'Win',
+            'Win': 'WIN',
             'Linux': 'LINUX',
             'SnowLeopard': 'SNOWLEOPARD',
             'Lion': 'LION',
@@ -980,12 +980,10 @@ var WEBKIT_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'webkit.org/b' + WEBKIT_BUG_URL_
 
 function htmlForBugs(bugs)
 {
-    bugs = bugs.replace(/BUG(CR)?(\d{4})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(CR)?(\d{5})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(CR)?(1\d{5})(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(CR)?([2-9]\d{5})(\ |$)/g, INTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(CR)?(\d{7})(\ |$)/g, INTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/BUG(WK)(\d{5}\d*?)(\ |$)/g, WEBKIT_BUG_REPLACE_VALUE);
+    // FIXME: do we still need the INTERNAL_BUG replacements? They're
+    // broken temporarily.
+    bugs = bugs.replace(/crbug.com\/(\d+)(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
+    bugs = bugs.replace(/webkit.org\/b\/(\d{5}\d*?)(\ |$)/g, WEBKIT_BUG_REPLACE_VALUE);
     return bugs;
 }
 

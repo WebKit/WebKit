@@ -3,6 +3,21 @@
         update flakiness dashboard after cutover to new test expectations syntax
         https://bugs.webkit.org/show_bug.cgi?id=97152
 
+        Unreviewed, build fix.
+
+        Handle (??) the new Bug notations as well. Hopefully we don't
+        still need the old ones.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (filterBugs):
+        (htmlForBugs):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
+        update flakiness dashboard after cutover to new test expectations syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97152
+
         Reviewed by Ryosuke Niwa.
 
         This change clones the TestExpectation parsing state machine
