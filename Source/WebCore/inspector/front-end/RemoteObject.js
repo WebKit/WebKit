@@ -241,13 +241,14 @@ WebInspector.RemoteObject.prototype = {
                 return;
             }
 
-            function setPropertyValue(propertyName, propertyValue)
-            {
-                this[propertyName] = propertyValue;
-            }
+            var setPropertyValueFunction = "function(a, b) { this[a] = b; }";
+
+            // Special case for NaN, Infinity and -Infinity
+            if (result.type === "number" && typeof result.value !== "number")
+                setPropertyValueFunction = "function(a) { this[a] = " + result.description + "; }";
 
             delete result.description; // Optimize on traffic.
-            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValue.toString(), [{ value:name }, result], true, undefined, propertySetCallback.bind(this));
+            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValueFunction, [{ value:name }, result], true, undefined, propertySetCallback.bind(this));
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
         }

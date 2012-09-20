@@ -9,8 +9,15 @@ var object2 = { bar: 2 };
 function dumpObject(label)
 {
     console.log("===== " + label + " =====");
-    console.log(JSON.stringify(object1));
+    console.log(JSON.stringify(object1, replacer));
     console.log("");
+
+    function replacer(key, value)
+    {
+        if (typeof value === "number" && !isFinite(value))
+            return String(value);
+        return value;
+    }
 }
 
 function test()
@@ -108,6 +115,26 @@ function test()
             {
                 InspectorTest.addResult(error);
                 InspectorTest.evaluateInPage("dumpObject('Set exception')", next);
+            }
+        },
+
+        function testSetNonFiniteNumbers(next)
+        {
+            obj1.setPropertyValue("foo", "NaN", step1);
+
+            function step1(error)
+            {
+                obj1.setPropertyValue("foo1", "Infinity", step2);
+            }
+
+            function step2(error)
+            {
+                obj1.setPropertyValue("foo2", "-Infinity", step3);
+            }
+
+            function step3(error)
+            {
+                InspectorTest.evaluateInPage("dumpObject('Set non-finite numbers')", next);
             }
         }
     ]);

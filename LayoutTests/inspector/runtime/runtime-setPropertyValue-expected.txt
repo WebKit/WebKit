@@ -22,6 +22,9 @@ CONSOLE MESSAGE: line 13:
 CONSOLE MESSAGE: line 11: ===== Set exception =====
 CONSOLE MESSAGE: line 12: {"foo":""}
 CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set non-finite numbers =====
+CONSOLE MESSAGE: line 12: {"foo":"NaN","foo1":"Infinity","foo2":"-Infinity"}
+CONSOLE MESSAGE: line 13: 
 Tests WebInspector.RemoveObject.setPropertyValue implementation.
 
 
@@ -41,4 +44,6 @@ Running: testSetEmptyString
 
 Running: testSetException
 exception
+
+Running: testSetNonFiniteNumbers
 
