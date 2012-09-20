@@ -1,3 +1,17 @@
+2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix initial build
+
+        Reviewed by Tor Arne Vestbø.
+
+        When building QtWebKit the first time there is no qt_webkit.pri module pri file, and therefore
+        $$QT.webkit.name isn't set and so creating_module isn't set. That has all sorts of implications
+        causing incorrect linking for Makefile.api, etc.
+
+        Fix the determination by simply checking if MODULE is set, which only happens in api.pri.
+
+        * qmake/mkspecs/features/webkit_modules.prf:
+
 2012-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129091.

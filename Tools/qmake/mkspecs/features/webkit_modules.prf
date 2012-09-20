@@ -37,7 +37,7 @@ for(library, WEBKIT) {
     !contains(QT, webkit): DEFINES += STATICALLY_LINKED_WITH_$$library
 }
 
-contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): CONFIG += creating_module
+!isEmpty(MODULE): CONFIG += creating_module
 
 creating_module {
     # Sanitize PKGCONFIG as we don't want any of these libraries
