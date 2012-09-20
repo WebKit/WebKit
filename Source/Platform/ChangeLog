@@ -1,3 +1,14 @@
+2012-09-20  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium ] Add new localized string, OtherDateLabel, to be used in input type=date datalist UI
+        https://bugs.webkit.org/show_bug.cgi?id=97200
+
+        Reviewed by Kent Tamura.
+
+        Adding new localized string to be used in the SuggestionPicker for input type=date.
+
+        * chromium/public/WebLocalizedString.h:
+
 2012-09-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Scrollbar with tickmarks doesn't respond to clicks

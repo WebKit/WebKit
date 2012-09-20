@@ -71,6 +71,7 @@ struct WebLocalizedString {
         MissingPluginText,
         MultipleFileUploadText,
         OtherColorLabel,
+        OtherDateLabel,
         ResetButtonDefaultLabel,
         SearchableIndexIntroduction,
         SearchMenuClearRecentSearchesText,
