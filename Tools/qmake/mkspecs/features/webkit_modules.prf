@@ -36,3 +36,18 @@ for(library, WEBKIT) {
     # macros synchronized with the code that it will be linked with statically.
     !contains(QT, webkit): DEFINES += STATICALLY_LINKED_WITH_$$library
 }
+
+contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): CONFIG += creating_module
+
+creating_module {
+    # Sanitize PKGCONFIG as we don't want any of these libraries
+    # to end up in as public API dependenices in the QtWebKit prl file.
+    PKGCONFIG_PRIVATE *= $$PKGCONFIG
+    unset(PKGCONFIG)
+
+    # We do have a limited subset of Qt modules as dependencies for using
+    # the public QtWebKit API. The rest of the modules go into QT_PRIVATE.
+    QT_PRIVATE *= $$QT
+    QT = $$QT_API_DEPENDS
+    QT_PRIVATE -= $$QT
+}

@@ -24,16 +24,16 @@ build?(webkit2): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
 
 use?(3D_GRAPHICS): WEBKIT += angle
 
-# We load the relevant modules here, so that the effects of each module
-# on the QT variable can be picked up when we later load(qt_module).
-load(webkit_modules)
-
 MODULE = webkit
 
 # This is the canonical list of dependencies for the public API of
 # the QtWebKit library, and will end up in the library's prl file.
 QT_API_DEPENDS = core gui network
 build?(webkit1): QT_API_DEPENDS += widgets
+
+# We load the relevant modules here, so that the effects of each module
+# on the QT variable can be picked up when we later load(qt_module).
+load(webkit_modules)
 
 # ---------------- Custom developer-build handling -------------------
 #

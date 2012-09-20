@@ -1,3 +1,15 @@
+2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] QtWebKit module header includes private dependencies
+
+        Reviewed by Tor Arne Vestbø.
+
+        Moved loading of webkit_modules.prf a few lines down after the definition
+        of QT_API_DEPENDS, because webkit_modules.prf does the sanitization of the
+        QT variable now and therefore needs QT_API_DEPENDS.
+
+        * Source/api.pri:
+
 2012-09-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Scrollbar with tickmarks doesn't respond to clicks

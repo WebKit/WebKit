@@ -192,8 +192,6 @@ contains(QT, webkit) {
     # FIXME: Replace this with putting the intermediate libraries in the prl file
 }
 
-contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): CONFIG += creating_module
-
 defineTest(needToLink) {
     # The main dynamic library always needs to link in the intermediate libraries
     creating_module: return(true)
@@ -223,23 +221,8 @@ needToLink() {
     for(library, WEBKIT) {
         library_identifier = $$lower($$library)
         linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
-        LIBS += $$eval(WEBKIT.$${library_identifier}.dependent_libs)
+        LIBS_PRIVATE += $$eval(WEBKIT.$${library_identifier}.dependent_libs)
     }
-}
-
-creating_module {
-    # Sanitize PKGCONFIG and LIBS, as we don't want any of these libraries
-    # to end up in as public API dependenices in the QtWebKit prl file.
-    PKGCONFIG_PRIVATE *= $$PKGCONFIG
-    unset(PKGCONFIG)
-    LIBS_PRIVATE += $$LIBS
-    unset(LIBS)
-
-    # We do have a limited subset of Qt modules as dependencies for using
-    # the public QtWebKit API. The rest of the modules go into QT_PRIVATE.
-    QT_PRIVATE *= $$QT
-    QT = $$QT_API_DEPENDS
-    QT_PRIVATE -= $$QT
 }
 
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {

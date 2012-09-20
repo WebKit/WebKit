@@ -1,5 +1,17 @@
 2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] QtWebKit module header includes private dependencies
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf: Don't try to sanitize LIBS, because we can make sure
+        that LIBS_PRIVATE is set from the beginning. Moved the creating_module and PKGCONFIG/QT(_PRIVATE)
+        sanitization into webkit_modules.prf. creating_module determination requires TARGET to be set, so
+        we can't do it in default_pre.
+        * qmake/mkspecs/features/webkit_modules.prf:
+
+2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Fix build with MingW
 
         Reviewed by Tor Arne Vestbø.
