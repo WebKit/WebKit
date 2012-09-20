@@ -194,7 +194,6 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Fail
 Bug(EFL) editing/input/emacs-ctrl-o.html [ Failure ]
 Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
 Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
-Bug(EFL) fast/frames/flattening/iframe-tiny.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-embed.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-object.html [ Failure ]
 Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
