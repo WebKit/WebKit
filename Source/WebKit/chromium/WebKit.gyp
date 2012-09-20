@@ -1313,5 +1313,13 @@
                 },
             ],
         }],
+        ['clang==1', {
+            'target_defaults': {
+                'cflags': ['-Wglobal-constructors'],
+                'xcode_settings': {
+                    'WARNING_CFLAGS': ['-Wglobal-constructors'],
+                },
+            },
+        }],
     ], # conditions
 }

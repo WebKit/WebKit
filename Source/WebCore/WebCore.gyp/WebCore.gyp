@@ -359,9 +359,9 @@
     }],  # condition OS == "mac"
     ['clang==1', {
       'target_defaults': {
-        'cflags': ['-Wglobal-constructors'],
+        'cflags': ['-Wglobal-constructors', '-Wunused-parameter'],
         'xcode_settings': {
-          'WARNING_CFLAGS': ['-Wglobal-constructors'],
+          'WARNING_CFLAGS': ['-Wglobal-constructors', '-Wunused-parameter'],
         },
       },
     }],

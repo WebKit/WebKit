@@ -528,5 +528,14 @@
                 }],
             }],
         }],
+        ['clang==1', {
+            'target_defaults': {
+                # FIXME: Add -Wglobal-constructors after fixing existing bugs.
+                'cflags': ['-Wunused-parameter'],
+                'xcode_settings': {
+                    'WARNING_CFLAGS': ['-Wunused-parameter'],
+                },
+            },
+        }],
     ], # conditions
 }

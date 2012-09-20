@@ -1,3 +1,13 @@
+2012-09-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Enable more clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=97257
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp: Add -Wunused-parameter. Don't add -Wglobal-constructors because
+        there are lots of violations in these files.
+
 2012-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should record individual value instead of statistics

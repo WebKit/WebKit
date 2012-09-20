@@ -218,5 +218,13 @@
                 ],
             }],
         }],
+        ['clang==1', {
+            'target_defaults': {
+                'cflags': ['-Wglobal-constructors', '-Wunused-parameter'],
+                'xcode_settings': {
+                    'WARNING_CFLAGS': ['-Wglobal-constructors', '-Wunused-parameter'],
+                },
+            },
+        }],
     ],
 }

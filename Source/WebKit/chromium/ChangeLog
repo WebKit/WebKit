@@ -1,3 +1,13 @@
+2012-09-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Enable more clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=97257
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp: Add -Wglobal-constructors. Don't add -Wunused-parameter because many of our API interfaces have named parameters with empty implementations.
+        * WebKitUnitTests.gyp: Add -Wglobal-constructors and -Wunused-parameter.
+
 2012-09-20  David Grogan  <dgrogan@chromium.org>
 
         Fix IndexedDB unit tests
