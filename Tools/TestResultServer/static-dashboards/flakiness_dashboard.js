@@ -588,22 +588,99 @@ function parsedExpectations()
     var lines = g_expectations.split('\n');
     lines.forEach(function(line) {
         line = trimString(line);
-        if (!line || startsWith(line, '//'))
+        if (!line || startsWith(line, '#'))
             return;
 
-        // FIXME: Make this robust against not having modifiers and/or expectations.
-        // Right now, run-webkit-tests doesn't allow such lines, but it may in the future.
-        var match = line.match(/([^:]+)*:([^=]+)=(.*)/);
-        if (!match) {
-            console.error('Line could not be parsed: ' + line);
-            return;
+        // This code mimics _tokenize_line_using_new_format() in
+        // Tools/Scripts/webkitpy/layout_tests/models/test_expectations.py
+        //
+        // FIXME: consider doing more error checking here.
+        //
+        // FIXME: Clean this all up once we've fully cut over to the new syntax.
+        var tokens = line.split(/\s+/)
+        var parsed_bugs = [];
+        var parsed_modifiers = [];
+        var parsed_path;
+        var parsed_expectations = [];
+        var state = 'start';
+
+        // This clones _configuration_tokens_list in test_expectations.py.
+        // FIXME: unify with the platforms constants at the top of the file.
+        var configuration_tokens = {
+            'Release': 'RELEASE',
+            'Debug': 'DEBUG',
+            'Mac': 'MAC',
+            'Win': 'Win',
+            'Linux': 'LINUX',
+            'SnowLeopard': 'SNOWLEOPARD',
+            'Lion': 'LION',
+            'MountainLion': 'MOUNTAINLION',
+            'Win7': 'WIN7',
+            'XP': 'XP',
+            'Vista': 'VISTA',
+            'Android': 'ANDROID',
+        };
+
+        var expectation_tokens = {
+            'Crash': 'CRASH',
+            'Failure': 'FAIL',
+            'ImageOnlyFailure': 'IMAGE',
+            'Missing': 'MISSING',
+            'Pass': 'PASS',
+            'Rebaseline': 'REBASELINE',
+            'Skip': 'SKIP',
+            'Slow': 'SLOW',
+            'Timeout': 'TIMEOUT',
+            'WontFix': 'WONTFIX',
+        };
+
+            
+        tokens.forEach(function(token) {
+          if (token.indexOf('Bug') != -1 ||
+              token.indexOf('webkit.org') != -1 ||
+              token.indexOf('crbug.com') != -1 ||
+              token.indexOf('code.google.com') != -1) {
+              parsed_bugs.push(token);
+          } else if (token == '[') {
+              if (state == 'start') {
+                  state = 'configuration';
+              } else if (state == 'name_found') {
+                  state = 'expectations';
+              }
+          } else if (token == ']') {
+              if (state == 'configuration') {
+                  state = 'name';
+              } else if (state == 'expectations') {
+                  state = 'done';
+              }
+          } else if (state == 'configuration') {
+              parsed_modifiers.push(configuration_tokens[token]);
+          } else if (state == 'expectations') {
+              if (token == 'Rebaseline' || token == 'Skip' || token == 'Slow' || token == 'WontFix') {
+                  parsed_modifiers.push(token.toUpperCase());
+              } else {
+                  parsed_expectations.push(expectation_tokens[token]);
+              }
+          } else if (token == '#') {
+              state = 'done';
+          } else if (state == 'name' || state == 'start') {
+              parsed_path = token;
+              state = 'name_found';
+          }
+        });
+
+        if (!parsed_expectations.length) {
+            if (parsed_modifiers.indexOf('Slow') == -1) {
+                parsed_modifiers.push('Skip');
+                parsed_expectations = ['Pass'];
+            }
         }
 
         // FIXME: Should we include line number and comment lines here?
         expectations.push({
-            modifiers: trimString(match[1]),
-            path: trimString(match[2]),
-            expectations: trimString(match[3])
+            modifiers: parsed_bugs.concat(parsed_modifiers).join(' '),
+            path: parsed_path,
+            expectations: parsed_expectations.join(' '),
         });
     });
     return expectations;

@@ -1,3 +1,18 @@
+2012-09-19  Dirk Pranke  <dpranke@chromium.org>
+
+        update flakiness dashboard after cutover to new test expectations syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97152
+
+        Reviewed by Ryosuke Niwa.
+
+        This change clones the TestExpectation parsing state machine
+        from python into javascript.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (parsedExpectations.lines.forEach):
+        (parsedExpectations):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2012-09-19  Dana Jansens  <danakj@chromium.org>
 
         Add backer@chromium.org as contributor

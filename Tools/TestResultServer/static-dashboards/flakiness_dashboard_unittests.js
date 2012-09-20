@@ -84,7 +84,7 @@ test('releaseFail', 2, function() {
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'}
     ];
-    g_expectations = 'RELEASE : ' + test + ' = FAIL';
+    g_expectations = '[ Release ] ' + test + ' [ Failure ]';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 });
 
@@ -96,8 +96,8 @@ test('releaseFailDebugCrashReleaseBuilder', 2, function() {
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
         {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
     ];
-    g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
-        'DEBUG : ' + test + ' = CRASH';
+    g_expectations = '[ Release ] ' + test + ' [ Failure ]\n' +
+        '[ Debug ] ' + test + ' [ Crash ]';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 });
 
@@ -109,24 +109,24 @@ test('releaseFailDebugCrashDebugBuilder', 2, function() {
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
         {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
     ];
-    g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
-        'DEBUG : ' + test + ' = CRASH';
+    g_expectations = '[ Release ] ' + test + ' [ Failure ]\n' +
+        '[ Debug ] ' + test + ' [ Crash ]';
     runExpectationsTest(builder, test, 'CRASH', 'DEBUG');
 });
 
 test('overrideJustBuildType', 12, function() {
     resetGlobals();
     var test = 'bar/1.html';
-    g_expectations = 'WONTFIX : bar = FAIL PASS TIMEOUT\n' +
-        'WONTFIX MAC : ' + test + ' = FAIL\n' +
-        'LINUX DEBUG : ' + test + ' = CRASH';
+    g_expectations = 'bar [ WontFix Failure Pass Timeout ]\n' +
+        '[ Mac ] ' + test + ' [ WontFix Failure ]\n' +
+        '[ Linux Debug ] ' + test + ' [ Crash ]';
     
     runExpectationsTest('Webkit Win', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Win (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Linux', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Linux (dbg)(3)', test, 'CRASH', 'LINUX DEBUG');
-    runExpectationsTest('Webkit Mac10.7', test, 'FAIL', 'WONTFIX MAC');
-    runExpectationsTest('Webkit Mac10.7 (dbg)(3)', test, 'FAIL', 'WONTFIX MAC');
+    runExpectationsTest('Webkit Mac10.7', test, 'FAIL', 'MAC WONTFIX');
+    runExpectationsTest('Webkit Mac10.7 (dbg)(3)', test, 'FAIL', 'MAC WONTFIX');
 });
 
 test('platformAndBuildType', 76, function() {
@@ -185,9 +185,9 @@ test('platformAndBuildType', 76, function() {
 });
 
 test('realModifiers', 3, function() {
-    equal(realModifiers('BUGFOO LINUX LION WIN DEBUG SLOW'), 'SLOW');
-    equal(realModifiers('BUGFOO LUCID MAC XP RELEASE SKIP'), 'SKIP');
-    equal(realModifiers('BUGFOO'), '');
+    equal(realModifiers('BUG(Foo) LINUX LION WIN DEBUG SLOW'), 'SLOW');
+    equal(realModifiers('BUG(Foo) LUCID MAC XP RELEASE SKIP'), 'SKIP');
+    equal(realModifiers('BUG(Foo)'), '');
 });
 
 test('allTestsWithSamePlatformAndBuildType', 14, function() {
@@ -219,15 +219,15 @@ test('getExpectations', 11, function() {
         }
     }
 
-    g_expectations = 'BUG123 : foo = FAIL PASS CRASH\n' +
-        'RELEASE BUGFOO : foo/test1.html = FAIL\n' +
-        'DEBUG : foo/test1.html = CRASH\n' +
-        'BUG456 : foo/test2.html = FAIL\n' +
-        'LINUX DEBUG : foo/test2.html = CRASH\n' +
-        'RELEASE : test1.html = FAIL\n' +
-        'DEBUG : test1.html = CRASH\n' +
-        'WIN7 : http/tests/appcache/interrupted-update.html = TIMEOUT\n' +
-        'MAC LINUX XP : http/tests/appcache/interrupted-update.html = FAIL\n';
+    g_expectations = 'Bug(123) foo [ Failure Pass Crash ]\n' +
+        'Bug(Foo) [ Release ] foo/test1.html [ Failure ]\n' +
+        '[ Debug ] foo/test1.html [ Crash ]\n' +
+        'Bug(456) foo/test2.html [ Failure ]\n' +
+        '[ Linux Debug ] foo/test2.html [ Crash ]\n' +
+        '[ Release ] test1.html [ Failure ]\n' +
+        '[ Debug ] test1.html [ Crash ]\n' +
+        '[ Win7 ] http/tests/appcache/interrupted-update.html [ Timeout ]\n' +
+        '[ Mac Linux XP ] http/tests/appcache/interrupted-update.html [ Failure ]\n';
 
     processExpectations();
     
@@ -235,19 +235,19 @@ test('getExpectations', 11, function() {
     equal(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('foo/test1.html', 'LUCID', 'RELEASE');
-    equal(JSON.stringify(expectations), '{"modifiers":"RELEASE BUGFOO","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"Bug(Foo) RELEASE","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'RELEASE');
-    equal(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"Bug(456)","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LION', 'DEBUG');
-    equal(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"Bug(456)","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'DEBUG');
     equal(JSON.stringify(expectations), '{"modifiers":"LINUX DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('foo/test3.html', 'LUCID', 'DEBUG');
-    equal(JSON.stringify(expectations), '{"modifiers":"BUG123","expectations":"FAIL PASS CRASH"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"Bug(123)","expectations":"FAIL PASS CRASH"}');
 
     var expectations = getExpectations('test1.html', 'XP', 'DEBUG');
     equal(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
