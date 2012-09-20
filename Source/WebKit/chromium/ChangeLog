@@ -1,3 +1,11 @@
+2012-09-20  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium win build fix.
+        Remove spurious reference to the non-existent
+        tests/LayerPainterChromium.h in WebKit.gypi.
+
+        * WebKit.gypi:
+
 2012-09-20  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused copy of chromium compositor implementation files

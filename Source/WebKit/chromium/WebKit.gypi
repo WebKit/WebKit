@@ -80,7 +80,6 @@
             'tests/ImageLayerChromiumTest.cpp',
             'tests/KURLTest.cpp',
             'tests/KeyboardTest.cpp',
-            'tests/LayerPainterChromium.h',
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
             'tests/ListenerLeakTest.cpp',
