@@ -4,11 +4,11 @@
 # Other rules should be in TestExpectations.
 
 # Skip tests of other platforms to save time.
-platform/gtk [ Pass Skip WontFix ]
-platform/mac [ Pass Skip WontFix ]
-platform/mac-wk2 [ Pass Skip WontFix ]
-platform/qt [ Pass Skip WontFix ]
-platform/win [ Pass Skip WontFix ]
+platform/gtk [ WontFix ]
+platform/mac [ WontFix ]
+platform/mac-wk2 [ WontFix ]
+platform/qt [ WontFix ]
+platform/win [ WontFix ]
 
 # Features not supported: http://crbug.com/145338.
 crbug.com/145338 compositing/plugins
@@ -60,7 +60,7 @@ crbug.com/145338 platform/chromium/media/video-capture-preview.html # Uses media
 crbug.com/145338 webaudio
 
 # This test is only for GTK which is not applicable to Android.
-platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Skip WontFix ]
+platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ WontFix ]
 
 # Skip webgl tests: http://crbug.com/135877.
 crbug.com/135877 compositing/webgl
@@ -70,18 +70,18 @@ crbug.com/135877 platform/chromium/virtual/gpu/fast/canvas/webgl
 crbug.com/135877 platform/chromium/virtual/threaded/compositing/webgl
 
 # Causes server error. Not feasible to fix because this is a behavior of Apache server.
-webkit.org/b/95378 fast/encoding/percent-escaping.html [ Pass Skip WontFix ]
+webkit.org/b/95378 fast/encoding/percent-escaping.html [ WontFix ]
 
 # Tests depending on Bengali, Tamil, Danda fonts
-webkit.org/b/95378 fast/text/international/bold-bengali.html [ Pass Skip WontFix ]
-webkit.org/b/95378 fast/text/international/complex-character-based-fallback.html [ Pass Skip WontFix ]
+webkit.org/b/95378 fast/text/international/bold-bengali.html [ WontFix ]
+webkit.org/b/95378 fast/text/international/complex-character-based-fallback.html [ WontFix ]
 
 # The test creates a temporary file via HTTP POST and access the file as a blob. This is unfeasible.
-webkit.org/b/95378 http/tests/local/fileapi/send-sliced-dragged-file.html [ Pass Skip WontFix ]
+webkit.org/b/95378 http/tests/local/fileapi/send-sliced-dragged-file.html [ WontFix ]
 
 # The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
-webkit.org/b/95378 http/tests/local/fileapi/file-last-modified.html [ Pass Skip WontFix ]
+webkit.org/b/95378 http/tests/local/fileapi/file-last-modified.html [ WontFix ]
 
 # Android font lacks some plane2 CJK glyphs to pass this test.
-webkit.org/b/95378 fast/text/international/plane2.html [ Pass Skip WontFix ]
+webkit.org/b/95378 fast/text/international/plane2.html [ WontFix ]
 

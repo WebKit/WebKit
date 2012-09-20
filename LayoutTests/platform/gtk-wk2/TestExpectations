@@ -37,8 +37,8 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(GTK) fast/regions/autoheight-regions-mark.html [ Failure Skip ]
-Bug(GTK) http/tests/security/resources/drag-drop-allowed.html [ Failure Skip ]
+Bug(GTK) fast/regions/autoheight-regions-mark.html [ Skip ]
+Bug(GTK) http/tests/security/resources/drag-drop-allowed.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests that require new results.

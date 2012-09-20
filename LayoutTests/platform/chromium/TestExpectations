@@ -101,16 +101,16 @@ webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector-enabled [ Pass Slow 
 
 # Rolling in a V8 change that will break these tests. We'll update with the new
 # test expectations along with the change that this roll will enable.
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html [ Failure Skip ]
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked.html [ Failure Skip ]
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/function-constructor-blocked.html [ Failure Skip ]
+webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html [ Skip ]
+webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked.html [ Skip ]
+webkit.org/b/94332 http/tests/security/contentSecurityPolicy/function-constructor-blocked.html [ Skip ]
 
 # Fails due to different window.close() rules.  We need to decide whether we
 # ever expect to pass this.
-crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Failure ImageOnlyFailure Skip ]
+crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Skip ]
 
 # Implement java testing harness.
-crbug.com/36681 java [ Failure Skip ]
+crbug.com/36681 java [ Skip ]
 
 # Quota API is not supported in DRT yet.
 crbug.com/84572 storage/storageinfo-missing-arguments.html
@@ -120,7 +120,7 @@ crbug.com/84572 storage/storageinfo-request-quota.html
 
 # Animation API is disabled.  Dean Jackson has promised (as of Aug. 25, 2011)
 # to re-enable these "in the next few weeks".
-webkit.org/b/54151 animations/animation-api-1.html [ Failure Skip ]
+webkit.org/b/54151 animations/animation-api-1.html [ Skip ]
 
 # Unskip after implementing DRT support for setDefersLoading and goBack.
 webkit.org/b/60877 loader/navigation-while-deferring-loads.html
@@ -160,7 +160,7 @@ webkit.org/b/63933 platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDa
 webkit.org/b/68610 fast/dom/MicroData
 
 # Unskip after changes on both sides have landed and rolled together.
-crbug.com/103939 http/tests/appcache/wrong-content-type.html [ Failure Skip ]
+crbug.com/103939 http/tests/appcache/wrong-content-type.html [ Skip ]
 
 # Vibration API is not supported yet in the chromium port.
 webkit.org/b/72010 fast/dom/navigator-vibration.html
@@ -198,354 +198,354 @@ webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.h
 # -----------------------------------------------------------------
 
 # Run the Mac-specific platform tests, but only to check for crashes.
-platform/gtk [ Failure ImageOnlyFailure Pass WontFix ]
-platform/mac [ Failure ImageOnlyFailure Pass Timeout WontFix ]
-platform/mac-wk2 [ Failure ImageOnlyFailure Pass Timeout WontFix ]
-platform/qt [ Failure ImageOnlyFailure Missing Pass WontFix ]
-platform/qt/plugins/qt-qwidget-plugin.html [ Pass Skip WontFix ]
-platform/qt/fast/forms [ Pass Skip WontFix ]
-[ Mac Win ] platform/chromium-linux [ Failure ImageOnlyFailure Missing WontFix ]
-[ Linux Mac ] platform/win [ Pass Skip WontFix ]
-[ Linux Win Mac ] platform/chromium-android [ Pass Skip WontFix ]
+platform/gtk [ WontFix ]
+platform/mac [ WontFix ]
+platform/mac-wk2 [ WontFix ]
+platform/qt [ WontFix ]
+platform/qt/plugins/qt-qwidget-plugin.html [ WontFix ]
+platform/qt/fast/forms [ WontFix ]
+[ Mac Win ] platform/chromium-linux [ WontFix ]
+[ Linux Mac ] platform/win [ WontFix ]
+[ Linux Win Mac ] platform/chromium-android [ WontFix ]
 
 # These tests are for -apple- and -khtml- prefixes, which we don't support
-inspector/styles/vendor-prefixes.html [ Skip Timeout WontFix ]
-fast/css/apple-prefix.html [ Pass Skip WontFix ]
+inspector/styles/vendor-prefixes.html [ WontFix ]
+fast/css/apple-prefix.html [ WontFix ]
 
 # Perf tests aren't loaded on the chromium bots, so skip testing the framework
-fast/harness/perftests [ Pass Skip WontFix ]
+fast/harness/perftests [ WontFix ]
 
 # Perf tests are really slow in debug builds and there are few benefits in
 # running them.
-[ Debug ] perf [ Skip Timeout WontFix ]
+[ Debug ] perf [ WontFix ]
 
 # This test verifies that a mismatch reftest will fail if both results are the
 # same.  Because the whole point is that this test should fail when run, it's
 # not SKIP, just WONTFIX.
-fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure WontFix ]
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ]
 
 # Since V8 is more interruptible than other engines, they use the standard
 # long-running-script mechanism to handle very-long-running regexps too.
 # See http://code.google.com/p/v8/issues/detail?id=287
-fast/js/regexp-overflow-too-big.html [ Skip Timeout WontFix ]
+fast/js/regexp-overflow-too-big.html [ WontFix ]
 
 # XHTML tests. These tests are all checked in with expectations that represent
 # JS errors. We skip them because they don't actually test what they set out to.
 # See http://crbug.com/24185 for some history.
-dom/xhtml/level2/html/HTMLDocument17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level2/html/HTMLDocument18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level2/html/HTMLDocument19.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level2/html/HTMLDocument20.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level2/html/HTMLDocument21.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/attrisid02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/attrisid03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/attrisid07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/canonicalform12.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/cdatasections01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/checkcharacternormalization01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/checkcharacternormalization02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/checkcharacternormalization03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/comments01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization14.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization15.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization16.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/datatypenormalization18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentadoptnode17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentadoptnode18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentadoptnode19.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentadoptnode20.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentgetinputencoding04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentgetxmlencoding05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentnormalizedocument13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode15.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode16.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/documentrenamenode28.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigcanonicalform1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigcdatasections1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigcheckcharacternormalization1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigcomments1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigdatatypenormalization1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigdatatypenormalization2.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigelementcontentwhitespace1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigentities1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigerrorhandler1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigerrorhandler2.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfiginfoset1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfignamespacedeclarations1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfignamespaces1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfignamespaces2.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfignormalizecharacters1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigschemalocation1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigschematype1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigsplitcdatasections1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigurationcansetparameter01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigurationcansetparameter02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigurationcansetparameter03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigurationcansetparameter06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigurationgetparameter01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigvalidate1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigvalidateifschema1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domconfigwellformed1.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationgetfeature01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationgetfeature02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationgetfeature03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationgetfeature05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationgetfeature06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry14.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry15.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry16.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry19.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry20.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry21.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry22.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry24.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domimplementationregistry25.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domstringlistcontains01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domstringlistcontains02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domstringlistgetlength01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domstringlistitem01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/domstringlistitem02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementcontentwhitespace01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementcontentwhitespace02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementcontentwhitespace03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattribute11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributenode10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens12.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/elementsetidattributens14.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entities01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entities02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entities03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entities04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetinputencoding01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetxmlencoding01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetxmlencoding02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetxmlversion01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/handleerror01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/handleerror02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/infoset09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/namespacedeclarations01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/namespacedeclarations02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition16.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition22.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition23.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition24.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodecomparedocumentposition33.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri12.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri14.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature12.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetfeature13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegettextcontent05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegettextcontent15.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegettextcontent16.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegettextcontent18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetuserdata07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeisdefaultnamespace04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeisequalnode25.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeisequalnode26.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeisequalnode27.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeissamenode07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeissamenode08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodeissamenode09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodelookupnamespaceuri04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodelookupprefix04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodelookupprefix12.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/noderemovechild07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/noderemovechild24.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/noderemovechild25.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/noderemovechild26.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/noderemovechild27.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodereplacechild10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodereplacechild21.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodereplacechild25.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodereplacechild38.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesettextcontent04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesettextcontent13.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodesetuserdata10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/normalizecharacters08.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/splitcdatasections01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/textiselementcontentwhitespace04.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/textiselementcontentwhitespace05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/textiselementcontentwhitespace06.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/userdatahandler01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/userdatahandler02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/userdatahandler03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/userdatahandler04.xhtml [ Failure Skip WontFix ]
+dom/xhtml/level2/html/HTMLDocument17.xhtml [ WontFix ]
+dom/xhtml/level2/html/HTMLDocument18.xhtml [ WontFix ]
+dom/xhtml/level2/html/HTMLDocument19.xhtml [ WontFix ]
+dom/xhtml/level2/html/HTMLDocument20.xhtml [ WontFix ]
+dom/xhtml/level2/html/HTMLDocument21.xhtml [ WontFix ]
+dom/xhtml/level3/core/attrisid02.xhtml [ WontFix ]
+dom/xhtml/level3/core/attrisid03.xhtml [ WontFix ]
+dom/xhtml/level3/core/attrisid07.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform01.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform02.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform03.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform04.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform05.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform07.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform10.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform11.xhtml [ WontFix ]
+dom/xhtml/level3/core/canonicalform12.xhtml [ WontFix ]
+dom/xhtml/level3/core/cdatasections01.xhtml [ WontFix ]
+dom/xhtml/level3/core/checkcharacternormalization01.xhtml [ WontFix ]
+dom/xhtml/level3/core/checkcharacternormalization02.xhtml [ WontFix ]
+dom/xhtml/level3/core/checkcharacternormalization03.xhtml [ WontFix ]
+dom/xhtml/level3/core/comments01.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization13.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization14.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization15.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization16.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization17.xhtml [ WontFix ]
+dom/xhtml/level3/core/datatypenormalization18.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentadoptnode17.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentadoptnode18.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentadoptnode19.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentadoptnode20.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentgetinputencoding04.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentgetxmlencoding05.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument01.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument02.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument03.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument04.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument05.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument07.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument08.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument09.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentnormalizedocument13.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode01.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode02.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode03.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode04.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode05.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode06.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode07.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode09.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode15.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode16.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode17.xhtml [ WontFix ]
+dom/xhtml/level3/core/documentrenamenode28.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigcanonicalform1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigcdatasections1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigcheckcharacternormalization1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigcomments1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigdatatypenormalization1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigdatatypenormalization2.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigelementcontentwhitespace1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigentities1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigerrorhandler1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigerrorhandler2.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfiginfoset1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfignamespacedeclarations1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfignamespaces1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfignamespaces2.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfignormalizecharacters1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigschemalocation1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigschematype1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigsplitcdatasections1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigurationcansetparameter01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigurationcansetparameter02.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigurationcansetparameter03.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigurationcansetparameter06.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigurationgetparameter01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigvalidate1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigvalidateifschema1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domconfigwellformed1.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationgetfeature01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationgetfeature02.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationgetfeature03.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationgetfeature05.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationgetfeature06.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry02.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry03.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry04.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry05.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry06.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry07.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry08.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry09.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry10.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry11.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry13.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry14.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry15.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry16.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry17.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry18.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry19.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry20.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry21.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry22.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry24.xhtml [ WontFix ]
+dom/xhtml/level3/core/domimplementationregistry25.xhtml [ WontFix ]
+dom/xhtml/level3/core/domstringlistcontains01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domstringlistcontains02.xhtml [ WontFix ]
+dom/xhtml/level3/core/domstringlistgetlength01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domstringlistitem01.xhtml [ WontFix ]
+dom/xhtml/level3/core/domstringlistitem02.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementcontentwhitespace01.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementcontentwhitespace02.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementcontentwhitespace03.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute01.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute03.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute04.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute07.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute08.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute09.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute10.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattribute11.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode01.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode02.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode03.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode04.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode07.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode08.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributenode10.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens01.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens02.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens03.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens04.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens05.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens10.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens11.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens12.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens13.xhtml [ WontFix ]
+dom/xhtml/level3/core/elementsetidattributens14.xhtml [ WontFix ]
+dom/xhtml/level3/core/entities01.xhtml [ WontFix ]
+dom/xhtml/level3/core/entities02.xhtml [ WontFix ]
+dom/xhtml/level3/core/entities03.xhtml [ WontFix ]
+dom/xhtml/level3/core/entities04.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetinputencoding01.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetxmlencoding01.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetxmlencoding02.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetxmlversion01.xhtml [ WontFix ]
+dom/xhtml/level3/core/handleerror01.xhtml [ WontFix ]
+dom/xhtml/level3/core/handleerror02.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset01.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset02.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset03.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset04.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset05.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset08.xhtml [ WontFix ]
+dom/xhtml/level3/core/infoset09.xhtml [ WontFix ]
+dom/xhtml/level3/core/namespacedeclarations01.xhtml [ WontFix ]
+dom/xhtml/level3/core/namespacedeclarations02.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition03.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition16.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition22.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition23.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition24.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodecomparedocumentposition33.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri12.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri13.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri14.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature01.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature02.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature03.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature06.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature07.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature08.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature09.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature10.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature11.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature12.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetfeature13.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegettextcontent05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegettextcontent15.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegettextcontent16.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegettextcontent18.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata01.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata02.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata03.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata06.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetuserdata07.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeisdefaultnamespace04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeisequalnode25.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeisequalnode26.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeisequalnode27.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeissamenode07.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeissamenode08.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodeissamenode09.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodelookupnamespaceuri04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodelookupprefix04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodelookupprefix12.xhtml [ WontFix ]
+dom/xhtml/level3/core/noderemovechild07.xhtml [ WontFix ]
+dom/xhtml/level3/core/noderemovechild24.xhtml [ WontFix ]
+dom/xhtml/level3/core/noderemovechild25.xhtml [ WontFix ]
+dom/xhtml/level3/core/noderemovechild26.xhtml [ WontFix ]
+dom/xhtml/level3/core/noderemovechild27.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodereplacechild10.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodereplacechild21.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodereplacechild25.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodereplacechild38.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesettextcontent04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesettextcontent13.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata01.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata02.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata03.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata04.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata06.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata07.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata08.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata09.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodesetuserdata10.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters01.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters02.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters03.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters04.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters05.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters06.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters07.xhtml [ WontFix ]
+dom/xhtml/level3/core/normalizecharacters08.xhtml [ WontFix ]
+dom/xhtml/level3/core/splitcdatasections01.xhtml [ WontFix ]
+dom/xhtml/level3/core/textiselementcontentwhitespace04.xhtml [ WontFix ]
+dom/xhtml/level3/core/textiselementcontentwhitespace05.xhtml [ WontFix ]
+dom/xhtml/level3/core/textiselementcontentwhitespace06.xhtml [ WontFix ]
+dom/xhtml/level3/core/userdatahandler01.xhtml [ WontFix ]
+dom/xhtml/level3/core/userdatahandler02.xhtml [ WontFix ]
+dom/xhtml/level3/core/userdatahandler03.xhtml [ WontFix ]
+dom/xhtml/level3/core/userdatahandler04.xhtml [ WontFix ]
 # The FAIL failures below are due to erroneous tests that fail to actually load
 # the JS meant to test them (and thus fail to trigger testRunner.dumpAsText()).
-dom/xhtml/level3/core/documentgetinputencoding03.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetinputencoding02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/entitygetxmlversion02.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri05.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri07.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri09.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri10.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri11.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri15.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri17.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodegetbaseuri18.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml [ Failure Skip WontFix ]
-dom/xhtml/level3/core/nodelookupprefix19.xhtml [ Failure Skip WontFix ]
+dom/xhtml/level3/core/documentgetinputencoding03.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetinputencoding02.xhtml [ WontFix ]
+dom/xhtml/level3/core/entitygetxmlversion02.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri05.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri07.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri09.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri10.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri11.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri15.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri17.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodegetbaseuri18.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml [ WontFix ]
+dom/xhtml/level3/core/nodelookupprefix19.xhtml [ WontFix ]
 
 # We do not want to support Legacy mac encodings on Windows/Linux/Android.
-[ Win Linux Android ] fast/encoding/char-decoding-mac.html [ Pass Skip WontFix ]
-[ Win Linux Android ] fast/encoding/char-encoding-mac.html [ Pass Skip WontFix ]
+[ Win Linux Android ] fast/encoding/char-decoding-mac.html [ WontFix ]
+[ Win Linux Android ] fast/encoding/char-encoding-mac.html [ WontFix ]
 
 # These tests are based on the JSC JavaScript profiler. The V8 JavaScript
 # profiler is in development and will use a different approach than JSC and
 # most likely these tests will always be JSC specific.
-fast/profiler [ Pass Skip WontFix ]
+fast/profiler [ WontFix ]
 
 # StorageTracker isn't used by Chromium and not all requisite platform code
 # is implemented.
-storage/domstorage/localstorage/storagetracker [ Pass Skip WontFix ]
+storage/domstorage/localstorage/storagetracker [ WontFix ]
 
 # Different quota model, in Chromium sessionstorage is subject to limits too.
-storage/domstorage/quota.html [ Pass Skip WontFix ]
+storage/domstorage/quota.html [ WontFix ]
 
 # test_shell does not support shared workers
-fast/filesystem/workers/file-writer-events-shared-worker.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-context-gc.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-event-listener.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-exception.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-frame-lifecycle.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-gc.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-in-iframe.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-lifecycle.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-load-error.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-location.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-navigator.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-replace-global-constructor.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-replace-self.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-shared.html [ Skip Timeout WontFix ]
-fast/workers/shared-worker-constructor.html [ Failure Skip WontFix ]
-fast/workers/shared-worker-name.html [ Failure Skip WontFix ]
-fast/workers/shared-worker-script-error.html [ Failure Skip WontFix ]
-fast/workers/shared-worker-simple.html [ Skip Timeout WontFix ]
-fast/workers/worker-crash-with-invalid-location.html [ Failure Skip WontFix ]
-http/tests/workers/shared-worker-invalid-url.html [ Failure Skip Timeout WontFix ]
-http/tests/workers/shared-worker-redirect.html [ Failure Skip Timeout WontFix ]
-http/tests/workers/shared-worker-importScripts.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip Timeout WontFix ]
-http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip Timeout WontFix ]
-http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip Timeout WontFix ]
-http/tests/inspector/network/network-shared-worker.html [ Pass Skip WontFix ]
-http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Failure Skip WontFix ]
-http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Failure Skip WontFix ]
-http/tests/security/cross-origin-shared-worker.html [ Failure Skip WontFix ]
-http/tests/security/cross-origin-shared-worker-allowed.html [ Failure Skip WontFix ]
-http/tests/security/same-origin-shared-worker-blocked.html [ Failure Skip WontFix ]
-http/tests/security/storage-blocking-loosened-shared-worker.html [ Failure Skip WontFix ]
-http/tests/security/storage-blocking-strengthened-shared-worker.html [ Failure Skip WontFix ]
-storage/indexeddb/basics-shared-workers.html [ Pass Skip WontFix ]
+fast/filesystem/workers/file-writer-events-shared-worker.html [ WontFix ]
+fast/workers/shared-worker-context-gc.html [ WontFix ]
+fast/workers/shared-worker-event-listener.html [ WontFix ]
+fast/workers/shared-worker-exception.html [ WontFix ]
+fast/workers/shared-worker-frame-lifecycle.html [ WontFix ]
+fast/workers/shared-worker-gc.html [ WontFix ]
+fast/workers/shared-worker-in-iframe.html [ WontFix ]
+fast/workers/shared-worker-lifecycle.html [ WontFix ]
+fast/workers/shared-worker-load-error.html [ WontFix ]
+fast/workers/shared-worker-location.html [ WontFix ]
+fast/workers/shared-worker-navigator.html [ WontFix ]
+fast/workers/shared-worker-replace-global-constructor.html [ WontFix ]
+fast/workers/shared-worker-replace-self.html [ WontFix ]
+fast/workers/shared-worker-shared.html [ WontFix ]
+fast/workers/shared-worker-constructor.html [ WontFix ]
+fast/workers/shared-worker-name.html [ WontFix ]
+fast/workers/shared-worker-script-error.html [ WontFix ]
+fast/workers/shared-worker-simple.html [ WontFix ]
+fast/workers/worker-crash-with-invalid-location.html [ WontFix ]
+http/tests/workers/shared-worker-invalid-url.html [ WontFix ]
+http/tests/workers/shared-worker-redirect.html [ WontFix ]
+http/tests/workers/shared-worker-importScripts.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-close.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-methods.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-referer.html [ WontFix ]
+http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ WontFix ]
+http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ WontFix ]
+http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ WontFix ]
+http/tests/inspector/network/network-shared-worker.html [ WontFix ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ WontFix ]
+http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ WontFix ]
+http/tests/security/cross-origin-shared-worker.html [ WontFix ]
+http/tests/security/cross-origin-shared-worker-allowed.html [ WontFix ]
+http/tests/security/same-origin-shared-worker-blocked.html [ WontFix ]
+http/tests/security/storage-blocking-loosened-shared-worker.html [ WontFix ]
+http/tests/security/storage-blocking-strengthened-shared-worker.html [ WontFix ]
+storage/indexeddb/basics-shared-workers.html [ WontFix ]
 
 # test_shell does not support message ports
 webkit.org/b/74459 fast/workers/termination-with-port-messages.html
@@ -559,153 +559,153 @@ webkit.org/b/74459 fast/workers/worker-multi-port.html
 # loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
 # Chromium wants those to be separate navigations made via browser process to be able to make decision
 # on which renderer process to use for each of them.
-fast/dom/Window/timer-resume-on-navigation-back.html [ Pass Skip WontFix ]
-fast/events/pagehide-timeout.html [ Skip Timeout WontFix ]
-fast/events/pagehide-xhr-open.html [ Skip Timeout WontFix ]
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Skip Timeout WontFix ]
-fast/events/pageshow-pagehide-on-back-cached.html [ Pass Skip WontFix ]
-fast/events/suspend-timers.html [ Skip Timeout WontFix ]
-fast/harness/page-cache-crash-on-data-urls.html [ Failure Skip WontFix ]
-fast/harness/use-page-cache.html [ Pass Skip WontFix ]
-fast/loader/crash-copying-backforwardlist.html [ Failure Skip WontFix ]
-fast/loader/window-properties-restored-from-page-cache.html [ Failure Skip WontFix ]
-fast/overflow/horizontal-scroll-after-back.html [ Skip Timeout WontFix ]
-http/tests/navigation/https-in-page-cache.html [ Pass Skip WontFix ]
-loader/go-back-to-different-window-size.html [ Failure Skip Timeout WontFix ]
-media/restore-from-page-cache.html [ Skip Timeout WontFix ]
-fast/forms/autocomplete-off-with-default-value-does-not-clear.html [ Skip Timeout WontFix ]
+fast/dom/Window/timer-resume-on-navigation-back.html [ WontFix ]
+fast/events/pagehide-timeout.html [ WontFix ]
+fast/events/pagehide-xhr-open.html [ WontFix ]
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ WontFix ]
+fast/events/pageshow-pagehide-on-back-cached.html [ WontFix ]
+fast/events/suspend-timers.html [ WontFix ]
+fast/harness/page-cache-crash-on-data-urls.html [ WontFix ]
+fast/harness/use-page-cache.html [ WontFix ]
+fast/loader/crash-copying-backforwardlist.html [ WontFix ]
+fast/loader/window-properties-restored-from-page-cache.html [ WontFix ]
+fast/overflow/horizontal-scroll-after-back.html [ WontFix ]
+http/tests/navigation/https-in-page-cache.html [ WontFix ]
+loader/go-back-to-different-window-size.html [ WontFix ]
+media/restore-from-page-cache.html [ WontFix ]
+fast/forms/autocomplete-off-with-default-value-does-not-clear.html [ WontFix ]
 
 # Tests that rely on cross-process MessagePorts.  No point in running them in
 # test_shell, since we'd have to use a completely different implementation from
 # what is used in the browser.
-fast/events/message-channel-gc-2.html [ Pass Skip WontFix ]
-fast/events/message-channel-gc-3.html [ Pass Skip WontFix ]
-fast/events/message-channel-gc-4.html [ Pass Skip WontFix ]
-fast/events/message-channel-gc.html [ Pass Skip WontFix ]
-fast/events/message-channel-listener-circular-ownership.html [ Pass Skip WontFix ]
-fast/events/message-port-clone.html [ Pass Skip WontFix ]
-fast/events/message-port-deleted-document.html [ Pass Skip WontFix ]
-fast/events/message-port-deleted-frame.html [ Pass Skip WontFix ]
-fast/events/message-port-inactive-document.html [ Pass Skip WontFix ]
-fast/events/message-port-no-wrapper.html [ Pass Skip WontFix ]
-fast/events/message-port.html [ Pass Skip WontFix ]
-http/tests/security/MessagePort/event-listener-context.html [ Pass Skip WontFix ]
+fast/events/message-channel-gc-2.html [ WontFix ]
+fast/events/message-channel-gc-3.html [ WontFix ]
+fast/events/message-channel-gc-4.html [ WontFix ]
+fast/events/message-channel-gc.html [ WontFix ]
+fast/events/message-channel-listener-circular-ownership.html [ WontFix ]
+fast/events/message-port-clone.html [ WontFix ]
+fast/events/message-port-deleted-document.html [ WontFix ]
+fast/events/message-port-deleted-frame.html [ WontFix ]
+fast/events/message-port-inactive-document.html [ WontFix ]
+fast/events/message-port-no-wrapper.html [ WontFix ]
+fast/events/message-port.html [ WontFix ]
+http/tests/security/MessagePort/event-listener-context.html [ WontFix ]
 
 # Chrome does not support Java LiveConnect.
-java/lc3 [ Failure Skip WontFix ]
+java/lc3 [ WontFix ]
 
 # This test is completely timing dependent.  It is testing the time
 # between a key event and a search event.  You cannot count on this
 # always being exactly the same.
-fast/forms/search-event-delay.html [ Failure Pass Skip WontFix ]
+fast/forms/search-event-delay.html [ WontFix ]
 
 # Chrome Win/Linux/Android doesn't support emacs key-bindings.
-[ Win Linux Android ] editing/pasteboard/emacs-cntl-y-001.html [ Pass Skip WontFix ]
-[ Win Linux Android ] editing/pasteboard/emacs-ctrl-a-k-y.html [ Pass Skip WontFix ]
-[ Win Linux Android ] editing/pasteboard/emacs-ctrl-k-with-move.html [ Pass Skip WontFix ]
-[ Win Linux Android ] editing/pasteboard/emacs-ctrl-k-y-001.html [ Pass Skip WontFix ]
-[ Win Linux Android ] editing/input/emacs-ctrl-o.html [ Pass Skip WontFix ]
+[ Win Linux Android ] editing/pasteboard/emacs-cntl-y-001.html [ WontFix ]
+[ Win Linux Android ] editing/pasteboard/emacs-ctrl-a-k-y.html [ WontFix ]
+[ Win Linux Android ] editing/pasteboard/emacs-ctrl-k-with-move.html [ WontFix ]
+[ Win Linux Android ] editing/pasteboard/emacs-ctrl-k-y-001.html [ WontFix ]
+[ Win Linux Android ] editing/input/emacs-ctrl-o.html [ WontFix ]
 
 # Chromium Mac doesn't support autocorrection panel
-platform/mac/editing/spelling/autocorrection-delete.html [ Pass Skip WontFix ]
-platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html [ Pass Skip WontFix ]
-platform/mac/editing/spelling/autocorrection-removing-underline.html [ Pass Skip WontFix ]
-platform/mac/editing/spelling/autocorrection-simple.html [ Pass Skip WontFix ]
-platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html [ Pass Skip WontFix ]
+platform/mac/editing/spelling/autocorrection-delete.html [ WontFix ]
+platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html [ WontFix ]
+platform/mac/editing/spelling/autocorrection-removing-underline.html [ WontFix ]
+platform/mac/editing/spelling/autocorrection-simple.html [ WontFix ]
+platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html [ WontFix ]
 
 # Checks for very kjs-specific garbage collector behavior.
 # Would have to be implemented much differently to work in v8.
-fast/dom/gc-10.html [ Pass Skip WontFix ]
+fast/dom/gc-10.html [ WontFix ]
 
 # We do not use Safari's private browsing mode.
-http/tests/security/cross-frame-access-private-browsing.html [ Pass Skip WontFix ]
-http/tests/security/storage-blocking-loosened-plugin.html [ Pass Skip WontFix ]
-http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Pass Skip WontFix ]
-http/tests/security/storage-blocking-strengthened-plugin.html [ Pass Skip WontFix ]
-http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Pass Skip WontFix ]
-plugins/private-browsing-mode.html [ Pass Skip WontFix ]
-plugins/private-browsing-mode-2.html [ Failure Skip WontFix ]
-storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass Skip WontFix ]
-storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Pass Skip WontFix ]
-storage/websql/private-browsing-noread-nowrite.html [ Pass Skip WontFix ]
+http/tests/security/cross-frame-access-private-browsing.html [ WontFix ]
+http/tests/security/storage-blocking-loosened-plugin.html [ WontFix ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ WontFix ]
+http/tests/security/storage-blocking-strengthened-plugin.html [ WontFix ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ WontFix ]
+plugins/private-browsing-mode.html [ WontFix ]
+plugins/private-browsing-mode-2.html [ WontFix ]
+storage/domstorage/localstorage/private-browsing-affects-storage.html [ WontFix ]
+storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ WontFix ]
+storage/websql/private-browsing-noread-nowrite.html [ WontFix ]
 
 # We don't let anyone set status in the browser.
-plugins/set-status.html [ Failure Skip WontFix ]
+plugins/set-status.html [ WontFix ]
 
 # This test is out of date with respect to the latest version of the HTML5 spec
 # Test had to be decommissioned to fix https://bugs.webkit.org/show_bug.cgi?id=65709
 # We can re-enable the test when it gets changed upstream to become spec-compliant
-canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure WontFix ]
-platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure WontFix ]
+canvas/philip/tests/2d.drawImage.outsidesource.html [ WontFix ]
+platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.outsidesource.html [ WontFix ]
 
 # We don't care about dashboard compatibility mode.
-http/tests/xmlhttprequest/default-content-type-dashboard.html [ Pass Skip WontFix ]
-fast/canvas/canvas-gradient-addStop-error.html [ Pass Skip WontFix ]
-platform/chromium/virtual/gpu/fast/canvas/canvas-gradient-addStop-error.html [ Pass Skip WontFix ]
+http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
+fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
+platform/chromium/virtual/gpu/fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
 
 # Chrome uses different keyboard accelerators from those used by Safari, so
 # this test will always fail.
-[ Linux Android Win ] fast/events/option-tab.html [ Pass Skip WontFix ]
+[ Linux Android Win ] fast/events/option-tab.html [ WontFix ]
 
 # This is a test to make WebKit behave like AppKit on Mac.
-[ Win Linux Android ] platform/mac/editing/deleting/backward-delete.html [ Failure Skip WontFix ]
+[ Win Linux Android ] platform/mac/editing/deleting/backward-delete.html [ WontFix ]
 
 # Ignored because we do not have OBJC bindings
-editing/pasteboard/paste-RTFD.html [ Pass Skip WontFix ]
-editing/pasteboard/paste-TIFF.html [ Pass Skip WontFix ]
-platform/mac/plugins/root-object-premature-delete-crash.html [ Pass Skip WontFix ]
-platform/mac/plugins/undefined-property-crash.html [ Pass Skip WontFix ]
+editing/pasteboard/paste-RTFD.html [ WontFix ]
+editing/pasteboard/paste-TIFF.html [ WontFix ]
+platform/mac/plugins/root-object-premature-delete-crash.html [ WontFix ]
+platform/mac/plugins/undefined-property-crash.html [ WontFix ]
 
 # Ignore test because it tries to load .pdf files in <img> tags.
-fast/images/pdf-as-image-landscape.html [ Pass Skip WontFix ]
-fast/images/pdf-as-image.html [ Pass Skip WontFix ]
-fast/replaced/pdf-as-image.html [ Pass Skip WontFix ]
+fast/images/pdf-as-image-landscape.html [ WontFix ]
+fast/images/pdf-as-image.html [ WontFix ]
+fast/replaced/pdf-as-image.html [ WontFix ]
 
 # These tests try to print a PDF file as the expected result.  I don't think
 # we plan on supporting this anytime soon.
-printing/compositing-layer-printing.html [ Pass Skip WontFix ]
-printing/media-queries-print.html [ Pass Skip WontFix ]
-printing/page-rule-in-media-query.html [ Pass Skip WontFix ]
+printing/compositing-layer-printing.html [ WontFix ]
+printing/media-queries-print.html [ WontFix ]
+printing/page-rule-in-media-query.html [ WontFix ]
 
 # Chrome doesn't call the willCacheResponse callback (a method
 # of ResourceHandleClient).  That function is Mac-specific.
-http/tests/misc/willCacheResponse-delegate-callback.html [ Pass Skip WontFix ]
+http/tests/misc/willCacheResponse-delegate-callback.html [ WontFix ]
 
 # Checks for very kjs-specific garbage collector
 # behavior. Gc-9 is completely braindamaged; it tests that certain
 # properties are reset by the garbage collector. It looks to pass recently.
-fast/dom/gc-9.html [ Pass Skip WontFix ]
+fast/dom/gc-9.html [ WontFix ]
 
 # This test checks that properties of arguments arrays are non-enumerable
 # which is incorrect according to the ES5 spec.
-fast/js/kde/function.html [ Pass Skip WontFix ]
+fast/js/kde/function.html [ WontFix ]
 
 # This test is broken.  The regular expression used contains an error
 # which kjs swallows and returns false, which is the expected result,
 # but for which we issue a syntax error.
-fast/js/code-serialize-paren.html [ Pass Skip WontFix ]
+fast/js/code-serialize-paren.html [ WontFix ]
 
 # These tests check for a kjs-specific extension, that source file
 # name and line numbers are available as properties on exception
 # objects.  We handle error positions differently.
-fast/js/exception-linenums-in-html-1.html [ Pass Skip WontFix ]
-fast/js/exception-linenums-in-html-2.html [ Pass Skip WontFix ]
-fast/js/exception-linenums.html [ Pass Skip WontFix ]
-fast/js/exception-expression-offset.html [ Pass Skip WontFix ]
+fast/js/exception-linenums-in-html-1.html [ WontFix ]
+fast/js/exception-linenums-in-html-2.html [ WontFix ]
+fast/js/exception-linenums.html [ WontFix ]
+fast/js/exception-expression-offset.html [ WontFix ]
 
 # This test relies on KJS specific implementation
 # (window.GCController.getJSObjectCount), which we have no intention of
 # supporting.
-fast/dom/Window/timeout-released-on-close.html [ Pass Skip WontFix ]
+fast/dom/Window/timeout-released-on-close.html [ WontFix ]
 
 # These tests expect a tiff decoder, which we don't have.
-[ Linux Android Win ] fast/images/embed-image.html [ Failure WontFix ]
-[ Linux Android Win ] fast/images/object-image.html [ Failure WontFix ]
+[ Linux Android Win ] fast/images/embed-image.html [ WontFix ]
+[ Linux Android Win ] fast/images/object-image.html [ WontFix ]
 
 # Safari has a unique handling of the BOM characters among browsers.
 # There is a strong suspicion that this is a security problem, so we
 # follow the rest of the browsers on this one.
-fast/js/removing-Cf-characters.html [ Pass Skip WontFix ]
+fast/js/removing-Cf-characters.html [ WontFix ]
 
 # These tests fail in all but the PST/PDT time zone.
 # Another reason for failure is that, for compatability, we don't obey
@@ -717,191 +717,191 @@ fast/js/removing-Cf-characters.html [ Pass Skip WontFix ]
 # 28 years must behave exactly the same.
 # OS local time services are more accurate than this ECMA rule,
 # which is a discrepancy.
-fast/js/date-DST-time-cusps.html [ Pass Skip WontFix ]
-fast/js/date-big-setdate.html [ Pass Skip WontFix ]
+fast/js/date-DST-time-cusps.html [ WontFix ]
+fast/js/date-big-setdate.html [ WontFix ]
 
 # V8 doesn't stable sort and we currently have no intention of
 # changing this.  The following tests only happen to pass due to
 # the current algorithm used for sorting small arrays. If larger
 # arrays were used in the tests, they would fail.
 # It is tracked by: http://code.google.com/p/v8/issues/detail?id=90
-fast/js/comparefn-sort-stability.html [ Pass Skip WontFix ]
-fast/js/sort-stability.html [ Pass Skip WontFix ]
+fast/js/comparefn-sort-stability.html [ WontFix ]
+fast/js/sort-stability.html [ WontFix ]
 
 # We have no indication that anyone misses this and have currently no
 # intention of implementing it.
-fast/js/function-dot-arguments.html [ Pass Skip WontFix ]
+fast/js/function-dot-arguments.html [ WontFix ]
 
 # This test is not reliable.  The behavior depends on exactly how the
 # stack limit is reached.  We're happy with our behavior on this test
 # as long as we don't crash.
-fast/js/global-recursion-on-full-stack.html [ Pass Skip WontFix ]
+fast/js/global-recursion-on-full-stack.html [ WontFix ]
 
 # These tests propagate auth credentials back to the renderer, which we
 # don't want to do.
-http/tests/loading/basic-auth-resend-wrong-credentials.html [ Pass Skip WontFix ]
-http/tests/loading/basic-credentials-sent-automatically.html [ Pass Skip WontFix ]
+http/tests/loading/basic-auth-resend-wrong-credentials.html [ WontFix ]
+http/tests/loading/basic-credentials-sent-automatically.html [ WontFix ]
 
 # These tests rely on embedded identities in URLs, which chrome chooses not to support
-http/tests/appcache/auth.html [ Skip Timeout WontFix ]
-http/tests/security/credentials-in-referer.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/basic-auth-default.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/basic-auth.html [ Skip Timeout WontFix ]
-http/tests/xmlhttprequest/cross-origin-authorization.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/re-login-async.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/re-login.html [ Failure Skip WontFix ]
+http/tests/appcache/auth.html [ WontFix ]
+http/tests/security/credentials-in-referer.html [ WontFix ]
+http/tests/xmlhttprequest/basic-auth-default.html [ WontFix ]
+http/tests/xmlhttprequest/basic-auth-nopassword.html [ WontFix ]
+http/tests/xmlhttprequest/basic-auth-nouser.html [ WontFix ]
+http/tests/xmlhttprequest/basic-auth.html [ WontFix ]
+http/tests/xmlhttprequest/cross-origin-authorization.html [ WontFix ]
+http/tests/xmlhttprequest/cross-origin-no-authorization.html [ WontFix ]
+http/tests/xmlhttprequest/re-login-async.html [ WontFix ]
+http/tests/xmlhttprequest/re-login.html [ WontFix ]
 
 # This test relies on code in the test plugin that only exists in Apple's Mac port.
-platform/mac/plugins/convert-point.html [ Pass Skip WontFix ]
+platform/mac/plugins/convert-point.html [ WontFix ]
 
 # This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 # WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
 # security model is different from it.
-fast/encoding/idn-security.html [ Pass Skip WontFix ]
+fast/encoding/idn-security.html [ WontFix ]
 
 # Our implementation of global history is completely different, and
 # these tests are irrelevant.
-http/tests/globalhistory [ Pass Skip WontFix ]
+http/tests/globalhistory [ WontFix ]
 
 # We are not going to support submitting a form to about:* pages.
 # For more details, see discussions at issue 20570.
-fast/forms/get-forms-to-about-blank.html [ Pass Skip WontFix ]
+fast/forms/get-forms-to-about-blank.html [ WontFix ]
 
 # These tests requires LayoutTestController.setCacheModel, which we don't
 # implement because we can't emulate the caching behaviors it expects.
-fast/dom/HTMLScriptElement/nested-execution.html [ Pass Skip WontFix ]
-storage/domstorage/storage-close-database-on-idle.html [ Pass Skip WontFix ]
+fast/dom/HTMLScriptElement/nested-execution.html [ WontFix ]
+storage/domstorage/storage-close-database-on-idle.html [ WontFix ]
 
 # Deletion UI is a Mail-ism. We don't need to worry about this.
-editing/deleting/deletionUI-single-instance.html [ Pass Skip WontFix ]
-fast/dom/Element/id-in-deletebutton.html [ Failure Skip WontFix ]
+editing/deleting/deletionUI-single-instance.html [ WontFix ]
+fast/dom/Element/id-in-deletebutton.html [ WontFix ]
 
 # Tests for FAST_MOBILE_SCROLLING. We don't use it.
-fast/fast-mobile-scrolling/fixed-position-element.html [ Failure Skip WontFix ]
-fast/fast-mobile-scrolling/no-fixed-position-elements.html [ Failure Skip WontFix ]
+fast/fast-mobile-scrolling/fixed-position-element.html [ WontFix ]
+fast/fast-mobile-scrolling/no-fixed-position-elements.html [ WontFix ]
 
 # Tests for frameset flattening. Relevant only on mobile browsers.
-fast/frames/flattening [ Skip Timeout WontFix ]
-fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure Skip WontFix ]
-http/tests/misc/iframe-flattening-3level-nesting-with-blocking-resource.html [ Skip Timeout WontFix ]
+fast/frames/flattening [ WontFix ]
+fast/text-autosizing/narrow-iframe-flattened.html [ WontFix ]
+http/tests/misc/iframe-flattening-3level-nesting-with-blocking-resource.html [ WontFix ]
 
 # This should be tested differently (see discussion on https://bugs.webkit.org/show_bug.cgi?id=35063).
 # No need to waste cycles implementing harness support for this variant of the test.
-fast/loader/api-test-go-to-current-back-forward-item.html [ Skip Timeout WontFix ]
+fast/loader/api-test-go-to-current-back-forward-item.html [ WontFix ]
 
 # We're not planning to support rocker-based cursor navigation.
-fast/spatial-navigation [ Pass Skip WontFix ]
+fast/spatial-navigation [ WontFix ]
 
 # We're not planning to relax third-party cookie rules any time soon.
-http/tests/cookies/third-party-cookie-relaxing.html [ Pass Skip WontFix ]
+http/tests/cookies/third-party-cookie-relaxing.html [ WontFix ]
 
 # <progress> on Mac is always animated.
-[ Mac ] fast/dom/HTMLProgressElement/progress-element.html [ Failure Skip WontFix ]
+[ Mac ] fast/dom/HTMLProgressElement/progress-element.html [ WontFix ]
 
 # These tests are WONTFIX because they use codecs Chromium doesn't support.
-media/audio-mpeg-supported.html [ Pass Skip WontFix ]
-media/audio-mpeg4-supported.html [ Pass Skip WontFix ]
-media/video-document-types.html [ Pass Skip WontFix ]
-media/video-element-other-namespace-crash.html [ Pass Skip WontFix ]
-media/video-size-intrinsic-scale.html [ Pass Skip WontFix ]
+media/audio-mpeg-supported.html [ WontFix ]
+media/audio-mpeg4-supported.html [ WontFix ]
+media/video-document-types.html [ WontFix ]
+media/video-element-other-namespace-crash.html [ WontFix ]
+media/video-size-intrinsic-scale.html [ WontFix ]
 
 # Doesn't apply to Chromium (QuickTime-specific behavior)
-media/video-does-not-loop.html [ Skip Timeout WontFix ]
+media/video-does-not-loop.html [ WontFix ]
 
 # Doesn't apply to Chromium any longer - volume slider is inline with video controls.
-media/video-volume-slider.html [ Pass Skip WontFix ]
-media/media-volume-slider-rendered-below.html [ Pass Skip WontFix ]
-media/media-volume-slider-rendered-normal.html [ Pass Skip WontFix ]
+media/video-volume-slider.html [ WontFix ]
+media/media-volume-slider-rendered-below.html [ WontFix ]
+media/media-volume-slider-rendered-normal.html [ WontFix ]
 
 # QuickTime reference movies not supported.
-http/tests/media/video-cross-site.html [ Pass Skip WontFix ]
+http/tests/media/video-cross-site.html [ WontFix ]
 
 # Chromium's video codecs don't support alpha information encoded in the video
 # data, so this test is not applicable.
-compositing/video/video-background-color.html [ Pass Skip WontFix ]
+compositing/video/video-background-color.html [ WontFix ]
 
 # Pre-HTML5 parser quirks only apply to the mac port; we're not interested in
 # supporting that option.
-fast/parser/pre-html5-parser-quirks.html [ Pass Skip WontFix ]
+fast/parser/pre-html5-parser-quirks.html [ WontFix ]
 
 # We're taking a different approach on this test than Webkit does, related to
 # whether we create a window via a plugin when target is _blank.
-plugins/get-url-with-blank-target.html [ Pass Skip WontFix ]
+plugins/get-url-with-blank-target.html [ WontFix ]
 
 # Dashboard-related test
-platform/mac/fast/css/dashboard-region-parser.html [ Pass Skip WontFix ]
+platform/mac/fast/css/dashboard-region-parser.html [ WontFix ]
 
 # Not a test?
-http/tests/incremental/pause-in-script-element.pl [ Pass Skip WontFix ]
+http/tests/incremental/pause-in-script-element.pl [ WontFix ]
 
 # This tests for an arbitrary limit set in JSCRE to terminate regular
 # expressions with an exponential matching behavior.  Since the V8
 # regular expression engine can be preempted from the outside, we do not
 # need to limit the execution this way.  Firefox also keeps running
 # on this one.
-fast/regex/slow.html [ Skip Timeout WontFix ]
+fast/regex/slow.html [ WontFix ]
 
 # WebKit QT Build-specific tests
-platform/qt/view/fixed-layout-size.html [ Pass Skip WontFix ]
+platform/qt/view/fixed-layout-size.html [ WontFix ]
 
 # The issue is which global object to use as the implicit
 # receiver for cross-frame calls.  Currently, IE, Firefox and Chrome
 # agree and only Safari is doing it this way.
-fast/frames/cross-site-this.html [ Pass Skip WontFix ]
+fast/frames/cross-site-this.html [ WontFix ]
 
 # This tests a Safari incompatibility.  This test should fail since
 # it contains syntax errors that JSC for some reason choose not to
 # throw.  V8 follows the spec.
-fast/js/reparsing-semicolon-insertion.html [ Pass Skip WontFix ]
+fast/js/reparsing-semicolon-insertion.html [ WontFix ]
 
 # These test rubber band overhang drawing, which is a Mac OS X Lion feature
 # that is not supported on other platforms.
-[ Win Linux Android ] platform/chromium/rubberbanding [ ImageOnlyFailure Skip WontFix ]
-[ Win Linux Android ] platform/chromium/compositing/rubberbanding [ ImageOnlyFailure Skip WontFix ]
+[ Win Linux Android ] platform/chromium/rubberbanding [ WontFix ]
+[ Win Linux Android ] platform/chromium/compositing/rubberbanding [ WontFix ]
 
 # This requires usp10.dll version 1.600 or greater on Windows and
 # it isn't installed on XP by default.
-[ XP ] css3/font-feature-settings-rendering.html [ Failure Pass WontFix ]
+[ XP ] css3/font-feature-settings-rendering.html [ WontFix ]
 
 # These test the CoreAnimation plugin model which we never intend to support on
 # Windows and Linux.
-[ Win Linux ] compositing/plugins/1x1-composited-plugin.html [ Failure Skip WontFix ]
-[ Win Linux ] compositing/plugins/composited-plugin.html [ Failure Skip WontFix ]
-[ Win Linux ] compositing/plugins/large-to-small-composited-plugin.html [ Failure Skip WontFix ]
-[ Win Linux ] compositing/plugins/small-to-large-composited-plugin.html [ Failure Skip WontFix ]
+[ Win Linux ] compositing/plugins/1x1-composited-plugin.html [ WontFix ]
+[ Win Linux ] compositing/plugins/composited-plugin.html [ WontFix ]
+[ Win Linux ] compositing/plugins/large-to-small-composited-plugin.html [ WontFix ]
+[ Win Linux ] compositing/plugins/small-to-large-composited-plugin.html [ WontFix ]
 
 # Mac's popup behavior is different.
-[ Mac ] fast/forms/select/menulist-onchange-fired-with-key-up-down.html [ Pass Skip WontFix ]
+[ Mac ] fast/forms/select/menulist-onchange-fired-with-key-up-down.html [ WontFix ]
 
 # Chrome uses its quota manager and doesn't respect the 5mb limit.
-storage/indexeddb/database-quota.html [ Failure Skip WontFix ]
+storage/indexeddb/database-quota.html [ WontFix ]
 
 # WebKitShouldInvertColors isn't implemented, but it doesn't look like we
 # need to implement this.
-platform/win/inverted-colors/non-composited.html [ Failure WontFix ]
+platform/win/inverted-colors/non-composited.html [ WontFix ]
 
 # Test for BlackBerry port only
-platform/blackberry [ Pass Skip WontFix ]
+platform/blackberry [ WontFix ]
 
 # JavaScriptCore bindings willfully have different behavior than V8 bindings
-plugins/npruntime/overrides-all-properties.html [ Failure Skip WontFix ]
+plugins/npruntime/overrides-all-properties.html [ WontFix ]
 
 # JavaScriptCore treats document.all differently
-fast/js/document-all-between-frames.html [ Failure Skip WontFix ]
+fast/js/document-all-between-frames.html [ WontFix ]
 
 # Chromium doesn't use fullscreen-specific media controls
-media/video-controls-fullscreen-volume.html [ Failure Skip WontFix ]
+media/video-controls-fullscreen-volume.html [ WontFix ]
 
 # Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
-platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html [ Failure WontFix ]
+platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html [ WontFix ]
 
 # Mac and Win does not have global selection.
-[ Mac Win ] editing/pasteboard/paste-global-selection.html [ Failure WontFix ]
+[ Mac Win ] editing/pasteboard/paste-global-selection.html [ WontFix ]
 
-webkit.org/b/96109 [ Linux ] editing/pasteboard/paste-global-selection.html [ Failure Skip ]
+webkit.org/b/96109 [ Linux ] editing/pasteboard/paste-global-selection.html [ Skip ]
 
 # Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
@@ -973,20 +973,20 @@ webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.htm
 # -----------------------------------------------------------------
 
 # There is no enough plugins support in DRT
-http/tests/inspector/network/network-embed.html [ Pass Skip WontFix ]
-http/tests/inspector/network/network-content-replacement-embed.html [ Pass Skip WontFix ]
+http/tests/inspector/network/network-embed.html [ WontFix ]
+http/tests/inspector/network/network-content-replacement-embed.html [ WontFix ]
 
 # Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
-[ Linux Debug ] inspector/profiler/cpu-profiler-profiling.html [ Pass Skip Timeout WontFix ]
+[ Linux Debug ] inspector/profiler/cpu-profiler-profiling.html [ WontFix ]
 
 webkit.org/b/91435 [ Linux Win ] http/tests/inspector/extensions-ignore-cache.html [ Pass Timeout ]
 webkit.org/b/91435 [ Linux ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
 webkit.org/b/91435 [ Win Release ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
 webkit.org/b/91435 [ Linux Win Release ] inspector/debugger/live-edit.html [ Failure Pass ]
 webkit.org/b/91435 [ Linux Win Debug ] inspector/debugger/live-edit.html [ Failure Pass Slow ]
-crbug.com/89357 [ Mac ] http/tests/inspector/extensions-ignore-cache.html [ Skip Timeout ]
-crbug.com/89357 [ Mac ] inspector/timeline/timeline-network-received-data.html [ Skip Timeout ]
-crbug.com/89357 [ Mac ] inspector/debugger/live-edit.html [ Skip Timeout ]
+crbug.com/89357 [ Mac ] http/tests/inspector/extensions-ignore-cache.html [ Skip ]
+crbug.com/89357 [ Mac ] inspector/timeline/timeline-network-received-data.html [ Skip ]
+crbug.com/89357 [ Mac ] inspector/debugger/live-edit.html [ Skip ]
 
 # Add support for inspector layout tests on Mac.
 crbug.com/89357 [ Mac ] inspector
@@ -997,10 +997,10 @@ crbug.com/89357 [ Mac ] platform/chromium/inspector
 crbug.com/67662 [ Linux Win ] http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
 
 # Transferred time/size are not supported in DRT.
-http/tests/inspector/network/network-timing.html [ Pass Skip WontFix ]
-http/tests/inspector/network/network-size.html [ Pass Skip WontFix ]
-http/tests/inspector/network/network-size-chunked.html [ Pass Skip WontFix ]
-http/tests/inspector/network/network-size-sync.html [ Pass Skip WontFix ]
+http/tests/inspector/network/network-timing.html [ WontFix ]
+http/tests/inspector/network/network-size.html [ WontFix ]
+http/tests/inspector/network/network-size-chunked.html [ WontFix ]
+http/tests/inspector/network/network-size-sync.html [ WontFix ]
 
 # PageAgent can not getCookies from DumpRenderTree.
 webkit.org/b/65770 http/tests/inspector/resource-main-cookies.php
@@ -1022,14 +1022,14 @@ webkit.org/b/82894 [ Release ] inspector/profiler/heap-snapshot-inspect-dom-wrap
 webkit.org/b/82894 [ Debug ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 
 webkit.org/b/60109 [ Win Release ] inspector/elements/edit-dom-actions.html [ Failure Pass ]
-webkit.org/b/60109 [ Win Debug ] inspector/elements/edit-dom-actions.html [ Failure Pass Skip ]
+webkit.org/b/60109 [ Win Debug ] inspector/elements/edit-dom-actions.html [ Skip ]
 
 webkit.org/b/72434 [ Linux Win Release ] inspector/styles/svg-style.xhtml [ Failure Pass ]
 webkit.org/b/72434 [ Linux Win Debug ] inspector/styles/svg-style.xhtml [ Failure Slow ]
 
 webkit.org/b/74654 http/tests/inspector/network/network-worker.html
 
-webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list.html [ Failure Pass Skip Timeout ]
+webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list.html [ Skip ]
 
 webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout ]
 
@@ -1135,7 +1135,7 @@ crbug.com/48033 plugins/plugin-initiate-popup-window.html [ Failure Pass ]
 crbug.com/35387 [ Mac ] plugins/reentrant-update-widget-positions.html [ Timeout ]
 crbug.com/38392 plugins/resize-from-plugin.html [ Failure ]
 # Times out after http://trac.webkit.org/changeset/62739/
-crbug.com/48550 plugins/return-negative-one-from-write.html [ Skip Timeout ]
+crbug.com/48550 plugins/return-negative-one-from-write.html [ Skip ]
 crbug.com/38353 http/tests/plugins/plugin-document-has-focus.html [ Failure Timeout ]
 
 # Tests differences from switching to webkit.org's test netscape plugin rather
@@ -1159,16 +1159,16 @@ crbug.com/73609 http/tests/media/video-play-stall.html [ Failure Pass Slow ]
 
 # These refer to the webkitHasClosedCaptions / webkitSupportsFullscreen
 # methods on the media elements themselves. We're not going to implement them.
-media/media-captions.html [ Skip Timeout WontFix ]
-media/media-fullscreen-inline.html [ Skip Timeout WontFix ]
-media/media-fullscreen-not-in-document.html [ Skip Timeout WontFix ]
+media/media-captions.html [ WontFix ]
+media/media-fullscreen-inline.html [ WontFix ]
+media/media-fullscreen-not-in-document.html [ WontFix ]
 
 # We don't expose a step button.
-media/audio-delete-while-step-button-clicked.html [ Skip Timeout WontFix ]
+media/audio-delete-while-step-button-clicked.html [ WontFix ]
 
 # We haven't implemented reverse audio/video playback.
-crbug.com/33099 media/video-reverse-play-duration.html [ Skip Timeout ]
-crbug.com/33099 media/video-timeupdate-reverse-play.html [ Skip Timeout ]
+crbug.com/33099 media/video-reverse-play-duration.html [ Skip ]
+crbug.com/33099 media/video-timeupdate-reverse-play.html [ Skip ]
 
 crbug.com/100798 [ Mac Debug ] fullscreen/full-screen-iframe-allowed.html [ Failure Pass ]
 crbug.com/100798 [ SnowLeopard ] fullscreen/full-screen-remove-ancestor-during-transition.html [ Pass Timeout ]
@@ -1339,61 +1339,61 @@ crbug.com/10295 [ Mac ] fast/dom/prototype-chain.html [ Failure ]
 
 crbug.com/10322 platform/mac/accessibility
 crbug.com/10322 platform/win/accessibility
-crbug.com/10322 accessibility/aria-activedescendant-crash.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-combobox.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-controls-with-tabs.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-fallback-roles.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-hidden-update.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-hidden-with-elements.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-invalid.html [ Pass Skip Timeout ]
-crbug.com/10322 accessibility/aria-labelledby-overrides-label.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-link-supports-press.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-list-and-listitem.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-menubar-menuitems.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-option-role.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-tab-roles.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-tables.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-text-role.html [ Failure Skip ]
-crbug.com/10322 accessibility/aria-used-on-image-maps.html [ Failure Skip ]
-crbug.com/10322 accessibility/button-press-action.html [ Failure Skip ]
-crbug.com/10322 accessibility/deleting-iframe-destroys-axcache.html [ Failure Skip ]
-crbug.com/10322 accessibility/document-attributes.html [ Failure Skip ]
-crbug.com/10322 accessibility/editable-webarea-context-menu-point.html [ Failure Skip ]
-crbug.com/10322 accessibility/iframe-bastardization.html [ Failure Skip ]
-crbug.com/10322 accessibility/image-link.html [ Failure Skip ]
-crbug.com/10322 accessibility/image-map-update-parent-crash.html [ Skip Timeout ]
-crbug.com/10322 accessibility/image-map2.html [ Failure Skip ]
-crbug.com/10322 accessibility/internal-link-anchors2.html [ Failure Skip ]
-crbug.com/10322 accessibility/label-for-control-hittest.html [ Failure Skip ]
-crbug.com/10322 accessibility/language-attribute.html [ Failure Skip ]
-crbug.com/10322 accessibility/legend.html [ Failure Skip ]
-crbug.com/10322 accessibility/lists.html [ Failure Skip ]
-crbug.com/10322 accessibility/media-element.html [ Skip Timeout ]
-crbug.com/10322 accessibility/non-data-table-cell-title-ui-element.html [ Failure Skip ]
-crbug.com/10322 accessibility/onclick-handlers.html [ Failure Skip ]
-crbug.com/10322 accessibility/placeholder.html [ Failure Skip ]
-crbug.com/10322 accessibility/plugin.html [ Failure Skip ]
-crbug.com/10322 accessibility/radio-button-checkbox-size.html [ Failure Skip ]
-crbug.com/10322 accessibility/radio-button-group-members.html [ Failure Skip ]
-crbug.com/10322 accessibility/radio-button-title-label.html [ Failure Skip ]
-crbug.com/10322 accessibility/secure-textfield-title-ui.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-attributes.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-cell-spans.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-cells.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-detection.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-one-cell.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-sections.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-with-aria-role.html [ Failure Skip ]
-crbug.com/10322 accessibility/table-with-rules.html [ Failure Skip ]
-crbug.com/10322 accessibility/textarea-insertion-point-line-number.html [ Failure Skip ]
-crbug.com/10322 accessibility/textarea-line-for-index.html [ Failure Skip ]
-crbug.com/10322 accessibility/textarea-selected-text-range.html [ Failure Skip ]
-crbug.com/10322 accessibility/textbox-role-reports-selection.html [ Failure Skip ]
-crbug.com/10322 accessibility/th-as-title-ui.html [ Failure Skip ]
-crbug.com/10322 accessibility/transformed-element.html [ Failure Skip ]
-crbug.com/10322 accessibility/visible-elements.html [ Failure Skip ]
+crbug.com/10322 accessibility/aria-activedescendant-crash.html [ Skip ]
+crbug.com/10322 accessibility/aria-combobox.html [ Skip ]
+crbug.com/10322 accessibility/aria-controls-with-tabs.html [ Skip ]
+crbug.com/10322 accessibility/aria-fallback-roles.html [ Skip ]
+crbug.com/10322 accessibility/aria-hidden-update.html [ Skip ]
+crbug.com/10322 accessibility/aria-hidden-with-elements.html [ Skip ]
+crbug.com/10322 accessibility/aria-invalid.html [ Skip ]
+crbug.com/10322 accessibility/aria-labelledby-overrides-label.html [ Skip ]
+crbug.com/10322 accessibility/aria-link-supports-press.html [ Skip ]
+crbug.com/10322 accessibility/aria-list-and-listitem.html [ Skip ]
+crbug.com/10322 accessibility/aria-menubar-menuitems.html [ Skip ]
+crbug.com/10322 accessibility/aria-option-role.html [ Skip ]
+crbug.com/10322 accessibility/aria-tab-roles.html [ Skip ]
+crbug.com/10322 accessibility/aria-tables.html [ Skip ]
+crbug.com/10322 accessibility/aria-text-role.html [ Skip ]
+crbug.com/10322 accessibility/aria-used-on-image-maps.html [ Skip ]
+crbug.com/10322 accessibility/button-press-action.html [ Skip ]
+crbug.com/10322 accessibility/deleting-iframe-destroys-axcache.html [ Skip ]
+crbug.com/10322 accessibility/document-attributes.html [ Skip ]
+crbug.com/10322 accessibility/editable-webarea-context-menu-point.html [ Skip ]
+crbug.com/10322 accessibility/iframe-bastardization.html [ Skip ]
+crbug.com/10322 accessibility/image-link.html [ Skip ]
+crbug.com/10322 accessibility/image-map-update-parent-crash.html [ Skip ]
+crbug.com/10322 accessibility/image-map2.html [ Skip ]
+crbug.com/10322 accessibility/internal-link-anchors2.html [ Skip ]
+crbug.com/10322 accessibility/label-for-control-hittest.html [ Skip ]
+crbug.com/10322 accessibility/language-attribute.html [ Skip ]
+crbug.com/10322 accessibility/legend.html [ Skip ]
+crbug.com/10322 accessibility/lists.html [ Skip ]
+crbug.com/10322 accessibility/media-element.html [ Skip ]
+crbug.com/10322 accessibility/non-data-table-cell-title-ui-element.html [ Skip ]
+crbug.com/10322 accessibility/onclick-handlers.html [ Skip ]
+crbug.com/10322 accessibility/placeholder.html [ Skip ]
+crbug.com/10322 accessibility/plugin.html [ Skip ]
+crbug.com/10322 accessibility/radio-button-checkbox-size.html [ Skip ]
+crbug.com/10322 accessibility/radio-button-group-members.html [ Skip ]
+crbug.com/10322 accessibility/radio-button-title-label.html [ Skip ]
+crbug.com/10322 accessibility/secure-textfield-title-ui.html [ Skip ]
+crbug.com/10322 accessibility/table-attributes.html [ Skip ]
+crbug.com/10322 accessibility/table-cell-spans.html [ Skip ]
+crbug.com/10322 accessibility/table-cells.html [ Skip ]
+crbug.com/10322 accessibility/table-detection.html [ Skip ]
+crbug.com/10322 accessibility/table-one-cell.html [ Skip ]
+crbug.com/10322 accessibility/table-sections.html [ Skip ]
+crbug.com/10322 accessibility/table-with-aria-role.html [ Skip ]
+crbug.com/10322 accessibility/table-with-rules.html [ Skip ]
+crbug.com/10322 accessibility/textarea-insertion-point-line-number.html [ Skip ]
+crbug.com/10322 accessibility/textarea-line-for-index.html [ Skip ]
+crbug.com/10322 accessibility/textarea-selected-text-range.html [ Skip ]
+crbug.com/10322 accessibility/textbox-role-reports-selection.html [ Skip ]
+crbug.com/10322 accessibility/th-as-title-ui.html [ Skip ]
+crbug.com/10322 accessibility/transformed-element.html [ Skip ]
+crbug.com/10322 accessibility/visible-elements.html [ Skip ]
 
-webkit.org/b/73912 accessibility/aria-checkbox-text.html [ Pass Skip Timeout ]
+webkit.org/b/73912 accessibility/aria-checkbox-text.html [ Skip ]
 
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 
@@ -1402,7 +1402,7 @@ webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure
 # -----------------------------------------------------------------
 
 # This test is slow due to Mesa slowness.
-platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html [ Pass Timeout WontFix ]
+platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html [ WontFix ]
 
 # This test is overly-finicky about pixel values.
 webkit.org/b/64876 [ Linux Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
@@ -1446,7 +1446,7 @@ crbug.com/10323 [ Win ] http/tests/xmlhttprequest/xmlhttprequest-no-content-leng
 
 # We fail to load a file URL with a port number -- how does this work on
 # Windows?
-crbug.com/10342 [ Android Linux Mac ] fast/loader/file-URL-with-port-number.html [ Skip Timeout WontFix ]
+crbug.com/10342 [ Android Linux Mac ] fast/loader/file-URL-with-port-number.html [ WontFix ]
 
 
 # Started timing out with agl's complex text change.  Page is verrry slow.
@@ -1465,7 +1465,7 @@ webkit.org/b/80335 fast/js/mozilla/strict/15.4.4.13.html [ Failure ]
 webkit.org/b/78657 fast/js/constructor-length.html [ Failure ]
 
 # This is JSC-only, preliminary implementation of a ES6 feature - doesn't exist in V8 (yet)
-webkit.org/b/86509 fast/js/names.html [ Pass Skip WontFix ]
+webkit.org/b/86509 fast/js/names.html [ WontFix ]
 
 # NEW FOR MERGE 36102:37604
 crbug.com/32184 fast/js/arguments.html [ Failure ]
@@ -1714,10 +1714,10 @@ crbug.com/2844 http/tests/appcache/top-frame-2.html
 crbug.com/2844 http/tests/appcache/max-size.html
 
 # Flakiness documented around Webkit Roll 51681:51711
-crbug.com/2844 http/tests/appcache/404-manifest.html [ Pass Skip Timeout ]
-crbug.com/2844 http/tests/appcache/404-resource.html [ Pass Skip Timeout ]
-crbug.com/2844 http/tests/appcache/foreign-iframe-main.html [ Pass Skip Timeout ]
-crbug.com/2844 http/tests/appcache/non-html.xhtml [ Pass Skip Timeout ]
+crbug.com/2844 http/tests/appcache/404-manifest.html [ Skip ]
+crbug.com/2844 http/tests/appcache/404-resource.html [ Skip ]
+crbug.com/2844 http/tests/appcache/foreign-iframe-main.html [ Skip ]
+crbug.com/2844 http/tests/appcache/non-html.xhtml [ Skip ]
 
 # LayoutTestController::clearApplicationCacheForOrigin isn't implemented
 webkit.org/b/ http/tests/appcache/origin-delete.html
@@ -1765,7 +1765,7 @@ crbug.com/32155 fast/js/Object-getOwnPropertyNames.html [ Failure ]
 # As of Aug 31, 2012, now times out in release. Marking flaky everywhere.
 crbug.com/32308 fast/frames/cached-frame-counter.html [ Pass Timeout ]
 
-crbug.com/33293 fast/media/lifetime.html [ Skip Timeout ]
+crbug.com/33293 fast/media/lifetime.html [ Skip ]
 
 # WebKit roll 53655 -> 53704
 crbug.com/32900 http/tests/misc/slow-loading-mask.html [ Failure ImageOnlyFailure ]
@@ -1825,7 +1825,7 @@ webkit.org/b/93221 [ Win7 ] fast/text/international/bold-bengali.html [ Failure 
 
 # These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 # They should be moved to the JavaScriptCore test suite.
-crbug.com/42875 sputnik [ Failure Skip WontFix ]
+crbug.com/42875 sputnik [ WontFix ]
 
 # WebKit roll 58791:58807
 crbug.com/43319 [ Android Linux Debug ] fast/forms/select-empty-option-height.html [ Pass Timeout ]
@@ -1903,13 +1903,13 @@ webkit.org/b/45991 [ Linux Win ] platform/chromium/virtual/gpu/canvas/philip/tes
 webkit.org/b/42798 fast/notifications/notifications-cancel-request-permission.html
 
 # HTML5 Geolocation API does not use window.clientInformation.
-crbug.com/11246 fast/dom/Window/window-properties-geolocation.html [ Failure Skip ]
+crbug.com/11246 fast/dom/Window/window-properties-geolocation.html [ Skip ]
 
 crbug.com/46603 [ Release ] fast/frames/lots-of-iframes.html [ Pass Timeout ]
 crbug.com/46603 [ Release ] fast/frames/lots-of-objects.html [ Pass Timeout ]
 # These tests are really slow in debug.
-crbug.com/46603 [ Debug ] fast/frames/lots-of-iframes.html [ Skip Timeout ]
-crbug.com/46603 [ Debug ] fast/frames/lots-of-objects.html [ Skip Timeout ]
+crbug.com/46603 [ Debug ] fast/frames/lots-of-iframes.html [ Skip ]
+crbug.com/46603 [ Debug ] fast/frames/lots-of-objects.html [ Skip ]
 
 crbug.com/47035 [ Win Debug ] fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure Pass ]
 
@@ -1938,9 +1938,9 @@ webkit.org/b/42769 http/tests/xmlhttprequest/remember-bad-password.html [ Failur
 crbug.com/49970 platform/chromium/plugins/call-as-function.html [ Failure Pass ]
 
 # Application Cache Quotas are N/A to the chromium port.
-webkit.org/b/43459 http/tests/appcache/origin-quota.html [ Failure Missing WontFix ]
-webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download.html [ Failure Missing WontFix ]
-webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Failure Missing WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota.html [ WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download.html [ WontFix ]
+webkit.org/b/43459 http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ WontFix ]
 
 # Need to support DeviceMotion.
 crbug.com/51416 fast/dom/DeviceMotion/window-property.html [ Failure ]
@@ -1978,7 +1978,7 @@ crbug.com/53073 [ Debug ] storage/websql/change-version.html
 # pass them because they rely on QuickTime being installed. We wontfix these
 # tests and let the Mac/Win coverage ensure that the (cross-platform)
 # special-document machinery still works.
-crbug.com/53546 [ Android Linux ] userscripts/user-script-video-document.html [ Failure WontFix ]
+crbug.com/53546 [ Android Linux ] userscripts/user-script-video-document.html [ WontFix ]
 
 # Requires page cache.
 webkit.org/b/45652 fast/viewport/viewport-128.html [ Timeout ]
@@ -2034,7 +2034,7 @@ crbug.com/58936 fast/js/numeric-escapes-in-string-literals.html [ Failure ]
 
 # For some reason it seems to not properly rect hit-tests elements in shadow
 # content of <video> elements.
-webkit.org/b/91205 media/nodesFromRect-shadowContent.html [ Failure Skip ]
+webkit.org/b/91205 media/nodesFromRect-shadowContent.html [ Skip ]
 
 webkit.org/b/96470 [ Android Linux Win ] fast/text/international/vertical-text-glyph-test.html [ Failure ]
 webkit.org/b/96470 [ Android Linux Win ] fast/text/international/vertical-text-metrics-test.html [ Failure ]
@@ -2065,15 +2065,15 @@ webkit.org/b/61161 [ Android Linux Win ] fast/writing-mode/border-image-vertical
 webkit.org/b/61161 [ Android Linux Win ] fast/writing-mode/border-image-vertical-lr.html [ Failure ]
 
 # New test; was added in http://trac.webkit.org/changeset/68520
-webkit.org/b/46735 [ Win ] platform/win/plugins/window-geometry-initialized-before-set-window.html [ Pass Skip WontFix ]
+webkit.org/b/46735 [ Win ] platform/win/plugins/window-geometry-initialized-before-set-window.html [ WontFix ]
 # Added in WebKit r70265
-webkit.org/b/48034 [ Win ] platform/win/plugins/npn-invalidate-rect-invalidates-window.html [ Pass Skip WontFix ]
+webkit.org/b/48034 [ Win ] platform/win/plugins/npn-invalidate-rect-invalidates-window.html [ WontFix ]
 # Added in WK r71416, doesn't look like it's applicable to Chromium
-[ Win ] platform/win/plugins/window-region-is-set-to-clip-rect.html [ Pass Skip WontFix ]
+[ Win ] platform/win/plugins/window-region-is-set-to-clip-rect.html [ WontFix ]
 # Added in WK r71418, doesn't look like it's applicable to Chromium
-[ Win ] platform/win/plugins/draws-gradient.html [ Pass Skip WontFix ]
+[ Win ] platform/win/plugins/draws-gradient.html [ WontFix ]
 # Doesn't look like it's applicable to Chromium
-[ Win ] platform/win/plugins/get-value-netscape-window.html [ Pass Skip WontFix ]
+[ Win ] platform/win/plugins/get-value-netscape-window.html [ WontFix ]
 
 # Added in WK r71424
 # We should probably just skip this test, everyone else has since
@@ -2225,7 +2225,7 @@ crbug.com/71783 [ Mac ] scrollbars/custom-scrollbar-with-incomplete-style.html [
 webkit.org/b/47923 [ Linux Mac Win ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Timeout ]
 
 # Chromium does not support PDF content in <img> tags.
-[ Win Linux Android ] compositing/images/direct-pdf-image.html [ ImageOnlyFailure WontFix ]
+[ Win Linux Android ] compositing/images/direct-pdf-image.html [ WontFix ]
 
 # Chromium does not support the CoreAnimation plugin model right now.
 webkit.org/b/47925 [ Mac ] compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
@@ -2584,16 +2584,16 @@ webkit.org/b/69998 [ Linux Win ] plugins/refcount-leaks.html [ Failure Pass ]
 # ICC color profiles are not supported on WIN, LINUX, ANDROID so SKIP for now.
 webkit.org/b/70001 [ Android Linux Win ] fast/images/color-jpeg-with-color-profile.html
 # Paletted PNG with ICC color profiles not working.
-webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html [ Missing Skip ]
+webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html [ Skip ]
 
 # V8 handles stack overflow exceptions differently than JSC
 webkit.org/b/70210 fast/js/stack-overflow-arrity-catch.html [ Failure ]
 
 # These all will timeout, because we are lacking a hook that signals test completion.
-webkit.org/b/70066 svg/as-image/image-respects-deviceScaleFactor.html [ Skip Timeout ]
+webkit.org/b/70066 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]
 
 # SVG painting in high DPI mode is broken in DRT.
-webkit.org/b/92511 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Failure Skip ]
+webkit.org/b/92511 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Skip ]
 
 # Swidth DRT to high DPI output mode, which temporarily breaks IMAGE
 crbug.com/146756 fast/hidpi/broken-image-icon-hidpi.html [ ImageOnlyFailure ]
@@ -2674,7 +2674,7 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 
 webkit.org/b/78544 [ Android Linux ] fast/text/international/danda-space.html [ Failure ImageOnlyFailure Pass ]
 
-webkit.org/b/74357 plugins/netscape-plugin-page-cache-works.html [ Failure Skip Timeout ]
+webkit.org/b/74357 plugins/netscape-plugin-page-cache-works.html [ Skip ]
 
 webkit.org/b/74662 [ Android Linux Win ] fast/text/unicode-variation-selector.html [ Failure ]
 
@@ -2690,7 +2690,7 @@ webkit.org/b/75430 [ Mac ] plugins/iframe-plugin-bgcolor.html [ Failure Timeout 
 
 webkit.org/b/75716 [ Linux Mac Win ] fullscreen/video-controls-drag.html [ Failure ]
 
-webkit.org/b/75786 compositing/tiled-layers-hidpi.html [ Skip Timeout ]
+webkit.org/b/75786 compositing/tiled-layers-hidpi.html [ Skip ]
 
 webkit.org/b/75932 fast/js/array-defineOwnProperty.html [ Failure ]
 webkit.org/b/75932 fast/js/mozilla/strict/15.4.4.6.html [ Failure ]
@@ -2717,7 +2717,7 @@ webkit.org/b/76572 http/tests/download [ Failure ]
 webkit.org/b/77314 [ Mac Win ] fast/events/touch/send-oncancel-event.html [ Failure Pass ]
 
 # Skipped until setTouchPointRadius get implemented
-webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Failure Pass Skip ]
+webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Skip ]
 
 # CRASH comes from BUGCR121442
 webkit.org/b/77397 [ Linux ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Crash Timeout ]
@@ -2729,7 +2729,7 @@ webkit.org/b/77508 platform/mac/fast/events/non-roman-key-code.html
 webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
 
 # Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
-fast/js/stack-trace.html [ Failure WontFix ]
+fast/js/stack-trace.html [ WontFix ]
 
 webkit.org/b/69210 [ SnowLeopard ] fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
 webkit.org/b/69210 [ Mac ] fast/inline/continuation-outlines-with-layers.html [ Failure ]
@@ -3050,10 +3050,10 @@ webkit.org/b/68744 fast/block/float/float-not-removed-from-next-sibling4.html [ 
 webkit.org/b/86414 fast/loader/javascript-url-in-embed.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # Skip it because it seems its frame loading notifications leak to the next test.
-webkit.org/b/85949 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure Skip ]
+webkit.org/b/85949 http/tests/loading/post-in-iframe-with-back-navigation.html [ Skip ]
 
 webkit.org/b/85951 [ Win Debug ] fast/css/hover-update.html [ Failure Pass ]
 
@@ -3320,7 +3320,7 @@ webkit.org/b/93569 [ Debug ] http/tests/navigation/lockedhistory-iframe.html [ F
 webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass ]
 
 # V8 does not support static attributes
-webkit.org/b/93488 fast/notifications/notifications-permission.html [ Failure Skip ]
+webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
 
 # Flaky
 webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ ImageOnlyFailure Pass ]
@@ -3405,34 +3405,34 @@ crbug.com/67540 webkit.org/b/94735 [ Linux ] fast/text/emphasis-overlap.html [ F
 webkit.org/b/94793 http/tests/notifications/event-listener-crash.html [ Failure Pass ]
 
 # Failing tests because Android has different implementation of HTML controls.
-crbug.com/144536 [ Android ] editing/selection/context-menu-on-text.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] editing/selection/context-menu-text-selection.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/dom/HTMLSelectElement/select-selectedOptions.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/events/select-element.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-clip.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-deselect-scroll.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-onchange.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-select-all.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-selection.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-selection-2.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/listbox-typeahead-scroll.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/option-mouseevents.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-cache-desynchronization.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-clientheight-large-size.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-clientheight-with-multiple-attr.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-item-background-clip.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-listbox-multiple-no-focusring.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-live-pseudo-selectors.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select-multiple-elements-with-mouse-drag.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select/listbox-drag-in-non-multiple.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select/listbox-in-multi-column.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select/option-selecting.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select/optgroup-clicking.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/forms/select/optgroup-rendering.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] fast/repaint/select-option-background-color.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure WontFix ]
-crbug.com/144536 [ Android ] scrollbars/listbox-scrollbar-combinations.html [ Failure WontFix ]
+crbug.com/144536 [ Android ] editing/selection/context-menu-on-text.html [ WontFix ]
+crbug.com/144536 [ Android ] editing/selection/context-menu-text-selection.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/dom/HTMLSelectElement/select-selectedOptions.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/events/select-element.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-clip.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-deselect-scroll.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-onchange.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-select-all.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-selection.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-selection-2.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/listbox-typeahead-scroll.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/option-mouseevents.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-cache-desynchronization.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-clientheight-large-size.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-clientheight-with-multiple-attr.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-item-background-clip.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-listbox-multiple-no-focusring.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-live-pseudo-selectors.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select-multiple-elements-with-mouse-drag.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select/listbox-drag-in-non-multiple.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select/listbox-in-multi-column.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select/option-selecting.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select/optgroup-clicking.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/forms/select/optgroup-rendering.html [ WontFix ]
+crbug.com/144536 [ Android ] fast/repaint/select-option-background-color.html [ WontFix ]
+crbug.com/144536 [ Android ] scrollbars/custom-scrollbar-with-incomplete-style.html [ WontFix ]
+crbug.com/144536 [ Android ] scrollbars/listbox-scrollbar-combinations.html [ WontFix ]
 
 # Failing tests with 2d canvas acceleration.
 crbug.com/145084 [ Android ] platform/chromium/virtual/gpu/canvas/philip [ Failure Pass ]
@@ -3507,7 +3507,7 @@ webkit.org/b/95136 [ Linux Win ] fast/css/sticky/sticky-writing-mode-vertical-rl
 webkit.org/b/95617 fast/js/function-constructor-this-value.html [ Failure Pass ]
 
 # These tests appear to be making bots flaky. See bug for details.
-webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ ImageOnlyFailure Pass Skip ]
+webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ Skip ]
 
 # Does not yet support new web notifications TestRunner API
 webkit.org/b/95506 http/tests/notifications
@@ -3527,7 +3527,7 @@ webkit.org/b/96441 [ Linux SnowLeopard Win ] platform/chromium/virtual/gpu/fast/
 
 webkit.org/b/96950 [ Linux ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Failure Pass ]
 
-webkit.org/b/96227 fast/js/function-dot-arguments-identity.html [ Failure Skip ]
+webkit.org/b/96227 fast/js/function-dot-arguments-identity.html [ Skip ]
 
 webkit.org/b/96835 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]
 webkit.org/b/96835 platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]

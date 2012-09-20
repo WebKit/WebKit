@@ -56,7 +56,7 @@ webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure
 webkit.org/b/83898 fast/exclusions
 
 # CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
-webkit.org/b/85465 css3/filters [ Failure Skip ]
+webkit.org/b/85465 css3/filters [ Skip ]
 
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
@@ -65,21 +65,21 @@ webkit.org/b/85262 fast/css/image-resolution
 webkit.org/b/89052 fast/css/image-orientation
 
 # This test assumes we cannot play RTSP, but we can.
-Bug(EFL) media/unsupported-rtsp.html [ Skip Timeout ]
+Bug(EFL) media/unsupported-rtsp.html [ Skip ]
 
 # Perf tests are really slow in debug builds and there are few benefits in running them.
-[ Debug ] perf [ Skip Timeout WontFix ]
+[ Debug ] perf [ WontFix ]
 
 # Perf tests are way too slow and some may fail due to timeout.
-perf/adding-radio-buttons.html [ Failure Pass Timeout WontFix ]
-perf/array-binary-search.html [ Failure Pass Timeout WontFix ]
-perf/array-nested-loop.html [ Failure Pass Timeout WontFix ]
-perf/mouse-event.html [ Failure Pass Timeout WontFix ]
+perf/adding-radio-buttons.html [ WontFix ]
+perf/array-binary-search.html [ WontFix ]
+perf/array-nested-loop.html [ WontFix ]
+perf/mouse-event.html [ WontFix ]
 
 # Rounding issues when running on 32-bits machines.
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html [ Failure Pass ]
 webkit.org/b/43568 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html [ Failure Pass ]
-[ X86 ] svg/css/stars-with-shadow.html [ Failure Pass WontFix ]
+[ X86 ] svg/css/stars-with-shadow.html [ WontFix ]
 
 # Newly added test which fails on other bots too
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
@@ -139,7 +139,7 @@ Bug(EFL) fast/forms/input-placeholder-paint-order.html [ Missing ]
 Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ Missing ]
 
 # Implementing copy{En,De}codedHostName only to test them does not make sense
-webkit.org/b/86080 fast/encoding/idn-security.html [ Failure Skip ]
+webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 
 # UndoManager is not yet enabled.
 webkit.org/b/87908 editing/undomanager
@@ -151,24 +151,24 @@ webkit.org/b/88794 webaudio/codec-tests
 webkit.org/b/84186 fast/text-autosizing
 
 # Dialog element is not yet enabled.
-webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
+webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
 # Subpixel layout is not enabled.
-webkit.org/b/85532 fast/sub-pixel [ Missing Skip ]
+webkit.org/b/85532 fast/sub-pixel [ Skip ]
 
 # DeviceOrientation support is not enabled by default.
-Bug(EFL) fast/dom/DeviceOrientation [ Failure Skip ]
-Bug(EFL) fast/dom/Window/window-properties-device-orientation.html [ Failure Skip ]
-Bug(EFL) inspector/device-orientation-success.html [ Failure Skip ]
+Bug(EFL) fast/dom/DeviceOrientation [ Skip ]
+Bug(EFL) fast/dom/Window/window-properties-device-orientation.html [ Skip ]
+Bug(EFL) inspector/device-orientation-success.html [ Skip ]
 
 # EFL port does not enable ORIENTATION_EVENTS
-webkit.org/b/90928 fast/dom/Orientation [ Failure Skip ]
+webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 
 # EFL port does not implement DeviceMotion
-webkit.org/b/95300 fast/dom/DeviceMotion [ Failure Skip ]
+webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 
 # The EFL port has no support for accessibility features
-Bug(EFL) accessibility [ Failure Skip ]
+Bug(EFL) accessibility [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
@@ -458,16 +458,16 @@ webkit.org/b/79766 compositing/layer-creation/scroll-partial-update.html [ Failu
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/translatez-overlap.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/clip-descendents.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Missing Skip ]
+webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/content-gains-scrollbars.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/content-loses-scrollbars.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Missing Skip ]
+webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Missing Skip ]
+webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ Missing Skip ]
+webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/resize-painting.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/textarea-scroll-touch.html [ Failure ]
@@ -527,18 +527,18 @@ webkit.org/b/86730 compositing/layer-creation/fixed-position-scroll.html [ Missi
 # EFL does not support WebGL
 webkit.org/b/77219 compositing/backface-visibility/backface-visibility-webgl.html [ Failure ]
 webkit.org/b/77219 compositing/visibility/visibility-simple-webgl-layer.html [ Failure ]
-webkit.org/b/77219 compositing/webgl/webgl-background-color.html [ Missing Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-no-alpha.html [ Missing Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-nonpremultiplied-blend.html [ Missing Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ Missing Skip ]
-webkit.org/b/77219 fast/canvas/webgl [ Failure Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-background-color.html [ Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-no-alpha.html [ Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
+webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ Skip ]
+webkit.org/b/77219 fast/canvas/webgl [ Skip ]
 webkit.org/b/77219 fast/dom/constructed-objects-prototypes.html [ Failure ]
-webkit.org/b/77219 fast/events/constructors/webgl-context-event-constructor.html [ Failure Skip ]
-webkit.org/b/77219 http/tests/canvas/webgl/origin-clean-conformance.html [ Failure Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Failure Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Failure Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Failure Skip ]
-webkit.org/b/77219 inspector/profiler/webgl [ Failure Skip ]
+webkit.org/b/77219 fast/events/constructors/webgl-context-event-constructor.html [ Skip ]
+webkit.org/b/77219 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
+webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
+webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
+webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
+webkit.org/b/77219 inspector/profiler/webgl [ Skip ]
 
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
@@ -568,33 +568,33 @@ Bug(EFL) http/tests/images/webp-partial-load.html
 Bug(EFL) http/tests/images/webp-progressive-load.html
 
 # Requires MEDIA_SOURCE support.
-webkit.org/b/95296 http/tests/media/media-source [ Failure Skip ]
+webkit.org/b/95296 http/tests/media/media-source [ Skip ]
 
 # Requires ENCRYPTED_MEDIA support.
-webkit.org/b/95297 media/encrypted-media [ Failure Skip ]
-webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ Failure Skip ]
+webkit.org/b/95297 media/encrypted-media [ Skip ]
+webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ Skip ]
 
 # Requires POINTER_LOCK support.
-webkit.org/b/88080 pointer-lock [ Failure Skip ]
-webkit.org/b/88080 http/tests/pointer-lock [ Failure Skip ]
+webkit.org/b/88080 pointer-lock [ Skip ]
+webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
 
 # EXIF orientation support has not yet been implemented for EFL port
 webkit.org/b/95299 fast/images/exif-orientation.html
 webkit.org/b/95299 fast/images/exif-orientation-css.html
 
 # Requires WEB_AUDIO support.
-webkit.org/b/91738 webaudio [ Failure Skip ]
+webkit.org/b/91738 webaudio [ Skip ]
 
 # Requires MEDIA_STREAM support.
-webkit.org/b/87662 fast/mediastream [ Failure Skip ]
+webkit.org/b/87662 fast/mediastream [ Skip ]
 
 # The EFL port has no support for x-webkit-speech
-webkit.org/b/95302 fast/speech [ Failure Skip ]
-webkit.org/b/95302 fast/events/constructors/speech-recognition-event-constructor.html [ Failure Skip ]
+webkit.org/b/95302 fast/speech [ Skip ]
+webkit.org/b/95302 fast/events/constructors/speech-recognition-event-constructor.html [ Skip ]
 
 # Requires support for Web notifications
-webkit.org/b/73544 fast/notifications [ Failure Skip ]
-webkit.org/b/73544 http/tests/notifications [ Failure Skip ]
+webkit.org/b/73544 fast/notifications [ Skip ]
+webkit.org/b/73544 http/tests/notifications [ Skip ]
 
 # This tests fails by one on 32 bits machines due to rounding issues.
 Bug(EFL) fast/css/percentage-non-integer.html [ Failure Pass ]
@@ -606,7 +606,7 @@ Bug(EFL) fast/css/device-aspect-ratio.html
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]
 
 # These test -apple- prefixed CSS properties, which we don't support.
-fast/css/apple-prefix.html [ Failure Skip WontFix ]
+fast/css/apple-prefix.html [ WontFix ]
 
 webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Failure ]
@@ -654,7 +654,7 @@ webkit.org/b/85599 http/tests/navigation/postredirect-basic.html [ Failure ]
 webkit.org/b/85599 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 webkit.org/b/84835 editing/execCommand/4128080-2.html [ Failure ]
@@ -895,12 +895,12 @@ Bug(EFL) gamepad/gamepad-polling-access.html [ Failure ]
 webkit.org/b/86445 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
 
 # ENABLE_INPUT_TYPE_* are not enabled on EFL port.
-webkit.org/b/29359 fast/forms/date [ Failure Skip ]
-webkit.org/b/29359 fast/forms/datetime [ Failure Skip ]
-webkit.org/b/29359 fast/forms/datetimelocal [ Failure Skip ]
-webkit.org/b/29359 fast/forms/month [ Failure Skip ]
-webkit.org/b/29359 fast/forms/time [ Failure Skip ]
-webkit.org/b/29359 fast/forms/week [ Failure Skip ]
+webkit.org/b/29359 fast/forms/date [ Skip ]
+webkit.org/b/29359 fast/forms/datetime [ Skip ]
+webkit.org/b/29359 fast/forms/datetimelocal [ Skip ]
+webkit.org/b/29359 fast/forms/month [ Skip ]
+webkit.org/b/29359 fast/forms/time [ Skip ]
+webkit.org/b/29359 fast/forms/week [ Skip ]
 webkit.org/b/89209 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 
 # Paletted PNG with ICC color profiles not working.
@@ -956,16 +956,16 @@ webkit.org/b/61799 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ 
 webkit.org/b/61799 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
 # JSC doesn't support heap profiling
-webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-show-all.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-retainers.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-fields.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting.html [ Failure Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Failure Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-show-all.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-retainers.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-show-ranges.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-fields.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting.html [ Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Skip ]
 
 # ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
 webkit.org/b/94186 fast/forms/time-multiple-fields
@@ -984,7 +984,7 @@ webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 # Requires CSS_COMPOSITING to be turned on
-webkit.org/b/94024 css3/compositing [ Failure Skip ]
+webkit.org/b/94024 css3/compositing [ Skip ]
 
 # Fails also on GTK
 webkit.org/b/94080 fast/overflow/line-clamp-and-columns.html [ ImageOnlyFailure ]
@@ -1036,7 +1036,7 @@ webkit.org/b/96881 fast/frames/sandboxed-iframe-plugins.html [ Failure ]
 webkit.org/b/96881 fast/replaced/invalid-object-with-fallback.html [ Failure ]
 webkit.org/b/96881 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
 webkit.org/b/96881 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
-webkit.org/b/96881 http/tests/plugins [ Failure Skip ]
+webkit.org/b/96881 http/tests/plugins [ Skip ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
@@ -1046,12 +1046,12 @@ webkit.org/b/96881 http/tests/security/storage-blocking-loosened-plugin.html [ F
 webkit.org/b/96881 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
-webkit.org/b/96881 java [ Failure Skip ]
-webkit.org/b/96881 plugins [ Failure Skip ]
+webkit.org/b/96881 java [ Skip ]
+webkit.org/b/96881 plugins [ Skip ]
 webkit.org/b/96881 userscripts/user-script-plugin-document.html [ Failure ]
 
 # EFL does not yet support global selection
-webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Failure Skip ]
+webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
 # Gradient instead of solid color in the rectangle
 webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]

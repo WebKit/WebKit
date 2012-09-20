@@ -19,7 +19,7 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886
-webkit.org/b/82886 inspector/styles/override-screen-size.html [ Failure Skip ]
+webkit.org/b/82886 inspector/styles/override-screen-size.html [ Skip ]
 
 webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
 webkit.org/b/83907 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
@@ -55,11 +55,11 @@ webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ Ima
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
 # Interferes with the tests that should pass
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # ietestcenter/css3/valuesandunits/units-000.htm asserts
 # https://bugs.webkit.org/show_bug.cgi?id=86176
-webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure Skip ]
+webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
 webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFailure ]
 
 # IETC namespace failures
@@ -83,11 +83,11 @@ webkit.org/b/58491 fast/css3-text-decoration
 
 # Needs rebaseline after bug 86441
 # failing new tests
-webkit.org/b/86441 fast/borders/border-antialiasing.html [ ImageOnlyFailure Skip ]
+webkit.org/b/86441 fast/borders/border-antialiasing.html [ Skip ]
 webkit.org/b/86441 fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
 
 # Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
-webkit.org/b/85405 tables/mozilla/bugs/bug10296-1.html [ Failure Skip ]
+webkit.org/b/85405 tables/mozilla/bugs/bug10296-1.html [ Skip ]
 
 # Paletted PNG with ICC color profiles not working.
 webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html
@@ -110,13 +110,13 @@ webkit.org/b/88171 css1/formatting_model/floating_elements.html [ Failure ]
 webkit.org/b/84186 fast/text-autosizing
 
 # Dialog element is not yet enabled.
-webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
+webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
 # Missing test infrastructure, no gamepads available.
-webkit.org/b/92873 gamepad/gamepad-polling-access.html [ Failure Skip ]
+webkit.org/b/92873 gamepad/gamepad-polling-access.html [ Skip ]
 
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]

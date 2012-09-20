@@ -47,148 +47,148 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure WontFix ]
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ]
 
 # Modal dialogs will not be supported in WebKit1. These expectations should eventually
 # be moved into WebKit1-specific TestExpectations file (once it's created).
-fast/animation/request-animation-frame-during-modal.html [ Failure WontFix ]
-fast/events/show-modal-dialog-onblur-onfocus.html [ Failure Skip WontFix ]
-fast/events/scroll-event-during-modal-dialog.html [ Failure WontFix ]
-fast/harness/show-modal-dialog.html [ Failure Skip WontFix ]
-http/tests/security/cross-frame-access-call.html [ Failure WontFix ]
-http/tests/security/cross-frame-access-get.html [ Failure WontFix ]
-inspector/console/console-long-eval-crash.html [ Failure Skip WontFix ]
+fast/animation/request-animation-frame-during-modal.html [ WontFix ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ WontFix ]
+fast/events/scroll-event-during-modal-dialog.html [ WontFix ]
+fast/harness/show-modal-dialog.html [ WontFix ]
+http/tests/security/cross-frame-access-call.html [ WontFix ]
+http/tests/security/cross-frame-access-get.html [ WontFix ]
+inspector/console/console-long-eval-crash.html [ WontFix ]
 
 # This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html [ Failure WontFix ]
+fast/js/i18n-bindings-locale.html [ WontFix ]
 
 # Ignored because we do not have OBJC bindings (via Chromium).
-editing/pasteboard/paste-RTFD.html [ Failure Skip WontFix ]
-editing/pasteboard/paste-TIFF.html [ Failure Skip WontFix ]
+editing/pasteboard/paste-RTFD.html [ WontFix ]
+editing/pasteboard/paste-TIFF.html [ WontFix ]
 
 # This test assumes we cannot play RTSP, but we can.
-media/unsupported-rtsp.html [ Skip Timeout WontFix ]
+media/unsupported-rtsp.html [ WontFix ]
 
 # We have no need to support Dashboard compatibility mode. (via Chromium).
-fast/canvas/canvas-gradient-addStop-error.html [ Failure Skip WontFix ]
-http/tests/xmlhttprequest/default-content-type-dashboard.html [ Failure Skip WontFix ]
+fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
+http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
 
 # ENABLE(WIDGET_REGION) is disabled
-fast/css/widget-region-parser.html [ Failure Skip WontFix ]
+fast/css/widget-region-parser.html [ WontFix ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ Failure Skip WontFix ]
-fast/css/apple-prefix.html [ Failure WontFix ]
+inspector/styles/vendor-prefixes.html [ WontFix ]
+fast/css/apple-prefix.html [ WontFix ]
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow-unload-handler.html [ Failure Skip WontFix ]
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure Skip WontFix ]
+fast/dom/Window/slow-unload-handler.html [ WontFix ]
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
 # Accessibility tests that should never be run for GTK due to be
 # written in a platform-specific way. They should either be moved to
 # the right platform or re-written in a more platform-agnostic way.
-accessibility/aria-list-and-listitem.html [ Failure Skip WontFix ]
-accessibility/aria-option-role.html [ Failure Skip WontFix ]
-accessibility/internal-link-anchors2.html [ Failure Skip WontFix ]
-accessibility/radio-button-group-members.html [ Failure Skip WontFix ]
-accessibility/table-attributes.html [ Failure Skip WontFix ]
-accessibility/table-detection.html [ Failure Skip WontFix ]
-accessibility/table-one-cell.html [ Failure Skip WontFix ]
-accessibility/table-sections.html [ Failure Skip WontFix ]
-accessibility/table-with-aria-role.html [ Failure Skip WontFix ]
-accessibility/table-with-rules.html [ Failure Skip WontFix ]
-accessibility/plugin.html [ Failure Skip WontFix ]
+accessibility/aria-list-and-listitem.html [ WontFix ]
+accessibility/aria-option-role.html [ WontFix ]
+accessibility/internal-link-anchors2.html [ WontFix ]
+accessibility/radio-button-group-members.html [ WontFix ]
+accessibility/table-attributes.html [ WontFix ]
+accessibility/table-detection.html [ WontFix ]
+accessibility/table-one-cell.html [ WontFix ]
+accessibility/table-sections.html [ WontFix ]
+accessibility/table-with-aria-role.html [ WontFix ]
+accessibility/table-with-rules.html [ WontFix ]
+accessibility/plugin.html [ WontFix ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
-Bug(GTK) fast/viewport/viewport-legacy-handheldfriendly.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized-2.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized-3.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-ordering-5.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-ordering-6.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure Skip ]
-Bug(GTK) fast/viewport/viewport-legacy-xhtmlmp.html [ Failure Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized-2.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized-3.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-mobileoptimized.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-ordering-5.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-ordering-6.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Skip ]
+Bug(GTK) fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
 
 # Deletion UI is a Mail-ism. We don't need to worry about this (via Chromium).
-Bug(GTK) editing/deleting/deletionUI-single-instance.html [ Failure Skip ]
-Bug(GTK) fast/dom/Element/id-in-deletebutton.html [ Failure Skip ]
+Bug(GTK) editing/deleting/deletionUI-single-instance.html [ Skip ]
+Bug(GTK) fast/dom/Element/id-in-deletebutton.html [ Skip ]
 
 # WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
-Bug(GTK) fast/events/option-tab.html [ Failure Skip ]
+Bug(GTK) fast/events/option-tab.html [ Skip ]
 
 # These tests expect a TIFF decoder (via Chromium).
-Bug(GTK) fast/images/embed-image.html [ Failure Skip ]
-Bug(GTK) fast/images/object-image.html [ Failure Skip ]
+Bug(GTK) fast/images/embed-image.html [ Skip ]
+Bug(GTK) fast/images/object-image.html [ Skip ]
 
 # Mac Safari under certain circumstances automatically places
 # a caret in editable document even when none was requested programatically.
-Bug(GTK) editing/selection/designmode-no-caret.html [ Failure Skip ]
+Bug(GTK) editing/selection/designmode-no-caret.html [ Skip ]
 
 # These tests require loading a PDF as an image, which we do not support (via Chromium).
-Bug(GTK) fast/images/pdf-as-background.html [ Failure Skip ]
-Bug(GTK) fast/images/pdf-as-image-landscape.html [ Failure Skip ]
-Bug(GTK) fast/images/pdf-as-image.html [ Failure Skip ]
-Bug(GTK) fast/images/pdf-as-tiled-background.html [ Failure Skip ]
-Bug(GTK) fast/replaced/pdf-as-image.html [ Failure Skip ]
+Bug(GTK) fast/images/pdf-as-background.html [ Skip ]
+Bug(GTK) fast/images/pdf-as-image-landscape.html [ Skip ]
+Bug(GTK) fast/images/pdf-as-image.html [ Skip ]
+Bug(GTK) fast/images/pdf-as-tiled-background.html [ Skip ]
+Bug(GTK) fast/replaced/pdf-as-image.html [ Skip ]
 
 # Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
 webkit.org/b/35824 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 
 # WebKitGTK+ does not support webarchives (via Chromium).
-Bug(GTK) webarchive [ Failure Skip ]
-Bug(GTK) http/tests/webarchive [ Failure Skip ]
-Bug(GTK) svg/webarchive [ Failure Skip ]
-Bug(GTK) svg/custom/image-with-prefix-in-webarchive.svg [ Failure Skip ]
+Bug(GTK) webarchive [ Skip ]
+Bug(GTK) http/tests/webarchive [ Skip ]
+Bug(GTK) svg/webarchive [ Skip ]
+Bug(GTK) svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 
 # This test is specific to QuickTime media engine.
-Bug(GTK) media/video-does-not-loop.html [ Failure Skip ]
+Bug(GTK) media/video-does-not-loop.html [ Skip ]
 
 # Requires media engine closed caption support.
-Bug(GTK) media/media-captions.html [ Failure Skip ]
+Bug(GTK) media/media-captions.html [ Skip ]
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
-Bug(GTK) fast/parser/pre-html5-parser-quirks.html [ Failure Skip ]
+Bug(GTK) fast/parser/pre-html5-parser-quirks.html [ Skip ]
 
 # Features that we want eventually:
 # DeviceMotion and DeviceOrientation are not enabled by default.
-Bug(GTK) fast/dom/Window/window-properties-device-orientation.html [ Failure Skip ]
-Bug(GTK) fast/dom/DeviceMotion [ Failure Skip ]
-Bug(GTK) fast/dom/DeviceOrientation [ Failure Skip ]
+Bug(GTK) fast/dom/Window/window-properties-device-orientation.html [ Skip ]
+Bug(GTK) fast/dom/DeviceMotion [ Skip ]
+Bug(GTK) fast/dom/DeviceOrientation [ Skip ]
 
 # Desktop notifications are not supported.
-Bug(GTK) fast/notifications [ Failure Skip ]
-Bug(GTK) http/tests/notifications [ Failure Skip ]
+Bug(GTK) fast/notifications [ Skip ]
+Bug(GTK) http/tests/notifications [ Skip ]
 
 # We lack userscripts support.
-Bug(GTK) userscripts [ Failure Skip ]
+Bug(GTK) userscripts [ Skip ]
 
 # Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support.
-Bug(GTK) transforms/3d [ Failure Skip ]
-Bug(GTK) compositing [ Failure Skip ]
-Bug(GTK) fast/transforms/selection-bounds-in-transformed-view.html [ Failure Skip ]
+Bug(GTK) transforms/3d [ Skip ]
+Bug(GTK) compositing [ Skip ]
+Bug(GTK) fast/transforms/selection-bounds-in-transformed-view.html [ Skip ]
 
 # These tests require touch support.
-Bug(GTK) fast/events/touch [ Failure Skip ]
+Bug(GTK) fast/events/touch [ Skip ]
 
 # IndexedDB is not yet enabled.
-Bug(GTK) storage/indexeddb [ Failure Skip ]
-Bug(GTK) http/tests/inspector/indexeddb [ Failure Skip ]
+Bug(GTK) storage/indexeddb [ Skip ]
+Bug(GTK) http/tests/inspector/indexeddb [ Skip ]
 
 # StorageTracker is not enabled.
-Bug(GTK) storage/domstorage/localstorage/storagetracker [ Failure Skip ]
+Bug(GTK) storage/domstorage/localstorage/storagetracker [ Skip ]
 
 # Datalist is not yet enabled.
-Bug(GTK) fast/forms/datalist [ Failure Skip ]
+Bug(GTK) fast/forms/datalist [ Skip ]
 
 # Color input is not yet enabled.
-Bug(GTK) fast/forms/color [ Failure Skip ]
+Bug(GTK) fast/forms/color [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/29359 fast/forms/date [ Failure ]
 webkit.org/b/29359 fast/forms/date/date-interactive-validation-required.html [ Pass ]
-webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-pre-100.html [ Failure Skip ]
-webkit.org/b/29359 fast/forms/date/calendar-picker-appearance.html [ Failure Skip ]
-webkit.org/b/29359 fast/forms/date/calendar-picker-key-operations.html [ Failure Skip ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-pre-100.html [ Skip ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-appearance.html [ Skip ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-key-operations.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-type-change-onclick.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/date-stepup-stepdown-from-renderer.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/no-page-popup-controller.html [ Pass ]
@@ -209,95 +209,95 @@ webkit.org/b/29359 fast/forms/week [ Failure ]
 webkit.org/b/29359 fast/forms/week/week-interactive-validation-required.html [ Pass ]
 
 # ENABLE_GAMEPAD not enabled.
-Bug(GTK) gamepad [ Failure Skip ]
+Bug(GTK) gamepad [ Skip ]
 
 # Speech input is not yet enabled.
-Bug(GTK) fast/speech [ Failure Skip ]
+Bug(GTK) fast/speech [ Skip ]
 
 # Speech JavaScript API is not yet enabled.
-Bug(GTK) fast/events/constructors/speech-recognition-event-constructor.html [ Failure Skip ]
+Bug(GTK) fast/events/constructors/speech-recognition-event-constructor.html [ Skip ]
 
 # FileSystem API is not supported.
-Bug(GTK) fast/filesystem [ Failure Skip ]
-Bug(GTK) http/tests/filesystem [ Failure Skip ]
-Bug(GTK) http/tests/security/filesystem-iframe-from-remote.html [ Failure Skip ]
-Bug(GTK) http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html [ Failure Skip ]
-Bug(GTK) http/tests/security/mixedContent/filesystem-url-in-iframe.html [ Failure Skip ]
-Bug(GTK) http/tests/websocket/tests/hybi/send-file-blob.html [ Failure Skip ]
-Bug(GTK) http/tests/websocket/tests/hybi/send-file-blob-fail.html [ Failure Skip ]
-Bug(GTK) http/tests/workers/terminate-during-sync-operation.html [ Failure Skip ]
-Bug(GTK) fast/mutation/filesystem-callback-delivery.html [ Failure Skip ]
-Bug(GTK) fast/forms/file/input-file-entries.html [ Failure Skip ]
+Bug(GTK) fast/filesystem [ Skip ]
+Bug(GTK) http/tests/filesystem [ Skip ]
+Bug(GTK) http/tests/security/filesystem-iframe-from-remote.html [ Skip ]
+Bug(GTK) http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html [ Skip ]
+Bug(GTK) http/tests/security/mixedContent/filesystem-url-in-iframe.html [ Skip ]
+Bug(GTK) http/tests/websocket/tests/hybi/send-file-blob.html [ Skip ]
+Bug(GTK) http/tests/websocket/tests/hybi/send-file-blob-fail.html [ Skip ]
+Bug(GTK) http/tests/workers/terminate-during-sync-operation.html [ Skip ]
+Bug(GTK) fast/mutation/filesystem-callback-delivery.html [ Skip ]
+Bug(GTK) fast/forms/file/input-file-entries.html [ Skip ]
 
 # Requires WebP support.
-Bug(GTK) fast/canvas/canvas-toDataURL-webp.html [ Failure Skip ]
-Bug(GTK) fast/images/webp-image-decoding.html [ Failure Skip ]
-Bug(GTK) http/tests/images/webp-partial-load.html [ Failure Skip ]
-Bug(GTK) http/tests/images/webp-progressive-load.html [ Failure Skip ]
+Bug(GTK) fast/canvas/canvas-toDataURL-webp.html [ Skip ]
+Bug(GTK) fast/images/webp-image-decoding.html [ Skip ]
+Bug(GTK) http/tests/images/webp-partial-load.html [ Skip ]
+Bug(GTK) http/tests/images/webp-progressive-load.html [ Skip ]
 
 # DataTransferItems is not yet implemented.
-Bug(GTK) editing/pasteboard/data-transfer-items.html [ Failure Skip ]
-Bug(GTK) editing/pasteboard/data-transfer-items-image-png.html [ ImageOnlyFailure Skip ]
-Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-file.html [ Failure Skip ]
-Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Failure Skip ]
-Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-string.html [ Failure Skip ]
-Bug(GTK) fast/events/clipboard-dataTransferItemList.html [ Failure Skip ]
-Bug(GTK) fast/events/drag-dataTransferItemList.html [ Failure Skip ]
-Bug(GTK) fast/events/drag-dataTransferItemList-file-handling.html [ Failure Skip ]
+Bug(GTK) editing/pasteboard/data-transfer-items.html [ Skip ]
+Bug(GTK) editing/pasteboard/data-transfer-items-image-png.html [ Skip ]
+Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
+Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
+Bug(GTK) editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
+Bug(GTK) fast/events/clipboard-dataTransferItemList.html [ Skip ]
+Bug(GTK) fast/events/drag-dataTransferItemList.html [ Skip ]
+Bug(GTK) fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
 # setAutomaticLinkDetectionEnabled is not yet implemented.
-webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure Skip ]
+webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 
 # Custom MIME type support in DataTransfer is not yet implemented.
-Bug(GTK) editing/pasteboard/clipboard-customData.html [ Failure Skip ]
-Bug(GTK) fast/events/drag-customData.html [ Failure Skip ]
+Bug(GTK) editing/pasteboard/clipboard-customData.html [ Skip ]
+Bug(GTK) fast/events/drag-customData.html [ Skip ]
 
 # PasteBoard::plainText() does not support file names.
-Bug(GTK) editing/pasteboard/drag-files-to-editable-element.html [ Failure Skip ]
+Bug(GTK) editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
 
 # Needs grammar checking.
-Bug(GTK) editing/spelling/markers.html [ Failure Skip ]
+Bug(GTK) editing/spelling/markers.html [ Skip ]
 
 # Legacy full screen API tests are now obsolete.
-Bug(GTK) media/context-menu-actions.html [ Failure Skip ]
-Bug(GTK) media/media-fullscreen-inline.html [ Failure Skip ]
-Bug(GTK) media/media-fullscreen-not-in-document.html [ Failure Skip ]
+Bug(GTK) media/context-menu-actions.html [ Skip ]
+Bug(GTK) media/media-fullscreen-inline.html [ Skip ]
+Bug(GTK) media/media-fullscreen-not-in-document.html [ Skip ]
 
 # Animation API is disabled
-Bug(GTK) animations/animation-api-1.html [ Failure Skip ]
+Bug(GTK) animations/animation-api-1.html [ Skip ]
 
 # Quota API is not supported.
-Bug(GTK) storage/storageinfo-missing-arguments.html [ Failure Skip ]
-Bug(GTK) storage/storageinfo-no-callbacks.html [ Failure Skip ]
-Bug(GTK) storage/storageinfo-query-usage.html [ Failure Skip ]
-Bug(GTK) storage/storageinfo-request-quota.html [ Failure Skip ]
+Bug(GTK) storage/storageinfo-missing-arguments.html [ Skip ]
+Bug(GTK) storage/storageinfo-no-callbacks.html [ Skip ]
+Bug(GTK) storage/storageinfo-query-usage.html [ Skip ]
+Bug(GTK) storage/storageinfo-request-quota.html [ Skip ]
 
 # This platform does not support the Page Visibility API.
-Bug(GTK) fast/events/page-visibility-iframe-delete-test.html [ Failure Skip ]
-Bug(GTK) fast/events/page-visibility-iframe-move-test.html [ Failure Skip ]
-Bug(GTK) fast/events/page-visibility-iframe-propagation-test.html [ Failure Skip ]
-Bug(GTK) fast/events/page-visibility-transition-test.html [ Failure Skip ]
+Bug(GTK) fast/events/page-visibility-iframe-delete-test.html [ Skip ]
+Bug(GTK) fast/events/page-visibility-iframe-move-test.html [ Skip ]
+Bug(GTK) fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
+Bug(GTK) fast/events/page-visibility-transition-test.html [ Skip ]
 
 # GTK doesn't support smart replace.
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # Tests for MediaSource API. Feature is not yet functional.
-webkit.org/b/64731 http/tests/media/media-source [ Failure Skip ]
+webkit.org/b/64731 http/tests/media/media-source [ Skip ]
 
 # Encrypted Media Extensions are not enabled.
-Bug(GTK) media/encrypted-media [ Failure Skip ]
-Bug(GTK) fast/events/constructors/media-key-event-constructor.html [ Failure Skip ]
+Bug(GTK) media/encrypted-media [ Skip ]
+Bug(GTK) fast/events/constructors/media-key-event-constructor.html [ Skip ]
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
-Bug(GTK) fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Failure Skip ]
-Bug(GTK) fast/dom/HTMLAnchorElement/anchor-download.html [ Failure Skip ]
-Bug(GTK) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure Skip ]
-Bug(GTK) fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Failure Skip ]
+Bug(GTK) fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
+Bug(GTK) fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
+Bug(GTK) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
+Bug(GTK) fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
 
 # Failing because WebGL is not enabled
-Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed.html [ Failure Skip ]
-Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Failure Skip ]
-Bug(GTK) http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Failure Skip ]
+Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
+Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
+Bug(GTK) http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
 # <style scoped> is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped [ Failure ]
@@ -309,59 +309,59 @@ Bug(GTK) fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageO
 Bug(GTK) fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
 
 # ENABLE(SHADOW_DOM) is disabled.
-Bug(GTK) fast/dom/shadow [ Failure Skip ]
-Bug(GTK) editing/shadow [ Failure Skip ]
+Bug(GTK) fast/dom/shadow [ Skip ]
+Bug(GTK) editing/shadow [ Skip ]
 
 # CSS Filters is disabled
-Bug(GTK) css3/filters [ Failure Skip ]
+Bug(GTK) css3/filters [ Skip ]
 
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-Bug(GTK) fast/css/image-set-parsing.html [ Failure Skip ]
-Bug(GTK) fast/css/image-set-parsing-invalid.html [ Failure Skip ]
-Bug(GTK) fast/css/image-set-setting.html [ Failure Skip ]
+Bug(GTK) fast/css/image-set-parsing.html [ Skip ]
+Bug(GTK) fast/css/image-set-parsing-invalid.html [ Skip ]
+Bug(GTK) fast/css/image-set-setting.html [ Skip ]
 
 # CSS Sticky Position is not yet enabled
-Bug(GTK) fast/css/sticky [ Failure ImageOnlyFailure Pass Skip ]
+Bug(GTK) fast/css/sticky [ Skip ]
 
 # For now, Web Audio API is disabled
-Bug(GTK) webaudio [ Failure Skip ]
+Bug(GTK) webaudio [ Skip ]
 
 # Needs testRunner.enableAutoResizeMode()
-Bug(GTK) fast/autoresize [ Failure Skip ]
+Bug(GTK) fast/autoresize [ Skip ]
 
 # The GTK+ build bots don't yet have the muscle to run WebGL tests.
-Bug(GTK) compositing/webgl [ Failure Skip ]
-Bug(GTK) fast/canvas/webgl [ Failure Skip ]
-Bug(GTK) http/tests/canvas/webgl [ Failure Skip ]
+Bug(GTK) compositing/webgl [ Skip ]
+Bug(GTK) fast/canvas/webgl [ Skip ]
+Bug(GTK) http/tests/canvas/webgl [ Skip ]
 
 # Vibration API support not yet.
 webkit.org/b/72010 fast/dom/navigator-vibration.html [ Failure ]
 
 # DumpRenderTree code to enable Java is currently a no-op
-Bug(GTK) java [ Failure Skip ]
+Bug(GTK) java [ Skip ]
 
 # Directory upload is not enabled.
-Bug(GTK) fast/forms/file/input-file-directory-upload.html [ Failure Skip ]
+Bug(GTK) fast/forms/file/input-file-directory-upload.html [ Skip ]
 
 # Microdata DOM API is not yet enabled.
-Bug(GTK) fast/dom/MicroData [ Failure Skip ]
+Bug(GTK) fast/dom/MicroData [ Skip ]
 
 # Web Intents is not yet enabled.
-Bug(GTK) webintents [ Failure Skip ]
+Bug(GTK) webintents [ Skip ]
 
 # Pointer Lock is not implemented.
-Bug(GTK) pointer-lock [ Failure Skip ]
+Bug(GTK) pointer-lock [ Skip ]
 # As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.
-Bug(GTK) http/tests/fullscreen [ Failure Skip ]
-Bug(GTK) http/tests/pointer-lock [ Failure Skip ]
+Bug(GTK) http/tests/fullscreen [ Skip ]
+Bug(GTK) http/tests/pointer-lock [ Skip ]
 
 # Battery Status API support not yet.
 webkit.org/b/62698 batterystatus [ Failure ]
-webkit.org/b/62698 batterystatus/event-after-navigation.html [ Failure Skip ]
+webkit.org/b/62698 batterystatus/event-after-navigation.html [ Skip ]
 
 # Network Information API support not yet.
 webkit.org/b/73528 networkinformation [ Failure ]
-webkit.org/b/73528 networkinformation/event-after-navigation.html [ Failure Skip ]
+webkit.org/b/73528 networkinformation/event-after-navigation.html [ Skip ]
 
 # Touch adjustment not enabled
 webkit.org/b/78801 touchadjustment [ Failure ]
@@ -385,20 +385,20 @@ webkit.org/b/85532 fast/sub-pixel/inline-block-should-not-wrap.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/inline-block-with-margin.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/size-of-span-with-different-positions.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/table-cells-with-padding-do-not-wrap.html [ Pass ]
-webkit.org/b/85532 fast/sub-pixel/table-rows-have-stable-height.html [ Crash Failure Skip ]
+webkit.org/b/85532 fast/sub-pixel/table-rows-have-stable-height.html [ Skip ]
 webkit.org/b/85532 fast/sub-pixel/table-rows-no-gaps.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/vertical-align-middle-overflow.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/sub-pixel-accumulates-to-layers.html [ Pass ]
 
 # Mediastream implementation is not complete yet.
-webkit.org/b/79203 fast/mediastream [ Failure Skip ]
+webkit.org/b/79203 fast/mediastream [ Skip ]
 
 # CSS Variables are not yet enabled.
-webkit.org/b/85580 fast/css/variables [ Failure Pass Skip ]
+webkit.org/b/85580 fast/css/variables [ Skip ]
 webkit.org/b/85580 inspector/styles/variables
 
 # CSS image-resolution is not yet enabled.
-webkit.org/b/85262 fast/css/image-resolution [ Failure Pass Skip ]
+webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
@@ -407,33 +407,33 @@ webkit.org/b/89052 fast/css/image-orientation
 webkit.org/b/58491 fast/css3-text-decoration
 
 # No CORS support for media elements is implemented yet.
-Bug(GTK) http/tests/security/video-cross-origin-readback.html [ Failure Skip ]
+Bug(GTK) http/tests/security/video-cross-origin-readback.html [ Skip ]
 
 # UndoManager is not yet enabled.
 webkit.org/b/87908 editing/undomanager
 
 # New test infrastructure required -- need isolated worlds
-webkit.org/b/31508 http/tests/security/isolatedWorld [ Failure Skip ]
-webkit.org/b/31508 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Failure Skip ]
-webkit.org/b/31508 plugins/npruntime/overrides-all-properties.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/open-database-creation-callback-isolated-world.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/statement-error-callback-isolated-world.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/statement-success-callback-isolated-world.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/transaction-callback-isolated-world.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/transaction-error-callback-isolated-world.html [ Failure Skip ]
-webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.html [ Failure Skip ]
+webkit.org/b/31508 http/tests/security/isolatedWorld [ Skip ]
+webkit.org/b/31508 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ]
+webkit.org/b/31508 plugins/npruntime/overrides-all-properties.html [ Skip ]
+webkit.org/b/31508 storage/websql/open-database-creation-callback-isolated-world.html [ Skip ]
+webkit.org/b/31508 storage/websql/statement-error-callback-isolated-world.html [ Skip ]
+webkit.org/b/31508 storage/websql/statement-success-callback-isolated-world.html [ Skip ]
+webkit.org/b/31508 storage/websql/transaction-callback-isolated-world.html [ Skip ]
+webkit.org/b/31508 storage/websql/transaction-error-callback-isolated-world.html [ Skip ]
+webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.html [ Skip ]
 
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1 [ Failure Skip ]
+webkit.org/b/85558 http/tests/security/contentSecurityPolicy/1.1 [ Skip ]
 
 # Text Autosizing is not yet enabled.
 webkit.org/b/84186 fast/text-autosizing
 
 # Dialog element is not yet enabled.
-webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
+webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
 # Proximity Events is not supported.
 webkit.org/b/92942 fast/dom/Proximity
@@ -478,7 +478,7 @@ webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ C
 # Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/44199 perf [ Failure Pass Skip ]
+webkit.org/b/44199 perf [ Skip ]
 
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Pass ]
@@ -619,9 +619,9 @@ Bug(GTK) tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
-webkit.org/b/68979 http/tests/multipart/invalid-image-data-standalone.html [ Skip Timeout ]
+webkit.org/b/68979 http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
-Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip Timeout ]
+Bug(GTK) http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Skip ]
 
 Bug(GTK) [ Debug ] fast/css/user-drag-none.html [ Timeout ]
 
@@ -727,7 +727,7 @@ Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 Bug(GTK) fast/loader/reload-policy-delegate.html [ Failure ]
 Bug(GTK) fast/loader/stop-provisional-loads.html [ Failure ]
 Bug(GTK) fast/loader/subframe-removes-itself.html [ Failure ]
-Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Failure Skip ]
+Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Skip ]
 
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
@@ -754,11 +754,11 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure ]
 webkit.org/b/54136 http/tests/misc/submit-post-keygen.html [ Failure ]
 
 # [GTK] GTK+ does not support hyphenation
-webkit.org/b/44478 fast/text/hyphenate-character.html [ Failure Skip ]
-webkit.org/b/44478 fast/text/hyphens.html [ Failure Skip ]
-webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Failure Skip ]
-webkit.org/b/44478 fast/text/hyphenate-locale.html [ Failure Skip ]
-webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure Skip ]
+webkit.org/b/44478 fast/text/hyphenate-character.html [ Skip ]
+webkit.org/b/44478 fast/text/hyphens.html [ Skip ]
+webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Skip ]
+webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
+webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
 Bug(GTK) http/tests/appcache/origin-quota.html [ Failure ]
 Bug(GTK) http/tests/appcache/origin-quota-continued-download.html [ Failure ]
@@ -776,7 +776,7 @@ Bug(GTK) http/tests/loading/bad-server-subframe.html [ Failure ]
 Bug(rdar6727495) http/tests/loading/deleted-host-in-resource-load-delegate-callback.html [ Failure ]
 Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
-Bug(GTK) http/tests/media/video-play-stall-seek.html [ Failure Skip ]
+Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 Bug(GTK) http/tests/media/video-play-stall.html [ Failure Slow ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
@@ -812,7 +812,7 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 Bug(GTK) plugins/form-value.html [ Failure ]
 
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
-webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Failure Skip ]
+webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
 
 # Missing resource load callback ability in DRT
 webkit.org/b/27905 http/tests/loading/redirect-methods.html [ Failure ]
@@ -824,13 +824,13 @@ webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 
 # No authentication challenge handling
-webkit.org/b/51104 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure Skip ]
+webkit.org/b/51104 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Skip ]
 webkit.org/b/51104 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
 webkit.org/b/51104 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
 webkit.org/b/51104 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
 webkit.org/b/51104 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
 webkit.org/b/51104 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
-webkit.org/b/51104 http/tests/security/401-logout/401-logout.php [ Failure Skip ]
+webkit.org/b/51104 http/tests/security/401-logout/401-logout.php [ Skip ]
 webkit.org/b/51104 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
 webkit.org/b/51104 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 webkit.org/b/51104 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
@@ -862,7 +862,7 @@ Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
 
 # Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
-webkit.org/b/35300 http/tests/navigation/post-307-response.html [ Failure Skip ]
+webkit.org/b/35300 http/tests/navigation/post-307-response.html [ Skip ]
 
 # Paged continuousMouseScrollBy() events are not supported in GTK.
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
@@ -877,7 +877,7 @@ Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failur
 Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 
 # Misses setMediaType() implementation
-Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Skip Timeout ]
+Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Skip ]
 
 # Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
 webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure ]
@@ -885,57 +885,57 @@ webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
-webkit.org/b/83174 inspector [ Failure Skip ]
-webkit.org/b/83174 http/tests/inspector [ Failure Skip ]
-webkit.org/b/82886 inspector/styles/override-screen-size.html [ Failure Skip ]
-webkit.org/b/72434 inspector/styles/svg-style.xhtml [ Failure Skip ]
-webkit.org/b/43034 inspector/debugger/debugger-breakpoints-not-activated-on-reload.html [ Failure Skip ]
-webkit.org/b/43332 inspector/debugger/dom-breakpoints.html [ Failure Skip ]
-webkit.org/b/43332 inspector/debugger/event-listener-breakpoints.html [ Failure Skip ]
-webkit.org/b/43332 inspector/debugger/step-through-event-listeners.html [ Failure Skip ]
-webkit.org/b/43332 inspector/debugger/xhr-breakpoints.html [ Failure Skip ]
-webkit.org/b/40300 inspector/debugger/live-edit.html [ Failure Skip ]
-webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html [ Failure Skip ]
-webkit.org/b/50868 inspector/debugger/debugger-step-out.html [ Failure Skip ]
-webkit.org/b/50868 inspector/styles/styles-source-lines-inline.html [ Failure Skip ]
-webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html [ Failure Skip ]
-webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ Failure Skip ]
+webkit.org/b/83174 inspector [ Skip ]
+webkit.org/b/83174 http/tests/inspector [ Skip ]
+webkit.org/b/82886 inspector/styles/override-screen-size.html [ Skip ]
+webkit.org/b/72434 inspector/styles/svg-style.xhtml [ Skip ]
+webkit.org/b/43034 inspector/debugger/debugger-breakpoints-not-activated-on-reload.html [ Skip ]
+webkit.org/b/43332 inspector/debugger/dom-breakpoints.html [ Skip ]
+webkit.org/b/43332 inspector/debugger/event-listener-breakpoints.html [ Skip ]
+webkit.org/b/43332 inspector/debugger/step-through-event-listeners.html [ Skip ]
+webkit.org/b/43332 inspector/debugger/xhr-breakpoints.html [ Skip ]
+webkit.org/b/40300 inspector/debugger/live-edit.html [ Skip ]
+webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html [ Skip ]
+webkit.org/b/50868 inspector/debugger/debugger-step-out.html [ Skip ]
+webkit.org/b/50868 inspector/styles/styles-source-lines-inline.html [ Skip ]
+webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html [ Skip ]
+webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ Skip ]
 
 # These inspector tests fell out of the radar after the transition to NRWT
 # Some time out and some are flaky or present different baselines.
-Bug(GTK) inspector/timeline/timeline-paint.html [ Skip Timeout ]
-Bug(GTK) inspector/timeline/timeline-animation-frame.html [ Skip Timeout ]
-Bug(GTK) inspector/timeline/timeline-receive-response-event.html [ Skip Timeout ]
-Bug(GTK) inspector/elements/elements-inspect-iframe-from-different-domain.html [ Skip Timeout ]
-Bug(GTK) inspector/extensions/extensions-reload.html [ Skip Timeout ]
-Bug(GTK) inspector/debugger/source-frame.html [ Skip Timeout ]
-Bug(GTK) inspector/debugger/scripts-panel.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/console-resource-errors.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/console-cross-origin-iframe-logging.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/extensions-network-redirect.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/inspect-element.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/resource-har-conversion.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/resource-har-pages.html [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/resource-main-cookies.php [ Skip Timeout ]
-Bug(GTK) http/tests/inspector/resource-parameters.html [ Skip Timeout ]
+Bug(GTK) inspector/timeline/timeline-paint.html [ Skip ]
+Bug(GTK) inspector/timeline/timeline-animation-frame.html [ Skip ]
+Bug(GTK) inspector/timeline/timeline-receive-response-event.html [ Skip ]
+Bug(GTK) inspector/elements/elements-inspect-iframe-from-different-domain.html [ Skip ]
+Bug(GTK) inspector/extensions/extensions-reload.html [ Skip ]
+Bug(GTK) inspector/debugger/source-frame.html [ Skip ]
+Bug(GTK) inspector/debugger/scripts-panel.html [ Skip ]
+Bug(GTK) http/tests/inspector/console-resource-errors.html [ Skip ]
+Bug(GTK) http/tests/inspector/console-cross-origin-iframe-logging.html [ Skip ]
+Bug(GTK) http/tests/inspector/extensions-network-redirect.html [ Skip ]
+Bug(GTK) http/tests/inspector/inspect-element.html [ Skip ]
+Bug(GTK) http/tests/inspector/resource-har-conversion.html [ Skip ]
+Bug(GTK) http/tests/inspector/resource-har-pages.html [ Skip ]
+Bug(GTK) http/tests/inspector/resource-main-cookies.php [ Skip ]
+Bug(GTK) http/tests/inspector/resource-parameters.html [ Skip ]
 
-webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure Skip ]
-webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-frame-add.html [ Failure Skip ]
-webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html [ Failure Skip ]
-webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-reload.html [ Failure Skip ]
-webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Failure Skip ]
-webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Failure Skip ]
-webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Failure Skip ]
-webkit.org/b/64097 http/tests/inspector/network/network-disable-cache-memory.html [ Failure Skip ]
-webkit.org/b/64097 http/tests/inspector/network/network-disable-cache-xhrs.html [ Failure Skip ]
-webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure Skip ]
-webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Failure Skip ]
+webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Skip ]
+webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-frame-add.html [ Skip ]
+webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html [ Skip ]
+webkit.org/b/59706 http/tests/inspector/resource-tree/resource-tree-reload.html [ Skip ]
+webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Skip ]
+webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Skip ]
+webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Skip ]
+webkit.org/b/64097 http/tests/inspector/network/network-disable-cache-memory.html [ Skip ]
+webkit.org/b/64097 http/tests/inspector/network/network-disable-cache-xhrs.html [ Skip ]
+webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Skip ]
+webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Skip ]
 
 # JSC doesn't support heap profiling
-webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Failure Skip ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Skip ]
 
-webkit.org/b/37613 printing [ Failure Skip ]
-webkit.org/b/37613 editing/execCommand/print.html [ Skip Timeout ]
+webkit.org/b/37613 printing [ Skip ]
+webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
 # Need to dump context menu items on eventSender.contextClick(true).
 webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
@@ -1015,9 +1015,9 @@ webkit.org/b/38437 editing/pasteboard/5761530-1.html [ Failure ]
 Bug(GTK) http/tests/loading/preload-slow-loading.php [ Failure ]
 
 # Need setPrinting.
-webkit.org/b/20011 printing/setPrinting.html [ Failure Skip ]
-webkit.org/b/20011 printing/single-line-must-not-be-split-into-two-pages.html [ Failure Skip ]
-webkit.org/b/20011 printing/width-overflow.html [ Failure Skip ]
+webkit.org/b/20011 printing/setPrinting.html [ Skip ]
+webkit.org/b/20011 printing/single-line-must-not-be-split-into-two-pages.html [ Skip ]
+webkit.org/b/20011 printing/width-overflow.html [ Skip ]
 
 # Tests that fail because they assume a certain number of mouse
 # movements during drags or fail only in Xvfb
@@ -1080,7 +1080,7 @@ webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-external-entity-redirect.x
 
 # textInputController.hasGrammarMarker() is not implemented.
 Bug(GTK) editing/spelling/grammar.html [ Failure ]
-Bug(GTK) editing/spelling/grammar-paste.html [ Failure Skip ]
+Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 
 # TextCheckerEnchant::checkSpellingOfString doesn't return misspelled location and length for multiple words.
 Bug(GTK) editing/spelling/spelling-backspace-between-lines.html [ Failure ]
@@ -1123,26 +1123,26 @@ webkit.org/b/68979 http/tests/multipart/invalid-image-data.html
 webkit.org/b/68979 http/tests/multipart/load-last-non-html-frame.php [ Failure ]
 webkit.org/b/68979 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
 webkit.org/b/68979 http/tests/multipart/policy-ignore-crash.php [ Failure ]
-webkit.org/b/68979 http/tests/multipart/stop-crash.html [ Failure Skip ]
+webkit.org/b/68979 http/tests/multipart/stop-crash.html [ Skip ]
 
 # Fails because it does not throw a couple of expected exceptions
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 
 # Missing DRT AccessibilityController::addNotificationListener implementation
-webkit.org/b/70606 accessibility/aria-checkbox-sends-notification.html [ Failure Skip ]
-webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Failure Skip ]
-webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Failure Skip ]
-webkit.org/b/70606 accessibility/notification-listeners.html [ Failure Skip ]
+webkit.org/b/70606 accessibility/aria-checkbox-sends-notification.html [ Skip ]
+webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Skip ]
+webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Skip ]
+webkit.org/b/70606 accessibility/notification-listeners.html [ Skip ]
 
 # ARIA Roles not being exposed for tab, tabpanel and tablist
-webkit.org/b/84043 accessibility/aria-tab-roles.html [ Failure Skip ]
+webkit.org/b/84043 accessibility/aria-tab-roles.html [ Skip ]
 
 # Image links not properly exposed
-webkit.org/b/84044 accessibility/image-link.html [ Failure Skip ]
+webkit.org/b/84044 accessibility/image-link.html [ Skip ]
 
 # Expose title and alternative text for links in image maps
-webkit.org/b/84045 accessibility/image-map1.html [ Failure Skip ]
-webkit.org/b/84045 accessibility/image-map2.html [ Failure Skip ]
+webkit.org/b/84045 accessibility/image-map1.html [ Skip ]
+webkit.org/b/84045 accessibility/image-map2.html [ Skip ]
 
 # [DRT] didDetectXSS is not implemented
 webkit.org/b/71465 http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Failure ]
@@ -1233,7 +1233,7 @@ webkit.org/b/87951 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # Started failing after it was added in r116473
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
@@ -1254,7 +1254,7 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 webkit.org/b/86445 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
 
 # This test is affecting other tests and seems to be behaving incorrectly itself
-webkit.org/b/86771 fast/dom/gc-10.html [ Failure Skip ]
+webkit.org/b/86771 fast/dom/gc-10.html [ Skip ]
 
 # Failing after r120145 on both GTK and EFL
 webkit.org/b/88961 http/tests/misc/redirect-to-about-blank.html [ Failure ]
@@ -1325,7 +1325,7 @@ webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
-webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Failure Skip ]
+webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Skip ]
 
 webkit.org/b/94186 fast/forms/time-multiple-fields
 

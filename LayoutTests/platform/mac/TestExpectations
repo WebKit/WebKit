@@ -65,7 +65,7 @@ webkit.org/b/74432 fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
 
 # Flakey media tests
 webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
-webkit.org/b/97259 media/track/track-cue-rendering-inner-timestamps.html [ Failure Skip ]
+webkit.org/b/97259 media/track/track-cue-rendering-inner-timestamps.html [ Skip ]
 
 # Rebaseline after bug 71705. All differences are due to the fact that table captions now
 # expand to the full width of the table.
@@ -177,19 +177,19 @@ webkit.org/b/74874 fast/table/027-vertical.html [ Failure ]
 
 # Need rebaselining. Only FAIL is suppressed because that is all the buildbots check, however
 # images need to be rebaselined too.
-webkit.org/b/69210 fast/encoding/utf-16-big-endian.html [ Failure Skip ]
+webkit.org/b/69210 fast/encoding/utf-16-big-endian.html [ Skip ]
 webkit.org/b/69210 fast/encoding/utf-16-little-endian.html [ Failure ]
 webkit.org/b/69210 fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=81276
 # Allowed to regress to fix a crash.
-webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Failure Skip ]
+webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Skip ]
 webkit.org/b/69210 fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
 
 # Tiled-layer compositing tests are flakey.
 webkit.org/b/82546 compositing/tiling/crash-reparent-tiled-layer.html [ Failure Pass ]
 
 # Requires rebaseline after bug 83978
-webkit.org/b/83978 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html [ Failure Skip ]
+webkit.org/b/83978 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html [ Skip ]
 
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
@@ -242,13 +242,13 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 webkit.org/b/85565 fast/css/border-solid-single-edge-antialias.html [ ImageOnlyFailure ]
 
 # Interferes with the tests that should pass
-webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Failure Skip ]
+webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
 webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ Missing Pass ]
 
 # Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
-webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure Skip ]
+webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
 webkit.org/b/85310 ietestcenter/css3/valuesandunits/units-010.htm [ ImageOnlyFailure ]
 
 # IETC namespace failures
@@ -290,7 +290,7 @@ webkit.org/b/88171 css1/formatting_model/floating_elements.html [ Failure ]
 webkit.org/b/84186 fast/text-autosizing
 
 # Dialog element is not yet enabled.
-webkit.org/b/84635 fast/dom/HTMLDialogElement [ Failure Skip ]
+webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
 # INPUT_TYPE_DATE is not enabled on the Mac
 webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
@@ -348,7 +348,7 @@ webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Fai
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
-webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip Timeout ]
+webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
 
 // Paints black behind the test image instead of the expected green.
 BUGWK97170 : http/tests/images/png-partial-load-no-alpha.html = IMAGE
