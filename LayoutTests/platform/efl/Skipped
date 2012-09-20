@@ -218,7 +218,6 @@ http/tests/misc/acid2-pixel.html
 http/tests/multipart/invalid-image-data.html
 
 # BUG: composited area is transparent
-compositing/geometry/fixed-position.html
 compositing/geometry/vertical-scroll-composited.html
 
 # BUG: new windows do not have scrollbars
