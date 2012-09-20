@@ -72,7 +72,6 @@ var ClassNames = {
  */
 var global = {
     argumentsReceived: false,
-    hadKeyEvent: false,
     params: null
 };
 
@@ -267,11 +266,9 @@ function validateArguments(args) {
  * @param {!Object} args
  */
 function initialize(args) {
-    var main = $("main");
-    main.classList.add(ClassNames.NoFocusRing);
-
     var errorString = validateArguments(args);
     if (errorString) {
+        var main = $("main");
         main.textContent = "Internal error: " + errorString;
         resizeWindow(main.offsetWidth, main.offsetHeight);
     } else {
@@ -305,6 +302,7 @@ function CalendarPicker(element, config) {
     this.step = (typeof this._config.step !== undefined) ? this._config.step * CalendarPicker.BaseStep : CalendarPicker.BaseStep;
     this.yearMonthController = new YearMonthController(this);
     this.daysTable = new DaysTable(this);
+    this._hadKeyEvent = false;
     this._layout();
     var initialDate = parseDateString(this._config.currentValue);
     if (initialDate < this.minimumDate)
@@ -328,6 +326,8 @@ CalendarPicker.prototype._layout = function() {
     this.yearMonthController.attachTo(this._element);
     this.daysTable.attachTo(this._element);
     this._layoutButtons();
+    // DaysTable will have focus but we don't want to show its focus ring until the first key event.
+    this._element.classList.add(ClassNames.NoFocusRing);
 };
 
 CalendarPicker.prototype.handleToday = function() {
@@ -1056,7 +1056,7 @@ DaysTable.prototype._handleMouseOut = function(event) {
  * @param {Event} event
  */
 DaysTable.prototype._handleKey = function(event) {
-    maybeUpdateFocusStyle();
+    this.picker.maybeUpdateFocusStyle();
     var x = this._x;
     var y = this._y;
     var key = event.keyIdentifier;
@@ -1156,7 +1156,7 @@ DaysTable.prototype.updateSelection = function(event, x, y) {
  * @param {!Event} event
  */
 CalendarPicker.prototype._handleBodyKeyDown = function(event) {
-    maybeUpdateFocusStyle();
+    this.maybeUpdateFocusStyle();
     var key = event.keyIdentifier;
     if (key == "U+0009") {
         if (!event.shiftKey && document.activeElement == global.lastFocusableControl) {
@@ -1178,11 +1178,11 @@ CalendarPicker.prototype._handleBodyKeyDown = function(event) {
         this.handleCancel();
 }
 
-function maybeUpdateFocusStyle() {
-    if (global.hadKeyEvent)
+CalendarPicker.prototype.maybeUpdateFocusStyle = function() {
+    if (this._hadKeyEvent)
         return;
-    global.hadKeyEvent = true;
-    $("main").classList.remove(ClassNames.NoFocusRing);
+    this._hadKeyEvent = true;
+    this._element.classList.remove(ClassNames.NoFocusRing);
 }
 
 if (window.dialogArguments) {
