@@ -533,6 +533,8 @@ void BackingStorePrivate::renderJob()
     if (!shouldPerformRenderJobs())
         return;
 
+    instrumentBeginFrame();
+
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderJob");
 #endif

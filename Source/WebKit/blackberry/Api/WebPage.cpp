@@ -5673,6 +5673,8 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     Platform::log(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
 #endif
 
+    m_backingStore->d->instrumentBeginFrame();
+
     // The commit timer may have fired just before the layout timer, or for some
     // other reason we need layout. It's not allowed to commit when a layout is
     // pending, becaues a commit can cause parts of the web page to be rendered

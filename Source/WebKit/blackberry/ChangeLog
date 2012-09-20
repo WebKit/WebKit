@@ -1,3 +1,20 @@
+2012-09-20  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] To support "Frames View" of "TimeLine" panel  in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=96077
+
+        Reviewed by Pavel Feldman.
+
+        A minor modification to make the inspecting results more accurate.
+        Internally reviewd by Arvid, Robin.C, and Konrad.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::render):
+
 2012-09-19  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Basic authentication challenge credentials for stored credentials again after restarting browser
