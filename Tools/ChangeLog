@@ -1,3 +1,17 @@
+2012-09-20  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][DRT]DumpRenderTree needs to reset focus state when test starts.
+        https://bugs.webkit.org/show_bug.cgi?id=97087
+
+        Reviewed by Gyuyoung Kim.
+
+        Add focusing a main frame on settings reset.
+        After editing/undo/undo-iframe-location-change was executed a frame
+        was left in unfocused state. This caused flakiness in two tests results.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-09-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Add eventSender.gestureTap

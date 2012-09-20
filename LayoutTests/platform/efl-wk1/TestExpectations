@@ -38,9 +38,6 @@ webkit.org/b/30724 [ Debug ] fast/loader/opaque-base-url.html [ Crash ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Test passes, but editing delegates does not match expected ones
-Bug(EFL) editing/undo/undo-indent.html [ Failure Pass ]
-Bug(EFL) editing/undo/undo-misspellings.html [ Failure Pass ]
-
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Failure Pass ]
 

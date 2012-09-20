@@ -292,6 +292,8 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 
     ewk_history_clear(ewk_view_history_get(mainView()));
 
+    ewk_frame_feed_focus_in(mainFrame());
+
     ewk_cookies_clear();
     ewk_cookies_policy_set(EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
 
