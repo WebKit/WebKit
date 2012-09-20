@@ -1304,12 +1304,15 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
         .setNodeId(pushNodePathToFrontend(node))
         .setHandlerBody(eventListenerHandlerBody(node->document(), eventListener.get()));
     String sourceName;
+    String scriptId;
     int lineNumber;
-    if (eventListenerHandlerLocation(node->document(), eventListener.get(), sourceName, lineNumber)) {
+    if (eventListenerHandlerLocation(node->document(), eventListener.get(), sourceName, scriptId, lineNumber)) {
         RefPtr<TypeBuilder::Debugger::Location> location = TypeBuilder::Debugger::Location::create()
-            .setScriptId(sourceName)
+            .setScriptId(scriptId)
             .setLineNumber(lineNumber);
         value->setLocation(location);
+        if (!sourceName.isEmpty())
+            value->setSourceName(sourceName);
     }
     return value.release();
 }

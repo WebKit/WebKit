@@ -72,9 +72,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         checkbox.addEventListener("click", this._breakpointCheckboxClicked.bind(this, breakpoint), false);
         element.appendChild(checkbox);
 
-        var url = uiLocation.uiSourceCode.url;
-        var displayName = url ? WebInspector.displayNameForURL(url) : WebInspector.UIString("(program)");
-        var labelElement = document.createTextNode(displayName + ":" + (uiLocation.lineNumber + 1));
+        var labelElement = document.createTextNode(WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber));
         element.appendChild(labelElement);
 
         var snippetElement = document.createElement("div");

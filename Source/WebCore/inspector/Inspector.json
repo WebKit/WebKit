@@ -1588,7 +1588,8 @@
                     { "name": "isAttribute", "type": "boolean", "description": "<code>EventListener</code>'s isAttribute." },
                     { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
                     { "name": "handlerBody", "type": "string", "description": "Event handler function body." },
-                    { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." }
+                    { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." },
+                    { "name": "sourceName", "type": "string", "optional": true, "description": "Source script URL." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },

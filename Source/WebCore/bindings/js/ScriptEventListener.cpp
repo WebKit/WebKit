@@ -106,7 +106,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     return jsFunction->toString(scriptState)->value(scriptState);
 }
 
-bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, int& lineNumber)
+bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, String& scriptId, int& lineNumber)
 {
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);
     ASSERT(jsListener);
@@ -122,7 +122,9 @@ bool eventListenerHandlerLocation(Document* document, EventListener* eventListen
     JSC::FunctionExecutable* funcExecutable = jsFunction->jsExecutable();
     if (!funcExecutable)
         return false;
-    lineNumber = funcExecutable->lineNo();
+    lineNumber = funcExecutable->lineNo() - 1;
+    intptr_t funcSourceId = funcExecutable->sourceID();
+    scriptId = funcSourceId == SourceProvider::nullID ? "" : String::number(funcSourceId);
     sourceName = funcExecutable->sourceURL();
     return true;
 }

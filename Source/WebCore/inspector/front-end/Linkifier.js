@@ -121,8 +121,6 @@ WebInspector.Linkifier.DefaultFormatter.prototype = {
      */
     formatLiveAnchor: function(anchor, uiLocation)
     {
-        anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
-
         var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
         if (this._maxLength)
             text = text.trimMiddle(this._maxLength);

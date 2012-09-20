@@ -104,7 +104,7 @@ String eventListenerHandlerBody(Document* document, EventListener* listener)
     return toWebCoreStringWithNullCheck(function);
 }
 
-bool eventListenerHandlerLocation(Document* document, EventListener* listener, String& sourceName, int& lineNumber)
+bool eventListenerHandlerLocation(Document* document, EventListener* listener, String& sourceName, String& scriptId, int& lineNumber)
 {
     if (listener->type() != EventListener::JSEventListenerType)
         return false;
@@ -118,13 +118,15 @@ bool eventListenerHandlerLocation(Document* document, EventListener* listener, S
         return false;
 
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(object);
+    v8::Handle<v8::Value> scriptIdValue = function->GetScriptId();
+    scriptId = toWebCoreStringWithNullOrUndefinedCheck(scriptIdValue);
     v8::ScriptOrigin origin = function->GetScriptOrigin();
-    if (!origin.ResourceName().IsEmpty()) {
+    if (origin.ResourceName()->IsString() && !origin.ResourceName().IsEmpty())
         sourceName = toWebCoreString(origin.ResourceName());
-        lineNumber = function->GetScriptLineNumber() + 1;
-        return true;
-    }
-    return false;
+    else
+        sourceName = "";
+    lineNumber = function->GetScriptLineNumber();
+    return true;
 }
 
 } // namespace WebCore

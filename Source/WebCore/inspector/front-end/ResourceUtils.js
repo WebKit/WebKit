@@ -192,7 +192,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
  */
 WebInspector.formatLinkText = function(url, lineNumber)
 {
-    var text = WebInspector.displayNameForURL(url);
+    var text = url ? WebInspector.displayNameForURL(url) : WebInspector.UIString("(program)");
     if (typeof lineNumber === "number")
         text += ":" + (lineNumber + 1);
     return text;
