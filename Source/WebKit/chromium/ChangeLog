@@ -1,5 +1,11 @@
 2012-09-20  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed build fix. webkit_unit_tests have global constructors.
+
+        * WebKitUnitTests.gyp: Remove -Wglobal-constructors.
+
+2012-09-20  Tony Chang  <tony@chromium.org>
+
         [chromium] Enable more clang warnings
         https://bugs.webkit.org/show_bug.cgi?id=97257
 
