@@ -26,8 +26,6 @@
 
 namespace JSC {
 
-#define CHECK_ARRAY_CONSISTENCY 0
-
 // Overview of JSArray
 //
 // Properties of JSArray objects may be stored in one of three locations:

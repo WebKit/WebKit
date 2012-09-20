@@ -1,3 +1,44 @@
+2012-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        CHECK_ARRAY_CONSISTENCY isn't being used or tested, so we should remove it
+        https://bugs.webkit.org/show_bug.cgi?id=97260
+
+        Rubber stamped by Geoffrey Garen.
+        
+        Supporting it will become difficult as we add more indexing types. It makes more
+        sense to kill, especially since we don't appear to use it or test it, ever.
+
+        * runtime/ArrayConventions.h:
+        (JSC):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::copyHeaderFromDuringGC):
+        (ArrayStorage):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/JSArray.cpp:
+        (JSC::createArrayButterflyInDictionaryIndexingMode):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSArray):
+        (JSC::createArrayButterfly):
+        (JSC::JSArray::tryCreateUninitialized):
+        (JSC::constructArray):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC):
+        * runtime/JSObject.h:
+        (JSC::JSObject::initializeIndex):
+        (JSObject):
+
 2012-09-20  Mark Lam  <mark.lam@apple.com>
 
         Fixed a missing semicolon in the C++ llint backend.

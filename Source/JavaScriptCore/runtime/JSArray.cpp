@@ -60,10 +60,6 @@ Butterfly* createArrayButterflyInDictionaryIndexingMode(JSGlobalData& globalData
     storage->m_indexBias = 0;
     storage->m_sparseMap.clear();
     storage->m_numValuesInVector = 0;
-#if CHECK_ARRAY_CONSISTENCY
-    storage->m_initializationIndex = 0;
-    storage->m_inCompactInitialization = 0;
-#endif
     return butterfly;
 }
 
@@ -330,8 +326,6 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
 
 bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException)
 {
-    checkIndexingConsistency();
-
     ArrayStorage* storage = ensureArrayStorage(exec->globalData());
     unsigned length = storage->length();
 
@@ -392,14 +386,11 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
 
     storage->setLength(newLength);
 
-    checkIndexingConsistency();
     return true;
 }
 
 JSValue JSArray::pop(ExecState* exec)
 {
-    checkIndexingConsistency();
-    
     switch (structure()->indexingType()) {
     case ArrayClass:
         return jsUndefined();
@@ -424,7 +415,6 @@ JSValue JSArray::pop(ExecState* exec)
             
                 ASSERT(isLengthWritable());
                 storage->setLength(index);
-                checkIndexingConsistency();
                 return element;
             }
         }
@@ -441,7 +431,6 @@ JSValue JSArray::pop(ExecState* exec)
         // Call the [[Put]] internal method of O with arguments "length", indx, and true.
         setLength(exec, index, true);
         // Return element.
-        checkIndexingConsistency();
         return element;
     }
         
@@ -456,8 +445,6 @@ JSValue JSArray::pop(ExecState* exec)
 //  - pushing to an array of length 2^32-1 stores the property, but throws a range error.
 void JSArray::push(ExecState* exec, JSValue value)
 {
-    checkIndexingConsistency();
-    
     switch (structure()->indexingType()) {
     case ArrayClass: {
         putByIndexBeyondVectorLengthWithArrayStorage(exec, 0, value, true, createInitialArrayStorage(exec->globalData()));
@@ -483,7 +470,6 @@ void JSArray::push(ExecState* exec, JSValue value)
             storage->m_vector[length].set(exec->globalData(), this, value);
             storage->setLength(length + 1);
             ++storage->m_numValuesInVector;
-            checkIndexingConsistency();
             return;
         }
 
@@ -498,7 +484,6 @@ void JSArray::push(ExecState* exec, JSValue value)
 
         // Handled the same as putIndex.
         putByIndexBeyondVectorLengthWithArrayStorage(exec, storage->length(), value, true, storage);
-        checkIndexingConsistency();
         break;
     }
         
@@ -622,7 +607,6 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
         // side-effect from swapping the order of equal primitive values.
         qsort(storage->m_vector, size, sizeof(WriteBarrier<Unknown>), compareNumbersForQSort);
         
-        checkIndexingConsistency(SortConsistencyCheck);
         return;
     }
         
@@ -711,7 +695,6 @@ void JSArray::sort(ExecState* exec)
         
         Heap::heap(this)->popTempSortVector(&values);
         
-        checkIndexingConsistency(SortConsistencyCheck);
         return;
     }
         
@@ -807,7 +790,6 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
         
     case ArrayWithArrayStorage: {
         ArrayStorage* storage = m_butterfly->arrayStorage();
-        checkIndexingConsistency();
         
         // FIXME: This ignores exceptions raised in the compare function or in toNumber.
         
@@ -912,7 +894,6 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
         
         storage->m_numValuesInVector = newUsedVectorLength;
         
-        checkIndexingConsistency(SortConsistencyCheck);
         return;
     }
         
@@ -983,8 +964,6 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
 {
     ASSERT(!inSparseIndexingMode());
 
-    checkIndexingConsistency();
-    
     switch (structure()->indexingType()) {
     case ArrayClass:
         return 0;
@@ -1039,8 +1018,6 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
             storage->m_vector[i].clear();
         
         storage->m_numValuesInVector = newUsedVectorLength;
-        
-        checkIndexingConsistency(SortConsistencyCheck);
         
         return numDefined;
     }

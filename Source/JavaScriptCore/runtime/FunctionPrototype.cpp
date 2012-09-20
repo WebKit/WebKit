@@ -193,7 +193,6 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
 
     for (size_t i = 0; i < numBoundArgs; ++i)
         boundArgs->initializeIndex(exec->globalData(), i, exec->argument(i + 1));
-    boundArgs->completeInitialization(numBoundArgs);
 
     // If the [[Class]] internal property of Target is "Function", then ...
     // Else set the length own property of F to 0.
