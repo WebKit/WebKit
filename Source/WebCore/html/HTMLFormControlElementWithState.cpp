@@ -25,8 +25,12 @@
 #include "config.h"
 #include "HTMLFormControlElementWithState.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "FormController.h"
+#include "Frame.h"
 #include "HTMLFormElement.h"
+#include "Page.h"
 
 namespace WebCore {
 
@@ -54,6 +58,16 @@ bool HTMLFormControlElementWithState::shouldAutocomplete() const
     if (!form())
         return true;
     return form()->shouldAutocomplete();
+}
+
+void HTMLFormControlElementWithState::notifyFormStateChanged()
+{
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    if (Page* page = frame->page())
+        page->chrome()->client()->formStateDidChange(this);
 }
 
 bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const

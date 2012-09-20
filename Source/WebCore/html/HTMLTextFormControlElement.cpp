@@ -27,7 +27,6 @@
 
 #include "AXObjectCache.h"
 #include "Attribute.h"
-#include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"
@@ -38,7 +37,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
-#include "Page.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -457,16 +455,6 @@ void HTMLTextFormControlElement::parseAttribute(const Attribute& attribute)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attribute));
     else
         HTMLFormControlElementWithState::parseAttribute(attribute);
-}
-
-void HTMLTextFormControlElement::notifyFormStateChanged()
-{
-    Frame* frame = document()->frame();
-    if (!frame)
-        return;
-
-    if (Page* page = frame->page())
-        page->chrome()->client()->formStateDidChange(this);
 }
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const

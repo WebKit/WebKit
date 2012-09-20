@@ -77,7 +77,6 @@ public:
     virtual HTMLElement* innerTextElement() const = 0;
 
     void selectionChanged(bool userTriggered);
-    void notifyFormStateChanged();
     bool lastChangeWasUserEdit() const;
     void setInnerTextValue(const String&);
     String innerTextValue() const;
