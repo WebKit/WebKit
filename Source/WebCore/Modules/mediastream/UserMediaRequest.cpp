@@ -36,6 +36,7 @@
 #include "UserMediaRequest.h"
 
 #include "Dictionary.h"
+#include "Document.h"
 #include "LocalMediaStream.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamDescriptor.h"
@@ -67,6 +68,16 @@ UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaCon
 
 UserMediaRequest::~UserMediaRequest()
 {
+}
+
+Document* UserMediaRequest::ownerDocument()
+{
+    if (m_scriptExecutionContext) {
+        ASSERT(m_scriptExecutionContext->isDocument());
+        return static_cast<Document*>(m_scriptExecutionContext);
+    }
+
+    return 0;
 }
 
 void UserMediaRequest::start()

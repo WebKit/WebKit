@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class Dictionary;
+class Document;
 class MediaStreamDescriptor;
 class UserMediaController;
 
@@ -55,6 +56,7 @@ public:
 
     NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
     NavigatorUserMediaErrorCallback* errorCallback() const { return m_errorCallback.get(); }
+    Document* ownerDocument();
 
     void start();
 

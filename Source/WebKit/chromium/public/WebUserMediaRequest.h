@@ -40,7 +40,7 @@ class UserMediaRequest;
 }
 
 namespace WebKit {
-
+class WebDocument;
 class WebMediaStreamDescriptor;
 class WebMediaStreamSource;
 class WebString;
@@ -67,9 +67,7 @@ public:
     WEBKIT_EXPORT bool video() const;
 
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
-
-    // DEPRECATED
-    WEBKIT_EXPORT void requestSucceeded(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources);
+    WEBKIT_EXPORT WebDocument ownerDocument() const;
 
     WEBKIT_EXPORT void requestSucceeded(const WebMediaStreamDescriptor&);
 

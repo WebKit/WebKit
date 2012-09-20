@@ -33,6 +33,7 @@
 
 #include "WebUserMediaClientMock.h"
 
+#include "WebDocument.h"
 #include "WebMediaStreamRegistry.h"
 #include "WebUserMediaRequest.h"
 #include "platform/WebMediaStreamDescriptor.h"
@@ -56,6 +57,11 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
 {
     ASSERT(!streamRequest.isNull());
     WebUserMediaRequest request = streamRequest;
+
+    if (request.ownerDocument().isNull() || !request.ownerDocument().frame()) {
+        request.requestFailed();
+        return;
+    }
 
     const size_t zero = 0;
     const size_t one = 1;

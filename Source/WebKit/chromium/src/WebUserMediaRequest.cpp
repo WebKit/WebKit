@@ -35,12 +35,11 @@
 #include "WebUserMediaRequest.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
-#include "Page.h"
 #include "SecurityOrigin.h"
 #include "UserMediaRequest.h"
+#include "WebDocument.h"
 #include "WebSecurityOrigin.h"
 #include "platform/WebMediaStreamDescriptor.h"
 #include "platform/WebMediaStreamSource.h"
@@ -64,50 +63,37 @@ void WebUserMediaRequest::reset()
 
 bool WebUserMediaRequest::audio() const
 {
+    ASSERT(!isNull());
     return m_private->audio();
 }
 
 bool WebUserMediaRequest::video() const
 {
+    ASSERT(!isNull());
     return m_private->video();
 }
 
 WebSecurityOrigin WebUserMediaRequest::securityOrigin() const
 {
-    ASSERT(m_private->scriptExecutionContext());
+    ASSERT(!isNull() && m_private->scriptExecutionContext());
     return WebSecurityOrigin(m_private->scriptExecutionContext()->securityOrigin());
 }
 
-void WebUserMediaRequest::requestSucceeded(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources)
+WebDocument WebUserMediaRequest::ownerDocument() const
 {
-    if (m_private.isNull())
-        return;
-
-    MediaStreamSourceVector audio;
-    for (size_t i = 0; i < audioSources.size(); ++i) {
-        MediaStreamSource* curr = audioSources[i];
-        audio.append(curr);
-    }
-    MediaStreamSourceVector video;
-    for (size_t i = 0; i < videoSources.size(); ++i) {
-        MediaStreamSource* curr = videoSources[i];
-        video.append(curr);
-    }
-
-    m_private->succeed(audio, video);
+    ASSERT(!isNull());
+    return WebDocument(m_private->ownerDocument());
 }
 
 void WebUserMediaRequest::requestSucceeded(const WebMediaStreamDescriptor& streamDescriptor)
 {
-    ASSERT(!streamDescriptor.isNull());
-    if (m_private.isNull())
-        return;
-
+    ASSERT(!isNull() && !streamDescriptor.isNull());
     m_private->succeed(streamDescriptor);
 }
 
 void WebUserMediaRequest::requestFailed()
 {
+    ASSERT(!isNull());
     m_private->fail();
 }
 

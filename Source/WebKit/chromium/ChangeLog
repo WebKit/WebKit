@@ -1,3 +1,23 @@
+2012-09-20  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Extend UserMediaRequest with a ownerDocument method
+        https://bugs.webkit.org/show_bug.cgi?id=97095
+
+        Reviewed by Adam Barth.
+
+        Chromium need to know exactly which frame called getUserMedia so that it can clean
+        away the stream when the frame goes away.
+        Since that information is available in webkit add an accessor method.
+
+        Also taking the opportunity to remove an unused deprecated method,
+        and adding asserts in case the object is empty.
+
+        * public/WebUserMediaRequest.h:
+        (WebKit):
+        (WebUserMediaRequest):
+        * src/WebUserMediaRequest.cpp:
+        (WebKit::WebUserMediaRequest::ownerDocument):
+
 2012-09-20  Mike West  <mkwst@google.com>
 
         [chromium] Adding the 'google_apis' directory to .gitignore.
