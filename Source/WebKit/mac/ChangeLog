@@ -1,3 +1,19 @@
+2012-09-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of adding a setting and API for disabling screen font substitution
+        https://bugs.webkit.org/show_bug.cgi?id=97168
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPreferenceKeysPrivate.h: Defined WebKitScreenFontSubstitutionEnabledKey.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Added a default value of YES for the new preference key.
+        (-[WebPreferences setScreenFontSubstitutionEnabled:]): Added this setter.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Added a call to Settings::setScreenFontSubstitutionEnabled
+        to push the preference down to Settings.
+
 2012-09-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12316935> [mac WebKit1]: -[WebView _setPaginationBehavesLikeColumns:] is a no-op

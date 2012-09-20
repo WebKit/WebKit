@@ -399,6 +399,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
+        [NSNumber numberWithBool:YES],  WebKitScreenFontSubstitutionEnabledKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1737,6 +1738,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setDiagnosticLoggingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitDiagnosticLoggingEnabledKey];
+}
+
+- (BOOL)screenFontSubstitutionEnabled
+{
+    return [self _boolValueForKey:WebKitScreenFontSubstitutionEnabledKey];
+}
+
+- (void)setScreenFontSubstitutionEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitScreenFontSubstitutionEnabledKey];
 }
 
 @end

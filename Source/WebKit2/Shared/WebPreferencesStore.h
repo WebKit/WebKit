@@ -128,6 +128,7 @@ namespace WebKit {
     macro(ScrollingPerformanceLoggingEnabled, scrollingPerformanceLoggingEnabled, Bool, bool, false) \
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, 0) \
     macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED) \
+    macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, true) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

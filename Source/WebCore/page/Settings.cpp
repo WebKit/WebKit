@@ -130,6 +130,7 @@ Settings::Settings(Page* page)
     , m_minimumLogicalFontSize(0)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
+    , m_screenFontSubstitutionEnabled(true)
     , m_validationMessageTimerMagnification(50)
     , m_minimumAccelerated2dCanvasSize(257 * 256)
     , m_layoutFallbackWidth(980)
@@ -415,6 +416,15 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
         return;
 
     m_defaultFixedFontSize = defaultFontSize;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void Settings::setScreenFontSubstitutionEnabled(bool screenFontSubstitutionEnabled)
+{
+    if (m_screenFontSubstitutionEnabled == screenFontSubstitutionEnabled)
+        return;
+
+    m_screenFontSubstitutionEnabled = screenFontSubstitutionEnabled;
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
