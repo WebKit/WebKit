@@ -74,6 +74,7 @@ PerfTestRunner.computeStatistics = function (times, unit) {
 
     // Compute the mean and variance using a numerically stable algorithm.
     var squareSum = 0;
+    result.values = times;
     result.mean = data[0];
     result.sum = data[0];
     for (var i = 1; i < data.length; ++i) {
@@ -99,6 +100,7 @@ PerfTestRunner.logStatistics = function (values, unit, title) {
 PerfTestRunner.printStatistics = function (statistics, title) {
     this.log("");
     this.log(title);
+    this.log("values " + statistics.values.join(', ') + " " + statistics.unit)
     this.log("avg " + statistics.mean + " " + statistics.unit);
     this.log("median " + statistics.median + " " + statistics.unit);
     this.log("stdev " + statistics.stdev + " " + statistics.unit);
