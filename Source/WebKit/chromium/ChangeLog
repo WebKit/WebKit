@@ -1,3 +1,11 @@
+2012-09-20  Dirk Pranke  <dpranke@chromium.org>
+
+        roll Chromium to r157829.
+
+        Unreviewed, deps change.
+
+        * DEPS:
+
 2012-09-20  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, chromium win build fix.
