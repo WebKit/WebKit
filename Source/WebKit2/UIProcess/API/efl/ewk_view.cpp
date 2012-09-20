@@ -26,6 +26,7 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
+#include "WKColorPickerResultListener.h"
 #include "WKEinaSharedString.h"
 #include "WKFindOptions.h"
 #include "WKRetainPtr.h"
@@ -98,6 +99,7 @@ struct _Ewk_View_Private_Data {
     Ewk_Back_Forward_List* backForwardList;
     OwnPtr<Ewk_Settings> settings;
     bool areMouseEventsEnabled;
+    WKColorPickerResultListenerRef colorPickerResultListener;
 
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
@@ -116,6 +118,7 @@ struct _Ewk_View_Private_Data {
         : cursorObject(0)
         , backForwardList(0)
         , areMouseEventsEnabled(false)
+        , colorPickerResultListener(0)
         , popupMenuProxy(0)
         , popupMenuItems(0)
 #ifdef HAVE_ECORE_X
@@ -1696,4 +1699,54 @@ WKEinaSharedString ewk_view_run_javascript_prompt(Evas_Object* ewkView, const WK
         return WKEinaSharedString();
 
     return WKEinaSharedString::adopt(smartData->api->run_javascript_prompt(smartData, message, defaultValue));
+}
+
+#if ENABLE(INPUT_TYPE_COLOR)
+/**
+ * @internal
+ * Reqeusts to show external color picker.
+ */
+void ewk_view_color_picker_request(Evas_Object* ewkView, int r, int g, int b, int a, WKColorPickerResultListenerRef listener)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    EINA_SAFETY_ON_NULL_RETURN(smartData->api->input_picker_color_request);
+
+    priv->colorPickerResultListener = listener;
+
+    smartData->api->input_picker_color_request(smartData, r, g, b, a);
+}
+
+/**
+ * @internal
+ * Reqeusts to hide external color picker.
+ */
+void ewk_view_color_picker_dismiss(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    EINA_SAFETY_ON_NULL_RETURN(smartData->api->input_picker_color_dismiss);
+
+    priv->colorPickerResultListener = 0;
+
+    smartData->api->input_picker_color_dismiss(smartData);
+}
+#endif
+
+Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, int b, int a)
+{
+#if ENABLE(INPUT_TYPE_COLOR)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->colorPickerResultListener, false);
+
+    WebCore::Color color = WebCore::Color(r, g, b, a);
+    const WKStringRef colorString = WKStringCreateWithUTF8CString(color.serialized().utf8().data());
+    WKColorPickerResultListenerSetColor(priv->colorPickerResultListener, colorString);
+    priv->colorPickerResultListener = 0;
+
+    return true;
+#else
+    return false;
+#endif
 }

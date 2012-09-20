@@ -624,3 +624,94 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     EXPECT_STREQ(ewk_view_title_get(webView()), "null");
     EXPECT_EQ(promptCallbackData.called, false);
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+static const int initialRed = 0x12;
+static const int initialGreen = 0x34;
+static const int initialBlue = 0x56;
+static const int initialAlpha = 0xff;
+static const int changedRed = 0x98;
+static const int changedGreen = 0x76;
+static const int changedBlue = 0x54;
+static const int changedAlpha = 0xff;
+
+static bool isColorPickerShown = false;
+
+static void onColorPickerDone(void* userData, Evas_Object*, void*)
+{
+    bool* handled = static_cast<bool*>(userData);
+
+    *handled = true;
+}
+
+static unsigned char setColorPickerColor(void* data)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+
+    // 3. Change color to changed color.
+    EXPECT_TRUE(ewk_view_color_picker_color_set(smartData->self, changedRed, changedGreen, changedBlue, changedAlpha));
+
+    evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
+
+    return 0;
+}
+
+static Eina_Bool showColorPicker(Ewk_View_Smart_Data* smartData, int r, int g, int b, int a)
+{
+    static bool isFirstRun = true;
+
+    isColorPickerShown = true;
+
+    if (isFirstRun) {
+        // 1. Check initial value from html file.
+        EXPECT_EQ(r, initialRed);
+        EXPECT_EQ(g, initialGreen);
+        EXPECT_EQ(b, initialBlue);
+        EXPECT_EQ(a, initialAlpha);
+
+        isFirstRun = false;
+    } else {
+        // 4. Input values should be same as changed color.
+        EXPECT_EQ(r, changedRed);
+        EXPECT_EQ(g, changedGreen);
+        EXPECT_EQ(b, changedBlue);
+        EXPECT_EQ(a, changedAlpha);
+    }
+
+    // 2. Return after making a color picker.
+    ecore_timer_add(0.0, setColorPickerColor, smartData);
+    return true;
+}
+
+static Eina_Bool hideColorPicker(Ewk_View_Smart_Data*)
+{
+    // Test color picker is shown.
+    EXPECT_TRUE(isColorPickerShown);
+    isColorPickerShown = false;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
+{
+    Ewk_View_Smart_Class* api = ewkViewClass();
+    api->input_picker_color_request = showColorPicker;
+    api->input_picker_color_dismiss = hideColorPicker;
+
+    loadUrlSync("data:text/html,<input type='color' value='#123456'>");
+
+    // Click input element.
+    mouseClick(30, 20);
+
+    bool handled = false;
+    evas_object_smart_callback_add(webView(), "input,type,color,request", onColorPickerDone, &handled);
+    while (!handled)
+        ecore_main_loop_iterate();
+
+    // Click input element again.
+    mouseClick(30, 20);
+
+    handled = false;
+    while (!handled)
+        ecore_main_loop_iterate();
+    evas_object_smart_callback_del(webView(), "input,type,color,request", onColorPickerDone);
+}
+#endif // ENABLE(INPUT_TYPE_COLOR)

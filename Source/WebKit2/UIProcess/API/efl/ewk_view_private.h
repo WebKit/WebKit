@@ -109,4 +109,9 @@ void ewk_view_run_javascript_alert(Evas_Object* ewkView, const WKEinaSharedStrin
 bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, const WKEinaSharedString& message);
 WKEinaSharedString ewk_view_run_javascript_prompt(Evas_Object* ewkView, const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
 
+#if ENABLE(INPUT_TYPE_COLOR)
+void ewk_view_color_picker_request(Evas_Object* ewkView, int r, int g, int b, int a, WKColorPickerResultListenerRef listener);
+void ewk_view_color_picker_dismiss(Evas_Object* ewkView);
+#endif
+
 #endif // ewk_view_private_h

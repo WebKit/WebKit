@@ -60,6 +60,19 @@ static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringR
     return value ? WKStringCreateWithUTF8CString(value) : 0;
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+static void showColorPicker(WKPageRef, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo)
+{
+    WebCore::Color color = WebCore::Color(WebKit::toWTFString(initialColor));
+    ewk_view_color_picker_request(toEwkView(clientInfo), color.red(), color.green(), color.blue(), color.alpha(), listener);
+}
+
+static void hideColorPicker(WKPageRef, const void* clientInfo)
+{
+    ewk_view_color_picker_dismiss(toEwkView(clientInfo));
+}
+#endif
+
 void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageUIClient uiClient;
@@ -71,5 +84,11 @@ void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    uiClient.showColorPicker = showColorPicker;
+    uiClient.hideColorPicker = hideColorPicker;
+#endif
+
     WKPageSetPageUIClient(pageRef, &uiClient);
 }

@@ -1,3 +1,34 @@
+2012-09-20  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Implemented color picker API
+        https://bugs.webkit.org/show_bug.cgi?id=91832
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for color picker API for EFL port in WebKit2.
+
+        The external application can implement input picker by overriding
+        smart class function.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (ewk_view_color_picker_request):
+        (ewk_view_color_picker_dismiss):
+        (ewk_view_color_picker_color_set):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_ui_client.cpp:
+        (showColorPicker):
+        (hideColorPicker):
+        (ewk_view_ui_client_attach):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (onColorPickerDone):
+        (setColorPickerColor):
+        (showColorPicker):
+        (hideColorPicker):
+        (TEST_F):
+
 2012-09-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CoordinatedGraphics] Don't reset m_shouldSyncFrame in flushPendingLayerChanges

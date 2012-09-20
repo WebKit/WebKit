@@ -121,13 +121,18 @@ struct _Ewk_View_Smart_Class {
     void (*run_javascript_alert)(Ewk_View_Smart_Data *sd, const char *message);
     Eina_Bool (*run_javascript_confirm)(Ewk_View_Smart_Data *sd, const char *message);
     const char *(*run_javascript_prompt)(Ewk_View_Smart_Data *sd, const char *message, const char *default_value); /**< return string should be stringshared. */
+
+    // color picker:
+    //   - Shows and hides color picker.
+    Eina_Bool (*input_picker_color_request)(Ewk_View_Smart_Data *sd, int r, int g, int b, int a);
+    Eina_Bool (*input_picker_color_dismiss)(Ewk_View_Smart_Data *sd);
 };
 
 /**
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 4UL
+#define EWK_VIEW_SMART_CLASS_VERSION 5UL
 
 /**
  * Initializer for whole Ewk_View_Smart_Class structure.
@@ -139,7 +144,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.
@@ -660,6 +665,23 @@ EAPI Eina_Bool ewk_view_mouse_events_enabled_set(Evas_Object *o, Eina_Bool enabl
  * @return @c EINA_TRUE if the mouse events are enabled or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object *o);
+
+/*
+ * Sets the user chosen color. To be used when implementing a color picker.
+ *
+ * The function should only be called when a color has been requested by the document.
+ * If called when this is not the case or when the input picker has been dismissed, this
+ * function will fail and return EINA_FALSE.
+ *
+ * @param o view object contains color picker
+ * @param r red channel value to be set
+ * @param g green channel value to be set
+ * @param b blue channel value to be set
+ * @param a alpha channel value to be set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_color_picker_color_set(Evas_Object *o, int r, int g, int b, int a);
 
 #ifdef __cplusplus
 }
