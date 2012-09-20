@@ -985,10 +985,10 @@ DaysTable.prototype.selectDate = function(date) {
  * @return {!boolean}
  */
 DaysTable.prototype._maybeSetPreviousMonth = function() {
-    var year = global.yearMonthController.year();
-    var month = global.yearMonthController.month();
+    var year = this.picker.yearMonthController.year();
+    var month = this.picker.yearMonthController.month();
     var thisMonthStartTime = createUTCDate(year, month, 1).getTime();
-    if (this.minimumDate.getTime() >= thisMonthStartTime)
+    if (this.picker.minimumDate.getTime() >= thisMonthStartTime)
         return false;
     if (month == 0) {
         year--;
@@ -1003,8 +1003,8 @@ DaysTable.prototype._maybeSetPreviousMonth = function() {
  * @return {!boolean}
  */
 DaysTable.prototype._maybeSetNextMonth = function() {
-    var year = global.yearMonthController.year();
-    var month = global.yearMonthController.month();
+    var year = this.picker.yearMonthController.year();
+    var month = this.picker.yearMonthController.month();
     if (month == 11) {
         year++;
         month = 0;

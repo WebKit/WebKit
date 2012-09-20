@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=date id=date value="2000-01-02">
+<script>
+description("Tests if calendar picker key bindings work as expected.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+sendKey(document.getElementById('date'), 'Down');
+
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.addEventListener("resize", function() {
+    debug('Check that page popup exists.');
+    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+
+    shouldBe('selectedDate()', '"2000-01-02"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+
+    debug('Check that arrow keys work properly even when going between weeks and months.');
+
+    eventSender.keyDown('upArrow');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+    // Move from first row of January 2000 to last row of December 1999.
+    eventSender.keyDown('upArrow');
+    shouldBe('selectedDate()', '"2000-01-02"');
+    shouldBe('selectedMonthYear()', '"1999-11"');
+    
+    eventSender.keyDown('downArrow');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+    eventSender.keyDown('downArrow');
+    shouldBe('selectedDate()', '"2000-01-02"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+
+    eventSender.keyDown('upArrow');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+
+    // Move from top left of January 2000 to bottom right of December 1999.
+    eventSender.keyDown('leftArrow');
+    shouldBe('selectedDate()', '"2000-01-08"');
+    shouldBe('selectedMonthYear()', '"1999-11"');
+
+    eventSender.keyDown('rightArrow');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('selectedMonthYear()', '"2000-0"');
+
+    finishJSTest();
+}, false);
+
+function selectedDate() {
+    var element = pickerWindow.document.querySelector(".day-selected");
+    if (!element)
+        return null;
+    return element.dataset.submitValue;
+}
+
+function selectedMonthYear() {
+    var element = pickerWindow.document.querySelector(".selected-month-year");
+    if (!element)
+        return null;
+    return element.dataset.value;
+}
+
+function sendKey(input, keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    input.dispatchEvent(event);
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+

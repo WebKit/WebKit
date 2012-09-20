@@ -1,0 +1,30 @@
+Tests if calendar picker key bindings work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+Check that page popup exists.
+PASS pickerWindow.pagePopupController.toString() is "[object PagePopupController]"
+PASS selectedDate() is "2000-01-02"
+PASS selectedMonthYear() is "2000-0"
+Check that arrow keys work properly even when going between weeks and months.
+PASS selectedDate() is "1999-12-26"
+PASS selectedMonthYear() is "2000-0"
+PASS selectedDate() is "2000-01-02"
+PASS selectedMonthYear() is "1999-11"
+PASS selectedDate() is "1999-12-26"
+PASS selectedMonthYear() is "2000-0"
+PASS selectedDate() is "2000-01-02"
+PASS selectedMonthYear() is "2000-0"
+PASS selectedDate() is "1999-12-26"
+PASS selectedMonthYear() is "2000-0"
+PASS selectedDate() is "2000-01-08"
+PASS selectedMonthYear() is "1999-11"
+PASS selectedDate() is "1999-12-26"
+PASS selectedMonthYear() is "2000-0"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
