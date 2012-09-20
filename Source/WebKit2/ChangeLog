@@ -1,3 +1,48 @@
+2012-09-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Same page navigation does not update view URI
+        https://bugs.webkit.org/show_bug.cgi?id=97094
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Handle didSameDocumentNavigationForFrame callback in
+        WKPageLoaderClient in order to update the view URI.
+        This fixes issues with the view URI not being updated
+        in case of a same page navigation.
+
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didSameDocumentNavigationForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (CallbackDataTimer):
+        (EWK2UnitTest::CallbackDataTimer::CallbackDataTimer):
+        (EWK2UnitTest::CallbackDataTimer::~CallbackDataTimer):
+        (EWK2UnitTest::CallbackDataTimer::isDone):
+        (EWK2UnitTest::CallbackDataTimer::setDone):
+        (EWK2UnitTest::CallbackDataTimer::didTimeOut):
+        (EWK2UnitTest::CallbackDataTimer::setTimedOut):
+        (EWK2UnitTest):
+        (CallbackDataExpectedValue):
+        (EWK2UnitTest::CallbackDataExpectedValue::CallbackDataExpectedValue):
+        (EWK2UnitTest::CallbackDataExpectedValue::expectedValue):
+        (EWK2UnitTest::onLoadFinished):
+        (EWK2UnitTest::timeOutWhileWaitingUntilLoadFinished):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilLoadFinished):
+        (EWK2UnitTest::onTitleChanged):
+        (EWK2UnitTest::timeOutWhileWaitingUntilTitleChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTitleChangedTo):
+        (EWK2UnitTest::onURIChanged):
+        (EWK2UnitTest::timeOutWhileWaitingUntilURIChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilURIChangedTo): Add convenience function to test
+        framework in order to wait until the view URI changes to a given value.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/resources/same_page_navigation.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F): Add corresponding unit test to verify fix and prevent regressions
+        in the future.
+
 2012-09-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of adding a setting and API for disabling screen font substitution

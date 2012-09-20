@@ -43,6 +43,7 @@ protected:
     void loadUrlSync(const char* url);
     bool waitUntilLoadFinished(double timeoutSeconds = -1);
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = -1);
+    bool waitUntilURIChangedTo(const char* expectedURI, double timeoutSeconds = -1);
     void mouseClick(int x, int y);
 
 private:

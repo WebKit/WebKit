@@ -133,6 +133,15 @@ static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedIt
     ewk_back_forward_list_changed(ewk_view_back_forward_list_get(ewkView), addedItem, removedItems);
 }
 
+static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    ewk_view_uri_update(ewkView);
+}
+
 void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageLoaderClient loadClient;
@@ -155,5 +164,6 @@ void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     loadClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
     loadClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
     loadClient.didChangeBackForwardList = didChangeBackForwardList;
+    loadClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }

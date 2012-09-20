@@ -30,6 +30,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace EWK2UnitTest;
 
@@ -359,6 +360,17 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
     waitUntilTitleChangedTo("fullscreen exited");
     ASSERT_TRUE(fullScreenCallbackCalled);
     checkFullScreenProperty(webView(), false);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
+{
+    // Tests that same page navigation updates the page URI.
+    String testUrl = environment->urlForResource("same_page_navigation.html").data();
+    loadUrlSync(testUrl.utf8().data());
+    ASSERT_STREQ(testUrl.utf8().data(), ewk_view_uri_get(webView()));
+    mouseClick(50, 50);
+    testUrl = testUrl + '#';
+    ASSERT_TRUE(waitUntilURIChangedTo(testUrl.utf8().data(), 10));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
