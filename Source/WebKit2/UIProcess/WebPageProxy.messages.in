@@ -177,6 +177,10 @@ messages -> WebPageProxy {
     BindAccessibilityTree(WTF::String plugID)
 #endif
 
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
+    InvalidateWidget()
+#endif
+
     # BackForward messages
     BackForwardAddItem(uint64_t itemID)
     BackForwardGoToItem(uint64_t itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle)

@@ -83,7 +83,10 @@ private:
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
-    void compositeLayersToContext();
+
+    enum CompositePurpose { ForResize, NotForResize };
+    void compositeLayersToContext(CompositePurpose = NotForResize);
+
     void flushAndRenderLayers();
     void cancelPendingLayerFlush();
 

@@ -110,9 +110,14 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void WebPageProxy::widgetMapped(uint64_t nativeWindowId)
+void WebPageProxy::setAcceleratedCompositingWindowId(uint64_t nativeWindowId)
 {
-    process()->send(Messages::WebPage::WidgetMapped(nativeWindowId), m_pageID);
+    process()->send(Messages::WebPage::SetAcceleratedCompositingWindowId(nativeWindowId), m_pageID);
+}
+
+void WebPageProxy::invalidateWidget()
+{
+    webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults(WEBKIT_WEB_VIEW_BASE(static_cast<PageClientImpl*>(m_pageClient)->viewWidget()));
 }
 #endif
 
