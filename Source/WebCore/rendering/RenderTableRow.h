@@ -68,7 +68,7 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const
     {
-        if (section()->hasSameDirectionAsTable())
+        if (section()->hasSameDirectionAs(table()))
             return style()->borderStart();
 
         return style()->borderEnd();
@@ -76,11 +76,14 @@ public:
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        if (section()->hasSameDirectionAsTable())
+        if (section()->hasSameDirectionAs(table()))
             return style()->borderEnd();
 
         return style()->borderStart();
     }
+
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }

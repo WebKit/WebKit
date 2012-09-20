@@ -543,6 +543,8 @@ public:
         return 0;
     }
 
+    bool hasSameDirectionAs(const RenderBox* object) const { return style()->direction() == object->style()->direction(); }
+
 protected:
     virtual void willBeDestroyed();
 

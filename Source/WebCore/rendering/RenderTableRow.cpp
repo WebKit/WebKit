@@ -82,6 +82,20 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
     }
 }
 
+const BorderValue& RenderTableRow::borderAdjoiningStartCell(const RenderTableCell* cell) const
+{
+    ASSERT_UNUSED(cell, !table()->cellBefore(cell));
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style()->borderStart();
+}
+
+const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell* cell) const
+{
+    ASSERT_UNUSED(cell, !table()->cellAfter(cell));
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style()->borderEnd();
+}
+
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.

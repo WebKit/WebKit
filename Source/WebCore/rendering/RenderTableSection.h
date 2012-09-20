@@ -117,14 +117,9 @@ public:
         Length logicalHeight;
     };
 
-    bool hasSameDirectionAsTable() const
-    {
-        return table()->style()->direction() == style()->direction();
-    }
-
     const BorderValue& borderAdjoiningTableStart() const
     {
-        if (hasSameDirectionAsTable())
+        if (hasSameDirectionAs(table()))
             return style()->borderStart();
 
         return style()->borderEnd();
@@ -132,11 +127,14 @@ public:
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        if (hasSameDirectionAsTable())
+        if (hasSameDirectionAs(table()))
             return style()->borderEnd();
 
         return style()->borderStart();
     }
+
+    const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
 
     const RenderTableCell* firstRowCellAdjoiningTableStart() const;
     const RenderTableCell* firstRowCellAdjoiningTableEnd() const;

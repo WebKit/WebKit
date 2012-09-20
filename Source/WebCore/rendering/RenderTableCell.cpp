@@ -422,18 +422,18 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
 
     // (2) The end border of the preceding cell.
     if (RenderTableCell* prevCell = table->cellBefore(this)) {
-        CollapsedBorderValue prevCellBorder = CollapsedBorderValue(prevCell->style()->borderEnd(), includeColor ? prevCell->style()->visitedDependentColor(endColorProperty) : Color(), BCELL);
+        CollapsedBorderValue prevCellBorder = CollapsedBorderValue(prevCell->borderAdjoiningCellAfter(this), includeColor ? prevCell->style()->visitedDependentColor(endColorProperty) : Color(), BCELL);
         result = chooseBorder(prevCellBorder, result);
         if (!result.exists())
             return result;
     } else if (isStartColumn) {
         // (3) Our row's start border.
-        result = chooseBorder(result, CollapsedBorderValue(parent()->style()->borderStart(), includeColor ? parent()->style()->visitedDependentColor(startColorProperty) : Color(), BROW));
+        result = chooseBorder(result, CollapsedBorderValue(row()->borderAdjoiningStartCell(this), includeColor ? parent()->style()->visitedDependentColor(startColorProperty) : Color(), BROW));
         if (!result.exists())
             return result;
-        
+
         // (4) Our row group's start border.
-        result = chooseBorder(result, CollapsedBorderValue(section()->style()->borderStart(), includeColor ? section()->style()->visitedDependentColor(startColorProperty) : Color(), BROWGROUP));
+        result = chooseBorder(result, CollapsedBorderValue(section()->borderAdjoiningStartCell(this), includeColor ? section()->style()->visitedDependentColor(startColorProperty) : Color(), BROWGROUP));
         if (!result.exists())
             return result;
     }
@@ -443,11 +443,11 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
     bool endColEdge;
     RenderTableCol* colElt = table->colElement(col(), &startColEdge, &endColEdge);
     if (colElt && startColEdge) {
-        result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderStart(), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
+        result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellStartBorder(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
         if (!result.exists())
             return result;
         if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentBefore()) {
-            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderStart(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellStartBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
         }
@@ -457,7 +457,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
     if (!isStartColumn) {
         colElt = table->colElement(col() -1, &startColEdge, &endColEdge);
         if (colElt && endColEdge) {
-            CollapsedBorderValue endBorder = CollapsedBorderValue(colElt->style()->borderEnd(), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL);
+            CollapsedBorderValue endBorder = CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL);
             result = chooseBorder(endBorder, result);
             if (!result.exists())
                 return result;
@@ -495,19 +495,19 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     if (!isEndColumn) {
         RenderTableCell* nextCell = table->cellAfter(this);
         if (nextCell && nextCell->style()) {
-            CollapsedBorderValue startBorder = CollapsedBorderValue(nextCell->style()->borderStart(), includeColor ? nextCell->style()->visitedDependentColor(startColorProperty) : Color(), BCELL);
+            CollapsedBorderValue startBorder = CollapsedBorderValue(nextCell->borderAdjoiningCellBefore(this), includeColor ? nextCell->style()->visitedDependentColor(startColorProperty) : Color(), BCELL);
             result = chooseBorder(result, startBorder);
             if (!result.exists())
                 return result;
         }
     } else {
         // (3) Our row's end border.
-        result = chooseBorder(result, CollapsedBorderValue(parent()->style()->borderEnd(), includeColor ? parent()->style()->visitedDependentColor(endColorProperty) : Color(), BROW));
+        result = chooseBorder(result, CollapsedBorderValue(row()->borderAdjoiningEndCell(this), includeColor ? parent()->style()->visitedDependentColor(endColorProperty) : Color(), BROW));
         if (!result.exists())
             return result;
         
         // (4) Our row group's end border.
-        result = chooseBorder(result, CollapsedBorderValue(section()->style()->borderEnd(), includeColor ? section()->style()->visitedDependentColor(endColorProperty) : Color(), BROWGROUP));
+        result = chooseBorder(result, CollapsedBorderValue(section()->borderAdjoiningEndCell(this), includeColor ? section()->style()->visitedDependentColor(endColorProperty) : Color(), BROWGROUP));
         if (!result.exists())
             return result;
     }
@@ -517,11 +517,11 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     bool endColEdge;
     RenderTableCol* colElt = table->colElement(col() + colSpan() - 1, &startColEdge, &endColEdge);
     if (colElt && endColEdge) {
-        result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderEnd(), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL));
+        result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellEndBorder(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL));
         if (!result.exists())
             return result;
         if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentAfter()) {
-            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderEnd(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
+            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellEndBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
         }
@@ -531,7 +531,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     if (!isEndColumn) {
         colElt = table->colElement(col() + colSpan(), &startColEdge, &endColEdge);
         if (colElt && startColEdge) {
-            CollapsedBorderValue startBorder = CollapsedBorderValue(colElt->style()->borderStart(), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL);
+            CollapsedBorderValue startBorder = CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL);
             result = chooseBorder(result, startBorder);
             if (!result.exists())
                 return result;

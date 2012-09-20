@@ -1317,15 +1317,29 @@ unsigned RenderTableSection::numColumns() const
     return result + 1;
 }
 
+const BorderValue& RenderTableSection::borderAdjoiningStartCell(const RenderTableCell* cell) const
+{
+    ASSERT_UNUSED(cell, !table()->cellBefore(cell));
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style()->borderStart();
+}
+
+const BorderValue& RenderTableSection::borderAdjoiningEndCell(const RenderTableCell* cell) const
+{
+    ASSERT_UNUSED(cell, !table()->cellAfter(cell));
+    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
+    return style()->borderEnd();
+}
+
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
 {
-    unsigned adjoiningStartCellColumnIndex = hasSameDirectionAsTable() ? 0 : table()->lastColumnIndex();
+    unsigned adjoiningStartCellColumnIndex = hasSameDirectionAs(table()) ? 0 : table()->lastColumnIndex();
     return cellAt(0, adjoiningStartCellColumnIndex).primaryCell();
 }
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableEnd() const
 {
-    unsigned adjoiningEndCellColumnIndex = hasSameDirectionAsTable() ? table()->lastColumnIndex() : 0;
+    unsigned adjoiningEndCellColumnIndex = hasSameDirectionAs(table()) ? table()->lastColumnIndex() : 0;
     return cellAt(0, adjoiningEndCellColumnIndex).primaryCell();
 }
 

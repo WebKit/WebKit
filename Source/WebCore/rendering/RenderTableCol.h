@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class RenderTable;
+class RenderTableCell;
 
 class RenderTableCol : public RenderBox {
 public:
@@ -66,6 +67,11 @@ public:
 
     // Returns the next column or column-group.
     RenderTableCol* nextColumn() const;
+
+    const BorderValue& borderAdjoiningCellStartBorder(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningCellEndBorder(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningCellBefore(const RenderTableCell*) const;
+    const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*) const;
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
