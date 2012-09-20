@@ -1,3 +1,18 @@
+2012-09-20  Patrick Gansterer  <paroga@webkit.org>
+
+        Add String::numberToStringFixedWidth()
+        https://bugs.webkit.org/show_bug.cgi?id=96330
+
+        Reviewed by Benjamin Poulain.
+
+        Add this new function as replacement for the ShouldRoundDecimalPlaces flag of String::number()
+        and remove the now unnecessary branch in String::number() for the old flags.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::number):
+        (WTF::String::numberToStringFixedWidth):
+        * wtf/text/WTFString.h:
+
 2012-09-19  Geoffrey Garen  <ggaren@apple.com>
 
         OSR exit sometimes neglects to create the arguments object

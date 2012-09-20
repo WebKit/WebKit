@@ -199,7 +199,7 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@_K@Z
         ?number@String@WTF@@SA?AV12@H@Z
         ?number@String@WTF@@SA?AV12@I@Z
-        ?number@String@WTF@@SA?AV12@NII@Z
+        ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
