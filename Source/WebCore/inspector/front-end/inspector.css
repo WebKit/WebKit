@@ -44,7 +44,7 @@ input[type="search"]:focus, input[type="text"]:focus {
 }
 
 .nowrap {
-    white-space: nowrap;
+    white-space: nowrap !important;
 }
 
 #toolbar {
