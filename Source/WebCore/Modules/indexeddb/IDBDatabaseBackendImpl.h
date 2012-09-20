@@ -113,17 +113,17 @@ private:
     TransactionSet m_transactions;
 
     class PendingSetVersionCall;
-    Deque<RefPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;
+    Deque<OwnPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;
 
     class PendingOpenCall;
-    Deque<RefPtr<PendingOpenCall> > m_pendingOpenCalls;
+    Deque<OwnPtr<PendingOpenCall> > m_pendingOpenCalls;
 
     class PendingOpenWithVersionCall;
-    Deque<RefPtr<PendingOpenWithVersionCall> > m_pendingOpenWithVersionCalls;
-    Deque<RefPtr<PendingOpenWithVersionCall> > m_pendingSecondHalfOpenWithVersionCalls;
+    Deque<OwnPtr<PendingOpenWithVersionCall> > m_pendingOpenWithVersionCalls;
+    OwnPtr<PendingOpenWithVersionCall> m_pendingSecondHalfOpenWithVersion;
 
     class PendingDeleteCall;
-    Deque<RefPtr<PendingDeleteCall> > m_pendingDeleteCalls;
+    Deque<OwnPtr<PendingDeleteCall> > m_pendingDeleteCalls;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
