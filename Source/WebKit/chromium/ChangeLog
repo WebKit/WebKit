@@ -1,3 +1,14 @@
+2012-09-20  David Grogan  <dgrogan@chromium.org>
+
+        Fix IndexedDB unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=97149
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+        Specify a desired version of -1 so that no version change transaction
+        is run.
+
 2012-09-20  Dirk Pranke  <dpranke@chromium.org>
 
         roll Chromium to r157829.
