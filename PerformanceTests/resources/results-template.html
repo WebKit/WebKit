@@ -146,6 +146,7 @@ $(document).ready(function () {
 function TestResult(associatedTest, result, associatedRun) {
     this.unit = function () { return result.unit; }
     this.test = function () { return associatedTest; }
+    this.values = function () { return result.values ? result.values.map(function (value) { return associatedTest.scalingFactor() * value; }) : undefined; }
     this.unscaledMean = function () { return result.avg; }
     this.mean = function () { return associatedTest.scalingFactor() * result.avg; }
     this.min = function () { return associatedTest.scalingFactor() * result.min; }
@@ -278,13 +279,23 @@ function createPlot(container, test) {
 function attachPlot(test, plotContainer, minIsZero) {
     var results = test.results();
 
-    function makeSubpoints(id, callback) { return $.extend(true, {}, subpointsPlotOptions, {id: id, data: results.map(callback)}); }
-    var plotData = [
-        makeSubpoints('min', function (result, index) { return [index, result.min()]; }),
+    var values = results.reduce(function (values, result, index) {
+        var newValues = result.values();
+        return newValues ? values.concat(newValues.map(function (value) { return [index, value]; })) : values;
+    }, []);
+
+    var plotData = [];
+    if (values.length)
+        plotData = [$.extend(true, {}, subpointsPlotOptions, {data: values})];
+    else {
+        function makeSubpoints(id, callback) { return $.extend(true, {}, subpointsPlotOptions, {id: id, data: results.map(callback)}); }
+        plotData = [makeSubpoints('min', function (result, index) { return [index, result.min()]; }),
         makeSubpoints('max', function (result, index) { return [index, result.max()]; }),
         makeSubpoints('-&#963;', function (result, index) { return [index, result.mean() - result.stdev()]; }),
-        makeSubpoints('+&#963;', function (result, index) { return [index, result.mean() + result.stdev()]; }),
-        {data: results.map(function (result, index) { return [index, result.mean()]; }), color: plotColor}];
+        makeSubpoints('+&#963;', function (result, index) { return [index, result.mean() + result.stdev()]; })];
+    }
+
+    plotData.push({id: '&mu;', data: results.map(function (result, index) { return [index, result.mean()]; }), color: plotColor});
 
     var currentPlotOptions = $.extend(true, {}, mainPlotOptions, {yaxis: {
         min: minIsZero ? 0 : Math.min.apply(Math, results.map(function (result, index) { return result.min(); })) * 0.98,
@@ -343,8 +354,12 @@ function createTableRow(test, referenceResult) {
             secondCell = '</td><td class="' + className + '">' + comparison;
         }
 
+        var statistics = '&sigma;=' + toFixedWidthPrecision(result.stdev()) + ', min=' + toFixedWidthPrecision(result.min())
+            + ', max=' + toFixedWidthPrecision(result.max());
+
         // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
-        return '<td class="result">' + toFixedWidthPrecision(result.mean()) + hiddenValue + '</td><td class="stdev">&plusmn; '
+        return '<td class="result" title="' + statistics + '">' + toFixedWidthPrecision(result.mean()) + hiddenValue
+            + '</td><td class="stdev" title="' + statistics + '">&plusmn; '
             + formatPercentage(result.stdevRatio()) + secondCell + '</td>';
     }).reduce(function (markup, cell) { return markup + cell; }, ''));
 

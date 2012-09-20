@@ -1,5 +1,16 @@
 2012-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Results page should show indivisual value
+        https://bugs.webkit.org/show_bug.cgi?id=97178
+
+        Reviewed by Tony Chang.
+
+        Show indivisual values instead of statistics (min, max, stdev).
+
+        * resources/results-template.html:
+
+2012-09-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         run-perf-tests should record individual value instead of statistics
         https://bugs.webkit.org/show_bug.cgi?id=97155
 
