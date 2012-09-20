@@ -1808,8 +1808,6 @@ fast/forms/textarea-placeholder-set-attribute.html
 fast/forms/textarea-placeholder-set-value.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
-fast/forms/mailto/advanced-get.html
-fast/forms/mailto/advanced-put.html
 fast/forms/range/range-thumb-height-percentage.html
 fast/forms/range/thumbslider-crash.html
 fast/forms/range/thumbslider-no-parent-slider.html
