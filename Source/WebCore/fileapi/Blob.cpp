@@ -89,21 +89,6 @@ Blob::~Blob()
 #if ENABLE(BLOB)
 PassRefPtr<Blob> Blob::slice(long long start, long long end, const String& contentType) const
 {
-    HistogramSupport::histogramEnumeration("WebCore.Blob.slice", SliceWithoutPrefix, SliceHistogramEnumMax);
-    return sliceInternal(start, end, contentType);
-}
-
-PassRefPtr<Blob> Blob::webkitSlice(ScriptExecutionContext* context, long long start, long long end, const String& contentType) const
-{
-    String message("Blob.webkitSlice() is deprecated. Use Blob.slice() instead.");
-    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, message);
-
-    HistogramSupport::histogramEnumeration("WebCore.Blob.slice", SliceWithPrefix, SliceHistogramEnumMax);
-    return sliceInternal(start, end, contentType);
-}
-
-PassRefPtr<Blob> Blob::sliceInternal(long long start, long long end, const String& contentType) const
-{
     // When we slice a file for the first time, we obtain a snapshot of the file by capturing its current size and modification time.
     // The modification time will be used to verify if the file has been changed or not, when the underlying data are accessed.
     long long size;

@@ -43,10 +43,6 @@ module html {
 #if !defined(LANGUAGE_OBJECTIVE_C)
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
         Blob slice(in [Optional] long long start, in [Optional] long long end, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-        // Prefixed version is going to be deprecated.
-        [CallWith=ScriptExecutionContext] Blob webkitSlice(in [Optional] long long start, in [Optional] long long end, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);
-#endif
 #endif
 #endif
     };

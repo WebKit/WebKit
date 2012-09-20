@@ -123,7 +123,7 @@ private:
 #if ENABLE(FILE_SYSTEM)
     KURL m_fileSystemURL;
 
-    // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and webkitSlice().
+    // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and slice().
     // Otherwise, the snapshot metadata are used directly in those methods.
     const long long m_snapshotSize;
     const double m_snapshotModificationTime;
