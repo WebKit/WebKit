@@ -190,9 +190,7 @@ public:
     void scale(float s);
 
     IntSize differenceToPoint(const IntPoint&) const;
-    IntSize differenceFromCenterLineToPoint(const IntPoint&) const;
     int distanceSquaredToPoint(const IntPoint& p) const { return differenceToPoint(p).diagonalLengthSquared(); }
-    int distanceSquaredFromCenterLineToPoint(const IntPoint& p) const { return differenceFromCenterLineToPoint(p).diagonalLengthSquared(); }
 
     IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
