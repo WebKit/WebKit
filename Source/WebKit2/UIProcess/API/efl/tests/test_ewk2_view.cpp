@@ -74,10 +74,10 @@ TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
 TEST_F(EWK2UnitTestBase, ewk_view_html_string_load)
 {
     ewk_view_html_string_load(webView(), "<html><head><title>Foo</title></head><body>Bar</body></html>", 0, 0);
-    waitUntilTitleChangedTo("Foo");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Foo"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Foo");
     ewk_view_html_string_load(webView(), "<html><head><title>Bar</title></head><body>Foo</body></html>", 0, 0);
-    waitUntilTitleChangedTo("Bar");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Bar"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Bar");
 }
 
@@ -118,14 +118,14 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
 
     // Go back to Page1
     ewk_view_back(webView());
-    waitUntilTitleChangedTo("Page1");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page1"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Page1");
     ASSERT_FALSE(ewk_view_back_possible(webView()));
     ASSERT_TRUE(ewk_view_forward_possible(webView()));
 
     // Go forward to Page2
     ewk_view_forward(webView());
-    waitUntilTitleChangedTo("Page2");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page2"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Page2");
     ASSERT_TRUE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
@@ -254,9 +254,9 @@ TEST_F(EWK2UnitTestBase, ewk_view_popup_menu_select)
     ewkViewClass()->popup_menu_show = showPopupMenu;
 
     ewk_view_html_string_load(webView(), selectHTML, "file:///", 0);
-    waitUntilLoadFinished();
+    ASSERT_TRUE(waitUntilLoadFinished());
     mouseClick(30, 20);
-    waitUntilTitleChangedTo("first");
+    ASSERT_TRUE(waitUntilTitleChangedTo("first"));
 
     EXPECT_TRUE(ewk_view_popup_menu_close(webView()));
     EXPECT_FALSE(ewk_view_popup_menu_select(webView(), 0));
@@ -276,19 +276,19 @@ TEST_F(EWK2UnitTestBase, ewk_view_theme_set)
         "</body></html>";
 
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
-    waitUntilTitleChangedTo("30"); // button of default theme has 30px as padding (15 to -16)
+    EXPECT_TRUE(waitUntilTitleChangedTo("30")); // button of default theme has 30px as padding (15 to -16)
 
     ewk_view_theme_set(webView(), environment->pathForResource("it_does_not_exist.edj").data());
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
-    waitUntilTitleChangedTo("30"); // the result should be same as default theme
+    EXPECT_TRUE(waitUntilTitleChangedTo("30")); // the result should be same as default theme
 
     ewk_view_theme_set(webView(), environment->pathForResource("empty_theme.edj").data());
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
-    waitUntilTitleChangedTo("30"); // the result should be same as default theme
+    EXPECT_TRUE(waitUntilTitleChangedTo("30")); // the result should be same as default theme
 
     ewk_view_theme_set(webView(), environment->pathForResource("big_button_theme.edj").data());
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
-    waitUntilTitleChangedTo("299"); // button of big button theme has 299px as padding (150 to -150)
+    EXPECT_TRUE(waitUntilTitleChangedTo("299")); // button of big button theme has 299px as padding (150 to -150)
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
@@ -334,9 +334,9 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
     ewkViewClass()->fullscreen_enter = fullScreenCallback;
 
     ewk_view_html_string_load(webView(), fullscreenHTML, "file:///", 0);
-    waitUntilLoadFinished();
+    ASSERT_TRUE(waitUntilLoadFinished());
     mouseClick(50, 50);
-    waitUntilTitleChangedTo("fullscreen entered");
+    ASSERT_TRUE(waitUntilTitleChangedTo("fullscreen entered"));
     ASSERT_TRUE(fullScreenCallbackCalled);
     checkFullScreenProperty(webView(), true);
 }
@@ -355,9 +355,9 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
     ewkViewClass()->fullscreen_exit = fullScreenCallback;
 
     ewk_view_html_string_load(webView(), fullscreenHTML, "file:///", 0);
-    waitUntilLoadFinished();
+    ASSERT_TRUE(waitUntilLoadFinished());
     mouseClick(50, 50);
-    waitUntilTitleChangedTo("fullscreen exited");
+    ASSERT_TRUE(waitUntilTitleChangedTo("fullscreen exited"));
     ASSERT_TRUE(fullScreenCallbackCalled);
     checkFullScreenProperty(webView(), false);
 }
@@ -370,7 +370,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
     ASSERT_STREQ(testUrl.utf8().data(), ewk_view_uri_get(webView()));
     mouseClick(50, 50);
     testUrl = testUrl + '#';
-    ASSERT_TRUE(waitUntilURIChangedTo(testUrl.utf8().data(), 10));
+    ASSERT_TRUE(waitUntilURIChangedTo(testUrl.utf8().data()));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
@@ -379,21 +379,21 @@ TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
         "<!doctype html><head><title>Title before changed</title></head>"
         "<body onload=\"document.title='Title after changed';\"></body>";
     ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
-    waitUntilTitleChangedTo("Title after changed");
+    EXPECT_TRUE(waitUntilTitleChangedTo("Title after changed"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "Title after changed");
 
     titleChangedHTML =
         "<!doctype html><head><title>Title before changed</title></head>"
         "<body onload=\"document.title='';\"></body>";
     ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
-    waitUntilTitleChangedTo("");
+    EXPECT_TRUE(waitUntilTitleChangedTo(""));
     EXPECT_STREQ(ewk_view_title_get(webView()), "");
 
     titleChangedHTML =
         "<!doctype html><head><title>Title before changed</title></head>"
         "<body onload=\"document.title=null;\"></body>";
     ewk_view_html_string_load(webView(), titleChangedHTML, 0, 0);
-    waitUntilTitleChangedTo("");
+    EXPECT_TRUE(waitUntilTitleChangedTo(""));
     EXPECT_STREQ(ewk_view_title_get(webView()), "");
 }
 
@@ -429,35 +429,35 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_alert)
     alertCallbackData.expectedMessage = "Alert message";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
-    waitUntilLoadFinished();
+    EXPECT_TRUE(waitUntilLoadFinished());
     EXPECT_EQ(alertCallbackData.called, true);
 
     alertHTML = "<!doctype html><body onload=\"alert('');\"></body>";
     alertCallbackData.expectedMessage = "";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
-    waitUntilLoadFinished();
+    EXPECT_TRUE(waitUntilLoadFinished());
     EXPECT_EQ(alertCallbackData.called, true);
 
     alertHTML = "<!doctype html><body onload=\"alert(null);\"></body>";
     alertCallbackData.expectedMessage = "null";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
-    waitUntilLoadFinished();
+    EXPECT_TRUE(waitUntilLoadFinished());
     EXPECT_EQ(alertCallbackData.called, true);
 
     alertHTML = "<!doctype html><body onload=\"alert();\"></body>";
     alertCallbackData.expectedMessage = "undefined";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
-    waitUntilLoadFinished();
+    EXPECT_TRUE(waitUntilLoadFinished());
     EXPECT_EQ(alertCallbackData.called, true);
 
     ewkViewClass()->run_javascript_alert = 0;
 
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
-    waitUntilLoadFinished();
+    EXPECT_TRUE(waitUntilLoadFinished());
     EXPECT_EQ(alertCallbackData.called, false);
 }
 
@@ -477,7 +477,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     confirmCallbackData.result = true;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("true");
+    EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "true");
     EXPECT_EQ(confirmCallbackData.called, true);
 
@@ -485,7 +485,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     confirmCallbackData.result = false;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("false");
+    EXPECT_TRUE(waitUntilTitleChangedTo("false"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "false");
     EXPECT_EQ(confirmCallbackData.called, true);
 
@@ -494,7 +494,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     confirmCallbackData.result = true;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("true");
+    EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "true");
     EXPECT_EQ(confirmCallbackData.called, true);
 
@@ -503,7 +503,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     confirmCallbackData.result = true;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("true");
+    EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "true");
     EXPECT_EQ(confirmCallbackData.called, true);
 
@@ -512,7 +512,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     confirmCallbackData.result = true;
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("true");
+    EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "true");
     EXPECT_EQ(confirmCallbackData.called, true);
 
@@ -520,7 +520,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
 
     confirmCallbackData.called = false;
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
-    waitUntilTitleChangedTo("false");
+    EXPECT_TRUE(waitUntilTitleChangedTo("false"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "false");
     EXPECT_EQ(confirmCallbackData.called, false);
 }
@@ -550,7 +550,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo(promptResult);
+    EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -560,7 +560,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo(promptResult);
+    EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -570,7 +570,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo(promptResult);
+    EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -580,7 +580,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo(promptResult);
+    EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -590,7 +590,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = promptResult;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo(promptResult);
+    EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(ewk_view_title_get(webView()), promptResult);
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -603,7 +603,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = "";
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo("");
+    EXPECT_TRUE(waitUntilTitleChangedTo(""));
     EXPECT_STREQ(ewk_view_title_get(webView()), "");
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -612,7 +612,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     promptCallbackData.result = 0;
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo("null");
+    EXPECT_TRUE(waitUntilTitleChangedTo("null"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "null");
     EXPECT_EQ(promptCallbackData.called, true);
 
@@ -620,7 +620,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
 
     promptCallbackData.called = false;
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
-    waitUntilTitleChangedTo("null");
+    EXPECT_TRUE(waitUntilTitleChangedTo("null"));
     EXPECT_STREQ(ewk_view_title_get(webView()), "null");
     EXPECT_EQ(promptCallbackData.called, false);
 }

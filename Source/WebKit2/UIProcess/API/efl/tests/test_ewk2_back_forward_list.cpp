@@ -136,7 +136,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_next_item_get)
 
     // Go back to Page1.
     ewk_view_back(webView());
-    waitUntilTitleChangedTo(title1);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
@@ -245,9 +245,9 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
 
     // Go back to Page1.
     ewk_view_back(webView());
-    waitUntilTitleChangedTo(title2);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title2));
     ewk_view_back(webView());
-    waitUntilTitleChangedTo(title1);
+    ASSERT_TRUE(waitUntilTitleChangedTo(title1));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);

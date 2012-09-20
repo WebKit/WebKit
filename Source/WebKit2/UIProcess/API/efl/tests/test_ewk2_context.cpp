@@ -138,13 +138,13 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
 
     // Make sure we don't receive vibration event.
     loadVibrationHTMLString(webView(), "[5000]", false, &data);
-    waitUntilTitleChangedTo("Loaded");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Loaded");
     ASSERT_FALSE(data.didReceiveVibrateCallback);
 
     // Make sure we don't receive cancel vibration event.
     loadVibrationHTMLString(webView(), "0", false, &data);
-    waitUntilTitleChangedTo("Loaded");
+    ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Loaded");
     ASSERT_FALSE(data.didReceiveCancelVibrationCallback);
 }
