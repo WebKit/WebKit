@@ -22,8 +22,16 @@
  * @brief   Describes the context API.
  *
  * @note ewk_context encapsulates all pages related to specific use of WebKit.
- * All pages in this context share the same visited link set,
- * local storage set, and preferences.
+ *
+ * Applications have the option of creating a context different than the default one
+ * and use it for a group of pages. All pages in the same context share the same
+ * preferences, visited link set, local storage, etc.
+ *
+ * A process model can be specified per context. The default one is the shared model
+ * where the web-engine process is shared among the pages in the context. The second
+ * model allows each page to use a separate web-engine process. This latter model is
+ * currently not supported by WebKit2/EFL.
+ *
  */
 
 #ifndef ewk_context_h
@@ -61,11 +69,58 @@ typedef void (*Ewk_Vibration_Client_Vibrate_Cb)(uint64_t vibration_time, void *u
 typedef void (*Ewk_Vibration_Client_Vibration_Cancel_Cb)(void *user_data);
 
 /**
+ * Increases the reference count of the given object.
+ *
+ * @param context context object to increase the reference count
+ *
+ * @return Ewk_Context object on success or @c NULL on failure
+ */
+EAPI Ewk_Context *ewk_context_ref(Ewk_Context *context);
+
+/**
+ * Decreases the reference count of the given object, possibly freeing it.
+ *
+ * When the reference count it's reached 0, the Ewk_Context is freed.
+ *
+ * @param context context object to decrease the reference count
+ */
+EAPI void ewk_context_unref(Ewk_Context *context);
+
+/**
  * Gets default Ewk_Context instance.
+ *
+ * The returned Ewk_Context object @b should not be unref'ed if application
+ * does not call ewk_context_ref() for that.
  *
  * @return Ewk_Context object.
  */
-EAPI Ewk_Context *ewk_context_default_get();
+EAPI Ewk_Context *ewk_context_default_get(void);
+
+/**
+ * Creates a new Ewk_Context.
+ *
+ * The returned Ewk_Context object @b should be unref'ed after use.
+ *
+ * @return Ewk_Context object on success or @c NULL on failure
+ *
+ * @see ewk_context_unref
+ * @see ewk_context_new_with_injected_bundle_path
+ */
+EAPI Ewk_Context *ewk_context_new(void);
+
+/**
+ * Creates a new Ewk_Context.
+ *
+ * The returned Ewk_Context object @b should be unref'ed after use.
+ *
+ * @param path path of injected bundle library
+ *
+ * @return Ewk_Context object on success or @c NULL on failure
+ *
+ * @see ewk_context_unref
+ * @see ewk_context_new
+ */
+EAPI Ewk_Context *ewk_context_new_with_injected_bundle_path(const char *path);
 
 /**
  * Gets the cookie manager instance for this @a context.

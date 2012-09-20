@@ -714,4 +714,11 @@ TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
         ecore_main_loop_iterate();
     evas_object_smart_callback_del(webView(), "input,type,color,request", onColorPickerDone);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_context_get)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ASSERT_TRUE(context);
+    ASSERT_EQ(context, ewk_view_context_get(webView()));
+}
 #endif // ENABLE(INPUT_TYPE_COLOR)

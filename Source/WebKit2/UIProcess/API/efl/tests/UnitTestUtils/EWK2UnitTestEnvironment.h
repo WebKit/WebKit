@@ -32,6 +32,7 @@ public:
     bool useX11Window() const { return m_useX11Window; }
     const char* defaultTestPageUrl() const;
     const char* defaultTheme() const;
+    const char* injectedBundleSample() const;
     CString urlForResource(const char* resource);
     CString pathForResource(const char* resource);
 

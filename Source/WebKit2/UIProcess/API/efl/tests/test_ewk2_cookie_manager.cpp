@@ -121,7 +121,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
 
-    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
     // Default policy is EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY.
@@ -164,7 +164,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
 
-    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
@@ -227,7 +227,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
 
-    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
@@ -269,7 +269,7 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
     char sqliteStorage[] = "/tmp/sqlite-cookie.XXXXXX";
     ASSERT_TRUE(mktemp(sqliteStorage));
 
-    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);

@@ -1,3 +1,46 @@
+2012-09-20  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add APIs to create, delete and get ewk_context.
+        https://bugs.webkit.org/show_bug.cgi?id=89186
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide APIs to create ewk_context with or without injected bundle path
+        and delete created ewk_context.
+        Additionally, the ewk_view can be created with ewk_context which is not
+        default context, so we have to get ewk_context from ewk_view.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (ewk_context_ref):
+        (ewk_context_unref):
+        (ewk_context_new):
+        (ewk_context_new_with_injected_bundle_path):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        (_ewk_view_initialize):
+        (ewk_view_context_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/InjectedBundle/injected_bundle_sample.cpp: Added.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp:
+        (EWK2UnitTest::EWK2UnitTestEnvironment::injectedBundleSample):
+        (EWK2UnitTest):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h:
+        (EWK2UnitTestEnvironment):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-09-20  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WK2] Implemented color picker API

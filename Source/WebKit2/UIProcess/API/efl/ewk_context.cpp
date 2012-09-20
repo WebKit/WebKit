@@ -28,15 +28,18 @@
 #include "WKNumber.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
+#include "WebContext.h"
 #include "ewk_context_download_client_private.h"
 #include "ewk_context_private.h"
 #include "ewk_context_request_manager_client_private.h"
 #include "ewk_cookie_manager_private.h"
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
+#include <WebCore/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 struct _Ewk_Url_Scheme_Handler {
@@ -57,6 +60,7 @@ struct _Ewk_Url_Scheme_Handler {
 typedef HashMap<String, _Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
 
 struct _Ewk_Context {
+    unsigned __ref; /**< the reference count of the object */
     WKRetainPtr<WKContextRef> context;
 
     Ewk_Cookie_Manager* cookieManager;
@@ -72,7 +76,8 @@ struct _Ewk_Context {
     URLSchemeHandlerMap urlSchemeHandlers;
 
     _Ewk_Context(WKRetainPtr<WKContextRef> contextRef)
-        : context(contextRef)
+        : __ref(1)
+        , context(contextRef)
         , cookieManager(0)
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
     {
@@ -111,6 +116,25 @@ struct _Ewk_Context {
             ewk_download_job_unref(it->second);
     }
 };
+
+Ewk_Context* ewk_context_ref(Ewk_Context* ewkContext)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
+    ++ewkContext->__ref;
+
+    return ewkContext;
+}
+
+void ewk_context_unref(Ewk_Context* ewkContext)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkContext);
+    EINA_SAFETY_ON_FALSE_RETURN(ewkContext->__ref > 0);
+
+    if (--ewkContext->__ref)
+        return;
+
+    delete ewkContext;
+}
 
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)
 {
@@ -213,6 +237,22 @@ Ewk_Context* ewk_context_default_get()
     static Ewk_Context defaultContext(adoptWK(WKContextCreate()));
 
     return &defaultContext;
+}
+
+Ewk_Context* ewk_context_new()
+{
+    return new Ewk_Context(adoptWK(WKContextCreate()));
+}
+
+Ewk_Context* ewk_context_new_with_injected_bundle_path(const char* path)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, 0);
+
+    WKRetainPtr<WKStringRef> pathRef(AdoptWK, WKStringCreateWithUTF8CString(path));
+    if (!fileExists(toImpl(pathRef.get())->string()))
+        return 0;
+
+    return new Ewk_Context(adoptWK(WKContextCreateWithInjectedBundlePath(pathRef.get())));
 }
 
 Eina_Bool ewk_context_uri_scheme_register(Ewk_Context* ewkContext, const char* scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)

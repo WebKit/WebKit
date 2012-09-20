@@ -285,10 +285,7 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 {
     Ewk_Download_Job* ewkDownload = ewk_download_job_new(download, m_viewWidget);
-    // For now we only support one default context, but once we support
-    // multiple contexts, we will need to retrieve the context from the
-    // view.
-    ewk_context_download_job_add(ewk_context_default_get(), ewkDownload);
+    ewk_context_download_job_add(ewk_view_context_get(m_viewWidget), ewkDownload);
     ewk_download_job_unref(ewkDownload);
 }
 

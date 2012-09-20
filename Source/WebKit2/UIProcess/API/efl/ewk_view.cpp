@@ -100,6 +100,7 @@ struct _Ewk_View_Private_Data {
     OwnPtr<Ewk_Settings> settings;
     bool areMouseEventsEnabled;
     WKColorPickerResultListenerRef colorPickerResultListener;
+    Ewk_Context* context;
 
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
@@ -119,6 +120,7 @@ struct _Ewk_View_Private_Data {
         , backForwardList(0)
         , areMouseEventsEnabled(false)
         , colorPickerResultListener(0)
+        , context(0)
         , popupMenuProxy(0)
         , popupMenuItems(0)
 #ifdef HAVE_ECORE_X
@@ -384,6 +386,7 @@ static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingR
 
 static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 {
+    ewk_context_unref(priv->context);
     delete priv;
 }
 
@@ -714,6 +717,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 
     priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageProxy->backForwardList()));
     priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
+    priv->context = ewk_context_ref(context);
 
 #if USE(COORDINATED_GRAPHICS)
     priv->viewportHandler = EflViewportHandler::create(ewkView);
@@ -796,6 +800,14 @@ Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
 Evas_Object* ewk_view_add(Evas* canvas)
 {
     return ewk_view_add_with_context(canvas, ewk_context_default_get());
+}
+
+Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->context;
 }
 
 /**

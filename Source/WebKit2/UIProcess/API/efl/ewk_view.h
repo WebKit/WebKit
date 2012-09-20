@@ -319,6 +319,15 @@ EAPI Evas_Object *ewk_view_add(Evas *e);
 EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
 
 /**
+ * Gets the Ewk_Context of this view.
+ *
+ * @param o the view object to get the Ewk_Context
+ *
+ * @return the Ewk_Context of this view or @c NULL on failure
+ */
+EAPI Ewk_Context *ewk_view_context_get(const Evas_Object *o);
+
+/**
  * Asks the object to load the given URI.
  *
  * @param o view object to load @a URI

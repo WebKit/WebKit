@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +47,10 @@ TEST_F(EWK2UnitTestBase, ewk_context_default_get)
 
 TEST_F(EWK2UnitTestBase, ewk_context_cookie_manager_get)
 {
-    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    Ewk_Context* context = ewk_view_context_get(webView());
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(context);
     ASSERT_TRUE(cookieManager);
-    ASSERT_EQ(cookieManager, ewk_context_cookie_manager_get(ewk_context_default_get()));
+    ASSERT_EQ(cookieManager, ewk_context_cookie_manager_get(context));
 }
 
 static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userData)
@@ -64,7 +66,7 @@ static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userDat
 
 TEST_F(EWK2UnitTestBase, ewk_context_uri_scheme_register)
 {
-    ewk_context_uri_scheme_register(ewk_context_default_get(), "fooscheme", schemeRequestCallback, 0);
+    ewk_context_uri_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
     loadUrlSync("fooscheme:MyPath");
     ASSERT_STREQ(ewk_view_title_get(webView()), "Foo");
 }
@@ -114,7 +116,7 @@ static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationP
 TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
 {
     VibrationCbData data = { false, false, 0, 5000 };
-    ewk_context_vibration_client_callbacks_set(ewk_context_default_get(), vibrateCallback, cancelVibrationCallback, &data);
+    ewk_context_vibration_client_callbacks_set(ewk_view_context_get(webView()), vibrateCallback, cancelVibrationCallback, &data);
 
     // Vibrate for 5 seconds.
     loadVibrationHTMLString(webView(), "5000", true, &data);
@@ -134,7 +136,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
     ASSERT_TRUE(data.didReceiveCancelVibrationCallback);
 
     // Stop listening for vibration events, by calling the function with null for the callbacks.
-    ewk_context_vibration_client_callbacks_set(ewk_context_default_get(), 0, 0, &data);
+    ewk_context_vibration_client_callbacks_set(ewk_view_context_get(webView()), 0, 0, &data);
 
     // Make sure we don't receive vibration event.
     loadVibrationHTMLString(webView(), "[5000]", false, &data);
@@ -147,4 +149,26 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
     ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
     ASSERT_STREQ(ewk_view_title_get(webView()), "Loaded");
     ASSERT_FALSE(data.didReceiveCancelVibrationCallback);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_context_new)
+{
+    Ewk_Context* context = ewk_context_new();
+    ASSERT_TRUE(context);
+    ewk_context_unref(context);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_context_new_with_injected_bundle_path)
+{
+    Ewk_Context* context = ewk_context_new_with_injected_bundle_path(environment->injectedBundleSample());
+    ASSERT_TRUE(context);
+    ewk_context_unref(context);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_context_ref)
+{
+    Ewk_Context* context = ewk_context_new();
+    ASSERT_EQ(context, ewk_context_ref(context));
+    ewk_context_unref(context);
+    ewk_context_unref(context);
 }
