@@ -1488,7 +1488,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             // 9.9
             if (ContainerNode* parent = lastNode->element()->parentNode())
                 parent->parserRemoveChild(lastNode->element());
-            node->element()->parserAddChild(lastNode->element());
+            node->element()->parserAppendChild(lastNode->element());
             if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
                 lastNode->element()->lazyAttach();
             // 9.10
@@ -1500,7 +1500,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         if (commonAncestor->causesFosterParenting())
             m_tree.fosterParent(lastNode->element());
         else {
-            commonAncestor->node()->parserAddChild(lastNode->element());
+            commonAncestor->node()->parserAppendChild(lastNode->element());
             ASSERT(lastNode->stackItem()->isElementNode());
             ASSERT(lastNode->element()->parentNode());
             if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
@@ -1512,10 +1512,10 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         newItem->element()->takeAllChildrenFrom(furthestBlock->element());
         // 13.
         Element* furthestBlockElement = furthestBlock->element();
-        // FIXME: All this creation / parserAddChild / attach business should
+        // FIXME: All this creation / parserAppendChild / attach business should
         //        be in HTMLConstructionSite. My guess is that steps 11--15
         //        should all be in some HTMLConstructionSite function.
-        furthestBlockElement->parserAddChild(newItem->element());
+        furthestBlockElement->parserAppendChild(newItem->element());
         // FIXME: Why is this attach logic necessary? Style resolve should attach us if needed.
         if (furthestBlockElement->attached() && !newItem->element()->attached()) {
             // Notice that newItem->element() might already be attached if, for example, one of the reparented

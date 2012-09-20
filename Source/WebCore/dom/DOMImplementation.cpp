@@ -317,9 +317,9 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
 
     // FIXME: Shouldn't this call appendChild instead?
     if (doctype)
-        doc->parserAddChild(doctype);
+        doc->parserAppendChild(doctype);
     if (documentElement)
-        doc->parserAddChild(documentElement.release());
+        doc->parserAppendChild(documentElement.release());
 
     return doc.release();
 }

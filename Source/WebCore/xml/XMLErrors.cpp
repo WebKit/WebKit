@@ -96,20 +96,20 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
     reportElement->parserSetAttributes(reportAttributes, DisallowScriptingContent);
 
     RefPtr<Element> h3 = doc->createElement(h3Tag, true);
-    reportElement->parserAddChild(h3.get());
-    h3->parserAddChild(doc->createTextNode("This page contains the following errors:"));
+    reportElement->parserAppendChild(h3.get());
+    h3->parserAppendChild(doc->createTextNode("This page contains the following errors:"));
 
     RefPtr<Element> fixed = doc->createElement(divTag, true);
     Vector<Attribute> fixedAttributes;
     fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
     fixed->parserSetAttributes(fixedAttributes, DisallowScriptingContent);
-    reportElement->parserAddChild(fixed.get());
+    reportElement->parserAppendChild(fixed.get());
 
-    fixed->parserAddChild(doc->createTextNode(errorMessages));
+    fixed->parserAppendChild(doc->createTextNode(errorMessages));
 
     h3 = doc->createElement(h3Tag, true);
-    reportElement->parserAddChild(h3.get());
-    h3->parserAddChild(doc->createTextNode("Below is a rendering of the page up to the first error."));
+    reportElement->parserAppendChild(h3.get());
+    h3->parserAppendChild(doc->createTextNode("Below is a rendering of the page up to the first error."));
 
     return reportElement.release();
 }
@@ -125,8 +125,8 @@ void XMLErrors::insertErrorMessageBlock()
     if (!documentElement) {
         RefPtr<Element> rootElement = m_document->createElement(htmlTag, true);
         RefPtr<Element> body = m_document->createElement(bodyTag, true);
-        rootElement->parserAddChild(body);
-        m_document->parserAddChild(rootElement);
+        rootElement->parserAppendChild(body);
+        m_document->parserAppendChild(rootElement);
         if (m_document->attached() && !rootElement->attached())
             rootElement->attach();
         documentElement = body.get();
@@ -135,14 +135,14 @@ void XMLErrors::insertErrorMessageBlock()
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         RefPtr<Element> rootElement = m_document->createElement(htmlTag, true);
         RefPtr<Element> body = m_document->createElement(bodyTag, true);
-        rootElement->parserAddChild(body);
+        rootElement->parserAppendChild(body);
 
         documentElement->parentNode()->parserRemoveChild(documentElement.get());
         if (documentElement->attached())
             documentElement->detach();
 
-        body->parserAddChild(documentElement);
-        m_document->parserAddChild(rootElement.get());
+        body->parserAppendChild(documentElement);
+        m_document->parserAppendChild(rootElement.get());
 
         if (m_document->attached())
             // In general, rootElement shouldn't be attached right now, but it will be if there is a style element
@@ -162,8 +162,8 @@ void XMLErrors::insertErrorMessageBlock()
         attributes.append(Attribute(styleAttr, "white-space: normal"));
         RefPtr<Element> paragraph = m_document->createElement(pTag, true);
         paragraph->parserSetAttributes(attributes, DisallowScriptingContent);
-        paragraph->parserAddChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
-        reportElement->parserAddChild(paragraph.release());
+        paragraph->parserAppendChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
+        reportElement->parserAppendChild(paragraph.release());
     }
 #endif
 
@@ -171,7 +171,7 @@ void XMLErrors::insertErrorMessageBlock()
     if (firstChild)
         documentElement->parserInsertBefore(reportElement, documentElement->firstChild());
     else
-        documentElement->parserAddChild(reportElement);
+        documentElement->parserAppendChild(reportElement);
 
     if (documentElement->attached() && !reportElement->attached())
         reportElement->attach();

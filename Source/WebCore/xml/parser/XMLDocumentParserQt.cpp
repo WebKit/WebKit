@@ -480,7 +480,7 @@ void XMLDocumentParser::parseStartElement()
     if (scriptElement)
         m_scriptStartPosition = textPosition();
 
-    m_currentNode->parserAddChild(newElement.get());
+    m_currentNode->parserAppendChild(newElement.get());
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
@@ -572,7 +572,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->parserAddChild(pi.get());
+    m_currentNode->parserAppendChild(pi.get());
     if (m_view && !pi->attached())
         pi->attach();
 
@@ -593,7 +593,7 @@ void XMLDocumentParser::parseCdata()
 
     RefPtr<CDATASection> newNode = CDATASection::create(document(), m_stream.text());
 
-    m_currentNode->parserAddChild(newNode.get());
+    m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -604,7 +604,7 @@ void XMLDocumentParser::parseComment()
 
     RefPtr<Comment> newNode = Comment::create(document(), m_stream.text());
 
-    m_currentNode->parserAddChild(newNode.get());
+    m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -636,7 +636,7 @@ void XMLDocumentParser::parseDtd()
        )
         setIsXHTMLDocument(true); // controls if we replace entities or not.
     if (!m_parsingFragment)
-        document()->parserAddChild(DocumentType::create(document(), name, publicId, systemId));
+        document()->parserAppendChild(DocumentType::create(document(), name, publicId, systemId));
 
 }
 }

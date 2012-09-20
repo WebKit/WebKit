@@ -70,24 +70,24 @@ PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()
 void HTMLViewSourceDocument::createContainingTable()
 {
     RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(this);
-    parserAddChild(html);
+    parserAppendChild(html);
     html->attach();
     RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
-    html->parserAddChild(body);
+    html->parserAppendChild(body);
     body->attach();
 
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
     RefPtr<HTMLDivElement> div = HTMLDivElement::create(this);
     div->setAttribute(classAttr, "webkit-line-gutter-backdrop");
-    body->parserAddChild(div);
+    body->parserAppendChild(div);
     div->attach();
 
     RefPtr<HTMLTableElement> table = HTMLTableElement::create(this);
-    body->parserAddChild(table);
+    body->parserAppendChild(table);
     table->attach();
     m_tbody = HTMLTableSectionElement::create(tbodyTag, this);
-    table->parserAddChild(m_tbody);
+    table->parserAppendChild(m_tbody);
     m_tbody->attach();
     m_current = m_tbody;
 }
@@ -186,7 +186,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const AtomicStr
 
     RefPtr<HTMLElement> span = HTMLElement::create(spanTag, this);
     span->setAttribute(classAttr, className);
-    m_current->parserAddChild(span);
+    m_current->parserAppendChild(span);
     span->attach();
     return span.release();
 }
@@ -195,19 +195,19 @@ void HTMLViewSourceDocument::addLine(const AtomicString& className)
 {
     // Create a table row.
     RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
-    m_tbody->parserAddChild(trow);
+    m_tbody->parserAppendChild(trow);
     trow->attach();
 
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
     RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, this);
     td->setAttribute(classAttr, "webkit-line-number");
-    trow->parserAddChild(td);
+    trow->parserAppendChild(td);
     td->attach();
 
     // Create a second cell for the line contents
     td = HTMLTableCellElement::create(tdTag, this);
     td->setAttribute(classAttr, "webkit-line-content");
-    trow->parserAddChild(td);
+    trow->parserAppendChild(td);
     td->attach();
     m_current = m_td = td;
 
@@ -229,7 +229,7 @@ void HTMLViewSourceDocument::finishLine()
 {
     if (!m_current->hasChildNodes()) {
         RefPtr<HTMLBRElement> br = HTMLBRElement::create(this);
-        m_current->parserAddChild(br);
+        m_current->parserAppendChild(br);
         br->attach();
     }
     m_current = m_tbody;
@@ -255,7 +255,7 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
             continue;
         }
         RefPtr<Text> t = Text::create(this, substring);
-        m_current->parserAddChild(t);
+        m_current->parserAppendChild(t);
         t->attach();
         if (i < size - 1)
             finishLine();
@@ -285,7 +285,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addBase(const AtomicString& href)
 {
     RefPtr<HTMLBaseElement> base = HTMLBaseElement::create(baseTag, this);
     base->setAttribute(hrefAttr, href);
-    m_current->parserAddChild(base);
+    m_current->parserAppendChild(base);
     base->attach();
     return base.release();
 }
@@ -305,7 +305,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const AtomicString& url, boo
     anchor->setAttribute(classAttr, classValue);
     anchor->setAttribute(targetAttr, "_blank");
     anchor->setAttribute(hrefAttr, url);
-    m_current->parserAddChild(anchor);
+    m_current->parserAppendChild(anchor);
     anchor->attach();
     return anchor.release();
 }

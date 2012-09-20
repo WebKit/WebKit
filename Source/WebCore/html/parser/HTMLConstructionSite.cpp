@@ -80,7 +80,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
     if (task.nextChild)
         task.parent->parserInsertBefore(task.child.get(), task.nextChild.get());
     else
-        task.parent->parserAddChild(task.child.get());
+        task.parent->parserAppendChild(task.child.get());
 
     // JavaScript run from beforeload (or DOM Mutation or event handlers)
     // might have removed the child, in which case we should not attach it.

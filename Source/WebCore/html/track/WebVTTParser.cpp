@@ -351,7 +351,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     case WebVTTTokenTypes::Character: {
         String content(m_token.characters().data(), m_token.characters().size());
         RefPtr<Text> child = Text::create(document, content);
-        m_currentNode->parserAddChild(child);
+        m_currentNode->parserAppendChild(child);
         break;
     }
     case WebVTTTokenTypes::StartTag: {
@@ -368,7 +368,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
                 child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
             if (child->hasTagName(qTag))
                 child->setAttribute(titleAttr, AtomicString(m_token.annotation().data(), m_token.annotation().size()));
-            m_currentNode->parserAddChild(child);
+            m_currentNode->parserAppendChild(child);
             m_currentNode = child;
         }
         break;
@@ -385,7 +385,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         unsigned position = 0;
         double time = collectTimeStamp(m_token.characters().data(), &position);
         if (time != malformedTime)
-            m_currentNode->parserAddChild(ProcessingInstruction::create(document, "timestamp", String(m_token.characters().data(), m_token.characters().size())));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", String(m_token.characters().data(), m_token.characters().size())));
         break;
     }
     default:

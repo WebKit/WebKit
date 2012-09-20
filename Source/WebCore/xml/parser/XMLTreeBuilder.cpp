@@ -214,7 +214,7 @@ void XMLTreeBuilder::processDOCTYPE(const AtomicXMLToken& token)
     AtomicString systemIdentifier(token.systemIdentifier().data(), token.systemIdentifier().size());
     RefPtr<DocumentType> doctype = DocumentType::create(m_document, token.name(), publicIdentifier, systemIdentifier);
     m_document->setDocType(doctype);
-    m_document->parserAddChild(doctype);
+    m_document->parserAppendChild(doctype);
 
     if ((publicIdentifier == xhtmlTransitional)
         || (publicIdentifier == xhtml11)
@@ -244,7 +244,7 @@ void XMLTreeBuilder::processStartTag(const AtomicXMLToken& token)
     processAttributes(token, top, newElement);
 
     newElement->beginParsingChildren();
-    m_currentNodeStack.last().node()->parserAddChild(newElement.get());
+    m_currentNodeStack.last().node()->parserAppendChild(newElement.get());
 
     top.setNode(newElement);
     pushCurrentNode(top);
@@ -388,7 +388,7 @@ void XMLTreeBuilder::processHTMLEntity(const AtomicXMLToken& token)
 
 inline void XMLTreeBuilder::add(PassRefPtr<Node> node)
 {
-    m_currentNodeStack.last().node()->parserAddChild(node.get());
+    m_currentNodeStack.last().node()->parserAppendChild(node.get());
     if (!node->attached())
         node->attach();
 }

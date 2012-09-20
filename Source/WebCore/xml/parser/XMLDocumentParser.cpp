@@ -147,7 +147,7 @@ void XMLDocumentParser::enterText()
 #endif
     ASSERT(!m_leafTextNode);
     m_leafTextNode = Text::create(document(), "");
-    m_currentNode->parserAddChild(m_leafTextNode.get());
+    m_currentNode->parserAppendChild(m_leafTextNode.get());
 }
 
 #if !USE(QXMLSTREAM)
@@ -295,7 +295,7 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
     if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag) || contextElement->hasLocalName(HTMLNames::styleTag))) {
-        fragment->parserAddChild(fragment->document()->createTextNode(chunk));
+        fragment->parserAppendChild(fragment->document()->createTextNode(chunk));
         return true;
     }
 
