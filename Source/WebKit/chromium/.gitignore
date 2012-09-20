@@ -21,6 +21,7 @@ crypto/
 depot_tools/
 dbus/
 gfx/
+google_apis/
 googleurl/
 gpu/
 ipc/

@@ -1,3 +1,14 @@
+2012-09-20  Mike West  <mkwst@google.com>
+
+        [chromium] Adding the 'google_apis' directory to .gitignore.
+        https://bugs.webkit.org/show_bug.cgi?id=97187
+
+        Reviewed by Jochen Eisinger.
+
+        'chromium/google_apis' should be ignored, as it's not in the git repo.
+
+        * .gitignore:
+
 2012-09-19  Adam Barth  <abarth@webkit.org>
 
         Remove webkitPostMessage
