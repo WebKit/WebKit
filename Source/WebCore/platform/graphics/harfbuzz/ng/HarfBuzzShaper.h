@@ -94,7 +94,6 @@ private:
         TextDirection m_direction;
         Vector<uint16_t, 256> m_glyphs;
         Vector<float, 256> m_advances;
-        Vector<uint16_t, 256> m_logClusters;
         Vector<uint16_t, 256> m_glyphToCharacterIndexes;
         Vector<FloatPoint, 256> m_offsets;
         float m_width;
