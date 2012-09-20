@@ -1,3 +1,19 @@
+2012-09-19  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Basic authentication challenge credentials for stored credentials again after restarting browser
+        https://bugs.webkit.org/show_bug.cgi?id=96362
+
+        Reviewed by Rob Buis.
+
+        Make the FrameLoaderClient use credential storage according to the macro
+        BLACKBERRY_CREDENTIAL_PERSIST
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::shouldUseCredentialStorage):
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2012-09-19  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] After zooming into an input field, zoom out when focus is lost.

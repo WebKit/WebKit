@@ -57,6 +57,9 @@
 #include "ProgressTracker.h"
 #include "ProtectionSpace.h"
 #include "ScopePointer.h"
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+#include "Settings.h"
+#endif
 #include "SharedBuffer.h"
 #include "SkData.h"
 #include "SkImageEncoder.h"
@@ -1010,6 +1013,17 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
         m_historyNavigationSourceURLs.add(docLoader->url());
         m_historyNavigationSourceURLs.add(docLoader->originalURL());
     }
+}
+
+bool FrameLoaderClientBlackBerry::shouldUseCredentialStorage(DocumentLoader* loader, long unsigned identifier)
+{
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (m_frame->page()->settings()->privateBrowsingEnabled())
+        return false;
+    return true;
+#else
+    return false;
+#endif
 }
 
 void FrameLoaderClientBlackBerry::loadIconExternally(const String& originalPageUrl, const String& finalPageUrl, const String& iconUrl)

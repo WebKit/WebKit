@@ -56,7 +56,7 @@ public:
     virtual void detachedFromParent3() { notImplemented(); }
     virtual void assignIdentifierToInitialRequest(long unsigned int, DocumentLoader*, const ResourceRequest&) { notImplemented(); }
     virtual void dispatchWillSendRequest(DocumentLoader*, long unsigned int, ResourceRequest&, const ResourceResponse&);
-    virtual bool shouldUseCredentialStorage(DocumentLoader*, long unsigned int) { notImplemented(); return false; }
+    virtual bool shouldUseCredentialStorage(DocumentLoader*, long unsigned);
     virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, long unsigned int, const AuthenticationChallenge&) { notImplemented(); }
     virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, long unsigned int, const AuthenticationChallenge&) { notImplemented(); }
     virtual void dispatchDidReceiveResponse(DocumentLoader*, long unsigned int, const ResourceResponse&);

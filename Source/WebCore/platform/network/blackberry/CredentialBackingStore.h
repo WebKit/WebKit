@@ -44,6 +44,7 @@ public:
     bool addLogin(const KURL&, const ProtectionSpace&, const Credential&);
     bool updateLogin(const KURL&, const ProtectionSpace&, const Credential&);
     bool hasLogin(const KURL&, const ProtectionSpace&);
+    ProtectionSpace getProtectionSpace(const KURL&);
     Credential getLogin(const ProtectionSpace&);
     Credential getLogin(const KURL&);
     bool removeLogin(const KURL&, const ProtectionSpace&);
