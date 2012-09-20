@@ -51,4 +51,8 @@ void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebContextMe
 WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 
+#if USE(TEXTURE_MAPPER_GL)
+void webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults(WebKitWebViewBase*);
+#endif
+
 #endif // WebKitWebViewBasePrivate_h

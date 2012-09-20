@@ -201,6 +201,8 @@ void LayerTreeHostGtk::sizeDidChange(const IntSize& newSize)
 
     if (m_pageOverlayLayer)
         m_pageOverlayLayer->setSize(newSize);
+
+    compositeLayersToContext(ForResize);
 }
 
 void LayerTreeHostGtk::deviceScaleFactorDidChange()
@@ -291,7 +293,7 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
-void LayerTreeHostGtk::compositeLayersToContext()
+void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
 {
     GLContext* context = glContext();
     if (!context || !context->makeContextCurrent())
@@ -303,11 +305,17 @@ void LayerTreeHostGtk::compositeLayersToContext()
     IntSize contextSize = m_context->defaultFrameBufferSize();
     glViewport(0, 0, contextSize.width(), contextSize.height());
 
+    if (purpose == ForResize) {
+        glClearColor(1, 1, 1, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
     m_textureMapper->beginPainting();
     toTextureMapperLayer(m_rootLayer.get())->paint();
     m_textureMapper->endPainting();
 
     context->swapBuffers();
+    m_webPage->invalidateWidget();
 }
 
 void LayerTreeHostGtk::flushAndRenderLayers()
