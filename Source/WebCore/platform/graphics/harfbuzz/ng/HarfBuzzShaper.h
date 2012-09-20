@@ -67,7 +67,7 @@ private:
         }
 
         void applyShapeResult(hb_buffer_t*);
-        void setGlyphAndAdvance(unsigned index, uint16_t glyphId, float advance);
+        void setGlyphAndPositions(unsigned index, uint16_t glyphId, float advance, float offsetX, float offsetY);
         void setWidth(float width) { m_width = width; }
 
         int characterIndexForXPosition(float targetX);
@@ -79,6 +79,8 @@ private:
         unsigned numGlyphs() const { return m_numGlyphs; }
         uint16_t* glyphs() { return &m_glyphs[0]; }
         float* advances() { return &m_advances[0]; }
+        FloatPoint* offsets() { return &m_offsets[0]; }
+        uint16_t* glyphToCharacterIndexes() { return &m_glyphToCharacterIndexes[0]; }
         float width() { return m_width; }
 
     private:
@@ -93,16 +95,18 @@ private:
         Vector<uint16_t, 256> m_glyphs;
         Vector<float, 256> m_advances;
         Vector<uint16_t, 256> m_logClusters;
-        Vector<uint16_t, 256> m_glyphToCharacterIndex;
+        Vector<uint16_t, 256> m_glyphToCharacterIndexes;
+        Vector<FloatPoint, 256> m_offsets;
         float m_width;
     };
 
-    bool shouldDrawCharacterAt(int index);
     void setFontFeatures();
 
     bool collectHarfBuzzRuns();
-    bool shapeHarfBuzzRuns(GlyphBuffer*);
-    void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, unsigned runIndexInVisualOrder, hb_buffer_t*, GlyphBuffer*, float& pendingGlyphAdvanceX, float& pendingGlyphAdvanceY);
+    bool shapeHarfBuzzRuns();
+    void fillGlyphBuffer(GlyphBuffer*);
+    void fillGlyphBufferFromHarfBuzzRun(GlyphBuffer*, HarfBuzzRun*, FloatPoint& firstOffsetOfNextRun);
+    void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, hb_buffer_t*);
 
     GlyphBufferAdvance createGlyphBufferAdvance(float, float);
 
