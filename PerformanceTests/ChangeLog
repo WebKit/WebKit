@@ -1,3 +1,16 @@
+2012-09-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should record individual value instead of statistics
+        https://bugs.webkit.org/show_bug.cgi?id=97155
+
+        Reviewed by Hajime Morita.
+
+        Report the list of values as "values" so that run-perf-tests can parse them.
+
+        * resources/runner.js:
+        (PerfTestRunner.computeStatistics):
+        (PerfTestRunner.printStatistics):
+
 2012-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129091.

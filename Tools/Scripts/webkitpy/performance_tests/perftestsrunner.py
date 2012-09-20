@@ -191,6 +191,11 @@ class PerfTestsRunner(object):
             if not output:
                 return self.EXIT_CODE_BAD_MERGE
             results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
+        else:
+            # FIXME: Remove this code once webkit-perf.appspot.com supported "values".
+            for result in output['results'].values():
+                if isinstance(result, dict) and 'values' in result:
+                    del result['values']
 
         self._generate_output_files(output_json_path, results_page_path, output)
 
