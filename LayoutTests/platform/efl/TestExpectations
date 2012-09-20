@@ -174,15 +174,6 @@ Bug(EFL) accessibility [ Failure Skip ]
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# REGRESSION(r128802): It made some JS tests crash
-webkit.org/b/97001 [ Debug ] fast/dom/message-port-deleted-by-accessor.html [ Crash Pass ]
-webkit.org/b/97001 [ Debug ] fast/js/Object-defineProperty.html [ Crash ]
-webkit.org/b/97001 [ Debug ] fast/js/array-bad-time.html [ Crash ]
-webkit.org/b/97001 [ Debug ] fast/js/array-slow-put.html [ Crash ]
-webkit.org/b/97001 [ Debug ] fast/js/object-bad-time.html [ Crash ]
-webkit.org/b/97001 [ Debug ] ietestcenter/Javascript/15.4.4.14-9-b-i-5.html [ Crash ]
-webkit.org/b/97001 [ Debug ] ietestcenter/Javascript/15.4.4.15-8-b-i-5.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
