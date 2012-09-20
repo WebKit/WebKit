@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+    testRunner.grantWebNotificationPermission(testURL);
+    testRunner.setCanOpenWindows(true);
+    testRunner.waitUntilDone();
+}
+
+description("This test checks that a script can open windows when the user clicks on a native notification.");
+
+shouldBeEqualToString("Notification.permission", "granted");
+var n = new Notification("Test");
+n.onshow = function() {
+    if (window.testRunner)
+        testRunner.simulateWebNotificationClick(this);
+};
+n.onclick = function() {
+    window.open('/notifications/resources/window-show-on-click.html');
+};
+
+function onWindowOpen() {
+    testPassed('clicking on notification successfully opened a window');
+    testCompleted();
+}
+
+setTimeout(function() {
+    testFailed('clicking on notification did not open a window');
+    testCompleted();
+}, 100);
+</script>

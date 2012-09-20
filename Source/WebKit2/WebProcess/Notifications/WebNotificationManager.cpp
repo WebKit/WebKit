@@ -39,6 +39,7 @@
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/UserGestureIndicator.h>
 #endif
 
 using namespace WebCore;
@@ -243,6 +244,8 @@ void WebNotificationManager::didClickNotification(uint64_t notificationID)
     if (!notification)
         return;
 
+    // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     notification->dispatchClickEvent();
 #else
     UNUSED_PARAM(notificationID);

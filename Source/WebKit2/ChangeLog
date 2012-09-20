@@ -1,3 +1,17 @@
+2012-09-17  Jon Lee  <jonlee@apple.com>
+
+        Safari 6 notifications' onclick handlers can't call window.open()
+        https://bugs.webkit.org/show_bug.cgi?id=96959
+        <rdar://problem/12132427>
+
+        Reviewed by Darin Adler.
+
+        The click is not being treated as a user gesture when the message is sent to the web process.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::didClickNotification): Gets called when the user clicks on the
+        platform notification. Set UserGestureIndicator to show the click event is due to user gesture.
+
 2012-09-20  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add APIs to create, delete and get ewk_context.
