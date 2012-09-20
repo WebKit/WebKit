@@ -35,7 +35,6 @@ using namespace HTMLNames;
 
 RenderButton::RenderButton(Node* node)
     : RenderDeprecatedFlexibleBox(node)
-    , m_buttonText(0)
     , m_inner(0)
     , m_default(false)
 {
@@ -83,8 +82,6 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    if (m_buttonText)
-        m_buttonText->setStyle(style());
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
         setupInnerStyle(m_inner->style());
 
@@ -106,39 +103,6 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     // safe to modify.
     innerStyle->setBoxFlex(1.0f);
     innerStyle->setBoxOrient(style()->boxOrient());
-}
-
-void RenderButton::updateFromElement()
-{
-    // If we're an input element, we may need to change our button text.
-    if (node()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-        String value = input->valueWithDefault();
-        setText(value);
-    }
-}
-
-void RenderButton::setText(const String& str)
-{
-    if (str.isEmpty()) {
-        if (m_buttonText) {
-            m_buttonText->destroy();
-            m_buttonText = 0;
-        }
-    } else {
-        if (m_buttonText)
-            m_buttonText->setText(str.impl());
-        else {
-            m_buttonText = new (renderArena()) RenderTextFragment(document(), str.impl());
-            m_buttonText->setStyle(style());
-            addChild(m_buttonText);
-        }
-    }
-}
-
-String RenderButton::text() const
-{
-    return m_buttonText ? m_buttonText->text() : 0;
 }
 
 bool RenderButton::canHaveGeneratedChildren() const

@@ -677,6 +677,7 @@ void HTMLInputElement::parseAttribute(const Attribute& attribute)
             updatePlaceholderVisibility(false);
             setNeedsStyleRecalc();
         }
+        m_inputType->valueAttributeChanged();
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
