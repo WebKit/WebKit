@@ -648,11 +648,11 @@ bool WKPreferencesGetFileAccessFromFileURLsAllowed(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->allowFileAccessFromFileURLs();
 }
 
-void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef, bool /*enabled*/)
 {
 }
 
-bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef)
 {
     return false;
 }

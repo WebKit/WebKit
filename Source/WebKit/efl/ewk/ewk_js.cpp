@@ -20,6 +20,8 @@
 #include "config.h"
 #include "ewk_js.h"
 
+#include <wtf/UnusedParam.h>
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NP_jsobject.h"
@@ -590,6 +592,7 @@ error:
     ewk_js_object_free(object);
     return 0;
 #else
+    UNUSED_PARAM(jsMetaClass);
     return 0;
 #endif
 }
@@ -610,6 +613,8 @@ void ewk_js_object_free(Ewk_JS_Object* jsObject)
 
     if (script_obj)
         free(jsObject);
+#else
+    UNUSED_PARAM(jsObject);
 #endif
 }
 
@@ -620,6 +625,7 @@ Evas_Object* ewk_js_object_view_get(const Ewk_JS_Object* jsObject)
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->view;
 #else
+    UNUSED_PARAM(jsObject);
     return 0;
 #endif
 }
@@ -631,6 +637,7 @@ Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->properties;
 #else
+    UNUSED_PARAM(jsObject);
     return 0;
 #endif
 }
@@ -642,6 +649,7 @@ const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->name;
 #else
+    UNUSED_PARAM(jsObject);
     return 0;
 #endif
 }
@@ -678,6 +686,10 @@ end:
     free(np_args);
     return fail;
 #else
+    UNUSED_PARAM(jsObject);
+    UNUSED_PARAM(args);
+    UNUSED_PARAM(argCount);
+    UNUSED_PARAM(result);
     return false;
 #endif
 }
@@ -690,6 +702,7 @@ Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
 
     return jsObject->type;
 #else
+    UNUSED_PARAM(jsObject);
     return EWK_JS_OBJECT_INVALID;
 #endif
 }
@@ -701,6 +714,9 @@ void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
     EINA_MAGIC_CHECK_OR_RETURN(jsObject);
 
     jsObject->type = type;
+#else
+    UNUSED_PARAM(jsObject);
+    UNUSED_PARAM(type);
 #endif
 }
 
@@ -713,6 +729,8 @@ void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
     else if (jsVariant->type == EWK_JS_VARIANT_OBJECT)
         ewk_js_object_free(jsVariant->value.o);
     free(jsVariant);
+#else
+    UNUSED_PARAM(jsVariant);
 #endif
 }
 
@@ -727,5 +745,8 @@ void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
             ewk_js_object_free(jsVariant[i].value.o);
     }
     free(jsVariant);
+#else
+    UNUSED_PARAM(jsVariant);
+    UNUSED_PARAM(count);
 #endif
 }

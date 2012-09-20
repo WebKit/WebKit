@@ -881,7 +881,7 @@ Eina_Bool ewk_frame_feed_focus_in(Evas_Object* ewkFrame)
     return true;
 }
 
-Eina_Bool ewk_frame_feed_focus_out(Evas_Object* ewkFrame)
+Eina_Bool ewk_frame_feed_focus_out(Evas_Object*)
 {
     // TODO: what to do on focus out?
     ERR("what to do?");
@@ -1334,7 +1334,7 @@ void ewk_frame_did_perform_first_navigation(Evas_Object* ewkFrame)
  *
  * Emits signal: "state,save"
  */
-void ewk_frame_view_state_save(Evas_Object* ewkFrame, WebCore::HistoryItem* item)
+void ewk_frame_view_state_save(Evas_Object* ewkFrame, WebCore::HistoryItem*)
 {
     evas_object_smart_callback_call(ewkFrame, "state,save", 0);
 }
@@ -1844,6 +1844,15 @@ WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, 
 
     if (pluginView->status() == WebCore::PluginStatusLoadedSuccessfully)
         return pluginView.release();
+#else
+    UNUSED_PARAM(ewkFrame);
+    UNUSED_PARAM(pluginSize);
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(url);
+    UNUSED_PARAM(paramNames);
+    UNUSED_PARAM(paramValues);
+    UNUSED_PARAM(mimeType);
+    UNUSED_PARAM(loadManually);
 #endif // #if ENABLE(NETSCAPE_PLUGIN_API)
     return 0;
 }

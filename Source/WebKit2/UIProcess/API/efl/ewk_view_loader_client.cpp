@@ -50,7 +50,7 @@ static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef fra
 }
 
 #if ENABLE(WEB_INTENTS)
-static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
+static void didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     Ewk_Intent* ewkIntent = ewk_intent_new(intent);
@@ -60,7 +60,7 @@ static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentD
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
-static void registerIntentServiceForFrame(WKPageRef page, WKFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void *clientInfo)
+static void registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void *clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     Ewk_Intent_Service* ewkIntentService = ewk_intent_service_new(serviceInfo);
@@ -75,7 +75,7 @@ static void didChangeProgress(WKPageRef page, const void* clientInfo)
     ewk_view_load_progress_changed(ewkView, WKPageGetEstimatedProgress(page));
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void *clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -84,7 +84,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     ewk_view_load_finished(ewkView);
 }
 
-static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void *clientInfo)
+static void didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void *clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -96,7 +96,7 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
     ewk_web_error_free(ewkError);
 }
 
-static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -105,7 +105,7 @@ static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WK
     ewk_view_load_provisional_started(ewkView);
 }
 
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -114,7 +114,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, W
     ewk_view_load_provisional_redirect(ewkView);
 }
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
@@ -125,7 +125,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     ewk_web_error_free(ewkError);
 }
 
-static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
+static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     ASSERT(ewkView);

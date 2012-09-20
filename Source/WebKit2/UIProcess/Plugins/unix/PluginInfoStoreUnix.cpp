@@ -104,7 +104,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
 #endif
 }
 
-bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& /*alreadyLoadedPlugins*/, const PluginModuleInfo& /*plugin*/)
 {
     // We do not do any black-listing presently.
     return true;

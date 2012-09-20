@@ -66,7 +66,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const Conte
     notImplemented();
 }
 
-void WebContextMenuClient::downloadURL(const KURL& url)
+void WebContextMenuClient::downloadURL(const KURL&)
 {
     // This is handled in the UI process.
     ASSERT_NOT_REACHED();

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static void notifyWebInspectorDestroy(void* userData, Evas_Object* webview, void* eventInfo)
+static void notifyWebInspectorDestroy(void* userData, Evas_Object* /*webview*/, void* /*eventInfo*/)
 {
     InspectorFrontendClientEfl* inspectorFrontendClient = static_cast<InspectorFrontendClientEfl*>(userData);
     if (inspectorFrontendClient)
@@ -50,13 +50,13 @@ static void invalidateView(Evas_Object* webView)
 
 class InspectorFrontendSettingsEfl : public InspectorFrontendClientLocal::Settings {
 public:
-    virtual String getProperty(const String& name)
+    virtual String getProperty(const String& /*name*/)
     {
         notImplemented();
         return String();
     }
 
-    virtual void setProperty(const String& name, const String& value)
+    virtual void setProperty(const String& /*name*/, const String& /*value*/)
     {
         notImplemented();
     }

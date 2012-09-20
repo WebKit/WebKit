@@ -617,31 +617,31 @@ static Eina_Bool _ewk_view_smart_key_up(Ewk_View_Smart_Data* smartData, const Ev
     return ewk_frame_feed_key_up(frame, upEvent);
 }
 
-static void _ewk_view_smart_add_console_message(Ewk_View_Smart_Data* smartData, const char* message, unsigned int lineNumber, const char* sourceID)
+static void _ewk_view_smart_add_console_message(Ewk_View_Smart_Data*, const char* message, unsigned int lineNumber, const char* sourceID)
 {
     INF("console message: %s @%d: %s\n", sourceID, lineNumber, message);
 }
 
-static void _ewk_view_smart_run_javascript_alert(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message)
+static void _ewk_view_smart_run_javascript_alert(Ewk_View_Smart_Data*, Evas_Object* /*frame*/, const char* message)
 {
     INF("javascript alert: %s\n", message);
 }
 
-static Eina_Bool _ewk_view_smart_run_javascript_confirm(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message)
+static Eina_Bool _ewk_view_smart_run_javascript_confirm(Ewk_View_Smart_Data*, Evas_Object* /*frame*/, const char* message)
 {
     INF("javascript confirm: %s", message);
     INF("javascript confirm (HARD CODED)? YES");
     return true;
 }
 
-static Eina_Bool _ewk_view_smart_should_interrupt_javascript(Ewk_View_Smart_Data* smartData)
+static Eina_Bool _ewk_view_smart_should_interrupt_javascript(Ewk_View_Smart_Data*)
 {
     INF("should interrupt javascript?\n"
         "\t(HARD CODED) NO");
     return false;
 }
 
-static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message, const char* defaultValue, const char** value)
+static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data*, Evas_Object* /*frame*/, const char* message, const char* defaultValue, const char** value)
 {
     *value = eina_stringshare_add("test");
     Eina_Bool result = true;
@@ -1037,7 +1037,7 @@ static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord w, Evas_Coor
     _ewk_view_smart_changed(smartData);
 }
 
-static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y)
+static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord /*x*/, Evas_Coord /*y*/)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     smartData->changed.position = true;
@@ -1126,7 +1126,7 @@ static void _ewk_view_smart_hide(Evas_Object* ewkView)
     evas_object_hide(smartData->backing_store);
 }
 
-static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data* smartData, int width, int height)
+static Eina_Bool _ewk_view_smart_contents_resize(Ewk_View_Smart_Data*, int /*width*/, int /*height*/)
 {
     return true;
 }
@@ -1288,7 +1288,7 @@ static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* smartData)
     return false;
 }
 
-static const char* _ewk_view_editor_command_string_get(Ewk_View_Private_Data* priv, Ewk_Editor_Command ewkCommand)
+static const char* _ewk_view_editor_command_string_get(Ewk_View_Private_Data*, Ewk_Editor_Command ewkCommand)
 {
     static OwnPtr<Eina_Hash> editorCommandHash;
 
@@ -3750,7 +3750,7 @@ WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Ev
  *
  * Emits: "popup,create" with a list of Ewk_Menu containing each item's data
  */
-void ewk_view_popup_new(Evas_Object* ewkView, WebCore::PopupMenuClient* client, int selected, const WebCore::IntRect& rect)
+void ewk_view_popup_new(Evas_Object* ewkView, WebCore::PopupMenuClient* client, int /*selected*/, const WebCore::IntRect& rect)
 {
     INF("ewkView=%p", ewkView);
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
@@ -4135,6 +4135,9 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, co
     window->methodTable()->put(window, executeState, id, runtimeObject, slot);
     return true;
 #else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(objectName);
     return false;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
@@ -4475,13 +4478,13 @@ void ewk_view_web_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspecto
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
+bool ewk_view_accelerated_compositing_object_create(Evas_Object*, Evas_Native_Surface*, const WebCore::IntRect& /*rect*/)
 {
     notImplemented();
     return false;
 }
 
-WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView)
+WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object*)
 {
     notImplemented();
     return 0;
@@ -4495,6 +4498,7 @@ Eina_Bool ewk_view_setting_web_audio_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     return priv->settings.webAudio;
 #else
+    UNUSED_PARAM(ewkView);
     return false;
 #endif
 }
@@ -4510,6 +4514,8 @@ Eina_Bool ewk_view_setting_web_audio_set(Evas_Object* ewkView, Eina_Bool enable)
     }
     return true;
 #else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(enable);
     return false;
 #endif
 }

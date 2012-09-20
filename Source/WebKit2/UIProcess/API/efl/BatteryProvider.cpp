@@ -40,12 +40,12 @@ static inline BatteryProvider* toBatteryProvider(const void* clientInfo)
     return static_cast<BatteryProvider*>(const_cast<void*>(clientInfo));
 }
 
-static void startUpdatingCallback(WKBatteryManagerRef batteryManager, const void* clientInfo)
+static void startUpdatingCallback(WKBatteryManagerRef, const void* clientInfo)
 {
     toBatteryProvider(clientInfo)->startUpdating();
 }
 
-static void stopUpdatingCallback(WKBatteryManagerRef batteryManager, const void* clientInfo)
+static void stopUpdatingCallback(WKBatteryManagerRef, const void* clientInfo)
 {
     toBatteryProvider(clientInfo)->stopUpdating();
 }

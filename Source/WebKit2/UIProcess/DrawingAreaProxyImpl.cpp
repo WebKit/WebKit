@@ -215,6 +215,8 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
         ASSERT(!m_backingStore);
         return;
     }
+#else
+    UNUSED_PARAM(layerTreeContext);
 #endif
 
     // If we have a backing store the right size, reuse it.
@@ -231,6 +233,8 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t backingStore
 
 #if USE(ACCELERATED_COMPOSITING)
     enterAcceleratedCompositingMode(layerTreeContext);
+#else
+    UNUSED_PARAM(layerTreeContext);
 #endif
 }
 
@@ -255,6 +259,8 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStor
 
 #if USE(ACCELERATED_COMPOSITING)
     updateAcceleratedCompositingMode(layerTreeContext);
+#else
+    UNUSED_PARAM(layerTreeContext);
 #endif
 }
 

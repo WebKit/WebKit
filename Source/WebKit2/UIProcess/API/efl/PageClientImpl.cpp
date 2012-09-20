@@ -194,7 +194,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHandled*/)
 {
     notImplemented();
 }

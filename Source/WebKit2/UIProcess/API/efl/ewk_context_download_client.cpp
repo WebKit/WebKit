@@ -48,7 +48,7 @@ static inline Ewk_Context* toEwkContext(const void* clientInfo)
     return static_cast<Ewk_Context*>(const_cast<void*>(clientInfo));
 }
 
-static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* allowOverwrite, const void* clientInfo)
+static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* /*allowOverwrite*/, const void* clientInfo)
 {
     Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
     ASSERT(download);
@@ -74,7 +74,7 @@ static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResp
     ewk_url_response_unref(response);
 }
 
-static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef path, const void* clientInfo)
+static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef /*path*/, const void* clientInfo)
 {
     Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
     ASSERT(download);

@@ -367,7 +367,7 @@ void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphic
     }
 }
 
-bool FindController::mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& mouseEvent)
+bool FindController::mouseEvent(PageOverlay*, const WebMouseEvent& mouseEvent)
 {
     // If we get a mouse down event inside the page overlay we should hide the find UI.
     if (mouseEvent.type() == WebEvent::MouseDown) {

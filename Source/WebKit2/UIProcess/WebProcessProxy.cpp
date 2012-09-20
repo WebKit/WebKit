@@ -181,7 +181,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
     return m_pageMap.get(pageID);
 }
 
-PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup)
+PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebContext*, WebPageGroup* pageGroup)
 {
     uint64_t pageID = generatePageID();
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);

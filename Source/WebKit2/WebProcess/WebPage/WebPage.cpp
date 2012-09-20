@@ -1954,6 +1954,8 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
         if ((data = frame->webArchiveData(0, 0)))
             dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
+#else
+    UNUSED_PARAM(frameID);
 #endif
 
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));

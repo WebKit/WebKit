@@ -890,6 +890,8 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
         for (size_t i = 0; i < sites.size(); ++i)
             sitesSet.add(sites[i]);
     }
+#else
+    UNUSED_PARAM(pluginPaths);
 #endif
 
     Vector<String> sites;
@@ -917,6 +919,11 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
         for (size_t i = 0; i < sites.size(); ++i)
             netscapePluginModule->clearSiteData(sites[i], flags, maxAgeInSeconds);
     }
+#else
+    UNUSED_PARAM(pluginPaths);
+    UNUSED_PARAM(sites);
+    UNUSED_PARAM(flags);
+    UNUSED_PARAM(maxAgeInSeconds);
 #endif
 
     connection()->send(Messages::WebProcessProxy::DidClearPluginSiteData(callbackID), 0);

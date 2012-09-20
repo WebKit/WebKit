@@ -40,6 +40,7 @@ Eina_Bool ewk_file_chooser_allows_directory_upload_get(const Ewk_File_Chooser* c
     EINA_SAFETY_ON_NULL_RETURN_VAL(chooser, false);
     return chooser->fileChooser->settings().allowsDirectoryUpload;
 #else
+    UNUSED_PARAM(chooser);
     return false;
 #endif
 }

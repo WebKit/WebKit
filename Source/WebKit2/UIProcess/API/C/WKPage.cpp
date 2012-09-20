@@ -596,6 +596,11 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, voi
 {
 #if ENABLE(MHTML)
     toImpl(pageRef)->getContentsAsMHTMLData(DataCallback::create(context, callback), useBinaryEncoding);
+#else
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(useBinaryEncoding);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(callback);
 #endif
 }
 

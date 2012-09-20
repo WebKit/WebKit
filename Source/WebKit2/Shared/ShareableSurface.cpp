@@ -77,6 +77,7 @@ PassRefPtr<ShareableSurface> ShareableSurface::create(const IntSize& size, Share
             return surface.release();
     }
 #endif
+    UNUSED_PARAM(hints);
 
     return create(size, flags, ShareableBitmap::createShareable(size, flags));
 }

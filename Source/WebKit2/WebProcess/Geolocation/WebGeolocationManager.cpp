@@ -83,6 +83,8 @@ void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data
         if (page->corePage())
             GeolocationController::from(page->corePage())->positionChanged(position.get());
     }
+#else
+    UNUSED_PARAM(data);
 #endif // ENABLE(GEOLOCATION)
 }
 

@@ -254,6 +254,9 @@ void InjectedBundle::setGeoLocationPermission(WebPageGroupProxy* pageGroup, bool
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         static_cast<GeolocationClientMock*>(GeolocationController::from(*iter)->client())->setPermission(enabled);
+#else
+    UNUSED_PARAM(pageGroup);
+    UNUSED_PARAM(enabled);
 #endif // ENABLE(GEOLOCATION)
 }
 
@@ -549,7 +552,7 @@ void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messag
     m_client.didReceiveMessageToPage(this, page, messageName, messageBody);
 }
 
-void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void InjectedBundle::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<InjectedBundleMessage::Kind>()) {
         case InjectedBundleMessage::PostMessage: {
@@ -644,6 +647,8 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
         return 0;
     return WebProcess::shared().notificationManager().notificationIDForTesting(notification);
 #else
+    UNUSED_PARAM(jsContext);
+    UNUSED_PARAM(jsNotification);
     return 0;
 #endif
 }

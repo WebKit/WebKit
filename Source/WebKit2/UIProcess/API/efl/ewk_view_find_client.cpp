@@ -34,7 +34,7 @@ static inline Evas_Object* toEwkView(const void* clientInfo)
     return static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
 }
 
-static void didFindString(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo)
+static void didFindString(WKPageRef, WKStringRef /*string*/, unsigned matchCount, const void* clientInfo)
 {
     ewk_view_text_found(toEwkView(clientInfo), static_cast<unsigned int>(matchCount));
 }

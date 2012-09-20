@@ -263,6 +263,10 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
     RetainPtr<CFDataRef> data = toImpl(frameRef)->webArchiveData(frameFilterCallback, context);
     if (data)
         return WKDataCreate(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+#else
+    UNUSED_PARAM(frameRef);
+    UNUSED_PARAM(frameFilterCallback);
+    UNUSED_PARAM(context);
 #endif
     
     return 0;

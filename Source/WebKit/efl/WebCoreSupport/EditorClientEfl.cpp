@@ -367,7 +367,7 @@ void EditorClientEfl::handleKeyboardEvent(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-void EditorClientEfl::handleInputMethodKeydown(KeyboardEvent* event)
+void EditorClientEfl::handleInputMethodKeydown(KeyboardEvent*)
 {
 }
 
@@ -466,7 +466,7 @@ bool EditorClientEfl::spellingUIIsShowing()
     return false;
 }
 
-void EditorClientEfl::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
+void EditorClientEfl::getGuessesForWord(const String& /*word*/, const String& /*context*/, Vector<String>& /*guesses*/)
 {
     notImplemented();
 }

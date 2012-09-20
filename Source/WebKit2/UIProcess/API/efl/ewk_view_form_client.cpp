@@ -31,7 +31,7 @@
 #include "ewk_view_form_client_private.h"
 #include "ewk_view_private.h"
 
-static void willSubmitForm(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo)
+static void willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /*sourceFrame*/, WKDictionaryRef values, WKTypeRef /*userData*/, WKFormSubmissionListenerRef listener, const void* clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
 

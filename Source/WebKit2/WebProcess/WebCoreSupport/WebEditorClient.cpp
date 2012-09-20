@@ -397,6 +397,7 @@ bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextChecki
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return type != TextCheckingTypeSpelling;
 #else
+    UNUSED_PARAM(type);
     return true;
 #endif
 }

@@ -1352,7 +1352,7 @@ void WebPageProxy::terminateProcess()
 }
 
 #if !USE(CF) || defined(BUILDING_QT__)
-PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const
+PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* /*context*/) const
 {
     // FIXME: Return session state data for saving Page state.
     return 0;
@@ -3815,6 +3815,8 @@ void WebPageProxy::recommendedScrollbarStyleDidChange(int32_t newStyle)
 {
 #if PLATFORM(MAC)
     m_pageClient->recommendedScrollbarStyleDidChange(newStyle);
+#else
+    UNUSED_PARAM(newStyle);
 #endif
 }
 
@@ -3853,6 +3855,8 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 
     pluginIdentifier = plugin.bundleIdentifier;
     pluginVersion = plugin.versionString;
+#else
+    UNUSED_PARAM(urlString);
 #endif
 
     m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginIdentifier, pluginVersion);

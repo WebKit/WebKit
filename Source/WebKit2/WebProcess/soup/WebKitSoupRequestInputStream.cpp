@@ -83,7 +83,7 @@ static bool webkitSoupRequestInputStreamIsWaitingForData(WebKitSoupRequestInputS
     return !stream->priv->contentLength || stream->priv->bytesReceived < stream->priv->contentLength;
 }
 
-static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, void* buffer, gsize count, int priority, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, void* buffer, gsize count, int /*priority*/, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     WebKitSoupRequestInputStream* stream = WEBKIT_SOUP_REQUEST_INPUT_STREAM(inputStream);
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(stream), callback, userData, reinterpret_cast<void*>(webkitSoupRequestInputStreamReadAsync)));
@@ -104,7 +104,7 @@ static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, voi
     stream->priv->pendingAsyncRead = adoptPtr(new AsyncReadData(result.get(), buffer, count, cancellable));
 }
 
-static gssize webkitSoupRequestInputStreamReadFinish(GInputStream* inputStream, GAsyncResult* result, GError** error)
+static gssize webkitSoupRequestInputStreamReadFinish(GInputStream*, GAsyncResult* result, GError**)
 {
     GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
     g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkitSoupRequestInputStreamReadAsync);

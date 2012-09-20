@@ -55,12 +55,12 @@ static inline VibrationProvider* toVibrationProvider(const void* clientInfo)
     return static_cast<VibrationProvider*>(const_cast<void*>(clientInfo));
 }
 
-static void vibrateCallback(WKVibrationRef vibrationRef, uint64_t vibrationTime, const void* clientInfo)
+static void vibrateCallback(WKVibrationRef, uint64_t vibrationTime, const void* clientInfo)
 {
     toVibrationProvider(clientInfo)->vibrate(vibrationTime);
 }
 
-static void cancelVibrationCallback(WKVibrationRef vibrationRef, const void* clientInfo)
+static void cancelVibrationCallback(WKVibrationRef, const void* clientInfo)
 {
     toVibrationProvider(clientInfo)->cancelVibration();
 }

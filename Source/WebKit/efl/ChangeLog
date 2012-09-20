@@ -1,3 +1,94 @@
+2012-09-19  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix unused parameter compile warnings in WebKit/WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=96742
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix unused parameter compile warning messages(-Wunused-parameter) in WebKit during EFL build.
+        WebCore's warning messages were fixed in r128570.
+ 
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+        (WebCore::ChromeClientEfl::mouseDidMoveOverElement):
+        (WebCore::ChromeClientEfl::print):
+        (WebCore::ChromeClientEfl::reachedMaxAppCacheSize):
+        (WebCore::ChromeClientEfl::invalidateContents):
+        (WebCore::ChromeClientEfl::invalidateRootView):
+        (WebCore::ChromeClientEfl::invalidateContentsAndRootView):
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::handleInputMethodKeydown):
+        (WebCore::EditorClientEfl::getGuessesForWord):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientEfl::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientEfl::createFrame):
+        (WebCore::FrameLoaderClientEfl::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientEfl::shouldStopLoadingForHistoryItem):
+        (WebCore::FrameLoaderClientEfl::canShowMIMETypeAsHTML):
+        (WebCore::FrameLoaderClientEfl::setTitle):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientEfl::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientEfl::setMainDocumentError):
+        * WebCoreSupport/FullscreenVideoControllerEfl.cpp:
+        (FullscreenVideoController::showHud):
+        (FullscreenVideoController::setVolume):
+        (FullscreenVideoController::setCurrentTime):
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::notifyWebInspectorDestroy):
+        (WebCore::InspectorFrontendSettingsEfl::getProperty):
+        (WebCore::InspectorFrontendSettingsEfl::setProperty):
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::getPluginInfo):
+        * ewk/ewk_auth_soup.cpp:
+        (ewk_auth_soup_dialog_class_init):
+        (ewk_auth_soup_dialog_init):
+        (ewk_auth_soup_dialog_session_feature_init):
+        (session_authenticate):
+        * ewk/ewk_file_chooser.cpp:
+        (ewk_file_chooser_allows_directory_upload_get):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_focus_out):
+        (ewk_frame_view_state_save):
+        (ewk_frame_plugin_create):
+        * ewk/ewk_js.cpp:
+        (ewk_js_object_new):
+        (ewk_js_object_free):
+        (ewk_js_object_view_get):
+        (ewk_js_object_properties_get):
+        (ewk_js_object_name_get):
+        (ewk_js_object_invoke):
+        (ewk_js_object_type_get):
+        (ewk_js_object_type_set):
+        (ewk_js_variant_free):
+        (ewk_js_variant_array_free):
+        * ewk/ewk_tiled_model.cpp:
+        (tile_account):
+        (_ewk_tile_account_allocated):
+        (_ewk_tile_account_freed):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_add_console_message):
+        (_ewk_view_smart_run_javascript_alert):
+        (_ewk_view_smart_run_javascript_confirm):
+        (_ewk_view_smart_should_interrupt_javascript):
+        (_ewk_view_smart_run_javascript_prompt):
+        (_ewk_view_smart_move):
+        (_ewk_view_smart_contents_resize):
+        (_ewk_view_editor_command_string_get):
+        (ewk_view_popup_new):
+        (ewk_view_js_object_add):
+        (ewk_view_accelerated_compositing_object_create):
+        (ewk_view_accelerated_compositing_context_get):
+        (ewk_view_setting_web_audio_get):
+        (ewk_view_setting_web_audio_set):
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_bg_color_set):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_updates_process_pre):
+        (_ewk_view_tiled_contents_size_changed_cb):
+        (_ewk_view_tiled_smart_bg_color_set):
+
 2012-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r128995.

@@ -210,7 +210,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     AuthenticationManager::shared().didReceiveAuthenticationChallenge(m_frame, challenge);
 }
 
-void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&)    
+void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long /*identifier*/, const AuthenticationChallenge&)    
 {
     notImplemented();
 }
@@ -273,7 +273,7 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long
     webPage->send(Messages::WebPageProxy::DidFailLoadForResource(m_frame->frameID(), identifier, error));
 }
 
-bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
 {
     notImplemented();
     return false;
@@ -1000,7 +1000,7 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     return shouldGoToBackForwardListItem;
 }
 
-bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) const
+bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem*) const
 {
     return true;
 }
@@ -1106,24 +1106,24 @@ bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const
+bool WebFrameLoaderClient::canShowMIMEType(const String& /*MIMEType*/) const
 {
     notImplemented();
     return true;
 }
 
-bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& /*MIMEType*/) const
 {
     return true;
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(const String& /*URLScheme*/) const
 {
     notImplemented();
     return false;
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLScheme) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLScheme*/) const
 {
     notImplemented();
     return String();
@@ -1287,7 +1287,7 @@ void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceReques
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
-                                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+                                                    const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     WebPage* webPage = m_frame->page();
 
@@ -1360,7 +1360,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
-PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues)
+PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     RefPtr<Widget> plugin = createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, appletElement->serviceType(), false);
     if (!plugin) {
@@ -1514,7 +1514,7 @@ void WebFrameLoaderClient::didPerformFirstNavigation() const
     notImplemented();
 }
 
-void WebFrameLoaderClient::registerForIconNotification(bool listen)
+void WebFrameLoaderClient::registerForIconNotification(bool /*listen*/)
 {
     notImplemented();
 }

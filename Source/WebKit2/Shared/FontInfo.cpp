@@ -40,6 +40,8 @@ void FontInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(static_cast<bool>(fontAttributeDictionary));
     if (fontAttributeDictionary)
         CoreIPC::encode(encoder, fontAttributeDictionary.get());
+#else
+    UNUSED_PARAM(encoder);
 #endif
 }
 
@@ -55,6 +57,9 @@ bool FontInfo::decode(CoreIPC::ArgumentDecoder* decoder, FontInfo& fontInfo)
 
     if (!CoreIPC::decode(decoder, fontInfo.fontAttributeDictionary))
         return false;
+#else
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(fontInfo);
 #endif
     
     return true;

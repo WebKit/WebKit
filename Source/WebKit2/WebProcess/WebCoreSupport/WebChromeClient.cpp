@@ -263,7 +263,7 @@ void WebChromeClient::setResizable(bool resizable)
     m_page->send(Messages::WebPageProxy::SetIsResizable(resizable));
 }
 
-void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
+void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& /*sourceID*/)
 {
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willAddMessageToConsole(m_page, message, lineNumber);
@@ -428,7 +428,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return 0;
 }
 
-void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
+void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& /*size*/) const
 {
     if (!m_page->corePage()->settings()->frameFlatteningEnabled()) {
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
@@ -572,14 +572,14 @@ void WebChromeClient::populateVisitedLinks()
 {
 }
 
-FloatRect WebChromeClient::customHighlightRect(Node*, const AtomicString& type, const FloatRect& lineRect)
+FloatRect WebChromeClient::customHighlightRect(Node*, const AtomicString& /*type*/, const FloatRect& /*lineRect*/)
 {
     notImplemented();
     return FloatRect();
 }
 
-void WebChromeClient::paintCustomHighlight(Node*, const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect,
-                                  bool behindText, bool entireLine)
+void WebChromeClient::paintCustomHighlight(Node*, const AtomicString& /*type*/, const FloatRect& /*boxRect*/, const FloatRect& /*lineRect*/, 
+                                           bool /*behindText*/, bool /*entireLine*/)
 {
     notImplemented();
 }
@@ -735,7 +735,7 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
+bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard)
 {
     return m_page->fullScreenManager()->supportsFullScreen(withKeyboard);
 }

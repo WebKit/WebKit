@@ -323,7 +323,7 @@ static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Dat
     evas_object_image_smooth_scale_set(smartData->backing_store, smooth_scale);
 }
 
-static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* smartData, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
+static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* smartData, unsigned char /*red*/, unsigned char /*green*/, unsigned char /*blue*/, unsigned char alpha)
 {
     evas_object_image_alpha_set(smartData->backing_store, alpha < 255);
 }

@@ -944,6 +944,8 @@ void WebContext::setHTTPPipeliningEnabled(bool enabled)
 {
 #if PLATFORM(MAC)
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
 #endif
 }
 

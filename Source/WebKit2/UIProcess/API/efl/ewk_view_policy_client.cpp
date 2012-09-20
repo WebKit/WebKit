@@ -42,21 +42,21 @@ static inline Evas_Object* toEwkView(const void* clientInfo)
     return static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
 }
 
-static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
     Ewk_Navigation_Policy_Decision* decision = ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, 0, listener);
     ewk_view_navigation_policy_decision(toEwkView(clientInfo), decision);
     ewk_navigation_policy_decision_unref(decision);
 }
 
-static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
     Ewk_Navigation_Policy_Decision* decision = ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
     ewk_view_new_window_policy_decision(toEwkView(clientInfo), decision);
     ewk_navigation_policy_decision_unref(decision);
 }
 
-static void decidePolicyForResponseCallback(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
 {
     const ResourceResponse resourceResponse = toImpl(response)->resourceResponse();
 

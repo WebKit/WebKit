@@ -58,7 +58,7 @@ void FullscreenVideoController::setMediaElement(HTMLMediaElement* mediaElement)
     }
 }
 
-void FullscreenVideoController::showHud(bool autoHide)
+void FullscreenVideoController::showHud(bool /*autoHide*/)
 {
     notImplemented();
 }
@@ -126,7 +126,7 @@ bool FullscreenVideoController::muted() const
     return false;
 }
 
-void FullscreenVideoController::setVolume(float volume)
+void FullscreenVideoController::setVolume(float /*volume*/)
 {
     notImplemented();
 }
@@ -147,7 +147,7 @@ float FullscreenVideoController::currentTime() const
     return 0;
 }
 
-void FullscreenVideoController::setCurrentTime(float value)
+void FullscreenVideoController::setCurrentTime(float /*value*/)
 {
     notImplemented();
 }

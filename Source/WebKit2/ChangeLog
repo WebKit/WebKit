@@ -1,3 +1,190 @@
+2012-09-19  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix unused parameter compile warnings in WebKit/WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=96742
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix unused parameter compile warning messages(-Wunused-parameter) in WebKit2 during EFL build.
+        WebCore's warning messages were fixed in r128570.
+
+        * Shared/FontInfo.cpp:
+        (WebKit::FontInfo::encode):
+        (WebKit::FontInfo::decode):
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        * Shared/ShareableSurface.cpp:
+        (WebKit::ShareableSurface::create):
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::appendCurrentMemoryUsageToFile):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetContentsAsMHTMLData):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetHixie76WebSocketProtocolEnabled):
+        (WKPreferencesGetHixie76WebSocketProtocolEnabled):
+        * UIProcess/API/efl/BatteryProvider.cpp:
+        (startUpdatingCallback):
+        (stopUpdatingCallback):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/efl/VibrationProvider.cpp:
+        (vibrateCallback):
+        (cancelVibrationCallback):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (decideDestinationWithSuggestedFilename):
+        (didCreateDestination):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_on_focus_in):
+        (_ewk_view_on_focus_out):
+        (_ewk_view_on_mouse_wheel):
+        (_ewk_view_on_mouse_down):
+        (_ewk_view_on_mouse_up):
+        (_ewk_view_on_mouse_move):
+        (_ewk_view_on_key_down):
+        (_ewk_view_on_key_up):
+        (_ewk_view_smart_move):
+        (ewk_view_contents_size_changed):
+        * UIProcess/API/efl/ewk_view_find_client.cpp:
+        (didFindString):
+        * UIProcess/API/efl/ewk_view_form_client.cpp:
+        (willSubmitForm):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didReceiveIntentForFrame):
+        (registerIntentServiceForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didChangeBackForwardList):
+        * UIProcess/API/efl/ewk_view_policy_client.cpp:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        (decidePolicyForResponseCallback):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::update):
+        (WebKit::DrawingAreaProxy::didUpdateBackingStoreState):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyImpl::updateAcceleratedCompositingMode):
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision):
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setHTTPPipeliningEnabled):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::supportsFullScreen):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        (WebKit::WebPageProxy::recommendedScrollbarStyleDidChange):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+        (WebKit::WebPageProxy::getEditorCommandsForKeyEvent):
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::didDecideDestination):
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::didChangePosition):
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::synchronousIconForPageURL):
+        (WebKit::WebIconDatabaseProxy::synchronousIconURLForPageURL):
+        (WebKit::WebIconDatabaseProxy::synchronousIconDataKnownForIconURL):
+        (WebKit::WebIconDatabaseProxy::synchronousLoadDecisionForIconURL):
+        (WebKit::WebIconDatabaseProxy::iconDataForIconURL):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyWebArchiveFilteringSubframes):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityRootObject):
+        (WKAccessibilityFocusedObject):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setGeoLocationPermission):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        (WebKit::InjectedBundle::webNotificationID):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::initialize):
+        (WebKit::WebNotificationManager::didUpdateNotificationDecision):
+        (WebKit::WebNotificationManager::didRemoveNotificationDecisions):
+        (WebKit::WebNotificationManager::policyForOrigin):
+        (WebKit::WebNotificationManager::notificationIDForTesting):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        (WebKit::WebNotificationManager::didShowNotification):
+        (WebKit::WebNotificationManager::didClickNotification):
+        (WebKit::WebNotificationManager::didCloseNotifications):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addMessageToConsole):
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        (WebKit::WebChromeClient::customHighlightRect):
+        (WebKit::WebChromeClient::paintCustomHighlight):
+        (WebKit::WebChromeClient::supportsFullScreenForElement):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::downloadURL):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::dragSourceActionMaskForPoint):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge):
+        (WebKit::WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        (WebKit::WebFrameLoaderClient::shouldStopLoadingForHistoryItem):
+        (WebKit::WebFrameLoaderClient::canShowMIMEType):
+        (WebKit::WebFrameLoaderClient::canShowMIMETypeAsHTML):
+        (WebKit::WebFrameLoaderClient::representationExistsForURLScheme):
+        (WebKit::WebFrameLoaderClient::generatedMIMETypeForURLScheme):
+        (WebKit::WebFrameLoaderClient::createFrame):
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget):
+        (WebKit::WebFrameLoaderClient::registerForIconNotification):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::drawRect):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::forceRepaintAsync):
+        (WebKit::DrawingArea::updateBackingStoreState):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::mouseEvent):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::forceRepaintAsync):
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendFinish):
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamReadAsync):
+        (webkitSoupRequestInputStreamReadFinish):
+
 2012-09-19  Pratik Solanki  <psolanki@apple.com>
 
         Warning in SandboxExtension.h if WEB_PROCESS_SANDBOX is not enabled

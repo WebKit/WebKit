@@ -72,7 +72,7 @@ void WebIconDatabaseProxy::releaseIconForPageURL(const String& pageURL)
     m_process->connection()->send(Messages::WebIconDatabase::ReleaseIconForPageURL(pageURL), 0);
 }
 
-Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& size)
+Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& /*size*/)
 {
     CoreIPC::DataReference result;
     if (!m_process->connection()->sendSync(Messages::WebIconDatabase::SynchronousIconDataForPageURL(pageURL), Messages::WebIconDatabase::SynchronousIconDataForPageURL::Reply(result), 0))
@@ -83,21 +83,21 @@ Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, co
 }
 
 
-String WebIconDatabaseProxy::synchronousIconURLForPageURL(const String& pageURL)
+String WebIconDatabaseProxy::synchronousIconURLForPageURL(const String& /*pageURL*/)
 {
     // FIXME: This needs to ask the UI process for the iconURL, but it can't do so synchronously because it will slow down page loading.
     // The parts in WebCore that need this data will have to be changed to work asycnchronously.
     return String();
 }
 
-bool WebIconDatabaseProxy::synchronousIconDataKnownForIconURL(const String& iconURL)
+bool WebIconDatabaseProxy::synchronousIconDataKnownForIconURL(const String& /*iconURL*/)
 {
     // FIXME: This needs to ask the UI process for the iconURL, but it can't do so synchronously because it will slow down page loading.
     // The parts in WebCore that need this data will have to be changed to work asycnchronously.
     return false;
 }
 
-IconLoadDecision WebIconDatabaseProxy::synchronousLoadDecisionForIconURL(const String& iconURL, DocumentLoader* documentLoader)
+IconLoadDecision WebIconDatabaseProxy::synchronousLoadDecisionForIconURL(const String& /*iconURL*/, DocumentLoader*)
 {
     // FIXME: This needs to ask the UI process for the iconURL, but it can't do so synchronously because it will slow down page loading.
     // The parts in WebCore that need this data will have to be changed to work asycnchronously.
@@ -124,7 +124,7 @@ void WebIconDatabaseProxy::receivedIconLoadDecision(int decision, uint64_t callb
         callback->performCallback(static_cast<WebCore::IconLoadDecision>(decision));
 }
 
-void WebIconDatabaseProxy::iconDataForIconURL(const String& iconURL, PassRefPtr<WebCore::IconDataCallback> callback)
+void WebIconDatabaseProxy::iconDataForIconURL(const String& /*iconURL*/, PassRefPtr<WebCore::IconDataCallback>)
 {
 }
 

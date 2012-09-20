@@ -137,8 +137,8 @@ void ewk_tile_accounting_dbg()
 }
 #else
 
-static inline void _ewk_tile_account_allocated(const Ewk_Tile* tile) { }
-static inline void _ewk_tile_account_freed(const Ewk_Tile* tile) { }
+static inline void _ewk_tile_account_allocated(const Ewk_Tile*) { }
+static inline void _ewk_tile_account_freed(const Ewk_Tile*) { }
 
 void ewk_tile_accounting_dbg()
 {

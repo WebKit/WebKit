@@ -70,7 +70,7 @@ public:
     // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
-    virtual bool forceRepaintAsync(uint64_t callbackID) { return false; }
+    virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
     virtual LayerTreeHost* layerTreeHost() const { return 0; }
@@ -110,7 +110,8 @@ protected:
 private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
-    virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset) { }
+    virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/, 
+                                         const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void didUpdate() { }
     virtual void suspendPainting() { }
     virtual void resumePainting() { }

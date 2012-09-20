@@ -51,7 +51,7 @@ static void webkitSoupRequestGenericSendAsync(SoupRequest* request, GCancellable
     WebProcess::shared().soupRequestManager().send(result, cancellable);
 }
 
-static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest* request, GAsyncResult* result, GError** error)
+static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest*, GAsyncResult* result, GError** error)
 {
     GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
     g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkitSoupRequestGenericSendAsync);

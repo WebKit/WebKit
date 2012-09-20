@@ -57,12 +57,12 @@ void TextChecker::setGrammarCheckingEnabled(bool)
     notImplemented();
 }
 
-void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
+void TextChecker::continuousSpellCheckingEnabledStateChanged(bool /*enabled*/)
 {
     notImplemented();
 }
 
-void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
+void TextChecker::grammarCheckingEnabledStateChanged(bool /*enabled*/)
 {
     notImplemented();
 }

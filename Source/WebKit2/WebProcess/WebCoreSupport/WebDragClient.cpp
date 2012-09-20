@@ -51,7 +51,7 @@ DragDestinationAction WebDragClient::actionMaskForDrag(DragData*)
     return DragDestinationActionAny;
 }
 
-DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
+DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& /*windowPoint*/)
 {
     return DragSourceActionAny;
 }

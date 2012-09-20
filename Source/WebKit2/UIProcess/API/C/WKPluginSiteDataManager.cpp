@@ -63,6 +63,13 @@ void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef,
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, VoidCallback::create(context, function));
+#else
+    UNUSED_PARAM(managerRef);
+    UNUSED_PARAM(sitesRef);
+    UNUSED_PARAM(flags);
+    UNUSED_PARAM(maxAgeInSeconds);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(function);
 #endif
 }
 
@@ -70,5 +77,9 @@ void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef managerR
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, numeric_limits<uint64_t>::max(), VoidCallback::create(context, function));
+#else
+    UNUSED_PARAM(managerRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(function);
 #endif
 }

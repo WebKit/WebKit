@@ -641,7 +641,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
-void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
+void PluginView::paint(GraphicsContext* context, const IntRect& /*dirtyRect*/)
 {
     if (!m_plugin || !m_isInitialized)
         return;

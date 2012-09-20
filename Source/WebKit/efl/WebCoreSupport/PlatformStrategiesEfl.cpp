@@ -107,6 +107,9 @@ void PlatformStrategiesEfl::getPluginInfo(const Page* page, Vector<PluginInfo>& 
 
         outPlugins.append(pluginInfo);
     }
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(outPlugins);
 #endif
 }
 

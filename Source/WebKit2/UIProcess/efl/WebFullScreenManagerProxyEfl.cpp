@@ -71,12 +71,12 @@ void WebFullScreenManagerProxy::exitFullScreen()
     didExitFullScreen();
 }
 
-void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& /*initialFrame*/, const IntRect& /*finalFrame*/)
 {
     notImplemented();
 }
 
-void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& /*initialFrame*/, const IntRect& /*finalFrame*/)
 {
     notImplemented();
 }

@@ -163,12 +163,12 @@ void FrameLoaderClientEfl::dispatchDidPopStateWithinPage()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
+void FrameLoaderClientEfl::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long /*identifier*/, const AuthenticationChallenge&)
 {
     notImplemented();
 }
 
-void FrameLoaderClientEfl::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
+void FrameLoaderClientEfl::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long /*identifier*/, const AuthenticationChallenge&)
 {
     notImplemented();
 }
@@ -310,7 +310,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction f
         callPolicyFunction(function, PolicyDownload);
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String&)
+void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String&)
 {
     ASSERT(function);
     ASSERT(m_frame);
@@ -368,7 +368,7 @@ PassRefPtr<Widget> FrameLoaderClientEfl::createPlugin(const IntSize& pluginSize,
                                   mimeType, loadManually);
 }
 
-PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
+PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     ASSERT(m_frame);
     ASSERT(m_view);
@@ -383,8 +383,8 @@ void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)
         m_hasSentResponseToPlugin = false;
 }
 
-PassRefPtr<Widget> FrameLoaderClientEfl::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
-                                                                const Vector<String>& paramNames, const Vector<String>& paramValues)
+PassRefPtr<Widget> FrameLoaderClientEfl::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&,
+                                                                const Vector<String>& /*paramNames*/, const Vector<String>& /*paramValues*/)
 {
     notImplemented();
     return 0;
@@ -544,7 +544,7 @@ bool FrameLoaderClientEfl::shouldGoToHistoryItem(HistoryItem* item) const
     return item;
 }
 
-bool FrameLoaderClientEfl::shouldStopLoadingForHistoryItem(HistoryItem* item) const
+bool FrameLoaderClientEfl::shouldStopLoadingForHistoryItem(HistoryItem*) const
 {
     return true;
 }
@@ -714,7 +714,7 @@ bool FrameLoaderClientEfl::canHandleRequest(const ResourceRequest&) const
     return true;
 }
 
-bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& MIMEType) const
+bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& /*MIMEType*/) const
 {
     notImplemented();
     return false;
@@ -771,12 +771,12 @@ void FrameLoaderClientEfl::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::setTitle(const StringWithDirection& title, const KURL& url)
+void FrameLoaderClientEfl::setTitle(const StringWithDirection&, const KURL&)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength)
+void FrameLoaderClientEfl::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long /*identifier*/, int /*dataLength*/)
 {
     notImplemented();
 }
@@ -810,7 +810,7 @@ void FrameLoaderClientEfl::dispatchDidFailLoading(DocumentLoader*, unsigned long
     evas_object_smart_callback_call(m_view, "load,resource,failed", &error);
 }
 
-bool FrameLoaderClientEfl::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)
+bool FrameLoaderClientEfl::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
 {
     notImplemented();
     return false;
@@ -941,7 +941,7 @@ void FrameLoaderClientEfl::dispatchUnableToImplementPolicy(const ResourceError&)
     notImplemented();
 }
 
-void FrameLoaderClientEfl::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
+void FrameLoaderClientEfl::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
     if (!m_pluginView)
         return;

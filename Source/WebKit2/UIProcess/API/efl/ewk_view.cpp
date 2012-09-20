@@ -281,7 +281,7 @@ static Eina_Bool _ewk_view_smart_key_up(Ewk_View_Smart_Data* smartData, const Ev
 }
 
 // Event Handling.
-static void _ewk_view_on_focus_in(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_focus_in(void* data, Evas*, Evas_Object*, void* /*eventInfo*/)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
@@ -289,7 +289,7 @@ static void _ewk_view_on_focus_in(void* data, Evas* canvas, Evas_Object* ewkView
     smartData->api->focus_in(smartData);
 }
 
-static void _ewk_view_on_focus_out(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_focus_out(void* data, Evas*, Evas_Object*, void* /*eventInfo*/)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
@@ -297,7 +297,7 @@ static void _ewk_view_on_focus_out(void* data, Evas* canvas, Evas_Object* ewkVie
     smartData->api->focus_out(smartData);
 }
 
-static void _ewk_view_on_mouse_wheel(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_mouse_wheel(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Wheel* wheelEvent = static_cast<Evas_Event_Mouse_Wheel*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -306,7 +306,7 @@ static void _ewk_view_on_mouse_wheel(void* data, Evas* canvas, Evas_Object* ewkV
     smartData->api->mouse_wheel(smartData, wheelEvent);
 }
 
-static void _ewk_view_on_mouse_down(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_mouse_down(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Down* downEvent = static_cast<Evas_Event_Mouse_Down*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -315,7 +315,7 @@ static void _ewk_view_on_mouse_down(void* data, Evas* canvas, Evas_Object* ewkVi
     smartData->api->mouse_down(smartData, downEvent);
 }
 
-static void _ewk_view_on_mouse_up(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_mouse_up(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Up* upEvent = static_cast<Evas_Event_Mouse_Up*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -324,7 +324,7 @@ static void _ewk_view_on_mouse_up(void* data, Evas* canvas, Evas_Object* ewkView
     smartData->api->mouse_up(smartData, upEvent);
 }
 
-static void _ewk_view_on_mouse_move(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_mouse_move(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Move* moveEvent = static_cast<Evas_Event_Mouse_Move*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -333,7 +333,7 @@ static void _ewk_view_on_mouse_move(void* data, Evas* canvas, Evas_Object* ewkVi
     smartData->api->mouse_move(smartData, moveEvent);
 }
 
-static void _ewk_view_on_key_down(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_key_down(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Key_Down* downEvent = static_cast<Evas_Event_Key_Down*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -342,7 +342,7 @@ static void _ewk_view_on_key_down(void* data, Evas* canvas, Evas_Object* ewkView
     smartData->api->key_down(smartData, downEvent);
 }
 
-static void _ewk_view_on_key_up(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Key_Up* upEvent = static_cast<Evas_Event_Key_Up*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -452,7 +452,7 @@ static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord width, Evas_
     _ewk_view_smart_changed(smartData);
 }
 
-static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y)
+static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord /*x*/, Evas_Coord /*y*/)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
 
@@ -1531,6 +1531,9 @@ void ewk_view_contents_size_changed(const Evas_Object* ewkView, const IntSize& s
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     priv->viewportHandler->didChangeContentsSize(size);
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(size);
 #endif
 }
 

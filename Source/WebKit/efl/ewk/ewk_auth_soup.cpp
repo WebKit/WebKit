@@ -49,15 +49,15 @@ static void free_auth_data(Ewk_Auth_Data*);
 G_DEFINE_TYPE_WITH_CODE(Ewk_Soup_Auth_Dialog, ewk_auth_soup_dialog, G_TYPE_OBJECT,
                         G_IMPLEMENT_INTERFACE(SOUP_TYPE_SESSION_FEATURE, ewk_auth_soup_dialog_session_feature_init))
 
-static void ewk_auth_soup_dialog_class_init(Ewk_Soup_Auth_DialogClass* klass)
+static void ewk_auth_soup_dialog_class_init(Ewk_Soup_Auth_DialogClass*)
 {
 }
 
-static void ewk_auth_soup_dialog_init(Ewk_Soup_Auth_Dialog* instance)
+static void ewk_auth_soup_dialog_init(Ewk_Soup_Auth_Dialog*)
 {
 }
 
-static void ewk_auth_soup_dialog_session_feature_init(SoupSessionFeatureInterface* featureInterface, gpointer interfaceData)
+static void ewk_auth_soup_dialog_session_feature_init(SoupSessionFeatureInterface* featureInterface, gpointer /*interfaceData*/)
 {
     featureInterface->attach = attach;
     featureInterface->detach = detach;
@@ -91,7 +91,7 @@ void ewk_auth_soup_credentials_set(const char* username, const char* password, v
     free_auth_data(authenticationData);
 }
 
-static void session_authenticate(SoupSession* session, SoupMessage* message, SoupAuth* auth, gboolean retrying, gpointer /* user_data */)
+static void session_authenticate(SoupSession* session, SoupMessage* message, SoupAuth* auth, gboolean /*retrying*/, gpointer /*user_data*/)
 {
     SoupURI* uri;
     Ewk_Auth_Data* authenticationData;

@@ -122,7 +122,7 @@ void WebInspectorClient::didMoveToWebPage(PageOverlay*, WebPage*)
 {
 }
 
-void WebInspectorClient::drawRect(PageOverlay* overlay, WebCore::GraphicsContext& context, const WebCore::IntRect& dirtyRect)
+void WebInspectorClient::drawRect(PageOverlay*, WebCore::GraphicsContext& context, const WebCore::IntRect& /*dirtyRect*/)
 {
     m_page->corePage()->inspectorController()->drawHighlight(context);
 }

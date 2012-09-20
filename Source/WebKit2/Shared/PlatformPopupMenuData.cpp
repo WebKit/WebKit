@@ -66,6 +66,8 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(shouldPopOver);
 #elif PLATFORM(QT)
     encoder->encode(multipleSelections);
+#else
+    UNUSED_PARAM(encoder);
 #endif
 }
 
@@ -102,6 +104,9 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPo
 #elif PLATFORM(QT)
     if (!decoder->decode(data.multipleSelections))
         return false;
+#else
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(data);
 #endif
     
     return true;

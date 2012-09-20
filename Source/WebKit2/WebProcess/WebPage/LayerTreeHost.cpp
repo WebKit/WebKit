@@ -57,6 +57,7 @@ PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
 #elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     return LayerTreeHostGtk::create(webPage);
 #else
+    UNUSED_PARAM(webPage);
     return 0;
 #endif
 }

@@ -167,7 +167,7 @@ void WebMemorySampler::stopTimerFired(Timer<WebMemorySampler>*)
     stop();
 }
 
-void WebMemorySampler::appendCurrentMemoryUsageToFile(PlatformFileHandle& file)
+void WebMemorySampler::appendCurrentMemoryUsageToFile(PlatformFileHandle&)
 {
     // Collect statistics from allocators and get RSIZE metric
     StringBuilder statString;

@@ -154,7 +154,7 @@ void ChromeClientEfl::unfocus()
     evas_object_focus_set(m_view, EINA_FALSE);
 }
 
-Page* ChromeClientEfl::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features, const NavigationAction&)
+Page* ChromeClientEfl::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
 {
     Evas_Object* newView = ewk_view_window_create(m_view, EINA_TRUE, &features);
     if (!newView)
@@ -361,7 +361,7 @@ void ChromeClientEfl::scrollbarsModeDidChange() const
 {
 }
 
-void ChromeClientEfl::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
+void ChromeClientEfl::mouseDidMoveOverElement(const HitTestResult& hit, unsigned /*modifierFlags*/)
 {
     // FIXME, compare with old link, look at Qt impl.
     bool isLink = hit.isLiveLink();
@@ -388,12 +388,12 @@ void ChromeClientEfl::setToolTip(const String& toolTip, TextDirection)
     ewk_view_tooltip_text_set(m_view, toolTip.utf8().data());
 }
 
-void ChromeClientEfl::print(Frame* frame)
+void ChromeClientEfl::print(Frame*)
 {
     notImplemented();
 }
 
-void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
+void ChromeClientEfl::reachedMaxAppCacheSize(int64_t /*spaceNeeded*/)
 {
     // FIXME: Free some space.
     notImplemented();
@@ -514,17 +514,17 @@ void ChromeClientEfl::cancelGeolocationPermissionForFrame(Frame*, Geolocation*)
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateContents(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateContents(const IntRect& /*updateRect*/, bool /*immediate*/)
 {
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateRootView(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateRootView(const IntRect& /*updateRect*/, bool /*immediate*/)
 {
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
+void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, bool /*immediate*/)
 {
     if (updateRect.isEmpty())
         return;

@@ -71,6 +71,8 @@ void WebNotificationManager::initialize(const HashMap<String, bool>& permissions
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_permissionsMap = permissions;
+#else
+    UNUSED_PARAM(permissions);
 #endif
 }
 
@@ -78,6 +80,9 @@ void WebNotificationManager::didUpdateNotificationDecision(const String& originS
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_permissionsMap.set(originString, allowed);
+#else
+    UNUSED_PARAM(originString);
+    UNUSED_PARAM(allowed);
 #endif
 }
 
@@ -87,6 +92,8 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
     size_t count = originStrings.size();
     for (size_t i = 0; i < count; ++i)
         m_permissionsMap.remove(originStrings[i]);
+#else
+    UNUSED_PARAM(originStrings);
 #endif
 }
 
@@ -100,6 +107,8 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
     HashMap<String, bool>::const_iterator it = m_permissionsMap.find(origin->toRawString());
     if (it != m_permissionsMap.end())
         return it->second ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
+#else
+    UNUSED_PARAM(origin);
 #endif
     
     return NotificationClient::PermissionNotAllowed;
@@ -119,6 +128,7 @@ uint64_t WebNotificationManager::notificationIDForTesting(Notification* notifica
         return 0;
     return m_notificationMap.get(notification);
 #else
+    UNUSED_PARAM(notification);
     return 0;
 #endif
 }
@@ -143,6 +153,8 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 #endif
     return true;
 #else
+    UNUSED_PARAM(notification);
+    UNUSED_PARAM(page);
     return false;
 #endif
 }
@@ -158,6 +170,9 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
         return;
     
     m_process->connection()->send(Messages::WebNotificationManagerProxy::Cancel(notificationID), page->pageID());
+#else
+    UNUSED_PARAM(notification);
+    UNUSED_PARAM(page);
 #endif
 }
 
@@ -180,6 +195,9 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
     }
     
     m_notificationContextMap.remove(it);
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(page);
 #endif
 }
 
@@ -193,6 +211,9 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
     m_notificationIDMap.remove(notificationID);
     removeNotificationFromContextMap(notificationID, notification);
     m_process->connection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), page->pageID());
+#else
+    UNUSED_PARAM(notification);
+    UNUSED_PARAM(page);
 #endif
 }
 
@@ -207,6 +228,8 @@ void WebNotificationManager::didShowNotification(uint64_t notificationID)
         return;
 
     notification->dispatchShowEvent();
+#else
+    UNUSED_PARAM(notificationID);
 #endif
 }
 
@@ -221,6 +244,8 @@ void WebNotificationManager::didClickNotification(uint64_t notificationID)
         return;
 
     notification->dispatchClickEvent();
+#else
+    UNUSED_PARAM(notificationID);
 #endif
 }
 
@@ -242,6 +267,8 @@ void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notif
 
         notification->dispatchCloseEvent();
     }
+#else
+    UNUSED_PARAM(notificationIDs);
 #endif
 }
 

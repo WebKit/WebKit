@@ -166,6 +166,7 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
     
     return root->wrapper();
 #else
+    UNUSED_PARAM(pageRef);
     return 0;
 #endif
 }
@@ -188,6 +189,7 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
     
     return focusedObject->wrapper();
 #else
+    UNUSED_PARAM(pageRef);
     return 0;
 #endif
 }

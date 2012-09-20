@@ -173,7 +173,7 @@ static Path pathWithRoundedRect(const FloatRect& pathRect, float radius)
     return path;
 }
     
-void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& /*dirtyRect*/)
 {
     for (size_t i = 0; i < m_textRectsInSelectionRectCoordinates.size(); ++i) {
         FloatRect textRect = m_textRectsInSelectionRectCoordinates[i];
