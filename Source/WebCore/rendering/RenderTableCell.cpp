@@ -412,7 +412,6 @@ CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrN
 CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderColorOrNot includeColor) const
 {
     RenderTable* table = this->table();
-    bool isStartColumn = col() == 0;
 
     // For the start border, we need to check, in order of precedence:
     // (1) Our start border.
@@ -421,12 +420,14 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
     CollapsedBorderValue result(style()->borderStart(), includeColor ? style()->visitedDependentColor(startColorProperty) : Color(), BCELL);
 
     // (2) The end border of the preceding cell.
-    if (RenderTableCell* prevCell = table->cellBefore(this)) {
-        CollapsedBorderValue prevCellBorder = CollapsedBorderValue(prevCell->borderAdjoiningCellAfter(this), includeColor ? prevCell->style()->visitedDependentColor(endColorProperty) : Color(), BCELL);
-        result = chooseBorder(prevCellBorder, result);
+    RenderTableCell* cellBefore = table->cellBefore(this);
+    if (cellBefore) {
+        CollapsedBorderValue cellBeforeAdjoiningBorder = CollapsedBorderValue(cellBefore->borderAdjoiningCellAfter(this), includeColor ? cellBefore->style()->visitedDependentColor(endColorProperty) : Color(), BCELL);
+        // |result| should be the 2nd argument as |cellBefore| should win in case of equality per CSS 2.1 (Border conflict resolution, point 4).
+        result = chooseBorder(cellBeforeAdjoiningBorder, result);
         if (!result.exists())
             return result;
-    } else if (isStartColumn) {
+    } else {
         // (3) Our row's start border.
         result = chooseBorder(result, CollapsedBorderValue(row()->borderAdjoiningStartCell(this), includeColor ? parent()->style()->visitedDependentColor(startColorProperty) : Color(), BROW));
         if (!result.exists())
@@ -454,11 +455,11 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
     }
     
     // (6) The end border of the preceding column.
-    if (!isStartColumn) {
+    if (cellBefore) {
         colElt = table->colElement(col() -1, &startColEdge, &endColEdge);
         if (colElt && endColEdge) {
-            CollapsedBorderValue endBorder = CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL);
-            result = chooseBorder(endBorder, result);
+            CollapsedBorderValue columnBeforeAdjoiningBorder = CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL);
+            result = chooseBorder(columnBeforeAdjoiningBorder, result);
             if (!result.exists())
                 return result;
         }
@@ -483,6 +484,8 @@ CollapsedBorderValue RenderTableCell::collapsedEndBorder(IncludeBorderColorOrNot
 CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderColorOrNot includeColor) const
 {
     RenderTable* table = this->table();
+    // Note: We have to use the effective column information instead of whether we have a cell after as a table doesn't
+    // have to be regular (any row can have less cells than the total cell count).
     bool isEndColumn = table->colToEffCol(col() + colSpan() - 1) == table->numEffCols() - 1;
 
     // For end border, we need to check, in order of precedence:
@@ -493,10 +496,9 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     
     // (2) The start border of the following cell.
     if (!isEndColumn) {
-        RenderTableCell* nextCell = table->cellAfter(this);
-        if (nextCell && nextCell->style()) {
-            CollapsedBorderValue startBorder = CollapsedBorderValue(nextCell->borderAdjoiningCellBefore(this), includeColor ? nextCell->style()->visitedDependentColor(startColorProperty) : Color(), BCELL);
-            result = chooseBorder(result, startBorder);
+        if (RenderTableCell* cellAfter = table->cellAfter(this)) {
+            CollapsedBorderValue cellAfterAdjoiningBorder = CollapsedBorderValue(cellAfter->borderAdjoiningCellBefore(this), includeColor ? cellAfter->style()->visitedDependentColor(startColorProperty) : Color(), BCELL);
+            result = chooseBorder(result, cellAfterAdjoiningBorder);
             if (!result.exists())
                 return result;
         }
@@ -531,8 +533,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     if (!isEndColumn) {
         colElt = table->colElement(col() + colSpan(), &startColEdge, &endColEdge);
         if (colElt && startColEdge) {
-            CollapsedBorderValue startBorder = CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL);
-            result = chooseBorder(result, startBorder);
+            CollapsedBorderValue columnAfterAdjoiningBorder = CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL);
+            result = chooseBorder(result, columnAfterAdjoiningBorder);
             if (!result.exists())
                 return result;
         }
