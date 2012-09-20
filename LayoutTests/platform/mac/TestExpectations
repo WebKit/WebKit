@@ -65,6 +65,7 @@ webkit.org/b/74432 fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
 
 # Flakey media tests
 webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
+webkit.org/b/97259 media/track/track-cue-rendering-inner-timestamps.html [ Failure Skip ]
 
 # Rebaseline after bug 71705. All differences are due to the fact that table captions now
 # expand to the full width of the table.
