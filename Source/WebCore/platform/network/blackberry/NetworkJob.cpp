@@ -294,9 +294,10 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         }
         storeCredentials();
         return;
-    } else if (serverType != ProtectionSpaceProxyHTTP)
-        // If a wifi proxy auth failed, there is no point of trying anymore because the credentials are wrong.
+    } else {
+        purgeCredentials();
         m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
+    }
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
