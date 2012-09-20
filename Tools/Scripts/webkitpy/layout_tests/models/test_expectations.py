@@ -40,9 +40,6 @@ _log = logging.getLogger(__name__)
 
 
 # Test expectation and modifier constants.
-# TEXT, IMAGE_PLUS_TEXT, and AUDIO are no longer used in new test runs but
-# we keep them around for now so we can parse old results.json entries and to
-# avoid changing the numbering for the constants.
 #
 # FIXME: range() starts with 0 which makes if expectation checks harder
 # as PASS is 0.
@@ -286,7 +283,8 @@ class TestExpectationParser(object):
         'WontFix': 'WONTFIX',
     }
 
-    _inverted_expectation_tokens = dict((value, name) for name, value in _expectation_tokens.iteritems())
+    _inverted_expectation_tokens = dict([(value, name) for name, value in _expectation_tokens.iteritems()] +
+                                        [('TEXT', 'Failure'), ('IMAGE+TEXT', 'Failure'), ('AUDIO', 'Failure')])
 
     @classmethod
     def _tokenize_line_using_new_format(cls, filename, expectation_string, line_number):
@@ -791,8 +789,11 @@ class TestExpectations(object):
 
     # FIXME: Update to new syntax once the old format is no longer supported.
     EXPECTATIONS = {'pass': PASS,
+                    'audio': AUDIO,
                     'fail': FAIL,
                     'image': IMAGE,
+                    'image+text': IMAGE_PLUS_TEXT,
+                    'text': TEXT,
                     'timeout': TIMEOUT,
                     'crash': CRASH,
                     'missing': MISSING}
@@ -802,6 +803,9 @@ class TestExpectations(object):
                                 PASS: ('passes', 'passed', ''),
                                 FAIL: ('failures', 'failed', ''),
                                 IMAGE: ('image-only failures', 'failed', ' (image diff)'),
+                                TEXT: ('text-only failures', 'failed', ' (text diff)'),
+                                IMAGE_PLUS_TEXT: ('image and text failures', 'failed', ' (image and text diff)'),
+                                AUDIO: ('audio failures', 'failed', ' (audio diff)'),
                                 CRASH: ('crashes', 'crashed', ''),
                                 TIMEOUT: ('timeouts', 'timed out', ''),
                                 MISSING: ('no expected results found', 'no expected result found', '')}
@@ -838,6 +842,8 @@ class TestExpectations(object):
             test_needs_rebaselining: whether test was marked as REBASELINE
             test_is_skipped: whether test was marked as SKIP"""
         if result in expected_results:
+            return True
+        if result in (TEXT, IMAGE_PLUS_TEXT, AUDIO) and (FAIL in expected_results):
             return True
         if result == MISSING and test_needs_rebaselining:
             return True

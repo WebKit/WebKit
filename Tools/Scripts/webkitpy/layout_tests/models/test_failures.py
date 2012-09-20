@@ -62,10 +62,18 @@ def determine_result_type(failure_list):
           FailureMissingAudio in failure_types):
         return test_expectations.MISSING
     else:
-        if FailureTextMismatch in failure_types or FailureAudioMismatch in failure_types:
-            return test_expectations.FAIL
-        elif FailureImageHashIncorrect in failure_types or FailureImageHashMismatch in failure_types or is_reftest_failure(failure_list):
+        is_text_failure = FailureTextMismatch in failure_types
+        is_image_failure = (FailureImageHashIncorrect in failure_types or
+                            FailureImageHashMismatch in failure_types)
+        is_audio_failure = (FailureAudioMismatch in failure_types)
+        if is_text_failure and is_image_failure:
+            return test_expectations.IMAGE_PLUS_TEXT
+        elif is_text_failure:
+            return test_expectations.TEXT
+        elif is_image_failure or is_reftest_failure(failure_list):
             return test_expectations.IMAGE
+        elif is_audio_failure:
+            return test_expectations.AUDIO
         else:
             raise ValueError("unclassifiable set of failures: "
                              + str(failure_types))
