@@ -44,7 +44,6 @@ static const float gLineThin = 0.33f;
 static const float gLineMedium = 1.f;
 static const float gLineThick = 3.f;
 static const float gFractionBarWidth = 0.05f;
-static const float gDenominatorPad = 0.1f;
 
 RenderMathMLFraction::RenderMathMLFraction(Element* element)
     : RenderMathMLBlock(element)
@@ -89,7 +88,7 @@ void RenderMathMLFraction::updateFromElement()
         m_lineThickness = 0;
 
     // Update the style for the padding of the denominator for the line thickness
-    lastChild()->style()->setPaddingTop(Length(static_cast<int>(m_lineThickness + style()->fontSize() * gDenominatorPad), Fixed));
+    lastChild()->style()->setPaddingTop(Length(static_cast<int>(m_lineThickness), Fixed));
 }
 
 void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChild)

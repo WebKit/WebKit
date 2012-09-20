@@ -41,7 +41,9 @@ public:
 private:
     virtual const char* renderName() const { return "RenderMathMLFenced"; }
 
-    RenderMathMLOperator* createMathMLOperator(UChar);
+    // FIXME: OperatorType here will go away when default operator margins are determined by the MathML operator dictionary.
+    enum OperatorType { Separator, Fence };
+    RenderMathMLOperator* createMathMLOperator(UChar, OperatorType);
     void makeFences();
     
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;

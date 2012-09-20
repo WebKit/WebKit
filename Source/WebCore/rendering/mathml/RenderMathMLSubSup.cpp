@@ -35,8 +35,6 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-static const int gSubsupScriptMargin = 1;
-
 RenderMathMLSubSup::RenderMathMLSubSup(Element* element) 
     : RenderMathMLBlock(element)
     , m_scripts(0)
@@ -69,8 +67,6 @@ void RenderMathMLSubSup::fixScriptsStyle()
     RenderStyle* scriptsStyle = m_scripts->style();
     scriptsStyle->setFlexDirection(FlowColumn);
     scriptsStyle->setJustifyContent(m_kind == Sub ? JustifyFlexEnd : m_kind == Super ? JustifyFlexStart : JustifySpaceBetween);
-    if (m_kind == SubSup)
-        scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
     // Set this wrapper's font-size for its line-height & baseline position, for its children.
     scriptsStyle->setFontSize(static_cast<int>(0.75 * style()->fontSize()));
 }
