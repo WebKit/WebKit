@@ -578,7 +578,7 @@ class Instruction
         when "loadbs"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int8MemRef};"
         when "storeb"
-            $asm.putc "#{operands[1].uint8MemRef} = #{operands[0].clValue(:int8)}"
+            $asm.putc "#{operands[1].uint8MemRef} = #{operands[0].clValue(:int8)};"
         when "loadh"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint16MemRef};"
         when "loadhs"

@@ -1,3 +1,12 @@
+2012-09-20  Mark Lam  <mark.lam@apple.com>
+
+        Fixed a missing semicolon in the C++ llint backend.
+        https://bugs.webkit.org/show_bug.cgi?id=97252.
+
+        Reviewed by Geoff Garen.
+
+        * offlineasm/cloop.rb:
+
 2012-09-20  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored the interpreter and JIT so they don't dictate closure layout
