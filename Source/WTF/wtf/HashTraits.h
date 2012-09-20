@@ -231,9 +231,16 @@ namespace WTF {
     template<typename Key, typename Value>
     struct HashTraits<KeyValuePair<Key, Value> > : public KeyValuePairHashTraits<HashTraits<Key>, HashTraits<Value> > { };
 
+    template<typename T>
+    struct NullableHashTraits : public HashTraits<T> {
+        static const bool emptyValueIsZero = false;
+        static T emptyValue() { return reinterpret_cast<T>(1); }
+    };
+
 } // namespace WTF
 
 using WTF::HashTraits;
 using WTF::PairHashTraits;
+using WTF::NullableHashTraits;
 
 #endif // WTF_HashTraits_h

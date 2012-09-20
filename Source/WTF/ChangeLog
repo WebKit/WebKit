@@ -1,3 +1,15 @@
+2012-09-19  Geoffrey Garen  <ggaren@apple.com>
+
+        OSR exit sometimes neglects to create the arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=97162
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/HashTraits.h:
+        (NullableHashTraits):
+        (WTF::NullableHashTraits::emptyValue):
+        (WTF):
+
 2012-09-18  Glenn Adams  <glenn@skynav.com>
 
         WTFString::show doesn't dump non-ASCII characters in a readable manner

@@ -1,3 +1,54 @@
+2012-09-19  Geoffrey Garen  <ggaren@apple.com>
+
+        OSR exit sometimes neglects to create the arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=97162
+
+        Reviewed by Filip Pizlo.
+
+        No performance change.
+
+        I don't know of any case where this is a real problem in TOT, but it
+        will become a problem if we start compiling eval, with, or catch, and/or
+        sometimes stop doing arguments optimizations in the bytecode.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run): Account for a
+        CreateArguments that has transformed into PhantomArguments. We used to
+        clear our reference to the CreateArguments node, but now we hold onto it, 
+        so we need to account for it transforming.
+
+        Don't replace a SetLocal(CreateArguments) with a SetLocal(JSValue())
+        because that doesn't leave enough information behind for OSR exit to do
+        the right thing. Instead, maintain our reference to CreateArguments, and
+        rely on CreateArguments transforming into PhantomArguments after
+        optimization. SetLocal(PhantomArguments) is efficient, and it's a marker
+        for OSR exit to create the arguments object.
+
+        Don't ASSERT that all PhantomArguments are unreferenced because we now
+        leave them in the graph as SetLocal(PhantomArguments), and that's harmless.
+
+        * dfg/DFGArgumentsSimplificationPhase.h:
+        (NullableHashTraits):
+        (JSC::DFG::NullableHashTraits::emptyValue): Export our special hash table
+        for inline call frames so the OSR exit compiler can use it.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit): Don't load the 'arguments'
+        register to decide if we need to create the arguments object. Optimization
+        may have eliminated the initializing store to this register, in which
+        case we'll load garbage. Instead, use the global knowledge that all call
+        frames that optimized out 'arguments' now need to create it, and use a hash
+        table to make sure we do so only once per call frame.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): SetLocal(PhantomArguments) is unique
+        because we haven't just changed a value's format or elided a load or store;
+        instead, we've replaced an object with JSValue(). We could try to account
+        for this in a general way, but for now it's a special-case optimization,
+        so we give it a specific OSR hint instead.
+
 2012-09-19  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r128802): It made some JS tests crash

@@ -587,6 +587,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     //     registers.
     
     if (haveArguments) {
+        HashSet<InlineCallFrame*, DefaultHash<InlineCallFrame*>::Hash,
+            NullableHashTraits<InlineCallFrame*> > didCreateArgumentsObject;
+
         for (size_t index = 0; index < operands.size(); ++index) {
             const ValueRecovery& recovery = operands[index];
             if (recovery.technique() != ArgumentsThatWereNotCreated)
@@ -602,29 +605,29 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                     break;
                 }
             }
+
             int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
-            
+            if (didCreateArgumentsObject.add(inlineCallFrame).isNewEntry) {
+                // We know this call frame optimized out an arguments object that
+                // the baseline JIT would have created. Do that creation now.
+                if (inlineCallFrame) {
+                    m_jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT0);
+                    m_jit.setupArguments(GPRInfo::regT0);
+                } else
+                    m_jit.setupArgumentsExecState();
+                m_jit.move(
+                    AssemblyHelpers::TrustedImmPtr(
+                        bitwise_cast<void*>(operationCreateArguments)),
+                    GPRInfo::nonArgGPR0);
+                m_jit.call(GPRInfo::nonArgGPR0);
+                m_jit.storePtr(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
+                m_jit.storePtr(
+                    GPRInfo::returnValueGPR,
+                    AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
+                m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
+            }
+
             m_jit.loadPtr(AssemblyHelpers::addressFor(argumentsRegister), GPRInfo::regT0);
-            AssemblyHelpers::Jump haveArguments = m_jit.branchTestPtr(
-                AssemblyHelpers::NonZero, GPRInfo::regT0);
-            
-            if (inlineCallFrame) {
-                m_jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT0);
-                m_jit.setupArguments(GPRInfo::regT0);
-            } else
-                m_jit.setupArgumentsExecState();
-            m_jit.move(
-                AssemblyHelpers::TrustedImmPtr(
-                    bitwise_cast<void*>(operationCreateArguments)),
-                GPRInfo::nonArgGPR0);
-            m_jit.call(GPRInfo::nonArgGPR0);
-            m_jit.storePtr(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
-            m_jit.storePtr(
-                GPRInfo::returnValueGPR,
-                AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
-            m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
-            
-            haveArguments.link(&m_jit);
             m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
         }
     }

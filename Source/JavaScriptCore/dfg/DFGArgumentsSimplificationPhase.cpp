@@ -41,12 +41,6 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-template<typename T>
-struct NullableHashTraits : public HashTraits<T> {
-    static const bool emptyValueIsZero = false;
-    static T emptyValue() { return reinterpret_cast<T>(1); }
-};
-
 struct ArgumentsAliasingData {
     InlineCallFrame* callContext;
     bool callContextSet;
@@ -181,7 +175,7 @@ public:
                     VariableAccessData* variableAccessData = node.variableAccessData();
                     int argumentsRegister =
                         m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin);
-                    if (source.op() != CreateArguments) {
+                    if (source.op() != CreateArguments && source.op() != PhantomArguments) {
                         // Make sure that the source of the SetLocal knows that if it's
                         // a variable that we think is aliased to the arguments, then it
                         // may escape at this point. In future, we could track transitive
@@ -435,18 +429,9 @@ public:
                     VariableAccessData* variableAccessData = node.variableAccessData();
                     
                     if (m_graph.argumentsRegisterFor(node.codeOrigin) == variableAccessData->local()
-                           || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node.codeOrigin)) == variableAccessData->local()) {
-                        // The child of this store should really be the empty value.
-                        Node emptyJSValue(JSConstant, node.codeOrigin, OpInfo(codeBlock()->addOrFindConstant(JSValue())));
-                        emptyJSValue.ref();
-                        NodeIndex emptyJSValueIndex = m_graph.size();
-                        m_graph.deref(node.child1());
-                        node.children.child1() = Edge(emptyJSValueIndex);
-                        m_graph.append(emptyJSValue);
-                        insertionSet.append(indexInBlock, emptyJSValueIndex);
-                        changed = true;
+                           || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node.codeOrigin)) == variableAccessData->local())
                         break;
-                    }
+
                     ASSERT(!variableAccessData->isCaptured());
                     
                     // If this is a store into a VariableAccessData* that is marked as
@@ -661,25 +646,8 @@ public:
             insertionSet.execute(*block);
         }
         
-        if (changed) {
+        if (changed)
             m_graph.collectGarbage();
-            
-            // Verify that PhantomArguments nodes are not shouldGenerate().
-#if !ASSERT_DISABLED
-            for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-                BasicBlock* block = m_graph.m_blocks[blockIndex].get();
-                if (!block)
-                    continue;
-                for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-                    NodeIndex nodeIndex = block->at(indexInBlock);
-                    Node& node = m_graph[nodeIndex];
-                    if (node.op() != PhantomArguments)
-                        continue;
-                    ASSERT(!node.shouldGenerate());
-                }
-            }
-#endif
-        }
         
         return changed;
     }
