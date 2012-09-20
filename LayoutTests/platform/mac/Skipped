@@ -32,9 +32,6 @@ fast/events/mouseout-on-window.html
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 
-# Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
-compositing/animation/animated-composited-inside-hidden.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=21916 Pixel test doesn't repaint entire view so result is corrupted by previous test
 tables/mozilla_expected_failures/bugs/bug178855.xml
 
@@ -46,11 +43,7 @@ fast/notifications
 
 # Skipped while Eric Carlson works on a fix.
 # https://bugs.webkit.org/show_bug.cgi?id=28221
-fast/layers/video-layer.html
 media/audio-delete-while-step-button-clicked.html
-media/video-controls-transformed.html
-media/video-controls-zoomed.html
-media/video-source-error.html
 
 # Crashes due to debug assert until we fix issues with style elements in SVG
 # https://bugs.webkit.org/show_bug.cgi?id=77764
@@ -62,9 +55,6 @@ media/video-volume-slider.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-
-# Skipped until we have a fix for <rdar://problem/6563117> WebKit should tell QuickTime to exclude the text importer
-media/video-empty-source.html
 
 # Accessibility tests without results
 accessibility/document-attributes.html
@@ -99,23 +89,11 @@ fast/events/mouseover-button.html
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
 platform/mac/accessibility/change-notification-on-scroll.html
 
-# Fails on Mac for some reason; being investigates.
 # See https://bugs.webkit.org/show_bug.cgi?id=34287
 http/tests/media/video-cookie.html
 
-# Fails on Mac
-# https://bugs.webkit.org/show_bug.cgi?id=34331
-http/tests/media/video-referer.html
-
-# Fails intermittently on Leopard and Tiger.
-# https://bugs.webkit.org/show_bug.cgi?id=29154
-storage/websql/database-lock-after-reload.html
-
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
-
-# For some reason crashes when run with all tests. Passes individually.
-fast/forms/multiple-form-submission-protection-mouse.html
 
 # The animation causes the result of this test to depend on the speed of executing it, and that will cause it to be flaky
 fast/dom/HTMLProgressElement/progress-element.html
@@ -123,10 +101,10 @@ fast/dom/HTMLProgressElement/progress-element.html
 # eventSender needs to propagate the event to the calling window, not the main frame always.
 http/tests/plugins/plugin-document-has-focus.html
 
-# Misses setMediaType() and implementation
+# Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
 
-# Needs layoutTestController.setViewModeMediaFeature()
+# Requires testRunner.setViewModeMediaFeature()
 fast/media/view-mode-media-feature.html
 fast/media/media-query-list-02.html
 fast/media/media-query-list-03.html
@@ -145,16 +123,13 @@ fast/dom/title-directionality-removeChild.html
 # https://bugs.webkit.org/show_bug.cgi?id=36642
 fast/replaced/border-radius-clip.html
 
-# Need to add functionality to DumpRenderTree to handle scrollbar police changes
+# Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 fast/overflow/scrollbar-restored-and-then-locked.html
 
 # Mac port doesn't put text/html on the pasteboard for app compatibility: https://bugs.webkit.org/show_bug.cgi?id=19893
 editing/pasteboard/onpaste-text-html-types.html
 editing/pasteboard/onpaste-text-html.html
 fast/events/ondrop-text-html.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=33812
-fast/dom/icon-url-property.html
 
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
@@ -199,7 +174,7 @@ http/tests/misc/prefetch-purpose.html
 fast/dom/HTMLLinkElement/prerender-insert-after-stop.html
 fast/dom/HTMLLinkElement/prerender-remove-after-stop.html
 
-# Filenames aren't filtered out from edit drags yet, see https://bugs.wekit.org/show_bug.cgi?id=38826
+# Filenames aren't filtered out from edit drags yet, see https://bugs.webkit.org/show_bug.cgi?id=38826
 editing/pasteboard/file-drag-to-editable.html
 
 # EventSender::dumpFilenameBeingDragged not implemented.
@@ -372,10 +347,6 @@ animations/stop-animation-on-suspend.html
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
 
-# This test is failing on the Leopard Intel Debug buildbot
-# https://bugs.webkit.org/show_bug.cgi?id=51807
-fast/writing-mode/broken-ideograph-small-caps.html
-
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
@@ -415,9 +386,6 @@ http/tests/inspector/network/network-size-sync.html
 # https://bugs.webkit.org/show_bug.cgi?id=64097
 http/tests/inspector/network/network-disable-cache-memory.html
 http/tests/inspector/network/network-disable-cache-xhrs.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=58515
-compositing/overflow/clip-content-under-overflow-controls.html
 
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
@@ -490,17 +458,18 @@ compositing/rtl/rtl-iframe-relative.html
 # https://bugs.webkit.org/show_bug.cgi?id=82554
 compositing/rtl/rtl-fixed-overflow-scrolled.html
 
-# For now, Web Audio API is disabled
+# For now, Web Audio tests are disabled
+# https://bugs.webkit.org/show_bug.cgi?id=86914
 webaudio/
 
 # Microdata DOM API is not yet enabled.
 fast/dom/MicroData
 
-# The mac port has no support for <track>
-# https://bugs.webkit.org/show_bug.cgi?id=43668
-media/track
-fast/events/constructors/track-event-constructor.html
-http/tests/security/text-track-crossorigin.html
+# https://bugs.webkit.org/show_bug.cgi?id=97132
+media/track/track-cue-rendering-horizontal.html
+media/track/track-cue-rendering-snap-to-lines-not-set.html
+media/track/track-cue-rendering-vertical.html
+media/track/track-webvtt-tc028-unsupported-markup.html
 
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
@@ -509,10 +478,6 @@ http/tests/media/media-source/
 # Encrypted Media Extensions are not enabled.
 media/encrypted-media/
 fast/events/constructors/media-key-event-constructor.html
-
-# REGRESSION (r91547): scrollbars/scrollbar-drag-thumb-with-large-content.html failing on SnowLeopard Intel Release (Tests)
-# https://bugs.webkit.org/show_bug.cgi?id=65434
-scrollbars/scrollbar-drag-thumb-with-large-content.html
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
@@ -525,10 +490,6 @@ media/media-controls-invalid-url.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=68278
 http/tests/history/back-with-fragment-change.php
-
-# https://bugs.webkit.org/show_bug.cgi?id=68566
-fast/css/webkit-mask-crash-fieldset-legend.html
-fast/css/webkit-mask-crash-table.html
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
@@ -546,10 +507,6 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 fast/canvas/webgl/attrib-location-length-limits.html
 fast/canvas/webgl/uniform-location-length-limits.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=71420
-# It needs a rebaseline
-fast/repaint/table-extra-bottom-grow.html
-
 # Web Intents is not yet enabled.
 webintents/
 
@@ -557,9 +514,10 @@ webintents/
 pointer-lock/
 http/tests/pointer-lock/
 
-# Placeholder is not rendered since the patch in the following bug. It seems a DRT-only problem.
-# https://bugs.webkit.org/show_bug.cgi?id=67408
+# https://bugs.webkit.org/show_bug.cgi?id=82763
 fast/forms/textarea-placeholder-set-attribute.html
+fast/forms/placeholder-set-attribute.html
+fast/forms/search-placeholder-value-changed.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
@@ -624,9 +582,6 @@ networkinformation
 fast/dom/Proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=43022
-tables/mozilla_expected_failures/bugs/bug85016.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=81410
 scrollbars/scrollbar-middleclick-nopaste.html
 
@@ -649,20 +604,6 @@ fast/workers/storage/use-same-database-in-page-and-workers.html
 
 # Not possible to set UA string for media requests with all Mac media engines.
 http/tests/media/video-useragent.html
-
-# Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
-tables/mozilla/bugs/bug2123.html
-tables/mozilla/bugs/bug2509.html
-tables/mozilla/bugs/bug34176.html
-tables/mozilla/bugs/bug44505.html
-tables/mozilla_expected_failures/bugs/bug59252.html
-tables/mozilla_expected_failures/bugs/bug7243.html
-fast/repaint/scroll-inside-table-cell.html
-fast/repaint/scroll-relative-table-inside-table-cell.html
-fast/table/cell-pref-width-invalidation.html
-
-# The inner <input> should now grow to take the full cell's height.
-fast/table/colspanMinWidth-vertical.html
 
 # Has failed since its introduction in r105826. Skipped everywhere but chromium.
 fast/events/dropzone-005.html
@@ -696,61 +637,28 @@ http/tests/inspector/resource-har-conversion.html
 # https://bugs.webkit.org/show_bug.cgi?id=82672
 http/tests/xmlhttprequest/range-test.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82675
-http/tests/local/link-stylesheet-load-order.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82744
-fast/css/font-face-data-uri.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82746
-fast/block/float/float-in-float-hit-testing.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=82747
 fast/events/scroll-div-with-prevent-default-in-subframe.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82748
-fast/frames/flattening/frameset-flattening-advanced.html
-fast/frames/flattening/frameset-flattening-simple.html
-fast/frames/flattening/frameset-flattening-subframesets.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82750
-http/tests/navigation/javascriptlink-frames.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82752
-plugins/netscape-dom-access-and-reload.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82761
-fast/forms/search-event-delay.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82762
 fast/animation/request-animation-frame-during-modal.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82763
-fast/forms/placeholder-set-attribute.html
-fast/forms/search-placeholder-value-changed.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=82805
 fast/canvas/webgl/framebuffer-object-attachment.html
 fast/canvas/webgl/object-deletion-behaviour.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82815
-svg/custom/animate-disallowed-use-element.svg
-svg/dom/animated-tearoff-equality.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=82817
 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82923
 inspector/styles/override-screen-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82932
 inspector/profiler/cpu-profiler-profiling.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=82934
-storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82943
 inspector/debugger/copy-stack-trace.html
@@ -784,9 +692,6 @@ fast/dom/jsDevicePixelRatio.html
 # https://bugs.webkit.org/show_bug.cgi?id=82886
 inspector/styles/override-screen-size.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=83239
-fast/animation/request-animation-frame-during-modal.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=83618
 fast/dom/inline-event-attributes-release.html
 
@@ -800,10 +705,6 @@ fast/files/blob-builder-crash.html
 # [Mac] inspector/debugger/linkifier.html is flakey
 # https://bugs.webkit.org/show_bug.cgi?id=85319
 inspector/debugger/linkifier.html
-
-# scrollbars/scrollbar-miss-mousemove-disabled.html is asserting in markAllMisspellingsAndBadGrammarInRanges()
-# https://bugs.webkit.org/show_bug.cgi?id=85273
-scrollbars/scrollbar-miss-mousemove-disabled.html
 
 # Fail until SUBPIXEL_LAYOUT is enabled
 # https://bugs.webkit.org/show_bug.cgi?id=85532
@@ -842,9 +743,6 @@ http/tests/security/sandboxed-iframe-modify-self.html
 # https://bugs.webkit.org/show_bug.cgi?id=85523
 fullscreen/full-screen-iframe-legacy.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=85524
-fast/dom/xmlhttprequest-constructor-in-detached-document.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=85525
 media/video-played-reset.html
 
@@ -862,9 +760,6 @@ inspector/extensions/extensions-audits-content-script.html
 plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=87199
-compositing/video/video-poster.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=87347
 fast/frames/flattening/iframe-tiny.html
