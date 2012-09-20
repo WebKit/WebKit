@@ -972,18 +972,16 @@ function processMissingAndExtraExpectations(resultsForTest)
 
 
 var BUG_URL_PREFIX = '<a href="http://';
-var BUG_URL_POSTFIX = '/$2">crbug.com/$2</a> ';
-var WEBKIT_BUG_URL_POSTFIX = '/$2">webkit.org/b/$2</a> ';
+var BUG_URL_POSTFIX = '/$1">crbug.com/$1</a> ';
+var WEBKIT_BUG_URL_POSTFIX = '/$1">webkit.org/b/$1</a> ';
 var INTERNAL_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'b' + BUG_URL_POSTFIX;
 var EXTERNAL_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'crbug.com' + BUG_URL_POSTFIX;
 var WEBKIT_BUG_REPLACE_VALUE = BUG_URL_PREFIX + 'webkit.org/b' + WEBKIT_BUG_URL_POSTFIX;
 
 function htmlForBugs(bugs)
 {
-    // FIXME: do we still need the INTERNAL_BUG replacements? They're
-    // broken temporarily.
     bugs = bugs.replace(/crbug.com\/(\d+)(\ |$)/g, EXTERNAL_BUG_REPLACE_VALUE);
-    bugs = bugs.replace(/webkit.org\/b\/(\d{5}\d*?)(\ |$)/g, WEBKIT_BUG_REPLACE_VALUE);
+    bugs = bugs.replace(/webkit.org\/b\/(\d+)(\ |$)/g, WEBKIT_BUG_REPLACE_VALUE);
     return bugs;
 }
 
