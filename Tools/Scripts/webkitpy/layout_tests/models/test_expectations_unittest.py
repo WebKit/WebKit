@@ -68,10 +68,10 @@ class Base(unittest.TestCase):
     def get_basic_expectations(self):
         return """
 BUG_TEST : failures/expected/text.html = FAIL
-BUG_TEST WONTFIX SKIP : failures/expected/crash.html = CRASH
+BUG_TEST WONTFIX : failures/expected/crash.html = PASS
 BUG_TEST REBASELINE : failures/expected/missing_image.html = MISSING
-BUG_TEST WONTFIX : failures/expected/image_checksum.html = IMAGE
-BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
+BUG_TEST WONTFIX : failures/expected/image_checksum.html = PASS
+BUG_TEST WONTFIX MAC : failures/expected/image.html = PASS
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False):
@@ -94,7 +94,7 @@ class BasicTests(Base):
     def test_basic(self):
         self.parse_exp(self.get_basic_expectations())
         self.assert_exp('failures/expected/text.html', FAIL)
-        self.assert_exp('failures/expected/image_checksum.html', IMAGE)
+        self.assert_exp('failures/expected/image_checksum.html', PASS)
         self.assert_exp('passes/text.html', PASS)
         self.assert_exp('failures/expected/image.html', PASS)
 
@@ -137,14 +137,14 @@ class MiscTests(Base):
         # expectations and that known test part of a test category is
         # present in the expectations.
         exp_str = """
-BUGX WONTFIX : failures/expected = IMAGE
+BUGX WONTFIX : failures/expected = PASS
 """
         self.parse_exp(exp_str)
         test_name = 'failures/expected/unknown-test.html'
         unknown_test = self.get_test(test_name)
         self.assertRaises(KeyError, self._exp.get_expectations,
                           unknown_test)
-        self.assert_exp('failures/expected/crash.html', IMAGE)
+        self.assert_exp('failures/expected/crash.html', PASS)
 
     def test_get_modifiers(self):
         self.parse_exp(self.get_basic_expectations())
@@ -170,11 +170,6 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.assertEqual(s,
             set([self.get_test('failures/expected/crash.html'),
                  self.get_test('failures/expected/image_checksum.html')]))
-        s = self._exp.get_test_set(WONTFIX, CRASH)
-        self.assertEqual(s,
-            set([self.get_test('failures/expected/crash.html')]))
-        s = self._exp.get_test_set(WONTFIX, CRASH, include_skips=False)
-        self.assertEqual(s, set([]))
 
     def test_parse_warning(self):
         try:
@@ -189,13 +184,6 @@ BUGX WONTFIX : failures/expected = IMAGE
             warnings = ("expectations:1 Test lacks BUG modifier. failures/expected/text.html\n"
                         "expectations:1 Unrecognized modifier 'foo' failures/expected/text.html\n"
                         "expectations:2 Path does not exist. non-existent-test.html")
-            self.assertEqual(str(e), warnings)
-
-        try:
-            self.parse_exp('SKIP : failures/expected/text.html = FAIL', is_lint_mode=True)
-            self.assertFalse(True, "ParseError wasn't raised")
-        except ParseError, e:
-            warnings = u'expectations:1 Test lacks BUG modifier. failures/expected/text.html'
             self.assertEqual(str(e), warnings)
 
     def test_error_on_different_platform(self):
@@ -236,11 +224,11 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.assertTrue(match('failures/expected/text.html', FAIL, False))
         self.assertFalse(match('failures/expected/text.html', CRASH, True))
         self.assertFalse(match('failures/expected/text.html', CRASH, False))
-        self.assertTrue(match('failures/expected/image_checksum.html', IMAGE,
+        self.assertTrue(match('failures/expected/image_checksum.html', PASS,
                               True))
         self.assertTrue(match('failures/expected/image_checksum.html', PASS,
                               False))
-        self.assertTrue(match('failures/expected/crash.html', SKIP, False))
+        self.assertTrue(match('failures/expected/crash.html', PASS, False))
         self.assertTrue(match('passes/text.html', PASS, False))
 
     def test_more_specific_override_resets_skip(self):
@@ -470,6 +458,24 @@ class SemanticTests(Base):
         self.parse_exp('SLOW : failures/expected/text.html = FAIL')
         self.assertTrue(self._exp.has_warnings())
 
+        self.parse_exp('failures/expected/text.html [ Failure ]')
+        line = self._exp._model.get_expectation_line('failures/expected/text.html')
+        self.assertFalse(line.is_invalid())
+        self.assertEquals(line.warnings, ['Test lacks BUG modifier.'])
+
+    def test_skip_and_wontfix(self):
+        # Skip and WontFix are not allowed to have other expectations as well, because those
+        # expectations won't be exercised and may become stale .
+        self.parse_exp('failures/expected/text.html [ Failure Skip ]')
+        self.assertTrue(self._exp.has_warnings())
+
+        self.parse_exp('failures/expected/text.html [ Crash WontFix ]')
+        self.assertTrue(self._exp.has_warnings())
+
+        # We can't warn against [ Pass WontFix ] until we get rid of the old syntax.
+        self.parse_exp('failures/expected/text.html [ Pass WontFix ]')
+        self.assertFalse(self._exp.has_warnings())
+
     def test_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.
         self.assertRaises(ParseError, self.parse_exp,
@@ -503,19 +509,19 @@ class PrecedenceTests(Base):
         # and tests expectations covering entire directories.
         exp_str = """
 BUGX : failures/expected/text.html = FAIL
-BUGX WONTFIX : failures/expected = IMAGE
+BUGX WONTFIX : failures/expected = PASS
 """
         self.parse_exp(exp_str)
         self.assert_exp('failures/expected/text.html', FAIL)
-        self.assert_exp('failures/expected/crash.html', IMAGE)
+        self.assert_exp('failures/expected/crash.html', PASS)
 
         exp_str = """
-BUGX WONTFIX : failures/expected = IMAGE
+BUGX WONTFIX : failures/expected = PASS
 BUGX : failures/expected/text.html = FAIL
 """
         self.parse_exp(exp_str)
         self.assert_exp('failures/expected/text.html', FAIL)
-        self.assert_exp('failures/expected/crash.html', IMAGE)
+        self.assert_exp('failures/expected/crash.html', PASS)
 
     def test_ambiguous(self):
         self.assert_bad_expectations("BUG_TEST RELEASE : passes/text.html = PASS\n"

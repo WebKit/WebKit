@@ -347,7 +347,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         res, out, err, user = logging_run(['--run-singly', '--time-out-ms=50',
                                           'failures/expected/hang.html'],
                                           tests_included=True)
-        self.assertEqual(res, 0)
+        # Note that hang.html is marked as WontFix and all WontFix tests are
+        # expected to Pass, so that actually running them generates an "unexpected" error.
+        self.assertEqual(res, 1)
         self.assertNotEmpty(out)
         self.assertNotEmpty(err)
 

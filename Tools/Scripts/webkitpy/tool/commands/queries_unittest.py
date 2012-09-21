@@ -178,35 +178,35 @@ class PrintExpectationsTest(unittest.TestCase):
     def test_basic(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'))
+                       'failures/expected/image.html [ ImageOnlyFailure ]\n'
+                       'failures/expected/text.html [ Failure ]\n'))
 
     def test_multiple(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-vista\n'
-                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'
+                       'failures/expected/image.html [ ImageOnlyFailure ]\n'
+                       'failures/expected/text.html [ Failure ]\n'
                        '\n'
                        '// For test-win-win7\n'
-                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'
+                       'failures/expected/image.html [ ImageOnlyFailure ]\n'
+                       'failures/expected/text.html [ Failure ]\n'
                        '\n'
                        '// For test-win-xp\n'
-                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'),
+                       'failures/expected/image.html [ ImageOnlyFailure ]\n'
+                       'failures/expected/text.html [ Failure ]\n'),
                        platform='test-win-*')
 
     def test_full(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/image.html [ ImageOnlyFailure WontFix ]\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'),
+                       'Bug(test) failures/expected/image.html [ ImageOnlyFailure ]\n'
+                       'Bug(test) failures/expected/text.html [ Failure ]\n'),
                       full=True)
 
     def test_exclude(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
                       ('// For test-win-xp\n'
-                       'failures/expected/text.html [ Failure WontFix ]\n'),
+                       'failures/expected/text.html [ Failure ]\n'),
                       exclude_keyword=['image'])
 
     def test_include(self):
@@ -217,8 +217,8 @@ class PrintExpectationsTest(unittest.TestCase):
 
     def test_csv(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
-                      ('test-win-xp,failures/expected/image.html,WONTFIX,IMAGE\n'
-                       'test-win-xp,failures/expected/text.html,WONTFIX,FAIL\n'),
+                      ('test-win-xp,failures/expected/image.html,BUGTEST,IMAGE\n'
+                       'test-win-xp,failures/expected/text.html,BUGTEST,FAIL\n'),
                       csv=True)
 
 

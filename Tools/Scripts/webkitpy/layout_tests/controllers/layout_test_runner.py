@@ -420,6 +420,7 @@ class Worker(object):
         thread.start()
         thread.join(thread_timeout_sec)
         result = thread.result
+        failures = []
         if thread.isAlive():
             # If join() returned with the thread still running, the
             # DumpRenderTree is completely hung and there's nothing
@@ -430,11 +431,12 @@ class Worker(object):
             # that tradeoff in order to avoid losing the rest of this
             # thread's results.
             _log.error('Test thread hung: killing all DumpRenderTrees')
+            failures = [test_failures.FailureTimeout()]
 
         driver.stop()
 
         if not result:
-            result = test_results.TestResult(test_input.test_name, failures=[], test_run_time=0)
+            result = test_results.TestResult(test_input.test_name, failures=failures, test_run_time=0)
         return result
 
     def _run_test_in_this_thread(self, test_input, stop_when_done):

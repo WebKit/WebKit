@@ -258,25 +258,25 @@ def add_unit_tests_to_mock_filesystem(filesystem):
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/platform/test')
     if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/TestExpectations'):
         filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/TestExpectations', """
-WONTFIX : failures/expected/crash.html = CRASH
-WONTFIX : failures/expected/image.html = IMAGE
-WONTFIX : failures/expected/audio.html = FAIL
-WONTFIX : failures/expected/image_checksum.html = IMAGE
-WONTFIX : failures/expected/mismatch.html = IMAGE
-WONTFIX : failures/expected/missing_check.html = MISSING PASS
-WONTFIX : failures/expected/missing_image.html = MISSING PASS
-WONTFIX : failures/expected/missing_audio.html = MISSING PASS
-WONTFIX : failures/expected/missing_text.html = MISSING PASS
-WONTFIX : failures/expected/newlines_leading.html = FAIL
-WONTFIX : failures/expected/newlines_trailing.html = FAIL
-WONTFIX : failures/expected/newlines_with_excess_CR.html = FAIL
-WONTFIX : failures/expected/reftest.html = IMAGE
-WONTFIX : failures/expected/text.html = FAIL
-WONTFIX : failures/expected/timeout.html = TIMEOUT
-WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
-WONTFIX SKIP : failures/expected/keyboard.html = CRASH
-WONTFIX SKIP : failures/expected/exception.html = CRASH
-WONTFIX SKIP : passes/skipped/skip.html = PASS
+Bug(test) failures/expected/crash.html [ Crash ]
+Bug(test) failures/expected/image.html [ ImageOnlyFailure ]
+Bug(test) failures/expected/audio.html [ Failure ]
+Bug(test) failures/expected/image_checksum.html [ ImageOnlyFailure ]
+Bug(test) failures/expected/mismatch.html [ ImageOnlyFailure ]
+Bug(test) failures/expected/missing_check.html [ Missing Pass ]
+Bug(test) failures/expected/missing_image.html [ Missing Pass ]
+Bug(test) failures/expected/missing_audio.html [ Missing Pass ]
+Bug(test) failures/expected/missing_text.html [ Missing Pass ]
+Bug(test) failures/expected/newlines_leading.html [ Failure ]
+Bug(test) failures/expected/newlines_trailing.html [ Failure ]
+Bug(test) failures/expected/newlines_with_excess_CR.html [ Failure ]
+Bug(test) failures/expected/reftest.html [ ImageOnlyFailure ]
+Bug(test) failures/expected/text.html [ Failure ]
+Bug(test) failures/expected/timeout.html [ Timeout ]
+Bug(test) failures/expected/hang.html [ WontFix ]
+Bug(test) failures/expected/keyboard.html [ WontFix ]
+Bug(test) failures/expected/exception.html [ WontFix ]
+Bug(test) passes/skipped/skip.html [ Skip ]
 """)
 
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/reftests/foo')
@@ -537,7 +537,7 @@ class TestDriver(Driver):
         if test.exception:
             raise ValueError('exception from ' + test_name)
         if test.hang:
-            time.sleep((float(test_input.timeout) * 4) / 1000.0)
+            time.sleep((float(test_input.timeout) * 4) / 1000.0 + 1.0)  # The 1.0 comes from thread_padding_sec in layout_test_runnery.
 
         audio = None
         actual_text = test.actual_text

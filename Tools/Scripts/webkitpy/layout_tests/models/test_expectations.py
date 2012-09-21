@@ -76,6 +76,8 @@ class TestExpectationParser(object):
 
     TIMEOUT_EXPECTATION = 'timeout'
 
+    MISSING_BUG_WARNING = 'Test lacks BUG modifier.'
+
     def __init__(self, port, full_test_list, allow_rebaseline_modifier):
         self._port = port
         self._test_configuration_converter = TestConfigurationConverter(set(port.all_test_configurations()), port.configuration_specifier_macros())
@@ -154,7 +156,7 @@ class TestExpectationParser(object):
                 parsed_specifiers.add(modifier)
 
         if not expectation_line.parsed_bug_modifiers and not has_wontfix and not has_bugid:
-            expectation_line.warnings.append('Test lacks BUG modifier.')
+            expectation_line.warnings.append(self.MISSING_BUG_WARNING)
 
         if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in modifiers:
             expectation_line.warnings.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
@@ -392,7 +394,13 @@ class TestExpectationParser(object):
             elif state not in ('name_found', 'done'):
                 warnings.append('Missing a "]"')
 
-        if not expectations:
+        if 'WONTFIX' in modifiers and 'SKIP' not in modifiers:
+            modifiers.append('SKIP')
+
+        if 'SKIP' in modifiers and expectations:
+            # FIXME: This is really a semantic warning and shouldn't be here. Remove when we drop the old syntax.
+            warnings.append('A test marked Skip or WontFix must not have other expectations.')
+        elif not expectations:
             if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers:
                 modifiers.append('SKIP')
             expectations = ['PASS']
@@ -431,7 +439,7 @@ class TestExpectationLine(object):
         self.warnings = []
 
     def is_invalid(self):
-        return len(self.warnings) > 0
+        return self.warnings and self.warnings != [TestExpectationParser.MISSING_BUG_WARNING]
 
     def is_flaky(self):
         return len(self.parsed_expectations) > 1

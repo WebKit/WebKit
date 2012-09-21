@@ -1,3 +1,50 @@
+2012-09-20  Dirk Pranke  <dpranke@chromium.org>
+
+        make Skip, WontFix be the only expectations on a line
+        https://bugs.webkit.org/show_bug.cgi?id=97225
+
+        Reviewed by Ojan Vafai.
+
+        It is now incorrect in the new syntax to have a line like:
+
+            foo.html [ WontFix Crash ]
+
+        This will generate a lint warning and be treated as an invalid
+        line. Fixing this caused a whole bunch of unit tests to need updating
+        to no longer be marked as WontFix :). Also, this patch adjusts
+        the warnings so that missing Bug() identifiers will cause lint
+        warnings but will *not* cause the line to be treated as invalid.
+        Fixing these issues also revealed that test_hung_thread was no
+        longer testing the right logic, so I adjusted the timeouts in
+        test.py to make that test work again.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._run_test_in_another_thread):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_summarized_results_wontfix):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_modifiers):
+        (TestExpectationParser._tokenize_line_using_new_format):
+        (TestExpectationLine.is_invalid):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (BasicTests.test_basic):
+        (test_get_test_set):
+        (test_parse_warning):
+        (test_pixel_tests_flag):
+        (SemanticTests.test_missing_bugid):
+        (SemanticTests):
+        (SemanticTests.test_skip_and_wontfix):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_hung_thread):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_basic):
+        (PrintExpectationsTest.test_multiple):
+        (PrintExpectationsTest.test_full):
+        (PrintExpectationsTest.test_exclude):
+        (PrintExpectationsTest.test_csv):
+
 2012-09-20  Lucas Forschler  <lforschler@apple.com>
 
         Unreviewed.  Start running tests on the mac-ews.
