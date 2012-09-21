@@ -45,6 +45,19 @@ webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Failure Pass ]
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Frame flattening does not work properly for EFL port
+Bug(EFL) fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
+Bug(EFL) fast/frames/flattening/frameset-flattening-grid.html [ Failure ]
+Bug(EFL) fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
+Bug(EFL) fast/frames/flattening/frameset-flattening-subframesets.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-fixed-width.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-offscreen.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view.html [ Failure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html [ ImageOnlyFailure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html [ ImageOnlyFailure ]
+Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
+
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 webkit.org/b/84835 editing/execCommand/indent-paragraphs.html [ Failure ]
 

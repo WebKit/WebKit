@@ -301,20 +301,6 @@ fast/forms/textfield-overflow.html
 # BUG: rendering problems
 fast/forms/color/input-appearance-color.html
 
-# BUG: wrong flattening (scrollbars are shown but they shouldn't be)
-fast/frames/flattening/frameset-flattening-advanced.html
-fast/frames/flattening/frameset-flattening-grid.html
-fast/frames/flattening/frameset-flattening-simple.html
-fast/frames/flattening/frameset-flattening-subframesets.html
-fast/frames/flattening/iframe-flattening-fixed-height.html
-fast/frames/flattening/iframe-flattening-fixed-width-and-height.html
-fast/frames/flattening/iframe-flattening-fixed-width.html
-fast/frames/flattening/iframe-flattening-offscreen.html
-fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html
-fast/frames/flattening/iframe-flattening-out-of-view.html
-fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
-fast/frames/flattening/iframe-flattening-simple.html
-
 # BUG: text opacity not being interpreted correctly
 fast/text/complex-text-opacity.html
 
