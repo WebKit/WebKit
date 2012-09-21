@@ -293,6 +293,7 @@ fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-denied.html
+fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/error-clear-watch.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/maximum-age.html
