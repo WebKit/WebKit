@@ -72,7 +72,8 @@ var ClassNames = {
  */
 var global = {
     argumentsReceived: false,
-    params: null
+    params: null,
+    picker: null
 };
 
 // ----------------------------------------------------------------
@@ -239,25 +240,25 @@ function handleArgumentsTimeout() {
 }
 
 /**
- * @param {!Object} args
+ * @param {!Object} config
  * @return {?string} An error message, or null if the argument has no errors.
  */
-function validateArguments(args) {
-    if (!args.monthLabels)
+CalendarPicker.validateConfig = function(config) {
+    if (!config.monthLabels)
         return "No monthLabels.";
-    if (args.monthLabels.length != 12)
+    if (config.monthLabels.length != 12)
         return "monthLabels is not an array with 12 elements.";
-    if (!args.dayLabels)
+    if (!config.dayLabels)
         return "No dayLabels.";
-    if (args.dayLabels.length != 7)
+    if (config.dayLabels.length != 7)
         return "dayLabels is not an array with 7 elements.";
-    if (!args.clearLabel)
+    if (!config.clearLabel)
         return "No clearLabel.";
-    if (!args.todayLabel)
+    if (!config.todayLabel)
         return "No todayLabel.";
-    if (args.weekStartDay) {
-        if (args.weekStartDay < 0 || args.weekStartDay > 6)
-            return "Invalid weekStartDay: " + args.weekStartDay;
+    if (config.weekStartDay) {
+        if (config.weekStartDay < 0 || config.weekStartDay > 6)
+            return "Invalid weekStartDay: " + config.weekStartDay;
     }
     return null;
 }
@@ -266,7 +267,7 @@ function validateArguments(args) {
  * @param {!Object} args
  */
 function initialize(args) {
-    var errorString = validateArguments(args);
+    var errorString = CalendarPicker.validateConfig(args);
     if (errorString) {
         var main = $("main");
         main.textContent = "Internal error: " + errorString;
@@ -277,15 +278,17 @@ function initialize(args) {
     }
 }
 
-function resetMain() {
+function closePicker() {
+    if (global.picker)
+        global.picker.cleanup();
     var main = $("main");
     main.innerHTML = "";
     main.className = "";
 };
 
 function openCalendarPicker() {
-    resetMain();
-    new CalendarPicker($("main"), global.params);
+    closePicker();
+    global.picker = new CalendarPicker($("main"), global.params);
 };
 
 /**
@@ -295,6 +298,7 @@ function openCalendarPicker() {
  */
 function CalendarPicker(element, config) {
     Picker.call(this, element, config);
+    this._element.classList.add("calendar-picker");
     // We assume this._config.min is a valid date.
     this.minimumDate = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min) : CalendarPicker.MinimumPossibleDate;
     // We assume this._config.max is a valid date.
@@ -311,7 +315,8 @@ function CalendarPicker(element, config) {
         initialDate = this.maximumDate;
     this.daysTable.selectDate(initialDate);
     this.fixWindowSize();
-    document.body.addEventListener("keydown", this._handleBodyKeyDown.bind(this), false);
+    this._handleBodyKeyDownBound = this._handleBodyKeyDown.bind(this);
+    document.body.addEventListener("keydown", this._handleBodyKeyDownBound, false);
 }
 CalendarPicker.prototype = Object.create(Picker.prototype);
 
@@ -320,6 +325,10 @@ CalendarPicker.MinimumPossibleDate = new Date(-62135596800000.0);
 CalendarPicker.MaximumPossibleDate = new Date(8640000000000000.0);
 // See WebCore/html/DateInputType.cpp.
 CalendarPicker.BaseStep = 86400000;
+
+CalendarPicker.prototype.cleanup = function() {
+    document.body.removeEventListener("keydown", this._handleBodyKeyDownBound, false);
+};
 
 CalendarPicker.prototype._layout = function() {
     this._element.style.direction = global.params.isRTL ? "rtl" : "ltr";

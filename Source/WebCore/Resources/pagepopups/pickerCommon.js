@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -57,6 +58,9 @@ function resizeWindow(width, height) {
     }
 }
 
+/**
+ * @return {!number}
+ */
 function getScrollbarWidth() {
     if (typeof window.scrollbarWidth === "undefined") {
         var scrollDiv = document.createElement("div");
@@ -104,3 +108,5 @@ Picker.prototype.handleCancel = function() {
 Picker.prototype.chooseOtherColor = function() {
     window.pagePopupController.setValueAndClosePopup(Picker.Actions.ChooseOtherColor, "");
 }
+
+Picker.prototype.cleanup = function() {};

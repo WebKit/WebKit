@@ -40,14 +40,13 @@ body {
     outline: none;
 }
 
-#main {
+.calendar-picker {
     background-color: white;
     border: solid 1px #8899aa;
     box-shadow: inset 2px 2px 2px white,
         inset -2px -2px 1px rgba(0,0,0,0.1);
     padding: 6px;
-    whitespace: nowrap;
-    /* width is reset in the JS code. */
+    white-space: nowrap;
     width: 500px;
 }
 
