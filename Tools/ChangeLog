@@ -1,3 +1,10 @@
+2012-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Comment out a failing webkitpy unit test until Dirk can fix it.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (SemanticTests.test_skip_and_wontfix):
+
 2012-09-20  Dirk Pranke  <dpranke@chromium.org>
 
         make Skip, WontFix be the only expectations on a line
