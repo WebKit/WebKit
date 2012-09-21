@@ -208,56 +208,6 @@ class TestExpectationParser(object):
         if expectation_line.path in self._full_test_list:
             expectation_line.matching_tests.append(expectation_line.path)
 
-    # FIXME: Seems like these should be classmethods on TestExpectationLine instead of TestExpectationParser.
-    @classmethod
-    def _tokenize_line(cls, filename, expectation_string, line_number):
-        expectation_line = cls._tokenize_line_using_new_format(filename, expectation_string, line_number)
-        if expectation_line.is_invalid():
-            old_expectation_line = cls._tokenize_line_using_old_format(filename, expectation_string, line_number)
-            if not old_expectation_line.is_invalid():
-                return old_expectation_line
-        return expectation_line
-
-    @classmethod
-    def _tokenize_line_using_old_format(cls, filename, expectation_string, line_number):
-        """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance.
-
-        The format of a test expectation line is:
-
-        [[<modifiers>] : <name> = <expectations>][ //<comment>]
-
-        Any errant whitespace is not preserved.
-
-        """
-        expectation_line = TestExpectationLine()
-        expectation_line.original_string = expectation_string
-        expectation_line.line_number = line_number
-        expectation_line.filename = filename
-        comment_index = expectation_string.find("//")
-        if comment_index == -1:
-            comment_index = len(expectation_string)
-        else:
-            expectation_line.comment = expectation_string[comment_index + 2:]
-
-        remaining_string = re.sub(r"\s+", " ", expectation_string[:comment_index].strip())
-        if len(remaining_string) == 0:
-            return expectation_line
-
-        parts = remaining_string.split(':')
-        if len(parts) != 2:
-            expectation_line.warnings.append("Missing a ':'" if len(parts) < 2 else "Extraneous ':'")
-        else:
-            test_and_expectation = parts[1].split('=')
-            if len(test_and_expectation) != 2:
-                expectation_line.warnings.append("Missing expectations" if len(test_and_expectation) < 2 else "Extraneous '='")
-
-        if not expectation_line.is_invalid():
-            expectation_line.modifiers = cls._split_space_separated(parts[0])
-            expectation_line.name = test_and_expectation[0].strip()
-            expectation_line.expectations = cls._split_space_separated(test_and_expectation[1])
-
-        return expectation_line
-
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [
         'Mac', 'SnowLeopard', 'Lion', 'MountainLion',
@@ -288,8 +238,9 @@ class TestExpectationParser(object):
     _inverted_expectation_tokens = dict([(value, name) for name, value in _expectation_tokens.iteritems()] +
                                         [('TEXT', 'Failure'), ('IMAGE+TEXT', 'Failure'), ('AUDIO', 'Failure')])
 
+    # FIXME: Seems like these should be classmethods on TestExpectationLine instead of TestExpectationParser.
     @classmethod
-    def _tokenize_line_using_new_format(cls, filename, expectation_string, line_number):
+    def _tokenize_line(cls, filename, expectation_string, line_number):
         """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance using the old format.
 
         The new format for a test expectation line is:

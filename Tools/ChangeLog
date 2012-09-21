@@ -1,3 +1,30 @@
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: drop support for old TestExpectations syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97364
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._collect_matching_tests):
+        (TestExpectationParser):
+        (TestExpectationParser._tokenize_line):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (SkippedTests.test_skipped_entry_dont_exist):
+        (ExpectationSyntaxTests.assert_tokenize_exp):
+        (ExpectationSyntaxTests.test_bare_name):
+        (ExpectationSyntaxTests.test_bare_name_and_bugs):
+        (ExpectationSyntaxTests.test_comments):
+        (ExpectationSyntaxTests.test_config_modifiers):
+        (ExpectationSyntaxTests.test_unknown_config):
+        (ExpectationSyntaxTests.test_unknown_expectation):
+        (ExpectationSyntaxTests.test_skip):
+        (ExpectationSyntaxTests.test_slow):
+        (ExpectationSyntaxTests.test_wontfix):
+        (ExpectationSyntaxTests.test_blank_line):
+        (ExpectationSyntaxTests.test_warnings):
+        (RebaseliningTest.test_no_get_rebaselining_failures):
+
 2012-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Improve WTR unresponsiveness output a little
