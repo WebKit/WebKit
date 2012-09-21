@@ -2193,6 +2193,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->opacity() < 1.0f
         || style->hasTransformRelatedProperty()
         || style->hasMask()
+        || style->clipPath()
         || style->boxReflect()
         || style->hasFilter()
         || style->hasBlendMode()

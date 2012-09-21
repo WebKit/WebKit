@@ -3114,12 +3114,15 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     updateLayerListsIfNeeded();
 
     // Apply clip-path to context.
+    bool hasClipPath = false;
     RenderStyle* style = renderer()->style();
     if (renderer()->hasClipPath() && !context->paintingDisabled() && style) {
         ASSERT(style->clipPath());
         if (style->clipPath()->getOperationType() == ClipPathOperation::SHAPE) {
+            hasClipPath = true;
+            context->save();
             ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
-            transparencyLayerContext->clipPath(clipPath->path(calculateLayerBounds(this, rootLayer, 0)), clipPath->windRule());
+            context->clipPath(clipPath->path(calculateLayerBounds(this, rootLayer, 0)), clipPath->windRule());
         }
     }
 
@@ -3289,6 +3292,9 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         context->restore();
         m_usedTransparency = false;
     }
+
+    if (hasClipPath)
+        context->restore();
 }
 
 void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, GraphicsContext* context,

@@ -17,6 +17,9 @@ webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
+# Needs rebaseline after bug 97217 is fixed
+webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageOnlyFailure Pass ]
+
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886
 webkit.org/b/82886 inspector/styles/override-screen-size.html [ Skip ]

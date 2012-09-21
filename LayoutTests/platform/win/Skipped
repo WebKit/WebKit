@@ -40,6 +40,10 @@ css3/filters/effect-sepia-hw.html
 # Custom filters not yet supported on Windows
 css3/filters/custom
 
+# Needs rebaseline after bug 97217 is fixed
+# https://bugs.webkit.org/show_bug.cgi?id=97325
+css3/masking/clip-path-circle-relative-overflow.html
+
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 fast/css/image-set-parsing.html
 fast/css/image-set-parsing-invalid.html
