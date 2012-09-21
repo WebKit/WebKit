@@ -353,7 +353,7 @@ def armV7LowerMisplacedImmediates(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "storei", "storep"
+            when "storeb", "storei", "storep"
                 operands = node.operands
                 newOperands = []
                 operands.each {
