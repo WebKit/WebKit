@@ -714,7 +714,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\GCActivityCallback.cpp"
+				RelativePath="..\..\runtime\GCActivityCallbackCF.cpp"
 				>
 			</File>
 			<File

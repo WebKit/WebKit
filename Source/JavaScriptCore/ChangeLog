@@ -1,3 +1,11 @@
+2012-09-20  Roger Fong  <roger_fong@apple.com>
+
+        Enable opportunistic garbage collecting on Windows.
+
+        Reviewed by Mark Hahnenberg
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2012-08-14  Lucas Forschler  <lforschler@apple.com>
 
     Merge r124272.
