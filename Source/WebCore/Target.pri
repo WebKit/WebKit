@@ -4033,6 +4033,7 @@ use?(GRAPHICS_SURFACE) {
 ALL_IN_ONE_SOURCES += \
     accessibility/AccessibilityAllInOne.cpp \
     inspector/InspectorAllInOne.cpp \
+    rendering/RenderingAllInOne.cpp \
     loader/appcache/ApplicationCacheAllInOne.cpp \
     platform/text/TextAllInOne.cpp \
     rendering/style/StyleAllInOne.cpp

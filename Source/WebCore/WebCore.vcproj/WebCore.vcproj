@@ -44027,7 +44027,6 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -44035,7 +44034,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -44043,7 +44041,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -44051,7 +44048,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -44059,7 +44055,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -44067,7 +44062,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Production|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
