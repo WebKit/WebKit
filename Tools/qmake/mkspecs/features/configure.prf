@@ -99,6 +99,9 @@ defineTest(finalizeConfigure) {
         error(Done computing defaults)
     }
 
+    # Sanity check that would prevent us from building the whole project altogether.
+    !mac:!contains(QT_CONFIG,icu): error("To build QtWebKit with Qt 5 you need to build Qt 5 with libICU support. Check for ICU support being mentioned in qtbase/config.summary.")
+
     # Detect changes to the configuration. Changes need a clean build.
     webkit_configured {
         added_features = $$WEBKIT_CONFIG

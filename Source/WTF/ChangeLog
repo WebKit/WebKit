@@ -1,3 +1,11 @@
+2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Error out early if we don't have ICU available
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WTF.pri:
+
 2012-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         Add String::numberToStringFixedWidth()

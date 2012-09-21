@@ -1,5 +1,13 @@
 2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Error out early if we don't have ICU available
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/configure.prf:
+
+2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Bail out when trying to build WebKit with Qt != 5
 
         Reviewed by Tor Arne Vestbø.
