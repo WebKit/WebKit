@@ -68,6 +68,10 @@ LocaleICU::~LocaleICU()
 {
     unum_close(m_numberFormat);
     udat_close(m_shortDateFormat);
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    udat_close(m_mediumTimeFormat);
+    udat_close(m_shortTimeFormat);
+#endif
 }
 
 PassOwnPtr<LocaleICU> LocaleICU::create(const char* localeString)
