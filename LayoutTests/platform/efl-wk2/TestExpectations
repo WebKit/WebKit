@@ -139,6 +139,9 @@ webkit.org/b/35220 inspector/debugger/disable-script.html [ Crash Failure Pass ]
 webkit.org/b/35220 inspector/debugger/function-details.html [ Crash Failure Pass ]
 webkit.org/b/35220 inspector/debugger/script-extract-outline.html [ Crash Failure Pass ]
 
+# Test is flaky and needs to be fixed
+webkit.org/b/56985 http/tests/loading/bad-server-subframe.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
