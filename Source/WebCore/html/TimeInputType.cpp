@@ -46,6 +46,7 @@
 #include "ElementShadow.h"
 #include "FormController.h"
 #include "KeyboardEvent.h"
+#include "Localizer.h"
 #include "ShadowRoot.h"
 #endif
 
@@ -304,14 +305,25 @@ void TimeInputType::updateInnerTextValue()
         return;
 
     Localizer& localizer = element()->document()->getLocalizer(element()->computeInheritedLanguage());
-    const StepRange stepRange(createStepRange(AnyIsDefaultStep));
+    DateTimeEditElement::LayoutParameters layoutParameters(localizer, createStepRange(AnyIsDefaultStep));
+
     DateComponents date;
-    if (parseToDateComponents(element()->value(), &date))
-        m_dateTimeEditElement->setValueAsDate(stepRange, date, localizer);
-    else {
-        setMillisecondToDateComponents(stepRange.minimum().toDouble(), &date);
-        m_dateTimeEditElement->setEmptyValue(stepRange, date, localizer);
+    const bool hasValue = parseToDateComponents(element()->value(), &date);
+    if (!hasValue)
+        setMillisecondToDateComponents(layoutParameters.stepRange.minimum().toDouble(), &date);
+
+    if (date.second() || layoutParameters.shouldHaveSecondField()) {
+        layoutParameters.dateTimeFormat = localizer.timeFormat();
+        layoutParameters.fallbackDateTimeFormat = "HH:mm:ss";
+    } else {
+        layoutParameters.dateTimeFormat = localizer.shortTimeFormat();
+        layoutParameters.fallbackDateTimeFormat = "HH:mm";
     }
+
+    if (hasValue)
+        m_dateTimeEditElement->setValueAsDate(layoutParameters, date);
+    else
+        m_dateTimeEditElement->setEmptyValue(layoutParameters, date);
 }
 #else
 TimeInputType::TimeInputType(HTMLInputElement* element)
