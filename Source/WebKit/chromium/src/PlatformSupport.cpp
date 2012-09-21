@@ -233,26 +233,6 @@ bool PlatformSupport::loadFont(NSFont* srcFont, CGFontRef* out, uint32_t* fontID
     return false;
 }
 #elif OS(UNIX)
-void PlatformSupport::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale, FontFamily* family)
-{
-#if OS(ANDROID)
-    // FIXME: We do not use fontconfig on Android, so use simple logic for now.
-    // https://bugs.webkit.org/show_bug.cgi?id=67587
-    family->name = "Arial";
-    family->isBold = false;
-    family->isItalic = false;
-#else
-    WebFontFamily webFamily;
-    if (WebKit::Platform::current()->sandboxSupport())
-        WebKit::Platform::current()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters, preferredLocale, &webFamily);
-    else
-        WebFontInfo::familyForChars(characters, numCharacters, preferredLocale, &webFamily);
-    family->name = String::fromUTF8(webFamily.name.data(), webFamily.name.length());
-    family->isBold = webFamily.isBold;
-    family->isItalic = webFamily.isItalic;
-#endif
-}
-
 #endif
 
 // Indexed Database -----------------------------------------------------------

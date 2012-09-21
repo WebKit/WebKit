@@ -4888,6 +4888,7 @@
             'platform/graphics/chromium/DrawingBufferChromium.cpp',
             'platform/graphics/chromium/Extensions3DChromium.h',
             'platform/graphics/chromium/FontCacheAndroid.cpp',
+            'platform/graphics/chromium/FontCacheChromiumLinux.cpp',
             'platform/graphics/chromium/FontCacheChromiumWin.cpp',
             'platform/graphics/chromium/FontChromiumWin.cpp',
             'platform/graphics/chromium/FontPlatformData.h',

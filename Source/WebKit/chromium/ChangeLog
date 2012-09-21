@@ -1,3 +1,18 @@
+2012-09-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] remove getFontFamilyForCharacters from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=96282
+
+        Reviewed by Tony Chang.
+
+        Migrating away from PlatformSupport. getFontFamilyForCharacters is
+        moved to FontCache.h and overridden by the two platforms that
+        need it (Chromium Linux and Blackberry). New files for the overrides.
+        Part of a larger refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-09-21  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add setters to WebFilterOperation for IPC pickling

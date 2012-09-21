@@ -35,7 +35,6 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 
 #include "SkPaint.h"
@@ -100,13 +99,9 @@ void FontCache::platformInit()
 
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    icu::Locale locale = icu::Locale::getDefault();
-    PlatformSupport::FontFamily family;
-    PlatformSupport::getFontFamilyForCharacters(characters, length, locale.getLanguage(), &family);
-    if (family.name.isEmpty())
-        return 0;
-
-    AtomicString atomicFamily(family.name);
+    // FIXME: We do not use fontconfig on Android, so use simple logic for now.
+    // https://bugs.webkit.org/show_bug.cgi?id=67587
+    AtomicString atomicFamily("Arial");
     return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain), DoNotRetain);
 }
 

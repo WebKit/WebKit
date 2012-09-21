@@ -42,6 +42,7 @@ LIST(APPEND WebCore_SOURCES
 
 # Skia font backend sources
 LIST(APPEND WebCore_SOURCES
+    platform/graphics/blackberry/FontCacheBlackberry.cpp
     platform/graphics/blackberry/skia/PlatformBridge.cpp
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
     platform/graphics/harfbuzz/FontHarfBuzz.cpp

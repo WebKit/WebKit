@@ -33,6 +33,7 @@
 
 #include "Font.h"
 #include "FontDescription.h"
+#include "FontFamily.h"
 #include "FontPlatformData.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -59,8 +60,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           int length)
 {
     icu::Locale locale = icu::Locale::getDefault();
-    PlatformSupport::FontFamily family;
-    PlatformSupport::getFontFamilyForCharacters(characters, length, locale.getLanguage(), &family);
+    FontCache::SimpleFontFamily family;
+    FontCache::getFontFamilyForCharacters(characters, length, locale.getLanguage(), &family);
     if (family.name.isEmpty())
         return 0;
 
