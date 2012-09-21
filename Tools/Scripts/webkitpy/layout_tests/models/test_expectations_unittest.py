@@ -472,9 +472,8 @@ class SemanticTests(Base):
         self.parse_exp('failures/expected/text.html [ Crash WontFix ]')
         self.assertTrue(self._exp.has_warnings())
 
-        # We can't warn against [ Pass WontFix ] until we get rid of the old syntax.
-        # self.parse_exp('failures/expected/text.html [ Pass WontFix ]')
-        # self.assertFalse(self._exp.has_warnings())
+        self.parse_exp('failures/expected/text.html [ Pass WontFix ]')
+        self.assertTrue(self._exp.has_warnings())
 
     def test_slow_and_timeout(self):
         # A test cannot be SLOW and expected to TIMEOUT.

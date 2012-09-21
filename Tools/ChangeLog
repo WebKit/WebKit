@@ -1,3 +1,13 @@
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix test_skip_and_wontfix failure
+        https://bugs.webkit.org/show_bug.cgi?id=97225
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (SemanticTests.test_skip_and_wontfix):
+
 2012-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement ViewState methods in PageClientImpl in WebKit2
