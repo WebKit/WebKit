@@ -195,8 +195,7 @@ private:
     WebSocketChannelClient* m_client;
     OwnPtr<WebSocketHandshake> m_handshake;
     RefPtr<SocketStreamHandle> m_handle;
-    char* m_buffer;
-    size_t m_bufferSize;
+    Vector<char> m_buffer;
 
     Timer<WebSocketChannel> m_resumeTimer;
     bool m_suspended;
