@@ -1,3 +1,15 @@
+2012-09-21  Gergely Kis  <gergely@homejinni.com>
+
+        Add MIPS build slave to build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=96713
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added a build slave for MIPS, and enabled a builder for 
+        Qt Linux MIPS32R2 little-endian release build.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-09-21  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Switch back to a fixed fifo path for Android

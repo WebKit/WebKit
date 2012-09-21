@@ -73,7 +73,9 @@
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
-                    { "name": "efl-linux-slave-4", "platform": "efl" }
+                    { "name": "efl-linux-slave-4", "platform": "efl" },
+
+                    { "name": "mips-1", "platform": "qt-mipsel"}
                   ],
 
     "builders":   [ { "name": "Apple SnowLeopard Release (Build)", "type": "Build", "builddir": "snowleopard-release",
@@ -228,6 +230,11 @@
                       "slavenames": ["szeged-linux-4"]
                     },
                     {
+                      "name": "Qt Linux MIPS32R2 LE Release", "type": "Build", "builddir": "qt-linux-mipsel-mips32r2-release",
+                      "platform": "qt-mipsel", "configuration": "release", "architectures": ["mipsel"],
+                      "slavenames": ["mips-1"]
+                    },
+                    {
                       "name": "Qt Windows 32-bit Release", "type": "Build", "builddir": "qt-windows-32bit-release",
                       "SVNMirror": "svn://rain.inf.u-szeged.hu/webkit/",
                       "platform": "qt-win", "configuration": "release", "architectures": ["i386"],
@@ -337,7 +344,7 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)",
-                                       "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release",
+                                       "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS32R2 LE Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
