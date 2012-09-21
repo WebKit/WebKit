@@ -1,3 +1,11 @@
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll Chromium DEPS to r158060
+
+        Unreviewed, rolled DEPS.
+
+        * DEPS:
+
 2012-09-21  Chris Rogers  <crogers@google.com>
 
         Add Web Audio support for deprecated/legacy APIs
