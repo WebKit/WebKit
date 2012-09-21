@@ -41,6 +41,7 @@ struct DateTimeChooserParameters {
     IntRect anchorRectInRootView;
     String currentValue;
     Vector<String> suggestionValues;
+    Vector<String> localizedSuggestionValues;
     Vector<String> suggestionLabels;
     double minimum;
     double maximum;
