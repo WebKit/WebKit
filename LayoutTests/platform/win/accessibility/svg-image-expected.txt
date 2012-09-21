@@ -11,3 +11,4 @@ SVG Image Description: Description: TestImage
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
