@@ -16,9 +16,9 @@ function test()
             return new InspectorTest.FakeFileReader(input, delegate, model.saveToFile.bind(model));
         }
 
-        function createFileWriter(fileName, delegate)
+        function createFileWriter(fileName, callback)
         {
-            return new InspectorTest.FakeFileWriter(delegate, checkSaveData);
+            callback(new InspectorTest.StringOutputStream(checkSaveData));
         }
 
         function checkSaveData(output)

@@ -20,10 +20,9 @@ function test()
         function heapSnapshotLoaderTest(next)
         {
             var loader = new WebInspector.HeapSnapshotLoader();
-            loader.startTransfer();
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
-                loader.transferChunk(sourceStringified.slice(i, i + partSize));
-            loader.finishTransfer();
+                loader.write(sourceStringified.slice(i, i + partSize));
+            loader.close();
             var result = loader.buildSnapshot();
             result._nodes = new Uint32Array(result._nodes);
             result._containmentEdges = new Uint32Array(result._containmentEdges);
@@ -97,11 +96,10 @@ function test()
             InspectorTest.override(WebInspector.HeapProfileHeader.prototype, '_createFileReader', function(fileMock, delegate) {
                 return {
                     start: function(receiver) {
-                        receiver.startTransfer();
                         delegate.onTransferStarted(this);
-                        receiver.transferChunk(sourceStringified);
+                        receiver.write(sourceStringified);
                         delegate.onChunkTransferred(this);
-                        receiver.finishTransfer();
+                        receiver.close();
                         delegate.onTransferFinished(this);
                     },
 

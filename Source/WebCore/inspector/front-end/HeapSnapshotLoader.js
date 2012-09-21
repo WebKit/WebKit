@@ -38,10 +38,6 @@ WebInspector.HeapSnapshotLoader = function()
 }
 
 WebInspector.HeapSnapshotLoader.prototype = {
-    startTransfer: function()
-    {
-    },
-
     dispose: function()
     {
         this._reset();
@@ -54,7 +50,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
         this._snapshot = {};
     },
 
-    finishTransfer: function()
+    close: function()
     {
         if (this._json)
             this._parseStringsArray();
@@ -117,7 +113,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
     /**
      * @param {string} chunk
      */
-    transferChunk: function(chunk)
+    write: function(chunk)
     {
         this._json += chunk;
         switch (this._state) {
@@ -128,8 +124,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
                 throw new Error("Snapshot token not found");
             this._json = this._json.slice(snapshotTokenIndex + snapshotToken.length + 1);
             this._state = "parse-snapshot-info";
-            this.transferChunk("");
-            break;
         }
         case "parse-snapshot-info": {
             var closingBracketIndex = WebInspector.findBalancedCurlyBrackets(this._json);
@@ -138,8 +132,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._snapshot.snapshot = /** @type {HeapSnapshotHeader} */JSON.parse(this._json.slice(0, closingBracketIndex));
             this._json = this._json.slice(closingBracketIndex);
             this._state = "find-nodes";
-            this.transferChunk("");
-            break;
         }
         case "find-nodes": {
             var nodesToken = "\"nodes\"";
@@ -155,8 +147,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._array = new Uint32Array(nodes_length);
             this._arrayIndex = 0;
             this._state = "parse-nodes";
-            this.transferChunk("");
-            break;
         }
         case "parse-nodes": {
             if (this._parseUintArray())
@@ -164,8 +154,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._snapshot.nodes = this._array;
             this._state = "find-edges";
             this._array = null;
-            this.transferChunk("");
-            break;
         }
         case "find-edges": {
             var edgesToken = "\"edges\"";
@@ -181,8 +169,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._array = new Uint32Array(edges_length);
             this._arrayIndex = 0;
             this._state = "parse-edges";
-            this.transferChunk("");
-            break;
         }
         case "parse-edges": {
             if (this._parseUintArray())
@@ -190,8 +176,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._snapshot.edges = this._array;
             this._array = null;
             this._state = "find-strings";
-            this.transferChunk("");
-            break;
         }
         case "find-strings": {
             var stringsToken = "\"strings\"";
