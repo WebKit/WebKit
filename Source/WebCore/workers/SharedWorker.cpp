@@ -35,6 +35,7 @@
 
 #include "SharedWorker.h"
 
+#include "FeatureObserver.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "MessageChannel.h"
@@ -52,6 +53,9 @@ inline SharedWorker::SharedWorker(ScriptExecutionContext* context)
 
 PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, const String& url, const String& name, ExceptionCode& ec)
 {
+    ASSERT(isMainThread());
+    FeatureObserver::observe(static_cast<Document*>(context)->domWindow(), FeatureObserver::SharedWorkerStart);
+
     RefPtr<SharedWorker> worker = adoptRef(new SharedWorker(context));
 
     RefPtr<MessageChannel> channel = MessageChannel::create(context);

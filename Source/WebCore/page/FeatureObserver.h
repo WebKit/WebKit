@@ -43,6 +43,8 @@ public:
         LegacyNotifications,
         LegacyBlobBuilder,
         PrefixedIndexedDB,
+        WorkerStart,
+        SharedWorkerStart,
         // Add new features above this line.
         NumberOfFeatures, // This enum value must be last.
     };
