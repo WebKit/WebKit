@@ -1,3 +1,14 @@
+2012-09-21  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r120361) Warnings while preprocessing com.apple.WebProcess.sb.in
+        https://bugs.webkit.org/show_bug.cgi?id=91079
+        <rdar://problem/12332660>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Add pragma to ignore the invalid preprocessor warnings.
+
 2012-09-21  Chris Rogers  <crogers@google.com>
 
         Add Web Audio support for deprecated/legacy APIs

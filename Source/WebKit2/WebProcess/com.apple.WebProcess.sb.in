@@ -1,3 +1,6 @@
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Winvalid-pp-token"
+
 (version 1)
 (deny default (with partial-symbolication))
 (allow ipc-posix-shm system-audit system-socket file-read-metadata)
