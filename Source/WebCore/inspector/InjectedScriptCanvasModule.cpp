@@ -59,20 +59,30 @@ String InjectedScriptCanvasModule::source() const
     return String(reinterpret_cast<const char*>(InjectedScriptCanvasModuleSource_js), sizeof(InjectedScriptCanvasModuleSource_js));
 }
 
+ScriptObject InjectedScriptCanvasModule::wrapCanvas2DContext(const ScriptObject& context)
+{
+    return callWrapContextFunction("wrapCanvas2DContext", context);
+}
+
 #if ENABLE(WEBGL)
 ScriptObject InjectedScriptCanvasModule::wrapWebGLContext(const ScriptObject& glContext)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "wrapWebGLContext");
-    function.appendArgument(glContext);
+    return callWrapContextFunction("wrapWebGLContext", glContext);
+}
+#endif // ENABLE(WEBGL)
+
+ScriptObject InjectedScriptCanvasModule::callWrapContextFunction(const String& functionName, const ScriptObject& context)
+{
+    ScriptFunctionCall function(injectedScriptObject(), functionName);
+    function.appendArgument(context);
     bool hadException = false;
     ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
     if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
         ASSERT_NOT_REACHED();
         return ScriptObject();
     }
-    return ScriptObject(glContext.scriptState(), resultValue);
+    return ScriptObject(context.scriptState(), resultValue);
 }
-#endif // ENABLE(WEBGL)
 
 void InjectedScriptCanvasModule::captureFrame(ErrorString* errorString, String* traceLogId)
 {

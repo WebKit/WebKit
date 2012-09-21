@@ -130,6 +130,20 @@ void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String
         module.replayTraceLog(errorString, traceLogId, stepNo, result);
 }
 
+ScriptObject InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject& context)
+{
+    if (context.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return ScriptObject();
+    }
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, context.scriptState());
+    if (module.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return ScriptObject();
+    }
+    return module.wrapCanvas2DContext(context);
+}
+
 #if ENABLE(WEBGL)
 ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
