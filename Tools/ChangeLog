@@ -1,3 +1,66 @@
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: update remaining tests to use the new expectation syntax
+        https://bugs.webkit.org/show_bug.cgi?id=97362
+
+        Reviewed by Ojan Vafai.
+
+        This patch updates all the unit tests that were still using the
+        old TestExpectations syntax to use the new syntax *except* for
+        the tests that were specifically testing that we parsed the old
+        syntax correctly.
+
+        Also, a block of tests for the new syntax were duplicated, so
+        I've deleted the duplicate.
+
+        Note that the old syntax is still supported so this change should
+        produce no visible changes.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (MiscTests.test_multiple_results):
+        (MiscTests.test_category_expectations):
+        (MiscTests.test_error_on_different_platform):
+        (MiscTests.test_error_on_different_build_type):
+        (MiscTests.test_overrides):
+        (MiscTests.test_overrides__directory):
+        (MiscTests.test_overrides__duplicate):
+        (MiscTests.test_more_specific_override_resets_skip):
+        (SkippedTests.check):
+        (SkippedTests.test_duplicate_skipped_test_fails_lint):
+        (SkippedTests.test_skipped_file_overrides_expectations):
+        (SkippedTests.test_skipped_dir_overrides_expectations):
+        (SkippedTests.test_skipped_file_overrides_overrides):
+        (SkippedTests.test_skipped_dir_overrides_overrides):
+        (ExpectationSyntaxTests.disabled_test_missing_expectation):
+        (ExpectationSyntaxTests.disabled_test_missing_colon):
+        (ExpectationSyntaxTests.disabled_test_too_many_colons):
+        (ExpectationSyntaxTests.disabled_test_too_many_equals_signs):
+        (ExpectationSyntaxTests):
+        (ExpectationSyntaxTests.test_unrecognized_expectation):
+        (ExpectationSyntaxTests.test_macro):
+        (SemanticTests.test_bug_format):
+        (SemanticTests.test_bad_bugid):
+        (SemanticTests.test_missing_bugid):
+        (SemanticTests.test_slow_and_timeout):
+        (SemanticTests.test_rebaseline):
+        (test_missing_file):
+        (test_ambiguous):
+        (test_more_modifiers):
+        (test_order_in_file):
+        (test_macro_overrides):
+        (OldExpectationParserTests):
+        (OldExpectationParserTests._tokenize):
+        (OldExpectationParserTests.test_tokenize_extra_colon):
+        (OldExpectationParserTests.test_tokenize_missing_equal):
+        (OldExpectationParserTests.test_tokenize_extra_equal):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_skip_failing_tests):
+        (MainTest.test_additional_expectations):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_valid_expectations):
+        (TestExpectationsTestCase.test_invalid_expectations):
+        (TestExpectationsTestCase.test_tab):
+
 2012-09-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Add basic testing support for Geolocation
