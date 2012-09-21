@@ -4,7 +4,7 @@ GET(""): GET(null bytes), Content-Type: null
 GET(null): GET(null bytes), Content-Type: null
 GET("123"): GET(null bytes), Content-Type: null
 POST(""): POST(0 bytes), Content-Type: application/xml
-POST(null): POST(0 bytes), Content-Type: application/octet-stream
+POST(null): POST(0 bytes), Content-Type: application/x-www-form-urlencoded
 POST("123"): POST(3 bytes), Content-Type: application/xml
 PUT(""): PUT(0 bytes), Content-Type: application/xml
 PUT(null): PUT(0 bytes), Content-Type: null
