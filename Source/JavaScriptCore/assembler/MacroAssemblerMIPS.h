@@ -335,6 +335,13 @@ public:
         m_assembler.orInsn(dest, dest, dataTempRegister);
     }
 
+    void or32(RegisterID src, AbsoluteAddress dest)
+    {
+        load32(dest.m_ptr, dataTempRegister);
+        m_assembler.orInsn(dataTempRegister, dataTempRegister, src);
+        store32(dataTempRegister, dest.m_ptr);
+    }
+
     void rshift32(RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.srav(dest, dest, shiftAmount);

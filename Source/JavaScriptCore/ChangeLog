@@ -1,3 +1,16 @@
+2012-09-21  Chao-ying Fu  <fu@mips.com>
+
+        Add MIPS or32 function
+        https://bugs.webkit.org/show_bug.cgi?id=97157
+
+        Reviewed by Gavin Barraclough.
+
+        Add a missing or32 function.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or32): New function.
+        (MacroAssemblerMIPS):
+
 2012-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         CHECK_ARRAY_CONSISTENCY isn't being used or tested, so we should remove it
