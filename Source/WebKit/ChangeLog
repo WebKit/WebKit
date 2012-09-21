@@ -1,3 +1,16 @@
+2012-09-21  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Remove obsolete compositing surface code
+        https://bugs.webkit.org/show_bug.cgi?id=97314
+
+        Reviewed by Antonio Gomes.
+
+        Remove compositing surface code from build system.
+
+        PR 208038.
+
+        * PlatformBlackBerry.cmake:
+
 2012-09-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make force_static_libs_as_shared work on Mac OS

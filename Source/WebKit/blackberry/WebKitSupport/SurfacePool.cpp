@@ -21,10 +21,6 @@
 
 #include "PlatformContextSkia.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "BackingStoreCompositingSurface.h"
-#endif
-
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
@@ -48,14 +44,6 @@ static PFNEGLDESTROYSYNCKHRPROC eglDestroySyncKHR;
 static PFNEGLCLIENTWAITSYNCKHRPROC eglClientWaitSyncKHR;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && ENABLE_COMPOSITING_SURFACE
-static PassRefPtr<BackingStoreCompositingSurface> createCompositingSurface()
-{
-    BlackBerry::Platform::IntSize screenSize = BlackBerry::Platform::Graphics::Screen::primaryScreen()->size();
-    return BackingStoreCompositingSurface::create(screenSize, false /*doubleBuffered*/);
-}
-#endif
-
 SurfacePool* SurfacePool::globalSurfacePool()
 {
     static SurfacePool* s_instance = 0;
@@ -66,9 +54,6 @@ SurfacePool* SurfacePool::globalSurfacePool()
 
 SurfacePool::SurfacePool()
     : m_visibleTileBuffer(0)
-#if USE(ACCELERATED_COMPOSITING)
-    , m_compositingSurface(0)
-#endif
     , m_tileRenderingSurface(0)
     , m_backBuffer(0)
     , m_initialized(false)
@@ -96,10 +81,6 @@ void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
     }
 
     m_tileRenderingSurface = BlackBerry::Platform::Graphics::drawingSurface();
-
-#if USE(ACCELERATED_COMPOSITING) && ENABLE_COMPOSITING_SURFACE
-    m_compositingSurface = createCompositingSurface();
-#endif
 
     if (!numberOfTiles)
         return; // we only use direct rendering when 0 tiles are specified.
@@ -166,21 +147,6 @@ TileBuffer* SurfacePool::backBuffer() const
 {
     ASSERT(m_backBuffer);
     return reinterpret_cast<TileBuffer*>(m_backBuffer);
-}
-
-#if USE(ACCELERATED_COMPOSITING)
-BackingStoreCompositingSurface* SurfacePool::compositingSurface() const
-{
-    return m_compositingSurface.get();
-}
-#endif
-
-void SurfacePool::notifyScreenRotated()
-{
-#if USE(ACCELERATED_COMPOSITING) && ENABLE_COMPOSITING_SURFACE
-    // Recreate compositing surface at new screen resolution.
-    m_compositingSurface = createCompositingSurface();
-#endif
 }
 
 std::string SurfacePool::sharedPixmapGroup() const

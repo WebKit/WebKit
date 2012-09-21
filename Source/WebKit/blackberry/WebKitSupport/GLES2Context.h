@@ -40,7 +40,6 @@
 namespace BlackBerry {
 namespace WebKit {
 
-class BackingStoreCompositingSurface;
 class WebPagePrivate;
 
 class GLES2Context : public Platform::Graphics::GLES2Context {
@@ -54,7 +53,6 @@ public:
 
 private:
     GLES2Context(WebPagePrivate*);
-    BackingStoreCompositingSurface* compositingSurface() const;
     Platform::Graphics::Buffer* buffer() const;
 
     Platform::Graphics::Window* m_window;

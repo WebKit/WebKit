@@ -29,12 +29,8 @@
 #include <set>
 #include <wtf/Vector.h>
 
-#define ENABLE_COMPOSITING_SURFACE 1
-
 namespace BlackBerry {
 namespace WebKit {
-
-class BackingStoreCompositingSurface;
 
 class SurfacePool {
 public:
@@ -64,10 +60,6 @@ public:
     // backingstore.
     TileBuffer* backBuffer() const;
 
-    BackingStoreCompositingSurface* compositingSurface() const;
-
-    void notifyScreenRotated();
-
     std::string sharedPixmapGroup() const;
 
     void releaseBuffers();
@@ -93,9 +85,6 @@ private:
 
     TileList m_tilePool;
     BackingStoreTile* m_visibleTileBuffer;
-#if USE(ACCELERATED_COMPOSITING)
-    RefPtr<BackingStoreCompositingSurface> m_compositingSurface;
-#endif
     BlackBerry::Platform::Graphics::Buffer* m_tileRenderingSurface;
     unsigned m_backBuffer;
     bool m_initialized; // SurfacePool has been set up, with or without buffers.

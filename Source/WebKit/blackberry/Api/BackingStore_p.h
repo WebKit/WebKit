@@ -207,9 +207,6 @@ public:
     //                calling this.
     void compositeContents(WebCore::LayerRenderer*, const WebCore::TransformationMatrix&, const WebCore::FloatRect& contents, bool contentsOpaque);
 
-    void blendCompositingSurface(const Platform::IntRect& dstRect);
-    void clearCompositingSurface();
-
     bool drawLayersOnCommitIfNeeded();
     void drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect);
     // WebPage will call this when drawing layers to tell us we don't need to

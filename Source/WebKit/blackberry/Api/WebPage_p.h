@@ -407,9 +407,6 @@ public:
     void setNeedsOneShotDrawingSynchronization();
     void scheduleRootLayerCommit();
 
-    // Thread safe.
-    void resetCompositingSurface();
-
     // Compositing thread.
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
     void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&, bool);

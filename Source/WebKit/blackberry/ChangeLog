@@ -1,3 +1,48 @@
+2012-09-21  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Remove obsolete compositing surface code
+        https://bugs.webkit.org/show_bug.cgi?id=97314
+
+        Reviewed by Antonio Gomes.
+
+        The removed code allowed rendering of sublayers to a separate offscreen
+        surface.
+
+        Now that we composite root layer and all sublayers to the window
+        surface, this code is not needed anymore. In addition, we save some
+        memory by not allocating the unused offscreen surface.
+
+        PR 208038.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenAndBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::suspendBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::resizeSurfaceIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        (BlackBerry::WebKit::WebPagePrivate::setRootLayerCompositingThread):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/BackingStoreCompositingSurface.cpp: Removed.
+        * WebKitSupport/BackingStoreCompositingSurface.h: Removed.
+        * WebKitSupport/GLES2Context.cpp:
+        (BlackBerry::WebKit::GLES2Context::buffer):
+        (BlackBerry::WebKit::GLES2Context::surfaceSize):
+        (BlackBerry::WebKit::GLES2Context::swapBuffers):
+        * WebKitSupport/GLES2Context.h:
+        (GLES2Context):
+        * WebKitSupport/SurfacePool.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2012-09-20  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] To support "Frames View" of "TimeLine" panel  in Inspector
