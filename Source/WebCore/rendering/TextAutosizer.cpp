@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+struct TextAutosizingWindowInfo {
+    IntSize windowSize;
+    IntSize minLayoutSize;
+};
+
 TextAutosizer::TextAutosizer(Document* document)
     : m_document(document)
 {
@@ -53,36 +58,68 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
 
     Frame* mainFrame = m_document->page()->mainFrame();
 
+    TextAutosizingWindowInfo windowInfo;
+
     // Window area, in logical (density-independent) pixels.
-    IntSize windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
-    if (windowSize.isEmpty()) {
+    windowInfo.windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
+    if (windowInfo.windowSize.isEmpty()) {
         bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
-        windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
+        windowInfo.windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
     }
 
     // Largest area of block that can be visible at once (assuming the main
     // frame doesn't get scaled to less than overview scale), in CSS pixels.
-    IntSize minLayoutSize = mainFrame->view()->layoutSize();
+    windowInfo.minLayoutSize = mainFrame->view()->layoutSize();
     for (Frame* frame = m_document->frame(); frame; frame = frame->tree()->parent()) {
         if (!frame->view()->isInChildFrameWithFrameFlattening())
-            minLayoutSize = minLayoutSize.shrunkTo(frame->view()->layoutSize());
+            windowInfo.minLayoutSize = windowInfo.minLayoutSize.shrunkTo(frame->view()->layoutSize());
     }
 
-    for (RenderObject* descendant = layoutRoot->nextInPreOrder(layoutRoot); descendant; descendant = descendant->nextInPreOrder(layoutRoot)) {
-        if (isNotAnAutosizingContainer(descendant))
-            continue;
-        processBox(toRenderBox(descendant), windowSize, minLayoutSize);
-    }
+    // The layoutRoot could be neither a container nor a cluster, so walk up the tree till we find each of these.
+    RenderBlock* container = layoutRoot->isRenderBlock() ? toRenderBlock(layoutRoot) : layoutRoot->containingBlock();
+    while (container && !isAutosizingContainer(container))
+        container = container->containingBlock();
 
+    RenderBlock* cluster = container;
+    while (cluster && (!isAutosizingContainer(cluster) || !isAutosizingCluster(cluster)))
+        cluster = cluster->containingBlock();
+
+    processCluster(cluster, container, layoutRoot, windowInfo);
     return true;
 }
 
-static bool contentHeightIsConstrained(const RenderBox* box)
+void TextAutosizer::processCluster(RenderBlock* cluster, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
+{
+    ASSERT(isAutosizingCluster(cluster));
+
+    // FIXME: Many pages set a max-width on their content. So especially for the RenderView,
+    // instead of just taking the width of |cluster| we should find the lowest common ancestor of
+    // the first and last descendant text node of the cluster (i.e. the deepest wrapper block that
+    // contains all the text), and use its width instead.
+    RenderBlock* lowestCommonAncestor = cluster;
+    float commonAncestorWidth = lowestCommonAncestor->contentLogicalWidth();
+
+    float multiplier = 1;
+    if (clusterShouldBeAutosized(lowestCommonAncestor, commonAncestorWidth)) {
+        int logicalWindowWidth = cluster->isHorizontalWritingMode() ? windowInfo.windowSize.width() : windowInfo.windowSize.height();
+        int logicalLayoutWidth = cluster->isHorizontalWritingMode() ? windowInfo.minLayoutSize.width() : windowInfo.minLayoutSize.height();
+        // Ignore box width in excess of the layout width, to avoid extreme multipliers.
+        float logicalClusterWidth = std::min<float>(commonAncestorWidth, logicalLayoutWidth);
+
+        multiplier = logicalClusterWidth / logicalWindowWidth;
+        multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
+        multiplier = std::max(1.0f, multiplier);
+    }
+
+    processContainer(multiplier, container, subtreeRoot, windowInfo);
+}
+
+static bool contentHeightIsConstrained(const RenderBlock* container)
 {
     // FIXME: Propagate constrainedness down the tree, to avoid inefficiently walking back up from each box.
     // FIXME: This code needs to take into account vertical writing modes.
     // FIXME: Consider additional heuristics, such as ignoring fixed heights if the content is already overflowing before autosizing kicks in.
-    for (const RenderBox* container = box; container; container = container->containingBlock()) {
+    for (; container; container = container->containingBlock()) {
         RenderStyle* style = container->style();
         if (style->overflowY() >= OSCROLL)
             return false;
@@ -97,29 +134,28 @@ static bool contentHeightIsConstrained(const RenderBox* box)
     return false;
 }
 
-void TextAutosizer::processBox(RenderBox* box, const IntSize& windowSize, const IntSize& layoutSize)
+void TextAutosizer::processContainer(float multiplier, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
 {
-    if (contentHeightIsConstrained(box))
-        return;
+    ASSERT(isAutosizingContainer(container));
 
-    int logicalWindowWidth = box->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
-    int logicalLayoutWidth = box->isHorizontalWritingMode() ? layoutSize.width() : layoutSize.height();
-    // Ignore box width in excess of the layout width, to avoid extreme multipliers.
-    float logicalBoxWidth = std::min<float>(box->logicalWidth(), logicalLayoutWidth);
+    float localMultiplier = contentHeightIsConstrained(container) ? 1 : multiplier;
 
-    float multiplier = logicalBoxWidth / logicalWindowWidth;
-    multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
-
-    if (multiplier < 1)
-        return;
-    RenderObject* descendant = nextInPreOrderMatchingFilter(box, box, isNotAnAutosizingContainer);
+    RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(subtreeRoot, subtreeRoot);
     while (descendant) {
         if (descendant->isText()) {
-            setMultiplier(descendant, multiplier);
-            setMultiplier(descendant->parent(), multiplier); // Parent does line spacing.
+            if (localMultiplier != descendant->style()->textAutosizingMultiplier()) {
+                setMultiplier(descendant, localMultiplier);
+                setMultiplier(descendant->parent(), localMultiplier); // Parent does line spacing.
+            }
             // FIXME: Increase list marker size proportionately.
+        } else if (isAutosizingContainer(descendant)) {
+            RenderBlock* descendantBlock = toRenderBlock(descendant);
+            if (isAutosizingCluster(descendantBlock))
+                processCluster(descendantBlock, descendantBlock, descendantBlock, windowInfo);
+            else
+                processContainer(multiplier, descendantBlock, descendantBlock, windowInfo);
         }
-        descendant = nextInPreOrderMatchingFilter(descendant, box, isNotAnAutosizingContainer);
+        descendant = nextInPreOrderSkippingDescendantsOfContainers(descendant, subtreeRoot);
     }
 }
 
@@ -158,28 +194,104 @@ float TextAutosizer::computeAutosizedFontSize(float specifiedSize, float multipl
     return computedSize;
 }
 
-bool TextAutosizer::isNotAnAutosizingContainer(const RenderObject* renderer)
+bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
 {
-    // "Autosizing containers" are the smallest unit for which we can enable/disable
-    // Text Autosizing. A uniform text size multiplier is enforced within them.
-    // - Must be RenderBoxes since they need a well-defined logicalWidth().
+    // "Autosizing containers" are the smallest unit for which we can
+    // enable/disable Text Autosizing.
     // - Must not be inline, as different multipliers on one line looks terrible.
     // - Must not be list items, as items in the same list should look consistent.
-    return !renderer->isBox() || renderer->isInline() || renderer->isListItem();
+    return renderer->isRenderBlock() && !renderer->isInline() && !renderer->isListItem();
 }
 
-RenderObject* TextAutosizer::nextInPreOrderMatchingFilter(RenderObject* current, const RenderObject* stayWithin, RenderObjectFilterFunctor filter)
+bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
 {
-    for (RenderObject* child = current->firstChild(); child; child = child->nextSibling())
-        if (filter(child))
+    // "Autosizing clusters" are special autosizing containers within which we
+    // want to enforce a uniform text size multiplier, in the hopes of making
+    // the major sections of the page look internally consistent.
+    // All their descendents (including other autosizing containers) must share
+    // the same multiplier, except for subtrees which are themselves clusters,
+    // and some of their descendent containers might not be autosized at all
+    // (for example if their height is constrained).
+    // Additionally, clusterShouldBeAutosized requires each cluster to contain a
+    // minimum amount of text, without which it won't be autosized.
+    //
+    // Clusters are chosen using very similar criteria to CSS flow roots, aka
+    // block formatting contexts (http://w3.org/TR/css3-box/#flow-root), since
+    // flow roots correspond to box containers that behave somewhat
+    // independently from their parent (for example they don't overlap floats).
+    // The definition of a flow flow root also conveniently includes most of the
+    // ways that a box and its children can have significantly different width
+    // from the box's parent (we want to avoid having significantly different
+    // width blocks within a cluster, since the narrower blocks would end up
+    // larger than would otherwise be necessary).
+    ASSERT(isAutosizingContainer(renderer));
+
+    return renderer->isRenderView()
+        || renderer->isFloating()
+        || renderer->isOutOfFlowPositioned()
+        || renderer->isTableCell()
+        || renderer->isTableCaption()
+        || renderer->isFlexibleBoxIncludingDeprecated()
+        || renderer->hasColumns()
+        || renderer->style()->overflowX() != OVISIBLE
+        || renderer->style()->overflowY() != OVISIBLE
+        || renderer->containingBlock()->isHorizontalWritingMode() != renderer->isHorizontalWritingMode();
+    // FIXME: Tables need special handling to multiply all their columns by
+    // the same amount even if they're different widths; so do hasColumns()
+    // renderers, and probably flexboxes...
+}
+
+bool TextAutosizer::clusterShouldBeAutosized(const RenderBlock* lowestCommonAncestor, float commonAncestorWidth)
+{
+    // Don't autosize clusters that contain less than 4 lines of text (in
+    // practice less lines are required, since measureDescendantTextWidth
+    // assumes that characters are 1em wide, but most characters are narrower
+    // than that, so we're overestimating their contribution to the linecount).
+    //
+    // This is to reduce the likelihood of autosizing things like headers and
+    // footers, which can be quite visually distracting. The rationale is that
+    // if a cluster contains very few lines of text then it's ok to have to zoom
+    // in and pan from side to side to read each line, since if there are very
+    // few lines of text you'll only need to pan across once or twice.
+    const float minLinesOfText = 4;
+    float minTextWidth = commonAncestorWidth * minLinesOfText;
+    float textWidth = 0;
+    measureDescendantTextWidth(lowestCommonAncestor, minTextWidth, textWidth);
+    if (textWidth >= minTextWidth)
+        return true;
+    return false;
+}
+
+void TextAutosizer::measureDescendantTextWidth(const RenderBlock* container, float minTextWidth, float& textWidth)
+{
+    bool skipLocalText = contentHeightIsConstrained(container);
+
+    RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(container, container);
+    while (descendant) {
+        if (!skipLocalText && descendant->isText()) {
+            textWidth += toRenderText(descendant)->renderedTextLength() * descendant->style()->specifiedFontSize();
+        } else if (isAutosizingContainer(descendant)) {
+            RenderBlock* descendantBlock = toRenderBlock(descendant);
+            if (!isAutosizingCluster(descendantBlock))
+                measureDescendantTextWidth(descendantBlock, minTextWidth, textWidth);
+        }
+        if (textWidth >= minTextWidth)
+            return;
+        descendant = nextInPreOrderSkippingDescendantsOfContainers(descendant, container);
+    }
+}
+
+RenderObject* TextAutosizer::nextInPreOrderSkippingDescendantsOfContainers(const RenderObject* current, const RenderObject* stayWithin)
+{
+    if (current == stayWithin || !isAutosizingContainer(current))
+        for (RenderObject* child = current->firstChild(); child; child = child->nextSibling())
             return child;
 
     for (const RenderObject* ancestor = current; ancestor; ancestor = ancestor->parent()) {
         if (ancestor == stayWithin)
             return 0;
         for (RenderObject* sibling = ancestor->nextSibling(); sibling; sibling = sibling->nextSibling())
-            if (filter(sibling))
-                return sibling;
+            return sibling;
     }
 
     return 0;

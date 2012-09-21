@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
+</style>
+
+</head>
+<body>
+
+<div style="width: 400px; float: left">
+    <div style="width: 800px; float: left; font-size: 2.5rem">
+        This text should be autosized to 40px computed font size (16 * 800/320), since the float:left causes this to be a new cluster, and it is 800px wide.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+
+    <div style="width: 800px; font-size: 1.25rem">
+        This text should be autosized to just 20px computed font-size (16 * 400/320), since despite its width:800px it is part of the 400px wide root cluster.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+
+    <div style="font-size: 1.25rem">
+        This text should similarly be autosized to 20px.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+</div>
+
+</body>
+</html>

@@ -3,11 +3,12 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
-body { width: 800px; margin: 0; }
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
 </style>
 
-<script type="text/javascript">
+<script>
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
@@ -20,7 +21,8 @@ if (window.internals) {
 <body>
 
 <p style="margin: 1em; border: 1em solid blue; padding: 1em">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    This text should get autosized to 40px computed font size, but the 1em margins, borders and padding should remain just 16px. While debatable, this generally looks more consistent than having them be scaled.<br>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 </p>
 
 </body>

@@ -3,16 +3,17 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
-body { width: 800px; margin: 0; }
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
 </style>
 
 </head>
 <body>
 
-<div style="width: 320px">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    <div style="width: 800px; font-size: 2.5rem">
+<div style="width: 320px; font-size: 2.5rem">
+    This text should all be autosized to 40px computed font-size, since although this block is narrow, it has a wide child block, so the cluster will be wide and need autosizing.
+    <div style="width: 800px">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

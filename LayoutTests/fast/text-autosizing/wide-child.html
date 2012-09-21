@@ -3,11 +3,12 @@
 <head>
 
 <meta name="viewport" content="width=800">
-<style type="text/css">
-body { width: 800px; margin: 0; }
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
 </style>
 
-<script type="text/javascript">
+<script>
 if (window.internals) {
     window.internals.settings.setTextAutosizingEnabled(true);
     window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
@@ -20,7 +21,7 @@ if (window.internals) {
 <body>
 
 <div style="width: 320px">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    This text should all be autosized to 40px computed font-size, since although this block is narrow, it has a wide child block, so the cluster will be wide and need autosizing.
     <div style="width: 800px">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>

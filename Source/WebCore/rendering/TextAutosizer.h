@@ -36,10 +36,11 @@
 namespace WebCore {
 
 class Document;
-class RenderBox;
+class RenderBlock;
 class RenderObject;
 class RenderStyle;
 class RenderText;
+struct TextAutosizingWindowInfo;
 
 class TextAutosizer {
     WTF_MAKE_NONCOPYABLE(TextAutosizer);
@@ -56,14 +57,19 @@ public:
 private:
     explicit TextAutosizer(Document*);
 
-    void processBox(RenderBox*, const IntSize& windowSize, const IntSize& layoutSize);
+    void processCluster(RenderBlock* cluster, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+    void processContainer(float multiplier, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+
     void setMultiplier(RenderObject*, float);
 
-    static bool isNotAnAutosizingContainer(const RenderObject*);
+    static bool isAutosizingContainer(const RenderObject*);
+    static bool isAutosizingCluster(const RenderBlock*);
 
-    typedef bool (*RenderObjectFilterFunctor)(const RenderObject*);
-    // Use to traverse the tree of descendants, excluding any subtrees within that whose root doesn't pass the filter.
-    static RenderObject* nextInPreOrderMatchingFilter(RenderObject* current, const RenderObject* stayWithin, RenderObjectFilterFunctor);
+    static bool clusterShouldBeAutosized(const RenderBlock* lowestCommonAncestor, float commonAncestorWidth);
+    static void measureDescendantTextWidth(const RenderBlock* container, float minTextWidth, float& textWidth);
+
+    // Use to traverse the tree of descendants, excluding descendants of containers (but returning the containers themselves).
+    static RenderObject* nextInPreOrderSkippingDescendantsOfContainers(const RenderObject* current, const RenderObject* stayWithin);
 
     Document* m_document;
 };
