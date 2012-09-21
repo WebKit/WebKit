@@ -464,7 +464,7 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
 
 static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
 
     const char* linksHoveredHTML =
         "<html><body>"

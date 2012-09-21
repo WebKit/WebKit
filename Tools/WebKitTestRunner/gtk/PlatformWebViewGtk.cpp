@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include <WebKit2/WKViewPrivate.h>
 #include <gtk/gtk.h>
 
 namespace WTR {
@@ -70,6 +71,8 @@ WKPageRef PlatformWebView::page()
 
 void PlatformWebView::focus()
 {
+    WKViewSetFocus(m_view, true);
+    setWindowIsKey(true);
 }
 
 WKRect PlatformWebView::windowFrame()

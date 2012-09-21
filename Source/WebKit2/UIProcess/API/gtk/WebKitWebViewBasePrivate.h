@@ -56,4 +56,10 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 void webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults(WebKitWebViewBase*);
 #endif
 
+void webkitWebViewBaseSetFocus(WebKitWebViewBase*, bool focused);
+bool webkitWebViewBaseIsInWindowActive(WebKitWebViewBase*);
+bool webkitWebViewBaseIsFocused(WebKitWebViewBase*);
+bool webkitWebViewBaseIsVisible(WebKitWebViewBase*);
+bool webkitWebViewBaseIsInWindow(WebKitWebViewBase*);
+
 #endif // WebKitWebViewBasePrivate_h

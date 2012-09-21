@@ -511,6 +511,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/gtk/WKInspectorClientGtk.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.h \
+	Source/WebKit2/UIProcess/API/C/gtk/WKViewPrivate.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKAPICastSoup.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.cpp \
 	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.h \

@@ -1,5 +1,72 @@
 2012-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Implement ViewState methods in PageClientImpl in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=97202
+
+        Reviewed by Martin Robinson.
+
+        Implement isViewWindowActive(), isViewFocused(), isViewVisible()
+        and isViewInWindow() in PageClientImpl.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/C/gtk/WKView.cpp:
+        (WKViewSetFocus): New private method used by WTR to focus the
+        WebView.
+        * UIProcess/API/C/gtk/WKViewPrivate.h: Added.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isViewWindowActive): Return
+        webkitWebViewBaseIsInWindowActive().
+        (WebKit::PageClientImpl::isViewFocused): Return
+        webkitWebViewBaseIsFocused().
+        (WebKit::PageClientImpl::isViewVisible): Return
+        webkitWebViewBaseIsVisible().
+        (WebKit::PageClientImpl::isViewInWindow): Return
+        webkitWebViewBaseIsInWindow().
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseNotifyResizerSize): Updated to not receive the
+        window as parameter since it's now saved in the instance struct.
+        (toplevelWindowResizeGripVisibilityChanged): Update to
+        webkitWebViewBaseNotifyResizerSize() API change.
+        (toplevelWindowFocusInEvent): Update ViewWindowIsActive flag and
+        notify the WebPageProxy if it changed.
+        (toplevelWindowFocusOutEvent): Ditto.
+        (webkitWebViewBaseSetToplevelOnScreenWindow): Set the toplevel
+        on-screen window where the view is currently added and notify
+        WebPageProxy if it changed.
+        (webkitWebViewBaseRealize): Call
+        webkitWebViewBaseSetToplevelOnScreenWindow() if the view has been
+        added to an on-screen window.
+        (webkitWebViewBaseFinalize): Reset the toplevel on-screen window
+        to make sure all signals are disconnected when the view is
+        destroyed.
+        (webkit_web_view_base_init): Remove unneeded initialization.
+        (resizeWebKitWebViewBaseFromAllocation): Update to
+        webkitWebViewBaseNotifyResizerSize() API change.
+        (webkitWebViewBaseMap): Update ViewIsVisible flag and notify
+        WebPageProxy if it changed.
+        (webkitWebViewBaseUnmap): Ditto.
+        (webkitWebViewBaseFocusInEvent): Call webkitWebViewBaseSetFocus()
+        passing true to focus the view.
+        (webkitWebViewBaseFocusOutEvent): Call webkitWebViewBaseSetFocus()
+        passing false to unfocus the view.
+        (webkitWebViewBaseParentSet): Reset the toplevel on-screen window
+        if the view is re-parented.
+        (webkit_web_view_base_class_init): Add implementations for map and
+        parent-set virtual functions.
+        (webkitWebViewBaseSetFocus): Update the ViewIsFocused and notify
+        WebPageProxy if it changed.
+        (webkitWebViewBaseIsInWindowActive):
+        (webkitWebViewBaseIsFocused):
+        (webkitWebViewBaseIsVisible):
+        (webkitWebViewBaseIsInWindow):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMouseTarget): Use a GTK_WINDOW_TOPLEVEL instead of
+        POPUP for this test to make sure the view receives focus change
+        events.
+
+2012-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitWebView:is-loading property to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=97330
 

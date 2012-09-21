@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKView.h"
+#ifndef WKViewPrivate_h
+#define WKViewPrivate_h
 
-#include "WKAPICast.h"
-#include "WKViewPrivate.h"
-#include "WebKitWebViewBasePrivate.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
-using namespace WebCore;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-{
-    return toAPI(webkitWebViewBaseCreate(toImpl(contextRef), toImpl(pageGroupRef)));
+WK_EXPORT void WKViewSetFocus(WKViewRef viewRef, bool focused);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKPageRef WKViewGetPage(WKViewRef viewRef)
-{
-    return toAPI(webkitWebViewBaseGetPage(toImpl(viewRef)));
-}
-
-void WKViewSetFocus(WKViewRef viewRef, bool focused)
-{
-    webkitWebViewBaseSetFocus(toImpl(viewRef), focused);
-}
+#endif /* WKViewPrivate_h */
