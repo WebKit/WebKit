@@ -226,6 +226,62 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 }
 
+class ViewIsLoadingTest: public LoadTrackingTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ViewIsLoadingTest);
+
+    static void isLoadingChanged(GObject*, GParamSpec*, ViewIsLoadingTest* test)
+    {
+        if (webkit_web_view_is_loading(test->m_webView))
+            test->beginLoad();
+        else
+            test->endLoad();
+    }
+
+    ViewIsLoadingTest()
+    {
+        g_signal_connect(m_webView, "notify::is-loading", G_CALLBACK(isLoadingChanged), this);
+    }
+
+    void beginLoad()
+    {
+        // New load, load-started hasn't been emitted yet.
+        g_assert(m_loadEvents.isEmpty());
+        g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+    }
+
+    void endLoad()
+    {
+        // Load finish, load-finished and load-failed haven't been emitted yet.
+        g_assert(!m_loadEvents.isEmpty());
+        g_assert(!m_loadEvents.contains(LoadTrackingTest::LoadFinished));
+        g_assert(!m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+    }
+};
+
+static void testWebViewIsLoading(ViewIsLoadingTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/normal").data());
+    test->waitUntilLoadFinished();
+
+    test->reload();
+    test->waitUntilLoadFinished();
+
+    test->loadURI(kServer->getURIForPath("/error").data());
+    test->waitUntilLoadFinished();
+
+    test->loadURI(kServer->getURIForPath("/normal").data());
+    test->waitUntilLoadFinished();
+    test->loadURI(kServer->getURIForPath("/normal2").data());
+    test->waitUntilLoadFinished();
+
+    test->goBack();
+    test->waitUntilLoadFinished();
+
+    test->goForward();
+    test->waitUntilLoadFinished();
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -281,6 +337,8 @@ void beforeAll()
     // This test checks that web view notify::uri signal is correctly emitted
     // and the uri is already updated when loader client signals are emitted.
     ViewURITrackingTest::add("WebKitWebView", "active-uri", testWebViewActiveURI);
+
+    ViewIsLoadingTest::add("WebKitWebView", "is-loading", testWebViewIsLoading);
 }
 
 void afterAll()

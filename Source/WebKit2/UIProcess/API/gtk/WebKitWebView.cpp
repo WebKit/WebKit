@@ -103,7 +103,8 @@ enum {
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
     PROP_URI,
-    PROP_ZOOM_LEVEL
+    PROP_ZOOM_LEVEL,
+    PROP_IS_LOADING
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -115,6 +116,7 @@ struct _WebKitWebViewPrivate {
     CString customTextEncoding;
     double estimatedLoadProgress;
     CString activeURI;
+    bool isLoading;
 
     bool waitingForMainResource;
     gulong mainResourceResponseHandlerID;
@@ -386,6 +388,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_ZOOM_LEVEL:
         g_value_set_double(value, webkit_web_view_get_zoom_level(webView));
         break;
+    case PROP_IS_LOADING:
+        g_value_set_boolean(value, webkit_web_view_is_loading(webView));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -506,6 +511,38 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         WEBKIT_PARAM_READABLE));
 
     /**
+     * WebKitWebView:zoom-level:
+     *
+     * The zoom level of the #WebKitWebView content.
+     * See webkit_web_view_set_zoom_level() for more details.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ZOOM_LEVEL,
+                                    g_param_spec_double("zoom-level",
+                                                        "Zoom level",
+                                                        _("The zoom level of the view content"),
+                                                        0, G_MAXDOUBLE, 1,
+                                                        WEBKIT_PARAM_READWRITE));
+
+    /**
+     * WebKitWebView:is-loading:
+     *
+     * Whether the #WebKitWebView is currently loading a page. This property becomes
+     * %TRUE as soon as a new load operation is requested and before the
+     * #WebKitWebView::load-changed signal is emitted with %WEBKIT_LOAD_STARTED and
+     * at that point the active URI is the requested one.
+     * When the load operation finishes the property is set to %FALSE before
+     * #WebKitWebView::load-changed is emitted with %WEBKIT_LOAD_FINISHED.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_IS_LOADING,
+                                    g_param_spec_boolean("is-loading",
+                                                         "Is Loading",
+                                                         _("Whether the view is loading a page"),
+                                                         FALSE,
+                                                         WEBKIT_PARAM_READABLE));
+
+    /**
      * WebKitWebView::load-changed:
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @load_event: the #WebKitLoadEvent
@@ -597,20 +634,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_LOAD_EVENT,
                      G_TYPE_STRING,
                      G_TYPE_POINTER);
-
-    /**
-     * WebKitWebView:zoom-level:
-     *
-     * The zoom level of the #WebKitWebView content.
-     * See webkit_web_view_set_zoom_level() for more details.
-     */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ZOOM_LEVEL,
-                                    g_param_spec_double("zoom-level",
-                                                        "Zoom level",
-                                                        "The zoom level of the view content",
-                                                        0, G_MAXDOUBLE, 1,
-                                                        WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView::create:
@@ -1106,6 +1129,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_FORM_SUBMISSION_REQUEST);
 }
 
+static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
+{
+    if (webView->priv->isLoading == isLoading)
+        return;
+
+    webView->priv->isLoading = isLoading;
+    g_object_freeze_notify(G_OBJECT(webView));
+    g_object_notify(G_OBJECT(webView), "is-loading");
+
+    // Update the URI if a new load has started.
+    if (webView->priv->isLoading)
+        webkitWebViewUpdateURI(webView);
+    g_object_thaw_notify(G_OBJECT(webView));
+}
+
 static void setCertificateToMainResource(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -1118,6 +1156,7 @@ static void setCertificateToMainResource(WebKitWebView* webView)
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     if (loadEvent == WEBKIT_LOAD_FINISHED) {
+        webkitWebViewSetIsLoading(webView, false);
         webView->priv->waitingForMainResource = false;
         webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
     } else
@@ -1167,6 +1206,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
+    webkitWebViewSetIsLoading(webView, false);
     gboolean returnValue;
     g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
@@ -1521,7 +1561,7 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURL(toAPI(page), url.get());
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1549,6 +1589,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     WKRetainPtr<WKStringRef> contentRef(AdoptWK,  WKStringCreateWithUTF8CString(content));
     WKRetainPtr<WKURLRef> baseURIRef = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
     WKPageLoadHTMLString(toAPI(page), contentRef.get(), baseURIRef.get());
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1575,7 +1616,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), contentURL.get());
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1595,6 +1636,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKRetainPtr<WKStringRef> plainTextRef(AdoptWK, WKStringCreateWithUTF8CString(plainText));
     WKPageLoadPlainTextString(toAPI(page), plainTextRef.get());
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1615,7 +1657,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
     WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURLRequest(toAPI(page), wkRequest.get());
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1647,7 +1689,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReload(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1662,7 +1704,7 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReloadFromOrigin(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1683,6 +1725,26 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
 }
 
 /**
+ * webkit_web_view_is_loading:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the value of the #WebKitWebView:is-loading property.
+ * You can monitor when a #WebKitWebView is loading a page by connecting to
+ * notify::is-loading signal of @web_view. This is useful when you are
+ * interesting in knowing when the view is loding something but not in the
+ * details about the status of the load operation, for example to start a spinner
+ * when the view is loading a page and stop it when it finishes.
+ *
+ * Returns: %TRUE if @web_view is loading a page or %FALSE otherwise.
+ */
+gboolean webkit_web_view_is_loading(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return webView->priv->isLoading;
+}
+
+/**
  * webkit_web_view_go_back:
  * @web_view: a #WebKitWebView
  *
@@ -1695,7 +1757,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoBack(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1726,7 +1788,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1900,7 +1962,7 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
 
     WKPageGoToBackForwardListItem(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))),
                                   webkitBackForwardListItemGetWKItem(listItem));
-    webkitWebViewUpdateURI(webView);
+    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**

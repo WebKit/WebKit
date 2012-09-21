@@ -1,3 +1,47 @@
+2012-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebView:is-loading property to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=97330
+
+        Reviewed by Xan Lopez.
+
+        WebKitWebView:is-loading property allows to monitor when the view
+        is loading something without having to deal with load-changed
+        signal and all the details of the load status. This also allows to
+        know when a new load is started before it goes to STARTED status.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewGetProperty): Implement getter for is-loading
+        property.
+        (webkit_web_view_class_init): Add is-loading property.
+        (webkitWebViewSetIsLoading): Set whether web view is loading a
+        page and emit notify signal if the is-loading property has
+        changed. Also update the active URI when a new load operation has
+        started.
+        (webkitWebViewEmitLoadChanged): Set is-loading to FALSE when load
+        finishes.
+        (webkitWebViewLoadFailed): Set is-loading to FALSE when load fails.
+        (webkit_web_view_load_uri): Set is-loading to TRUE.
+        (webkit_web_view_load_html): Ditto.
+        (webkit_web_view_load_alternate_html): Ditto.
+        (webkit_web_view_load_plain_text): Ditto.
+        (webkit_web_view_load_request): Ditto.
+        (webkit_web_view_reload): Ditto.
+        (webkit_web_view_reload_bypass_cache): Ditto.
+        (webkit_web_view_is_loading): Return whether the view is loading a
+        page.
+        (webkit_web_view_go_back): Set is-loading to TRUE.
+        (webkit_web_view_go_forward): Ditto.
+        (webkit_web_view_go_to_back_forward_list_item): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (loadChangedCallback):
+        (loadFailedCallback):
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        (testWebViewIsLoading):
+        (beforeAll):
+
 2012-09-20  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add API to feed touch event.
