@@ -248,18 +248,18 @@ defineTest(linkAgainstLibrary) {
     path = $$replace(source_dir, $${ROOT_WEBKIT_DIR}, $${ROOT_BUILD_DIR})/$$activeBuildConfig()
 
     force_static_libs_as_shared {
-            LIBS_PRIVATE += -L$${ROOT_BUILD_DIR}/lib -l$$target
+            LIBS += -L$${ROOT_BUILD_DIR}/lib -l$$target
     } else {
 
         mac {
-            LIBS_PRIVATE += -Wl,-force_load,$${path}$${QMAKE_DIR_SEP}lib$${target}.a
+            LIBS += -Wl,-force_load,$${path}$${QMAKE_DIR_SEP}lib$${target}.a
         } else:win32-msvc*|wince*|win32-icc {
-            LIBS_PRIVATE += /OPT:REF -l$$target
+            LIBS += /OPT:REF -l$$target
         } else {
-            LIBS_PRIVATE += -Wl,-whole-archive -l$$target -Wl,-no-whole-archive
+            LIBS += -Wl,-whole-archive -l$$target -Wl,-no-whole-archive
         }
 
-        LIBS_PRIVATE += -L$$path
+        LIBS += -L$$path
 
         win32-msvc*|wince*|win32-icc {
             POST_TARGETDEPS += $${path}$${QMAKE_DIR_SEP}$${target}.lib
@@ -268,7 +268,7 @@ defineTest(linkAgainstLibrary) {
         }
     }
 
-    export(LIBS_PRIVATE)
+    export(LIBS)
     export(QMAKE_LIBDIR)
     export(POST_TARGETDEPS)
     export(CONFIG)

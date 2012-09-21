@@ -221,8 +221,15 @@ needToLink() {
     for(library, WEBKIT) {
         library_identifier = $$lower($$library)
         linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
-        LIBS_PRIVATE += $$eval(WEBKIT.$${library_identifier}.dependent_libs)
+        LIBS += $$eval(WEBKIT.$${library_identifier}.dependent_libs)
     }
+}
+
+creating_module {
+    # Sanitize LIBS, as we don't want any of these libraries
+    # to end up in as public API dependenices in the QtWebKit prl file.
+    LIBS_PRIVATE += $$LIBS
+    unset(LIBS)
 }
 
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {

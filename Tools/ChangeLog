@@ -1,3 +1,19 @@
+2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Re-fix clean builds
+
+        Reviewed by Tor Arne Vestbø.
+
+        Re-introduce the sanitization for LIBS when creating a module to use
+        LIBS_PRIVATE and otherwise do _not_ use LIBS_PRIVATE. We decided to
+        continue to use QT, LIBS and PKGCONFIG instead of their _PRIVATE variants
+        throughout the code base, so just using LIBS_PRIVATE in linkAgainstLibrary()
+        causes build issues when depending system libraries end up in LIBS before
+        LIBS_PRIVATE.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Comment out a failing webkitpy unit test until Dirk can fix it.
