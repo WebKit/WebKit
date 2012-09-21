@@ -90,6 +90,10 @@ public:
     void postSetWindowIsKey(bool);
     void postSimulateWebNotificationClick(uint64_t notificationID);
 
+    // Geolocation.
+    void setGeolocationPermission(bool);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+
 private:
     InjectedBundle();
     ~InjectedBundle();

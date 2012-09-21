@@ -91,6 +91,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
+    , m_isGeolocationPermissionAllowed(false)
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     , m_eventSenderProxy(new EventSenderProxy(this))
 #endif
@@ -170,6 +171,15 @@ static void unfocus(WKPageRef page, const void* clientInfo)
     view->setWindowIsKey(false);
 }
 
+static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
+{
+    TestController* testController = static_cast<TestController*>(const_cast<void*>(clientInfo));
+    if (testController->isGeolocationPermissionAllowed())
+        WKGeolocationPermissionRequestAllow(permissionRequest);
+    else
+        WKGeolocationPermissionRequestDeny(permissionRequest);
+}
+
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
 {
     PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage));
@@ -209,7 +219,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // pageDidScroll
         exceededDatabaseQuota,
         0, // runOpenPanel
-        0, // decidePolicyForGeolocationPermissionRequest
+        decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
         0, // footerHeight
         0, // drawHeader
@@ -318,6 +328,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
+    m_geolocationProvider = adoptPtr(new GeolocationProviderMock(m_context.get()));
 
     const char* path = libraryPathForTesting();
     if (path) {
@@ -379,7 +390,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // pageDidScroll
         exceededDatabaseQuota,
         0, // runOpenPanel
-        0, // decidePolicyForGeolocationPermissionRequest
+        decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
         0, // footerHeight
         0, // drawHeader
@@ -986,6 +997,11 @@ void TestController::processDidCrash()
 void TestController::simulateWebNotificationClick(uint64_t notificationID)
 {
     m_webNotificationProvider.simulateWebNotificationClick(notificationID);
+}
+
+void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+{
+    m_geolocationProvider->setMockGeolocationPosition(latitude, longitude, accuracy);
 }
 
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void* clientInfo)

@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
@@ -100,6 +101,8 @@
 
 /* Begin PBXFileReference section */
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationProviderMock.cpp; sourceTree = "<group>"; };
+		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
 		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
 		29210EA3144CAAA500835BB5 /* AccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityController.h; sourceTree = "<group>"; };
 		29210EA8144CAB8800835BB5 /* AccessibilityController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibilityController.idl; sourceTree = "<group>"; };
@@ -255,6 +258,8 @@
 				5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */,
 				5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */,
 				5670B8261386FC13002EB355 /* EventSenderProxy.h */,
+				26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */,
+				26D758E6160BECDD00268472 /* GeolocationProviderMock.h */,
 				5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */,
 				5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
@@ -565,6 +570,7 @@
 			files = (
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */,
+				26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */,
 				5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,

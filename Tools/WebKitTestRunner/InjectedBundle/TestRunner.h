@@ -98,7 +98,6 @@ public:
     void setAllowFileAccessFromFileURLs(bool);
     void setFrameFlatteningEnabled(bool);
     void setPluginsEnabled(bool);
-    void setGeolocationPermission(bool);
     void setJavaScriptCanAccessClipboard(bool);
     void setPrivateBrowsingEnabled(bool);
     void setPopupBlockingEnabled(bool);
@@ -247,6 +246,10 @@ public:
     void denyWebNotificationPermission(JSStringRef origin);
     void removeAllWebNotificationPermissions();
     void simulateWebNotificationClick(JSValueRef notification);
+
+    // Geolocation.
+    void setGeolocationPermission(bool);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
 
     JSRetainPtr<JSStringRef> platformName();
 

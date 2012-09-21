@@ -60,7 +60,6 @@ module WTR {
         void setAllowFileAccessFromFileURLs(in boolean value);
         void setFrameFlatteningEnabled(in boolean value);
         void setPluginsEnabled(in boolean value);
-        void setGeolocationPermission(in boolean value);
         void setJavaScriptCanAccessClipboard(in boolean value);
         void setPrivateBrowsingEnabled(in boolean value);
         void setPopupBlockingEnabled(in boolean value);
@@ -178,6 +177,10 @@ module WTR {
         void denyWebNotificationPermission(in DOMString origin);
         void removeAllWebNotificationPermissions();
         void simulateWebNotificationClick(in object notification);
+
+        // Geolocation
+        void setGeolocationPermission(in boolean value);
+        void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy);
 
         boolean callShouldCloseOnWebView();
     };

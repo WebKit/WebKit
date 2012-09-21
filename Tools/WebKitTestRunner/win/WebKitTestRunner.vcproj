@@ -479,6 +479,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\GeolocationProviderMock.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\GeolocationProviderMock.h"
+			>
+		</File>
+		<File
 			RelativePath="..\PixelDumpSupport.cpp"
 			>
 		</File>

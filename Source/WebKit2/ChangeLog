@@ -1,3 +1,20 @@
+2012-09-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Add basic testing support for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=97278
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/API/c/WKNumber.h: Fix an unfortunate copy-paste :)
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        Remove the code forcing the Geolocation permissions. It was working around the normal
+        Geolocation code and updating all the GeolocationController, which is a terrible idea.
+
 2012-09-21  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Make Web Inspector work in multiple web process mode

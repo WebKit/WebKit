@@ -10,6 +10,7 @@ TARGET = WebKitTestRunner
 HEADERS += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.h \
     EventSenderProxy.h \
+    GeolocationProviderMock.h \
     PlatformWebView.h \
     StringFunctions.h \
     TestController.h \
@@ -23,6 +24,7 @@ SOURCES += \
     qt/PlatformWebViewQt.cpp \
     qt/TestControllerQt.cpp \
     qt/TestInvocationQt.cpp \
+    GeolocationProviderMock.cpp \
     TestController.cpp \
     TestInvocation.cpp \
     WebNotificationProvider.cpp

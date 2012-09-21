@@ -248,18 +248,6 @@ void InjectedBundle::setPluginsEnabled(WebPageGroupProxy* pageGroup, bool enable
         (*iter)->settings()->setPluginsEnabled(enabled);
 }
 
-void InjectedBundle::setGeoLocationPermission(WebPageGroupProxy* pageGroup, bool enabled)
-{
-#if ENABLE(GEOLOCATION)
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        static_cast<GeolocationClientMock*>(GeolocationController::from(*iter)->client())->setPermission(enabled);
-#else
-    UNUSED_PARAM(pageGroup);
-    UNUSED_PARAM(enabled);
-#endif // ENABLE(GEOLOCATION)
-}
-
 void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGroup, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

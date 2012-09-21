@@ -358,4 +358,32 @@ void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
+void InjectedBundle::setGeolocationPermission(bool enabled)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetGeolocationPermission"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(enabled));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGeolocationPosition"));
+
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> latitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("latitude"));
+    WKRetainPtr<WKDoubleRef> latitudeWK(AdoptWK, WKDoubleCreate(latitude));
+    WKDictionaryAddItem(messageBody.get(), latitudeKeyWK.get(), latitudeWK.get());
+
+    WKRetainPtr<WKStringRef> longitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("longitude"));
+    WKRetainPtr<WKDoubleRef> longitudeWK(AdoptWK, WKDoubleCreate(longitude));
+    WKDictionaryAddItem(messageBody.get(), longitudeKeyWK.get(), longitudeWK.get());
+
+    WKRetainPtr<WKStringRef> accuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("accuracy"));
+    WKRetainPtr<WKDoubleRef> accuracyWK(AdoptWK, WKDoubleCreate(accuracy));
+    WKDictionaryAddItem(messageBody.get(), accuracyKeyWK.get(), accuracyWK.get());
+
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
 } // namespace WTR

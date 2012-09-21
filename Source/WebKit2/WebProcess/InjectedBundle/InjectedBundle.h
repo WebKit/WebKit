@@ -111,7 +111,6 @@ public:
     void setMinimumLogicalFontSize(WebPageGroupProxy*, int size);
     void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
     void setPluginsEnabled(WebPageGroupProxy*, bool);
-    void setGeoLocationPermission(WebPageGroupProxy*, bool);
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
     void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);

@@ -162,11 +162,6 @@ void WKBundleSetPluginsEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageG
     toImpl(bundleRef)->setPluginsEnabled(toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSetGeolocationPermission(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
-{
-    toImpl(bundleRef)->setGeoLocationPermission(toImpl(pageGroupRef), enabled);
-}
-
 void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setJavaScriptCanAccessClipboard(toImpl(pageGroupRef), enabled);

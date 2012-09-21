@@ -393,11 +393,6 @@ void TestRunner::setPluginsEnabled(bool enabled)
     WKBundleSetPluginsEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
-void TestRunner::setGeolocationPermission(bool enabled)
-{
-    WKBundleSetGeolocationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
-}
-
 void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 {
      WKBundleSetJavaScriptCanAccessClipboard(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
@@ -770,6 +765,17 @@ void TestRunner::simulateWebNotificationClick(JSValueRef notification)
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     uint64_t notificationID = WKBundleGetWebNotificationID(InjectedBundle::shared().bundle(), context, notification);
     InjectedBundle::shared().postSimulateWebNotificationClick(notificationID);
+}
+
+void TestRunner::setGeolocationPermission(bool enabled)
+{
+    // FIXME: this should be done by frame.
+    InjectedBundle::shared().setGeolocationPermission(enabled);
+}
+
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+{
+    InjectedBundle::shared().setMockGeolocationPosition(latitude, longitude, accuracy);
 }
 
 bool TestRunner::callShouldCloseOnWebView()

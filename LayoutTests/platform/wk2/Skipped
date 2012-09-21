@@ -288,40 +288,16 @@ platform/mac/editing/deleting/deletionUI-differing-background.html
 platform/mac/editing/deleting/deletionUI-minimum-size.html
 platform/mac/editing/deleting/deletionUI-successful-deletion.html
 
-# WebKitTestRunner needs layoutTestController.setMockGeolocationPosition
-# and layoutTestController.setMockGeolocationError
-# <https://bugs.webkit.org/show_bug.cgi?id=59201>
-fast/dom/Geolocation/callback-exception.html
-fast/dom/Geolocation/callback-to-deleted-context.html
-fast/dom/Geolocation/callback-to-remote-context.html
-fast/dom/Geolocation/callback-to-remote-context2.html
-fast/dom/Geolocation/clear-watch-invalid-id-crash.html
+# Geolocation Tests for which WebKitTestRunner still misses support.
 fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-allowed.html
 fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 fast/dom/Geolocation/delayed-permission-denied.html
-fast/dom/Geolocation/disconnected-frame-already.html
-fast/dom/Geolocation/disconnected-frame-permission-denied.html
-fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/error-clear-watch.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/maximum-age.html
-fast/dom/Geolocation/multiple-requests.html
-fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/permission-denied-already-error.html
-fast/dom/Geolocation/permission-denied-already-success.html
-fast/dom/Geolocation/permission-denied-stops-watches.html
-fast/dom/Geolocation/permission-denied.html
-fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
-fast/dom/Geolocation/reentrant-permission-denied.html
-fast/dom/Geolocation/reentrant-success.html
-fast/dom/Geolocation/success-clear-watch.html
-fast/dom/Geolocation/success.html
-fast/dom/Geolocation/timeout.html
-fast/dom/Geolocation/timeout-clear-watch.html
-fast/dom/Geolocation/timeout-zero.html
-fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
 fast/dom/Geolocation/window-close-crash.html
 

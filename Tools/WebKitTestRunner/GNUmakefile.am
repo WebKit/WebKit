@@ -19,6 +19,8 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/cairo/TestInvocationCairo.cpp \
 	Tools/WebKitTestRunner/CyclicRedundancyCheck.cpp \
 	Tools/WebKitTestRunner/CyclicRedundancyCheck.h \
+	Tools/WebKitTestRunner/GeolocationProviderMock.cpp \
+	Tools/WebKitTestRunner/GeolocationProviderMock.h \
 	Tools/WebKitTestRunner/PixelDumpSupport.cpp \
 	Tools/WebKitTestRunner/PixelDumpSupport.h \
 	Tools/WebKitTestRunner/PlatformWebView.h \

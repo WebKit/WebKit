@@ -1,3 +1,60 @@
+2012-09-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Add basic testing support for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=97278
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update the Geolocation testing to use the proper API in the UIProcess.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/GNUmakefile.am:
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp: Added.
+        (WTR::startUpdatingCallback):
+        (WTR::stopUpdatingCallback):
+        (WTR::GeolocationProviderMock::GeolocationProvierMock):
+        (WTR::GeolocationProviderMock::setMockGeolocationPosition):
+        (WTR::GeolocationProviderMock::startUpdating):
+        (WTR::GeolocationProviderMock::stopUpdating):
+        (GeolocationProviderMock):
+        The GeolocationProvider store the location update and deliver them as needed.
+
+        WebCore GeolocationController do not support asynchronous update on start/stop. This is not
+        a problem in this case because all the messages between the WebProcess and the UIProcess are
+        asynchronous. Because of this, unlike GeolocationClientMock, we do not use a timer for event
+        delivery.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setGeolocationPermission):
+        (WTR::InjectedBundle::setMockGeolocationPosition):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setGeolocationPermission):
+        (WTR::TestRunner::setMockGeolocationPosition):
+        From the InjectedBundle, we now pass the information to the UIProcess so that
+        GeolocationProvider and the TestController can respond appropriately.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::decidePolicyForGeolocationPermissionRequest):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        (WTR::TestController::setMockGeolocationPosition):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        (WTR::TestController::setGeolocationPermission):
+        (WTR::TestController::isGeolocationPermissionAllowed):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+
 2012-09-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION (r127882): accessibility/spinbutton-value.html failing on GTK
