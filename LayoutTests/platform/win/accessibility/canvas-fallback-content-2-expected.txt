@@ -1,0 +1,375 @@
+Link  Button  Button  Button                 
+Focusable
+Heading
+
+ARIA button
+ARIA disabled button
+ARIA enabled button
+ARIA required button
+ARIA toggle button
+ARIA link
+This tests a number of different elements in canvas fallback content to make sure their accessible attributes are essentially identical to the corresponding elements outside of canvas fallback content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+link1
+PASS document.activeElement == element1 is true
+link2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Link. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+button1
+PASS document.activeElement == element1 is true
+button2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+labeled-button1
+PASS document.activeElement == element1 is true
+labeled-button2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Button. Was .
+FAIL axElement2.description should be Description: Label. Was .
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+button-with-title1
+PASS document.activeElement == element1 is true
+button-with-title2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+text1
+PASS document.activeElement == element1 is true
+text2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+checkbox1
+PASS document.activeElement == element1 is true
+checkbox2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+number1
+PASS document.activeElement == element1 is true
+number2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+FAIL axElement2.intValue should be 123. Was 0.
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+radio1
+PASS document.activeElement == element1 is true
+radio2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+slider1
+PASS document.activeElement == element1 is true
+slider2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+submit1
+PASS document.activeElement == element1 is true
+submit2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Submit. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+combobox1
+PASS document.activeElement == element1 is true
+combobox2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+FAIL axElement2.intValue should be 2. Was 0.
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+listbox1
+PASS document.activeElement == element1 is true
+listbox2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+textarea1
+PASS document.activeElement == element1 is true
+textarea2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+PASS axElement2.title is axElement1.title
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+focusable1
+PASS document.activeElement == element1 is true
+focusable2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Focusable. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+heading1
+PASS document.activeElement == element1 is true
+heading2
+PASS document.activeElement == element2 is true
+FAIL axElement2.role should be H5. Was client.
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be Heading. Was .
+FAIL axElement2.description should be L5. Was .
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-button1
+PASS document.activeElement == element1 is true
+aria-button2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-disabledbutton1
+PASS document.activeElement == element1 is true
+aria-disabledbutton2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA disabled button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-enabledbutton1
+PASS document.activeElement == element1 is true
+aria-enabledbutton2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA enabled button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-requiredbutton1
+PASS document.activeElement == element1 is true
+aria-requiredbutton2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA required button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-togglebutton1
+PASS document.activeElement == element1 is true
+aria-togglebutton2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA toggle button. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+aria-link1
+PASS document.activeElement == element1 is true
+aria-link2
+PASS document.activeElement == element2 is true
+PASS axElement2.role is axElement1.role
+PASS axElement2.roleDescription is axElement1.roleDescription
+FAIL axElement2.title should be ARIA link. Was .
+PASS axElement2.description is axElement1.description
+PASS axElement2.helpText is axElement1.helpText
+PASS axElement2.stringValue is axElement1.stringValue
+PASS axElement2.isEnabled is axElement1.isEnabled
+PASS axElement2.isRequired is axElement1.isRequired
+PASS axElement2.isChecked is axElement1.isChecked
+PASS axElement2.intValue is axElement1.intValue
+PASS axElement2.minValue is axElement1.minValue
+PASS axElement2.maxValue is axElement1.maxValue
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
