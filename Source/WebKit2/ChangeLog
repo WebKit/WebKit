@@ -1,3 +1,23 @@
+2012-09-20  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add API to feed touch event.
+        https://bugs.webkit.org/show_bug.cgi?id=96903
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The applications will use this API to feed touch event to the view
+        when they want to generate touch event from their own event processor.
+        WTR also will use this API to generate touch event with multiple touch
+        points for passing test cases of touch event in the WebKit2/EFL.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_feed_touch_event):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         Add String::numberToStringFixedWidth()

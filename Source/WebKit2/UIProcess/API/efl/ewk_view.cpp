@@ -1762,3 +1762,19 @@ Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, in
     return false;
 #endif
 }
+
+Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers)
+{
+#if ENABLE(TOUCH_EVENTS)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(points, false);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    Evas_Point position = { smartData->view.x, smartData->view.y };
+    priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, &position, ecore_time_get()));
+
+    return true;
+#else
+    return false;
+#endif
+}

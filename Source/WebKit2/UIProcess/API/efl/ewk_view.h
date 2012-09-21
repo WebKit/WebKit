@@ -75,6 +75,7 @@
 #include "ewk_download_job.h"
 #include "ewk_intent.h"
 #include "ewk_settings.h"
+#include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
 #include "ewk_web_error.h"
@@ -691,6 +692,21 @@ EAPI Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object *o);
  * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool ewk_view_color_picker_color_set(Evas_Object *o, int r, int g, int b, int a);
+
+/**
+ * Feeds the touch event to the view.
+ *
+ * @param o view object to feed touch event
+ * @param type the type of touch event
+ * @param points a list of points (Ewk_Touch_Point) to process
+ * @param modifiers an Evas_Modifier handle to the list of modifier keys
+ *        registered in the Evas. Users can get the Evas_Modifier from the Evas
+ *        using evas_key_modifier_get() and can set each modifier key using
+ *        evas_key_modifier_on() and evas_key_modifier_off()
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type type, const Eina_List *points, const Evas_Modifier *modifiers);
 
 #ifdef __cplusplus
 }
