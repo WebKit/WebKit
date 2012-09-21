@@ -1,3 +1,32 @@
+2012-09-21  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add setters to WebFilterOperation for IPC pickling
+        https://bugs.webkit.org/show_bug.cgi?id=97147
+
+        Reviewed by James Robinson.
+
+        These methods allow us to restore a WebFilterOperation from a blob
+        of opaque data. The pickling code needs to be able to create an
+        empty object and then fill in the pieces, so these setters allow it
+        to do so.
+
+        Test: WebFilterOperationsTest.saveAndRestore
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::amount):
+        (WebKit::WebFilterOperation::dropShadowOffset):
+        (WebKit::WebFilterOperation::matrix):
+        (WebKit::WebFilterOperation::zoomRect):
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::createEmptyFilter):
+        (WebKit::WebFilterOperation::setType):
+        (WebKit::WebFilterOperation::setAmount):
+        (WebKit::WebFilterOperation::setDropShadowOffset):
+        (WebKit::WebFilterOperation::setDropShadowColor):
+        (WebKit::WebFilterOperation::setMatrix):
+        (WebKit::WebFilterOperation::setZoomRect):
+        * chromium/src/WebFilterOperation.cpp:
+
 2012-09-20  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium ] Add new localized string, OtherDateLabel, to be used in input type=date datalist UI

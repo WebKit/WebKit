@@ -55,12 +55,23 @@ public:
 
     float amount() const
     {
+        WEBKIT_ASSERT(m_type == FilterTypeGrayscale
+                   || m_type == FilterTypeSepia
+                   || m_type == FilterTypeSaturate
+                   || m_type == FilterTypeHueRotate
+                   || m_type == FilterTypeInvert
+                   || m_type == FilterTypeBrightness
+                   || m_type == FilterTypeContrast
+                   || m_type == FilterTypeOpacity
+                   || m_type == FilterTypeBlur
+                   || m_type == FilterTypeDropShadow
+                   || m_type == FilterTypeZoom);
         return m_amount;
     }
     WebPoint dropShadowOffset() const
     {
         WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
-        return WebPoint(m_dropShadowOffset);
+        return m_dropShadowOffset;
     }
     WebColor dropShadowColor() const
     {
@@ -69,16 +80,16 @@ public:
     }
     const SkScalar* matrix() const
     {
+        WEBKIT_ASSERT(m_type == FilterTypeColorMatrix);
         return m_matrix;
     }
 
     WebRect zoomRect() const
     {
         WEBKIT_ASSERT(m_type == FilterTypeZoom);
-        return WebRect(m_zoomRect);
+        return m_zoomRect;
     }
 
-#define WEBKIT_HAS_NEW_WEBFILTEROPERATION_API 1
     static WebFilterOperation createGrayscaleFilter(float amount) { return WebFilterOperation(FilterTypeGrayscale, amount); }
     static WebFilterOperation createSepiaFilter(float amount) { return WebFilterOperation(FilterTypeSepia, amount); }
     static WebFilterOperation createSaturateFilter(float amount) { return WebFilterOperation(FilterTypeSaturate, amount); }
@@ -93,6 +104,46 @@ public:
     static WebFilterOperation createZoomFilter(WebRect rect, int inset) { return WebFilterOperation(FilterTypeZoom, rect, inset); }
 
     bool equals(const WebFilterOperation& other) const;
+
+    // Methods for restoring a WebFilterOperation.
+    static WebFilterOperation createEmptyFilter() { return WebFilterOperation(FilterTypeGrayscale, 0.0); }
+    void setType(FilterType type) { m_type = type; }
+    void setAmount(float amount)
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeGrayscale
+                   || m_type == FilterTypeSepia
+                   || m_type == FilterTypeSaturate
+                   || m_type == FilterTypeHueRotate
+                   || m_type == FilterTypeInvert
+                   || m_type == FilterTypeBrightness
+                   || m_type == FilterTypeContrast
+                   || m_type == FilterTypeOpacity
+                   || m_type == FilterTypeBlur
+                   || m_type == FilterTypeDropShadow
+                   || m_type == FilterTypeZoom);
+        m_amount = amount;
+    }
+    void setDropShadowOffset(WebPoint offset)
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
+        m_dropShadowOffset = offset;
+    }
+    void setDropShadowColor(WebColor color)
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
+        m_dropShadowColor = color;
+    }
+    void setMatrix(const SkScalar matrix[20])
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeColorMatrix);
+        for (unsigned i = 0; i < 20; ++i)
+            m_matrix[i] = matrix[i];
+    }
+    void setZoomRect(WebRect rect)
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeZoom);
+        m_zoomRect = rect;
+    }
 
 private:
     FilterType m_type;
