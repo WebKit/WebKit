@@ -62,20 +62,6 @@ const Vector<String>& weekDayShortLabels();
 unsigned firstDayOfWeek();
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-// Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
-// second with optional period(AM/PM), e.g. "h:mm:ss a"
-// [1] LDML http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
-String localizedTimeFormatText();
-
-// Returns time format in Unicode TR35 LDML containing hour, and minute
-// with optional period(AM/PM), e.g. "h:mm a"
-// Note: Some platforms return same value as localizedTimeFormatText().
-String localizedShortTimeFormatText();
-
-// Returns localized period field(AM/PM) strings.
-const Vector<String>& timeAMPMLabels();
-#endif
 } // namespace WebCore
 
 #endif // LocalizedDate_h

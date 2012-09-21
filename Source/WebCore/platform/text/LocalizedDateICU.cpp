@@ -92,21 +92,4 @@ unsigned firstDayOfWeek()
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-String localizedTimeFormatText()
-{
-    return LocaleICU::currentLocale()->timeFormat();
-}
-
-String localizedShortTimeFormatText()
-{
-    return LocaleICU::currentLocale()->shortTimeFormat();
-}
-
-const Vector<String>& timeAMPMLabels()
-{
-    return LocaleICU::currentLocale()->timeAMPMLabels();
-}
-#endif
-
 }
