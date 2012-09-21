@@ -56,6 +56,9 @@ COMMAND_LINE_FILE = DEVICE_SOURCE_ROOT_DIR + 'chrome-native-tests-command-line'
 DEVICE_DRT_DIR = DEVICE_SOURCE_ROOT_DIR + 'drt/'
 DEVICE_FORWARDER_PATH = DEVICE_DRT_DIR + 'forwarder'
 
+# Path on the device where the test framework will create the fifo pipes.
+DEVICE_FIFO_PATH = '/data/data/org.chromium.native_test/files/'
+
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
 DRT_APP_CACHE_DIR = DEVICE_DRT_DIR + 'cache/'
@@ -311,9 +314,9 @@ class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._cmd_line = None
-        self._in_fifo_path = ''
-        self._out_fifo_path = ''
-        self._err_fifo_path = ''
+        self._in_fifo_path = DEVICE_FIFO_PATH + 'stdin.fifo'
+        self._out_fifo_path = DEVICE_FIFO_PATH + 'test.fifo'
+        self._err_fifo_path = DEVICE_FIFO_PATH + 'stderr.fifo'
         self._read_stdout_process = None
         self._read_stderr_process = None
         self._forwarder_process = None
@@ -321,7 +324,6 @@ class ChromiumAndroidDriver(driver.Driver):
         self._original_governors = {}
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command = ['adb', '-s', self._device_serial]
-        self._external_storage = ''
 
     def __del__(self):
         self._teardown_performance()
@@ -342,11 +344,6 @@ class ChromiumAndroidDriver(driver.Driver):
     def _setup_test(self):
         if self._has_setup:
             return
-
-        # Set up the fifo paths used for getting DumpRenderTree's output.
-        self._in_fifo_path = self._get_external_storage() + '/native_tests/stdin.fifo'
-        self._out_fifo_path = self._get_external_storage() + '/native_tests/test.fifo'
-        self._err_fifo_path = self._get_external_storage() + '/native_tests/stderr.fifo'
 
         self._setup_md5sum_and_push_data_if_needed()
         self._has_setup = True
@@ -428,12 +425,6 @@ class ChromiumAndroidDriver(driver.Driver):
 
     def _update_version(self, dir, version):
         self._run_adb_command(['shell', 'echo %d > %sVERSION' % (version, dir)])
-
-    def _get_external_storage(self):
-        if not self._external_storage:
-            self._external_storage = self._run_adb_command(['shell', 'echo', '$EXTERNAL_STORAGE']).splitlines()[0]
-            assert self._external_storage, 'Unable to find $EXTERNAL_STORAGE'
-        return self._external_storage
 
     def _run_adb_command(self, cmd, ignore_error=False):
         self._log_debug('Run adb command: ' + str(cmd))

@@ -232,9 +232,8 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
     def test_drt_cmd_line(self):
         cmd_line = self.driver._drt_cmd_line(True, ['--a'])
         self.assertTrue('--a' in cmd_line)
-        self.assertTrue('--in-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.in' in cmd_line)
-        self.assertTrue('--out-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.out' in cmd_line)
-        self.assertTrue('--err-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.err' in cmd_line)
+        self.assertTrue('--create-stdin-fifo' in cmd_line)
+        self.assertTrue('--separate-stderr-fifo' in cmd_line)
 
     def test_read_prompt(self):
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['root@android:/ # '])
