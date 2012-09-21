@@ -47,8 +47,12 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forc
         double value1;
         double value2;
         double gain;
-        
-        if (useSmoothing) {
+
+        if (biquadProcessor()->hasSampleAccurateValues()) {
+            value1 = biquadProcessor()->parameter1()->finalValue();
+            value2 = biquadProcessor()->parameter2()->finalValue();
+            gain = biquadProcessor()->parameter3()->finalValue();
+        } else if (useSmoothing) {
             value1 = biquadProcessor()->parameter1()->smoothedValue();
             value2 = biquadProcessor()->parameter2()->smoothedValue();
             gain = biquadProcessor()->parameter3()->smoothedValue();

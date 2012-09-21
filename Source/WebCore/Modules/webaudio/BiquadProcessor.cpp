@@ -68,21 +68,27 @@ void BiquadProcessor::checkForDirtyCoefficients()
 
     // The BiquadDSPKernel objects rely on this value to see if they need to re-compute their internal filter coefficients.
     m_filterCoefficientsDirty = false;
+    m_hasSampleAccurateValues = false;
     
-    if (m_hasJustReset) {
-        // Snap to exact values first time after reset, then smooth for subsequent changes.
-        m_parameter1->resetSmoothedValue();
-        m_parameter2->resetSmoothedValue();
-        m_parameter3->resetSmoothedValue();
+    if (m_parameter1->hasSampleAccurateValues() || m_parameter2->hasSampleAccurateValues() || m_parameter3->hasSampleAccurateValues()) {
         m_filterCoefficientsDirty = true;
-        m_hasJustReset = false;
+        m_hasSampleAccurateValues = true;
     } else {
-        // Smooth all of the filter parameters. If they haven't yet converged to their target value then mark coefficients as dirty.
-        bool isStable1 = m_parameter1->smooth();
-        bool isStable2 = m_parameter2->smooth();
-        bool isStable3 = m_parameter3->smooth();
-        if (!(isStable1 && isStable2 && isStable3))
+        if (m_hasJustReset) {
+            // Snap to exact values first time after reset, then smooth for subsequent changes.
+            m_parameter1->resetSmoothedValue();
+            m_parameter2->resetSmoothedValue();
+            m_parameter3->resetSmoothedValue();
             m_filterCoefficientsDirty = true;
+            m_hasJustReset = false;
+        } else {
+            // Smooth all of the filter parameters. If they haven't yet converged to their target value then mark coefficients as dirty.
+            bool isStable1 = m_parameter1->smooth();
+            bool isStable2 = m_parameter2->smooth();
+            bool isStable3 = m_parameter3->smooth();
+            if (!(isStable1 && isStable2 && isStable3))
+                m_filterCoefficientsDirty = true;
+        }
     }
 }
 
