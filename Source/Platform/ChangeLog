@@ -1,3 +1,20 @@
+2012-09-21  Brandon Jones  <bajones@google.com>
+
+        Add support for OES_vertex_array_object in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=96578
+
+        Reviewed by Kenneth Russell.
+
+        Added code to allow calls to the OES_vertex_array_object extension to interface
+        properly with the chromium WebGL implementation. 
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::createVertexArrayOES):
+        (WebKit::WebGraphicsContext3D::deleteVertexArrayOES):
+        (WebKit::WebGraphicsContext3D::isVertexArrayOES):
+        (WebKit::WebGraphicsContext3D::bindVertexArrayOES):
+
 2012-09-21  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add setters to WebFilterOperation for IPC pickling

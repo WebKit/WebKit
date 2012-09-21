@@ -97,20 +97,22 @@ void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
 
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
 {
-    return 0;
+    return m_private->webContext()->createVertexArrayOES();
 }
 
-void Extensions3DChromium::deleteVertexArrayOES(Platform3DObject)
+void Extensions3DChromium::deleteVertexArrayOES(Platform3DObject array)
 {
+    m_private->webContext()->deleteVertexArrayOES(array);
 }
 
-GC3Dboolean Extensions3DChromium::isVertexArrayOES(Platform3DObject)
+GC3Dboolean Extensions3DChromium::isVertexArrayOES(Platform3DObject array)
 {
-    return 0;
+    return m_private->webContext()->isVertexArrayOES(array);
 }
 
-void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
+void Extensions3DChromium::bindVertexArrayOES(Platform3DObject array)
 {
+    m_private->webContext()->bindVertexArrayOES(array);
 }
 
 String Extensions3DChromium::getTranslatedShaderSourceANGLE(Platform3DObject shader)

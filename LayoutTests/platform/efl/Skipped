@@ -670,3 +670,6 @@ inspector/extensions/extensions-eval-content-script.html
 
 # ENABLE(WIDGET_REGION) is disabled
 fast/css/widget-region-parser.html
+
+# http://webkit.org/b/96828
+fast/canvas/webgl/oes-vertex-array-object.html

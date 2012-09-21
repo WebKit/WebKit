@@ -443,6 +443,12 @@ public:
     virtual void pushGroupMarkerEXT(const WGC3Dchar* marker) { }
     virtual void popGroupMarkerEXT(void) { }
 
+    // GL_OES_vertex_array_object
+    virtual WebGLId createVertexArrayOES() { return 0; }
+    virtual void deleteVertexArrayOES(WebGLId array) { }
+    virtual WGC3Dboolean isVertexArrayOES(WebGLId array) { return false; }
+    virtual void bindVertexArrayOES(WebGLId array) { }
+
     GrGLInterface* createGrGLInterface();
 
 protected:

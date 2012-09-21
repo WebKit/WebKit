@@ -322,6 +322,7 @@ public:
     friend class WebGLDebugShaders;
     friend class WebGLCompressedTextureS3TC;
     friend class WebGLRenderingContextErrorMessageCallback;
+    friend class WebGLVertexArrayObjectOES;
 
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();

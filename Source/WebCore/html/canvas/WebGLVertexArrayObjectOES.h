@@ -76,9 +76,11 @@ public:
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
     
     PassRefPtr<WebGLBuffer> getElementArrayBuffer() const { return m_boundElementArrayBuffer; }
-    void setElementArrayBuffer(PassRefPtr<WebGLBuffer> buffer) { m_boundElementArrayBuffer = buffer; }
+    void setElementArrayBuffer(PassRefPtr<WebGLBuffer>);
     
     VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
+    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, PassRefPtr<WebGLBuffer>);
+    void unbindBuffer(PassRefPtr<WebGLBuffer>);
 
 private:
     WebGLVertexArrayObjectOES(WebGLRenderingContext*, VaoType);

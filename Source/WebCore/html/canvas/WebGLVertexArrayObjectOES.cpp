@@ -72,6 +72,75 @@ void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContext3D* context3d, P
         extensions->deleteVertexArrayOES(object);
         break;
     }
+
+    if (m_boundElementArrayBuffer)
+        m_boundElementArrayBuffer->onDetached(context3d);
+
+    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
+        VertexAttribState& state = m_vertexAttribState[i];
+        if (state.bufferBinding)
+            state.bufferBinding->onDetached(context3d);
+    }
+}
+
+void WebGLVertexArrayObjectOES::setElementArrayBuffer(PassRefPtr<WebGLBuffer> buffer)
+{
+    if (buffer)
+        buffer->onAttached();
+    if (m_boundElementArrayBuffer)
+        m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
+    m_boundElementArrayBuffer = buffer;
+    
+}
+
+void WebGLVertexArrayObjectOES::setVertexAttribState(
+    GC3Duint index, GC3Dsizei bytesPerElement, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, PassRefPtr<WebGLBuffer> buffer)
+{
+    GC3Dsizei validatedStride = stride ? stride : bytesPerElement;
+
+    VertexAttribState& state = m_vertexAttribState[index];
+
+    if (buffer)
+        buffer->onAttached();
+    if (state.bufferBinding)
+        state.bufferBinding->onDetached(context()->graphicsContext3D());
+
+    state.bufferBinding = buffer;
+    state.bytesPerElement = bytesPerElement;
+    state.size = size;
+    state.type = type;
+    state.normalized = normalized;
+    state.stride = validatedStride;
+    state.originalStride = stride;
+    state.offset = offset;
+}
+
+void WebGLVertexArrayObjectOES::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
+{
+    if (m_boundElementArrayBuffer == buffer) {
+        m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
+        m_boundElementArrayBuffer = 0;
+    }
+
+    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
+        VertexAttribState& state = m_vertexAttribState[i];
+        if (state.bufferBinding == buffer) {
+            buffer->onDetached(context()->graphicsContext3D());
+
+            if (!i && !context()->isGLES2Compliant()) {
+                state.bufferBinding = context()->m_vertexAttrib0Buffer;
+                state.bufferBinding->onAttached();
+                state.bytesPerElement = 0;
+                state.size = 4;
+                state.type = GraphicsContext3D::FLOAT;
+                state.normalized = false;
+                state.stride = 16;
+                state.originalStride = 0;
+                state.offset = 0;
+            } else
+                state.bufferBinding = 0;
+        }
+    }
 }
 
 }

@@ -943,6 +943,9 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html
 
+# http://webkit.org/b/96828
+fast/canvas/webgl/oes-vertex-array-object.html
+
 # --- WebKit1 only ---
 http/tests/misc/willCacheResponse-delegate-callback.html
 http/tests/multipart/load-last-non-html-frame.php
