@@ -229,7 +229,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontCache::FontFileKey, OwnPtr<OpenTypeVerticalData>> FontVerticalDataCache;
+typedef HashMap<FontCache::FontFileKey, OwnPtr<OpenTypeVerticalData> > FontVerticalDataCache;
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {

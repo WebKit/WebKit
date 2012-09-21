@@ -1667,6 +1667,8 @@
             ['include', 'platform/graphics/harfbuzz/FontPlatformDataHarfBuzz\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.(cpp|h)$'],
+            ['include', 'platform/graphics/opentype/OpenTypeTypes\\.h$'],
+            ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.(cpp|h)$'],
             ['include', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
           ],
         }, { # use_x11==0
@@ -1885,6 +1887,8 @@
             ['include', 'platform/graphics/harfbuzz/FontPlatformDataHarfBuzz\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.cpp$'],
+            ['include', 'platform/graphics/opentype/OpenTypeTypes\\.h$'],
+            ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.(cpp|h)$'],
             ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],
             ['include', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
           ],

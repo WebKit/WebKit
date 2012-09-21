@@ -32,59 +32,13 @@
 #include "GlyphPageTreeNode.h"
 
 #include "Font.h"
-#if !USE(HARFBUZZ_NG)
-#include "HarfBuzzSkia.h"
-#else
-#include "NotImplemented.h"
-#endif
 #include "SimpleFontData.h"
 
 #include "SkTemplates.h"
 #include "SkPaint.h"
 #include "SkUtils.h"
 
-#if !USE(HARFBUZZ_NG)
-extern "C" {
-#include "harfbuzz-shaper.h"
-}
-#endif
-
 namespace WebCore {
-
-static int substituteWithVerticalGlyphs(const SimpleFontData* fontData, uint16_t* glyphs, unsigned bufferLength)
-{
-#if USE(HARFBUZZ_NG)
-    notImplemented();
-    return 0xFFFF;
-#else
-    HB_FaceRec_* hbFace = fontData->platformData().harfbuzzFace()->face();
-    if (!hbFace->gsub) {
-        // if there is no GSUB table, treat it as not covered
-        return 0Xffff;
-    }
-
-    HB_Buffer buffer;
-    hb_buffer_new(&buffer);
-    for (unsigned i = 0; i < bufferLength; ++i)
-        hb_buffer_add_glyph(buffer, glyphs[i], 0, i);
-
-    HB_UShort scriptIndex;
-    HB_UShort featureIndex;
-
-    HB_GSUB_Select_Script(hbFace->gsub, HB_MAKE_TAG('D', 'F', 'L', 'T'), &scriptIndex);
-    HB_GSUB_Select_Feature(hbFace->gsub, HB_MAKE_TAG('v', 'e', 'r', 't'), scriptIndex, 0xffff, &featureIndex);
-    HB_GSUB_Add_Feature(hbFace->gsub, featureIndex, 1);
-    HB_GSUB_Select_Feature(hbFace->gsub, HB_MAKE_TAG('v', 'r', 't', '2'), scriptIndex, 0xffff, &featureIndex);
-    HB_GSUB_Add_Feature(hbFace->gsub, featureIndex, 1);
-
-    int error = HB_GSUB_Apply_String(hbFace->gsub, buffer);
-    if (!error) {
-        for (unsigned i = 0; i < bufferLength; ++i)
-            glyphs[i] = static_cast<Glyph>(buffer->out_string[i].gindex);
-    }
-    return error;
-#endif
-}
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
@@ -104,15 +58,6 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     if (count != length) {
         SkDebugf("%s count != length\n", __FUNCTION__);
         return false;
-    }
-
-    if (fontData->hasVerticalGlyphs()) {
-        for (unsigned i = 0; i < bufferLength; ++i) {
-            if (!Font::isCJKIdeograph(buffer[i])) {
-                substituteWithVerticalGlyphs(fontData, glyphs, length);
-                break;
-            }
-        }
     }
 
     unsigned allGlyphs = 0; // track if any of the glyphIDs are non-zero

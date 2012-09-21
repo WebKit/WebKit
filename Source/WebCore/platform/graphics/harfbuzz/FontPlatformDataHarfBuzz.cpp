@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FontPlatformDataHarfBuzz.h"
 
+#include "FontCache.h"
 #include "NotImplemented.h"
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkFontHost.h"
@@ -340,5 +341,35 @@ void FontPlatformData::querySystemForRenderStyle()
     if (m_style.useSubpixelRendering == FontRenderStyle::NoPreference)
         m_style.useSubpixelRendering = useSkiaSubpixelRendering;
 }
+
+#if ENABLE(OPENTYPE_VERTICAL)
+static SkFontTableTag reverseByteOrder(uint32_t tableTag)
+{
+    return (tableTag >> 24) | ((tableTag >> 8) & 0xff00) | ((tableTag & 0xff00) << 8) | ((tableTag & 0xff) << 24);
+}
+
+const OpenTypeVerticalData* FontPlatformData::verticalData() const
+{
+    if (!uniqueID())
+        return 0;
+    return fontCache()->getVerticalData(uniqueID(), *this);
+}
+
+PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+{
+    RefPtr<SharedBuffer> buffer;
+    if (!uniqueID())
+        return buffer.release();
+
+    SkFontTableTag tag = reverseByteOrder(table);
+    const size_t tableSize = SkFontHost::GetTableSize(uniqueID(), tag);
+    if (tableSize) {
+        Vector<char> tableBuffer(tableSize);
+        SkFontHost::GetTableData(uniqueID(), tag, 0, tableSize, &tableBuffer[0]);
+        buffer = SharedBuffer::adoptVector(tableBuffer);
+    }
+    return buffer.release();
+}
+#endif
 
 } // namespace WebCore

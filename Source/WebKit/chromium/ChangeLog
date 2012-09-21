@@ -1,3 +1,12 @@
+2012-09-21  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Use OpenTypeVerticalData on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=97277
+
+        Reviewed by Tony Chang.
+
+        * features.gypi: Enable OPENTYPE_VERTICAL on linux and android.
+
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
         Roll Chromium DEPS to r158095 to pick up typo fix in test_expectations.txt
