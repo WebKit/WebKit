@@ -1142,6 +1142,7 @@ fast/forms/number/number-spinbutton-change-and-input-events.html
 fast/forms/number/number-large-padding.html
 fast/forms/number/number-size.html
 fast/forms/number/number-spinbutton-capturing.html
+fast/forms/number/number-spinbutton-click-in-iframe.html
 fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html
 fast/forms/number/number-spinbutton-state.html
 fast/forms/number/number-spinbutton-in-multi-column.html
