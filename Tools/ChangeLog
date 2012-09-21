@@ -1,3 +1,13 @@
+2012-09-21  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt][WK2] Removed duplicated code from EventSenderProxy::keyDown
+        https://bugs.webkit.org/show_bug.cgi?id=97235
+
+        Reviewed by Luiz Agostini.
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
 2012-09-21  Gergely Kis  <gergely@homejinni.com>
 
         Add MIPS build slave to build.webkit.org

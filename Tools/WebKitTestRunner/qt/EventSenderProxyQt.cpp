@@ -188,10 +188,6 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
                 code = Qt::Key_PageDown;
                 modifiers &= ~Qt::MetaModifier;
             }
-        } else if (code == 'a' && modifiers == Qt::ControlModifier) {
-            keyText = QString();
-            code = Qt::Key_Home;
-            modifiers = 0;
         } else
             code = key.unicode()->toUpper().unicode();
     } else {
