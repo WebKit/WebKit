@@ -1,5 +1,13 @@
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Roll Chromium DEPS to r158095 to pick up typo fix in test_expectations.txt
+
+        Unreviewed, rolled DEPS.
+
+        * DEPS:
+
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
         Roll Chromium DEPS to r158060
 
         Unreviewed, rolled DEPS.
