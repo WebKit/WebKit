@@ -8,17 +8,17 @@ layer at (0,0) size 800x102
       RenderBlock {p} at (0,39) size 784x31
         RenderText {#text} at (0,3) size 332x19
           text run at (0,3) width 332: "Square root, green on yellow, padded and bordered: "
-layer at (8,20) size 29x19
-  RenderMathMLMath {math} at (0,4) size 29x19 [padding: 0 1 0 1]
-    RenderBlock {mi} at (1,3) size 7x9
+layer at (8,20) size 35x19
+  RenderMathMLMath {math} at (0,4) size 35x19 [padding: 0 1 0 1]
+    RenderBlock {mi} at (1,3) size 8x9
       RenderText {#text} at (0,-9) size 7x25
         text run at (0,-9) width 7: "x"
-    RenderMathMLOperator {mo} at (8,2) size 12x10 [padding: 0 1 0 0]
+    RenderMathMLOperator {mo} at (12,2) size 11x10
       RenderMathMLBlock (flex) {mo} at (0,0) size 11x10
         RenderBlock (anonymous) at (0,0) size 11x10
           RenderText {mo} at (0,-8) size 11x25
             text run at (0,-8) width 11: "+"
-    RenderBlock {mn} at (20,0) size 8x12
+    RenderBlock {mn} at (26,0) size 8x12
       RenderText {#text} at (0,-6) size 8x25
         text run at (0,-6) width 8: "1"
 layer at (340,55) size 46x31
