@@ -48,7 +48,7 @@ public:
     }
 
     TextLayout(RenderText* text, const Font& font, float xPos)
-        : m_font(fontWithNoWordSpacing(font))
+        : m_font(font)
         , m_run(constructTextRun(text, font, xPos))
         , m_controller(adoptPtr(new ComplexTextController(&m_font, m_run, true)))
     {
@@ -58,19 +58,14 @@ public:
     {
         m_controller->advance(from, 0, ByWholeGlyphs);
         float beforeWidth = m_controller->runWidthSoFar();
+        if (m_font.wordSpacing() && from && Font::treatAsSpace(m_run[from]))
+            beforeWidth += m_font.wordSpacing();
         m_controller->advance(from + len, 0, ByWholeGlyphs);
         float afterWidth = m_controller->runWidthSoFar();
         return afterWidth - beforeWidth;
     }
 
 private:
-    static Font fontWithNoWordSpacing(const Font& originalFont)
-    {
-        Font font(originalFont);
-        font.setWordSpacing(0);
-        return font;
-    }
-
     static TextRun constructTextRun(RenderText* text, const Font& font, float xPos)
     {
         TextRun run = RenderBlock::constructTextRun(text, font, text->characters(), text->textLength(), text->style());
