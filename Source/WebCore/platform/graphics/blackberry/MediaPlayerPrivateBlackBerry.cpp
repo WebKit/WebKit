@@ -151,6 +151,7 @@ void MediaPlayerPrivate::load(const String& url)
     }
 
     void* tabId = m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient();
+    int playerID = m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient()->playerID();
 
     deleteGuardedObject(m_platformPlayer);
 #if USE(ACCELERATED_COMPOSITING)
@@ -163,9 +164,9 @@ void MediaPlayerPrivate::load(const String& url)
     if (!url.isEmpty())
         cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url.utf8().data()), WithHttpOnlyCookies);
     if (!cookiePairs.isEmpty() && cookiePairs.utf8().data())
-        m_platformPlayer->load(modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), cookiePairs.utf8().data());
+        m_platformPlayer->load(playerID, modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), cookiePairs.utf8().data());
     else
-        m_platformPlayer->load(modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), 0);
+        m_platformPlayer->load(playerID, modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), 0);
 }
 
 void MediaPlayerPrivate::cancelLoad()
