@@ -1354,8 +1354,6 @@ webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
 
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Failure ]
 
-webkit.org/b/96196 accessibility/spinbutton-value.html [ Failure ]
-
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-async.html [ Failure ]
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-paste.html [ Pass ]
 webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]

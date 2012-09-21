@@ -1,3 +1,18 @@
+2012-09-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION (r127882): accessibility/spinbutton-value.html failing on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=96196
+
+        Reviewed by Martin Robinson.
+
+        The "regression" is that a new test was added but the support was missing
+        in the Gtk port for spin buttons.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::valueDescription): Updated the FIXME comment to
+        indicate that this cannot be implemented until it is implemented in ATK.
+        URL of the newly-filed ATK bug included for reference.
+
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
         Fix test_skip_and_wontfix failure
