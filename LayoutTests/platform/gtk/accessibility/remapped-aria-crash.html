@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+    <a role="option"></a>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Test to ensure a remapped ARIA role does not produce a crash.");
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+
+    document.body.focus();
+
+    if (window.accessibilityController) {
+        function touchTheEntireAccessibilityTree(accessibilityObject) {
+            for (var i = 0; i < accessibilityObject.childrenCount; ++i)
+                touchTheEntireAccessibilityTree(accessibilityObject.childAtIndex(i));
+        }
+        touchTheEntireAccessibilityTree(accessibilityController.focusedElement);
+    }
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

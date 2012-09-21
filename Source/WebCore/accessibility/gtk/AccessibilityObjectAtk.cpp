@@ -84,13 +84,16 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // usually have no need for the anonymous block. And when the wrong objects
     // get included or ignored, needed accessibility signals do not get emitted.
     if (role == ParagraphRole || role == DivRole) {
-        AccessibilityObject* child = firstAnonymousBlockChild();
-        if (!child)
+        if (textUnderElement().isEmpty())
             return DefaultBehavior;
 
-        child = child->firstChild();
-        if (child && (child->isLink() || !child->firstAnonymousBlockChild()))
-            return IncludeObject;
+        if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
+            return DefaultBehavior;
+
+        for (RenderObject* r = renderer()->firstChild(); r; r = r->nextSibling()) {
+            if (r->isAnonymousBlock())
+                return IncludeObject;
+        }
     }
 
     // Block spans result in objects of ATK_ROLE_PANEL which are almost always unwanted.
