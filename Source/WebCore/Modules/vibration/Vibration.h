@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-class Navigator;
-class Page;
 class VibrationClient;
 
 class Vibration : public Supplement<Page> {
