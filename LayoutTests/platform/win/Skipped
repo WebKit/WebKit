@@ -1151,6 +1151,7 @@ fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html
 fast/forms/number/number-spinbutton-state.html
 fast/forms/number/number-spinbutton-in-multi-column.html
 
+
 # Datalist is not yet enabled.
 fast/forms/datalist
 
@@ -2287,3 +2288,6 @@ http/tests/security/xssAuditor/script-tag-with-callbacks.html
 http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
 http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html
 http/tests/xmlhttprequest/range-test.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=97271
+http/tests/security/sandboxed-iframe-origin-add.html
