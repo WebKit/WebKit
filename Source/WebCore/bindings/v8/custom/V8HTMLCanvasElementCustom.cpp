@@ -35,12 +35,12 @@
 #include "CanvasContextAttributes.h"
 #include "CanvasRenderingContext.h"
 #include "HTMLCanvasElement.h"
-#include "InspectorCanvasInstrumentation.h"
 #include "WebGLContextAttributes.h"
 #include "V8Binding.h"
 #include "V8CanvasRenderingContext2D.h"
 #include "V8Node.h"
 #if ENABLE(WEBGL)
+#include "InspectorCanvasInstrumentation.h"
 #include "V8WebGLRenderingContext.h"
 #endif
 #include <wtf/MathExtras.h>
@@ -85,17 +85,9 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     CanvasRenderingContext* result = imp->getContext(contextId, attrs.get());
     if (!result)
         return v8::Null(args.GetIsolate());
-    else if (result->is2d()) {
-        v8::Handle<v8::Value> v8Result = toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder(), args.GetIsolate());
-        if (InspectorInstrumentation::hasFrontends()) {
-            ScriptState* scriptState = ScriptState::forContext(v8::Context::GetCurrent());
-            ScriptObject context(scriptState, v8::Handle<v8::Object>::Cast(v8Result));
-            ScriptObject wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(imp->document(), context);
-            if (!wrapped.hasNoValue())
-                return wrapped.v8Value();
-        }
-        return v8Result;
-    }
+
+    if (result->is2d())
+        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder(), args.GetIsolate());
 #if ENABLE(WEBGL)
     else if (result->is3d()) {
         // 3D canvas contexts can hold on to lots of GPU resources, and we want to take an

@@ -251,7 +251,6 @@ public:
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
 #endif
 
-    static ScriptObject wrapCanvas2DRenderingContextForInstrumentation(Document*, const ScriptObject&);
 #if ENABLE(WEBGL)
     static ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const ScriptObject&);
 #endif

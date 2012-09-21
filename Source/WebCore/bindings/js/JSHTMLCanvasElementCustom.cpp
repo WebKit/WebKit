@@ -29,11 +29,11 @@
 
 #include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
-#include "InspectorCanvasInstrumentation.h"
 #include "JSCanvasRenderingContext2D.h"
-#include "ScriptObject.h"
 #if ENABLE(WEBGL)
+#include "InspectorCanvasInstrumentation.h"
 #include "JSWebGLRenderingContext.h"
+#include "ScriptObject.h"
 #include "WebGLContextAttributes.h"
 #endif
 #include <wtf/GetPtr.h>
@@ -78,18 +78,14 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     if (!context)
         return jsNull();
     JSValue jsValue = toJS(exec, globalObject(), WTF::getPtr(context));
-    if (InspectorInstrumentation::hasFrontends()) {
-        ScriptObject contextObject(exec, jsValue.getObject());
-        ScriptObject wrapped;
-        if (context->is2d())
-            wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(canvas->document(), contextObject);
 #if ENABLE(WEBGL)
-        else if (context->is3d())
-            wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(canvas->document(), contextObject);
-#endif
+    if (context->is3d() && InspectorInstrumentation::hasFrontends()) {
+        ScriptObject glContext(exec, jsValue.getObject());
+        ScriptObject wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(canvas->document(), glContext);
         if (!wrapped.hasNoValue())
             return wrapped.jsValue();
     }
+#endif
     return jsValue;
 }
 

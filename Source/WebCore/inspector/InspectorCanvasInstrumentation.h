@@ -38,18 +38,6 @@
 
 namespace WebCore {
 
-ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(Document* document, const ScriptObject& context)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
-        InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent();
-        if (canvasAgent && canvasAgent->enabled())
-            return canvasAgent->wrapCanvas2DRenderingContextForInstrumentation(context);
-    }
-#endif
-    return ScriptObject();
-}
-
 #if ENABLE(WEBGL)
 ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const ScriptObject& glContext)
 {

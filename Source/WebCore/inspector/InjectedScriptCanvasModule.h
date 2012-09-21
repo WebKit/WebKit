@@ -50,18 +50,14 @@ public:
 
     static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, ScriptState*);
 
-    ScriptObject wrapCanvas2DContext(const ScriptObject&);
 #if ENABLE(WEBGL)
-    ScriptObject wrapWebGLContext(const ScriptObject&);
+    ScriptObject wrapWebGLContext(const ScriptObject& glContext);
 #endif
 
     void captureFrame(ErrorString*, String*);
     void dropTraceLog(ErrorString*, const String&);
     void traceLog(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::TraceLog>*);
     void replayTraceLog(ErrorString*, const String&, int, String*);
-
-private:
-    ScriptObject callWrapContextFunction(const String&, const ScriptObject&);
 };
 
 #endif

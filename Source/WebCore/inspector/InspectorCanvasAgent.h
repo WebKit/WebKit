@@ -66,7 +66,6 @@ public:
 
     bool enabled() { return m_enabled; }
 
-    ScriptObject wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject&);
 #if ENABLE(WEBGL)
     ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
 #endif
