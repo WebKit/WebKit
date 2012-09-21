@@ -32,7 +32,6 @@
 #include "TestShell.h"
 
 #include "linux/WebFontRendering.h"
-#include "tests/ForwardIOStreamsAndroid.h"
 #include "third_party/skia/include/ports/SkTypeface_android.h"
 
 namespace {
@@ -50,9 +49,6 @@ void platformInit(int* argc, char*** argv)
 {
     // Initialize skia with customized font config files.
     SkUseTestFontConfigFile(fontMainConfigFile, fontFallbackConfigFile, fontsDir);
-
-    // Set up IO stream forwarding if necessary.
-    WebKit::maybeInitIOStreamForwardingForAndroid(argc, argv);
 
     // Disable auto hint and use normal hinting in layout test mode to produce the same font metrics as chromium-linux.
     WebKit::WebFontRendering::setAutoHint(false);

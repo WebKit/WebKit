@@ -1,3 +1,19 @@
+2012-09-20  Peter Beverloo  <peter@chromium.org>
+
+        Leverage Chromium's code to set up FIFOs for Chromium Android layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=97227
+
+        Reviewed by Tony Chang.
+
+        Remove all fifo-related code together with the io_stream_forwarder_android
+        target defined in WebKitUnitTests.gyp.
+
+        * WebKitUnitTests.gyp:
+        * tests/ForwardIOStreamsAndroid.cpp: Removed.
+        * tests/ForwardIOStreamsAndroid.h: Removed.
+        * tests/RunAllTests.cpp:
+        (main):
+
 2012-09-21  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

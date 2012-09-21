@@ -119,7 +119,6 @@
                     'type': 'shared_library',
                     'dependencies': [
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
-                        'io_stream_forwarder_android',
                     ],
                 }],
             ],
@@ -202,20 +201,6 @@
                         '<(android_app_abi)',
                     ],
                 }],
-            },
-            # FIXME: When the Android test runner framework in Chromium has stabilized enough,
-            # we should switch to using that and will no longer need the stream forwarding.
-            # https://bugs.webkit.org/show_bug.cgi?id=96764
-            {
-                'target_name': 'io_stream_forwarder_android',
-                'type': 'static_library',
-                'sources': [
-                    'tests/ForwardIOStreamsAndroid.cpp',
-                    'tests/ForwardIOStreamsAndroid.h',
-                ],
-                'dependencies': [
-                    '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                ],
             }],
         }],
         ['clang==1', {

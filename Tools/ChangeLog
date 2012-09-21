@@ -1,3 +1,35 @@
+2012-09-20  Peter Beverloo  <peter@chromium.org>
+
+        Leverage Chromium's code to set up FIFOs for Chromium Android layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=97227
+
+        Reviewed by Tony Chang.
+
+        We switched Chromium to using FIFOs in order to achieve better consistency,
+        which was done by Marcus in r157541. Remove all custom WebKit code in
+        favor of Chromium's implementation.
+
+        Remove more FIFO code in the test runner itself, including the code in
+        DumpRenderTree that invoked it. We can now switch to Chromium's brand
+        new FIFO-creating code, which is being set-up for all test targets build
+        for Android, including DumpRenderTree, TestWebKitAPI and webkit_unit_tests.
+
+        This also changes the ChromiumAndroidDriver._remove_all_pipes method to
+        delete the files individually. "rm" would fail if one of the earlier files
+        does not exist, and the "-f" argument doesn't seem to be reliable.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestShellAndroid.cpp:
+        (platformInit):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._setup_test):
+        (ChromiumAndroidDriver._get_external_storage):
+        (ChromiumAndroidDriver._drt_cmd_line):
+        (ChromiumAndroidDriver._remove_all_pipes):
+        (ChromiumAndroidDriver.stop):
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-09-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] EventSender needs to implement scheduleAsynchronousClick

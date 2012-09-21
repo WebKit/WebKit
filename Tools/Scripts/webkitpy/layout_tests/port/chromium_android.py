@@ -311,9 +311,9 @@ class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._cmd_line = None
-        self._in_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.in'
-        self._out_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.out'
-        self._err_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.err'
+        self._in_fifo_path = ''
+        self._out_fifo_path = ''
+        self._err_fifo_path = ''
         self._read_stdout_process = None
         self._read_stderr_process = None
         self._forwarder_process = None
@@ -321,6 +321,7 @@ class ChromiumAndroidDriver(driver.Driver):
         self._original_governors = {}
         self._device_serial = port._get_device_serial(worker_number)
         self._adb_command = ['adb', '-s', self._device_serial]
+        self._external_storage = ''
 
     def __del__(self):
         self._teardown_performance()
@@ -341,6 +342,11 @@ class ChromiumAndroidDriver(driver.Driver):
     def _setup_test(self):
         if self._has_setup:
             return
+
+        # Set up the fifo paths used for getting DumpRenderTree's output.
+        self._in_fifo_path = self._get_external_storage() + '/native_tests/stdin.fifo'
+        self._out_fifo_path = self._get_external_storage() + '/native_tests/test.fifo'
+        self._err_fifo_path = self._get_external_storage() + '/native_tests/stderr.fifo'
 
         self._setup_md5sum_and_push_data_if_needed()
         self._has_setup = True
@@ -422,6 +428,12 @@ class ChromiumAndroidDriver(driver.Driver):
 
     def _update_version(self, dir, version):
         self._run_adb_command(['shell', 'echo %d > %sVERSION' % (version, dir)])
+
+    def _get_external_storage(self):
+        if not self._external_storage:
+            self._external_storage = self._run_adb_command(['shell', 'echo', '$EXTERNAL_STORAGE']).splitlines()[0]
+            assert self._external_storage, 'Unable to find $EXTERNAL_STORAGE'
+        return self._external_storage
 
     def _run_adb_command(self, cmd, ignore_error=False):
         self._log_debug('Run adb command: ' + str(cmd))
@@ -510,11 +522,7 @@ class ChromiumAndroidDriver(driver.Driver):
         return self._run_adb_command(['shell', 'ls', full_file_path]).strip() == full_file_path
 
     def _drt_cmd_line(self, pixel_tests, per_test_args):
-        return driver.Driver.cmd_line(self, pixel_tests, per_test_args) + [
-            '--in-fifo=' + self._in_fifo_path,
-            '--out-fifo=' + self._out_fifo_path,
-            '--err-fifo=' + self._err_fifo_path,
-        ]
+        return driver.Driver.cmd_line(self, pixel_tests, per_test_args) + ['--create-stdin-fifo', '--separate-stderr-fifo']
 
     @staticmethod
     def _loop_with_timeout(condition, timeout_secs):
@@ -530,7 +538,9 @@ class ChromiumAndroidDriver(driver.Driver):
                 self._file_exists_on_device(self._err_fifo_path))
 
     def _remove_all_pipes(self):
-        self._run_adb_command(['shell', 'rm', self._in_fifo_path, self._out_fifo_path, self._err_fifo_path])
+        for file in [self._in_fifo_path, self._out_fifo_path, self._err_fifo_path]:
+            self._run_adb_command(['shell', 'rm', file])
+
         return (not self._file_exists_on_device(self._in_fifo_path) and
                 not self._file_exists_on_device(self._out_fifo_path) and
                 not self._file_exists_on_device(self._err_fifo_path))
@@ -653,8 +663,9 @@ class ChromiumAndroidDriver(driver.Driver):
             self._forwarder_process.kill()
             self._forwarder_process = None
 
-        if not ChromiumAndroidDriver._loop_with_timeout(self._remove_all_pipes, DRT_START_STOP_TIMEOUT_SECS):
-            raise AssertionError('Failed to remove fifo files. May be locked.')
+        if self._has_setup:
+            if not ChromiumAndroidDriver._loop_with_timeout(self._remove_all_pipes, DRT_START_STOP_TIMEOUT_SECS):
+                raise AssertionError('Failed to remove fifo files. May be locked.')
 
     def _command_from_driver_input(self, driver_input):
         command = super(ChromiumAndroidDriver, self)._command_from_driver_input(driver_input)

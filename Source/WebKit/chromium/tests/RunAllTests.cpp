@@ -43,10 +43,6 @@
 #include "WebUnitTests.h"
 #endif
 
-#if defined(OS_ANDROID)
-#include "ForwardIOStreamsAndroid.h"
-#endif
-
 #include <gmock/gmock.h>
 
 // TestSuite must be created before SetUpTestEnvironment so it performs
@@ -63,9 +59,6 @@ int main(int argc, char** argv)
     WebKit::DeleteTestSuite();
 #else
     ::testing::InitGoogleMock(&argc, argv);
-#if defined(OS_ANDROID)
-    WebKit::maybeInitIOStreamForwardingForAndroid(&argc, &argv);
-#endif
     TestSuite testSuite(argc, argv);
     webkit_support::SetUpTestEnvironmentForUnitTests();
     int result = testSuite.Run();

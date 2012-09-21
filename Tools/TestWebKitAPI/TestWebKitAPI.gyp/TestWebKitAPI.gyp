@@ -87,7 +87,6 @@
                     'type': 'shared_library',
                     'dependencies': [
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
-                        '<(source_dir)/WebKit/chromium/WebKitUnitTests.gyp:io_stream_forwarder_android',
                     ],
                 }],
             ],
