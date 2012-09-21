@@ -411,9 +411,23 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
         wkModifiers |= kWKEventModifiersShiftKey;
 
     Evas* evas = ecore_evas_get(m_testController->mainWebView()->platformWindow());
+
+    int eventIndex = 0;
+    // Mimic the emacs ctrl-o binding by inserting a paragraph
+    // separator and then putting the cursor back to its original
+    // position. Allows us to pass emacs-ctrl-o.html
+    if ((wkModifiers & kWKEventModifiersControlKey) && !strcmp(keyName, "o")) {
+        setEvasModifiers(evas, 0);
+        evas_event_feed_key_down(evas, "Return", "Return", "\r", 0, eventIndex++, 0);
+        evas_event_feed_key_up(evas, "Return", "Return", "\r", 0, eventIndex++, 0);
+        wkModifiers = 0;
+        keyName = "Left";
+        keyString = 0;
+    }
+
     setEvasModifiers(evas, wkModifiers);
-    evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, 0, 0);
-    evas_event_feed_key_up(evas, keyName, keyName, keyString, 0, 1, 0);
+    evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, eventIndex++, 0);
+    evas_event_feed_key_up(evas, keyName, keyName, keyString, 0, eventIndex++, 0);
     setEvasModifiers(evas, 0);
 }
 

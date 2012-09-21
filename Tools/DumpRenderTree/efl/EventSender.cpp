@@ -529,9 +529,24 @@ static void sendKeyDown(Evas* evas, KeyEventInfo* keyEventInfo)
     DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
 
     ASSERT(evas);
+
+    int eventIndex = 0;
+    // Mimic the emacs ctrl-o binding by inserting a paragraph
+    // separator and then putting the cursor back to its original
+    // position. Allows us to pass emacs-ctrl-o.html
+    if ((modifiers & EvasKeyModifierControl) && !strcmp(keyName, "o")) {
+        setEvasModifiers(evas, EvasKeyModifierNone);
+        evas_event_feed_key_down(evas, "Return", "Return", "\r", 0, eventIndex++, 0);
+        evas_event_feed_key_up(evas, "Return", "Return", "\r", 0, eventIndex++, 0);
+
+        modifiers = EvasKeyModifierNone;
+        keyName = "Left";
+        keyString = 0;
+    }
+
     setEvasModifiers(evas, modifiers);
-    evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, 0, 0);
-    evas_event_feed_key_up(evas, keyName, keyName, keyString, 0, 1, 0);
+    evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, eventIndex++, 0);
+    evas_event_feed_key_up(evas, keyName, keyName, keyString, 0, eventIndex++, 0);
     setEvasModifiers(evas, EvasKeyModifierNone);
 
     DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary();

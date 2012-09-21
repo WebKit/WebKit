@@ -191,7 +191,6 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
 # Unclassified failures
-Bug(EFL) editing/input/emacs-ctrl-o.html [ Failure ]
 Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
 Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-embed.html [ Failure ]

@@ -97,7 +97,8 @@ bool EditorClientEfl::shouldEndEditing(Range* range)
 
 bool EditorClientEfl::shouldInsertText(const String& text, Range* range, EditorInsertAction action)
 {
-    Ewk_Should_Insert_Text_Event shouldInsertTextEvent = { text.utf8().data(), range, action };
+    CString protectedText = text.utf8();
+    Ewk_Should_Insert_Text_Event shouldInsertTextEvent = { protectedText.data(), range, action };
     evas_object_smart_callback_call(m_view, "editorclient,text,insert", &shouldInsertTextEvent);
     return true;
 }

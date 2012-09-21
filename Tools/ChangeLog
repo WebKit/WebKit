@@ -1,3 +1,18 @@
+2012-09-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EventSender should mimic CTRL+o emacs shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=97224
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for mimicking CTRL+o emacs shortcut in EFL's
+        EventSender in DumpRenderTree and WebKitTestRunner.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (sendKeyDown):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
 2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Re-fix clean builds
