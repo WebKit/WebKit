@@ -153,9 +153,6 @@ webkit.org/b/42674 http/tests/navigation/response204.html [ Failure ]
 webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 
-# WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
-Bug(EFL) fast/events/popup-blocking-click-in-iframe.html [ Failure ]
-
 # WebKitTestRunner eventSender needs touch events support
 webkit.org/b/96465 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/96465 fast/events/touch/basic-multi-touch-events.html [ Failure ]

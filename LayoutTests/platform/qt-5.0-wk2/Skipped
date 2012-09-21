@@ -51,7 +51,6 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/fire-mousedown-while-pressing-mouse-button.html
 fast/events/open-window-from-another-frame.html
 fast/events/platform-wheelevent-in-scrolling-div.html
-fast/events/popup-blocking-click-in-iframe.html
 fast/events/popup-when-select-change.html
 fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html

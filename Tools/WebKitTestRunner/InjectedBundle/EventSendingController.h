@@ -53,6 +53,7 @@ public:
     void mouseScrollBy(int x, int y);
     void continuousMouseScrollBy(int x, int y, bool paged);
     void leapForward(int milliseconds);
+    void scheduleAsynchronousClick();
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
 

@@ -144,7 +144,6 @@ fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
 fast/events/open-window-from-another-frame.html
-fast/events/popup-blocking-click-in-iframe.html
 fast/events/popup-when-select-change.html
 fast/events/right-click-focus.html
 fast/events/scroll-after-click-on-tab-index.html

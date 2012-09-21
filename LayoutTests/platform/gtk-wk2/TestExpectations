@@ -172,10 +172,6 @@ Bug(GTK) editing/undo/undo-indent.html [ Failure ]
 Bug(GTK) editing/undo/undo-misspellings.html [ Failure ]
 Bug(GTK) fast/forms/plaintext-mode-1.html [ Failure ]
 
-# Implement layoutTestController.setPopupBlockingEnabled and
-# eventSender.scheduleAsynchronousClick support
-Bug(GTK) fast/events/popup-blocking-click-in-iframe.html [ Failure ]
-
 # accessibility tests failing due to missing WKTR features
 Bug(GTK) accessibility/aria-describedby-on-input.html [ Failure ]
 Bug(GTK) accessibility/aria-help.html [ Failure ]
