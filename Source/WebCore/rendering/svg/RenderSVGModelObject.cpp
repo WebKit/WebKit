@@ -164,6 +164,13 @@ static bool isGraphicsElement(RenderObject* renderer)
     return renderer->isSVGShape() || renderer->isSVGText() || renderer->isSVGImage() || renderer->node()->hasTagName(SVGNames::useTag);
 }
 
+// The SVG addFocusRingRects() method adds rects in local coordinates so the default absoluteFocusRingQuads
+// returns incorrect values for SVG objects. Overriding this method provides access to the absolute bounds.
+void RenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
+{
+    quads.append(localToAbsoluteQuad(FloatQuad(repaintRectInLocalCoordinates())));
+}
+    
 bool RenderSVGModelObject::checkIntersection(RenderObject* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style()->pointerEvents() == PE_NONE)
