@@ -1,3 +1,27 @@
+2012-09-21  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] Really fix bug 95488 that user can get the authentication challenge dialog while the other tab has focus.
+        https://bugs.webkit.org/show_bug.cgi?id=97348
+        Internal PR: 186597.
+
+        Internally reviewed by Yong Li, Joe Mason.
+        Reviewed by Yong Li.
+
+        Update WebPage to use new AuthenticationChallengeManager.
+        Register page creation/deletion and visibility change to the new
+            AuthenticationChallengeManager.
+        Initialize AuthenticationChallengeManager in GlobalInitialize() function.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::globalInitialize):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        (BlackBerry::WebKit::WebPage::setVisible):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-09-21  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Wrong seperator for viewport meta in Popup scripts

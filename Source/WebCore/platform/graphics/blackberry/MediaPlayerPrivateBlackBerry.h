@@ -174,6 +174,7 @@ private:
     Timer<MediaPlayerPrivate> m_userDrivenSeekTimer;
     float m_lastSeekTime;
     bool m_lastSeekTimePending;
+    bool m_isAuthenticationChallenging;
     void waitMetadataTimerFired(Timer<MediaPlayerPrivate>*);
     Timer<MediaPlayerPrivate> m_waitMetadataTimer;
     int m_waitMetadataPopDialogCounter;
