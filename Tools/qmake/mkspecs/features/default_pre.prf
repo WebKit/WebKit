@@ -89,8 +89,6 @@ unix:config_gccdepends {
     CONFIG += GNUmake gcc_MD_depends
 }
 
-!haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
-
 # We use private_tests to detect developer build, since the destdir will
 # always be our webkit build dir. This might change as configure changes.
 contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build

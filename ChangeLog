@@ -1,3 +1,15 @@
+2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Bail out when trying to build WebKit with Qt != 5
+
+        Reviewed by Tor Arne Vestbø.
+
+        Moved check for Qt version out of default_pre into top-level WebKit.pro,
+        because we never reach default_pre.prf due to the lack of .qmake.conf support
+        in older versions of Qt/QMake.
+
+        * WebKit.pro:
+
 2012-09-20  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] QtWebKit module header includes private dependencies
