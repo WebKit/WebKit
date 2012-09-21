@@ -234,3 +234,11 @@ shouldBe("Math.tan(0)", "0");
 shouldBe("Math.tan(-0)", "-0");
 shouldBe("Math.tan(Infinity)", "NaN");
 shouldBe("Math.tan(-Infinity)", "NaN");
+
+var __Math = Math;
+shouldBeTrue("delete Math;");
+
+function global() { return this; }
+shouldBeFalse("'Math' in global()");
+
+Math = __Math;

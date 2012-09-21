@@ -310,9 +310,9 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
 
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "JSON"), JSONObject::create(exec, this, JSONObject::createStructure(exec->globalData(), this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Math"), MathObject::create(exec, this, MathObject::createStructure(exec->globalData(), this, m_objectPrototype.get())), DontEnum);
 
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(Identifier(exec, "Math"), MathObject::create(exec, this, MathObject::createStructure(exec->globalData(), this, m_objectPrototype.get())), DontEnum | DontDelete),
         GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly)

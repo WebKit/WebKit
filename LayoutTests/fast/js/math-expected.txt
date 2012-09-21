@@ -163,6 +163,8 @@ PASS Math.tan(0) is 0
 PASS Math.tan(-0) is -0
 PASS Math.tan(Infinity) is NaN
 PASS Math.tan(-Infinity) is NaN
+PASS delete Math; is true
+PASS 'Math' in global() is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
