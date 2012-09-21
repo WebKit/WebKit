@@ -48,12 +48,16 @@ public:
     virtual bool createsAnonymousWrapper() const { return true; }
 
     void setupInnerStyle(RenderStyle*);
+    virtual void updateFromElement();
 
     virtual void updateBeforeAfterContent(PseudoId);
 
     virtual bool canHaveGeneratedChildren() const OVERRIDE;
     virtual bool hasControlClip() const { return true; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+
+    void setText(const String&);
+    String text() const;
 
 private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
@@ -65,7 +69,9 @@ private:
 
     void timerFired(Timer<RenderButton>*);
 
+    RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
+
     OwnPtr<Timer<RenderButton> > m_timer;
     bool m_default;
 };

@@ -62,7 +62,6 @@ private:
 PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
-    button->createShadowSubtree();
     button->setType("button");
     button->setValue(fileButtonChooseFileLabel());
     return button.release();
@@ -71,7 +70,6 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
 PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document* document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
-    button->createShadowSubtree();
     button->setType("button");
     button->setValue(fileButtonChooseMultipleFilesLabel());
     return button.release();

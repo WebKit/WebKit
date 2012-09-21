@@ -278,7 +278,6 @@ public:
     virtual String fixedPlaceholder();
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
-    virtual void valueAttributeChanged();
     virtual void multipleAttributeChanged();
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();

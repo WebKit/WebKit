@@ -889,10 +889,6 @@ void InputType::updatePlaceholderText()
 {
 }
 
-void InputType::valueAttributeChanged()
-{
-}
-
 void InputType::multipleAttributeChanged()
 {
 }

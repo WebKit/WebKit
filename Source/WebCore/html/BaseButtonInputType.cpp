@@ -36,61 +36,10 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
-#include "RenderTextFragment.h"
-#include "ShadowRoot.h"
-#include "Text.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-class TextForButtonInputType : public Text {
-public:
-    static PassRefPtr<TextForButtonInputType> create(Document*, const String&);
-
-private:
-    TextForButtonInputType(Document*, const String&);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-};
-
-PassRefPtr<TextForButtonInputType> TextForButtonInputType::create(Document* document, const String& data)
-{
-    return adoptRef(new TextForButtonInputType(document, data));
-}
-
-TextForButtonInputType::TextForButtonInputType(Document* document, const String& data)
-    : Text(document, data)
-{
-}
-
-RenderObject* TextForButtonInputType::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderTextFragment(document(), dataImpl());
-}
-
-BaseButtonInputType::BaseButtonInputType(HTMLInputElement* element)
-    : BaseClickableWithKeyInputType(element)
-{
-}
-
-void BaseButtonInputType::createShadowSubtree()
-{
-    ASSERT(element()->userAgentShadowRoot());
-
-    RefPtr<TextForButtonInputType> text = TextForButtonInputType::create(element()->document(), defaultValue());
-    element()->userAgentShadowRoot()->appendChild(text);
-}
-
-void BaseButtonInputType::destroyShadowSubtree()
-{
-    InputType::destroyShadowSubtree();
-}
-
-void BaseButtonInputType::valueAttributeChanged()
-{
-    String value = element()->valueWithDefault();
-    toText(element()->userAgentShadowRoot()->firstChild())->setData(value, ASSERT_NO_EXCEPTION);
-}
 
 bool BaseButtonInputType::shouldSaveAndRestoreFormControlState() const
 {
