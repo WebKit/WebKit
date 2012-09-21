@@ -515,7 +515,7 @@ private:
 #endif
 
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    HashMap<FilterOperation*, WebKitCSSSVGDocumentValue*> m_pendingSVGDocuments;
+    HashMap<FilterOperation*, RefPtr<WebKitCSSSVGDocumentValue> > m_pendingSVGDocuments;
 #endif
 
 #if ENABLE(STYLE_SCOPED)

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+internals.settings.setCSSVariablesEnabled(true);
+</script>
+<style>
+body {
+  -webkit-var-a: url(1);
+  -webkit-filter: -webkit-var(a);
+}
+</style>
+This test is successful if it does not crash.
+</html>
