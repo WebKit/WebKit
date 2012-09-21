@@ -1,3 +1,36 @@
+2012-09-21  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Add test for ScrollingCoordinatorChromium
+        https://bugs.webkit.org/show_bug.cgi?id=96657
+
+        Reviewed by James Robinson.
+
+        Add tests for ScrollingCoordinatorChromium. These tests mainly verify that
+        fast (non-main thread) scrolling is enabled when necessary and that a proper
+        compositing layer structure is created for fixed position and accelerated
+        scrolling layers.
+
+        Tests: ScrollingCoordinatorChromiumTest.fastScrollingByDefault
+               ScrollingCoordinatorChromiumTest.fastScrollingForFixedPosition
+               ScrollingCoordinatorChromiumTest.nonFastScrollableRegion
+               ScrollingCoordinatorChromiumTest.wheelEventHandler
+               ScrollingCoordinatorChromiumTest.touchOverflowScrolling
+
+        * WebKit.gypi:
+        * tests/ScrollingCoordinatorChromiumTest.cpp: Added.
+        (WebKit):
+        (MockWebViewClient):
+        (ScrollingCoordinatorChromiumTest):
+        (WebKit::ScrollingCoordinatorChromiumTest::ScrollingCoordinatorChromiumTest):
+        (WebKit::ScrollingCoordinatorChromiumTest::createCompositedWebViewImpl):
+        (WebKit::ScrollingCoordinatorChromiumTest::registerMockedHttpURLLoad):
+        (WebKit::ScrollingCoordinatorChromiumTest::getRootScrollLayer):
+        (WebKit::TEST_F):
+        * tests/data/fixed_position.html: Added.
+        * tests/data/non_fast_scrollable.html: Added.
+        * tests/data/touch_overflow_scrolling.html: Added.
+        * tests/data/wheel_event_handler.html: Added.
+
 2012-09-20  Peter Beverloo  <peter@chromium.org>
 
         Leverage Chromium's code to set up FIFOs for Chromium Android layout tests

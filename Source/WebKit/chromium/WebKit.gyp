@@ -714,6 +714,7 @@
                                 'tests/PopupMenuTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
                                 'tests/RenderTableRowTest.cpp',
+                                'tests/ScrollingCoordinatorChromiumTest.cpp',
                                 'tests/URLTestHelpers.cpp',
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebImageTest.cpp',

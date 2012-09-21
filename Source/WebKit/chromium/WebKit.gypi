@@ -97,6 +97,7 @@
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',
             'tests/RenderTableRowTest.cpp',
+            'tests/ScrollingCoordinatorChromiumTest.cpp',
             'tests/TilingDataTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',

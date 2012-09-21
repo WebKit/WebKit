@@ -169,12 +169,25 @@ public:
     virtual WebPoint scrollPosition() const = 0;
 
     virtual void setMaxScrollPosition(WebSize) = 0;
+    virtual WebSize maxScrollPosition() const = 0;
+
     virtual void setScrollable(bool) = 0;
+    virtual bool scrollable() const = 0;
+
     virtual void setHaveWheelEventHandlers(bool) = 0;
+    virtual bool haveWheelEventHandlers() const = 0;
+
     virtual void setShouldScrollOnMainThread(bool) = 0;
+    virtual bool shouldScrollOnMainThread() const = 0;
+
     virtual void setNonFastScrollableRegion(const WebVector<WebRect>&) = 0;
+    virtual WebVector<WebRect> nonFastScrollableRegion() const = 0;
+
     virtual void setIsContainerForFixedPositionLayers(bool) = 0;
+    virtual bool isContainerForFixedPositionLayers() const = 0;
+
     virtual void setFixedToContainerLayer(bool) = 0;
+    virtual bool fixedToContainerLayer() const = 0;
 
     // The scroll client is notified when the scroll position of the WebLayer
     // changes. Only a single scroll client can be set for a WebLayer at a time.
