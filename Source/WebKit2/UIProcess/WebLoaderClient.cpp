@@ -233,10 +233,21 @@ bool WebLoaderClient::shouldGoToBackForwardListItem(WebPageProxy* page, WebBackF
 
 void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, const String& mimeType)
 {
-    if (!m_client.didFailToInitializePlugin)
+    if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
+        m_client.didFailToInitializePlugin_deprecatedForUseWithV0(toAPI(page), toAPI(mimeType.impl()), m_client.clientInfo);
+
+    if (!m_client.pluginDidFail)
         return;
 
-    m_client.didFailToInitializePlugin(toAPI(page), toAPI(mimeType.impl()), m_client.clientInfo);
+    m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(mimeType.impl()), 0, 0, m_client.clientInfo);
+}
+
+void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const String& mimeType, const String& pluginIdentifier, const String& pluginVersion)
+{
+    if (!m_client.pluginDidFail)
+        return;
+
+    m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(mimeType.impl()), toAPI(pluginIdentifier.impl()), toAPI(pluginVersion.impl()), m_client.clientInfo);
 }
 
 } // namespace WebKit

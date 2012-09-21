@@ -287,7 +287,7 @@ bool HTMLObjectElement::hasValidClassId()
 // moved down into HTMLPluginImageElement.cpp
 void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
-    ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
+    ASSERT(!renderEmbeddedObject()->showsUnavailablePluginIndicator());
     // FIXME: We should ASSERT(needsWidgetUpdate()), but currently
     // FrameView::updateWidget() calls updateWidget(false) without checking if
     // the widget actually needs updating!

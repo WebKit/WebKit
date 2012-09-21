@@ -66,8 +66,11 @@ public:
     // Returns the info for the plug-in with the given path.
     Plugin infoForPluginWithPath(const String& pluginPath);
 
-private:
+    // Return whether this plug-in should be blocked from being instantiated.
+    // Note that the plug-in will still be seen by e.g. navigator.plugins
+    bool shouldBlockPlugin(const PluginInfoStore::Plugin&) const;
 
+private:
     Plugin findPluginForMIMEType(const String& mimeType);
     Plugin findPluginForExtension(const String& extension, String& mimeType);
 

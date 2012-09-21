@@ -122,8 +122,8 @@ private:
     virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const; // Currently only Mac has a non empty implementation.
     // End methods used by HostWindow.
 
-    virtual bool shouldMissingPluginMessageBeButton() const;
-    virtual void missingPluginButtonClicked(WebCore::Element*) const;
+    virtual bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const;
+    virtual void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const;
 
     virtual void scrollbarsModeDidChange() const;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);

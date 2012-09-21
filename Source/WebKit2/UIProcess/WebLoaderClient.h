@@ -80,6 +80,7 @@ public:
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
 
     void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
+    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& pluginIdentifier, const String& pluginVersion);
 };
 
 } // namespace WebKit

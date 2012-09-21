@@ -76,6 +76,7 @@ namespace CoreIPC {
 
 namespace WebCore {
     class GraphicsContext;
+    class HTMLPlugInElement;
     class KeyboardEvent;
     class Page;
     class PrintContext;
@@ -217,7 +218,7 @@ public:
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
-    PassRefPtr<Plugin> createPlugin(WebFrame*, const Plugin::Parameters&);
+    PassRefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&);
 
     EditorState editorState() const;
 

@@ -1,3 +1,165 @@
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r117634.
+
+    2012-05-18  Anders Carlsson  <andersca@apple.com>
+
+        Missing plugin msg becomes "insecure plugin version" after Real Player page refresh
+        https://bugs.webkit.org/show_bug.cgi?id=86903
+        <rdar://problem/11477163>
+
+        Reviewed by Andreas Kling.
+
+        Set blocked to false before returning early when the plug-in doesn't exist.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::getPluginPath):
+
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r117516.
+
+    2012-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins blacklist mechanism can tell clients about plug-in with null identifier
+        https://bugs.webkit.org/show_bug.cgi?id=86788
+        <rdar://problem/11479503>
+
+        Reviewed by John Sullivan.
+
+        Pass along the URL string of the blocked plug-in so we can find the plug-in even if there was no
+        MIME type specified in the <embed> or <object> tag.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r116993.
+
+    2012-05-14  Anders Carlsson  <andersca@apple.com>
+
+        The "plug-in was blocked" callback needs to include enough info to uniquely identify the plug-in + version
+        https://bugs.webkit.org/show_bug.cgi?id=86395
+        <rdar://problem/11447652>
+
+        Reviewed by John Sullivan.
+
+        Add the plug-in identifier and version string to the didFail client callback.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        Pass a null plug-in identifier and version here since we don't have the plug-in information here.
+
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r116716.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2: Add a way to blacklist specific plug-ins/plug-in versions
+        https://bugs.webkit.org/show_bug.cgi?id=86164
+        <rdar://problem/9551196>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKError.h:
+        Add kWKErrorCodeInsecurePlugInVersion error code.
+
+        * Shared/APIClientTraits.cpp:
+        Update now that didFailToInitializePlugin is deprecated.
+
+        * UIProcess/API/C/WKPage.h:
+        Deprecate didFailToInitializePlugin and replace it with the more generic pluginDidFail. 
+        Also, deprecate missingPluginButtonClicked and replace it with unavailablePluginButtonClicked.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::shouldBlockPlugin):
+        Non-Mac version, always return false.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldBlockPlugin):
+        Call WKShouldBlockPlugin.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::getPluginPath):
+        Check if the plug-in should be blocked.
+
+        * UIProcess/WebContext.messages.in:
+        GetPluginPath now takes an additional out parameter, a boolean that determines whether the plug-in
+        should be blocked from loading or not.
+
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        Call m_client.pluginDidFail.
+
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        Call the loader client.
+
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        Ditto.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Rename MissingPluginButtonClicked to UnavailablePluginButtonClicked and add a new DidBlockInsecurePluginVersion message.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::unavailablePluginButtonClicked):
+        Call missingPluginButtonClicked and unavailablePluginButtonClicked.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        Handle RenderEmbeddedObject::InsecurePluginVersion.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        WebPage::createPlugin now takes the plug-in element.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        If the plug-in is blocked, set the appropriate unavailability reason.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::canPluginHandleResponse):
+        Update now that GetPluginPath returns a blocked parameter as well.
+
+2012-08-20  Andy Estes  <aestes@apple.com>
+
+        Merge r116687.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename the missing plug-in indicator to the unavailable plug-in indicator
+        https://bugs.webkit.org/show_bug.cgi?id=86136
+
+        Reviewed by Sam Weinig.
+
+        Update for WebCore changes.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginProcessCrashed):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2012-07-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116381

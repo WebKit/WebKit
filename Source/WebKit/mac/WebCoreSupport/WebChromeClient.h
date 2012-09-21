@@ -102,8 +102,8 @@ public:
     virtual void setStatusbarText(const WTF::String&);
 
     virtual void scrollbarsModeDidChange() const { }
-    virtual bool shouldMissingPluginMessageBeButton() const;
-    virtual void missingPluginButtonClicked(WebCore::Element*) const;
+    virtual bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const;
+    virtual void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
     virtual void setToolTip(const WTF::String&, WebCore::TextDirection);

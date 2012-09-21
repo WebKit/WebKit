@@ -36,17 +36,19 @@ public:
     RenderEmbeddedObject(Element*);
     virtual ~RenderEmbeddedObject();
 
-    bool pluginCrashedOrWasMissing() const;
-    
-    void setShowsMissingPluginIndicator();
-    void setShowsCrashedPluginIndicator();
-    bool showsMissingPluginIndicator() const { return m_showsMissingPluginIndicator; }
+    enum PluginUnavailabilityReason {
+        PluginMissing,
+        PluginCrashed,
+        InsecurePluginVersion
+    };
+    void setPluginUnavailabilityReason(PluginUnavailabilityReason);
+    bool showsUnavailablePluginIndicator() const;
 
     // FIXME: This belongs on HTMLObjectElement.
     bool hasFallbackContent() const { return m_hasFallbackContent; }
     void setHasFallbackContent(bool hasFallbackContent) { m_hasFallbackContent = hasFallbackContent; }
 
-    void handleMissingPluginIndicatorEvent(Event*);
+    void handleUnavailablePluginIndicatorEvent(Event*);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool allowsAcceleratedCompositing() const;
@@ -71,15 +73,17 @@ private:
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Node** stopNode);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Node** stopNode);
 
-    void setMissingPluginIndicatorIsPressed(bool);
-    bool isInMissingPluginIndicator(MouseEvent*);
+    void setUnavailablePluginIndicatorIsPressed(bool);
+    bool isInUnavailablePluginIndicator(MouseEvent*);
     bool getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth);
 
-    String m_replacementText;
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.
-    bool m_showsMissingPluginIndicator;
-    bool m_missingPluginIndicatorIsPressed;
-    bool m_mouseDownWasInMissingPluginIndicator;
+
+    bool m_showsUnavailablePluginIndicator;
+    PluginUnavailabilityReason m_pluginUnavailabilityReason;
+    String m_unavailablePluginReplacementText;
+    bool m_unavailablePluginIndicatorIsPressed;
+    bool m_mouseDownWasInUnavailablePluginIndicator;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

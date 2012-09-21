@@ -51,9 +51,11 @@ enum {
     @constant WebKitErrorCannotFindPlugIn
     @constant WebKitErrorCannotLoadPlugIn
     @constant WebKitErrorJavaUnavailable
+    @constant WebKitErrorBlockedPlugInVersion
 */
 enum {
     WebKitErrorCannotFindPlugIn =                               200,
     WebKitErrorCannotLoadPlugIn =                               201,
     WebKitErrorJavaUnavailable =                                202,
+    WebKitErrorBlockedPlugInVersion =                           203,
 };

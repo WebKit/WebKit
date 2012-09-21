@@ -1,3 +1,72 @@
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r119543.
+
+    2012-06-05  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        The error constant has been renamed.
+
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r119542.
+
+    2012-06-05  Anders Carlsson  <andersca@apple.com>
+
+        Rename a plug-in loading error constant
+        https://bugs.webkit.org/show_bug.cgi?id=88381
+        <rdar://problem/11602601>
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebKitErrors.h:
+
+2012-08-20  Andy Estes  <aestes@apple.com>
+
+        Merge r116695.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit1: Add a way to blacklist specific plug-ins/plug-in versions
+        https://bugs.webkit.org/show_bug.cgi?id=86150
+        <rdar://problem/9551196>
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebKitErrors.h:
+        Add WebKitErrorInsecurePlugInVersion enum.
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage bundleIdentifier]):
+        (-[WebBasePluginPackage bundleVersion]):
+        Add bundleIdentifier and bundleVersion getters.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        Check if the plug-in is blocked. If it is, set the unavailability reason and the error code.
+
+2012-08-20  Andy Estes  <aestes@apple.com>
+
+        Merge r116687.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename the missing plug-in indicator to the unavailable plug-in indicator
+        https://bugs.webkit.org/show_bug.cgi?id=86136
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginHostDied]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebChromeClient::unavailablePluginButtonClicked):
+
 2011-02-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 106678

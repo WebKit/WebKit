@@ -1,3 +1,107 @@
+2012-08-24  Andy Estes  <aestes@apple.com>
+
+        Update Localizable.strings after merging plug-in blacklisting changes.
+
+        * English.lproj/Localizable.strings:
+
+2012-08-21  Andy Estes  <aestes@apple.com>
+
+        Merge r116794.
+
+    2012-05-11  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION(r116687): [Chromium] plugins/embed-attributes-style.html shows a garbled string
+        https://bugs.webkit.org/show_bug.cgi?id=86170
+
+        Reviewed by Andreas Kling.
+
+        The string we are passing to the TextRun constructor needs to stay alive for longer so revert back to the old
+        behavior where we store it as a member variable.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::unavailablePluginReplacementText):
+        (WebCore):
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReason):
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderEmbeddedObject.h:
+        (RenderEmbeddedObject):
+
+2012-08-20  Andy Estes  <aestes@apple.com>
+
+        Merge r116695.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit1: Add a way to blacklist specific plug-ins/plug-in versions
+        https://bugs.webkit.org/show_bug.cgi?id=86150
+        <rdar://problem/9551196>
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings:
+        Update.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        It is possible that the client has already set the unavailability reason so don't try to set it twice.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::insecurePluginVersionText):
+        * platform/LocalizedStrings.h:
+        Add insecure plug-in version text.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::unavailablePluginReplacementText):
+        * rendering/RenderEmbeddedObject.h:
+        Add InsecurePluginVersion unavailability reason.
+
+2012-08-20  Andy Estes  <aestes@apple.com>
+
+        Merge r116687.
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename the missing plug-in indicator to the unavailable plug-in indicator
+        https://bugs.webkit.org/show_bug.cgi?id=86136
+
+        Reviewed by Sam Weinig.
+
+        Since the indicator is shown for more than just missing plug-ins, generalize it and use a plug-in unavailability
+        reason enum to make it easier to extend. Also, pass the unavailability reason to the ChromeClient member functions.
+
+        * WebCore.exp.in:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebCore::ChromeClient::unavailablePluginButtonClicked):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReason):
+        (WebCore::RenderEmbeddedObject::showsUnavailablePluginIndicator):
+        (WebCore::RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed):
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        (WebCore::RenderEmbeddedObject::unavailablePluginReplacementText):
+        (WebCore):
+        (WebCore::RenderEmbeddedObject::isInUnavailablePluginIndicator):
+        (WebCore::shouldUnavailablePluginMessageBeButton):
+        (WebCore::RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent):
+        (WebCore::RenderEmbeddedObject::getCursor):
+        * rendering/RenderEmbeddedObject.h:
+        (RenderEmbeddedObject):
+
 2012-07-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116381

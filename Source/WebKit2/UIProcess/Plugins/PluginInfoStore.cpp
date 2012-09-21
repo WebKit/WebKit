@@ -173,6 +173,11 @@ static inline String pathExtension(const KURL& url)
 }
 
 #if !PLATFORM(MAC)
+bool PluginInfoStore::shouldBlockPlugin(const PluginInfoStore::Plugin&) const
+{
+    return false;
+}
+
 String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 {
     return MIMETypeRegistry::getMIMETypeForExtension(extension);
