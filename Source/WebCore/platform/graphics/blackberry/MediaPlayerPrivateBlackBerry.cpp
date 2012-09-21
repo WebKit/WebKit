@@ -400,7 +400,7 @@ void MediaPlayerPrivate::resizeSourceDimensions()
         return;
 
     // If we have an HTMLVideoElement but the source has no video, then we need to resize the media element.
-    if (!hasVideo()) {
+    if (!hasVideo() && PlatformPlayer::MediaOK == m_platformPlayer->error()) {
         LayoutRect rect = m_webCorePlayer->mediaPlayerClient()->mediaPlayerContentBoxRect();
 
         static const int playbookMinAudioElementWidth = 300;
