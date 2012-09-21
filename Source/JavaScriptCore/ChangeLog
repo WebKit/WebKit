@@ -1,3 +1,18 @@
+2012-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE assumes that a holy PutByVal does not interfere with GetArrayLength, when it clearly does
+        https://bugs.webkit.org/show_bug.cgi?id=97373
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::getArrayLengthElimination):
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.h:
+        (Graph):
+
 2012-09-21  Chris Rogers  <crogers@google.com>
 
         Add Web Audio support for deprecated/legacy APIs

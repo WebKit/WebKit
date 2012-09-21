@@ -99,6 +99,7 @@ fast/js/dfg-get-by-val-clobber
 fast/js/dfg-get-by-val-getter-cse
 fast/js/dfg-getter-throw
 fast/js/dfg-getter
+fast/js/dfg-holy-put-by-val-interferes-with-get-array-length
 fast/js/dfg-inline-arguments-become-double
 fast/js/dfg-inline-arguments-become-int32
 fast/js/dfg-inline-arguments-int32
