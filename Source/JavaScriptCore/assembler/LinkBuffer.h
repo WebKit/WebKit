@@ -287,6 +287,9 @@ private:
 #define FINALIZE_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
     FINALIZE_CODE_IF(Options::showDisassembly(), linkBufferReference, dataLogArgumentsForHeading)
 
+#define FINALIZE_DFG_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
+    FINALIZE_CODE_IF(Options::showDFGDisassembly(), linkBufferReference, dataLogArgumentsForHeading)
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

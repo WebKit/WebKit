@@ -153,6 +153,9 @@ protected:
 #define FINALIZE_CODE_FOR_STUB(patchBuffer, dataLogArguments) \
     (adoptRef(new JITStubRoutine(FINALIZE_CODE((patchBuffer), dataLogArguments))))
 
+#define FINALIZE_CODE_FOR_DFG_STUB(patchBuffer, dataLogArguments) \
+    (adoptRef(new JITStubRoutine(FINALIZE_DFG_CODE((patchBuffer), dataLogArguments))))
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

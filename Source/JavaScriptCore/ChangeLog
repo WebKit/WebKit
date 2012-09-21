@@ -1,5 +1,30 @@
 2012-09-21  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION (r128400): Opening Google Web Fonts page hangs or crashes
+        https://bugs.webkit.org/show_bug.cgi?id=97328
+
+        Reviewed by Mark Hahnenberg.
+
+        It's a bad idea to emit stub code that reallocates property storage when we're in indexed
+        storage mode. DFGRepatch.cpp knew this and had the appropriate check in one of the places,
+        but it didn't have it in all of the places.
+        
+        This change also adds some more handy disassembly support, which I used to find the bug.
+
+        * assembler/LinkBuffer.h:
+        (JSC):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::tryCachePutByID):
+        * jit/JITStubRoutine.h:
+        (JSC):
+
+2012-09-21  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE assumes that a holy PutByVal does not interfere with GetArrayLength, when it clearly does
         https://bugs.webkit.org/show_bug.cgi?id=97373
 

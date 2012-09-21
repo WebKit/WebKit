@@ -216,7 +216,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     
-    stubRoutine = FINALIZE_CODE_FOR_STUB(
+    stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
         patchBuffer,
         ("DFG prototype chain access stub for CodeBlock %p, return point %p",
          exec->codeBlock(), successLabel.executableAddress()));
@@ -277,7 +277,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
         
-        stubInfo.stubRoutine = FINALIZE_CODE_FOR_STUB(
+        stubInfo.stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
             patchBuffer,
             ("DFG GetById array length stub for CodeBlock %p, return point %p",
              exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
@@ -506,7 +506,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         
         RefPtr<JITStubRoutine> stubRoutine =
             createJITStubRoutine(
-                FINALIZE_CODE(
+                FINALIZE_DFG_CODE(
                     patchBuffer,
                     ("DFG GetById polymorphic list access for CodeBlock %p, return point %p",
                      exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
@@ -717,7 +717,7 @@ static void emitPutReplaceStub(
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             
-    stubRoutine = FINALIZE_CODE_FOR_STUB(
+    stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
         patchBuffer,
         ("DFG PutById replace stub for CodeBlock %p, return point %p",
          exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
@@ -917,9 +917,11 @@ static void emitPutTransitionStub(
     
     stubRoutine =
         createJITStubRoutine(
-            FINALIZE_CODE(
+            FINALIZE_DFG_CODE(
                 patchBuffer,
-                ("DFG PutById transition stub for CodeBlock %p, return point %p",
+                ("DFG PutById %stransition stub (%p -> %p) for CodeBlock %p, return point %p",
+                 structure->outOfLineCapacity() != oldStructure->outOfLineCapacity() ? "reallocating " : "",
+                 oldStructure, structure,
                  exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
                      stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
             *globalData,
@@ -955,6 +957,11 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             if (GPRInfo::numberOfRegisters < 6
                 && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
                 && oldStructure->outOfLineCapacity())
+                return false;
+            
+            // Skip optimizing the case where we need realloc, and the structure has
+            // indexing storage.
+            if (hasIndexingHeader(oldStructure->indexingType()))
                 return false;
             
             normalizePrototypeChain(exec, baseCell);
