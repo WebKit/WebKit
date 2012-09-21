@@ -198,8 +198,10 @@ end:
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
 
-    if (errorMessage || !TestController::shared().resetStateToConsistentValues())
+    if (errorMessage)
         dumpWebProcessUnresponsiveness(errorMessage);
+    else if (!TestController::shared().resetStateToConsistentValues())
+        dumpWebProcessUnresponsiveness("Timed out loading about:blank before the next test");
 }
 
 void TestInvocation::dumpWebProcessUnresponsiveness(const char* textToStdout)

@@ -1,3 +1,17 @@
+2012-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve WTR unresponsiveness output a little
+        https://bugs.webkit.org/show_bug.cgi?id=97370
+
+        Reviewed by Timothy Horton.
+
+        Distinguish between conditions that already set the errorMessage,
+        and unresponsiveness due to slow about:blank loads when WTR
+        reports unresponsiveness.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+
 2012-09-21  Chris Rogers  <crogers@google.com>
 
         Add Web Audio support for deprecated/legacy APIs
