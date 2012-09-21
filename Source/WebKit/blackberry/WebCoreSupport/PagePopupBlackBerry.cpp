@@ -86,7 +86,7 @@ void PagePopupBlackBerry::generateHTML(WebPage* webpage)
     int screenWidth = webpage->d->screenSize().width() - PADDING;
     source.appendLiteral("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n");
     source.append("<meta name=\"viewport\" content=\"width=" + String::number(screenWidth));
-    source.appendLiteral("; user-scalable=no\" />\n");
+    source.appendLiteral(", user-scalable=no\" />\n");
     writer->addData(source.toString().utf8().data(), source.toString().utf8().length());
 
     m_client->writeDocument(*writer);
