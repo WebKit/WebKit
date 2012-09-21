@@ -3559,5 +3559,5 @@ webkit.org/b/96962 fast/js/cross-frame-really-bad-time-with-__proto__.html [ Fai
 webkit.org/b/97179 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
 
 # The test should pass after harfbuzz transition.
-webkit.org/b/97164 [ Linux Win ] fast/text/international/hebrew-selection.html [ Failure ]
+webkit.org/b/97296 [ Linux Win ] fast/text/international/hebrew-selection.html [ Failure ]
 
