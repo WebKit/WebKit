@@ -1062,4 +1062,7 @@ webkit.org/b/96517 fast/events/popup-blocking-timers.html [ Failure ]
 # Fails after r129175.
 webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
 
+# Fail after r128393.
+webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
+webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 

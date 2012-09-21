@@ -100,10 +100,6 @@ webkit.org/b/87088 fast/js/names.html [ Failure ]
 # Failing after 125592
 webkit.org/b/94194 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Failure ]
 
-# Fail after r128393.
-webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
-webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
-
 # EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements.
 webkit.org/b/82864 fast/events/keypress-insert-tab.html [ Failure ]
 

@@ -981,6 +981,11 @@ void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame, WK
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
+    if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks()) {
+        dumpFrameDescriptionSuitableForTestResult(frame);
+        InjectedBundle::shared().stringBuilder()->appendLiteral(" - didFailLoadWithError\n");
+    }
+
     if (frame != InjectedBundle::shared().topLoadingFrame())
         return;
     InjectedBundle::shared().setTopLoadingFrame(0);
