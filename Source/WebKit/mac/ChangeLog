@@ -1,3 +1,12 @@
+2012-09-21  Chris Rogers  <crogers@google.com>
+
+        Add Web Audio support for deprecated/legacy APIs
+        https://bugs.webkit.org/show_bug.cgi?id=97050
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-09-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac part of adding a setting and API for disabling screen font substitution

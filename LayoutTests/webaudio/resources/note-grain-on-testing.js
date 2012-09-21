@@ -83,7 +83,7 @@ function playGrain(context, source, time, offset, duration) {
 
     bufferSource.buffer = source;
     bufferSource.connect(context.destination);
-    bufferSource.noteGrainOn(time, offset, duration);
+    bufferSource.start(time, offset, duration);
 }
 
 // Play out all grains.  Returns a object containing two arrays, one

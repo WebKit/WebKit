@@ -50,8 +50,14 @@ module audio {
         readonly attribute AudioParam frequency; // in Hertz
         readonly attribute AudioParam detune; // in Cents
 
+        void start(in double when);
+        void stop(in double when);
+
+#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
         void noteOn(in double when);
         void noteOff(in double when);
+#endif
+
         void setWaveTable(in WaveTable waveTable);
 
     };

@@ -91,6 +91,7 @@ my (
     $javascriptDebuggerSupport,
     $legacyNotificationsSupport,
     $legacyVendorPrefixSupport,
+    $legacyWebAudioSupport,
     $legacyWebKitBlobBuilderSupport,
     $linkPrefetchSupport,
     $linkPrerenderSupport,
@@ -287,6 +288,9 @@ my @features = (
 
     { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKit Blob Builder support",
       define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$legacyWebKitBlobBuilderSupport },
+
+    { option => "legacy-web-audio", desc => "Toggle Legacy Web Audio support",
+      define => "ENABLE_LEGACY_WEB_AUDIO", default => 1, value => \$legacyWebAudioSupport },
 
     { option => "link-prefetch", desc => "Toggle Link Prefetch support",
       define => "ENABLE_LINK_PREFETCH", default => (isGtk() || isEfl()), value => \$linkPrefetchSupport },

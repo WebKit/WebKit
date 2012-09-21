@@ -128,7 +128,7 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize,
     return;
 }
 
-void AudioScheduledSourceNode::noteOn(double when)
+void AudioScheduledSourceNode::start(double when)
 {
     ASSERT(isMainThread());
     if (m_playbackState != UNSCHEDULED_STATE)
@@ -138,7 +138,7 @@ void AudioScheduledSourceNode::noteOn(double when)
     m_playbackState = SCHEDULED_STATE;
 }
 
-void AudioScheduledSourceNode::noteOff(double when)
+void AudioScheduledSourceNode::stop(double when)
 {
     ASSERT(isMainThread());
     if (!(m_playbackState == SCHEDULED_STATE || m_playbackState == PLAYING_STATE))
@@ -147,6 +147,18 @@ void AudioScheduledSourceNode::noteOff(double when)
     when = max(0.0, when);
     m_endTime = when;
 }
+
+#if ENABLE(LEGACY_WEB_AUDIO)
+void AudioScheduledSourceNode::noteOn(double when)
+{
+    start(when);
+}
+
+void AudioScheduledSourceNode::noteOff(double when)
+{
+    stop(when);
+}
+#endif
 
 void AudioScheduledSourceNode::finish()
 {

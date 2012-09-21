@@ -43,7 +43,7 @@ function finishedLoading(bufferList) {
     bufferSource.buffer = bufferList[0];
     
     bufferSource.connect(context.destination);
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = finishAudioTest;
     context.startRendering();    

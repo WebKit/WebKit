@@ -1,3 +1,12 @@
+2012-09-21  Chris Rogers  <crogers@google.com>
+
+        Add Web Audio support for deprecated/legacy APIs
+        https://bugs.webkit.org/show_bug.cgi?id=97050
+
+        Reviewed by Eric Carlson.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Bail out when trying to build WebKit with Qt != 5

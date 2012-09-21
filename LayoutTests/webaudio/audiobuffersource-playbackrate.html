@@ -55,8 +55,8 @@ function playNote(time, duration, playbackRate) {
 
     // Loop and play for the given duration.
     source.loop = true;
-    source.noteOn(time);
-    source.noteOff(time + duration);
+    source.start(time);
+    source.stop(time + duration);
     
     // Apply quick fade-in and fade-out to avoid clicks.
     gainNode.gain.value = 0;
