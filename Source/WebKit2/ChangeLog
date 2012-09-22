@@ -1,3 +1,24 @@
+2012-09-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        fast/dom/Geolocation/disconnected-frame.html test asserts
+        https://bugs.webkit.org/show_bug.cgi?id=97376
+
+        Reviewed by Alexey Proskuryakov.
+
+        In GeolocationPermissionRequestManager::cancelRequestForGeolocation, we access an iterator
+        after its value has been removed from the table.
+        There are two problems with that:
+        -The iterator is no longer valid after the container has been modified.
+        -If it was the last element, the table has been freed and the iterator points to deleted memory.
+
+        We solve the issue by keeping a copy of the ID. We could have inverted the order of the calls
+        but that would make the issue less visible for future change.
+
+        Testing covered by fast/dom/Geolocation/disconnected-frame.html.
+
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::cancelRequestForGeolocation):
+
 2012-09-21  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r120361) Warnings while preprocessing com.apple.WebProcess.sb.in

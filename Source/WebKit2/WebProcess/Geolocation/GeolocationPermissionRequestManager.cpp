@@ -73,8 +73,9 @@ void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocatio
     if (it == m_geolocationToIDMap.end())
         return;
 
+    uint64_t geolocationID = it->second;
     m_geolocationToIDMap.remove(it);
-    m_idToGeolocationMap.remove(it->second);
+    m_idToGeolocationMap.remove(geolocationID);
 }
 
 void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
