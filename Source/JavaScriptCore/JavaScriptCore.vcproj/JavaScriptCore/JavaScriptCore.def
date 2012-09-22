@@ -222,7 +222,6 @@ EXPORTS
     ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?grow@HandleSet@JSC@@AAEXXZ
     ?growOutOfLineStorage@JSObject@JSC@@QAEPAVButterfly@2@AAVJSGlobalData@2@II@Z
-    ?hasInstance@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VJSValue@2@2@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@VPropertyName@2@@Z
     ?hashSlowCase@StringImpl@WTF@@ABEIXZ

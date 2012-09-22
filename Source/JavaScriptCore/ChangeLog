@@ -1,5 +1,11 @@
 2012-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Unreviewed windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         instanceof should not get the prototype for non-default HasInstance
         https://bugs.webkit.org/show_bug.cgi?id=68656
 
