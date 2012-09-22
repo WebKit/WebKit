@@ -53,7 +53,7 @@
     testcases[tc++] = new TestCase(
         SECTION,
         "eval(\"function f(){}function g(){}\")",
-        "error",
+        undefined,
         eval("function f(){}function g(){}") );
 
     test();

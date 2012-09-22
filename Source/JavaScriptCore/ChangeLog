@@ -1,5 +1,20 @@
 2012-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Pedantic test in Mozilla's JavaScript test suite fails. function-001.js function-001-n.js
+        https://bugs.webkit.org/show_bug.cgi?id=27219
+
+        Reviewed by Sam Weinig.
+
+        These tests are just wrong.
+        See ECMA 262 A.5, FunctionDelcaration does not require a semicolon.
+
+        * tests/mozilla/expected.html:
+        * tests/mozilla/js1_2/function/function-001-n.js:
+        * tests/mozilla/js1_3/Script/function-001-n.js:
+        * tests/mozilla/js1_3/regress/function-001-n.js:
+
+2012-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         Remove redundant argument to op_instanceof
         https://bugs.webkit.org/show_bug.cgi?id=97382
 
