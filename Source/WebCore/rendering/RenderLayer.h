@@ -938,6 +938,8 @@ protected:
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;
+    bool m_updatingMarqueePosition : 1;
+
 #if !ASSERT_DISABLED
     bool m_layerListMutationAllowed : 1;
 #endif
