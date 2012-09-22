@@ -1,3 +1,17 @@
+2012-09-21  Sam Weinig  <sam@webkit.org>
+
+        WebProcess XPC services need have their environment set without disrupting all other XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=95161
+
+        Reviewed by Anders Carlsson.
+
+        Remove setting the __XPC_* environment variables.
+
+        * Scripts/webkitdirs.pm:
+        (setUpGuardMallocIfNeeded):
+        (runMacWebKitApp):
+        (execMacWebKitAppForDebugging):
+
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo in additional-platform-directory patch just landed

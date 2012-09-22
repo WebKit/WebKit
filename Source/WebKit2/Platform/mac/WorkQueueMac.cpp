@@ -110,6 +110,8 @@ private:
 
 void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEventType eventType, const Function<void()>& function)
 {
+    ASSERT(machPort != MACH_PORT_NULL);
+
     dispatch_source_type_t sourceType = 0;
     switch (eventType) {
     case MachPortDataAvailable:
@@ -144,7 +146,7 @@ void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEvent
 
 void WorkQueue::unregisterMachPortEventHandler(mach_port_t machPort)
 {
-    ASSERT(machPort);
+    ASSERT(machPort != MACH_PORT_NULL);
     
     MutexLocker locker(m_eventSourcesMutex);
     

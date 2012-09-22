@@ -25,7 +25,7 @@
 
 GCC_ENABLE_OBJC_GC = NO;
 PRODUCT_NAME = com.apple.WebKit2.$(TARGET_NAME:rfc1034identifier);
-INFOPLIST_FILE = WebKit2Service/Info.plist;
+INFOPLIST_FILE = WebProcessServiceForWebKitDevelopment/Info.plist;
 INSTALL_PATH = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework;
 
 APP_ICON = $(APP_ICON_$(CONFIGURATION));

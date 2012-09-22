@@ -1,3 +1,64 @@
+2012-09-21  Sam Weinig  <sam@webkit.org>
+
+        WebProcess XPC services need have their environment set without disrupting all other XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=95161
+
+        Reviewed by Anders Carlsson.
+
+        Replace the WebKit2Service with two new XPC services, the WebProcessService, which is only used
+        when installed on the system, and the WebProcessServiceForWebKitDevelopment which is used at all
+        other times. We need both services because XPC can't in general be configured to have a custom
+        environment at runtime, and thus WebProcessServiceForWebKitDevelopment has the ability to re-exec
+        itself into a desired state. That capability is rather undesirable for installed usage, where we
+        don't want to allow arbitrary changes to the environment of the service, which would allow breaking
+        the App Sandbox.
+
+        * Configurations/WebProcessService.xcconfig: Copied from Source/WebKit2/Configurations/WebKit2Service.xcconfig.
+        * Configurations/WebProcessServiceForWebKitDevelopment.xcconfig: Renamed from Source/WebKit2/Configurations/WebKit2Service.xcconfig.
+        Add new configuration files.
+
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::registerMachPortEventHandler):
+        (WorkQueue::unregisterMachPortEventHandler):
+        Add helpful assertions. Without them, we confusingly crash a bit later in HashTable code.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::addDYLDEnvironmentAdditions):
+        Factor out environment additions to this helper function.
+
+        (WebKit::connectToWebProcessServiceForWebKitDevelopment):
+        (WebKit::createWebProcessServiceForWebKitDevelopment):
+        Add functionality to setup the webkit development service via re-exec.
+
+        (WebKit::createWebProcessService):
+        Add functionality to connect to the installed WebProcess service.
+        
+        (WebKit::createProcess):
+        Factor out posix_spawn based launching into this helper function.
+
+        (WebKit::ProcessLauncher::launchProcess):
+        Call the correct process creation function based on launch data and install state.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files to the project.
+
+        * WebProcess/mac/WebProcessServiceEntryPoints.h: Renamed from Source/WebKit2/WebProcess/mac/WebProcessXPCServiceMain.h.
+        * WebProcess/mac/WebProcessServiceEntryPoints.mm: Renamed from Source/WebKit2/WebProcess/mac/WebProcessXPCServiceMain.mm.
+        (WebKit::WebProcessServiceEventHandler):
+        (WebProcessServiceMain):
+        (InitializeWebProcessForWebProcessServiceForWebKitDevelopment):
+        Rename to WebProcessServiceEntryPoints since this is now used for both the WebProcessService and the 
+        WebProcessServiceForWebKitDevelopment.
+    
+        * WebProcessService/Info.plist: Copied from Source/WebKit2/WebKit2Service/Info.plist.
+        * WebProcessService/WebProcessServiceMain.mm: Renamed from Source/WebKit2/WebKit2Service/MainMacService.mm.
+        Add main for the WebProcessService which just calls into the WebProcessServiceEntryPoints in WebKit2.framework.
+
+        * WebProcessServiceForWebKitDevelopment/Info.plist: Renamed from Source/WebKit2/WebKit2Service/Info.plist.
+        * WebProcessServiceForWebKitDevelopment/WebProcessServiceForWebKitDevelopmentMain.mm: Added.
+        Add main for the WebProcessServiceForWebKitDevelopment, which can't just call directly into WebProcessServiceEntryPoints
+        as the framework path might not be set up correctly. This is also where we re-exec ourselves when required.
+
 2012-09-21  Anders Carlsson  <andersca@apple.com>
 
         Fix WebKit2 sandbox profile.

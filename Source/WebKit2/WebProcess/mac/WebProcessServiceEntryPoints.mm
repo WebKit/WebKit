@@ -24,9 +24,12 @@
  */
 
 #import "config.h"
-#import "WebProcessXPCServiceMain.h"
+#import "WebProcessServiceEntryPoints.h"
 
 #if HAVE(XPC)
+
+#import "EnvironmentUtilities.h"
+#import "WebProcessInitialization.h"
 
 #import "EnvironmentUtilities.h"
 #import "WebProcessInitialization.h"
@@ -38,7 +41,7 @@ extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 
 namespace WebKit {
 
-static void WebKit2ServiceEventHandler(xpc_connection_t peer)
+static void WebProcessServiceEventHandler(xpc_connection_t peer)
 {
     xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
@@ -67,14 +70,23 @@ static void WebKit2ServiceEventHandler(xpc_connection_t peer)
 
 } // namespace WebKit
 
-int WebProcessXPCServiceMain(int argc, char** argv)
+int WebProcessServiceMain(int argc, char** argv)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
     WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
-    xpc_main(WebKit::WebKit2ServiceEventHandler);
+    xpc_main(WebKit::WebProcessServiceEventHandler);
     return 0;
+}
+
+void InitializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort)
+{
+    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // the WebProcess don't try to insert the shim and crash.
+    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+
+    WebKit::InitializeWebProcess(String(clientIdentifer), CoreIPC::Connection::Identifier(serverPort, connection));
 }
 
 #endif // HAVE(XPC)

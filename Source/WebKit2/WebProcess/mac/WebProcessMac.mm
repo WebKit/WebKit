@@ -203,10 +203,12 @@ void WebProcess::initializeSandbox(const String& clientIdentifier)
     setenv("TMPDIR", temporaryDirectory, 1);
 #endif
 
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+
     Vector<const char*> sandboxParameters;
 
     // These are read-only.
-    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent]);
+    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
 
     // These are read-write getconf paths.
     appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
@@ -217,7 +219,7 @@ void WebProcess::initializeSandbox(const String& clientIdentifier)
 
     sandboxParameters.append(static_cast<const char*>(0));
 
-    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] fileSystemRepresentation];
+    const char* profilePath = [[webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"] fileSystemRepresentation];
 
     char* errorBuf;
     if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParameters.data(), &errorBuf)) {

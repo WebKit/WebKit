@@ -27,11 +27,11 @@
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
-#import "WebProcessXPCServiceMain.h"
+#import "WebProcessServiceEntryPoints.h"
 
 int main(int argc, char** argv)
 {
-    return WebProcessXPCServiceMain(argc, argv);
+    return WebProcessServiceMain(argc, argv);
 }
 
 #else

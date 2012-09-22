@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessXPCServiceMain_h
-#define WebProcessXPCServiceMain_h
+#ifndef WebProcessServiceEntryPoints_h
+#define WebProcessServiceEntryPoints_h
 
 #if HAVE(XPC)
 
@@ -34,7 +34,14 @@
 extern "C" {
 #endif
 
-WK_EXPORT int WebProcessXPCServiceMain(int argc, char** argv);
+// This entry point is used for the installed WebProcessService, which does not
+// need to be re-execed, or mess around with DYLD.
+WK_EXPORT int WebProcessServiceMain(int argc, char** argv);
+
+// This entry point is used for the WebProcessServiceForWebKitDevelopment
+// which needs to be re-exec, and can't link directly to WebKit2 requiring
+// some DYLD fiddling.
+WK_EXPORT void InitializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort);
 
 #ifdef __cplusplus
 }; // extern "C"
@@ -42,4 +49,4 @@ WK_EXPORT int WebProcessXPCServiceMain(int argc, char** argv);
 
 #endif // HAVE(XPC)
 
-#endif // WebProcessXPCServiceMain_h
+#endif // WebProcessServiceEntryPoints_h
