@@ -873,8 +873,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_check_has_instance: {
-            int base = (++it)->u.operand;
-            dataLog("[%4d] check_has_instance\t\t %s", location, registerName(exec, base).data());
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            dataLog("[%4d] check_has_instance\t\t %s, %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data(), offset, location + offset);
             dumpBytecodeCommentAndNewLine(location);
             break;
         }

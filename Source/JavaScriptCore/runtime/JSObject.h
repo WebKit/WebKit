@@ -306,7 +306,8 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-        JS_EXPORT_PRIVATE static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
+        bool hasInstance(ExecState*, JSValue);
+        static bool defaultHasInstance(ExecState*, JSValue, JSValue prototypeProperty);
 
         JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);

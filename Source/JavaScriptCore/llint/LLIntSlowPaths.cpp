@@ -718,19 +718,28 @@ LLINT_SLOW_PATH_DECL(slow_path_bitxor)
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
 {
     LLINT_BEGIN();
-    JSValue baseVal = LLINT_OP_C(1).jsValue();
-#ifndef NDEBUG
-    TypeInfo typeInfo(UnspecifiedType);
-    ASSERT(!baseVal.isObject()
-           || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance());
-#endif
+    
+    JSValue value = LLINT_OP_C(2).jsValue();
+    JSValue baseVal = LLINT_OP_C(3).jsValue();
+    if (baseVal.isObject()) {
+        JSObject* baseObject = asObject(baseVal);
+        ASSERT(!baseObject->structure()->typeInfo().implementsDefaultHasInstance());
+        if (baseObject->structure()->typeInfo().implementsHasInstance()) {
+            pc += pc[4].u.operand;
+            LLINT_RETURN(jsBoolean(baseObject->methodTable()->customHasInstance(baseObject, exec, value)));
+        }
+    }
     LLINT_THROW(createInvalidParamError(exec, "instanceof", baseVal));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_instanceof)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsBoolean(CommonSlowPaths::opInstanceOfSlow(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue())));
+    JSValue value = LLINT_OP_C(2).jsValue();
+    JSValue proto = LLINT_OP_C(4).jsValue();
+    ASSERT(LLINT_OP_C(3).jsValue().isObject() && asObject(LLINT_OP_C(3).jsValue())->structure()->typeInfo().implementsDefaultHasInstance());
+    ASSERT(!value.isObject() || !proto.isObject());
+    LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_typeof)

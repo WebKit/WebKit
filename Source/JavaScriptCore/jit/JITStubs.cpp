@@ -1937,21 +1937,27 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_string_fail)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(void, op_check_has_instance)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_check_has_instance)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue baseVal = stackFrame.args[0].jsValue();
+    JSValue value = stackFrame.args[0].jsValue();
+    JSValue baseVal = stackFrame.args[1].jsValue();
 
-    // ECMA-262 15.3.5.3:
-    // Throw an exception either if baseVal is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
-#ifndef NDEBUG
-    TypeInfo typeInfo(UnspecifiedType);
-    ASSERT(!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance());
-#endif
+    if (baseVal.isObject()) {
+        JSObject* baseObject = asObject(baseVal);
+        ASSERT(!baseObject->structure()->typeInfo().implementsDefaultHasInstance());
+        if (baseObject->structure()->typeInfo().implementsHasInstance()) {
+            bool result = baseObject->methodTable()->customHasInstance(baseObject, callFrame, value);
+            CHECK_FOR_EXCEPTION_AT_END();
+            return JSValue::encode(jsBoolean(result));
+        }
+    }
+
     stackFrame.globalData->exception = createInvalidParamError(callFrame, "instanceof", baseVal);
     VM_THROW_EXCEPTION_AT_END();
+    return JSValue::encode(JSValue());
 }
 
 #if ENABLE(DFG_JIT)
@@ -2082,10 +2088,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue value = stackFrame.args[0].jsValue();
-    JSValue baseVal = stackFrame.args[1].jsValue();
     JSValue proto = stackFrame.args[2].jsValue();
     
-    bool result = CommonSlowPaths::opInstanceOfSlow(callFrame, value, baseVal, proto);
+    ASSERT(stackFrame.args[1].jsValue().isObject() && asObject(stackFrame.args[1].jsValue())->structure()->typeInfo().implementsDefaultHasInstance());
+    ASSERT(!value.isObject() || !proto.isObject());
+
+    bool result = JSObject::defaultHasInstance(callFrame, value, proto);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(jsBoolean(result));
 }

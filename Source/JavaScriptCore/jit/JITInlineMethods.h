@@ -552,6 +552,7 @@ inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndI
 #if ENABLE(VALUE_PROFILER)
     emitArrayProfilingSite(structureAndIndexingType, scratch, m_codeBlock->getOrAddArrayProfile(bytecodeIndex));
 #else
+    UNUSED_PARAM(bytecodeIndex);
     emitArrayProfilingSite(structureAndIndexingType, scratch, 0);
 #endif
 }

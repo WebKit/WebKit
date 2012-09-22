@@ -691,26 +691,19 @@ _llint_op_bitor:
 
 _llint_op_check_has_instance:
     traceExecution()
-    loadis 8[PB, PC, 8], t1
+    loadis 24[PB, PC, 8], t1
     loadConstantOrVariableCell(t1, t0, .opCheckHasInstanceSlow)
     loadp JSCell::m_structure[t0], t0
-    btbz Structure::m_typeInfo + TypeInfo::m_flags[t0], ImplementsHasInstance, .opCheckHasInstanceSlow
-    dispatch(2)
+    btbz Structure::m_typeInfo + TypeInfo::m_flags[t0], ImplementsDefaultHasInstance, .opCheckHasInstanceSlow
+    dispatch(5)
 
 .opCheckHasInstanceSlow:
     callSlowPath(_llint_slow_path_check_has_instance)
-    dispatch(2)
+    dispatch(0)
 
 
 _llint_op_instanceof:
     traceExecution()
-    # Check that baseVal implements the default HasInstance behavior.
-    # FIXME: This should be deprecated.
-    loadis 24[PB, PC, 8], t1
-    loadConstantOrVariable(t1, t0)
-    loadp JSCell::m_structure[t0], t0
-    btbz Structure::m_typeInfo + TypeInfo::m_flags[t0], ImplementsDefaultHasInstance, .opInstanceofSlow
-    
     # Actually do the work.
     loadis 32[PB, PC, 8], t0
     loadis 8[PB, PC, 8], t3

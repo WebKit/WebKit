@@ -199,7 +199,7 @@ void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, Enumera
     ASSERT_NOT_REACHED();
 }
 
-bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
+bool JSCell::customHasInstance(JSObject*, ExecState*, JSValue)
 {
     ASSERT_NOT_REACHED();
     return false;

@@ -1457,10 +1457,14 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
     return ResolveResult::dynamicResolve(scopeDepth());
 }
 
-void BytecodeGenerator::emitCheckHasInstance(RegisterID* base)
-{ 
+void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value, RegisterID* base, Label* target)
+{
+    size_t begin = instructions().size();
     emitOpcode(op_check_has_instance);
+    instructions().append(dst->index());
+    instructions().append(value->index());
     instructions().append(base->index());
+    instructions().append(target->bind(begin, instructions().size()));
 }
 
 RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base, RegisterID* basePrototype)

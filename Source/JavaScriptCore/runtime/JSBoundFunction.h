@@ -39,7 +39,7 @@ public:
 
     static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
 
-    static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
+    static bool customHasInstance(JSObject*, ExecState*, JSValue);
 
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }

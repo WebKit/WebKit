@@ -2049,7 +2049,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_check_has_instance:
-            addToGraph(CheckHasInstance, get(currentInstruction[1].u.operand));
+            addToGraph(CheckHasInstance, get(currentInstruction[3].u.operand));
             NEXT_OPCODE(op_check_has_instance);
 
         case op_instanceof: {

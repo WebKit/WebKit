@@ -160,7 +160,7 @@ namespace JSC {
         static NO_RETURN_DUE_TO_ASSERT void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static String className(const JSObject*);
-        static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
+        JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);
         static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
         static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);

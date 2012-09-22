@@ -350,6 +350,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_call_eval(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+    EncodedJSValue JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
@@ -431,7 +432,6 @@ extern "C" {
     void* JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    void JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_end(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_jmp_scopes(STUB_ARGS_DECLARATION) WTF_INTERNAL;

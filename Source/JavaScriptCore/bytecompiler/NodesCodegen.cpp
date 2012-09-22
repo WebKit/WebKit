@@ -1088,15 +1088,20 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 {
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
     RefPtr<RegisterID> src2 = generator.emitNode(m_expr2);
+    RefPtr<RegisterID> prototype = generator.newTemporary();
+    RefPtr<RegisterID> dstReg = generator.finalDestination(dst, src1.get());
+    RefPtr<Label> target = generator.newLabel();
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitCheckHasInstance(src2.get());
+    generator.emitCheckHasInstance(dstReg.get(), src1.get(), src2.get(), target.get());
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* src2Prototype = generator.emitGetById(generator.newTemporary(), src2.get(), generator.globalData()->propertyNames->prototype);
+    generator.emitGetById(prototype.get(), src2.get(), generator.globalData()->propertyNames->prototype);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    return generator.emitInstanceOf(generator.finalDestination(dst, src1.get()), src1.get(), src2.get(), src2Prototype);
+    RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), src2.get(), prototype.get());
+    generator.emitLabel(target.get());
+    return result;
 }
 
 // ------------------------------ LogicalOpNode ----------------------------

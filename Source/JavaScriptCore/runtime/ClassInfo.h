@@ -81,8 +81,8 @@ namespace JSC {
         typedef String (*ClassNameFunctionPtr)(const JSObject*);
         ClassNameFunctionPtr className;
 
-        typedef bool (*HasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue, JSValue);
-        HasInstanceFunctionPtr hasInstance;
+        typedef bool (*CustomHasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue);
+        CustomHasInstanceFunctionPtr customHasInstance;
 
         typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, PropertyName propertyName, JSValue, unsigned attributes);
         PutWithAttributesFunctionPtr putDirectVirtual;
@@ -130,7 +130,7 @@ struct MemberCheck##member { \
         &ClassName::getOwnNonIndexPropertyNames, \
         &ClassName::getPropertyNames, \
         &ClassName::className, \
-        &ClassName::hasInstance, \
+        &ClassName::customHasInstance, \
         &ClassName::putDirectVirtual, \
         &ClassName::defineOwnProperty, \
         &ClassName::getOwnPropertyDescriptor, \

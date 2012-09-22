@@ -1,3 +1,106 @@
+2012-09-21  Gavin Barraclough  <barraclough@apple.com>
+
+        instanceof should not get the prototype for non-default HasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=68656
+
+        Reviewed by Oliver Hunt.
+
+        Instanceof is currently implemented as a sequance of three opcodes:
+            check_has_instance
+            get_by_id(prototype)
+            op_instanceof
+        There are three interesting types of base value that instanceof can be applied to:
+            (A) Objects supporting default instanceof behaviour (functions, other than those created with bind)
+            (B) Objects overriding the default instancecof behaviour with a custom one (API objects, bound functions)
+            (C) Values that do not respond to the [[HasInstance]] trap.
+        Currently check_has_instance handles case (C), leaving the op_instanceof opcode to handle (A) & (B). There are
+        two problems with this apporach. Firstly, this is suboptimal for case (A), since we have to check for
+        hasInstance support twice (once in check_has_instance, then for default behaviour in op_instanceof). Secondly,
+        this means that in cases (B) we also perform the get_by_id, which is both suboptimal and an observable spec
+        violation.
+
+        The fix here is to move handing of non-default instanceof (cases (B)) to the check_has_instance op, leaving
+        op_instanceof to handle only cases (A).
+
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::customHasInstance):
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor):
+            - renamed hasInstance to customHasInstance
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+            - added additional parameters to check_has_instance opcode
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+            - added additional parameters to check_has_instance opcode
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCheckHasInstance):
+            - added additional parameters to check_has_instance opcode
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+            - added additional parameters to check_has_instance opcode
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+            - added additional parameters to check_has_instance opcode
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+            - added additional parameters to check_has_instance opcode
+        * interpreter/Interpreter.cpp:
+        (JSC::isInvalidParamForIn):
+        (JSC::Interpreter::privateExecute):
+            - Add handling for non-default instanceof to op_check_has_instance
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitArrayProfilingSiteForBytecodeIndex):
+            - Fixed no-LLInt no_DFG build
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+            - check for ImplementsDefaultHasInstance, handle additional arguments to op_check_has_instance.
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+            - no need to check for ImplementsDefaultHasInstance.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+            - check for ImplementsDefaultHasInstance, handle additional arguments to op_check_has_instance.
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+            - no need to check for ImplementsDefaultHasInstance.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+            - Add handling for non-default instanceof to op_check_has_instance
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+            - move check for ImplementsDefaultHasInstance, handle additional arguments to op_check_has_instance.
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        (JSC):
+            - renamed hasInstance to customHasInstance
+        * runtime/CommonSlowPaths.h:
+        (CommonSlowPaths):
+            - removed opInstanceOfSlow (this was whittled down to one function call!)
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::customHasInstance):
+        * runtime/JSBoundFunction.h:
+        (JSBoundFunction):
+            - renamed hasInstance to customHasInstance, reimplemented.
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::customHasInstance):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        (JSC):
+        (JSC::JSObject::defaultHasInstance):
+        * runtime/JSObject.h:
+        (JSObject):
+
 2012-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix ARM build.

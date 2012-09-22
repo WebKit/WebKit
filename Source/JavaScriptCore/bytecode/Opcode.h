@@ -84,7 +84,7 @@ namespace JSC {
         macro(op_bitxor, 5) \
         macro(op_bitor, 5) \
         \
-        macro(op_check_has_instance, 2) \
+        macro(op_check_has_instance, 5) \
         macro(op_instanceof, 5) \
         macro(op_typeof, 3) \
         macro(op_is_undefined, 3) \

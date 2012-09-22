@@ -783,7 +783,18 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, PropertyName p
     return 0;
 }
 
-bool JSObject::hasInstance(JSObject*, ExecState* exec, JSValue value, JSValue proto)
+bool JSObject::hasInstance(ExecState* exec, JSValue value)
+{
+    TypeInfo info = structure()->typeInfo();
+    if (info.implementsDefaultHasInstance())
+        return defaultHasInstance(exec, value, get(exec, exec->propertyNames().prototype));
+    if (info.implementsHasInstance())
+        return methodTable()->customHasInstance(this, exec, value);
+    throwError(exec, createInvalidParamError(exec, "instanceof" , this));
+    return false;
+}
+
+bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
 {
     if (!value.isObject())
         return false;

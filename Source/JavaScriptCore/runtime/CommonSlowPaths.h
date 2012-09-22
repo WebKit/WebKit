@@ -75,28 +75,6 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFi
     return newExec;
 }
 
-ALWAYS_INLINE bool opInstanceOfSlow(ExecState* exec, JSValue value, JSValue baseVal, JSValue proto)
-{
-    ASSERT(!value.isCell() || !baseVal.isCell() || !proto.isCell()
-           || !value.isObject() || !baseVal.isObject() || !proto.isObject() 
-           || !asObject(baseVal)->structure()->typeInfo().implementsDefaultHasInstance());
-
-
-    // ECMA-262 15.3.5.3:
-    // Throw an exception either if baseVal is not an object, or if it does not implement 'HasInstance' (i.e. is a function).
-    TypeInfo typeInfo(UnspecifiedType);
-    if (!baseVal.isObject() || !(typeInfo = asObject(baseVal)->structure()->typeInfo()).implementsHasInstance()) {
-        exec->globalData().exception = createInvalidParamError(exec, "instanceof", baseVal);
-        return false;
-    }
-    ASSERT(typeInfo.type() != UnspecifiedType);
-
-    if (!typeInfo.overridesHasInstance() && !value.isObject())
-        return false;
-
-    return asObject(baseVal)->methodTable()->hasInstance(asObject(baseVal), exec, value, proto);
-}
-
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 {
     if (!baseVal.isObject()) {

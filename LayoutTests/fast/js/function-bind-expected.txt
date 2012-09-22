@@ -26,7 +26,7 @@ PASS abcAt(1) is "b"
 PASS new abcAt(1) threw exception TypeError: 'function charAt() {
     [native code]
 }' is not a constructor (evaluating 'new abcAt(1)').
-FAIL boundFunctionPrototypeAccessed should be false. Was true.
+PASS boundFunctionPrototypeAccessed is false
 PASS Function.bind.length is 1
 PASS successfullyParsed is true
 
