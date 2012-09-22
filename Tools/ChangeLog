@@ -1,5 +1,27 @@
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: don't require additional-platform-directory to be an abspath or live under LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=97380
+
+        Reviewed by Ojan Vafai.
+
+        There doesn't seem to be a good reason for this restriction and
+        it's useful to be able to point to directories outside the
+        checkout for results (e.g., for local failures due to a 10.7.4
+        install ;).
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.relative_test_filename):
+        (Port.relative_perf_test_filename):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_additional_platform_directory):
+
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: drop support for old TestExpectations syntax
         https://bugs.webkit.org/show_bug.cgi?id=97364
 

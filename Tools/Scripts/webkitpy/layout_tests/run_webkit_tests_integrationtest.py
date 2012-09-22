@@ -851,9 +851,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo', '--additional-platform-directory', '/tmp/bar']))
-
-        res, buildbot_output, regular_output, user = logging_run(['--additional-platform-directory', 'foo'])
-        self.assertContains(regular_output, '--additional-platform-directory=foo is ignored since it is not absolute\n')
+        self.assertTrue(passing_run(['--additional-platform-directory', 'foo']))
 
     def test_additional_expectations(self):
         host = MockHost()

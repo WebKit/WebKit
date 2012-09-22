@@ -663,6 +663,7 @@ class ChromiumAndroidDriver(driver.Driver):
         if command.startswith('/'):
             # Convert the host file path to a device file path. See comment of
             # DEVICE_LAYOUT_TESTS_DIR for details.
+            # FIXME: what happens if command lies outside of the layout_tests_dir on the host?
             command = DEVICE_LAYOUT_TESTS_DIR + self._port.relative_test_filename(command)
         return command
 

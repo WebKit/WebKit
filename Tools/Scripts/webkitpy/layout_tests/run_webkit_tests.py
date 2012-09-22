@@ -142,13 +142,10 @@ def _set_up_derived_options(port, options):
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 
     if options.additional_platform_directory:
-        normalized_platform_directories = []
+        additional_platform_directories = []
         for path in options.additional_platform_directory:
-            if not port.host.filesystem.isabs(path):
-                warnings.append("--additional-platform-directory=%s is ignored since it is not absolute" % path)
-                continue
-            normalized_platform_directories.append(port.host.filesystem.normpath(path))
-        options.additional_platform_directory = normalized_platform_directories
+            additional_platform_directories.append(port.host.filesystem.abspath(path))
+        options.additional_platform_directory = additional_platform_directories
 
     if not options.http and options.skipped in ('ignore', 'only'):
         warnings.append("--force/--skipped=%s overrides --no-http." % (options.skipped))

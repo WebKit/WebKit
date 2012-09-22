@@ -786,17 +786,20 @@ class Port(object):
         return self._filesystem.join(self._webkit_baseline_path(port_name), 'TestExpectations')
 
     def relative_test_filename(self, filename):
-        """Returns a test_name a realtive unix-style path for a filename under the LayoutTests
-        directory. Filenames outside the LayoutTests directory should raise
-        an error."""
+        """Returns a test_name a relative unix-style path for a filename under the LayoutTests
+        directory. Ports may legitimately return abspaths here if no relpath makes sense."""
         # Ports that run on windows need to override this method to deal with
         # filenames with backslashes in them.
-        assert filename.startswith(self.layout_tests_dir()), "%s did not start with %s" % (filename, self.layout_tests_dir())
-        return filename[len(self.layout_tests_dir()) + 1:]
+        if filename.startswith(self.layout_tests_dir()):
+            return self.host.filesystem.relpath(filename, self.layout_tests_dir())
+        else:
+            return self.filesystem.abspath(filename)
 
     def relative_perf_test_filename(self, filename):
-        assert filename.startswith(self.perf_tests_dir()), "%s did not start with %s" % (filename, self.perf_tests_dir())
-        return filename[len(self.perf_tests_dir()) + 1:]
+        if filename.startswith(self.perf_tests_dir()):
+            return self.host.filesystem.relpath(filename, self.perf_tests_dir())
+        else:
+            return self.filesystem.abspath(filename)
 
     @memoized
     def abspath_for_test(self, test_name):
