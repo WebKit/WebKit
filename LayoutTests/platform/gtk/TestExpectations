@@ -562,6 +562,8 @@ webkit.org/b/93812 [ Release ] svg/custom/use-instanceRoot-as-event-target.xhtml
 
 webkit.org/b/95430 fast/layers/scroll-no-visible-content-but-visible-descendant.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1361,8 +1363,8 @@ webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
 webkit.org/b/96900 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
 
 webkit.org/b/97188 fast/text/word-space-with-kerning.html [ ImageOnlyFailure ]
+webkit.org/b/97188 fast/text/word-space-with-kerning-2.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
-
