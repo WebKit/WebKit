@@ -135,6 +135,7 @@ EXPORTS
     ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
+    ?customHasInstance@JSCell@JSC@@KA_NPAVJSObject@2@PAVExecState@2@VJSValue@2@@Z
     ?data@CString@WTF@@QBEPBDXZ
     ?dataLog@WTF@@YAXPBDZZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z

@@ -1,5 +1,11 @@
 2012-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Unreviewed windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         Pedantic test in Mozilla's JavaScript test suite fails. function-001.js function-001-n.js
         https://bugs.webkit.org/show_bug.cgi?id=27219
 
