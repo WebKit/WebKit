@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    .elementSize {
+        width: 50px;
+        height: 50px;
+    }
+
+    #div1 {
+        -webkit-flow-into: flowA;
+        /* Force a composited RenderLayer for the content inside a flow thread. */
+        -webkit-transform: scale3d(1, 1, 1);
+        background-color: green;
+    }
+
+    #region1 {
+        -webkit-flow-from: flowA;
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=84900"> [CSS Regions] Enable accelerated layers on elements inside a RenderFlowThread</a>.</p>
+<p>Test that an element requiring a composited layer, collected in a flow thread, is displayed correctly inside a region.</p>
+<p>On success, you should not see a red rectangle below.</p>
+<div id="div1" class="elementSize"></div>
+<div id="region1" class="elementSize"></div>
+</body>
+</html>

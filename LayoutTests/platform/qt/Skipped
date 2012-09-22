@@ -171,6 +171,9 @@ fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html
 fast/regions/style-scoped-in-flow-override-region-styling.html
 fast/regions/style-scoped-in-flow.html
 
+# Accelerated compositing is disabled for elements in a RenderFlowThread webkit.org/b/84900
+compositing/regions/webkit-flow-renderer-layer-compositing.html
+
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
 fast/dom/shadow/access-key.html

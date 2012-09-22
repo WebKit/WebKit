@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    .region{
+        height:50px;
+        width:50px;
+        background-color: green
+    }
+</style>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=84900"> [CSS Regions] Enable accelerated layers on elements inside a RenderFlowThread</a>.</p>
+<p>Test that an element requiring a composited layer, collected in a flow thread, is displayed correctly inside a region.</p>
+<p>On success, you should not see a red rectangle below.</p>
+<div class="region">
+</div>
+</body>
+</html>
+

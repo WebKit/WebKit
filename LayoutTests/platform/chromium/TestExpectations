@@ -2465,6 +2465,9 @@ webkit.org/b/74137 [ Lion Win ] fast/regions/region-overflow-auto-overflow-visib
 # CSS Regions tests for region styling and scoped styles
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
+# Accelerated compositing is disabled for elements in a RenderFlowThread
+webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
+
 webkit.org/b/92131 inspector/styles/region-style-crash.html
 
 crbug.com/85755 fast/js/exception-properties.html [ Failure ]

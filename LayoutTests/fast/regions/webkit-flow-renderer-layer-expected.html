@@ -1,37 +1,22 @@
-<!DOCTYPE HTML>
-
+<!doctype html>
+<html>
+<head>
 <style>
-    .region{
-    	height:100px;
-    	width:100%;
-    }   
-    .regionScale{
-    	-webkit-transform: scale3d(1, 1, 1);
+    .size1 {
+        width: 50px;
+        height: 50px;
     }
-    #DIV1 {
-        /* force a RenderLayer */
-        position: absolute;
-    }
-    #DIV5 {
-        position: absolute;
-        z-index: -1;
-    }
+    #div1 { background-color: green; }
+    #div2 { background-color: orange; }
+    #div3 { background-color: blue; }
 </style>
+</head>
 <body>
-
-<div class="region">
-    <div id="DIV1">DIV1 - flowA</div>
-</div>
-
-<div class="region regionScale">
-</div>
-
-<div class="region">
-    <div id="DIV3">
-        DIV3 - flowC
-        <div id="DIV4">DIV5 - flowC</div>  
-        <div id="DIV5">DIV4 - flowC</div>
-    </div>   
-</div>
-
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=64516"> [CSSRegions] Collect flowed elements in different render element</a>.</p>
+<p>Test that elements requiring a layer, collected in a flow thread, are correctly displayed in a region.</p>
+<p>On success, you should not see a red rectangle below.</p>
+<div id="div1" class="size1"></div>
+<div id="div2" class="size1"></div>
+<div id="div3" class="size1"></div>
 </body>
+</html>

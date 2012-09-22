@@ -1,43 +1,56 @@
-<!DOCTYPE HTML>
-
+<!doctype html>
+<html>
+<head>
 <style>
-    #DIV1 {
+    .size1 {
+        width: 50px;
+        height: 50px;
+    }
+    .size2 {
+        width: 50px;
+        height: 100px;
+    }
+
+    #div1 {
         -webkit-flow-into: flowA;
-        /* force a RenderLayer */
         position: absolute;
+        background-color: green;
     }
-    #DIV2 {
+    #div2 {
         -webkit-flow-into: flowB;
-        /* Force a composited RenderLayer. */
-        -webkit-transform: scale3d(1, 1, 1);
+        background-color: green;
     }
-    
-    #DIV3 { -webkit-flow-into: flowC; }
-    
-    #DIV5 {
+    #div3 {
+        background-color: orange;
+    }
+    #div4 {
+        background-color: blue;
         position: absolute;
         z-index: -1;
     }
-    
-    #REGION1, #REGION2, #REGION3 {
-        width: 100%;
-        height: 100px;
+
+    #region1 {
+        -webkit-flow-from: flowA;
+        background-color: red;
     }
-    #REGION1 { -webkit-flow-from: flowA; }
-    #REGION2 { -webkit-flow-from: flowB; }
-    #REGION3 { -webkit-flow-from: flowC; }
+    #region2 {
+        -webkit-flow-from: flowB;
+        background-color: red;
+    }
 </style>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=64516"> [CSSRegions] Collect flowed elements in different render element</a>.</p>
+<p>Test that elements requiring a layer, collected in a flow thread, are correctly displayed in a region.</p>
+<p>On success, you should not see a red rectangle below.</p>
+<div id="div1" class="size1"></div>
 
-<div id="DIV1">DIV1 - flowA</div>
-<div id="DIV2">DIV2 - flowB</div>
-
-<div id="DIV3">
-    DIV3 - flowC
-    <div id="DIV4">DIV5 - flowC</div>
-    <div id="DIV5">DIV4 - flowC</div>
+<div id="div2">
+    <div id="div3" class="size1"></div>
+    <div id="div4" class="size1"></div>
 </div>
 
-<!-- Make some regions, so that the flow has a size and it's visible in the render tree. -->
-<div id="REGION1"></div>
-<div id="REGION2"></div>
-<div id="REGION3"></div>
+<div id="region1" class="size1"></div>
+<div id="region2" class="size2"></div>
+</body>
+</html>

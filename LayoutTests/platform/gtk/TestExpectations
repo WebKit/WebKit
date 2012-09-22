@@ -1300,7 +1300,9 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/90770 fast/regions/webkit-flow-renderer-layer.html [ ImageOnlyFailure ]
+
+# Accelerated compositing is disabled for elements in a RenderFlowThread
+webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
 
 webkit.org/b/89231 fast/js/global-constructors.html [ Failure ]
 
