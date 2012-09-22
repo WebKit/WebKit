@@ -1,5 +1,12 @@
 2012-09-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed, rolled out a line I committed by accident.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
+2012-09-21  Geoffrey Garen  <ggaren@apple.com>
+
         Optimized closures that capture arguments
         https://bugs.webkit.org/show_bug.cgi?id=97358
 
