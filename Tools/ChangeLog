@@ -1,3 +1,29 @@
+2012-09-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unexpected reftest passes are only reported when pixel testing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=97242
+
+        Reviewed by Dirk Pranke.
+
+        LayoutTestRunner should know whether the finished test it's handling is
+        a reftest. This is necessary when updating result summary for reftests
+        when pixel testing is not enabled - in these circumstances an unexpectedly
+        passing reftest was not reported as such due to pixel testing then being
+        determined by searching for reftest failures in failures list, which were
+        not found in an empty failure list of a passing test. Now the TestResult
+        objects have a member variable indicating the test is a reftest whenever
+        that's the case.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.run):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__):
+
 2012-09-21  Sam Weinig  <sam@webkit.org>
 
         WebProcess XPC services need have their environment set without disrupting all other XPC services
