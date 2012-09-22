@@ -2414,10 +2414,6 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             float wordSpacing = currentStyle->wordSpacing();
             float lastSpaceWordSpacing = 0;
 
-            // Non-zero only when kerning is enabled, in which case we measure words with their trailing
-            // space, then subtract its width.
-            float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(constructTextRun(t, f, &space, 1, style)) + wordSpacing : 0;
-
             float wrapW = width.uncommittedWidth() + inlineLogicalWidth(current.m_obj, !appliedStartWidth, true);
             float charWidth = 0;
             bool breakNBSP = autoWrap && currentStyle->nbspMode() == SPACE;
@@ -2446,6 +2442,10 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             }
 
             TextLayout* textLayout = renderTextInfo.m_layout.get();
+
+            // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
+            // words with their trailing space, then subtract its width.
+            float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(constructTextRun(t, f, &space, 1, style)) + wordSpacing : 0;
 
             for (; current.m_pos < t->textLength(); current.fastIncrementInTextNode()) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
