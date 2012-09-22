@@ -47,6 +47,7 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
 #if PLATFORM(MAC)
     encoder->encode(parentProcessName);
     encoder->encode(acceleratedCompositingPort);
+    encoder->encode(sandboxProfileDirectoryPath);
 #endif
 }
 
@@ -64,6 +65,8 @@ bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, 
     if (!decoder->decode(result.parentProcessName))
         return false;
     if (!decoder->decode(result.acceleratedCompositingPort))
+        return false;
+    if (!decoder->decode(result.sandboxProfileDirectoryPath))
         return false;
 #endif
 

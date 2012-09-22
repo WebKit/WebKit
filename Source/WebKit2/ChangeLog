@@ -1,3 +1,28 @@
+2012-09-22  Sam Weinig  <sam@webkit.org>
+
+        Allow setting a custom path to where the plug-in sandbox profiles are being kept
+        https://bugs.webkit.org/show_bug.cgi?id=97399
+
+        Reviewed by Anders Carlsson.
+
+        Add a new default to allow controlling where to look for plug-in sandbox profiles
+        called "PlugInSandboxProfileDirectoryPath".
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeSandbox):
+        Use the passed in sandboxProfileDirectoryPath instead of hard coding /usr/share/sandbox/.
+
+        (WebKit::PluginProcess::platformInitialize):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        Grab the sandboxProfileDirectoryPath from standardUserDefaults and pass it to
+        the plug-in.
+
 2012-09-21  Sam Weinig  <sam@webkit.org>
 
         Fix the Lion and Snow Leopard builds.

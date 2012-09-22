@@ -267,8 +267,11 @@ void PluginProcess::setFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-static void initializeSandbox(const String& pluginPath)
+static void initializeSandbox(const String& pluginPath, const String& sandboxProfileDirectoryPath)
 {
+    if (sandboxProfileDirectoryPath.isEmpty())
+        return;
+
     RetainPtr<CFStringRef> cfPluginPath = adoptCF(pluginPath.createCFString());
     RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, cfPluginPath.get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)
@@ -282,9 +285,12 @@ static void initializeSandbox(const String& pluginPath)
     if (!bundleIdentifier)
         return;
 
+    RetainPtr<CFStringRef> cfSandboxProfileDirectoryPath = adoptCF(sandboxProfileDirectoryPath.createCFString());
+    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, cfSandboxProfileDirectoryPath.get(), kCFURLPOSIXPathStyle, TRUE));
+
     RetainPtr<CFStringRef> sandboxFileName = CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier);
-    RetainPtr<CFURLRef> pluginSandboxDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, CFSTR("/usr/share/sandbox/"), kCFURLPOSIXPathStyle, YES));
-    RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, pluginSandboxDirectory.get()));
+    RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
+
     RetainPtr<NSString> profileString = [[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL];
     if (!profileString)
         return;
@@ -306,7 +312,7 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    initializeSandbox(m_pluginPath);
+    initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
 #endif
 }
 

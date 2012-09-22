@@ -53,6 +53,8 @@
 
 @end
 
+NSString * const WebKit2PlugInSandboxProfileDirectoryPathKey = @"WebKit2PlugInSandboxProfileDirectoryPath";
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -132,6 +134,12 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif
+
+    // FIXME: We should rip this out once we have a good place to install plug-in
+    // sandbox profiles.
+    NSString* sandboxProfileDirectoryPath = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2PlugInSandboxProfileDirectoryPathKey];
+    if (sandboxProfileDirectoryPath)
+        parameters.sandboxProfileDirectoryPath = String(sandboxProfileDirectoryPath);
 }
 
 bool PluginProcessProxy::getPluginProcessSerialNumber(ProcessSerialNumber& pluginProcessSerialNumber)

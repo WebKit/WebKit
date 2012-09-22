@@ -56,6 +56,7 @@ struct PluginProcessCreationParameters {
 #if PLATFORM(MAC)
     String parentProcessName;
     CoreIPC::MachPort acceleratedCompositingPort;
+    String sandboxProfileDirectoryPath;
 #endif
 };
 
