@@ -3675,6 +3675,7 @@ void HTMLMediaElement::stop()
     userCancelledLoad();
     
     // Stop the playback without generating events
+    m_playing = false;
     setPausedInternal(true);
     
     if (renderer())

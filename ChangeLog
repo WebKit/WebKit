@@ -1,3 +1,14 @@
+2012-09-21  Ami Fischman  <fischman@chromium.org>
+
+        HTMLMediaElement isn't garbage collected between document reloads
+        https://bugs.webkit.org/show_bug.cgi?id=97020
+
+        Reviewed by Eric Carlson.
+
+        Manual test added: ManualTests/audio-freed-during-reload.html
+
+        * ManualTests/audio-freed-during-reload.html:
+
 2012-09-21  Chris Rogers  <crogers@google.com>
 
         Add Web Audio support for deprecated/legacy APIs
