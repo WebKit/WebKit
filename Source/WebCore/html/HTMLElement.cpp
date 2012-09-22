@@ -30,7 +30,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
-#include "ChildListMutationScope.h"
 #include "DOMSettableTokenList.h"
 #include "DocumentFragment.h"
 #include "Event.h"

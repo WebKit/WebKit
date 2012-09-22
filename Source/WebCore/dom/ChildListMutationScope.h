@@ -39,65 +39,70 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class MutationObserverInterestGroup;
+
+// ChildListMutationAccumulator is not meant to be used directly; ChildListMutationScope is the public interface.
+//
+// ChildListMutationAccumulator expects that all removals from a parent take place in order
+// and precede any additions. If this is violated (i.e. because of code changes elsewhere
+// in WebCore) it will likely result in both (a) ASSERTions failing, and (b) mutation records
+// being enqueued for delivery before the outer-most scope closes.
+class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
+public:
+    static PassRefPtr<ChildListMutationAccumulator> getOrCreate(Node*);
+    ~ChildListMutationAccumulator();
+
+    void childAdded(PassRefPtr<Node>);
+    void willRemoveChild(PassRefPtr<Node>);
+
+    bool hasObservers() const { return m_observers; }
+
+private:
+    ChildListMutationAccumulator(PassRefPtr<Node>, PassOwnPtr<MutationObserverInterestGroup>);
+
+    void enqueueMutationRecord();
+    bool isEmpty();
+    bool isAddedNodeInOrder(Node*);
+    bool isRemovedNodeInOrder(Node*);
+
+    RefPtr<Node> m_target;
+
+    Vector<RefPtr<Node> > m_removedNodes;
+    Vector<RefPtr<Node> > m_addedNodes;
+    RefPtr<Node> m_previousSibling;
+    RefPtr<Node> m_nextSibling;
+    Node* m_lastAdded;
+
+    OwnPtr<MutationObserverInterestGroup> m_observers;
+};
 
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
     explicit ChildListMutationScope(Node* target)
-        : m_target(target->document()->hasMutationObserversOfType(MutationObserver::ChildList) ? target : 0)
     {
-        if (m_target)
-            MutationAccumulationRouter::instance()->incrementScopingLevel(m_target);
-    }
-
-    ~ChildListMutationScope()
-    {
-        if (m_target)
-            MutationAccumulationRouter::instance()->decrementScopingLevel(m_target);
+        if (target->document()->hasMutationObserversOfType(MutationObserver::ChildList))
+            m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
     }
 
     void childAdded(Node* child)
     {
-        if (m_target)
-            MutationAccumulationRouter::instance()->childAdded(m_target, child);
+        if (m_accumulator && m_accumulator->hasObservers())
+            m_accumulator->childAdded(child);
     }
 
     void willRemoveChild(Node* child)
     {
-        if (m_target)
-            MutationAccumulationRouter::instance()->willRemoveChild(m_target, child);
+        if (m_accumulator && m_accumulator->hasObservers())
+            m_accumulator->willRemoveChild(child);
     }
 
 private:
-    class MutationAccumulator;
-
-    class MutationAccumulationRouter {
-        WTF_MAKE_NONCOPYABLE(MutationAccumulationRouter);
-    public:
-        ~MutationAccumulationRouter();
-
-        static MutationAccumulationRouter* instance();
-
-        void incrementScopingLevel(Node*);
-        void decrementScopingLevel(Node*);
-
-        void childAdded(Node* target, Node* child);
-        void willRemoveChild(Node* target, Node* child);
-
-    private:
-        MutationAccumulationRouter();
-        static void initialize();
-
-        typedef HashMap<Node*, unsigned> ScopingLevelMap;
-        ScopingLevelMap m_scopingLevels;
-        HashMap<Node*, OwnPtr<MutationAccumulator> > m_accumulations;
-
-        static MutationAccumulationRouter* s_instance;
-    };
-
-    Node* m_target;
+    RefPtr<ChildListMutationAccumulator> m_accumulator;
 };
 
 } // namespace WebCore
