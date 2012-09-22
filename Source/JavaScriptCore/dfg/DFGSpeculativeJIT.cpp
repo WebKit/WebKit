@@ -2382,7 +2382,7 @@ void SpeculativeJIT::compileInstanceOf(Node& node)
         // from speculating any more aggressively than we absolutely need to.
         
         JSValueOperand value(this, node.child1());
-        SpeculateCellOperand prototype(this, node.child3());
+        SpeculateCellOperand prototype(this, node.child2());
         GPRTemporary scratch(this);
         
         GPRReg prototypeReg = prototype.gpr();

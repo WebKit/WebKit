@@ -1,5 +1,17 @@
 2012-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Eeeep - broke early boyer in bug#97382
+        https://bugs.webkit.org/show_bug.cgi?id=97383
+
+        Rubber stamped by Sam Weinig.
+
+        missed a child3 -> child2!
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+
+2012-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         Unreviewed windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
