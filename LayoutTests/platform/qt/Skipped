@@ -394,6 +394,7 @@ inspector/styles/media-queries.html
 fast/dom/MicroData
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
+fast/mutation/added-out-of-order.html
 fast/mutation/callback-arguments.html
 fast/mutation/clear-transient-without-delivery.html
 fast/mutation/create-during-delivery.html
@@ -411,6 +412,7 @@ fast/mutation/observe-characterdata.html
 fast/mutation/observe-childList.html
 fast/mutation/observe-exceptions.html
 fast/mutation/observe-subtree.html
+fast/mutation/removed-out-of-order.html
 fast/mutation/shadow-dom.html
 fast/mutation/takeRecords.html
 fast/mutation/transient-gc-crash.html
@@ -2801,3 +2803,7 @@ inspector/extensions/extensions-panel.html
 # [Qt] fast/regions/overflow-size-change-with-stacking-context.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=97199
 fast/regions/overflow-size-change-with-stacking-context.html
+
+# [Qt] New fast/text/kerning-with-TextLayout.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=97388
+fast/text/kerning-with-TextLayout.html
