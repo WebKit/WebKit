@@ -48,6 +48,7 @@ public:
     PassRefPtr<AccessibilityUIElement> rootElement();
     PassRefPtr<AccessibilityUIElement> focusedElement();
     PassRefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
+    PassRefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
     bool addNotificationListener(JSValueRef functionCallback);
     bool removeNotificationListener();

@@ -51,6 +51,7 @@ public:
     void setFocusedElement(const WebKit::WebAccessibilityObject&);
     AccessibilityUIElement* getFocusedElement();
     AccessibilityUIElement* getRootElement();
+    AccessibilityUIElement* getAccessibleElementById(const std::string& id);
 
     bool shouldLogAccessibilityEvents();
 
@@ -70,6 +71,9 @@ private:
 
     void focusedElementGetterCallback(CppVariant*);
     void rootElementGetterCallback(CppVariant*);
+    void accessibleElementByIdGetterCallback(const CppArgumentList&, CppVariant*);
+
+    AccessibilityUIElement* findAccessibleElementByIdRecursive(const WebKit::WebAccessibilityObject&, const WebKit::WebString& id);
 
     WebKit::WebAccessibilityObject m_focusedElement;
     WebKit::WebAccessibilityObject m_rootElement;

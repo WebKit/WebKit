@@ -29,6 +29,7 @@ module WTR {
         readonly attribute AccessibilityUIElement rootElement;
         readonly attribute AccessibilityUIElement focusedElement;
         AccessibilityUIElement elementAtPoint(in int x, in int y);
+        AccessibilityUIElement accessibleElementById(in DOMString id);
         
         boolean addNotificationListener(in object functionCallback);
         boolean removeNotificationListener();

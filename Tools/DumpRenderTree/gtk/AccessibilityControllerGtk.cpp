@@ -70,6 +70,12 @@ AccessibilityUIElement AccessibilityController::rootElement()
     return AccessibilityUIElement(accessible);
 }
 
+AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef id)
+{
+    // FIXME: implement
+    return 0;
+}
+
 void AccessibilityController::setLogFocusEvents(bool)
 {
 }

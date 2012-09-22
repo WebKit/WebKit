@@ -97,6 +97,18 @@ static JSValueRef getElementAtPointCallback(JSContextRef context, JSObjectRef fu
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->elementAtPoint(x, y));
 }
 
+static JSValueRef getAccessibleElementByIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSStringRef idAttribute = 0;
+    if (argumentCount == 1)
+        idAttribute = JSValueToStringCopy(context, arguments[0], exception);    
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    JSValueRef result = AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->accessibleElementById(idAttribute));
+    if (idAttribute)
+        JSStringRelease(idAttribute);
+    return result;
+}
+
 static JSValueRef addNotificationListenerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 1)
@@ -123,6 +135,7 @@ JSClassRef AccessibilityController::getJSClass()
         { "logScrollingStartEvents", logScrollingStartEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "logAccessibilityEvents", logAccessibilityEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementAtPoint", getElementAtPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "accessibleElementById", getAccessibleElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addNotificationListener", addNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeNotificationListener", removeNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }

@@ -106,6 +106,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x
 #if !PLATFORM(MAC)
 bool AccessibilityController::addNotificationListener(JSValueRef) { return false; }
 bool AccessibilityController::removeNotificationListener() { return false; }
+PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return 0; }
 #endif
 
 #if !PLATFORM(GTK)

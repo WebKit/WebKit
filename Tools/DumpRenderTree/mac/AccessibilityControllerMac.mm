@@ -27,10 +27,13 @@
 #import "DumpRenderTree.h"
 #import "AccessibilityController.h"
 
+#import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import <AppKit/NSColor.h>
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLView.h>
@@ -66,6 +69,36 @@ AccessibilityUIElement AccessibilityController::rootElement()
     
     id accessibilityObject = [[mainFrame accessibilityRoot] accessibilityAttributeValue:NSAccessibilityParentAttribute];
     return AccessibilityUIElement(accessibilityObject);
+}
+
+static id findAccessibleObjectById(id obj, NSString *idAttribute)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id objIdAttribute = [obj accessibilityAttributeValue:@"AXDRTElementIdAttribute"];
+    if ([objIdAttribute isKindOfClass:[NSString class]] && [objIdAttribute isEqualToString:idAttribute])
+        return obj;
+    END_AX_OBJC_EXCEPTIONS
+
+    NSArray *children = [obj accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    NSUInteger childrenCount = [children count];
+    for (NSUInteger i = 0; i < childrenCount; ++i) {
+        id result = findAccessibleObjectById([children objectAtIndex:i], idAttribute);
+        if (result)
+            return result;
+    }
+
+    return 0;
+}
+
+AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef idAttributeRef)
+{
+    NSString *idAttribute = [NSString stringWithJSStringRef:idAttributeRef];
+    id root = [[mainFrame accessibilityRoot] accessibilityAttributeValue:NSAccessibilityParentAttribute];
+    id result = findAccessibleObjectById(root, idAttribute);
+    if (result)
+        return AccessibilityUIElement(result);
+
+    return 0;
 }
 
 void AccessibilityController::setLogFocusEvents(bool)

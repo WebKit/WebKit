@@ -32,9 +32,11 @@
 #include "AccessibilityControllerChromium.h"
 
 #include "WebAccessibilityObject.h"
+#include "WebElement.h"
 #include "WebFrame.h"
+#include "WebNode.h"
 #include "WebView.h"
-#include "platform/WebString.h"
+#include "platform/WebCString.h"
 
 using namespace WebKit;
 
@@ -48,6 +50,8 @@ AccessibilityController::AccessibilityController()
 
     bindProperty("focusedElement", &AccessibilityController::focusedElementGetterCallback);
     bindProperty("rootElement", &AccessibilityController::rootElementGetterCallback);
+
+    bindMethod("accessibleElementById", &AccessibilityController::accessibleElementByIdGetterCallback);
 
     bindFallbackMethod(&AccessibilityController::fallbackCallback);
 }
@@ -84,6 +88,36 @@ AccessibilityUIElement* AccessibilityController::getRootElement()
     if (m_rootElement.isNull())
         m_rootElement = m_webView->accessibilityObject();
     return m_elements.createRoot(m_rootElement);
+}
+
+AccessibilityUIElement* AccessibilityController::findAccessibleElementByIdRecursive(const WebAccessibilityObject& obj, const WebString& id)
+{
+    if (obj.isNull() || obj.isDetached())
+        return 0;
+
+    WebNode node = obj.node();
+    if (!node.isNull() && node.isElementNode()) {
+        WebElement element = node.to<WebElement>();
+        element.getAttribute("id");
+        if (element.getAttribute("id") == id) 
+            return m_elements.getOrCreate(obj);
+    }
+
+    unsigned childCount = obj.childCount();
+    for (unsigned i = 0; i < childCount; i++) {
+        if (AccessibilityUIElement* result = findAccessibleElementByIdRecursive(obj.childAt(i), id))
+            return result;
+    }
+
+    return 0;
+}
+
+AccessibilityUIElement* AccessibilityController::getAccessibleElementById(const std::string& id)
+{
+    if (m_rootElement.isNull())
+        m_rootElement = m_webView->accessibilityObject();
+
+    return findAccessibleElementByIdRecursive(m_rootElement, WebString::fromUTF8(id.c_str()));
 }
 
 bool AccessibilityController::shouldLogAccessibilityEvents()
@@ -139,6 +173,21 @@ void AccessibilityController::focusedElementGetterCallback(CppVariant* result)
 void AccessibilityController::rootElementGetterCallback(CppVariant* result)
 {
     result->set(*(getRootElement()->getAsCppVariant()));
+}
+
+void AccessibilityController::accessibleElementByIdGetterCallback(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+
+    if (arguments.size() < 1 || !arguments[0].isString())
+        return;
+
+    std::string id = arguments[0].toString();
+    AccessibilityUIElement* foundElement = getAccessibleElementById(id);
+    if (!foundElement)
+        return;
+
+    result->set(*(foundElement->getAsCppVariant()));
 }
 
 void AccessibilityController::fallbackCallback(const CppArgumentList&, CppVariant* result)

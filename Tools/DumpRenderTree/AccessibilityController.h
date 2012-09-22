@@ -46,6 +46,7 @@ public:
     AccessibilityUIElement rootElement();
     AccessibilityUIElement focusedElement();
     AccessibilityUIElement elementAtPoint(int x, int y);
+    AccessibilityUIElement accessibleElementById(JSStringRef id);
 
     void setLogFocusEvents(bool);
     void setLogValueChangeEvents(bool);

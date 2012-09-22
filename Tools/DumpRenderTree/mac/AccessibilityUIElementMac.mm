@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "DumpRenderTree.h"
+#import "AccessibilityCommonMac.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 
@@ -51,41 +52,12 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
-// If an unsupported attribute is passed in, it will raise an accessibility exception. These are usually caught by the Accessibility Runtime to inform
-// the AX client app of the error. However, DRT is the AX client app, so it must catch these exceptions.
-#define BEGIN_AX_OBJC_EXCEPTIONS @try {
-#define END_AX_OBJC_EXCEPTIONS } @catch(NSException *e) { if (![[e name] isEqualToString:NSAccessibilityException]) @throw; }
-
-
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
-@end
-
-@interface NSString (JSStringRefAdditions)
-+ (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
-- (JSStringRef)createJSStringRef;
-@end
-
-@implementation NSString (JSStringRefAdditions)
-
-+ (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef
-{
-    if (!jsStringRef)
-        return NULL;
-    
-    CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsStringRef);
-    return [(NSString *)cfString autorelease];
-}
-
-- (JSStringRef)createJSStringRef
-{
-    return JSStringCreateWithCFString((CFStringRef)self);
-}
-
 @end
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)

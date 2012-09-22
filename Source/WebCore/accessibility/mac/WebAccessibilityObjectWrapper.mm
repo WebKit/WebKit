@@ -2430,6 +2430,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"normal";
         }
     }
+
+    // Used by DRT to find an accessible node by its element id.
+    if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
+        return m_object->getAttribute(idAttr);
     
     return nil;
 }

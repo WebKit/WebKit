@@ -67,6 +67,12 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
     return 0;
 }
 
+AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef id)
+{
+    // FIXME: implement
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
     COMPtr<IAccessible> rootAccessible = rootElement().platformUIElement();

@@ -5,6 +5,8 @@
 </head>
 <body id="body">
 
+<div id="container" aria-label="container">
+
 <table border=1 summary="test" aria-hidden="true">
 <tr><td>cell</td><td>cell</td><td>cell</td></tr>
 <tr><td>cell</td><td>cell</td><td>cell</td></tr>
@@ -19,12 +21,16 @@
 <li>test
 </ul>
 
+<div aria-label="wrapper">
 <select size=10 aria-hidden="true">
 <option>option
 <option>option
 </select>
+</div>
 
 <h1>heading</h1>
+
+</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -34,14 +40,14 @@
     description("This tests that aria-hidden works as expected on elements that are subclasses of AccessibilityRenderObject");
 
     if (window.accessibilityController) {
-       var root = accessibilityController.rootElement;
+       var container = accessibilityController.accessibleElementById("container");
 
        // first child is an AXGroup that has no children
-       var child = root.childAtIndex(0).childAtIndex(0);
+       var child = container.childAtIndex(0);
        shouldBe("child.childrenCount", "0");
 
        // The second child we ask for from the web area should be the heading, and we should have skipped over everything else.
-       child = root.childAtIndex(0).childAtIndex(1);
+       child = container.childAtIndex(1);
        shouldBe("child.role", "'AXRole: AXHeading'");
     }
 

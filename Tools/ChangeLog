@@ -1,3 +1,56 @@
+2012-09-22  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Layout tests would be easier to write if AccessibilityController could find an element by id
+        https://bugs.webkit.org/show_bug.cgi?id=97301
+
+        Reviewed by Chris Fleizach.
+
+        Adds a new accessibleElementById method to AccessibilityController, to make it
+        easier to write cross-platform layout tests.
+
+        Implemented for Chromium and for Mac (DRT and WKTR).
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (getAccessibleElementByIdCallback):
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/AccessibilityController.h:
+        (AccessibilityController):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::findAccessibleElementByIdRecursive):
+        (AccessibilityController::getAccessibleElementById):
+        (AccessibilityController::accessibleElementByIdGetterCallback):
+        * DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.h:
+        (AccessibilityController):
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::accessibleElementById):
+        * DumpRenderTree/mac/AccessibilityCommonMac.h: added
+        * DumpRenderTree/mac/AccessibilityCommonMac.mm: added
+        (+[NSString stringWithJSStringRef:]):
+        (-[NSString createJSStringRef]):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (findAccessibleObjectById):
+        (AccessibilityController::accessibleElementById):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        (AccessibilityController):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.h: added
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm: added
+        (+[NSString stringWithJSStringRef:]):
+        (-[NSString createJSStringRef]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::findAccessibleObjectById):
+        (WTR):
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2012-09-22  Zan Dobersek  <zandobersek@gmail.com>
 
         Unexpected reftest passes are only reported when pixel testing is enabled
