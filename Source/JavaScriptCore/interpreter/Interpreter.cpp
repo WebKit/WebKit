@@ -2435,9 +2435,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
         int dst = vPC[1].u.operand;
         int value = vPC[2].u.operand;
-        int baseProto = vPC[4].u.operand;
-
-        ASSERT(callFrame->r(vPC[3].u.operand).jsValue().isObject() && asObject(callFrame->r(vPC[3].u.operand).jsValue())->structure()->typeInfo().implementsDefaultHasInstance());
+        int baseProto = vPC[3].u.operand;
 
         bool result = JSObject::defaultHasInstance(callFrame, callFrame->r(value).jsValue(), callFrame->r(baseProto).jsValue());
         CHECK_FOR_EXCEPTION();

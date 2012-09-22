@@ -2088,9 +2088,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue value = stackFrame.args[0].jsValue();
-    JSValue proto = stackFrame.args[2].jsValue();
+    JSValue proto = stackFrame.args[1].jsValue();
     
-    ASSERT(stackFrame.args[1].jsValue().isObject() && asObject(stackFrame.args[1].jsValue())->structure()->typeInfo().implementsDefaultHasInstance());
     ASSERT(!value.isObject() || !proto.isObject());
 
     bool result = JSObject::defaultHasInstance(callFrame, value, proto);

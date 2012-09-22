@@ -705,7 +705,7 @@ _llint_op_check_has_instance:
 _llint_op_instanceof:
     traceExecution()
     # Actually do the work.
-    loadis 32[PB, PC, 8], t0
+    loadis 24[PB, PC, 8], t0
     loadis 8[PB, PC, 8], t3
     loadConstantOrVariableCell(t0, t1, .opInstanceofSlow)
     loadp JSCell::m_structure[t1], t2
@@ -725,11 +725,11 @@ _llint_op_instanceof:
 .opInstanceofDone:
     orp ValueFalse, t0
     storep t0, [cfr, t3, 8]
-    dispatch(5)
+    dispatch(4)
 
 .opInstanceofSlow:
     callSlowPath(_llint_slow_path_instanceof)
-    dispatch(5)
+    dispatch(4)
 
 
 _llint_op_is_undefined:

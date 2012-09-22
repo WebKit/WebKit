@@ -847,7 +847,7 @@ _llint_op_check_has_instance:
 _llint_op_instanceof:
     traceExecution()
     # Actually do the work.
-    loadi 16[PC], t0
+    loadi 12[PC], t0
     loadi 4[PC], t3
     loadConstantOrVariablePayload(t0, CellTag, t1, .opInstanceofSlow)
     loadp JSCell::m_structure[t1], t2
@@ -867,11 +867,11 @@ _llint_op_instanceof:
 .opInstanceofDone:
     storei BooleanTag, TagOffset[cfr, t3, 8]
     storei t0, PayloadOffset[cfr, t3, 8]
-    dispatch(5)
+    dispatch(4)
 
 .opInstanceofSlow:
     callSlowPath(_llint_slow_path_instanceof)
-    dispatch(5)
+    dispatch(4)
 
 
 _llint_op_is_undefined:

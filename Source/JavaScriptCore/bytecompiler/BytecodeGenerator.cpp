@@ -1467,12 +1467,11 @@ void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value,
     instructions().append(target->bind(begin, instructions().size()));
 }
 
-RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base, RegisterID* basePrototype)
+RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* basePrototype)
 { 
     emitOpcode(op_instanceof);
     instructions().append(dst->index());
     instructions().append(value->index());
-    instructions().append(base->index());
     instructions().append(basePrototype->index());
     return dst;
 }

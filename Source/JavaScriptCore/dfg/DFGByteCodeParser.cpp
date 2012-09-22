@@ -2054,9 +2054,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_instanceof: {
             NodeIndex value = get(currentInstruction[2].u.operand);
-            NodeIndex baseValue = get(currentInstruction[3].u.operand);
-            NodeIndex prototype = get(currentInstruction[4].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(InstanceOf, value, baseValue, prototype));
+            NodeIndex prototype = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(InstanceOf, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }
             

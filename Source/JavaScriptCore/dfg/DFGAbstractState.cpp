@@ -1477,7 +1477,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
         if (!(m_graph[node.child1()].prediction() & ~SpecCell) && !(forNode(node.child1()).m_type & ~SpecCell))
             forNode(node.child1()).filter(SpecCell);
-        forNode(node.child3()).filter(SpecCell);
+        forNode(node.child2()).filter(SpecCell);
         forNode(nodeIndex).set(SpecBoolean);
         break;
             

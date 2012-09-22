@@ -1099,7 +1099,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     generator.emitGetById(prototype.get(), src2.get(), generator.globalData()->propertyNames->prototype);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), src2.get(), prototype.get());
+    RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), prototype.get());
     generator.emitLabel(target.get());
     return result;
 }

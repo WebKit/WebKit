@@ -559,7 +559,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
     unsigned value = currentInstruction[2].u.operand;
-    unsigned proto = currentInstruction[4].u.operand;
+    unsigned proto = currentInstruction[3].u.operand;
 
     // Load the operands into registers.
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
@@ -616,8 +616,7 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 {
     unsigned dst = currentInstruction[1].u.operand;
     unsigned value = currentInstruction[2].u.operand;
-    unsigned baseVal = currentInstruction[3].u.operand;
-    unsigned proto = currentInstruction[4].u.operand;
+    unsigned proto = currentInstruction[3].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, proto);
@@ -625,7 +624,6 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
     JITStubCall stubCall(this, cti_op_instanceof);
     stubCall.addArgument(value);
-    stubCall.addArgument(baseVal);
     stubCall.addArgument(proto);
     stubCall.call(dst);
 }
