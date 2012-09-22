@@ -233,7 +233,7 @@ NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* bu
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 {
     if (!weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), 0, m_iterator))
-        ubrk_close(m_iterator);
+        delete m_iterator;
 }
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
