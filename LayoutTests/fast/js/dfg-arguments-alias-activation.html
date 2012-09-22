@@ -21,19 +21,54 @@ if (window.testRunner) {
 	testRunner.dumpAsText();
 }
 
-// In-bounds of declared and passed arguments.
-function f(x) {
+// In-bounds of declared and passed arguments, no activation, before tear-off.
+function f0(x) {
     return arguments[0] || function() { return x; };
 }
 
-// Out-of-bounds of declared arguments, in-bounds of passed arguments.
-function g(x) {
+// Out-of-bounds of declared arguments, in-bounds of passed arguments, no activation, before tear-off.
+function f1(x) {
     return arguments[1] || function() { return x; };
 }
 
-for (var i = 0; i < 200; ++i)
-    shouldBe(f(1), "f(1)", 1);
+// In-bounds of declared arguments, in-bounds of passed arguments, yes activation, before tear-off.
+function f2(x) {
+    return function() { return x; } && arguments[0];
+}
 
-for (var i = 0; i < 200; ++i)
-    shouldBe(g(0, 1), "g(0, 1)", 1);
+// Out-of-bounds of declared arguments, in-bounds of passed arguments, yes activation, before tear-off.
+function f3(x) {
+    return function() { return x; } && arguments[1];
+}
+
+// In-bounds of declared and passed arguments, no activation, after tear-off.
+function f4(x) {
+    return arguments || function() { return x; };
+}
+
+// Out-of-bounds of declared arguments, in-bounds of passed arguments, no activation, after tear-off.
+function f5(x) {
+    return arguments || function() { return x; };
+}
+
+// In-bounds of declared arguments, in-bounds of passed arguments, yes activation, after tear-off.
+function f6(x) {
+    return function() { return x; } && arguments;
+}
+
+// Out-of-bounds of declared arguments, in-bounds of passed arguments, yes activation, after tear-off.
+function f7(x) {
+    return function() { return x; } && arguments;
+}
+
+for (var i = 0; i < 200; ++i) {
+    shouldBe(f0(1), "f0(1)", 1);
+    shouldBe(f1(2, 3), "f1(2, 3)", 3);
+    shouldBe(f2(4), "f2(4)", 4);
+    shouldBe(f3(5, 6), "f3(5, 6)", 6);
+    shouldBe(f4(7)[0], "f4(7)", 7);
+    shouldBe(f5(8, 9)[1], "f5(8, 9)", 9);
+    shouldBe(f6(10)[0], "f6(10)", 10);
+    shouldBe(f7(11, 12)[1], "f7(11, 12)", 12);
+}
 </script>

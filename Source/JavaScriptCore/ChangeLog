@@ -1,3 +1,105 @@
+2012-09-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Optimized closures that capture arguments
+        https://bugs.webkit.org/show_bug.cgi?id=97358
+
+        Reviewed by Oliver Hunt.
+
+        Previously, the activation object was responsible for capturing all
+        arguments in a way that was convenient for the arguments object. Now,
+        we move all captured variables into a contiguous region in the stack,
+        allocate an activation for exactly that size, and make the arguments
+        object responsible for knowing all the places to which arguments could
+        have moved.
+
+        This seems like the right tradeoff because
+
+            (a) Closures are common and long-lived, so we want them to be small.
+
+            (b) Our primary strategy for optimizing the arguments object is to make
+            it go away. If you're allocating arguments objects, you're already having
+            a bad time.
+
+            (c) It's common to use either the arguments object or named argument
+            closure, but not both.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::argumentsRegister):
+        (JSC::CodeBlock::activationRegister):
+        (JSC::CodeBlock::isCaptured):
+        (JSC::CodeBlock::argumentIndexAfterCapture): m_numCapturedVars is gone
+        now -- we have an explicit range instead.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Move captured arguments
+        into the captured region of local variables for space efficiency. Record
+        precise data about where they moved for the sake of the arguments object.
+
+        Some of this data was previously wrong, but it didn't cause any problems
+        because the arguments weren't actually moving.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushArgumentsAndCapturedVariables): Don't
+        assume that captured vars are in any particular location -- always ask
+        the CodeBlock. This is better encapsulation.
+
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): I rename things sometimes.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff): Account for a particularly nasty edge case.
+
+        (JSC::Arguments::didTearOffActivation): Don't allocate our slow arguments
+        data on tear-off. We need to allocate it eagerly instead, since we need
+        to know about displaced, captured arguments during access before tear-off.
+
+        * runtime/Arguments.h:
+        (JSC::Arguments::allocateSlowArguments):
+        (JSC::Arguments::argument): Tell our slow arguments array where all arguments
+        are, even if they are not captured. This simplifies some things, so we don't
+        have to account explicitly for the full matrix of (not torn off, torn off)
+        * (captured, not captured).
+
+        (JSC::Arguments::finishCreation): Allocate our slow arguments array eagerly
+        because we need to know about displaced, captured arguments during access
+        before tear-off.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::parameterCount):
+        (FunctionExecutable):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSActivation.h:
+        (JSActivation):
+        (JSC::JSActivation::create):
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::registerOffset):
+        (JSC::JSActivation::tearOff):
+        (JSC::JSActivation::allocationSize):
+        (JSC::JSActivation::isValid): This is really the point of the patch. All
+        the pointer math in Activations basically boils away, since we always
+        copy a contiguous region of captured variables now.
+
+        * runtime/SymbolTable.h:
+        (JSC::SlowArgument::SlowArgument):
+        (SlowArgument):
+        (SharedSymbolTable):
+        (JSC::SharedSymbolTable::captureCount):
+        (JSC::SharedSymbolTable::SharedSymbolTable): AllOfTheThings capture mode
+        is gone now -- that's the point of the patch. indexIfCaptured gets renamed
+        to index because we always have an index, even if not captured. (The only
+        time when the index is meaningless is when we're Deleted.)
+
 2012-09-21  Gavin Barraclough  <barraclough@apple.com>
 
         Eeeep - broke early boyer in bug#97382

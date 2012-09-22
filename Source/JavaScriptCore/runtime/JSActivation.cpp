@@ -53,7 +53,7 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (!thisObject->isTornOff())
         return;
 
-    for (size_t i = 0; i < thisObject->storageSize(); ++i)
+    for (int i = 0; i < thisObject->symbolTable()->captureCount(); ++i)
         visitor.append(&thisObject->storage()[i]);
 }
 

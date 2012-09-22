@@ -49,12 +49,12 @@ namespace JSC {
 
         SlowArgument()
             : status(Normal)
-            , indexIfCaptured(0)
+            , index(0)
         {
         }
 
         Status status;
-        int indexIfCaptured; // If status is 'Captured', indexIfCaptured is our index in the CallFrame.
+        int index; // If status is 'Deleted', index is bogus.
     };
 
     static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
@@ -360,19 +360,13 @@ namespace JSC {
         bool usesNonStrictEval() { return m_usesNonStrictEval; }
         void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }
 
-        enum CaptureMode {
-            SomeOfTheThings,
-            AllOfTheThings
-        };
-
-        CaptureMode captureMode() { return m_captureMode; }
-        void setCaptureMode(CaptureMode captureMode) { m_captureMode = captureMode; }
-
         int captureStart() { return m_captureStart; }
         void setCaptureStart(int captureStart) { m_captureStart = captureStart; }
 
         int captureEnd() { return m_captureEnd; }
         void setCaptureEnd(int captureEnd) { m_captureEnd = captureEnd; }
+
+        int captureCount() { return m_captureEnd - m_captureStart; }
 
         int parameterCount() { return m_parameterCountIncludingThis - 1; }
         int parameterCountIncludingThis() { return m_parameterCountIncludingThis; }
@@ -389,7 +383,6 @@ namespace JSC {
             : JSCell(globalData, globalData.sharedSymbolTableStructure.get())
             , m_parameterCountIncludingThis(0)
             , m_usesNonStrictEval(false)
-            , m_captureMode(SomeOfTheThings)
             , m_captureStart(0)
             , m_captureEnd(0)
         {
@@ -398,7 +391,6 @@ namespace JSC {
         int m_parameterCountIncludingThis;
         bool m_usesNonStrictEval;
 
-        CaptureMode m_captureMode;
         int m_captureStart;
         int m_captureEnd;
 

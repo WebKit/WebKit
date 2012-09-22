@@ -834,6 +834,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 {
     JSScope* scope = callFrame->scope();
     ASSERT(isValidThisObject(thisObj, callFrame));
+    scope->globalData()->exception = JSValue();
     ASSERT(!scope->globalData()->exception);
     ASSERT(!callFrame->globalData().isCollectorBusy());
     if (callFrame->globalData().isCollectorBusy())

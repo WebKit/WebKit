@@ -692,7 +692,6 @@ namespace JSC {
         const Identifier& inferredName() { return m_inferredName; }
         JSString* nameValue() const { return m_nameValue.get(); }
         size_t parameterCount() const { return m_parameters->size(); } // Excluding 'this'!
-        unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         String paramString() const;
         SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
@@ -742,8 +741,7 @@ namespace JSC {
         }
 
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        unsigned m_numCapturedVariables : 31;
-        bool m_forceUsesArguments : 1;
+        bool m_forceUsesArguments;
 
         RefPtr<FunctionParameters> m_parameters;
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;

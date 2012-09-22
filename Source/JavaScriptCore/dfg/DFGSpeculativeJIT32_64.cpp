@@ -4215,7 +4215,7 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.load32(
                 JITCompiler::BaseIndex(
                     resultPayloadGPR, indexGPR, JITCompiler::TimesEight, 
-                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                    OBJECT_OFFSETOF(SlowArgument, index)), 
                 resultPayloadGPR);
 
             m_jit.load32(
@@ -4292,7 +4292,7 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.load32(
                 JITCompiler::BaseIndex(
                     resultPayloadGPR, indexGPR, JITCompiler::TimesEight, 
-                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                    OBJECT_OFFSETOF(SlowArgument, index)), 
                 resultPayloadGPR);
             m_jit.load32(
                 JITCompiler::BaseIndex(

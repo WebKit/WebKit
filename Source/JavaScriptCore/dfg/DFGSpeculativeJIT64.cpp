@@ -4164,7 +4164,7 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.load32(
                 JITCompiler::BaseIndex(
                     resultGPR, indexGPR, JITCompiler::TimesEight, 
-                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                    OBJECT_OFFSETOF(SlowArgument, index)), 
                 resultGPR);
             m_jit.signExtend32ToPtr(resultGPR, resultGPR);
             m_jit.loadPtr(
@@ -4229,7 +4229,7 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.load32(
                 JITCompiler::BaseIndex(
                     resultGPR, indexGPR, JITCompiler::TimesEight, 
-                    OBJECT_OFFSETOF(SlowArgument, indexIfCaptured)), 
+                    OBJECT_OFFSETOF(SlowArgument, index)), 
                 resultGPR);
             m_jit.signExtend32ToPtr(resultGPR, resultGPR);
             m_jit.loadPtr(

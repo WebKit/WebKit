@@ -1,403 +1,1603 @@
 This tests verifies access to captured arguments via an optimized-away arguments object.
 
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: f(1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
-PASS: g(0, 1) should be 1 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
+PASS: f0(1) should be 1 and is.
+PASS: f1(2, 3) should be 3 and is.
+PASS: f2(4) should be 4 and is.
+PASS: f3(5, 6) should be 6 and is.
+PASS: f4(7) should be 7 and is.
+PASS: f5(8, 9) should be 9 and is.
+PASS: f6(10) should be 10 and is.
+PASS: f7(11, 12) should be 12 and is.
 

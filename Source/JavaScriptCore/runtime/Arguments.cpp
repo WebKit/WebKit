@@ -343,6 +343,18 @@ void Arguments::tearOff(CallFrame* callFrame)
     m_registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[m_numArguments]);
     m_registers = m_registerArray.get() + CallFrame::offsetFor(m_numArguments + 1);
 
+    // If we have a captured argument that logically aliases activation storage,
+    // but we optimize away the activation, the argument needs to tear off into
+    // our storage. The simplest way to do this is to revert it to Normal status.
+    if (m_slowArguments && !m_activation) {
+        for (size_t i = 0; i < m_numArguments; ++i) {
+            if (m_slowArguments[i].status != SlowArgument::Captured)
+                continue;
+            m_slowArguments[i].status = SlowArgument::Normal;
+            m_slowArguments[i].index = CallFrame::argumentOffset(i);
+        }
+    }
+
     if (!callFrame->isInlineCallFrame()) {
         for (size_t i = 0; i < m_numArguments; ++i)
             trySetArgument(callFrame->globalData(), i, callFrame->argumentAfterCapture(i));
@@ -362,20 +374,8 @@ void Arguments::didTearOffActivation(ExecState* exec, JSActivation* activation)
     if (!m_numArguments)
         return;
     
-    tearOff(exec);
-
-    SharedSymbolTable* symbolTable = activation->symbolTable();
-    const SlowArgument* slowArguments = symbolTable->slowArguments();
-    if (!slowArguments)
-        return;
-
-    ASSERT(symbolTable->captureMode() == SharedSymbolTable::AllOfTheThings);
     m_activation.set(exec->globalData(), this, activation);
-
-    allocateSlowArguments();
-    size_t count = min<unsigned>(m_numArguments, symbolTable->parameterCount());
-    for (size_t i = 0; i < count; ++i)
-        m_slowArguments[i] = slowArguments[i];
+    tearOff(exec);
 }
 
 void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)

@@ -532,8 +532,8 @@ void CodeBlock::dump(ExecState* exec)
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         this, codeTypeToString(codeType()), m_numParameters, m_numCalleeRegisters,
         m_numVars);
-    if (m_numCapturedVars)
-        dataLog("; %d captured var(s)", m_numCapturedVars);
+    if (m_symbolTable->captureCount())
+        dataLog("; %d captured var(s)", m_symbolTable->captureCount());
     if (usesArguments()) {
         dataLog(
             "; uses arguments, in r%d, r%d",
@@ -1709,7 +1709,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_heap(other.m_heap)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
     , m_numVars(other.m_numVars)
-    , m_numCapturedVars(other.m_numCapturedVars)
     , m_isConstructor(other.m_isConstructor)
     , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
     , m_globalData(other.m_globalData)
@@ -1775,7 +1774,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_heap(&m_globalObject->globalData().heap)
     , m_numCalleeRegisters(0)
     , m_numVars(0)
-    , m_numCapturedVars(0)
     , m_isConstructor(isConstructor)
     , m_numParameters(0)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)

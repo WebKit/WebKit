@@ -467,8 +467,11 @@ private:
             numArguments = m_inlineStackTop->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
             flush(argumentToOperand(argument));
-        for (unsigned local = m_inlineStackTop->m_codeBlock->m_numCapturedVars; local--;)
+        for (int local = 0; local < m_inlineStackTop->m_codeBlock->m_numVars; ++local) {
+            if (!m_inlineStackTop->m_codeBlock->isCaptured(local))
+                continue;
             flush(local);
+        }
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -3282,10 +3285,10 @@ void ByteCodeParser::parseCodeBlock()
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Parsing code block %p. codeType = %s, numCapturedVars = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
+    dataLog("Parsing code block %p. codeType = %s, captureCount = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
             codeBlock,
             codeTypeToString(codeBlock->codeType()),
-            codeBlock->m_numCapturedVars,
+            codeBlock->symbolTable()->captureCount(),
             codeBlock->needsFullScopeChain()?"true":"false",
             codeBlock->ownerExecutable()->needsActivation()?"true":"false",
             codeBlock->ownerExecutable()->isStrictMode()?"true":"false");

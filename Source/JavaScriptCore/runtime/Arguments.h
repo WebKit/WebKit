@@ -161,6 +161,10 @@ namespace JSC {
         if (m_slowArguments)
             return;
         m_slowArguments = adoptArrayPtr(new SlowArgument[m_numArguments]);
+        for (size_t i = 0; i < m_numArguments; ++i) {
+            ASSERT(m_slowArguments[i].status == SlowArgument::Normal);
+            m_slowArguments[i].index = CallFrame::argumentOffset(i);
+        }
     }
 
     inline bool Arguments::tryDeleteArgument(size_t argument)
@@ -210,14 +214,14 @@ namespace JSC {
     inline WriteBarrierBase<Unknown>& Arguments::argument(size_t argument)
     {
         ASSERT(isArgument(argument));
-        if (!m_slowArguments || m_slowArguments[argument].status == SlowArgument::Normal)
+        if (!m_slowArguments)
             return m_registers[CallFrame::argumentOffset(argument)];
 
-        ASSERT(m_slowArguments[argument].status == SlowArgument::Captured);
-        if (!m_activation)
-            return m_registers[m_slowArguments[argument].indexIfCaptured];
+        int index = m_slowArguments[argument].index;
+        if (!m_activation || m_slowArguments[argument].status != SlowArgument::Captured)
+            return m_registers[index];
 
-        return m_activation->registerAt(m_slowArguments[argument].indexIfCaptured);
+        return m_activation->registerAt(index);
     }
 
     inline void Arguments::finishCreation(CallFrame* callFrame)
@@ -233,6 +237,15 @@ namespace JSC {
         m_overrodeCallee = false;
         m_overrodeCaller = false;
         m_isStrictMode = callFrame->codeBlock()->isStrictMode();
+
+        SharedSymbolTable* symbolTable = callFrame->codeBlock()->symbolTable();
+        const SlowArgument* slowArguments = symbolTable->slowArguments();
+        if (slowArguments) {
+            allocateSlowArguments();
+            size_t count = std::min<unsigned>(m_numArguments, symbolTable->parameterCount());
+            for (size_t i = 0; i < count; ++i)
+                m_slowArguments[i] = slowArguments[i];
+        }
 
         // The bytecode generator omits op_tear_off_activation in cases of no
         // declared parameters, so we need to tear off immediately.
@@ -253,6 +266,8 @@ namespace JSC {
         m_overrodeCallee = false;
         m_overrodeCaller = false;
         m_isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
+
+        ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable()->slowArguments());
 
         // The bytecode generator omits op_tear_off_activation in cases of no
         // declared parameters, so we need to tear off immediately.
