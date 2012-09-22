@@ -87,10 +87,10 @@ inline bool ChildListMutationAccumulator::isAddedNodeInOrder(Node* child)
 
 void ChildListMutationAccumulator::childAdded(PassRefPtr<Node> prpChild)
 {
+    ASSERT(hasObservers());
+
     RefPtr<Node> child = prpChild;
 
-    ASSERT(hasObservers());
-    ASSERT(isAddedNodeInOrder(child.get()));
     if (!isAddedNodeInOrder(child.get()))
         enqueueMutationRecord();
 
@@ -110,10 +110,10 @@ inline bool ChildListMutationAccumulator::isRemovedNodeInOrder(Node* child)
 
 void ChildListMutationAccumulator::willRemoveChild(PassRefPtr<Node> prpChild)
 {
+    ASSERT(hasObservers());
+
     RefPtr<Node> child = prpChild;
 
-    ASSERT(hasObservers());
-    ASSERT(m_addedNodes.isEmpty() && isRemovedNodeInOrder(child.get()));
     if (!m_addedNodes.isEmpty() || !isRemovedNodeInOrder(child.get()))
         enqueueMutationRecord();
 

@@ -46,11 +46,6 @@ namespace WebCore {
 class MutationObserverInterestGroup;
 
 // ChildListMutationAccumulator is not meant to be used directly; ChildListMutationScope is the public interface.
-//
-// ChildListMutationAccumulator expects that all removals from a parent take place in order
-// and precede any additions. If this is violated (i.e. because of code changes elsewhere
-// in WebCore) it will likely result in both (a) ASSERTions failing, and (b) mutation records
-// being enqueued for delivery before the outer-most scope closes.
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
 public:
     static PassRefPtr<ChildListMutationAccumulator> getOrCreate(Node*);
