@@ -1,5 +1,16 @@
 2012-09-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix typo in additional-platform-directory patch just landed
+        https://bugs.webkit.org/show_bug.cgi?id=97380
+        
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.relative_test_filename):
+        (Port.relative_perf_test_filename):
+
+2012-09-21  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: don't require additional-platform-directory to be an abspath or live under LayoutTests
         https://bugs.webkit.org/show_bug.cgi?id=97380
 
