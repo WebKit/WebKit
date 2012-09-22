@@ -29,7 +29,7 @@
 namespace WebKit {
 
 class WebImage;
-class WebSize;
+struct WebSize;
 
 // This is a "tear-off" class providing software drawing support to
 // WebCompositorOutputSurface, such as to a platform-provided window

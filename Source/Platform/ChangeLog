@@ -1,3 +1,16 @@
+2012-09-21  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Forward-declare WebSize as a struct
+        https://bugs.webkit.org/show_bug.cgi?id=97381
+
+        Reviewed by James Robinson.
+
+        The mismatched "class" forward-declaration for WebSize in this file
+        will cause a Clang error when it's included in Chromium.
+
+        * chromium/public/WebCompositorSoftwareOutputDevice.h:
+        (WebKit):
+
 2012-09-21  Brandon Jones  <bajones@google.com>
 
         Add support for OES_vertex_array_object in chromium
