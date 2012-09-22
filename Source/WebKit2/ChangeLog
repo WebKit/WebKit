@@ -1,3 +1,14 @@
+2012-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Fix WebKit2 sandbox profile.
+
+        Instead of using #pragmas, just disable all warnings in DerivedSources.make. I suspect
+        that passing -traditional to the preprocessor disables support for #pragmas but I'm afraid
+        to change it to something else.
+
+        * DerivedSources.make:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2012-09-21  Benjamin Poulain  <bpoulain@apple.com>
 
         fast/dom/Geolocation/disconnected-frame.html test asserts
