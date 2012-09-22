@@ -705,17 +705,6 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
 
-# [Qt] XML Viewer fails due to specifics in the parser implementation
-# https://bugs.webkit.org/show_bug.cgi?id=55302
-xmlviewer/extensions-api.html
-http/tests/xmlviewer/dumpAsText/svg.xml
-http/tests/xmlviewer/dumpAsText/xlink.xml
-http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251.xml
-http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8.xml
-http/tests/xmlviewer/dumpAsText/xmlviewer.xml
-http/tests/xmlviewer/dumpAsText/xsl-stylesheet.xml
-http/tests/xmlviewer/dumpAsText/xul.xml
-
 # new test introduced in r94828, but fails on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=66588
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html
@@ -2803,7 +2792,3 @@ inspector/extensions/extensions-panel.html
 # [Qt] fast/regions/overflow-size-change-with-stacking-context.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=97199
 fast/regions/overflow-size-change-with-stacking-context.html
-
-# [Qt] New fast/text/kerning-with-TextLayout.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=97388
-fast/text/kerning-with-TextLayout.html
