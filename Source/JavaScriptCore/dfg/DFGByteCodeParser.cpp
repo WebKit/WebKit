@@ -2265,8 +2265,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int dst = currentInstruction[1].u.operand;
             int slot = currentInstruction[2].u.operand;
             int depth = currentInstruction[3].u.operand;
-            NodeIndex getScopeChain = addToGraph(GetScopeChain, OpInfo(depth));
-            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(prediction), getScopeChain);
+            NodeIndex getScope = addToGraph(GetScope, OpInfo(depth));
+            NodeIndex getScopeRegisters = addToGraph(GetScopeRegisters, getScope);
+            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(prediction), getScopeRegisters);
             set(dst, getScopedVar);
             NEXT_OPCODE(op_get_scoped_var);
         }
@@ -2274,8 +2275,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int slot = currentInstruction[1].u.operand;
             int depth = currentInstruction[2].u.operand;
             int source = currentInstruction[3].u.operand;
-            NodeIndex getScopeChain = addToGraph(GetScopeChain, OpInfo(depth));
-            addToGraph(PutScopedVar, OpInfo(slot), getScopeChain, get(source));
+            NodeIndex getScope = addToGraph(GetScope, OpInfo(depth));
+            NodeIndex getScopeRegisters = addToGraph(GetScopeRegisters, getScope);
+            addToGraph(PutScopedVar, OpInfo(slot), getScope, getScopeRegisters, get(source));
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id:

@@ -3371,7 +3371,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case GetScopeChain: {
+    case GetScope: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 

@@ -215,6 +215,34 @@ private:
         return NoNode;
     }
     
+    NodeIndex scopedVarLoadElimination(unsigned scopeChainDepth, unsigned varNumber)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            switch (node.op()) {
+            case GetScopedVar: {
+                Node& getScopeRegisters = m_graph[node.child1()];
+                Node& getScope = m_graph[getScopeRegisters.child1()];
+                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                    return index;
+                break;
+            } 
+            case PutScopedVar: {
+                Node& getScope = m_graph[node.child1()];
+                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                    return node.child3().index();
+                break;
+            }
+            default:
+                break;
+            }
+            if (m_graph.clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
     bool globalVarWatchpointElimination(WriteBarrier<Unknown>* registerPointer)
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -257,6 +285,38 @@ private:
                     return NoNode;
                 break;
                 
+            default:
+                break;
+            }
+            if (m_graph.clobbersWorld(index) || node.canExit())
+                return NoNode;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex scopedVarStoreElimination(unsigned scopeChainDepth, unsigned varNumber)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            switch (node.op()) {
+            case PutScopedVar: {
+                Node& getScope = m_graph[node.child1()];
+                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                    return index;
+                break;
+            }
+                
+            case GetScopedVar: {
+                Node& getScopeRegisters = m_graph[node.child1()];
+                Node& getScope = m_graph[getScopeRegisters.child1()];
+                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                    return NoNode;
+                break;
+            }
+
             default:
                 break;
             }
@@ -689,19 +749,35 @@ private:
         return NoNode;
     }
     
-    NodeIndex getScopeChainLoadElimination(unsigned depth)
+    NodeIndex getScopeLoadElimination(unsigned depth)
     {
         for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             if (!node.shouldGenerate())
                 continue;
-            if (node.op() == GetScopeChain
+            if (node.op() == GetScope
                 && node.scopeChainDepth() == depth)
                 return index;
         }
         return NoNode;
     }
+
+    NodeIndex getScopeRegistersLoadElimination(unsigned depth)
+    {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            if (node.op() == GetScopeRegisters
+                && m_graph[node.scope()].scopeChainDepth() == depth)
+                return index;
+        }
+        return NoNode;
+    }
+
+
     
     NodeIndex getLocalLoadElimination(VirtualRegister local, NodeIndex& relevantLocalOp, bool careAboutClobbering)
     {
@@ -786,7 +862,8 @@ private:
                 return result;
             }
                 
-            case GetScopeChain:
+            case GetScope:
+            case GetScopeRegisters:
                 if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
                     result.mayBeAccessed = true;
                 break;
@@ -1079,9 +1156,13 @@ private:
         case GetArrayLength:
             setReplacement(getArrayLengthElimination(node.child1().index()));
             break;
-            
-        case GetScopeChain:
-            setReplacement(getScopeChainLoadElimination(node.scopeChainDepth()));
+
+        case GetScope:
+            setReplacement(getScopeLoadElimination(node.scopeChainDepth()));
+            break;
+
+        case GetScopeRegisters:
+            setReplacement(getScopeRegistersLoadElimination(m_graph[node.scope()].scopeChainDepth()));
             break;
 
         // Handle nodes that are conditionally pure: these are pure, and can
@@ -1105,7 +1186,14 @@ private:
         case GetGlobalVar:
             setReplacement(globalVarLoadElimination(node.registerPointer()));
             break;
-            
+
+        case GetScopedVar: {
+            Node& getScopeRegisters = m_graph[node.child1()];
+            Node& getScope = m_graph[getScopeRegisters.child1()];
+            setReplacement(scopedVarLoadElimination(getScope.scopeChainDepth(), node.varNumber()));
+            break;
+        }
+
         case GlobalVarWatchpoint:
             if (globalVarWatchpointElimination(node.registerPointer()))
                 eliminate();
@@ -1118,6 +1206,14 @@ private:
             eliminate(globalVarStoreElimination(node.registerPointer()));
             break;
             
+        case PutScopedVar: {
+            if (m_graph.m_fixpointState == FixpointNotConverged)
+                break;
+            Node& getScope = m_graph[node.child1()];
+            eliminate(scopedVarStoreElimination(getScope.scopeChainDepth(), node.varNumber()));
+            break;
+        }
+
         case GetByVal:
             if (m_graph.byValIsPure(node))
                 setReplacement(getByValLoadElimination(node.child1().index(), node.child2().index()));

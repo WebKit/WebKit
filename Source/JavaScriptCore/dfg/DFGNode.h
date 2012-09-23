@@ -466,13 +466,19 @@ struct Node {
 
     bool hasScopeChainDepth()
     {
-        return op() == GetScopeChain;
+        return op() == GetScope;
     }
     
     unsigned scopeChainDepth()
     {
         ASSERT(hasScopeChainDepth());
         return m_opInfo;
+    }
+
+    Edge scope()
+    {
+        ASSERT(op() == GetScopeRegisters);
+        return child1();
     }
 
     bool hasResult()

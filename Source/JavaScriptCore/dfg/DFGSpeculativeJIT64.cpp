@@ -3380,7 +3380,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case GetScopeChain: {
+    case GetScope: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
@@ -3401,23 +3401,39 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(resultGPR, m_compileIndex);
         break;
     }
-    case GetScopedVar: {
+    case GetScopeRegisters: {
         SpeculateCellOperand scope(this, node.child1());
         GPRTemporary result(this);
+        GPRReg scopeGPR = scope.gpr();
         GPRReg resultGPR = result.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), resultGPR);
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, node.varNumber() * sizeof(Register)), resultGPR);
+
+        m_jit.loadPtr(JITCompiler::Address(scopeGPR, JSVariableObject::offsetOfRegisters()), resultGPR);
+        storageResult(resultGPR, m_compileIndex);
+        break;
+    }
+    case GetScopedVar: {
+        StorageOperand registers(this, node.child1());
+        GPRTemporary result(this);
+        GPRReg registersGPR = registers.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.loadPtr(JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register)), resultGPR);
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
     case PutScopedVar: {
         SpeculateCellOperand scope(this, node.child1());
+        StorageOperand registers(this, node.child2());
+        JSValueOperand value(this, node.child3());
         GPRTemporary scratchRegister(this);
+
+        GPRReg scopeGPR = scope.gpr();
+        GPRReg registersGPR = registers.gpr();
+        GPRReg valueGPR = value.gpr();
         GPRReg scratchGPR = scratchRegister.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
-        JSValueOperand value(this, node.child2());
-        m_jit.storePtr(value.gpr(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register)));
-        writeBarrier(scope.gpr(), value.gpr(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
+
+        m_jit.storePtr(valueGPR, JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register)));
+        writeBarrier(scopeGPR, valueGPR, node.child3(), WriteBarrierForVariableAccess, scratchGPR);
         noResult(m_compileIndex);
         break;
     }

@@ -447,7 +447,8 @@ private:
             changed |= setPrediction(SpecInt32);
             break;
         }
-            
+
+        case GetScopeRegisters:            
         case GetButterfly: 
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
@@ -509,7 +510,7 @@ private:
             break;
         }
             
-        case GetScopeChain: {
+        case GetScope: {
             changed |= setPrediction(SpecCellOther);
             break;
         }

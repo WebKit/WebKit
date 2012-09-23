@@ -144,10 +144,11 @@ namespace JSC { namespace DFG {
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(GetArrayLength, NodeResultInt32) \
-    macro(GetScopeChain, NodeResultJS) \
-    macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
+    macro(GetScope, NodeResultJS) \
+    macro(GetScopeRegisters, NodeResultStorage) \
+    macro(GetScopedVar, NodeResultJS) \
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
+    macro(GetGlobalVar, NodeResultJS) \
     macro(PutGlobalVar, NodeMustGenerate) \
     macro(GlobalVarWatchpoint, NodeMustGenerate) \
     macro(PutGlobalVarCheck, NodeMustGenerate) \

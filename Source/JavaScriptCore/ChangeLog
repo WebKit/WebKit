@@ -1,3 +1,51 @@
+2012-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        CSE for access to closure variables (get_/put_scoped_var)
+        https://bugs.webkit.org/show_bug.cgi?id=97414
+
+        Reviewed by Oliver Hunt.
+
+        I separated loading a scope from loading its storage pointer, so we can
+        CSE the storage pointer load. Then, I copied the global var CSE and adjusted
+        it for closure vars.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute): Renamed GetScopeChain => GetScope to
+        reflect renames from a few weeks ago.
+
+        Added a case for the storage pointer load, similar to object storage pointer load.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Added an independent node for
+        the storage pointer.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::scopedVarLoadElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::scopedVarStoreElimination):
+        (JSC::DFG::CSEPhase::getScopeLoadElimination):
+        (JSC::DFG::CSEPhase::getScopeRegistersLoadElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE): Copied globalVarLoad/StoreElimination
+        and adapted the same logic to closure vars.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasScopeChainDepth):
+        (JSC::DFG::Node::scope):
+        (Node):
+        * dfg/DFGNodeType.h:
+        (DFG): GetScopedVar and GetGlobalVar are no longer MustGenerate. I'm not
+        sure why they ever were. But these are simple load operations so, if they're
+        unused, they're truly dead.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Updated for renames and split-out
+        node for getting the storage pointer.
+
 2012-09-21  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolled out a line I committed by accident.
