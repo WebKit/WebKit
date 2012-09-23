@@ -1,5 +1,24 @@
 2012-09-22  Sam Weinig  <sam@webkit.org>
 
+        Install WebProcess XPC services into the right places
+        https://bugs.webkit.org/show_bug.cgi?id=97385
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebProcessService.xcconfig:
+        Update INSTALL_PATH to go into WebKit2.framework/Versions/A/XPCServices.
+
+        * Configurations/WebProcessServiceForWebKitDevelopment.xcconfig:
+        Since this config file is almost identical to WebProcessService.xcconfig,
+        just #include it and change the one thing that is different, the INFOPLIST_FILE
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Follow XPC procedure and copy the services into the right place, WebKit2.framework/Versions/A/XPCServices
+        in all builds except production builds where it is not necessary. Also add a symlink like everyone else
+        does.
+
+2012-09-22  Sam Weinig  <sam@webkit.org>
+
         Allow setting a custom path to where the plug-in sandbox profiles are being kept
         https://bugs.webkit.org/show_bug.cgi?id=97399
 

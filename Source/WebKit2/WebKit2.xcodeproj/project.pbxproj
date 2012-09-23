@@ -12,7 +12,8 @@
 			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
 				1A50DB70110A3D67000D3FE5 /* CopyFiles */,
-				BCA8D46B15BCE33C009DC1F1 /* CopyFiles */,
+				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
+				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
 			);
 			dependencies = (
 				1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */,
@@ -728,11 +729,9 @@
 		BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */; };
 		BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */; };
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
-		BCA8D46C15BCE34B009DC1F1 /* com.apple.WebKit2.WebProcessService.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC3DE46615A91763008D26FC /* com.apple.WebKit2.WebProcessService.xpc */; };
 		BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */; };
 		BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */; };
 		BCAE9DFB160C0AA100A33217 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
-		BCAE9DFE160C0AC500A33217 /* com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCAE9DE9160C097400A33217 /* com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc */; };
 		BCAE9E05160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAE9E04160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm */; };
 		BCAE9E07160C139A00A33217 /* WebProcessServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAE9E06160C139A00A33217 /* WebProcessServiceMain.mm */; };
 		BCAE9E08160C1C0700A33217 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
@@ -1048,17 +1047,6 @@
 				5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */,
 			);
 			name = "Copy Message Generation Scripts";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCA8D46B15BCE33C009DC1F1 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = WebKit2.framework/XPCServices;
-			dstSubfolderSpec = 1;
-			files = (
-				BCA8D46C15BCE34B009DC1F1 /* com.apple.WebKit2.WebProcessService.xpc in CopyFiles */,
-				BCAE9DFE160C0AC500A33217 /* com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BCDE093C13272496001259FB /* Copy Plug-in Process Shim */ = {
@@ -4637,6 +4625,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Add XPCServices symlink";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(WRAPPER_NAME)/WebKit2.framework/XPCServices",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ln -sf ${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/Versions/Current/XPCServices \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/XPCServices\"\n";
+		};
+		BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit2.WebProcessService.xpc",
+				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc",
+			);
+			name = "Copy XPC services for engineering builds";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit2.WebProcessService.xpc",
+				"$(BUILT_PRODUCTS_DIR)/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices/com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nXPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/WebKit2.framework/Versions/A/XPCServices\"\nmkdir -p \"${XPC_SERVICES_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit2.WebProcessService.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit2.WebProcessService.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc\"\n";
 		};
 		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
