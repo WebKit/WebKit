@@ -47,6 +47,7 @@ public:
         SharedWorkerStart,
         LegacyWebAudioNoteOn,
         WebAudioStart,
+        PrefixedContentSecurityPolicy,
         // Add new features above this line.
         NumberOfFeatures, // This enum value must be last.
     };
