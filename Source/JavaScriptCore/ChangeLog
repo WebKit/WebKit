@@ -1,3 +1,19 @@
+2012-09-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Sorting a non-array creates propreties (spec-violation)
+        https://bugs.webkit.org/show_bug.cgi?id=25477
+
+        Reviewed by Oliver Hunt.
+
+        We're just calling get() to get properties, which is converting missing properties to
+        undefined. Hole values should be retained, and moved to the end of the array.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getOrHole):
+            - Helper function, returns JSValue() instead of undefined for missing properties.
+        (JSC::arrayProtoFuncSort):
+            - Implemented per 15.4.4.11, see comments above.
+
 2012-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         CSE for access to closure variables (get_/put_scoped_var)
