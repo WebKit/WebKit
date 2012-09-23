@@ -1,3 +1,20 @@
+2012-09-22  Sam Weinig  <sam@webkit.org>
+
+        Add explicit conversion operator to RetainPtr for easier use in C++11 environments
+        https://bugs.webkit.org/show_bug.cgi?id=97403
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Compiler.h:
+        Add support for COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS)
+
+        * wtf/RetainPtr.h:
+        (RetainPtr):
+        (WTF::RetainPtr::get):
+        (WTF::RetainPtr::operator PtrType):
+        Add the explicit conversion operator and group all the underlying
+        pointer accessors together.
+
 2012-09-21  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Error out early if we don't have ICU available

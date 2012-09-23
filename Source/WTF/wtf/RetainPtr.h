@@ -76,14 +76,16 @@ namespace WTF {
         ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
         
         template<typename U> RetainPtr(const RetainPtr<U>&);
-        
-        PtrType get() const { return m_ptr; }
 
         void clear();
         PtrType leakRef() WARN_UNUSED_RETURN;
 
+        PtrType get() const { return m_ptr; }
         PtrType operator->() const { return m_ptr; }
-        
+#if COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS)
+        explicit operator PtrType() const { return m_ptr; }
+#endif
+
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
