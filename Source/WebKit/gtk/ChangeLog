@@ -1,3 +1,18 @@
+2012-09-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Unskip the Shadow DOM layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=90776
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a method for enabling the Shadow DOM through RuntimeEnabledFeatures.
+        The method is called from DumpRenderTree when resetting state.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setShadowDOMEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-09-24  Joone Hur  <joone.hur@intel.com>
 
         [GTK] Implement GraphicsLayer using Clutter

@@ -1,5 +1,17 @@
 2012-09-24  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] Unskip the Shadow DOM layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=90776
+
+        Reviewed by Ryosuke Niwa.
+
+        Enable Shadow DOM through DumpRenderTreeSupport when resetting defaults in between tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
+2012-09-24  Zan Dobersek  <zandobersek@gmail.com>
+
         REGRESSION (r129211-r129218): http/tests/loading/redirect-with-no-location-crash.html failing on GTK Linux 64-bit Release WK2 (Tests)
         https://bugs.webkit.org/show_bug.cgi?id=97404
 

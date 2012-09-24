@@ -60,6 +60,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "ResourceLoadScheduler.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -699,6 +700,11 @@ void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, b
 void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
 {
     core(webView)->settings()->setCSSRegionsEnabled(enabled);
+}
+
+void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
 }
 
 bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)
