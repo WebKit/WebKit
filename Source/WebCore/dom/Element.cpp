@@ -843,13 +843,10 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     }
 
     // When the document is in parsing state, we cache immutable ElementAttributeData objects with the
-    // input attribute vector as key. (This cache is held by Document.)
+    // input attribute vector (and the tag name) as key. (This cache is held by Document.)
     if (!document() || !document()->parsing())
         m_attributeData = ElementAttributeData::createImmutable(filteredAttributes);
-    else if (!isHTMLElement()) {
-        // FIXME: Support attribute data sharing for non-HTML elements.
-        m_attributeData = ElementAttributeData::createImmutable(filteredAttributes);
-    } else
+    else
         m_attributeData = document()->cachedImmutableAttributeData(this, filteredAttributes);
 
     // Iterate over the set of attributes we already have on the stack in case

@@ -97,6 +97,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
     bool isMutable() const { return m_isMutable; }
+    const Attribute* immutableAttributeArray() const;
 
 protected:
     ElementAttributeData()
@@ -133,7 +134,6 @@ private:
 
     Vector<Attribute, 4>& mutableAttributeVector();
     const Vector<Attribute, 4>& mutableAttributeVector() const;
-    const Attribute* immutableAttributeArray() const;
 };
 
 class ImmutableElementAttributeData : public ElementAttributeData {
