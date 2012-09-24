@@ -793,6 +793,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setSansSerifFontFamily("sans");
     priv->pageSettings->setStandardFontFamily("sans");
     priv->pageSettings->setHyperlinkAuditingEnabled(false);
+    priv->pageSettings->setCSSRegionsEnabled(true);
     priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);
     priv->pageSettings->setLocalStorageEnabled(true);

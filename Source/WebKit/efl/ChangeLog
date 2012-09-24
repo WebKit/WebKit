@@ -1,3 +1,15 @@
+2012-09-24  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Enable Regions support
+        https://bugs.webkit.org/show_bug.cgi?id=83897
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Activating CSS regions by default for EWK views.
+
+        * ewk/ewk_view.cpp: Switch CSS regions on by default.
+        (_ewk_view_priv_new):
+
 2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
 
         Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.

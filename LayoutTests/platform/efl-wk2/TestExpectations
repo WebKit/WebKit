@@ -203,3 +203,5 @@ Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
 # Fails after r128056.
 webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]
 
+# CSS Regions Preference override fails.
+webkit.org/b/97457 fast/regions/css-regions-disabled.html [ Failure ]

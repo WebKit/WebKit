@@ -1,0 +1,14 @@
+Tests regionLayoutEvent being dispatched when the region chain is removed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Flow content
+PASS event.target.name is "article"
+Removing region 1
+Removing region 2
+PASS event.target.name is "article"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

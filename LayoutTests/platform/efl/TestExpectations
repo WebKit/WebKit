@@ -40,11 +40,6 @@ Bug(EFL) http/tests/xmlhttprequest/default-content-type-dashboard.html
 # Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 webkit.org/b/35824 http/tests/cookies/third-party-cookie-relaxing.html
 
-# CSS Regions support not yet enabled, tracking in a separate EFL bug.
-webkit.org/b/83897 fast/regions
-webkit.org/b/83897 inspector/styles/protocol-css-regions-commands.html
-webkit.org/b/83897 inspector/styles/region-style-crash.html
-
 # Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
 Bug(EFL) editing/deleting/deletionUI-single-instance.html
 Bug(EFL) fast/dom/Element/id-in-deletebutton.html
@@ -185,6 +180,12 @@ webkit.org/b/97459 http/tests/inspector/network/network-size.html [ WontFix ]
 webkit.org/b/97459 http/tests/inspector/network/network-size-chunked.html [ WontFix ]
 webkit.org/b/97459 http/tests/inspector/network/network-size-sync.html [ WontFix ]
 
+# CSS Regions tests for region styling and scoped styles, of which the latter are not enabled by default.
+webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
+webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
+webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
+webkit.org/b/82340 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -256,6 +257,13 @@ webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# CSS Regions Reftest issues.
+webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
+
+# CSS Regions issues.
+webkit.org/b/97208 fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html [ Missing ]
+webkit.org/b/97209 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ Missing ]
 
 # Needs inner spin button to respect -webkit-inner-spin-button style
 webkit.org/b/87619 fast/forms/number/number-appearance-rtl.html [ Failure ]
