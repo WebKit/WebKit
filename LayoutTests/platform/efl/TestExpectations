@@ -45,9 +45,6 @@ webkit.org/b/83897 fast/regions
 webkit.org/b/83897 inspector/styles/protocol-css-regions-commands.html
 webkit.org/b/83897 inspector/styles/region-style-crash.html
 
-# Accelerated compositing is disabled for elements in a RenderFlowThread
-webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
-
 # Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
 Bug(EFL) editing/deleting/deletionUI-single-instance.html
 Bug(EFL) fast/dom/Element/id-in-deletebutton.html
@@ -751,7 +748,6 @@ Bug(EFL) fast/dom/shadow/selections-in-shadow.html [ Failure ]
 # Shadow DOM for replaced elements is not rendered correctly yet.
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ ImageOnlyFailure ]
@@ -922,9 +918,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
-# Test started failing after r122681 due to wrong scrollbar positioning
-webkit.org/b/91359 css3/flexbox/flexbox-overflow-auto.html [ ImageOnlyFailure ]
-
 # Looks like missing multipart/x-mixed-replace support in libsoup. Failing on both GTK and EFL.
 webkit.org/b/68979 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
 
@@ -975,9 +968,6 @@ webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 # Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
 webkit.org/b/89826 fast/css/word-space-extra.html [ Failure ]
 
-# Tests added by https://bugs.webkit.org/show_bug.cgi?id=89826
-webkit.org/b/94008 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
-webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
