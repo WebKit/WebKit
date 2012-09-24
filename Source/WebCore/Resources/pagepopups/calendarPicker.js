@@ -268,13 +268,18 @@ CalendarPicker.validateConfig = function(config) {
  */
 function initialize(args) {
     var errorString = CalendarPicker.validateConfig(args);
+    if (args.suggestionValues)
+        errorString = errorString || SuggestionPicker.validateConfig(args)
     if (errorString) {
         var main = $("main");
         main.textContent = "Internal error: " + errorString;
         resizeWindow(main.offsetWidth, main.offsetHeight);
     } else {
         global.params = args;
-        openCalendarPicker();
+        if (global.params.suggestionValues && global.params.suggestionValues.length)
+            openSuggestionPicker();
+        else
+            openCalendarPicker();
     }
 }
 
@@ -284,6 +289,11 @@ function closePicker() {
     var main = $("main");
     main.innerHTML = "";
     main.className = "";
+};
+
+function openSuggestionPicker() {
+    closePicker();
+    global.picker = new SuggestionPicker($("main"), global.params);
 };
 
 function openCalendarPicker() {

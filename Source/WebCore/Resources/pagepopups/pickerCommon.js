@@ -76,6 +76,19 @@ function getScrollbarWidth() {
 }
 
 /**
+ * @param {!string} className
+ * @return {?Element}
+ */
+function enclosingNodeOrSelfWithClass(selfNode, className)
+{
+    for (var node = selfNode; node && node !== selfNode.ownerDocument; node = node.parentNode) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains(className))
+            return node;
+    }
+    return null;
+};
+
+/**
  * @constructor
  * @param {!Element} element
  * @param {!Object} config

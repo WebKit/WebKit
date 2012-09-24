@@ -946,6 +946,8 @@
           'inputs': [
             '../Resources/pagepopups/calendarPicker.css',
             '../Resources/pagepopups/calendarPicker.js',
+            '../Resources/pagepopups/suggestionPicker.css',
+            '../Resources/pagepopups/suggestionPicker.js',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.h',

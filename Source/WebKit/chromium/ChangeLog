@@ -1,3 +1,13 @@
+2012-09-23  Keishi Hattori  <keishi@webkit.org>
+
+        Add suggestionPicker to CalendarPicker
+        https://bugs.webkit.org/show_bug.cgi?id=97201
+
+        Reviewed by Kent Tamura.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument): Add js/css for SuggestionPicker to page picker. Add highlight color to args.
+
 2012-09-21  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Use OpenTypeVerticalData on Linux

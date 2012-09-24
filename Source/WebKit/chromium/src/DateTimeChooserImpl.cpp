@@ -88,6 +88,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));
+    writer.addData(WebCore::suggestionPickerCss, sizeof(WebCore::suggestionPickerCss));
     writer.addData(WebCore::calendarPickerCss, sizeof(WebCore::calendarPickerCss));
     CString extraStyle = WebCore::RenderTheme::defaultTheme()->extraCalendarPickerStyleSheet();
     if (extraStyle.length())
@@ -114,10 +115,13 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
         addProperty("suggestionLabels", m_parameters.suggestionLabels, writer);
         addProperty("showOtherDateEntry", m_parameters.type == WebCore::InputTypeNames::date(), writer);
         addProperty("otherDateLabel", Platform::current()->queryLocalizedString(WebLocalizedString::OtherDateLabel), writer);
+        addProperty("suggestionHighlightColor", WebCore::RenderTheme::defaultTheme()->activeListBoxSelectionBackgroundColor().serialized(), writer);
+        addProperty("suggestionHighlightTextColor", WebCore::RenderTheme::defaultTheme()->activeListBoxSelectionForegroundColor().serialized(), writer);
     }
     addString("}\n", writer);
 
     writer.addData(WebCore::pickerCommonJs, sizeof(WebCore::pickerCommonJs));
+    writer.addData(WebCore::suggestionPickerJs, sizeof(WebCore::suggestionPickerJs));
     writer.addData(WebCore::calendarPickerJs, sizeof(WebCore::calendarPickerJs));
     addString("</script></body>\n", writer);
 }
