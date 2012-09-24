@@ -31,6 +31,7 @@
 #define ExclusionRectangle_h
 
 #include "ExclusionShape.h"
+#include "FloatSize.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -38,20 +39,20 @@ namespace WebCore {
 
 class ExclusionRectangle : public ExclusionShape {
 public:
-    ExclusionRectangle(float x, float y, float width, float height, float rx = 0, float ry = 0)
+    ExclusionRectangle(const FloatRect& bounds, const FloatSize& radii)
         : ExclusionShape()
-        , m_x(x)
-        , m_y(y)
-        , m_width(width)
-        , m_height(height)
-        , m_rx(rx)
-        , m_ry(ry)
+        , m_x(bounds.x())
+        , m_y(bounds.y())
+        , m_width(bounds.width())
+        , m_height(bounds.height())
+        , m_rx(radii.width())
+        , m_ry(radii.height())
     {
     }
 
-    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return FloatRect(m_x, m_y, m_width, m_height); }
-    virtual void getOutsideIntervals(float y1, float y2, Vector<ExclusionInterval>&) const OVERRIDE;
-    virtual void getInsideIntervals(float y1, float y2, Vector<ExclusionInterval>&) const OVERRIDE;
+    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(FloatRect(m_x, m_y, m_width, m_height)); }
+    virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
+    virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
 
 private:
     float m_x;

@@ -31,22 +31,51 @@
 #define ExclusionShape_h
 
 #include "BasicShapes.h"
-#include "ExclusionInterval.h"
 #include "FloatRect.h"
+#include "WritingMode.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+struct LineSegment {
+    float logicalLeft;
+    float logicalRight;
+
+    LineSegment(float logicalLeft, float logicalRight)
+        : logicalLeft(logicalLeft)
+        , logicalRight(logicalRight)
+    {
+    }
+};
+
+typedef Vector<LineSegment> SegmentList;
+
+
+// A representation of a BasicShape that enables layout code to determine how to break a line up into segments
+// that will fit within or around a shape. The line is defined by a pair of logical Y coordinates and the
+// computed segments are returned as pairs of logical X coordinates. The BasicShape itself is defined in
+// physical coordinates.
+
 class ExclusionShape {
 public:
-    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, float borderBoxLogicalWidth, float borderBoxLogicalHeight);
+    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, float logicalBoxWidth, float logicalBoxHeight, WritingMode);
 
     virtual ~ExclusionShape() { }
 
     virtual FloatRect shapeLogicalBoundingBox() const = 0;
-    virtual void getInsideIntervals(float logicalTop, float logicalBottom, Vector<ExclusionInterval>&) const = 0;
-    virtual void getOutsideIntervals(float logicalTop, float logicalBottom, Vector<ExclusionInterval>&) const = 0;
+    virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
+    virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
+
+protected:
+    float minYForLogicalLine(float logicalTop, float logicalBottom) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalBottom : logicalTop; }
+    float maxYForLogicalLine(float logicalTop, float logicalBottom) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop : logicalBottom; }
+    FloatRect internalToLogicalBoundingBox(FloatRect r) const { return (m_writingMode == RightToLeftWritingMode) ? FloatRect(r.x(), m_logicalBoxHeight - r.maxY(), r.width(), r.height()) : r; }
+
+private:
+    WritingMode m_writingMode;
+    float m_logicalBoxWidth;
+    float m_logicalBoxHeight;
 };
 
 } // namespace WebCore

@@ -42,14 +42,6 @@
 namespace WebCore {
 
 class RenderBlock;
-class WrapShapeInfo;
-
-struct LineSegment {
-    LayoutUnit logicalLeft;
-    LayoutUnit logicalRight;
-};
-
-typedef Vector<LineSegment> SegmentList;
 
 class WrapShapeInfo {
     WTF_MAKE_FAST_ALLOCATED;

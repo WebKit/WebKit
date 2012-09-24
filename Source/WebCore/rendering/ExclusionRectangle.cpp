@@ -40,10 +40,10 @@ static inline float ellipseXIntercept(float y, float rx, float ry)
     return rx * sqrt(1 - (y*y) / (ry*ry));
 }
 
-void ExclusionRectangle::getOutsideIntervals(float y1, float y2, Vector<ExclusionInterval>& rv) const
+void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
-    if (y1 > y2)
-        std::swap(y1, y2);
+    float y1 = minYForLogicalLine(logicalTop, logicalBottom);
+    float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 
     if (y2 < m_y || y1 >= m_y + m_height)
         return;
@@ -65,15 +65,15 @@ void ExclusionRectangle::getOutsideIntervals(float y1, float y2, Vector<Exclusio
         }
     }
 
-    rv.append(ExclusionInterval(x1, x2));
+    result.append(LineSegment(x1, x2));
 }
 
-void ExclusionRectangle::getInsideIntervals(float y1, float y2, Vector<ExclusionInterval>& rv) const
+void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
-    if (y1 > y2)
-        std::swap(y1, y2);
+    float y1 = minYForLogicalLine(logicalTop, logicalBottom);
+    float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 
-    if (y1 < m_y || y2 >= m_y + m_height)
+    if (y1 < m_y || y2 > m_y + m_height)
         return;
 
     float x1 = m_x;
@@ -106,7 +106,7 @@ void ExclusionRectangle::getInsideIntervals(float y1, float y2, Vector<Exclusion
         }
     }
 
-    rv.append(ExclusionInterval(x1, x2));
+    result.append(LineSegment(x1, x2));
 }
 
 } // namespace WebCore

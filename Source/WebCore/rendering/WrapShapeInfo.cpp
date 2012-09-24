@@ -71,10 +71,6 @@ WrapShapeInfo* WrapShapeInfo::wrapShapeInfoForRenderBlock(const RenderBlock* blo
 
 bool WrapShapeInfo::isWrapShapeInfoEnabledForRenderBlock(const RenderBlock* block)
 {
-    // FIXME: Bug 89705: Enable shape inside for vertical writing modes
-    if (!block->isHorizontalWritingMode())
-        return false;
-
     // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
     BasicShape* shape = block->style()->wrapShapeInside();
     return (shape && shape->type() == BasicShape::BASIC_SHAPE_RECTANGLE);
@@ -107,7 +103,7 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
     BasicShape* shape = m_block->style()->wrapShapeInside();
     ASSERT(shape);
 
-    m_shape = ExclusionShape::createExclusionShape(shape, logicalWidth, logicalHeight);
+    m_shape = ExclusionShape::createExclusionShape(shape, logicalWidth, logicalHeight, m_block->style()->writingMode());
     ASSERT(m_shape);
 }
 
@@ -118,15 +114,7 @@ bool WrapShapeInfo::computeSegmentsForLine(LayoutUnit lineTop)
 
     if (lineState() == LINE_INSIDE_SHAPE) {
         ASSERT(m_shape);
-
-        Vector<ExclusionInterval> intervals;
-        m_shape->getInsideIntervals(lineTop, lineTop, intervals); // FIXME: Bug 95479, workaround for now
-        for (size_t i = 0; i < intervals.size(); i++) {
-            LineSegment segment;
-            segment.logicalLeft = intervals[i].x1;
-            segment.logicalRight = intervals[i].x2;
-            m_segments.append(segment);
-        }
+        m_shape->getIncludedIntervals(lineTop, lineTop, m_segments); // FIXME: Bug 95479, workaround for now
     }
     return m_segments.size();
 }
