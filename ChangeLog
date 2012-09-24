@@ -1,3 +1,37 @@
+2012-09-24  Bo Liu  <boliu@chromium.org>
+
+        Reland "Add in-place reload behavior to ImagesEnabled setting" with optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=97055
+
+        Reviewed by Adam Barth.
+
+        Relanding 128780, 128676, 128645. Was reverted in 128914 due to
+        performance regression in Chromium.
+
+        New changes in addition to previously reverted patches:
+
+        Refactored CachedResource::requestResource, loadResource, and
+        revalidateResource. Moved CachedResource::load method to end of
+        requestResource so there is one place where load is called for all
+        resources.
+
+        Added a enum parameter for requestResource and
+        determineRevalidationPolicy so that FrameLoaderClient::allowImage call
+        do not need to be called multiple times.
+
+        Removed CachedImage::load call in requestImage so it is not called
+        twice.
+
+        Removed unnecessary Frame.h includes in CachedResource and
+        CachedImage.
+
+        Removed dead load() method declaration in CachedImage.
+
+        Updated text expectation for two image-permissions tests to reflect
+        the removed calls to allowImage.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-24  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: implement testing harness for pure protocol tests.

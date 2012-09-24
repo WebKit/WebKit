@@ -647,6 +647,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_frame->document()->initContentSecurityPolicy();
 
     Settings* settings = m_frame->document()->settings();
+    m_frame->document()->cachedResourceLoader()->setImagesEnabled(!settings || settings->areImagesEnabled());
     m_frame->document()->cachedResourceLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());
 
     if (m_documentLoader) {

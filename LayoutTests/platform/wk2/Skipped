@@ -203,6 +203,7 @@ fast/canvas/webgl/webgl-specific.html
 fast/canvas/webgl/oes-vertex-array-object.html
 fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
+fast/loader/display-image-unset-allows-cached-image-load.html
 fast/text/zero-font-size.html
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
@@ -317,6 +318,8 @@ svg/custom/svg-allowed-in-dashboard-object.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
 fast/css/compare-content-style.html
 fast/frames/frame-display-none-focus.html
+fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
+fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/reload-policy-delegate.html
 
 # WebKitTestRunner needs layoutTestController.queueLoad
