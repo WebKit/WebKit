@@ -63,9 +63,6 @@ Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 webkit.org/b/84835 editing/execCommand/indent-paragraphs.html [ Failure ]
 
-# Frame does not get focus as expected
-webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
-
 # Custom font loading delaying text drawing on Canvas
 webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 

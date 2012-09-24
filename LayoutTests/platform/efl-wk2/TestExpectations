@@ -199,7 +199,6 @@ Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-embed.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-object.html [ Failure ]
 Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
-Bug(EFL) inspector/extensions/extensions-panel.html [ Failure ]
 
 # Fails after r128056.
 webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]

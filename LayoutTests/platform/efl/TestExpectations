@@ -1051,3 +1051,5 @@ webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFail
 webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
 webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
+# Frame does not get focus as expected
+webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
