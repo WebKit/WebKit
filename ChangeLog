@@ -1,3 +1,9 @@
+2012-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.10.0 release
+
+        * configure.ac: Bump version numbers.
+
 2012-08-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] The tarball should be called webkitgtk-x.x.x.tar.xz

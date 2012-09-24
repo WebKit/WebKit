@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 1.10.0
+=================
+
+What's new in WebKitGTK+ 1.10.0?
+
+  - Make WebKitWebView work again inside a GtkOverlay in WebKit2 by
+    not using a native window for Accelerated Compositing
+    implementation.
+
+=================
 WebKitGTK+ 1.9.92
 =================
 
