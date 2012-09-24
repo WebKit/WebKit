@@ -39,6 +39,7 @@ BiquadProcessor::BiquadProcessor(AudioContext* context, float sampleRate, size_t
     , m_parameter2(0)
     , m_parameter3(0)
     , m_filterCoefficientsDirty(true)
+    , m_hasSampleAccurateValues(false)
 {
     double nyquist = 0.5 * this->sampleRate();
 
