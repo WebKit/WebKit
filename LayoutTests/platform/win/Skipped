@@ -2303,4 +2303,7 @@ accessibility/svg-bounds.html
 #https://bugs.webkit.org/show_bug.cgi?id=97485
 http/tests/security/sandboxed-iframe-form-top.html
 
+#https://bugs.webkit.org/show_bug.cgi?id=95530
+http/tests/security/inactive-document-with-empty-security-origin.html
+
 
