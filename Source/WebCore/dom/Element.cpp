@@ -999,7 +999,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 void Element::attach()
 {
     suspendPostAttachCallbacks();
-    RenderWidget::suspendWidgetHierarchyUpdates();
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     createRendererIfNeeded();
     StyleResolverParentPusher parentPusher(this);
@@ -1028,7 +1028,6 @@ void Element::attach()
         }
     }
 
-    RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
 }
 
@@ -1042,7 +1041,7 @@ void Element::unregisterNamedFlowContentNode()
 
 void Element::detach()
 {
-    RenderWidget::suspendWidgetHierarchyUpdates();
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
@@ -1055,8 +1054,6 @@ void Element::detach()
         shadow->detach();
     }
     ContainerNode::detach();
-
-    RenderWidget::resumeWidgetHierarchyUpdates();
 }
 
 bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)

@@ -225,9 +225,10 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
 
-    RenderWidget::suspendWidgetHierarchyUpdates();
-    [view mouseDown:currentNSEvent()];
-    RenderWidget::resumeWidgetHierarchyUpdates();
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        [view mouseDown:currentNSEvent()];
+    }
 
     m_sendingEventToSubview = false;
     

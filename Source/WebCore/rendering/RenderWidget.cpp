@@ -47,53 +47,42 @@ static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
     return *staticWidgetRendererMap;
 }
 
-static unsigned widgetHierarchyUpdateSuspendCount;
+unsigned WidgetHierarchyUpdatesSuspensionScope::s_widgetHierarchyUpdateSuspendCount = 0;
 
-typedef HashMap<RefPtr<Widget>, FrameView*> WidgetToParentMap;
-
-static WidgetToParentMap& widgetNewParentMap()
+WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdatesSuspensionScope::widgetNewParentMap()
 {
     DEFINE_STATIC_LOCAL(WidgetToParentMap, map, ());
     return map;
 }
 
-void RenderWidget::suspendWidgetHierarchyUpdates()
+void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
-    widgetHierarchyUpdateSuspendCount++;
-}
-
-void RenderWidget::resumeWidgetHierarchyUpdates()
-{
-    ASSERT(widgetHierarchyUpdateSuspendCount);
-    if (widgetHierarchyUpdateSuspendCount == 1) {
-        WidgetToParentMap map = widgetNewParentMap();
-        widgetNewParentMap().clear();
-        WidgetToParentMap::iterator end = map.end();
-        for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
-            Widget* child = it->first.get();
-            ScrollView* currentParent = child->parent();
-            FrameView* newParent = it->second;
-            if (newParent != currentParent) {
-                if (currentParent)
-                    currentParent->removeChild(child);
-                if (newParent)
-                    newParent->addChild(child);
-            }
+    WidgetToParentMap map = widgetNewParentMap();
+    widgetNewParentMap().clear();
+    WidgetToParentMap::iterator end = map.end();
+    for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
+        Widget* child = it->first.get();
+        ScrollView* currentParent = child->parent();
+        FrameView* newParent = it->second;
+        if (newParent != currentParent) {
+            if (currentParent)
+                currentParent->removeChild(child);
+            if (newParent)
+                newParent->addChild(child);
         }
     }
-    widgetHierarchyUpdateSuspendCount--;
 }
 
 static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
 {
-    if (!widgetHierarchyUpdateSuspendCount) {
+    if (!WidgetHierarchyUpdatesSuspensionScope::isSuspended()) {
         if (parent)
             parent->addChild(child);
         else
             child->removeFromParent();
         return;
     }
-    widgetNewParentMap().set(child, parent);
+    WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
 RenderWidget::RenderWidget(Node* node)
