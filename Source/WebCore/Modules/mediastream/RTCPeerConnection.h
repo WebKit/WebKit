@@ -86,7 +86,7 @@ public:
 
     void close(ExceptionCode&);
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(negotationneeded);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(negotiationneeded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(icecandidate);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);

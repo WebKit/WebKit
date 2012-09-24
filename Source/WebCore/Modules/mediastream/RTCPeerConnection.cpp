@@ -393,7 +393,7 @@ void RTCPeerConnection::close(ExceptionCode& ec)
 
 void RTCPeerConnection::negotiationNeeded()
 {
-    dispatchEvent(Event::create(eventNames().negotationneededEvent, false, false));
+    dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
 }
 
 void RTCPeerConnection::didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidateDescriptor)

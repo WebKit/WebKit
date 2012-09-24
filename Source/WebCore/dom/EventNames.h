@@ -229,7 +229,7 @@ namespace WebCore {
     macro(unmute) \
     macro(icechange) \
     macro(icecandidate) \
-    macro(negotationneeded) \
+    macro(negotiationneeded) \
     \
     macro(show) \
     \

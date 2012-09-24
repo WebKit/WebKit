@@ -24,8 +24,8 @@ function getUserMedia(dictionary, callback) {
     }
 }
 
-function onNegotationNeeded(event) {
-    testPassed('onNegotationNeeded was called.');
+function onNegotiationNeeded(event) {
+    testPassed('onNegotiationNeeded was called.');
 
     finishJSTest();
 }
@@ -35,7 +35,7 @@ function gotStream(s) {
     stream = s;
 
     pc = new webkitRTCPeerConnection(null, null);
-    pc.onnegotationneeded = onNegotationNeeded;
+    pc.onnegotiationneeded = onNegotiationNeeded;
 
     pc.addStream(stream);
 }
