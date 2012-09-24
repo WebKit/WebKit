@@ -1155,7 +1155,9 @@ static void setCertificateToMainResource(WebKitWebView* webView)
 
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
-    if (loadEvent == WEBKIT_LOAD_FINISHED) {
+    if (loadEvent == WEBKIT_LOAD_STARTED)
+        webkitWebViewSetIsLoading(webView, true);
+    else if (loadEvent == WEBKIT_LOAD_FINISHED) {
         webkitWebViewSetIsLoading(webView, false);
         webView->priv->waitingForMainResource = false;
         webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
@@ -1561,7 +1563,6 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
     WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURL(toAPI(page), url.get());
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1589,7 +1590,6 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     WKRetainPtr<WKStringRef> contentRef(AdoptWK,  WKStringCreateWithUTF8CString(content));
     WKRetainPtr<WKURLRef> baseURIRef = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
     WKPageLoadHTMLString(toAPI(page), contentRef.get(), baseURIRef.get());
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1616,7 +1616,6 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), contentURL.get());
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1636,7 +1635,6 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKRetainPtr<WKStringRef> plainTextRef(AdoptWK, WKStringCreateWithUTF8CString(plainText));
     WKPageLoadPlainTextString(toAPI(page), plainTextRef.get());
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1657,7 +1655,6 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
     WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURLRequest(toAPI(page), wkRequest.get());
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1689,7 +1686,6 @@ void webkit_web_view_reload(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReload(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1704,7 +1700,6 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageReloadFromOrigin(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1757,7 +1752,6 @@ void webkit_web_view_go_back(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoBack(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1788,7 +1782,6 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
     WKPageGoForward(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**
@@ -1962,7 +1955,6 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
 
     WKPageGoToBackForwardListItem(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))),
                                   webkitBackForwardListItemGetWKItem(listItem));
-    webkitWebViewSetIsLoading(webView, true);
 }
 
 /**

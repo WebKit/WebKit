@@ -1,3 +1,31 @@
+2012-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView:is-loading is not updated when the is loaded is started by link clicked navigation action
+        https://bugs.webkit.org/show_bug.cgi?id=97458
+
+        Reviewed by Xan Lopez.
+
+        WebKitWebView:is-loading is set to TRUE when the load is started
+        by using the API. We want to make sure that both URI and
+        is-loading are updated before load-started is emitted, so we can
+        update both right before emitting load-started.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewEmitLoadChanged): Update both uri and is-loading
+        properties before emitting load-changed signal with
+        WEBKIT_LOAD_STARTED.
+        (webkit_web_view_load_uri): Don't call
+        webkitWebViewSetIsLoading().
+        (webkit_web_view_load_html): Ditto.
+        (webkit_web_view_load_alternate_html): Ditto.
+        (webkit_web_view_load_plain_text): Ditto.
+        (webkit_web_view_load_request): Ditto.
+        (webkit_web_view_reload): Ditto.
+        (webkit_web_view_reload_bypass_cache): Ditto.
+        (webkit_web_view_go_back): Ditto.
+        (webkit_web_view_go_forward): Ditto.
+        (webkit_web_view_go_to_back_forward_list_item): Ditto.
+
 2012-09-24  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Change the install path for libewk2UnitTestInjectedBundleSample.so.
