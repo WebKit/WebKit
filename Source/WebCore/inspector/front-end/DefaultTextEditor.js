@@ -1863,10 +1863,21 @@ WebInspector.TextEditorMainPanel.prototype = {
             if (!highlight)
                 return;
 
-            lineRow.removeChildren();
+            var decorationsElement = lineRow.decorationsElement;
+            if (!decorationsElement)
+                lineRow.removeChildren();
+            else {
+                while (true) {
+                    var child = lineRow.firstChild;
+                    if (!child || child === decorationsElement)
+                        break;
+                    lineRow.removeChild(child);
+                }
+            }
+
             var line = this._textModel.line(lineNumber);
             if (!line)
-                lineRow.appendChild(document.createElement("br"));
+                lineRow.insertBefore(document.createElement("br"), decorationsElement);
 
             var plainTextStart = -1;
             for (var j = 0; j < line.length;) {
@@ -1883,21 +1894,19 @@ WebInspector.TextEditorMainPanel.prototype = {
                     j++;
                 } else {
                     if (plainTextStart !== -1) {
-                        this._appendTextNode(lineRow, line.substring(plainTextStart, j));
+                        this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, j));
                         plainTextStart = -1;
                         --this._paintLinesOperationsCredit;
                     }
-                    this._appendSpan(lineRow, line.substring(j, j + attribute.length), attribute.tokenType);
+                    this._insertSpanBefore(lineRow, decorationsElement, line.substring(j, j + attribute.length), attribute.tokenType);
                     j += attribute.length;
                     --this._paintLinesOperationsCredit;
                 }
             }
             if (plainTextStart !== -1) {
-                this._appendTextNode(lineRow, line.substring(plainTextStart, line.length));
+                this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
                 --this._paintLinesOperationsCredit;
             }
-            if (lineRow.decorationsElement)
-                lineRow.appendChild(lineRow.decorationsElement);
         } finally {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
                 this._markedRangeElement = WebInspector.highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
@@ -2050,20 +2059,21 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     /**
      * @param {Element} element
+     * @param {Element} oldChild
      * @param {string} content
      * @param {string} className
      */
-    _appendSpan: function(element, content, className)
+    _insertSpanBefore: function(element, oldChild, content, className)
     {
         if (className === "html-resource-link" || className === "html-external-link") {
-            element.appendChild(this._createLink(content, className === "html-external-link"));
+            element.insertBefore(this._createLink(content, className === "html-external-link"), oldChild);
             return;
         }
 
         var span = this._cachedSpans.pop() || document.createElement("span");
         span.className = "webkit-" + className;
         span.textContent = content;
-        element.appendChild(span);
+        element.insertBefore(span, oldChild);
         if (!("spans" in element))
             element.spans = [];
         element.spans.push(span);
@@ -2071,16 +2081,17 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     /**
      * @param {Element} element
+     * @param {Element} oldChild
      * @param {string} text
      */
-    _appendTextNode: function(element, text)
+    _insertTextNodeBefore: function(element, oldChild, text)
     {
         var textNode = this._cachedTextNodes.pop();
         if (textNode)
             textNode.nodeValue = text;
         else
             textNode = document.createTextNode(text);
-        element.appendChild(textNode);
+        element.insertBefore(textNode, oldChild);
         if (!("textNodes" in element))
             element.textNodes = [];
         element.textNodes.push(textNode);
