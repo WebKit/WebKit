@@ -405,6 +405,18 @@ public:
         loadDelayNop();
     }
 
+    void sb(RegisterID rt, RegisterID rs, int offset)
+    {
+        emitInst(0xa0000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)
+                 | (offset & 0xffff));
+    }
+
+    void sh(RegisterID rt, RegisterID rs, int offset)
+    {
+        emitInst(0xa4000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)
+                 | (offset & 0xffff));
+    }
+
     void sw(RegisterID rt, RegisterID rs, int offset)
     {
         emitInst(0xac000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)

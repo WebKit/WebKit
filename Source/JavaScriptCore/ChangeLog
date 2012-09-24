@@ -1,3 +1,24 @@
+2012-09-24  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        MIPS: store8 functions added to MacroAssembler.
+
+        MIPS store8 functions
+        https://bugs.webkit.org/show_bug.cgi?id=97243
+
+        Reviewed by Oliver Hunt.
+
+        Add MIPS store8 functions.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::lhu): New function.
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::sb): New function.
+        (JSC::MIPSAssembler::sh): New function.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::store8): New function.
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::store16): New function.
+
 2012-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         PutScopedVar should not be marked as clobbering the world
