@@ -52,6 +52,7 @@ v8::Handle<v8::Value> wrapArrayBufferView(const v8::Arguments& args, WrapperType
 {
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
+    ASSERT(!hasIndexer || static_cast<int32_t>(array.get()->length()) >= 0);
     if (hasIndexer)
         args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -85,6 +86,10 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
             return throwError(RangeError, "ArrayBuffer length minus the byteOffset is not a multiple of the element size.", args.GetIsolate());
         length = (buf->byteLength() - offset) / sizeof(ElementType);
     }
+
+    if (static_cast<int32_t>(length) < 0)
+        return throwError(RangeError, tooLargeSize, args.GetIsolate());
+
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
     if (!array)
         return throwError(RangeError, tooLargeSize, args.GetIsolate());
@@ -143,6 +148,10 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
         ArrayClass* source = JavaScriptWrapperArrayType::toNative(args[0]->ToObject());
         uint32_t length = source->length();
+
+        if (static_cast<int32_t>(length) < 0)
+            return throwError(RangeError, tooLargeSize, args.GetIsolate());
+
         RefPtr<ArrayClass> array = ArrayClass::createUninitialized(length);
         if (!array.get())
             return throwError(RangeError, tooLargeSize, args.GetIsolate());
@@ -173,6 +182,9 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
             doInstantiation = true;
         }
     }
+
+    if (static_cast<int32_t>(len) < 0)
+        return throwError(RangeError, tooLargeSize, args.GetIsolate());
 
     RefPtr<ArrayClass> array;
     if (doInstantiation) {
