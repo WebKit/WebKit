@@ -1,3 +1,18 @@
+2012-09-24  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Change the install path for libewk2UnitTestInjectedBundleSample.so.
+        https://bugs.webkit.org/show_bug.cgi?id=97302
+
+        Reviewed by Gyuyoung Kim.
+
+        libewk2UnitTestInjectedBundleSample.so file is created under the
+        Source directory.
+        Change install directory for the library to under the build directory.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp:
+        (EWK2UnitTest::EWK2UnitTestEnvironment::injectedBundleSample):
+
 2012-09-24  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: implement testing harness for pure protocol tests.

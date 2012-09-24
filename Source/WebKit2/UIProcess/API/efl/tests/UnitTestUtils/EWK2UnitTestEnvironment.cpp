@@ -45,7 +45,7 @@ const char* EWK2UnitTestEnvironment::defaultTheme() const
 
 const char* EWK2UnitTestEnvironment::injectedBundleSample() const
 {
-    return TEST_RESOURCES_DIR "/libewk2UnitTestInjectedBundleSample.so";
+    return TEST_LIB_DIR "/libewk2UnitTestInjectedBundleSample.so";
 }
 
 CString EWK2UnitTestEnvironment::urlForResource(const char* resource)
