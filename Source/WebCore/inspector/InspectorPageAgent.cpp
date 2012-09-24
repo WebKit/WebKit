@@ -349,13 +349,6 @@ void InspectorPageAgent::restore()
         ErrorString error;
         enable(&error);
 
-        // When restoring the agent, override values are restored into the FrameView.
-        int width = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
-        int height = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
-        double fontScaleFactor = m_state->getDouble(PageAgentState::pageAgentFontScaleFactorOverride);
-        bool fitWindow = m_state->getBoolean(PageAgentState::pageAgentFitWindow);
-        updateViewMetrics(width, height, fontScaleFactor, fitWindow);
-
         if (m_inspectorAgent->didCommitLoadFired())
             frameNavigated(m_page->mainFrame()->loader()->documentLoader());
 #if ENABLE(TOUCH_EVENTS)

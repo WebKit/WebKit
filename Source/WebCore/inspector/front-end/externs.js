@@ -262,6 +262,11 @@ WebInspector.showPanel = function(panel)
  */
 WebInspector.inspectedPageDomain;
 
+/**
+ * @type {WebInspector.UserAgentSupport} 
+ */
+WebInspector.userAgentSupport;
+
 WebInspector.isCompactMode = function() { return false; }
 
 WebInspector.SourceJavaScriptTokenizer = {}
