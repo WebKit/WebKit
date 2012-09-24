@@ -21,17 +21,23 @@ function test()
         InspectorTest.addObject({
             title: title,
             query: query,
-            input: input,
-            output: output
+            input: JSON.stringify(input),
+            output: JSON.stringify(output)
         });
     }
 
     checkQuery("Empty query matches everything", "", ["a", "bc"]);
     checkQuery("Case sensitive matching", "aB", ["abc", "acB"]);
     checkQuery("Case insensitive matching", "ab", ["abc", "bac", "a_B"]);
-    checkQuery("Spaces in query", "d v ", ["div .visible", "div.visible "]);
-    checkQuery("Duplicate symbols in query", "aab", ["abab", "abaa", "caab", "baac"]);
+    checkQuery("Spaces in the input", "d.v ", ["div .visible", "div . visible "]);
+    checkQuery("Duplicate symbols in query", "aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
+    checkQuery("Star in query", "*aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
+    checkQuery("Question in query", "?aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
     checkQuery("Dangerous input escaping", "^[]{}()\\.$*+?|", ["^[]{}()\\.$*+?|", "0123456789abcdef"]);
+    checkQuery("Camel case matching", "fBaB", ["fooBarBaz", "FooBarBaz", "Foo_Bar_Baz", "foo_bar_baz", "foobarbaz", "foobarBaz", "afooBarBaz", "aFooBarBaz", "a fooBarBaz", "fooBorBaz", "fooBorCaz"]);
+    checkQuery("Underscore matching", "fO_ba_b", ["foOBarBaz", "FoOBarBaz", "FoO_Bar_Baz", "foO_bar_baz", "foObarbaz", "foObarBaz", "afoOBarBaz", "aFoOBarBaz", "a foOBarBaz", "foOBorBaz", "foOBorCaz"]);
+    checkQuery("Case insensitive matching", "fb", ["foo_bar", "FB", "foobar", "fBar"]);
+    checkQuery("Case insensitive underscore matching", "f_b", ["foo_bar", "FOO_BAR", "Foo_Bar", "fOo_bAr"]);
     InspectorTest.completeTest();
 }
 
