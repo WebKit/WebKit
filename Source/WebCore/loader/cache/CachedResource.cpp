@@ -32,6 +32,7 @@
 #include "CachedResourceLoader.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -389,7 +390,7 @@ void CachedResource::didAddClient(CachedResourceClient* c)
         m_clients.add(c);
         m_clientsAwaitingCallback.remove(c);
     }
-    if (!isLoading() && !stillNeedsLoad())
+    if (!isLoading())
         c->notifyFinished(this);
 }
 

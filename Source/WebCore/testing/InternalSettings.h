@@ -82,7 +82,6 @@ public:
         bool m_canStartMedia;
         bool m_originalMockScrollbarsEnabled;
         bool m_langAttributeAwareFormControlUIEnabled;
-        bool m_imagesEnabled;
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;
@@ -148,8 +147,6 @@ public:
     void setMemoryInfoEnabled(bool, ExceptionCode&);
     void setStorageBlockingPolicy(const String&, ExceptionCode&);
     void setLangAttributeAwareFormControlUIEnabled(bool);
-    void setImagesEnabled(bool enabled, ExceptionCode&);
-
 private:
     explicit InternalSettings(Page*);
     virtual void hostDestroyed() OVERRIDE { m_page = 0; }

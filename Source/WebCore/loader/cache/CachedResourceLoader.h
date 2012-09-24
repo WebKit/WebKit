@@ -97,10 +97,6 @@ public:
 
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
-
-    void setImagesEnabled(bool);
-
-    bool shouldDeferImageLoad(const KURL&) const;
     
     CachePolicy cachePolicy() const;
     
@@ -126,23 +122,19 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    enum DeferOption { NoDefer, DeferredByClient };
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, ResourceRequest&, const String& charset, const ResourceLoaderOptions&, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false, DeferOption = NoDefer);
-    CachedResourceHandle<CachedResource> revalidateResource(CachedResource*);
-    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, ResourceRequest&, const String& charset);
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, ResourceRequest&, const String& charset, const ResourceLoaderOptions&, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false);
+    CachedResourceHandle<CachedResource> revalidateResource(CachedResource*, ResourceLoadPriority, const ResourceLoaderOptions&);
+    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority, const ResourceLoaderOptions&);
     void requestPreload(CachedResource::Type, ResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
-    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, DeferOption) const;
+    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource) const;
     
     void notifyLoadedFromMemoryCache(CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const KURL&) const;
 
     void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();
-
-    bool clientDefersImage(const KURL&) const;
-    void reloadImagesIfNotDeferred();
     
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
@@ -160,9 +152,8 @@ private:
 
     Timer<CachedResourceLoader> m_garbageCollectDocumentResourcesTimer;
 
-    // 29 bits left
+    // 30 bits left
     bool m_autoLoadImages : 1;
-    bool m_imagesEnabled : 1;
     bool m_allowStaleResources : 1;
 };
 
