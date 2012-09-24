@@ -204,6 +204,7 @@ WebInspector.DefaultTextEditor.prototype = {
     {
         this._mainPanel.addDecoration(lineNumber, element);
         this._gutterPanel.addDecoration(lineNumber, element);
+        this._syncDecorationsForLine(lineNumber);
     },
 
     /**
@@ -214,6 +215,7 @@ WebInspector.DefaultTextEditor.prototype = {
     {
         this._mainPanel.removeDecoration(lineNumber, element);
         this._gutterPanel.removeDecoration(lineNumber, element);
+        this._syncDecorationsForLine(lineNumber);
     },
 
     /**
