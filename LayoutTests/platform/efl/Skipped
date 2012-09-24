@@ -404,7 +404,7 @@ fast/repaint/moving-shadow-on-container.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
 
-# Needs a rebaseline
+# Unclassified failures
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
@@ -420,53 +420,18 @@ fast/forms/select/listbox-in-multi-column.html
 fast/inline/continuation-outlines-with-layers.html
 fast/invalid/residual-style.html
 fast/js/constructor-length.html
-fast/table/prepend-in-anonymous-table.html
-fast/text/basic/011.html
-fast/text/basic/013.html
-fast/text/bidi-embedding-pop-and-push-same.html
-fast/text/capitalize-boundaries.html
-fast/text/cg-fallback-bolding.html
-fast/text/drawBidiText.html
-fast/text/emphasis-vertical.html
-fast/text/fallback-traits-fixup.html
-fast/text/firstline/001.html
-fast/text/firstline/002.html
-fast/text/firstline/003.html
-fast/text/format-control.html
-fast/text/hyphens.html
-fast/text/international/002.html
-fast/text/international/bidi-LDB-2-CSS.html
-fast/text/international/bidi-LDB-2-HTML.html
-fast/text/international/bidi-LDB-2-formatting-characters.html
-fast/text/international/wrap-CJK-001.html
-fast/text/in-rendered-text-rtl.html
-fast/text/international/001.html
-fast/text/international/003.html
-fast/text/international/bidi-L2-run-reordering.html
-fast/text/international/bidi-european-terminators.html
-fast/text/international/bidi-explicit-embedding.html
-fast/text/international/bidi-ignored-for-first-child-inline.html
-fast/text/international/bidi-innertext.html
-fast/text/international/bidi-layout-across-linebreak.html
-fast/text/international/bidi-listbox.html
-fast/text/international/bidi-neutral-directionality-paragraph-start.html
-fast/text/international/bidi-override.html
-fast/text/international/rtl-caret.html
-fast/text/international/rtl-white-space-pre-wrap.html
-fast/text/international/unicode-bidi-plaintext-in-textarea.html
+
+# The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html
-fast/text/midword-break-hang.html
-fast/text/trailing-white-space-2.html
-fast/text/trailing-white-space.html
-fast/text/whitespace/024.html
+
+# Fails, test times out in testLoadErrorGC()
 fast/workers/shared-worker-load-error.html
-fast/writing-mode/Kusa-Makura-background-canvas.html
-fast/writing-mode/border-vertical-lr.html
-fast/writing-mode/fallback-orientation.html
+
+# Fails, the div does not scroll
 scrollbars/scroll-rtl-or-bt-layer.html
+
+# Fails, seems like a rounding problem
 svg/animations/animate-text-nested-transforms.html
-svg/as-border-image/svg-as-border-image-2.html
-svg/as-border-image/svg-as-border-image.html
 
 # Failing, the 2 bars are not identical
 svg/hixie/data-types/002.xhtml
