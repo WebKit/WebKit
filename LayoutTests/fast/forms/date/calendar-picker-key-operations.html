@@ -56,6 +56,17 @@ pickerWindow.addEventListener("resize", function() {
     shouldBe('selectedDate()', '"1999-12-26"');
     shouldBe('selectedMonthYear()', '"2000-0"');
 
+    debug('Check if tabbing works.');
+    shouldBe('focusedElement()', '".days-area-container"');
+    eventSender.keyDown('\t');
+    shouldBe('focusedElement()', '".today-button[value=Today]"');
+    eventSender.keyDown('\t');
+    shouldBe('focusedElement()', '".clear-button[value=Clear]"');
+    eventSender.keyDown('\t');
+    shouldBe('focusedElement()', '".year-month-button[value=<<]"');
+    eventSender.keyDown('\t', ['shiftKey']);
+    shouldBe('focusedElement()', '".clear-button[value=Clear]"');
+
     finishJSTest();
 }, false);
 
@@ -71,6 +82,16 @@ function selectedMonthYear() {
     if (!element)
         return null;
     return element.dataset.value;
+}
+
+function focusedElement() {
+    var element = pickerWindow.document.activeElement;
+    if (!element)
+        return null;
+    var identifier = "." + element.className;
+    if (element.value)
+        identifier += "[value=" + element.value + "]";
+    return identifier;
 }
 
 function sendKey(input, keyName) {

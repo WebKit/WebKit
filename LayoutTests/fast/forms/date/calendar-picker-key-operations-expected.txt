@@ -24,6 +24,12 @@ PASS selectedDate() is "2000-01-08"
 PASS selectedMonthYear() is "1999-11"
 PASS selectedDate() is "1999-12-26"
 PASS selectedMonthYear() is "2000-0"
+Check if tabbing works.
+PASS focusedElement() is ".days-area-container"
+PASS focusedElement() is ".today-button[value=Today]"
+PASS focusedElement() is ".clear-button[value=Clear]"
+PASS focusedElement() is ".year-month-button[value=<<]"
+PASS focusedElement() is ".clear-button[value=Clear]"
 PASS successfullyParsed is true
 
 TEST COMPLETE
