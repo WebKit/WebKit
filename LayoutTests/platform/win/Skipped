@@ -2300,3 +2300,7 @@ http/tests/inspector/network/network-xhr-replay.html
 #AX role needs to be updated on Windows, many test cases involve AX role crash or fail
 accessibility/svg-bounds.html
 
+#https://bugs.webkit.org/show_bug.cgi?id=97485
+http/tests/security/sandboxed-iframe-form-top.html
+
+
