@@ -1398,7 +1398,9 @@ _llint_op_put_by_val:
     dispatch(5)
 
 .opPutByValEmpty:
-    storeb 1, ArrayProfile::m_mayStoreToHole[t3]
+    if VALUE_PROFILER
+        storeb 1, ArrayProfile::m_mayStoreToHole[t3]
+    end
     addi 1, ArrayStorage::m_numValuesInVector[t0]
     bib t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValStoreResult
     addi 1, t2, t1

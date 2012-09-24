@@ -1,3 +1,13 @@
+2012-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Added a missing "if VALUE_PROFILER" around an access to ArrayProfile record.
+        https://bugs.webkit.org/show_bug.cgi?id=97496.
+
+        Reviewed by Filip Pizlo.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Inlined activation tear-off in the DFG
