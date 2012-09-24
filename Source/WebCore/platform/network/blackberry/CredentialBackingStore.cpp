@@ -265,7 +265,7 @@ ProtectionSpace CredentialBackingStore::getProtectionSpace(const KURL& url)
 
     int result = m_getLoginByURLStatement->step();
     String username = m_getLoginByURLStatement->getColumnText(0);
-    String password = m_usingCertManager ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
+    String password = certMgrWrapper()->isReady() ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
     String host = m_getLoginByURLStatement->getColumnText(2);
     int port = m_getLoginByURLStatement->getColumnInt(3);
     int serviceType = m_getLoginByURLStatement->getColumnInt(4);
