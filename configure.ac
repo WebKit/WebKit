@@ -1,8 +1,8 @@
 AC_PREREQ(2.60)
 
 m4_define([webkit_major_version], [1])
-m4_define([webkit_minor_version], [9])
-m4_define([webkit_micro_version], [92])
+m4_define([webkit_minor_version], [10])
+m4_define([webkit_micro_version], [0])
 
 # This is the version we'll be using as part of our User-Agent string
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
@@ -35,13 +35,13 @@ AC_CONFIG_SRCDIR([Source/WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
-LIBWEBKITGTK_VERSION=17:2:17
+LIBWEBKITGTK_VERSION=17:3:17
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
-LIBJAVASCRIPTCOREGTK_VERSION=13:8:13
+LIBJAVASCRIPTCOREGTK_VERSION=13:9:13
 AC_SUBST([LIBJAVASCRIPTCOREGTK_VERSION])
 
-LIBWEBKIT2GTK_VERSION=18:2:0
+LIBWEBKIT2GTK_VERSION=18:3:0
 AC_SUBST([LIBWEBKIT2GTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
