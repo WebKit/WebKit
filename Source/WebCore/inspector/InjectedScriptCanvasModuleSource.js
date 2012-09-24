@@ -743,7 +743,7 @@ Resource.prototype = {
             if (isCapturing) {
                 var call = wrapFunction.call();
                 call.setStackTrace(StackTrace.create(1, arguments.callee));
-                manager.reportCall(call);
+                manager.captureCall(call);
             }
             return wrapFunction.result();
         };
@@ -767,7 +767,7 @@ Resource.prototype = {
             var result = originalFunction.apply(originalObject, arguments);
             var stackTrace = StackTrace.create(1, arguments.callee);
             var call = new Call(resource, functionName, arguments, result, stackTrace);
-            manager.reportCall(call);
+            manager.captureCall(call);
             return result;
         };
     },
@@ -833,6 +833,27 @@ Resource.WrapFunction.prototype = {
 }
 
 /**
+ * @param {!Function} resourceConstructor
+ * @return {Function}
+ */
+Resource.WrapFunction.resourceFactoryMethod = function(resourceConstructor)
+{
+    /** @this Resource.WrapFunction */
+    return function()
+    {
+        var wrappedObject = this.result();
+        if (!wrappedObject)
+            return;
+        var resource = new resourceConstructor(wrappedObject);
+        var manager = this._resource.manager();
+        if (manager)
+            manager.registerResource(resource);
+        this.overrideResult(resource.proxyObject());
+        resource.pushCall(this.call());
+    }
+}
+
+/**
  * @constructor
  * @param {Resource} originalResource
  * @param {Object} data
@@ -866,6 +887,10 @@ ReplayableResource.replay = function(obj, cache)
 {
     return (obj instanceof ReplayableResource) ? obj.replay(cache).wrappedObject() : obj;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// WebGL
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @constructor
@@ -1033,8 +1058,10 @@ WebGLTextureResource.prototype = {
         var framebufferResource = glResource.currentBinding(gl.FRAMEBUFFER);
         if (framebufferResource)
             this.pushCall(new Call(glResource, "bindFramebuffer", [gl.FRAMEBUFFER, framebufferResource]));
-        else
-            console.error("ASSERT_NOT_REACHED: No FRAMEBUFFER bound while calling gl." + call.functionName());
+        else {
+            // FIXME: Implement this case.
+            console.error("ASSERT_NOT_REACHED: Could not properly process a gl." + call.functionName() + " call while the DRAWING BUFFER is bound.");
+        }
         this.pushCall(call);
     }
 }
@@ -1369,10 +1396,10 @@ WebGLRenderingContextResource.forObject = function(obj)
     var resource = Resource.forObject(obj);
     if (!resource || resource instanceof WebGLRenderingContextResource)
         return resource;
-    var call = resource.calls();
-    if (!call || !call.length)
+    var calls = resource.calls();
+    if (!calls || !calls.length)
         return null;
-    resource = call[0].resource();
+    resource = calls[0].resource();
     return (resource instanceof WebGLRenderingContextResource) ? resource : null;
 }
 
@@ -1593,7 +1620,7 @@ WebGLRenderingContextResource.prototype = {
         }
         gl.activeTexture(glState.ACTIVE_TEXTURE);
 
-        return Resource.prototype._doReplayCalls.call(this, data, cache);
+        Resource.prototype._doReplayCalls.call(this, data, cache);
     },
 
     /**
@@ -1661,33 +1688,13 @@ WebGLRenderingContextResource.prototype = {
         if (!wrapFunctions) {
             wrapFunctions = Object.create(null);
 
-            /**
-             * @param {string} methodName
-             * @param {Function} resourceConstructor
-             */
-            function createResourceWrapFunction(methodName, resourceConstructor)
-            {
-                /** @this Resource.WrapFunction */
-                wrapFunctions[methodName] = function()
-                {
-                    var wrappedObject = this.result();
-                    if (!wrappedObject)
-                        return;
-                    var resource = new resourceConstructor(wrappedObject);
-                    var manager = this._resource.manager();
-                    if (manager)
-                        manager.registerResource(resource);
-                    this.overrideResult(resource.proxyObject());
-                    resource.pushCall(this.call());
-                }
-            }
-            createResourceWrapFunction("createBuffer", WebGLBufferResource);
-            createResourceWrapFunction("createShader", WebGLShaderResource);
-            createResourceWrapFunction("createProgram", WebGLProgramResource);
-            createResourceWrapFunction("createTexture", WebGLTextureResource);
-            createResourceWrapFunction("createFramebuffer", WebGLFramebufferResource);
-            createResourceWrapFunction("createRenderbuffer", WebGLRenderbufferResource);
-            createResourceWrapFunction("getUniformLocation", Resource);
+            wrapFunctions["createBuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLBufferResource);
+            wrapFunctions["createShader"] = Resource.WrapFunction.resourceFactoryMethod(WebGLShaderResource);
+            wrapFunctions["createProgram"] = Resource.WrapFunction.resourceFactoryMethod(WebGLProgramResource);
+            wrapFunctions["createTexture"] = Resource.WrapFunction.resourceFactoryMethod(WebGLTextureResource);
+            wrapFunctions["createFramebuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLFramebufferResource);
+            wrapFunctions["createRenderbuffer"] = Resource.WrapFunction.resourceFactoryMethod(WebGLRenderbufferResource);
+            wrapFunctions["getUniformLocation"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
 
             /**
              * @param {string} methodName
@@ -1752,6 +1759,227 @@ WebGLRenderingContextResource.prototype = {
 }
 
 WebGLRenderingContextResource.prototype.__proto__ = Resource.prototype;
+
+////////////////////////////////////////////////////////////////////////////////
+// 2D Canvas
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @constructor
+ * @extends {Resource}
+ * @param {CanvasRenderingContext2D} context
+ * @param {Function} replayContextCallback
+ */
+function CanvasRenderingContext2DResource(context, replayContextCallback)
+{
+    Resource.call(this, context);
+    this._replayContextCallback = replayContextCallback;
+    this._attributesStack = [];
+}
+
+/**
+ * @const
+ * @type {Array.<string>}
+ */
+CanvasRenderingContext2DResource.AttributeProperties = [
+    "strokeStyle",
+    "fillStyle",
+    "globalAlpha",
+    "lineWidth",
+    "lineCap",
+    "lineJoin",
+    "miterLimit",
+    "shadowOffsetX",
+    "shadowOffsetY",
+    "shadowBlur",
+    "shadowColor",
+    "globalCompositeOperation",
+    "font",
+    "textAlign",
+    "textBaseline"
+];
+
+/**
+ * @const
+ * @type {Array.<string>}
+ */
+CanvasRenderingContext2DResource.PathMethods = [
+    "beginPath",
+    "moveTo",
+    "closePath",
+    "lineTo",
+    "quadraticCurveTo",
+    "bezierCurveTo",
+    "arcTo",
+    "arc",
+    "rect"
+];
+
+/**
+ * @const
+ * @type {Array.<string>}
+ */
+CanvasRenderingContext2DResource.TransformationMatrixMethods = [
+    "scale",
+    "rotate",
+    "translate",
+    "transform",
+    "setTransform"
+];
+
+CanvasRenderingContext2DResource.prototype = {
+    /**
+     * @override
+     * @param {Object} data
+     * @param {Cache} cache
+     */
+    _populateReplayableData: function(data, cache)
+    {
+        data.replayContextCallback = this._replayContextCallback;
+        data.attributesStack = this._attributesStack.slice(0);
+        data.currentAttributes = this._currentAttributesState();
+    },
+
+    /**
+     * @override
+     * @param {Object} data
+     * @param {Cache} cache
+     */
+    _doReplayCalls: function(data, cache)
+    {
+        this._replayContextCallback = data.replayContextCallback;
+        this._attributesStack = data.attributesStack.slice(0);
+
+        var ctx = Resource.wrappedObject(this._replayContextCallback());
+        this.setWrappedObject(ctx);
+
+        var saveCalls = 0;
+        for (var i = 0, n = data.calls.length; i < n; ++i) {
+            var replayableCall = data.calls[i];
+            if (replayableCall.functionName() === "save") {
+                console.assert(saveCalls < this._attributesStack.length, "Size of attributes stack is less than 'save' calls");
+                this._applyAttributesState(this._attributesStack[saveCalls++]);
+            }
+            this._calls.push(replayableCall.replay(cache));
+        }
+        console.assert(saveCalls === this._attributesStack.length, "Size of attributes stack should be equal to the number of 'save' calls");
+        this._applyAttributesState(data.currentAttributes);
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall_setTransform: function(call)
+    {
+        // FIXME: Remove obsolete transform matrix methods.
+        this.pushCall(call);
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall_beginPath: function(call)
+    {
+        // FIXME: Remove obsolete path methods.
+        this.pushCall(call);
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall_save: function(call)
+    {
+        this._attributesStack.push(this._currentAttributesState());
+        this.pushCall(call);
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall_restore: function(call)
+    {
+        this._attributesStack.pop();
+        // FIXME: Remove obsolete clip,save methods.
+        this.pushCall(call);
+    },
+
+    /**
+     * @return {!Object.<string, string>}
+     */
+    _currentAttributesState: function()
+    {
+        var ctx = this.wrappedObject();
+        var state = {};
+        CanvasRenderingContext2DResource.AttributeProperties.forEach(function(attribute) {
+            state[attribute] = ctx[attribute];
+        });
+        return state;
+    },
+
+    /**
+     * @param {!Object.<string, string>} state
+     */
+    _applyAttributesState: function(state)
+    {
+        var ctx = this.wrappedObject();
+        Object.keys(state).forEach(function(attribute) {
+            ctx[attribute] = state[attribute];
+        });
+    },
+
+    /**
+     * @override
+     * @return {Object.<string, Function>}
+     */
+    _customWrapFunctions: function()
+    {
+        var wrapFunctions = CanvasRenderingContext2DResource._wrapFunctions;
+        if (!wrapFunctions) {
+            wrapFunctions = Object.create(null);
+
+            wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
+            wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
+            wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
+
+            /**
+             * @param {string} methodName
+             * @param {Function=} func
+             */
+            function stateModifyingWrapFunction(methodName, func)
+            {
+                if (func) {
+                    /** @this Resource.WrapFunction */
+                    wrapFunctions[methodName] = function()
+                    {
+                        func.call(this._resource, this.call());
+                    }
+                } else {
+                    /** @this Resource.WrapFunction */
+                    wrapFunctions[methodName] = function()
+                    {
+                        this._resource.pushCall(this.call());
+                    }
+                }
+            }
+            CanvasRenderingContext2DResource.TransformationMatrixMethods.forEach(function(methodName) {
+                var func = methodName === "setTransform" ? this.pushCall_setTransform : null;
+                stateModifyingWrapFunction(methodName, func);
+            });
+            CanvasRenderingContext2DResource.PathMethods.forEach(function(methodName) {
+                var func = methodName === "beginPath" ? this.pushCall_beginPath : null;
+                stateModifyingWrapFunction(methodName, func);
+            });
+            stateModifyingWrapFunction("save", this.pushCall_save);
+            stateModifyingWrapFunction("restore", this.pushCall_restore);
+            stateModifyingWrapFunction("clip");
+
+            CanvasRenderingContext2DResource._wrapFunctions = wrapFunctions;
+        }
+        return wrapFunctions;
+    }
+};
+
+CanvasRenderingContext2DResource.prototype.__proto__ = Resource.prototype;
 
 /**
  * @constructor
@@ -1942,7 +2170,7 @@ ResourceTrackingManager.prototype = {
     /**
      * @param {Call} call
      */
-    reportCall: function(call)
+    captureCall: function(call)
     {
         if (!this._capturing)
             return;
@@ -1988,8 +2216,7 @@ InjectedScript.prototype = {
     {
         var resource = Resource.forObject(glContext) || new WebGLRenderingContextResource(glContext, this._constructWebGLReplayContext.bind(this, glContext));
         this._manager.registerResource(resource);
-        var proxy = resource.proxyObject();
-        return proxy;
+        return resource.proxyObject();
     },
 
     /**
@@ -1998,9 +2225,10 @@ InjectedScript.prototype = {
      */
     wrapCanvas2DContext: function(context)
     {
-        // FIXME: Implement wrapping 2D context.
-        return context;
-    },    
+        var resource = Resource.forObject(context) || new CanvasRenderingContext2DResource(context, this._constructCanvas2DReplayContext.bind(this, context));
+        this._manager.registerResource(resource);
+        return resource.proxyObject();
+    },
 
     captureFrame: function()
     {
@@ -2112,6 +2340,29 @@ InjectedScript.prototype = {
             this._replayContext = replayContext;
         } else {
             // FIXME: Reset the replay GL state and clear the canvas.
+        }
+        return replayContext;
+    },
+
+    /**
+     * @param {CanvasRenderingContext2D} originalContext
+     * @return {CanvasRenderingContext2D}
+     */
+    _constructCanvas2DReplayContext: function(originalContext)
+    {
+        var replayContext = originalContext["__replayContext"];
+        if (!replayContext) {
+            var canvas = originalContext.canvas.cloneNode(true);
+            replayContext = /** @type {CanvasRenderingContext2D} */ Resource.wrappedObject(canvas.getContext("2d"));
+            Object.defineProperty(originalContext, "__replayContext", {
+                value: replayContext,
+                writable: false,
+                enumerable: false,
+                configurable: true
+            });
+            this._replayContext = replayContext;
+        } else {
+            // FIXME: Clear the canvas.
         }
         return replayContext;
     }
