@@ -62,6 +62,15 @@ G_BEGIN_DECLS
  */
 #define WEBKIT_EDITING_COMMAND_PASTE "Paste"
 
+/**
+ * WEBKIT_EDITING_COMMAND_SELECT_ALL:
+ *
+ * The select all command. Selects all the content of the current text field in
+ * a #WebKitWebView.
+ * It is always possible to select all text, no matter wheter the #WebKitWebView content
+ * is editable or not. You can still check it with webkit_web_view_can_execute_editing_command().
+ */
+#define WEBKIT_EDITING_COMMAND_SELECT_ALL "SelectAll"
 
 G_END_DECLS
 
