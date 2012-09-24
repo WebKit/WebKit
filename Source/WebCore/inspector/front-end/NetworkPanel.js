@@ -65,7 +65,7 @@ WebInspector.NetworkLogView = function()
     this._currentMatchedRequestIndex = -1;
 
     this._createStatusbarButtons();
-    this._createFilterStatusBarItems();
+    this._createStatusBarItems();
     this._linkifier = new WebInspector.Linkifier();
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, this._onRequestStarted, this);
@@ -118,7 +118,7 @@ WebInspector.NetworkLogView.prototype = {
 
     get statusBarItems()
     {
-        return [this._largerRequestsButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement];
+        return [this._largerRequestsButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement, this._progressBarContainer];
     },
 
     get useLargeRows()
@@ -325,7 +325,7 @@ WebInspector.NetworkLogView.prototype = {
         this._updateOffscreenRows();
     },
 
-    _createFilterStatusBarItems: function()
+    _createStatusBarItems: function()
     {
         var filterBarElement = document.createElement("div");
         filterBarElement.className = "scope-bar status-bar-item";
@@ -358,6 +358,8 @@ WebInspector.NetworkLogView.prototype = {
             createFilterElement.call(this, type.name(), type.categoryTitle());
         }
         this._filterBarElement = filterBarElement;
+        this._progressBarContainer = document.createElement("div");
+        this._progressBarContainer.className = "status-bar-item";
     },
 
     _createSummaryBar: function()
@@ -944,15 +946,12 @@ WebInspector.NetworkLogView.prototype = {
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy request headers" : "Copy Request Headers"), this._copyRequestHeaders.bind(this, request));
             if (request.responseHeadersText)
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy response headers" : "Copy Response Headers"), this._copyResponseHeaders.bind(this, request));
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy entry as HAR" : "Copy Entry as HAR"), this._copyRequest.bind(this, request));
         }
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy all as HAR" : "Copy All as HAR"), this._copyAll.bind(this));
 
         if (InspectorFrontendHost.canSave()) {
             contextMenu.appendSeparator();
-            if (request)
-                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save entry as HAR" : "Save Entry as HAR"), this._exportRequest.bind(this, request));
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as HAR with content" : "Save as HAR with Content"), this._exportAll.bind(this));
         }
 
         if (this._canClearBrowserCache || this._canClearBrowserCookies)
@@ -963,7 +962,7 @@ WebInspector.NetworkLogView.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear browser cookies" : "Clear Browser Cookies"), this._clearBrowserCookies.bind(this));
 
 
-        if (request.type === WebInspector.resourceTypes.XHR) {
+        if (request && request.type === WebInspector.resourceTypes.XHR) {
             contextMenu.appendSeparator();
             contextMenu.appendItem(WebInspector.UIString("Replay XHR"), this._replayXHR.bind(this, request.requestId));
             contextMenu.appendSeparator();
@@ -986,12 +985,6 @@ WebInspector.NetworkLogView.prototype = {
         InspectorFrontendHost.copyText(JSON.stringify(harArchive, null, 2));
     },
 
-    _copyRequest: function(request)
-    {
-        var har = (new WebInspector.HAREntry(request)).build();
-        InspectorFrontendHost.copyText(JSON.stringify(har, null, 2));
-    },
-
     _copyLocation: function(request)
     {
         InspectorFrontendHost.copyText(request.url);
@@ -1009,17 +1002,16 @@ WebInspector.NetworkLogView.prototype = {
 
     _exportAll: function()
     {
-        var harArchive = {
-            log: (new WebInspector.HARLog(this._requests)).build()
-        };
-        
-        WebInspector.fileManager.save(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2), true);
-    },
-
-    _exportRequest: function(request)
-    {
-        var har = (new WebInspector.HAREntry(request)).build();
-        WebInspector.fileManager.save(request.displayName + ".har", JSON.stringify(har, null, 2), true);
+        var filename = WebInspector.inspectedPageDomain + ".har";
+        var stream = new WebInspector.FileOutputStream();
+        stream.open(filename, openCallback.bind(this));
+        function openCallback()
+        {
+            var progressIndicator = new WebInspector.ProgressIndicator();
+            this._progressBarContainer.appendChild(progressIndicator.element);
+            var harWriter = new WebInspector.HARWriter();
+            harWriter.write(stream, this._requests, progressIndicator);
+        }
     },
 
     _clearBrowserCache: function(event)

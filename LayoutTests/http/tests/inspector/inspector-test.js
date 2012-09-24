@@ -372,6 +372,26 @@ InspectorTest.textContentWithLineBreaks = function(node)
     return buffer;
 }
 
+InspectorTest.StringOutputStream = function(callback)
+{
+    this._callback = callback;
+    this._buffer = "";
+};
+
+InspectorTest.StringOutputStream.prototype = {
+    write: function(chunk, callback)
+    {
+        this._buffer += chunk;
+        if (callback)
+            callback(this);
+    },
+
+    close: function()
+    {
+        this._callback(this._buffer);
+    }
+};
+
 };
 
 var initializeCallId = 0;

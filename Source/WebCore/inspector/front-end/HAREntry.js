@@ -164,7 +164,7 @@ WebInspector.HAREntry.prototype = {
             text: this._request.requestFormData
         };
         if (this._request.formParameters)
-           res.params = this._buildParameters(this._request.formParameters);
+            res.params = this._buildParameters(this._request.formParameters);
         return res;
     },
 
@@ -279,17 +279,22 @@ WebInspector.HARLog.prototype = {
      */
     build: function()
     {
-        var webKitVersion = /AppleWebKit\/([^ ]+)/.exec(window.navigator.userAgent);
-
         return {
             version: "1.2",
-            creator: {
-                name: "WebInspector",
-                version: webKitVersion ? webKitVersion[1] : "n/a"
-            },
+            creator: this._creator(),
             pages: this._buildPages(),
             entries: this._requests.map(this._convertResource.bind(this))
         }
+    },
+
+    _creator: function()
+    {
+        var webKitVersion = /AppleWebKit\/([^ ]+)/.exec(window.navigator.userAgent);
+
+        return {
+            name: "WebInspector",
+            version: webKitVersion ? webKitVersion[1] : "n/a"
+        };
     },
 
     /**
@@ -346,5 +351,89 @@ WebInspector.HARLog.prototype = {
         if (time === -1 || startTime === -1)
             return -1;
         return WebInspector.HAREntry._toMilliseconds(time - startTime);
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.HARWriter = function()
+{
+}
+
+WebInspector.HARWriter.prototype = {
+    /**
+     * @param {WebInspector.OutputStream} stream
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {WebInspector.Progress} progress
+     */
+    write: function(stream, requests, progress)
+    {
+        this._stream = stream;
+        this._harLog = (new WebInspector.HARLog(requests)).build();
+        this._pendingRequests = 1; // Guard against completing resource transfer before all requests are made.
+        var entries = this._harLog.entries;
+        for (var i = 0; i < entries.length; ++i) {
+            var content = requests[i].content;
+            if (typeof content === "undefined" && requests[i].finished) {
+                ++this._pendingRequests;
+                requests[i].requestContent(this._onContentAvailable.bind(this, entries[i]));
+            } else if (content !== null)
+                entries[i].response.content.text = content;
+        }
+        var compositeProgress = new WebInspector.CompositeProgress(progress);
+        this._writeProgress = compositeProgress.createSubProgress();
+        if (--this._pendingRequests) {
+            this._requestsProgress = compositeProgress.createSubProgress();
+            this._requestsProgress.setTitle(WebInspector.UIString("Collecting content…"));
+            this._requestsProgress.setTotalWork(this._pendingRequests);
+        } else
+            this._beginWrite();
+    },
+
+    /**
+     * @param {Object} entry
+     * @param {string|null} content
+     * @param {boolean} contentEncoded
+     * @param {string=} mimeType
+     */
+    _onContentAvailable: function(entry, content, contentEncoded, mimeType)
+    {
+        if (content !== null)
+            entry.response.content.text = content;
+        if (this._requestsProgress)
+            this._requestsProgress.worked();
+        if (!--this._pendingRequests) {
+            this._requestsProgress.done();
+            this._beginWrite();
+        }
+    },
+
+    _beginWrite: function()
+    {
+        const jsonIndent = 2;
+        this._text = JSON.stringify({log: this._harLog}, null, jsonIndent);
+        this._writeProgress.setTitle(WebInspector.UIString("Writing file…"));
+        this._writeProgress.setTotalWork(this._text.length);
+        this._bytesWritten = 0;
+        this._writeNextChunk(this._stream);
+    },
+
+    /**
+     * @param {WebInspector.OutputStream} stream
+     * @param {string} error
+     */
+    _writeNextChunk: function(stream, error)
+    {
+        if (this._bytesWritten >= this._text.length || error) {
+            stream.close();
+            this._writeProgress.done();
+            return;
+        }
+        const chunkSize = 100000;
+        var text = this._text.substring(this._bytesWritten, this._bytesWritten + chunkSize);
+        this._bytesWritten += text.length;
+        stream.write(text, this._writeNextChunk.bind(this));
+        this._writeProgress.setWorked(this._bytesWritten);
     }
 }

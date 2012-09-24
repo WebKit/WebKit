@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+
+<script>
+var test = function()
+{
+    const requestRegExp = /\/initiator.css$/;
+
+    function onRequestFinished()
+    {
+        var writer = new WebInspector.HARWriter();
+        var stream = new InspectorTest.StringOutputStream(onSaved);
+        writer.write(stream, WebInspector.networkLog.requests, new WebInspector.Progress());
+    }
+
+    function onSaved(data)
+    {
+        var har = JSON.parse(data);
+        InspectorTest.addResult("initiator.css: " + findEntry(har, requestRegExp).response.content.text);
+        InspectorTest.completeTest();
+    }
+
+    function findEntry(har, regexp)
+    {
+        var entries = har.log.entries;
+        for (var i = 0; i < entries.length; ++i) {
+             var entry = entries[i];
+             if (regexp.test(entry.request.url))
+                 return entry;
+        }
+        InspectorTest.addResult("FAIL: can't find resource for " + regexp);
+        return null;
+    }
+
+    InspectorTest.makeSimpleXHR("GET", "resources/initiator.css", false, onRequestFinished);
+}
+</script>
+
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests conversion of Inspector's resource representation into HAR format.
+</p>
+
+</body>
+</html>

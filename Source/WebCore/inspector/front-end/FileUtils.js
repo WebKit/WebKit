@@ -40,8 +40,6 @@ WebInspector.OutputStreamDelegate.prototype = {
 
     onChunkTransferred: function(source) { },
 
-    onTransferFinished: function(source) { },
-
     onError: function(source, event) { }
 }
 

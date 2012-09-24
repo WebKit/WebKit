@@ -207,24 +207,4 @@ InspectorTest.FakeFileReader.prototype = {
     }
 };
 
-InspectorTest.StringOutputStream = function(callback)
-{
-    this._callback = callback;
-    this._buffer = "";
-};
-
-InspectorTest.StringOutputStream.prototype = {
-    write: function(chunk, callback)
-    {
-        this._buffer += chunk;
-        if (callback)
-            callback(this);
-    },
-
-    close: function()
-    {
-        this._callback(this._buffer);
-    }
-};
-
 };
