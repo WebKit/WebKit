@@ -173,6 +173,18 @@ webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 # The EFL port has no support for accessibility features
 Bug(EFL) accessibility [ Skip ]
 
+# -------------------------------------------------------------------------------------
+# Only the Chromium port supports the features below, but its DRT implementation is not
+# capable of running those tests either. They are currently skipped by all ports.
+# -------------------------------------------------------------------------------------
+# Comment from chromium/TestExpectations: There is no enough plugins support in DRT
+webkit.org/b/97459 http/tests/inspector/network/network-embed.html [ WontFix ]
+webkit.org/b/97459 http/tests/inspector/network/network-content-replacement-embed.html [ WontFix ]
+# Comment from chromium/TestExpectations: Transferred time/size are not supported in DRT.
+webkit.org/b/97459 http/tests/inspector/network/network-size.html [ WontFix ]
+webkit.org/b/97459 http/tests/inspector/network/network-size-chunked.html [ WontFix ]
+webkit.org/b/97459 http/tests/inspector/network/network-size-sync.html [ WontFix ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
