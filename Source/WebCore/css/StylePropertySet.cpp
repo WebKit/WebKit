@@ -19,8 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#define WTF_DEPRECATED_STRING_OPERATORS
-
 #include "config.h"
 #include "StylePropertySet.h"
 

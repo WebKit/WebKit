@@ -1,3 +1,14 @@
+2012-09-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove remaining WTF_DEPRECATED_STRING_OPERATORS from cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=97412
+
+        Reviewed by Adam Barth.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::openTagToString): Replaced operator+= with StringBuilder::append().
+        (WebKit::WebPageSerializerImpl::endTagToString): Ditto.
+
 2012-09-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, rolling out r122243.
