@@ -385,7 +385,6 @@ WebInspector.TimelineSaver = function(stream)
 
 WebInspector.TimelineSaver.prototype = {
     /**
-     * @param {string} fileName
      * @param {Array} records
      * @param {string} version
      */

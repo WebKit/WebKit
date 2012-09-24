@@ -421,7 +421,7 @@ WebInspector.HARWriter.prototype = {
 
     /**
      * @param {WebInspector.OutputStream} stream
-     * @param {string} error
+     * @param {string=} error
      */
     _writeNextChunk: function(stream, error)
     {
