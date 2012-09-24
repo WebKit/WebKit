@@ -271,6 +271,9 @@ void InspectorOverlay::update()
     }
 
     FrameView* view = m_page->mainFrame()->view();
+    if (!view)
+        return;
+
     FrameView* overlayView = overlayPage()->mainFrame()->view();
     IntRect visibleRect = enclosingIntRect(view->visibleContentRect());
     overlayView->resize(visibleRect.width(), visibleRect.height());
