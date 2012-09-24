@@ -438,6 +438,8 @@ WebInspector.FunctionScopeMainTreeElement.prototype = {
             this.removeChildren();
 
             var scopeChain = response.scopeChain;
+            if (!scopeChain)
+                return;
             for (var i = 0; i < scopeChain.length; ++i) {
                 var scope = scopeChain[i];
                 var title = null;
