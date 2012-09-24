@@ -142,6 +142,9 @@ webkit.org/b/35220 inspector/debugger/script-extract-outline.html [ Crash Failur
 # Test is flaky and needs to be fixed
 webkit.org/b/56985 http/tests/loading/bad-server-subframe.html [ Crash Pass ]
 
+# Sometimes times out of the build bot
+webkit.org/b/90207 fast/forms/select/select-state-restore.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
