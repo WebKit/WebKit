@@ -1,3 +1,216 @@
+2012-09-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Integrate most of GoogleURL in WTFURL
+        https://bugs.webkit.org/show_bug.cgi?id=97405
+
+        Reviewed by Adam Barth.
+
+        This patch brings almost all of the implementatation of Google-URL in WTFURL
+        with only minor changes.
+
+        The changes from the original code are mostly:
+        -Code cleaning.
+        -Replace url_parse::Parsed by URLSegments.
+        -Replace url_parse::Component by URLComponent
+        -More code cleaning.
+        -Adopt URLBuffer and RawURLBuffer instead of the CanonOutputT and RawCanonOutputT.
+        -Use URLCharacterTypes instead of the litany of characters functions.
+        -Some more code cleaning.
+        -Fix the style to match WebKit as much as possible.
+        -Rename the files to match WebKit style.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::ParsedURL):
+        (WTF::ParsedURL::segment):
+        * wtf/url/api/ParsedURL.h:
+        (WTF::ParsedURL::isValid):
+        * wtf/url/src/RawURLBuffer.h:
+        * wtf/url/src/URLCanon.h: Added.
+        (URLCanonicalizer):
+        (CharsetConverter):
+        (WTF::URLCanonicalizer::CharsetConverter::CharsetConverter):
+        (WTF::URLCanonicalizer::CharsetConverter::~CharsetConverter):
+        (CanonHostInfo):
+        (WTF::URLCanonicalizer::CanonHostInfo::CanonHostInfo):
+        (WTF::URLCanonicalizer::CanonHostInfo::IsIPAddress):
+        (WTF::URLCanonicalizer::CanonHostInfo::AddressLength):
+        (URLComponentSource):
+        (WTF::URLCanonicalizer::URLComponentSource::URLComponentSource):
+        (Replacements):
+        (WTF::URLCanonicalizer::Replacements::Replacements):
+        (WTF::URLCanonicalizer::Replacements::SetScheme):
+        (WTF::URLCanonicalizer::Replacements::IsSchemeOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetUsername):
+        (WTF::URLCanonicalizer::Replacements::ClearUsername):
+        (WTF::URLCanonicalizer::Replacements::IsUsernameOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetPassword):
+        (WTF::URLCanonicalizer::Replacements::ClearPassword):
+        (WTF::URLCanonicalizer::Replacements::IsPasswordOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetHost):
+        (WTF::URLCanonicalizer::Replacements::ClearHost):
+        (WTF::URLCanonicalizer::Replacements::IsHostOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetPort):
+        (WTF::URLCanonicalizer::Replacements::ClearPort):
+        (WTF::URLCanonicalizer::Replacements::IsPortOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetPath):
+        (WTF::URLCanonicalizer::Replacements::ClearPath):
+        (WTF::URLCanonicalizer::Replacements::IsPathOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetQuery):
+        (WTF::URLCanonicalizer::Replacements::ClearQuery):
+        (WTF::URLCanonicalizer::Replacements::IsQueryOverridden):
+        (WTF::URLCanonicalizer::Replacements::SetRef):
+        (WTF::URLCanonicalizer::Replacements::ClearRef):
+        (WTF::URLCanonicalizer::Replacements::IsRefOverridden):
+        (WTF::URLCanonicalizer::Replacements::sources):
+        (WTF::URLCanonicalizer::Replacements::components):
+        (WTF::URLCanonicalizer::Replacements::Placeholder):
+        * wtf/url/src/URLCanonEtc.cpp: Added.
+        (WTF::URLCanonicalizer::removeURLWhitespace):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::canonicalSchemeChar):
+        (WTF::URLCanonicalizer::CanonicalizeScheme):
+        (WTF::URLCanonicalizer::CanonicalizeUserInfo):
+        (WTF::URLCanonicalizer::CanonicalizePort):
+        (WTF::URLCanonicalizer::CanonicalizeRef):
+        * wtf/url/src/URLCanonFilesystemurl.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeFileSystemURL):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::ReplaceFileSystemURL):
+        * wtf/url/src/URLCanonFileurl.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeFileURL):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::FileCanonicalizePath):
+        (WTF::URLCanonicalizer::ReplaceFileURL):
+        * wtf/url/src/URLCanonHost.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeHost):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::CanonicalizeHostVerbose):
+        * wtf/url/src/URLCanonICU.cpp: Added.
+        (WTF::URLCanonicalizer::IDNToASCII):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::readUTFChar):
+        * wtf/url/src/URLCanonIP.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeIPAddress):
+        (URLCanonicalizer):
+        * wtf/url/src/URLCanonInternal.cpp: Added.
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::AppendInvalidNarrowString):
+        (WTF::URLCanonicalizer::ConvertUTF16ToUTF8):
+        (WTF::URLCanonicalizer::ConvertUTF8ToUTF16):
+        (WTF::URLCanonicalizer::SetupOverrideComponents):
+        (WTF::URLCanonicalizer::SetupUTF16OverrideComponents):
+        (WTF::URLCanonicalizer::_itoa_s):
+        (WTF::URLCanonicalizer::_itow_s):
+        * wtf/url/src/URLCanonInternal.h: Added.
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::hexCharToValue):
+        (WTF::URLCanonicalizer::isDot):
+        (WTF::URLCanonicalizer::appendURLEscapedCharacter):
+        (WTF::URLCanonicalizer::doAppendUTF8):
+        (WTF::URLCanonicalizer::AppendCharToOutput):
+        (WTF::URLCanonicalizer::AppendUTF8Value):
+        (WTF::URLCanonicalizer::AppendUTF8EscapedValue):
+        (WTF::URLCanonicalizer::AppendUTF16Value):
+        (WTF::URLCanonicalizer::AppendUTF8EscapedChar):
+        (WTF::URLCanonicalizer::Is8BitChar):
+        (WTF::URLCanonicalizer::DecodeEscaped):
+        (WTF::URLCanonicalizer::_itoa_s):
+        (WTF::URLCanonicalizer::_itow_s):
+        (WTF::URLCanonicalizer::_strtoui64):
+        * wtf/url/src/URLCanonMailto.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeMailtoURL):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::ReplaceMailtoURL):
+        * wtf/url/src/URLCanonPath.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizePath):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::CanonicalizePartialPath):
+        * wtf/url/src/URLCanonPathurl.cpp: Added.
+        (WTF::URLCanonicalizer::canonicalizePathURL):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::ReplacePathURL):
+        * wtf/url/src/URLCanonQuery.cpp: Added.
+        (WTF::URLCanonicalizer::CanonicalizeQuery):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::ConvertUTF16ToQueryEncoding):
+        * wtf/url/src/URLCanonRelative.cpp: Added.
+        (WTF::URLCanonicalizer::isRelativeURL):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::resolveRelativeURL):
+        * wtf/url/src/URLCanonStdURL.cpp: Added.
+        (WTF::URLCanonicalizer::DefaultPortForScheme):
+        (URLCanonicalizer):
+        (WTF::URLCanonicalizer::CanonicalizeStandardURL):
+        (WTF::URLCanonicalizer::ReplaceStandardURL):
+        * wtf/url/src/URLCharacterTypes.cpp:
+        * wtf/url/src/URLCharacterTypes.h:
+        (WTF::URLCharacterTypes::isComponentChar):
+        (WTF::URLCharacterTypes::isHexChar):
+        (WTF::URLCharacterTypes::isIPv4Char):
+        (WTF::URLCharacterTypes::isQueryChar):
+        (WTF::URLCharacterTypes::isCharacterOfType):
+        (URLCharacterTypes):
+        * wtf/url/src/URLEscape.cpp: Removed.
+        * wtf/url/src/URLFile.h: Added.
+        (URLParser):
+        (WTF::URLParser::isWindowsDriveSeparator):
+        (WTF::URLParser::isWindowsDriveLetter):
+        (WTF::URLParser::findNextSlash):
+        (WTF::URLParser::doesBeginWindowsDriveSpec):
+        (WTF::URLParser::doesBeginUNCPath):
+        * wtf/url/src/URLParse.cpp: Added.
+        (WTF::URLParser::ExtractScheme):
+        (URLParser):
+        (WTF::URLParser::IsAuthorityTerminator):
+        (WTF::URLParser::ExtractFileName):
+        (WTF::URLParser::ExtractQueryKeyValue):
+        (WTF::URLParser::ParseAuthority):
+        (WTF::URLParser::ParsePort):
+        (WTF::URLParser::ParseStandardURL):
+        (WTF::URLParser::ParsePathURL):
+        (WTF::URLParser::ParseFileSystemURL):
+        (WTF::URLParser::ParseMailtoURL):
+        (WTF::URLParser::parsePathInternal):
+        (WTF::URLParser::ParseAfterScheme):
+        * wtf/url/src/URLParse.h: Added.
+        (URLParser):
+        * wtf/url/src/URLParseFile.cpp: Added.
+        (WTF):
+        (WTF::URLParser::ParseFileURL):
+        (URLParser):
+        * wtf/url/src/URLParseInternal.h: Added.
+        (URLParser):
+        (WTF::URLParser::isURLSlash):
+        (WTF::URLParser::shouldTrimFromURL):
+        (WTF::URLParser::trimURL):
+        (WTF::URLParser::countConsecutiveSlashes):
+        * wtf/url/src/URLParser.h: Removed.
+        * wtf/url/src/URLQueryCanonicalizer.h: Removed.
+        * wtf/url/src/URLSegments.cpp:
+        * wtf/url/src/URLSegments.h:
+        (WTF::URLSegments::URLSegments):
+        (URLSegments):
+        (WTF::URLSegments::operator=):
+        (WTF::URLSegments::innerURLSegments):
+        (WTF::URLSegments::setInnerURLSegments):
+        (WTF::URLSegments::clearInnerURLSegments):
+        * wtf/url/src/URLUtil.cpp: Added.
+        (URLUtilities):
+        (WTF::URLUtilities::IsStandard):
+        (WTF::URLUtilities::FindAndCompareScheme):
+        (WTF::URLUtilities::Canonicalize):
+        (WTF::URLUtilities::resolveRelative):
+        (WTF::URLUtilities::ReplaceComponents):
+        (WTF::URLUtilities::LowerCaseEqualsASCII):
+        (WTF::URLUtilities::DecodeURLEscapeSequences):
+        (WTF::URLUtilities::EncodeURIComponent):
+        (WTF::URLUtilities::CompareSchemeComponent):
+        * wtf/url/src/URLUtil.h: Added.
+        (URLUtilities):
+        * wtf/url/src/URLUtilInternal.h: Renamed from Source/WTF/wtf/url/src/URLEscape.h.
+        (URLUtilities):
+
 2012-09-24  Joone Hur  <joone.hur@intel.com>
 
         [GTK] Implement GraphicsLayer using Clutter

@@ -45,7 +45,7 @@ public:
 
     WTF_EXPORT_PRIVATE ParsedURL isolatedCopy() const;
 
-    bool isValid() const { return !m_spec.string().isEmpty(); }
+    bool isValid() const { return !m_spec.string().isNull(); }
 
     // Return a URL component or a null String if the component is undefined for the URL.
     WTF_EXPORT_PRIVATE String scheme() const;

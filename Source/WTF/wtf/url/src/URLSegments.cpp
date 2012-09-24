@@ -13,7 +13,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -25,7 +25,7 @@
  * http://www.mozilla.org/MPL/ (the "MPL") or the GNU General Public
  * License Version 2.0, found at http://www.fsf.org/copyleft/gpl.html
  * (the "GPL"), in which case the provisions of the MPL or the GPL are
- * applicable instead of those above.  If you wish to allow use of your
+ * applicable instead of those above. If you wish to allow use of your
  * version of this file only under the terms of one of those two
  * licenses (the MPL or the GPL) and not to allow others to use your
  * version of this file under the LGPL, indicate your decision by

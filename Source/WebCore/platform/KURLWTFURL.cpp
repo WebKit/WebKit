@@ -71,9 +71,17 @@ KURL::KURL(const KURL& baseURL, const String& relative)
         m_urlImpl->m_invalidUrlString = relative;
 }
 
-KURL::KURL(const KURL&, const String&, const TextEncoding&)
+KURL::KURL(const KURL& baseURL, const String& relative, const TextEncoding&)
+    : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
-    // FIXME: Add WTFURL Implementation.
+    // FIXME: handle the encoding.
+    if (baseURL.isEmpty())
+        m_urlImpl->m_parsedURL = ParsedURL(relative);
+    else
+        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative);
+
+    if (!m_urlImpl->m_parsedURL.isValid())
+        m_urlImpl->m_invalidUrlString = relative;
 }
 
 KURL KURL::copy() const
@@ -141,7 +149,10 @@ String KURL::host() const
 
 bool KURL::hasPort() const
 {
-    ASSERT(isValid());
+    // This should be an ASSERT. HTMLAnchorElement::port() does not check the validity of the URL.
+    if (!isValid())
+        return false;
+
     return !m_urlImpl->m_parsedURL.port().isNull();
 }
 
@@ -164,25 +175,37 @@ unsigned short KURL::port() const
 
 String KURL::user() const
 {
-    ASSERT(isValid());
+    // FIXME: this should be an ASSERT(), call site should not use invalid URLs.
+    if (!isValid())
+        return String();
+
     return m_urlImpl->m_parsedURL.username();
 }
 
 String KURL::pass() const
 {
-    ASSERT(isValid());
+    // FIXME: this should be an ASSERT(), call site should not use invalid URLs.
+    if (!isValid())
+        return String();
+
     return m_urlImpl->m_parsedURL.password();
 }
 
 bool KURL::hasPath() const
 {
-    ASSERT(isValid());
+    // FIXME: this should be an ASSERTION, call site should not use invalid URLs.
+    if (!isValid())
+        return false;
+
     return !path().isEmpty();
 }
 
 String KURL::path() const
 {
-    ASSERT(isValid());
+    // FIXME: this should be an ASSERTION, HTMLAnchorElement should not use invalid URLs.
+    if (!isValid())
+        return String();
+
     return m_urlImpl->m_parsedURL.path();
 }
 
@@ -201,7 +224,10 @@ String KURL::lastPathComponent() const
 
 String KURL::query() const
 {
-    ASSERT(isValid());
+    // FIXME: this should be an ASSERTION, HTMLAnchorElement should not use invalid URLs.
+    if (!isValid())
+        return String();
+
     return m_urlImpl->m_parsedURL.query();
 }
 
@@ -221,6 +247,7 @@ String KURL::fragmentIdentifier() const
     // ASSERT(isValid());
     if (!isValid())
         return String();
+
     return m_urlImpl->m_parsedURL.fragment();
 }
 
@@ -234,7 +261,7 @@ String KURL::baseAsString() const
 // FIXME: Get rid of this function from KURL.
 String KURL::fileSystemPath() const
 {
-    return String();
+    return string();
 }
 
 bool KURL::protocolIs(const char* testProtocol) const

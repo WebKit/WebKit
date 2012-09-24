@@ -1,40 +1,46 @@
-// Copyright 2007, Google Inc. All rights reserved.
-// Copyright 2012 Apple Inc. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/*
+ * Copyright 2007 Google Inc. All rights reserved.
+ * Copyright 2012 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #ifndef URLSegments_h
 #define URLSegments_h
 
 #include "URLComponent.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 #if USE(WTFURL)
 
 namespace WTF {
+
+class URLSegments;
 
 // A structure that holds the identified parts of an input URL. This structure
 // does NOT store the URL itself. The caller will have to store the URL text
@@ -58,6 +64,26 @@ public:
     };
 
     URLSegments() { }
+
+    URLSegments(const URLSegments& otherSegment)
+    {
+        *this = otherSegment;
+    }
+
+    URLSegments& operator=(const URLSegments& otherSegment)
+    {
+        scheme = otherSegment.scheme;
+        username = otherSegment.username;
+        password = otherSegment.password;
+        host = otherSegment.host;
+        port = otherSegment.port;
+        path = otherSegment.path;
+        query = otherSegment.query;
+        fragment = otherSegment.fragment;
+        if (otherSegment.m_innerURLSegments)
+            m_innerURLSegments = adoptPtr(new URLSegments(*otherSegment.m_innerURLSegments));
+            return *this;
+    }
 
     // Returns the length of the URL (the end of the last component).
     //
@@ -105,6 +131,16 @@ public:
     URLComponent path;
     URLComponent query;
     URLComponent fragment;
+
+    // FIXME: this is a damn ugly API and is basically untested.
+    const URLSegments* innerURLSegments() const { return m_innerURLSegments.get(); }
+    void setInnerURLSegments(const URLSegments& urlSegments) { m_innerURLSegments = adoptPtr(new URLSegments(urlSegments)); }
+    void clearInnerURLSegments() { return m_innerURLSegments.clear(); }
+
+private:
+    // The Filesystem API describe a URL format with an internal URL. E.g.: filesystem:http://www.apple.com/
+    // The inner URL segment contains the parsed inner URL of a filesystem: URL.
+    OwnPtr<URLSegments> m_innerURLSegments;
 };
 
 } // namespace WTF

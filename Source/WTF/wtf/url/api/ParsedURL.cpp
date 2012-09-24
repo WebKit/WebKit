@@ -33,23 +33,38 @@
 #include <wtf/MemoryInstrumentation.h>
 #include <wtf/RawURLBuffer.h>
 #include <wtf/URLComponent.h>
-#include <wtf/URLParser.h>
+#include <wtf/URLUtil.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
 ParsedURL::ParsedURL(const String& urlString)
 {
-    if (urlString.isEmpty()) {
-        m_spec = URLString();
-        return;
-    }
+    unsigned urlStringLength = urlString.length();
+    if (!urlStringLength)
+        return; // FIXME: we should ASSERT on this, but people use KURL incorrectly with ParsedURLStringTag :(.
 
-    // FIXME: handle invalid urlString.
-    m_spec = URLString(urlString);
+    RawURLBuffer<char> outputBuffer;
+    String base;
+    const CString& baseStr = base.utf8();
+    bool isValid = false;
+    URLSegments baseSegments;
+
+    // FIXME: we should take shortcuts here! We do not have to resolve the relative part.
     if (urlString.is8Bit())
-        URLParser<LChar>::parseStandardURL(urlString.characters8(), urlString.length(), m_segments);
+        isValid = URLUtilities::resolveRelative(baseStr.data(), baseSegments,
+                                                reinterpret_cast<const char*>(urlString.characters8()), urlStringLength,
+                                                /* charsetConverter */ 0,
+                                                outputBuffer, &m_segments);
     else
-        URLParser<UChar>::parseStandardURL(urlString.characters16(), urlString.length(), m_segments);
+        isValid = URLUtilities::resolveRelative(baseStr.data(), baseSegments,
+                                                urlString.characters16(), urlStringLength,
+                                                /* charsetConverter */ 0,
+                                                outputBuffer, &m_segments);
+
+    // FIXME: we should ASSERT on isValid, but people use KURL incorrectly with ParsedURLStringTag :(.
+    if (isValid)
+        m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
 }
 
 ParsedURL::ParsedURL(const ParsedURL& base, const String& relative)
@@ -57,36 +72,29 @@ ParsedURL::ParsedURL(const ParsedURL& base, const String& relative)
     if (!base.isValid())
         return;
 
-    if (relative.isEmpty()) {
+    unsigned relativeLength = relative.length();
+    if (!relativeLength) {
         *this = base.withoutFragment();
         return;
     }
 
-    // FIXME: handle invalid URLs.
-    const String& baseString = base.m_spec.string();
-    RawURLBuffer<char, 1024> outputBuffer;
-    if (relative.is8Bit()) {
-        if (baseString.is8Bit()) {
-            URLParser<LChar, LChar>::parseURLWithBase(relative.characters8(), relative.length(),
-                                                      baseString.characters8(), baseString.length(), base.m_segments,
-                                                      outputBuffer, m_segments);
-        } else {
-            URLParser<LChar, UChar>::parseURLWithBase(relative.characters8(), relative.length(),
-                                                      baseString.characters16(), baseString.length(), base.m_segments,
-                                                      outputBuffer, m_segments);
-        }
-    } else {
-        if (baseString.is8Bit()) {
-            URLParser<UChar, LChar>::parseURLWithBase(relative.characters16(), relative.length(),
-                                                      baseString.characters8(), baseString.length(), base.m_segments,
-                                                      outputBuffer, m_segments);
-        } else {
-            URLParser<UChar, UChar>::parseURLWithBase(relative.characters16(), relative.length(),
-                                                      baseString.characters16(), baseString.length(), base.m_segments,
-                                                      outputBuffer, m_segments);
-        }
-    }
-    m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
+    RawURLBuffer<char> outputBuffer;
+    const CString& baseStr = base.m_spec.m_string.utf8();
+    bool isValid = false;
+
+    if (relative.is8Bit())
+        isValid = URLUtilities::resolveRelative(baseStr.data(), base.m_segments,
+                                                reinterpret_cast<const char*>(relative.characters8()), relativeLength,
+                                                /* charsetConverter */ 0,
+                                                outputBuffer, &m_segments);
+    else
+        isValid = URLUtilities::resolveRelative(baseStr.data(), base.m_segments,
+                                                relative.characters16(), relativeLength,
+                                                /* charsetConverter */ 0,
+                                                outputBuffer, &m_segments);
+
+    if (isValid)
+        m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
 }
 
 ParsedURL ParsedURL::isolatedCopy() const
@@ -171,7 +179,9 @@ String ParsedURL::segment(const URLComponent& component) const
         return String();
 
     String segment = m_spec.string().substring(component.begin(), component.length());
-    ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
+
+    // FIXME: GoogleURL create empty segments. This happen for the fragment for the test fast/url/segments.html
+    // ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
     return segment;
 }
 
