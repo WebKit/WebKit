@@ -55,13 +55,22 @@ HTMLMeterElement* RenderMeter::meterElement() const
 void RenderMeter::updateLogicalWidth()
 {
     RenderBox::updateLogicalWidth();
-    setWidth(theme()->meterSizeForBounds(this, pixelSnappedIntRect(frameRect())).width());
+
+    IntSize frameSize = theme()->meterSizeForBounds(this, pixelSnappedIntRect(frameRect()));
+    setLogicalWidth(isHorizontalWritingMode() ? frameSize.width() : frameSize.height());
 }
 
-void RenderMeter::updateLogicalHeight()
+void RenderMeter::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    RenderBox::updateLogicalHeight();
-    setHeight(theme()->meterSizeForBounds(this, pixelSnappedIntRect(frameRect())).height());
+    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+
+    LayoutRect frame = frameRect();
+    if (isHorizontalWritingMode())
+        frame.setHeight(computedValues.m_extent);
+    else
+        frame.setWidth(computedValues.m_extent);
+    IntSize frameSize = theme()->meterSizeForBounds(this, pixelSnappedIntRect(frame));
+    computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
 }
 
 double RenderMeter::valueRatio() const

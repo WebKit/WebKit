@@ -40,7 +40,7 @@ public:
 
 private:    
     virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
