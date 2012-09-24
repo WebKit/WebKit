@@ -77,6 +77,7 @@ class InPageSearchManager;
 class InputHandler;
 class SelectionHandler;
 class TouchEventHandler;
+class WebCookieJar;
 class WebPageClient;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -469,6 +470,7 @@ public:
     WebCore::Frame* m_mainFrame;
     RefPtr<WebCore::Node> m_currentContextNode;
     WebSettings* m_webSettings;
+    WebCookieJar* m_cookieJar;
     OwnPtr<WebTapHighlight> m_tapHighlight;
     WebSelectionOverlay* m_selectionOverlay;
 

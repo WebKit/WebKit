@@ -137,6 +137,17 @@ void CookieManager::setCookies(const KURL& url, const String& value, CookieFilte
     }
 }
 
+void CookieManager::setCookies(const KURL& url, const Vector<String>& cookies, CookieFilter filter)
+{
+    CookieLog("CookieManager - Setting cookies");
+    CookieParser parser(url);
+    for (size_t i = 0; i < cookies.size(); ++i) {
+        BackingStoreRemovalPolicy treatment = m_privateMode ? DoNotRemoveFromBackingStore : RemoveFromBackingStore;
+        if (ParsedCookie* parsedCookie = parser.parseOneCookie(cookies[i]))
+            checkAndTreatCookie(parsedCookie, treatment, filter);
+    }
+}
+
 String CookieManager::getCookie(const KURL& url, CookieFilter filter) const
 {
     Vector<ParsedCookie*> rawCookies;

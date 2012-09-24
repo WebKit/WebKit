@@ -65,6 +65,11 @@ WebString WebString::fromUtf8(const char* utf8)
     return String::fromUTF8(utf8);
 }
 
+WebString WebString::fromUtf8(const char* utf8, size_t length)
+{
+    return String::fromUTF8(utf8, length);
+}
+
 WebString& WebString::operator=(const WebString& str)
 {
     if (&str == this)

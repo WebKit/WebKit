@@ -45,6 +45,8 @@ public:
     // Parses a sequence of "Cookie:" header and return the parsed cookies.
     Vector<ParsedCookie*> parse(const String& cookies);
 
+    ParsedCookie* parseOneCookie(const String& cookie);
+
 private:
     // FIXME: curTime, start, end parameters should be removed. And this method can be public.
     ParsedCookie* parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime);

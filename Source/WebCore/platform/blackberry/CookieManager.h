@@ -71,6 +71,7 @@ public:
     void setCanLocalAccessAllCookies(bool enabled) { m_shouldDumpAllCookies = enabled; }
 
     void setCookies(const KURL&, const String& value, CookieFilter = WithHttpOnlyCookies);
+    void setCookies(const KURL&, const Vector<String>& cookies, CookieFilter);
 
     void removeAllCookies(BackingStoreRemovalPolicy);
     void removeCookieWithName(const KURL&, const String& cookieName);

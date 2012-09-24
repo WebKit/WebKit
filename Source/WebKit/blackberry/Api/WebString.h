@@ -41,6 +41,7 @@ public:
     WebString& operator=(const WebString&);
     std::string utf8() const;
     static WebString fromUtf8(const char* utf8);
+    static WebString fromUtf8(const char* utf8, size_t length);
     const unsigned short* characters() const;
     unsigned length() const;
     bool isEmpty() const;

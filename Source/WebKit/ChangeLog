@@ -1,3 +1,16 @@
+2012-09-24  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add cookie database API
+        https://bugs.webkit.org/show_bug.cgi?id=97102
+
+        Reviewed by Antonio Gomes.
+
+        Add cookie database file to build system.
+
+        Reviewed internally by Otto D. Cheung.
+
+        * PlatformBlackBerry.cmake:
+
 2012-09-21  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Remove obsolete compositing surface code

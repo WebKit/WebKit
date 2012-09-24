@@ -124,6 +124,7 @@
 #include "VibrationClientBlackBerry.h"
 #endif
 #include "VisiblePosition.h"
+#include "WebCookieJar.h"
 #if ENABLE(WEBDOM)
 #include "WebDOMDocument.h"
 #endif
@@ -349,6 +350,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_mainFrame(0) // Initialized by init.
     , m_currentContextNode(0)
     , m_webSettings(0) // Initialized by init.
+    , m_cookieJar(0)
     , m_visible(false)
     , m_activationState(ActivationActive)
     , m_shouldResetTilesWhenShown(false)
@@ -448,6 +450,9 @@ WebPagePrivate::~WebPagePrivate()
 
     delete m_webSettings;
     m_webSettings = 0;
+
+    delete m_cookieJar;
+    m_cookieJar = 0;
 
     delete m_backingStoreClient;
     m_backingStoreClient = 0;
@@ -3189,6 +3194,14 @@ void WebPage::reloadFromCache()
 WebSettings* WebPage::settings() const
 {
     return d->m_webSettings;
+}
+
+WebCookieJar* WebPage::cookieJar() const
+{
+    if (!d->m_cookieJar)
+        d->m_cookieJar = new WebCookieJar();
+
+    return d->m_cookieJar;
 }
 
 bool WebPage::isVisible() const

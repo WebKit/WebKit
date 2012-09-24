@@ -1,3 +1,44 @@
+2012-09-24  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add cookie database API
+        https://bugs.webkit.org/show_bug.cgi?id=97102
+
+        Reviewed by Antonio Gomes.
+
+        The cookie database is exposed through WebCookieJar, which has only two
+        methods: cookies() and setCookies().
+
+        Also add a new WebString::fromUTF8 overload that takes a const char*
+        and a length, in order to avoid a strlen call when converting from
+        other string classes to WebString. This is useful for callers of the
+        new cookie API when converting cookies to WebString.
+
+        Reviewed internally by Otto D. Cheung.
+
+        PR 209282
+
+        * Api/WebCookieJar.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::WebCookieJar::WebCookieJar):
+        (BlackBerry::WebKit::WebCookieJar::cookies):
+        (BlackBerry::WebKit::WebCookieJar::setCookies):
+        * Api/WebCookieJar.h: Added.
+        (WebKit):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::cookieJar):
+        (WebKit):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebKit):
+        (WebPagePrivate):
+        * Api/WebString.cpp:
+        (BlackBerry::WebKit::WebString::fromUtf8):
+        (WebKit):
+        * Api/WebString.h:
+
 2012-09-21  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Really fix bug 95488 that user can get the authentication challenge dialog while the other tab has focus.

@@ -103,6 +103,11 @@ Vector<ParsedCookie*> CookieParser::parse(const String& cookies)
     return parsedCookies;
 }
 
+ParsedCookie* CookieParser::parseOneCookie(const String& cookie)
+{
+    return parseOneCookie(cookie, 0, cookie.length() - 1, currentTime());
+}
+
 // The cookie String passed into this method will only contian the name value pairs as well as other related cookie
 // attributes such as max-age and domain. Set-Cookie should never be part of this string.
 ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime)
