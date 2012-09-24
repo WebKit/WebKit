@@ -61,16 +61,7 @@ public:
 
     static void setWebkitIndexedDBEnabled(bool isEnabled) { isIndexedDBEnabled = isEnabled; }
     static bool webkitIndexedDBEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBCursorEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBDatabaseEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBDatabaseErrorEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBDatabaseExceptionEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBFactoryEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBIndexEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBKeyRangeEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBObjectStoreEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBRequestEnabled() { return isIndexedDBEnabled; }
-    static bool webkitIDBTransactionEnabled() { return isIndexedDBEnabled; }
+    static bool indexedDBEnabled() { return isIndexedDBEnabled; }
 
 #if ENABLE(CSS_EXCLUSIONS)
     static void setCSSExclusionsEnabled(bool isEnabled) { isCSSExclusionsEnabled = isEnabled; }

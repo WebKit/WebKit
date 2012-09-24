@@ -58,12 +58,12 @@ WorkerContextIndexedDatabase* WorkerContextIndexedDatabase::from(ScriptExecution
     return supplement;
 }
 
-IDBFactory* WorkerContextIndexedDatabase::webkitIndexedDB(ScriptExecutionContext* context)
+IDBFactory* WorkerContextIndexedDatabase::indexedDB(ScriptExecutionContext* context)
 {
-    return from(context)->webkitIndexedDB();
+    return from(context)->indexedDB();
 }
 
-IDBFactory* WorkerContextIndexedDatabase::webkitIndexedDB()
+IDBFactory* WorkerContextIndexedDatabase::indexedDB()
 {
     if (!m_context->securityOrigin()->canAccessDatabase())
         return 0;

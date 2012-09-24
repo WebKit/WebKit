@@ -30,7 +30,7 @@ module window {
         Conditional=INDEXED_DATABASE,
         Supplemental=DOMWindow
     ] DOMWindowIndexedDatabase {
-        readonly attribute [V8MeasureAs=PrefixedIndexedDB] IDBFactory webkitIndexedDB;
+        readonly attribute [ImplementedAs=indexedDB,V8MeasureAs=PrefixedIndexedDB] IDBFactory webkitIndexedDB;
 
         attribute IDBCursorConstructor webkitIDBCursor;
         attribute IDBDatabaseConstructor webkitIDBDatabase;
@@ -41,6 +41,18 @@ module window {
         attribute IDBObjectStoreConstructor webkitIDBObjectStore;
         attribute IDBRequestConstructor webkitIDBRequest;
         attribute IDBTransactionConstructor webkitIDBTransaction;
+
+        readonly attribute [V8MeasureAs=UnprefixedIndexedDB] IDBFactory indexedDB;
+
+        attribute IDBCursorConstructor IDBCursor;
+        attribute IDBDatabaseConstructor IDBDatabase;
+        attribute IDBDatabaseExceptionConstructor IDBDatabaseException;
+        attribute IDBFactoryConstructor IDBFactory;
+        attribute IDBIndexConstructor IDBIndex;
+        attribute IDBKeyRangeConstructor IDBKeyRange;
+        attribute IDBObjectStoreConstructor IDBObjectStore;
+        attribute IDBRequestConstructor IDBRequest;
+        attribute IDBTransactionConstructor IDBTransaction;
     };
 
 }

@@ -42,12 +42,12 @@ public:
     virtual ~WorkerContextIndexedDatabase();
     static WorkerContextIndexedDatabase* from(ScriptExecutionContext*);
 
-    static IDBFactory* webkitIndexedDB(ScriptExecutionContext*);
+    static IDBFactory* indexedDB(ScriptExecutionContext*);
 
 private:
     explicit WorkerContextIndexedDatabase(ScriptExecutionContext*);
 
-    IDBFactory* webkitIndexedDB();
+    IDBFactory* indexedDB();
 
     ScriptExecutionContext* m_context;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;

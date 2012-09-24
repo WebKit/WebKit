@@ -88,12 +88,12 @@ void DOMWindowIndexedDatabase::willDetachGlobalObjectFromFrame()
     DOMWindowProperty::willDetachGlobalObjectFromFrame();
 }
 
-IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB(DOMWindow* window)
+IDBFactory* DOMWindowIndexedDatabase::indexedDB(DOMWindow* window)
 {
-    return from(window)->webkitIndexedDB();
+    return from(window)->indexedDB();
 }
 
-IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB()
+IDBFactory* DOMWindowIndexedDatabase::indexedDB()
 {
     Document* document = m_window->document();
     if (!document)

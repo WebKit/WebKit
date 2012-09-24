@@ -41,7 +41,7 @@ public:
     virtual ~DOMWindowIndexedDatabase();
     static DOMWindowIndexedDatabase* from(DOMWindow*);
 
-    static IDBFactory* webkitIndexedDB(DOMWindow*);
+    static IDBFactory* indexedDB(DOMWindow*);
 
     virtual void disconnectFrameForPageCache() OVERRIDE;
     virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;
@@ -52,7 +52,7 @@ public:
 private:
     explicit DOMWindowIndexedDatabase(DOMWindow*);
 
-    IDBFactory* webkitIndexedDB();
+    IDBFactory* indexedDB();
 
     DOMWindow* m_window;
     RefPtr<IDBFactory> m_idbFactory;
