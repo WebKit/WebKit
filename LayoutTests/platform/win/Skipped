@@ -2293,3 +2293,6 @@ http/tests/xmlhttprequest/range-test.html
 #https://bugs.webkit.org/show_bug.cgi?id=97271
 http/tests/security/sandboxed-iframe-origin-add.html
 http/tests/security/sandboxed-iframe-origin-remove.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=96942
+http/tests/inspector/network/network-xhr-replay.html
