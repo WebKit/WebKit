@@ -3392,27 +3392,42 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(resultGPR, m_compileIndex);
         break;
     }
-    case GetScopedVar: {
+    case GetScopeRegisters: {
         SpeculateCellOperand scope(this, node.child1());
+        GPRTemporary result(this);
+        GPRReg scopeGPR = scope.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        m_jit.loadPtr(JITCompiler::Address(scopeGPR, JSVariableObject::offsetOfRegisters()), resultGPR);
+        storageResult(resultGPR, m_compileIndex);
+        break;
+    }
+    case GetScopedVar: {
+        StorageOperand registers(this, node.child1());
         GPRTemporary resultTag(this);
         GPRTemporary resultPayload(this);
+        GPRReg registersGPR = registers.gpr();
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), resultPayloadGPR);
-        m_jit.load32(JITCompiler::Address(resultPayloadGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
-        m_jit.load32(JITCompiler::Address(resultPayloadGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
+        m_jit.load32(JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+        m_jit.load32(JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
         break;
     }
     case PutScopedVar: {
         SpeculateCellOperand scope(this, node.child1());
+        StorageOperand registers(this, node.child2());
+        JSValueOperand value(this, node.child3());
         GPRTemporary scratchRegister(this);
+        GPRReg scopeGPR = scope.gpr();
+        GPRReg registersGPR = registers.gpr();
+        GPRReg valueTagGPR = value.tagGPR();
+        GPRReg valuePayloadGPR = value.payloadGPR();
         GPRReg scratchGPR = scratchRegister.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
-        JSValueOperand value(this, node.child2());
-        m_jit.store32(value.tagGPR(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
-        m_jit.store32(value.payloadGPR(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        writeBarrier(scope.gpr(), value.tagGPR(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
+
+        m_jit.store32(valueTagGPR, JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+        m_jit.store32(valuePayloadGPR, JITCompiler::Address(registersGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        writeBarrier(scopeGPR, valueTagGPR, node.child2(), WriteBarrierForVariableAccess, scratchGPR);
         noResult(m_compileIndex);
         break;
     }
