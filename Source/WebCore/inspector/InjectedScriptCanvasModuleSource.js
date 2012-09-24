@@ -1992,6 +1992,16 @@ InjectedScript.prototype = {
         return proxy;
     },
 
+    /**
+     * @param {CanvasRenderingContext2D} context
+     * @return {Object}
+     */
+    wrapCanvas2DContext: function(context)
+    {
+        // FIXME: Implement wrapping 2D context.
+        return context;
+    },    
+
     captureFrame: function()
     {
         var id = this._makeTraceLogId();
