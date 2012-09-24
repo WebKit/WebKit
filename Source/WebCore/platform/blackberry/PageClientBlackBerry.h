@@ -72,7 +72,7 @@ public:
     virtual int showAlertDialog(BlackBerry::WebKit::WebPageClient::AlertType) = 0;
     virtual bool isActive() const = 0;
     virtual bool isVisible() const = 0;
-    virtual void authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, const WebCore::Credential&) = 0;
+    virtual void authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, const WebCore::Credential&, WebCore::AuthenticationChallengeClient*) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool) = 0;
     virtual void syncProxyCredential(const WebCore::Credential&) = 0;
 };

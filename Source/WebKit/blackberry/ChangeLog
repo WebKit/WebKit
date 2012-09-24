@@ -1,3 +1,26 @@
+2012-09-24  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Reverting implementation for 407 error pages
+        https://bugs.webkit.org/show_bug.cgi?id=97455
+
+        Reviewed by Rob Buis.
+
+        Revert "[BlackBerry] Really fix bug 95488 that user can get the 
+        authentication challenge dialog while the other tab has focus."
+        https://bugs.webkit.org/show_bug.cgi?id=97348
+
+        This reverts commit 0cffe01961fb80204138505bcec29a83818efb73.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::globalInitialize):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        (BlackBerry::WebKit::WebPage::setVisible):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-09-24  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add cookie database API

@@ -29,7 +29,6 @@
 #include <network/FilterStream.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
@@ -50,8 +49,6 @@ class ResourceRequest;
 class NetworkJob : public AuthenticationChallengeClient, public BlackBerry::Platform::FilterStream {
 public:
     NetworkJob();
-    ~NetworkJob();
-
     bool initialize(int playerId,
                     const String& pageGroupName,
                     const KURL&,
@@ -174,8 +171,6 @@ private:
     DeferredData m_deferredData;
     int m_deferLoadingCount;
     const Frame* m_frame;
-
-    bool m_isAuthenticationChallenging;
 };
 
 } // namespace WebCore
