@@ -55,14 +55,11 @@ InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAge
     , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
-    , m_enabled(false)
 {
-    m_instrumentingAgents->setInspectorCanvasAgent(this);
 }
 
 InspectorCanvasAgent::~InspectorCanvasAgent()
 {
-    m_instrumentingAgents->setInspectorCanvasAgent(0);
 }
 
 void InspectorCanvasAgent::setFrontend(InspectorFrontend* frontend)
@@ -79,23 +76,22 @@ void InspectorCanvasAgent::clearFrontend()
 
 void InspectorCanvasAgent::restore()
 {
-    m_enabled = m_state->getBoolean(CanvasAgentState::canvasAgentEnabled);
+    if (m_state->getBoolean(CanvasAgentState::canvasAgentEnabled)) {
+        ErrorString error;
+        enable(&error);
+    }
 }
 
 void InspectorCanvasAgent::enable(ErrorString*)
 {
-    if (m_enabled)
-        return;
-    m_enabled = true;
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, true);
+    m_instrumentingAgents->setInspectorCanvasAgent(this);
 }
 
 void InspectorCanvasAgent::disable(ErrorString*)
 {
-    if (!m_enabled)
-        return;
-    m_enabled = false;
-    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, m_enabled);
+    m_instrumentingAgents->setInspectorCanvasAgent(0);
+    m_state->setBoolean(CanvasAgentState::canvasAgentEnabled, false);
 }
 
 void InspectorCanvasAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)

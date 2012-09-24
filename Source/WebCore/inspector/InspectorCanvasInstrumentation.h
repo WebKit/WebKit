@@ -42,8 +42,7 @@ ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrument
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
-        InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent();
-        if (canvasAgent && canvasAgent->enabled())
+        if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
             return canvasAgent->wrapCanvas2DRenderingContextForInstrumentation(context);
     }
 #endif
@@ -55,8 +54,7 @@ ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentati
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
-        InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent();
-        if (canvasAgent && canvasAgent->enabled())
+        if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
             return canvasAgent->wrapWebGLRenderingContextForInstrumentation(glContext);
     }
 #endif
