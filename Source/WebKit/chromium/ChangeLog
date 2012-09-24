@@ -1,3 +1,9 @@
+2012-09-24  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-09-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add setters to WebFilterOperation for IPC pickling
