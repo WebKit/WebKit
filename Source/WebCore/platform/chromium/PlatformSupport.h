@@ -49,15 +49,6 @@ typedef struct NPObject NPObject;
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
 
-#if OS(DARWIN)
-typedef struct CGFont* CGFontRef;
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
-#endif // OS(DARWIN)
-
 #if OS(WINDOWS)
 typedef struct HFONT__* HFONT;
 #endif
@@ -98,9 +89,6 @@ public:
     // Font ---------------------------------------------------------------
 #if OS(WINDOWS)
     static bool ensureFontLoaded(HFONT);
-#endif
-#if OS(DARWIN)
-    static bool loadFont(NSFont* srcFont, CGFontRef*, uint32_t* fontID);
 #endif
 
     // IndexedDB ----------------------------------------------------------
