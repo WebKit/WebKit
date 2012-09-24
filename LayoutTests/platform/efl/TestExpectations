@@ -986,9 +986,6 @@ webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html
 # Failed table/mozilla test, fields are not on the same line
 webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
 
-# New test introduced in r125790 fails
-webkit.org/b/94341 inspector/timeline/timeline-decode-resize.html [ Failure ]
-
 webkit.org/b/94690 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
 
 # Fails after r126350
