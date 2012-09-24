@@ -39,7 +39,7 @@ public:
 private:
     virtual const char* renderName() const OVERRIDE;
     
-    virtual void updateLogicalHeight() OVERRIDE { } // We simply remain at our intrinsic height.
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 };
 
 } // namespace WebCore

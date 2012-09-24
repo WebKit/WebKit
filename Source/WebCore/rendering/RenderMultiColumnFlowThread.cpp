@@ -42,4 +42,11 @@ const char* RenderMultiColumnFlowThread::renderName() const
     return "RenderMultiColumnFlowThread";
 }
 
+void RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+{
+    // We simply remain at our intrinsic height.
+    computedValues.m_extent = logicalHeight;
+    computedValues.m_position = logicalTop;
+}
+
 }
