@@ -83,3 +83,19 @@ Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings* settin
 
     return WKPreferencesGetLoadsImagesAutomatically(settings->preferences.get());
 }
+
+Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    WKPreferencesSetDeveloperExtrasEnabled(settings->preferences.get(), enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return WKPreferencesGetDeveloperExtrasEnabled(settings->preferences.get());
+}

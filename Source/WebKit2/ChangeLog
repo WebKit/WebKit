@@ -1,3 +1,19 @@
+2012-09-23  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][WK2] Add setting to toggle developer extensions
+        https://bugs.webkit.org/show_bug.cgi?id=96974
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This is required to allow the user to inspect pages. (Web inspector)
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_developer_extras_enabled_set):
+        (ewk_settings_developer_extras_enabled_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
 
         Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.

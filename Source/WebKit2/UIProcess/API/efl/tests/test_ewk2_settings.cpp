@@ -81,3 +81,17 @@ TEST_F(EWK2UnitTestBase, ewk_settings_loads_images_automatically)
     ASSERT_TRUE(ewk_settings_loads_images_automatically_set(settings, EINA_FALSE));
     ASSERT_FALSE(ewk_settings_loads_images_automatically_get(settings));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_developer_extras_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    ASSERT_TRUE(ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE));
+    ASSERT_TRUE(ewk_settings_developer_extras_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_developer_extras_enabled_set(settings, 2));
+    ASSERT_TRUE(ewk_settings_developer_extras_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_developer_extras_enabled_set(settings, EINA_FALSE));
+    ASSERT_FALSE(ewk_settings_developer_extras_enabled_get(settings));
+}

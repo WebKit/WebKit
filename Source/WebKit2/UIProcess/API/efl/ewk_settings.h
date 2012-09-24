@@ -110,6 +110,30 @@ EAPI Eina_Bool ewk_settings_loads_images_automatically_set(Ewk_Settings *setting
  */
 EAPI Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables developer extensions.
+ *
+ * By default, the developer extensions are disabled.
+ *
+ * @param settings settings object to set developer extensions
+ * @param enable @c EINA_TRUE to enable developer extensions, @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Queries if developer extensions are enabled.
+ *
+ * By default, the developer extensions are disabled.
+ *
+ * @param settings settings object to set developer extensions
+ *
+ * @return @c EINA_TRUE if developer extensions are enabled
+           @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif
