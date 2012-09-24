@@ -2795,3 +2795,7 @@ inspector/extensions/extensions-panel.html
 # [Qt] fast/regions/overflow-size-change-with-stacking-context.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=97199
 fast/regions/overflow-size-change-with-stacking-context.html
+
+# [Qt] New test introduced in r129346 inspector-protocol/css-getSupportedCSSProperties.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=97451
+inspector-protocol/css-getSupportedCSSProperties.html
