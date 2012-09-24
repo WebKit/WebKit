@@ -38,7 +38,7 @@
 
 namespace WTF {
 
-ParsedURL::ParsedURL(const String& urlString)
+ParsedURL::ParsedURL(const String& urlString, ParsedURLStringTag)
 {
     unsigned urlStringLength = urlString.length();
     if (!urlStringLength)
@@ -67,7 +67,35 @@ ParsedURL::ParsedURL(const String& urlString)
         m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
 }
 
-ParsedURL::ParsedURL(const ParsedURL& base, const String& relative)
+ParsedURL::ParsedURL(const String& urlString, URLQueryCharsetConverter* queryCharsetConverter)
+{
+    unsigned urlStringLength = urlString.length();
+    if (!urlStringLength)
+        return;
+
+    RawURLBuffer<char> outputBuffer;
+    String base;
+    const CString& baseStr = base.utf8();
+    bool isValid = false;
+    URLSegments baseSegments;
+
+    // FIXME: we should take shortcuts here! We do not have to resolve the relative part.
+    if (urlString.is8Bit())
+        isValid = URLUtilities::resolveRelative(baseStr.data(), baseSegments,
+                                                reinterpret_cast<const char*>(urlString.characters8()), urlStringLength,
+                                                queryCharsetConverter,
+                                                outputBuffer, &m_segments);
+    else
+        isValid = URLUtilities::resolveRelative(baseStr.data(), baseSegments,
+                                                urlString.characters16(), urlStringLength,
+                                                queryCharsetConverter,
+                                                outputBuffer, &m_segments);
+
+    if (isValid)
+        m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
+}
+
+ParsedURL::ParsedURL(const ParsedURL& base, const String& relative, URLQueryCharsetConverter* queryCharsetConverter)
 {
     if (!base.isValid())
         return;
@@ -85,12 +113,12 @@ ParsedURL::ParsedURL(const ParsedURL& base, const String& relative)
     if (relative.is8Bit())
         isValid = URLUtilities::resolveRelative(baseStr.data(), base.m_segments,
                                                 reinterpret_cast<const char*>(relative.characters8()), relativeLength,
-                                                /* charsetConverter */ 0,
+                                                queryCharsetConverter,
                                                 outputBuffer, &m_segments);
     else
         isValid = URLUtilities::resolveRelative(baseStr.data(), base.m_segments,
                                                 relative.characters16(), relativeLength,
-                                                /* charsetConverter */ 0,
+                                                queryCharsetConverter,
                                                 outputBuffer, &m_segments);
 
     if (isValid)

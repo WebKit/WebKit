@@ -40,34 +40,9 @@
 
 namespace WTF {
 
+class URLQueryCharsetConverter;
+
 namespace URLCanonicalizer {
-
-// Character set converter ----------------------------------------------------
-//
-// Converts query strings into a custom encoding. The embedder can supply an
-// implementation of this class to interface with their own character set
-// conversion libraries.
-//
-// Embedders will want to see the unit test for the ICU version.
-
-class CharsetConverter {
-public:
-    CharsetConverter() { }
-    virtual ~CharsetConverter() { }
-
-    // Converts the given input string from UTF-16 to whatever output format the
-    // converter supports. This is used only for the query encoding conversion,
-    // which does not fail. Instead, the converter should insert "invalid
-    // character" characters in the output for invalid sequences, and do the
-    // best it can.
-    //
-    // If the input contains a character not representable in the output
-    // character set, the converter should append the HTML entity sequence in
-    // decimal, (such as "&#20320;") with escaping of the ampersand, number
-    // sign, and semicolon (in the previous example it would be
-    // "%26%2320320%3B"). This rule is based on what IE does in this situation.
-    virtual void ConvertFromUTF16(const UChar* input, int inputLength, URLBuffer<char>& output) = 0;
-};
 
 // Whitespace -----------------------------------------------------------------
 
@@ -264,8 +239,8 @@ bool FileCanonicalizePath(const UChar* spec, const URLComponent& path, URLBuffer
 // if necessary, for ASCII input, no conversions are necessary.
 //
 // The converter can be null. In this case, the output encoding will be UTF-8.
-void CanonicalizeQuery(const char* spec, const URLComponent& query, CharsetConverter*, URLBuffer<char>&, URLComponent* outputQuery);
-void CanonicalizeQuery(const UChar* spec, const URLComponent& query, CharsetConverter*, URLBuffer<char>&, URLComponent* outputQuery);
+void CanonicalizeQuery(const char* spec, const URLComponent& query, URLQueryCharsetConverter*, URLBuffer<char>&, URLComponent* outputQuery);
+void CanonicalizeQuery(const UChar* spec, const URLComponent& query, URLQueryCharsetConverter*, URLBuffer<char>&, URLComponent* outputQuery);
 
 // Ref: Prepends the # if needed. The output will be UTF-8 (this is the only
 // canonicalizer that does not produce ASCII output). The output is
@@ -287,21 +262,21 @@ void canonicalizeFragment(const UChar* spec, const URLComponent& path, URLBuffer
 // The 8-bit versions require UTF-8 encoding.
 
 // Use for standard URLs with authorities and paths.
-bool CanonicalizeStandardURL(const char* spec, int specLength, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool CanonicalizeStandardURL(const char* spec, int specLength, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                              URLBuffer<char>&, URLSegments* outputParsed);
-bool CanonicalizeStandardURL(const UChar* spec, int specLength, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool CanonicalizeStandardURL(const UChar* spec, int specLength, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                              URLBuffer<char>&, URLSegments* outputParsed);
 
 // Use for file URLs.
-bool CanonicalizeFileURL(const char* spec, int specLength, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool CanonicalizeFileURL(const char* spec, int specLength, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                          URLBuffer<char>&, URLSegments* outputParsed);
-bool CanonicalizeFileURL(const UChar* spec, int specLength, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool CanonicalizeFileURL(const UChar* spec, int specLength, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                          URLBuffer<char>&, URLSegments* outputParsed);
 
 // Use for filesystem URLs.
-bool canonicalizeFileSystemURL(const char* spec, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool canonicalizeFileSystemURL(const char* spec, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                                URLBuffer<char>&, URLSegments& outputParsed);
-bool canonicalizeFileSystemURL(const UChar* spec, const URLSegments& parsed, CharsetConverter* queryConverter,
+bool canonicalizeFileSystemURL(const UChar* spec, const URLSegments& parsed, URLQueryCharsetConverter* queryConverter,
                                URLBuffer<char>&, URLSegments& outputParsed);
 
 // Use for path URLs such as javascript. This does not modify the path in any
@@ -522,13 +497,13 @@ private:
 bool ReplaceStandardURL(const char* base,
                         const URLSegments& baseParsed,
                         const Replacements<char>&,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>&,
                         URLSegments* outputParsed);
 bool ReplaceStandardURL(const char* base,
                         const URLSegments& baseParsed,
                         const Replacements<UChar>&,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>&,
                         URLSegments* outputParsed);
 
@@ -537,13 +512,13 @@ bool ReplaceStandardURL(const char* base,
 bool ReplaceFileSystemURL(const char* base,
                           const URLSegments& baseParsed,
                           const Replacements<char>&,
-                          CharsetConverter* queryConverter,
+                          URLQueryCharsetConverter* queryConverter,
                           URLBuffer<char>&,
                           URLSegments* outputParsed);
 bool ReplaceFileSystemURL(const char* base,
                           const URLSegments& baseParsed,
                           const Replacements<UChar>&,
-                          CharsetConverter* queryConverter,
+                          URLQueryCharsetConverter* queryConverter,
                           URLBuffer<char>&,
                           URLSegments* outputParsed);
 
@@ -552,13 +527,13 @@ bool ReplaceFileSystemURL(const char* base,
 bool ReplaceFileURL(const char* base,
                     const URLSegments& baseParsed,
                     const Replacements<char>&,
-                    CharsetConverter* queryConverter,
+                    URLQueryCharsetConverter* queryConverter,
                     URLBuffer<char>&,
                     URLSegments* outputParsed);
 bool ReplaceFileURL(const char* base,
                     const URLSegments& baseParsed,
                     const Replacements<UChar>&,
-                    CharsetConverter* queryConverter,
+                    URLQueryCharsetConverter* queryConverter,
                     URLBuffer<char>&,
                     URLSegments* outputParsed);
 
@@ -626,11 +601,11 @@ bool isRelativeURL(const char* base, const URLSegments& baseParsed,
 // was intended by the web page author or caller.
 bool resolveRelativeURL(const char* baseURL, const URLSegments& baseParsed, bool baseIsFile,
                         const char* relativeURL, const URLComponent& relativeComponent,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>&, URLSegments* outputParsed);
 bool resolveRelativeURL(const char* baseURL, const URLSegments& baseParsed, bool baseIsFile,
                         const UChar* relativeURL, const URLComponent& relativeComponent,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>&, URLSegments* outputParsed);
 
 } // namespace URLCanonicalizer

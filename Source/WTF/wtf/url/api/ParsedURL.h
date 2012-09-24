@@ -35,13 +35,18 @@
 namespace WTF {
 
 class URLComponent;
+class URLQueryCharsetConverter;
 
 // ParsedURL represents a valid URL decomposed by components.
 class ParsedURL {
 public:
+    enum ParsedURLStringTag { ParsedURLString };
+
     ParsedURL() { };
-    WTF_EXPORT_PRIVATE explicit ParsedURL(const String&);
-    WTF_EXPORT_PRIVATE explicit ParsedURL(const ParsedURL& base, const String& relative);
+    WTF_EXPORT_PRIVATE explicit ParsedURL(const String&, ParsedURLStringTag);
+
+    WTF_EXPORT_PRIVATE explicit ParsedURL(const String&, URLQueryCharsetConverter*);
+    WTF_EXPORT_PRIVATE explicit ParsedURL(const ParsedURL& base, const String& relative, URLQueryCharsetConverter*);
 
     WTF_EXPORT_PRIVATE ParsedURL isolatedCopy() const;
 

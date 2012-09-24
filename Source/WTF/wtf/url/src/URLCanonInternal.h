@@ -311,7 +311,7 @@ bool ConvertUTF8ToUTF16(const char* input, int inputLength, URLBuffer<UChar>& ou
 
 // Converts from UTF-16 to 8-bit using the character set converter. If the
 // converter is null, this will use UTF-8.
-void ConvertUTF16ToQueryEncoding(const UChar* input, const URLComponent& query, CharsetConverter*, URLBuffer<char>& output);
+void ConvertUTF16ToQueryEncoding(const UChar* input, const URLComponent& query, URLQueryCharsetConverter*, URLBuffer<char>& output);
 
 // Applies the replacements to the given component source. The component source
 // should be pre-initialized to the "old" base. That is, all pointers will

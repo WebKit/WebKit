@@ -1,5 +1,70 @@
 2012-09-24  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add support for query encoding to WTFURL
+        https://bugs.webkit.org/show_bug.cgi?id=97422
+
+        Reviewed by Adam Barth.
+
+        Expose character conversion through the new abstract class URLQueryCharsetConverter.
+        URLQueryCharsetConverter is implemented by WebCore to expose the TextEncoding classes.
+
+        Unfortunatelly that forces us to bring over URLBuffer in the public API. We may be able
+        to mitigate that later when moving WTFURL to more templates.
+
+        The change fixes 2 of the URL layout tests.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::ParsedURL):
+        * wtf/url/api/ParsedURL.h:
+        (ParsedURL):
+        ParsedURL was using the same constructor for ParsedURLString, and URL without a base.
+        That was a mistake on my part, I did not intend that, fixed it now :)
+
+        * wtf/url/api/URLBuffer.h: Renamed from Source/WTF/wtf/url/src/URLBuffer.h.
+        (URLBuffer):
+        (WTF::URLBuffer::URLBuffer):
+        (WTF::URLBuffer::~URLBuffer):
+        (WTF::URLBuffer::at):
+        (WTF::URLBuffer::set):
+        (WTF::URLBuffer::capacity):
+        (WTF::URLBuffer::length):
+        (WTF::URLBuffer::data):
+        (WTF::URLBuffer::setLength):
+        (WTF::URLBuffer::append):
+        (WTF::URLBuffer::grow):
+        * wtf/url/api/URLQueryCharsetConverter.h: Added.
+        (URLQueryCharsetConverter):
+        (WTF::URLQueryCharsetConverter::URLQueryCharsetConverter):
+        (WTF::URLQueryCharsetConverter::~URLQueryCharsetConverter):
+        * wtf/url/src/URLCanon.h:
+        (URLCanonicalizer):
+        * wtf/url/src/URLCanonFilesystemurl.cpp:
+        (WTF::URLCanonicalizer::canonicalizeFileSystemURL):
+        (WTF::URLCanonicalizer::ReplaceFileSystemURL):
+        * wtf/url/src/URLCanonFileurl.cpp:
+        (WTF::URLCanonicalizer::CanonicalizeFileURL):
+        (WTF::URLCanonicalizer::ReplaceFileURL):
+        * wtf/url/src/URLCanonInternal.h:
+        (URLCanonicalizer):
+        * wtf/url/src/URLCanonQuery.cpp:
+        (WTF::URLCanonicalizer::CanonicalizeQuery):
+        (WTF::URLCanonicalizer::ConvertUTF16ToQueryEncoding):
+        * wtf/url/src/URLCanonRelative.cpp:
+        (WTF::URLCanonicalizer::resolveRelativeURL):
+        * wtf/url/src/URLCanonStdURL.cpp:
+        (WTF::URLCanonicalizer::CanonicalizeStandardURL):
+        (WTF::URLCanonicalizer::ReplaceStandardURL):
+        * wtf/url/src/URLUtil.cpp:
+        (URLUtilities):
+        (WTF::URLUtilities::canonicalize):
+        (WTF::URLUtilities::resolveRelative):
+        (WTF::URLUtilities::ReplaceComponents):
+        * wtf/url/src/URLUtil.h:
+        (URLUtilities):
+
+2012-09-24  Benjamin Poulain  <benjamin@webkit.org>
+
         Integrate most of GoogleURL in WTFURL
         https://bugs.webkit.org/show_bug.cgi?id=97405
 

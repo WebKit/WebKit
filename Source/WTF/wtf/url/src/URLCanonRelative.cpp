@@ -283,7 +283,7 @@ bool doResolveRelativePath(const char* baseURL,
                            bool /* baseIsFile */,
                            const CHAR* relativeURL,
                            const URLComponent& relativeComponent,
-                           CharsetConverter* queryConverter,
+                           URLQueryCharsetConverter* queryConverter,
                            URLBuffer<char>& output,
                            URLSegments* outputParsed)
 {
@@ -390,7 +390,7 @@ bool doResolveRelativeHost(const char* baseURL,
                            const URLSegments& baseParsed,
                            const CHAR* relativeURL,
                            const URLComponent& relativeComponent,
-                           CharsetConverter* queryConverter,
+                           URLQueryCharsetConverter* queryConverter,
                            URLBuffer<char>& output,
                            URLSegments* outputParsed)
 {
@@ -421,7 +421,7 @@ bool doResolveRelativeHost(const char* baseURL,
 template<typename CharacterType>
 bool doResolveAbsoluteFile(const CharacterType* relativeURL,
                            const URLComponent& relativeComponent,
-                           CharsetConverter* queryConverter,
+                           URLQueryCharsetConverter* queryConverter,
                            URLBuffer<char>& output,
                            URLSegments& outputParsed)
 {
@@ -444,7 +444,7 @@ bool doResolveRelativeURL(const char* baseURL,
                           bool baseIsFile,
                           const CHAR* relativeURL,
                           const URLComponent& relativeComponent,
-                          CharsetConverter* queryConverter,
+                          URLQueryCharsetConverter* queryConverter,
                           URLBuffer<char>& output,
                           URLSegments* outputParsed)
 {
@@ -544,7 +544,7 @@ bool resolveRelativeURL(const char* baseURL,
                         bool baseIsFile,
                         const char* relativeURL,
                         const URLComponent& relativeComponent,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>& output,
                         URLSegments* outputParsed)
 {
@@ -557,7 +557,7 @@ bool resolveRelativeURL(const char* baseURL,
                         bool baseIsFile,
                         const UChar* relativeURL,
                         const URLComponent& relativeComponent,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>& output,
                         URLSegments* outputParsed)
 {

@@ -49,7 +49,7 @@ namespace {
 template<typename CHAR, typename UCHAR>
 bool doCanonicalizeStandardURL(const URLComponentSource<CHAR>& source,
                                const URLSegments& parsed,
-                               CharsetConverter* queryConverter,
+                               URLQueryCharsetConverter* queryConverter,
                                URLBuffer<char>& output,
                                URLSegments& outputParsed)
 {
@@ -146,7 +146,7 @@ int defaultPortForScheme(const char* scheme, int schemeLength)
 bool CanonicalizeStandardURL(const char* spec,
                              int /* specLength */,
                              const URLSegments& parsed,
-                             CharsetConverter* queryConverter,
+                             URLQueryCharsetConverter* queryConverter,
                              URLBuffer<char>& output,
                              URLSegments* outputParsed)
 {
@@ -157,7 +157,7 @@ bool CanonicalizeStandardURL(const char* spec,
 bool CanonicalizeStandardURL(const UChar* spec,
                              int /* specLength */,
                              const URLSegments& parsed,
-                             CharsetConverter* queryConverter,
+                             URLQueryCharsetConverter* queryConverter,
                              URLBuffer<char>& output,
                              URLSegments* outputParsed)
 {
@@ -177,7 +177,7 @@ bool CanonicalizeStandardURL(const UChar* spec,
 bool ReplaceStandardURL(const char* base,
                         const URLSegments& baseParsed,
                         const Replacements<char>& replacements,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>& output,
                         URLSegments* outputParsed)
 {
@@ -192,7 +192,7 @@ bool ReplaceStandardURL(const char* base,
 bool ReplaceStandardURL(const char* base,
                         const URLSegments& baseParsed,
                         const Replacements<UChar>& replacements,
-                        CharsetConverter* queryConverter,
+                        URLQueryCharsetConverter* queryConverter,
                         URLBuffer<char>& output,
                         URLSegments* outputParsed)
 {

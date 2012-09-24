@@ -53,7 +53,7 @@ KURL::KURL(NSURL *url)
 #else
     m_urlImpl = adoptRef(new KURLWTFURLImpl());
     String urlString(bytes, bytesLength);
-    m_urlImpl->m_parsedURL = ParsedURL(urlString);
+    m_urlImpl->m_parsedURL = ParsedURL(urlString, 0);
     if (!m_urlImpl->m_parsedURL.isValid())
         m_urlImpl->m_invalidUrlString = urlString;
 #endif // USE(WTFURL)

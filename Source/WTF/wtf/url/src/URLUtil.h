@@ -41,6 +41,8 @@
 
 namespace WTF {
 
+class URLQueryCharsetConverter;
+
 namespace URLUtilities {
 
 // Locates the scheme in the given string and places it into |foundScheme|,
@@ -69,9 +71,9 @@ bool isStandard(const UChar* spec, const URLComponent& scheme);
 // Returns true if a valid URL was produced, false if not. On failure, the
 // output and parsed structures will still be filled and will be consistent,
 // but they will not represent a loadable URL.
-bool canonicalize(const char* spec, int specLength, URLCanonicalizer::CharsetConverter*,
+bool canonicalize(const char* spec, int specLength, URLQueryCharsetConverter*,
                   URLBuffer<char>&, URLSegments& ouputParsed);
-bool canonicalize(const UChar* spec, int specLength, URLCanonicalizer::CharsetConverter*,
+bool canonicalize(const UChar* spec, int specLength, URLQueryCharsetConverter*,
                   URLBuffer<char>&, URLSegments& ouputParsed);
 
 // Resolves a potentially relative URL relative to the given parsed base URL.
@@ -86,11 +88,11 @@ bool canonicalize(const UChar* spec, int specLength, URLCanonicalizer::CharsetCo
 // a valid URL.
 bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
                      const char* relative, int relativeLength,
-                     URLCanonicalizer::CharsetConverter*,
+                     URLQueryCharsetConverter*,
                      URLBuffer<char>&, URLSegments* ouputParsed);
 bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
                      const UChar* relative, int relativeLength,
-                     URLCanonicalizer::CharsetConverter*,
+                     URLQueryCharsetConverter*,
                      URLBuffer<char>&, URLSegments* ouputParsed);
 
 // Replaces components in the given VALID input url. The new canonical URL info
@@ -99,11 +101,11 @@ bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
 // Returns true if the resulting URL is valid.
 bool ReplaceComponents(const char* spec, int specLength, const URLSegments& parsed,
                        const URLCanonicalizer::Replacements<char>&,
-                       URLCanonicalizer::CharsetConverter*,
+                       URLQueryCharsetConverter*,
                        URLBuffer<char>&, URLSegments* outputParsed);
 bool ReplaceComponents(const char* spec, int specLength, const URLSegments& parsed,
                        const URLCanonicalizer::Replacements<UChar>&,
-                       URLCanonicalizer::CharsetConverter*,
+                       URLQueryCharsetConverter*,
                        URLBuffer<char>&, URLSegments* outputParsed);
 
 // String helper functions ----------------------------------------------------

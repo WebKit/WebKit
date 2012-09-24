@@ -122,7 +122,7 @@ bool doFileCanonicalizePath(const CharacterType* spec,
 template<typename CharacterType, typename UCHAR>
 bool doCanonicalizeFileURL(const URLComponentSource<CharacterType>& source,
                            const URLSegments& parsed,
-                           CharsetConverter* queryConverter,
+                           URLQueryCharsetConverter* queryConverter,
                            URLBuffer<char>& output,
                            URLSegments& outputParsed)
 {
@@ -157,7 +157,7 @@ bool doCanonicalizeFileURL(const URLComponentSource<CharacterType>& source,
 bool CanonicalizeFileURL(const char* spec,
                          int /* specLength */,
                          const URLSegments& parsed,
-                         CharsetConverter* queryConverter,
+                         URLQueryCharsetConverter* queryConverter,
                          URLBuffer<char>& output,
                          URLSegments* outputParsed)
 {
@@ -167,7 +167,7 @@ bool CanonicalizeFileURL(const char* spec,
 bool CanonicalizeFileURL(const UChar* spec,
                          int /* specLength */,
                          const URLSegments& parsed,
-                         CharsetConverter* queryConverter,
+                         URLQueryCharsetConverter* queryConverter,
                          URLBuffer<char>& output,
                          URLSegments* outputParsed)
 {
@@ -193,7 +193,7 @@ bool FileCanonicalizePath(const UChar* spec,
 bool ReplaceFileURL(const char* base,
                     const URLSegments& baseParsed,
                     const Replacements<char>& replacements,
-                    CharsetConverter* queryConverter,
+                    URLQueryCharsetConverter* queryConverter,
                     URLBuffer<char>& output,
                     URLSegments* outputParsed)
 {
@@ -206,7 +206,7 @@ bool ReplaceFileURL(const char* base,
 bool ReplaceFileURL(const char* base,
                     const URLSegments& baseParsed,
                     const Replacements<UChar>& replacements,
-                    CharsetConverter* queryConverter,
+                    URLQueryCharsetConverter* queryConverter,
                     URLBuffer<char>& output,
                     URLSegments* outputParsed)
 {

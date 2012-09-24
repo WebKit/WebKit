@@ -121,7 +121,7 @@ bool doFindAndCompareScheme(const CharacterType* str, int strLength, const char*
 
 template<typename CharacterType>
 bool doCanonicalize(const CharacterType* inSpec, int inSpecLength,
-                    URLCanonicalizer::CharsetConverter* charsetConverter,
+                    URLQueryCharsetConverter* charsetConverter,
                     URLBuffer<char>& output, URLSegments& ouputParsed)
 {
     // Remove any whitespace from the middle of the relative URL, possibly
@@ -194,7 +194,7 @@ bool doCanonicalize(const CharacterType* inSpec, int inSpecLength,
 template<typename CharacterType>
 bool doResolveRelative(const char* baseSpec, const URLSegments& baseParsed,
                        const CharacterType* inRelative, int inRelativeLength,
-                       URLCanonicalizer::CharsetConverter* charsetConverter,
+                       URLQueryCharsetConverter* charsetConverter,
                        URLBuffer<char>& output, URLSegments* ouputParsed)
 {
     // Remove any whitespace from the middle of the relative URL, possibly
@@ -232,7 +232,7 @@ bool doReplaceComponents(const char* spec,
                          int specLength,
                          const URLSegments& parsed,
                          const URLCanonicalizer::Replacements<CharacterType>& replacements,
-                         URLCanonicalizer::CharsetConverter* charsetConverter,
+                         URLQueryCharsetConverter* charsetConverter,
                          URLBuffer<char>& output,
                          URLSegments& outputParsed)
 {
@@ -340,14 +340,14 @@ bool FindAndCompareScheme(const UChar* str, int strLength, const char* compare, 
 }
 
 bool canonicalize(const char* spec, int specLength,
-                  URLCanonicalizer::CharsetConverter* charsetConverter,
+                  URLQueryCharsetConverter* charsetConverter,
                   URLBuffer<char>& output, URLSegments& ouputParsed)
 {
     return doCanonicalize(spec, specLength, charsetConverter, output, ouputParsed);
 }
 
 bool canonicalize(const UChar* spec, int specLength,
-                  URLCanonicalizer::CharsetConverter* charsetConverter,
+                  URLQueryCharsetConverter* charsetConverter,
                   URLBuffer<char>& output, URLSegments& ouputParsed)
 {
     return doCanonicalize(spec, specLength, charsetConverter, output, ouputParsed);
@@ -355,7 +355,7 @@ bool canonicalize(const UChar* spec, int specLength,
 
 bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
                      const char* relative, int relativeLength,
-                     URLCanonicalizer::CharsetConverter* charsetConverter,
+                     URLQueryCharsetConverter* charsetConverter,
                      URLBuffer<char>& output, URLSegments* ouputParsed)
 {
     return doResolveRelative(baseSpec, baseParsed,
@@ -365,7 +365,7 @@ bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
 
 bool resolveRelative(const char* baseSpec, const URLSegments& baseParsed,
                      const UChar* relative, int relativeLength,
-                     URLCanonicalizer::CharsetConverter* charsetConverter,
+                     URLQueryCharsetConverter* charsetConverter,
                      URLBuffer<char>& output, URLSegments* ouputParsed)
 {
     return doResolveRelative(baseSpec, baseParsed,
@@ -377,7 +377,7 @@ bool ReplaceComponents(const char* spec,
                        int specLength,
                        const URLSegments& parsed,
                        const URLCanonicalizer::Replacements<char>& replacements,
-                       URLCanonicalizer::CharsetConverter* charsetConverter,
+                       URLQueryCharsetConverter* charsetConverter,
                        URLBuffer<char>& output,
                        URLSegments* outputParsed)
 {
@@ -389,7 +389,7 @@ bool ReplaceComponents(const char* spec,
                        int specLength,
                        const URLSegments& parsed,
                        const URLCanonicalizer::Replacements<UChar>& replacements,
-                       URLCanonicalizer::CharsetConverter* charsetConverter,
+                       URLQueryCharsetConverter* charsetConverter,
                        URLBuffer<char>& output,
                        URLSegments* outputParsed)
 {

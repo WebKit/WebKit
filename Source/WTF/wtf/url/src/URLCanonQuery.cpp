@@ -35,6 +35,7 @@
 #include "RawURLBuffer.h"
 #include "URLCanonInternal.h"
 #include "URLCharacterTypes.h"
+#include "URLQueryCharsetConverter.h"
 #include <wtf/text/ASCIIFastPath.h>
 
 // Query canonicalization in IE
@@ -107,25 +108,25 @@ void appendRaw8BitQueryString(const CharacterType* source, int length, URLBuffer
 
 // Runs the converter on the given UTF-8 input. Since the converter expects
 // UTF-16, we have to convert first. The converter must be non-null.
-void runConverter(const char* spec, const URLComponent& query, CharsetConverter* converter, URLBuffer<char>& output)
+void runConverter(const char* spec, const URLComponent& query, URLQueryCharsetConverter* converter, URLBuffer<char>& output)
 {
     // This function will replace any misencoded values with the invalid
     // character. This is what we want so we don't have to check for error.
     RawURLBuffer<UChar> utf16;
     ConvertUTF8ToUTF16(&spec[query.begin()], query.length(), utf16);
-    converter->ConvertFromUTF16(utf16.data(), utf16.length(), output);
+    converter->convertFromUTF16(utf16.data(), utf16.length(), output);
 }
 
 // Runs the converter with the given UTF-16 input. We don't have to do
 // anything, but this overriddden function allows us to use the same code
 // for both UTF-8 and UTF-16 input.
-void runConverter(const UChar* spec, const URLComponent& query, CharsetConverter* converter, URLBuffer<char>& output)
+void runConverter(const UChar* spec, const URLComponent& query, URLQueryCharsetConverter* converter, URLBuffer<char>& output)
 {
-    converter->ConvertFromUTF16(&spec[query.begin()], query.length(), output);
+    converter->convertFromUTF16(&spec[query.begin()], query.length(), output);
 }
 
 template<typename CharacterType>
-void doConvertToQueryEncoding(const CharacterType* spec, const URLComponent& query, CharsetConverter* converter, URLBuffer<char>& output)
+void doConvertToQueryEncoding(const CharacterType* spec, const URLComponent& query, URLQueryCharsetConverter* converter, URLBuffer<char>& output)
 {
     if (isAllASCII(spec, query)) {
         // Easy: the input can just appended with no character set conversions.
@@ -146,7 +147,7 @@ void doConvertToQueryEncoding(const CharacterType* spec, const URLComponent& que
 }
 
 template<typename CharacterType>
-void doCanonicalizeQuery(const CharacterType* spec, const URLComponent& query, CharsetConverter* converter,
+void doCanonicalizeQuery(const CharacterType* spec, const URLComponent& query, URLQueryCharsetConverter* converter,
                          URLBuffer<char>& output, URLComponent& outputQueryComponent)
 {
     if (query.length() < 0) {
@@ -164,19 +165,19 @@ void doCanonicalizeQuery(const CharacterType* spec, const URLComponent& query, C
 
 } // namespace
 
-void CanonicalizeQuery(const char* spec, const URLComponent& query, CharsetConverter* converter,
+void CanonicalizeQuery(const char* spec, const URLComponent& query, URLQueryCharsetConverter* converter,
                        URLBuffer<char>& output, URLComponent* outputQueryComponent)
 {
     doCanonicalizeQuery(spec, query, converter, output, *outputQueryComponent);
 }
 
-void CanonicalizeQuery(const UChar* spec, const URLComponent& query, CharsetConverter* converter,
+void CanonicalizeQuery(const UChar* spec, const URLComponent& query, URLQueryCharsetConverter* converter,
                        URLBuffer<char>& output, URLComponent* outputQueryComponent)
 {
     doCanonicalizeQuery(spec, query, converter, output, *outputQueryComponent);
 }
 
-void ConvertUTF16ToQueryEncoding(const UChar* input, const URLComponent& query, CharsetConverter* converter, URLBuffer<char>& output)
+void ConvertUTF16ToQueryEncoding(const UChar* input, const URLComponent& query, URLQueryCharsetConverter* converter, URLBuffer<char>& output)
 {
     doConvertToQueryEncoding<UChar>(input, query, converter, output);
 }

@@ -26,7 +26,11 @@
 #include "config.h"
 #include "KURL.h"
 
+#include <TextEncoding.h>
 #include <wtf/DataLog.h>
+#include <wtf/text/CString.h>
+#include <wtf/url/api/URLBuffer.h>
+#include <wtf/url/api/URLQueryCharsetConverter.h>
 
 #if USE(WTFURL)
 
@@ -51,34 +55,52 @@ static inline void detach(RefPtr<KURLWTFURLImpl>& urlImpl)
 KURL::KURL(ParsedURLStringTag, const String& urlString)
     : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
-    m_urlImpl->m_parsedURL = ParsedURL(urlString);
+    m_urlImpl->m_parsedURL = ParsedURL(urlString, ParsedURL::ParsedURLString);
 
     // FIXME: Frame::init() actually create empty URL, investigate why not just null URL.
     // ASSERT(m_urlImpl->m_parsedURL.isValid());
 }
+
+class CharsetConverter : public URLQueryCharsetConverter {
+public:
+    CharsetConverter(const TextEncoding& encoding)
+        : m_encoding(encoding)
+    {
+    }
+
+    virtual void convertFromUTF16(const UChar* input, unsigned inputLength, URLBuffer<char>& output) OVERRIDE
+    {
+        CString encoded = m_encoding.encode(input, inputLength, URLEncodedEntitiesForUnencodables);
+        output.append(encoded.data(), static_cast<int>(encoded.length()));
+    }
+
+private:
+    const TextEncoding& m_encoding;
+};
 
 KURL::KURL(const KURL& baseURL, const String& relative)
     : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
     // FIXME: the case with a null baseURL is common. We should have a separate constructor in KURL.
     // FIXME: the case of an empty Base is useless, we should get rid of empty URLs.
+    CharsetConverter charsetConverter(UTF8Encoding());
     if (baseURL.isEmpty())
-        m_urlImpl->m_parsedURL = ParsedURL(relative);
+        m_urlImpl->m_parsedURL = ParsedURL(relative, &charsetConverter);
     else
-        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative);
+        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative, &charsetConverter);
 
     if (!m_urlImpl->m_parsedURL.isValid())
         m_urlImpl->m_invalidUrlString = relative;
 }
 
-KURL::KURL(const KURL& baseURL, const String& relative, const TextEncoding&)
+KURL::KURL(const KURL& baseURL, const String& relative, const TextEncoding& encoding)
     : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
-    // FIXME: handle the encoding.
+    CharsetConverter charsetConverter(encoding.encodingForFormSubmission());
     if (baseURL.isEmpty())
-        m_urlImpl->m_parsedURL = ParsedURL(relative);
+        m_urlImpl->m_parsedURL = ParsedURL(relative, &charsetConverter);
     else
-        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative);
+        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative, &charsetConverter);
 
     if (!m_urlImpl->m_parsedURL.isValid())
         m_urlImpl->m_invalidUrlString = relative;
