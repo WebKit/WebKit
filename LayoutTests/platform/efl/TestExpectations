@@ -212,6 +212,7 @@ webkit.org/b/92112 fast/overflow/overflow-height-float-not-removed-crash2.html [
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Failure Pass ]
 
 # Flaky inspector tests
+webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
 webkit.org/b/91958 http/tests/inspector-enabled/injected-script-discard.html [ Failure Pass ]
 webkit.org/b/85615 http/tests/inspector/resource-har-pages.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/search/resources-search-match-index.html [ Failure Pass ]
@@ -997,6 +998,9 @@ webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html
 
 # Failed table/mozilla test, fields are not on the same line
 webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
+
+# New test introduced in r125790 fails
+webkit.org/b/94341 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
 webkit.org/b/94690 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
 
