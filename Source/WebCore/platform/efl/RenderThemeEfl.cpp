@@ -421,7 +421,7 @@ PassRefPtr<RenderTheme> RenderThemeEfl::create(Page* page)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     if (page)
-        return page->theme() ? page->theme() : RenderThemeEfl::create(page);
+        return RenderThemeEfl::create(page);
 
     static RenderTheme* fallback = RenderThemeEfl::create(0).leakRef();
     return fallback;
