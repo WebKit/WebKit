@@ -31,6 +31,10 @@ MODULE = webkit
 QT_API_DEPENDS = core gui network
 build?(webkit1): QT_API_DEPENDS += widgets
 
+# We want the QtWebKit API forwarding includes to live in the root build dir.
+MODULE_BASE_DIR = $$_PRO_FILE_PWD_
+MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
+
 # We load the relevant modules here, so that the effects of each module
 # on the QT variable can be picked up when we later load(qt_module).
 load(webkit_modules)

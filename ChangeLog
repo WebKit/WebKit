@@ -1,3 +1,15 @@
+2012-09-24  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with latest Qt 5
+
+        Reviewed by Tor Arne Vestbø.
+
+        Define MODULE_BASE_DIR before loading qt_module.prf, which now calls syncqt. MODULE_BASE_DIR is
+        passed as last parameter (source dir) to syncqt now, so set it to the directory that contains
+        sync.profile.
+
+        * Source/api.pri:
+
 2012-09-23  Keishi Hattori  <keishi@webkit.org>
 
         Add suggestionPicker to CalendarPicker
