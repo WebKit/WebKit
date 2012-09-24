@@ -1,3 +1,13 @@
+2012-09-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, rolling out r122243.
+        http://trac.webkit.org/changeset/129243
+        https://bugs.webkit.org/show_bug.cgi?id=97441
+
+        WebFilterOperationsTest.saveAndRestore added in the change is failing.
+
+        * tests/FilterOperationsTest.cpp:
+
 2012-09-23  Keishi Hattori  <keishi@webkit.org>
 
         Add suggestionPicker to CalendarPicker

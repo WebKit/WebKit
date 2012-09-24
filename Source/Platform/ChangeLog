@@ -1,3 +1,18 @@
+2012-09-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, rolling out r122243.
+        http://trac.webkit.org/changeset/129243
+        https://bugs.webkit.org/show_bug.cgi?id=97441
+
+        WebFilterOperationsTest.saveAndRestore added in the change is failing.
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::amount):
+        (WebKit::WebFilterOperation::dropShadowOffset):
+        (WebKit::WebFilterOperation::matrix):
+        (WebKit::WebFilterOperation::zoomRect):
+        (WebFilterOperation):
+
 2012-09-21  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Forward-declare WebSize as a struct
