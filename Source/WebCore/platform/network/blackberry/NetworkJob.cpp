@@ -192,12 +192,6 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
     if (isInfo(status))
         return; // ignore
 
-    // Load up error page and ask the user to change their wireless proxy settings
-    if (status == 407) {
-        const ResourceError error = ResourceError(ResourceError::httpErrorDomain, BlackBerry::Platform::FilterStream::StatusWifiProxyAuthError, m_response.url().string(), emptyString());
-        m_handle->client()->didFail(m_handle.get(), error);
-    }
-
     m_statusReceived = true;
 
     // Convert non-HTTP status codes to generic HTTP codes.
@@ -300,10 +294,11 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         }
         storeCredentials();
         return;
-    } else {
-        purgeCredentials();
-        m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
     }
+
+    purgeCredentials();
+    m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
+
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
@@ -733,8 +728,15 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
     String host;
     int port;
-    host = m_response.url().host();
-    port = m_response.url().port();
+    if (type == ProtectionSpaceProxyHTTP) {
+        String proxyAddress = BlackBerry::Platform::Client::get()->getProxyAddress(newURL.string().ascii().data()).c_str();
+        KURL proxyURL(KURL(), proxyAddress);
+        host = proxyURL.host();
+        port = proxyURL.port();
+    } else {
+        host = m_response.url().host();
+        port = m_response.url().port();
+    }
 
     ProtectionSpace protectionSpace(host, port, type, realm, scheme);
 
@@ -761,30 +763,37 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        // Before asking the user for credentials, we check if the URL contains that.
-        if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
-            username = m_handle->getInternal()->m_user;
-            password = m_handle->getInternal()->m_pass;
+        if (type == ProtectionSpaceProxyHTTP) {
+            username = BlackBerry::Platform::Client::get()->getProxyUsername().c_str();
+            password = BlackBerry::Platform::Client::get()->getProxyPassword().c_str();
+        }
 
-            // Prevent them from been used again if they are wrong.
-            // If they are correct, they will the put into CredentialStorage.
-            m_handle->getInternal()->m_user = "";
-            m_handle->getInternal()->m_pass = "";
-        } else {
-            if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
-                return false;
+        if (username.isEmpty() || password.isEmpty()) {
+            // Before asking the user for credentials, we check if the URL contains that.
+            if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
+                username = m_handle->getInternal()->m_user;
+                password = m_handle->getInternal()->m_pass;
 
-            m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
+                // Prevent them from been used again if they are wrong.
+                // If they are correct, they will the put into CredentialStorage.
+                m_handle->getInternal()->m_user = "";
+                m_handle->getInternal()->m_pass = "";
+            } else {
+                if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
+                    return false;
 
-            m_isAuthenticationChallenging = true;
-            updateDeferLoadingCount(1);
+                m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
 
-            AuthenticationChallengeManager::instance()->authenticationChallenge(newURL,
-                                                                                protectionSpace,
-                                                                                Credential(),
-                                                                                this,
-                                                                                m_frame->page()->chrome()->client()->platformPageClient());
-            return true;
+                m_isAuthenticationChallenging = true;
+                updateDeferLoadingCount(1);
+
+                AuthenticationChallengeManager::instance()->authenticationChallenge(newURL,
+                                                                                    protectionSpace,
+                                                                                    Credential(),
+                                                                                    this,
+                                                                                    m_frame->page()->chrome()->client()->platformPageClient());
+                return true;
+            }
         }
 
         credential = Credential(username, password, CredentialPersistenceForSession);
