@@ -1,3 +1,23 @@
+2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
+
+        Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=97306
+
+        Reviewed by Benjamin Poulain.
+
+        Fix build warning about -Wunused-parameter on MachineStackMarker.cpp,
+        LLIntSlowPaths.cpp, DatePrototype.cpp, Options.cpp by using
+        UNUSED_PARAM() macro or remove parameter name.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::pthreadSignalHandlerSuspendResume):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/Options.cpp:
+        (JSC::computeNumberOfGCMarkers):
+
 2012-09-23  Gavin Barraclough  <barraclough@apple.com>
 
         Sorting a non-array creates propreties (spec-violation)

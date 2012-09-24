@@ -84,8 +84,9 @@
 #else
 #include <pthread.h>
 #endif
-#include <wtf/StdLibExtras.h>
 #include <string.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/UnusedParam.h>
 
 #ifndef NO_TCMALLOC_SAMPLES
 #ifdef WTF_CHANGES
@@ -391,6 +392,7 @@ size_t fastMallocSize(const void* p)
 #elif OS(WINDOWS)
     return _msize(const_cast<void*>(p));
 #else
+    UNUSED_PARAM(p);
     return 1;
 #endif
 }

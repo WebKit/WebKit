@@ -659,7 +659,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& ti
 void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType iconType)
 {
     // Other touch types are apple-specific
-    ASSERT(iconType == WebCore::Favicon);
+    ASSERT_UNUSED(iconType, iconType == WebCore::Favicon);
     ewk_frame_icon_changed(m_frame);
 }
 

@@ -448,7 +448,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
             ASSERT(!m_pendingSyncReplies.isEmpty());
             
             PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
-            ASSERT(pendingSyncReply.syncRequestID == syncRequestID);
+            ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
             
             // We found the sync reply, or the connection was closed.
             if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies)

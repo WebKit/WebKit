@@ -1,3 +1,20 @@
+2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
+
+        Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=97306
+
+        Reviewed by Benjamin Poulain.
+
+        Fix build warning about -Wunused-parameter on FrameLoaderClientEfl.cpp
+        by using ASSERT_UNUSED() macro.
+        Fix build warning aboug -Wparentheses on ewk_frame.cpp by adding
+        additional brace for the assign statement.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_resources_location_get):
+
 2012-09-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EventSender should mimic CTRL+o emacs shortcut

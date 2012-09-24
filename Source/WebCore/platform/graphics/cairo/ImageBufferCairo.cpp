@@ -268,7 +268,7 @@ static cairo_status_t writeFunction(void* output, const unsigned char* data, uns
 
 static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<char>* output)
 {
-    ASSERT(mimeType == "image/png"); // Only PNG output is supported for now.
+    ASSERT_UNUSED(mimeType, mimeType == "image/png"); // Only PNG output is supported for now.
 
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }

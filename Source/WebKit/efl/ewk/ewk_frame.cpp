@@ -1694,7 +1694,7 @@ Eina_List* ewk_frame_resources_location_get(const Evas_Object* ewkFrame)
         void* data = 0;
         Eina_Bool found = false;
         EINA_LIST_FOREACH(listOfImagesLocation, listIterator, data)
-            if (found = !strcmp(static_cast<char*>(data), imageLocation.utf8().data()))
+            if ((found = !strcmp(static_cast<char*>(data), imageLocation.utf8().data())))
                 break;
         if (found)
             continue;

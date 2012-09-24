@@ -1,3 +1,19 @@
+2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
+
+        Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=97306
+
+        Reviewed by Benjamin Poulain.
+
+        Fix build warning about -Wunused-parameter on FastMalloc.cpp,
+        OSAllocatorPosix.cpp by using UNUSED_PARAM() macro.
+        Fix header including order of FastMalloc.cpp.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSize):
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
 2012-09-22  Sam Weinig  <sam@webkit.org>
 
         Add explicit conversion operator to RetainPtr for easier use in C++11 environments

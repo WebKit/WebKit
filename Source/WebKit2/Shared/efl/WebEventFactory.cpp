@@ -234,7 +234,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, co
             break;
         default:
             ASSERT_NOT_REACHED();
-            break;
+            continue;
         }
 
         touchPoints.append(WebPlatformTouchPoint(point->id, state, IntPoint(point->x, point->y), IntPoint(point->x - position->x, point->y - position->y)));

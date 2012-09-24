@@ -195,7 +195,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
 
 #elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING
 
-static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, double timeInMilliseconds, LocaleDateTimeFormat format)
+static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMilliseconds, LocaleDateTimeFormat format)
 {
     UDateFormatStyle timeStyle = (format != LocaleDate ? UDAT_LONG : UDAT_NONE);
     UDateFormatStyle dateStyle = (format != LocaleTime ? UDAT_LONG : UDAT_NONE);

@@ -96,7 +96,7 @@ typedef pthread_t PlatformThread;
 static const int SigThreadSuspendResume = SIGUSR2;
 
 #if defined(SA_RESTART)
-static void pthreadSignalHandlerSuspendResume(int signo)
+static void pthreadSignalHandlerSuspendResume(int)
 {
     sigset_t signalSet;
     sigemptyset(&signalSet);

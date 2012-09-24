@@ -301,11 +301,13 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 }
 
 enum EntryKind { Prologue, ArityCheck };
-static SlowPathReturnType entryOSR(ExecState* exec, Instruction* pc, CodeBlock* codeBlock, const char *name, EntryKind kind)
+static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLog("%p: Entered %s with executeCounter = %s\n", codeBlock, name,
             codeBlock->llintExecuteCounter().status());
+#else
+    UNUSED_PARAM(name);
 #endif
     
     if (!shouldJIT(exec)) {

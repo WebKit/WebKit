@@ -35,6 +35,7 @@
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
+#include <wtf/UnusedParam.h>
 
 #if OS(DARWIN) && ENABLE(PARALLEL_GC)
 #include <sys/sysctl.h>
@@ -101,6 +102,8 @@ static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
     ASSERT(cpusToUse >= 1);
     if (cpusToUse < 1)
         cpusToUse = 1;
+#else
+    UNUSED_PARAM(maxNumberOfGCMarkers);
 #endif
 
     return cpusToUse;

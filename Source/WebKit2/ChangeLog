@@ -1,3 +1,28 @@
+2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
+
+        Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.
+        https://bugs.webkit.org/show_bug.cgi?id=97306
+
+        Reviewed by Benjamin Poulain.
+
+        Fix build warning about -Wunused-parameter on Connection.cpp,
+        WKEinaSharedString.cpp, ewk_view_loader_client.cpp, WebPage.cpp by
+        using ASSERT_UNUSED() macro or removing parameter name.
+        Fix build warning about -Wuninitialized on WebEventFactory.cpp by
+        continueing the loop at the default switch case not to use the
+        uninitialized variable.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForSyncReply):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp:
+        (WKEinaSharedString::WKEinaSharedString):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didSameDocumentNavigationForFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+
 2012-09-22  Sam Weinig  <sam@webkit.org>
 
         Install WebProcess XPC services into the right places

@@ -2795,7 +2795,7 @@ void WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction(Pass
 
 void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, const SandboxExtension::Handle& handle)
 {
-    ASSERT(frame->isMainFrame());
+    ASSERT_UNUSED(frame, frame->isMainFrame());
 
     setPendingProvisionalSandboxExtension(SandboxExtension::create(handle));
 }
