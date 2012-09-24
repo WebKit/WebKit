@@ -686,9 +686,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         }
         if (!m_framesetOk)
             return;
-        ExceptionCode ec = 0;
-        m_tree.openElements()->bodyElement()->remove(ec);
-        ASSERT(!ec);
+        m_tree.openElements()->bodyElement()->remove(ASSERT_NO_EXCEPTION);
         m_tree.openElements()->popUntil(m_tree.openElements()->bodyElement());
         m_tree.openElements()->popHTMLBodyElement();
         ASSERT(m_tree.openElements()->top() == m_tree.openElements()->htmlElement());

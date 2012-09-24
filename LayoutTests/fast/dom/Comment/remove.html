@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id="test"></div>
+<script>
+
+description('This tests the DOM 4 remove method on a Comment.');
+
+var testDiv = document.getElementById('test');
+var comment = document.createComment('Comment');
+testDiv.appendChild(comment);
+shouldBe('testDiv.childNodes.length', '1');
+comment.remove();
+shouldBe('testDiv.childNodes.length', '0');
+comment.remove();
+shouldBe('testDiv.childNodes.length', '0');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

@@ -630,8 +630,6 @@ void Node::remove(ExceptionCode& ec)
 {
     if (ContainerNode* parent = parentNode())
         parent->removeChild(this, ec);
-    else
-        ec = HIERARCHY_REQUEST_ERR;
 }
 
 void Node::normalize()

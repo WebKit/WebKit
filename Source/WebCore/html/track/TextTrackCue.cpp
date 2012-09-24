@@ -742,8 +742,7 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree()
 
 void TextTrackCue::removeDisplayTree()
 {
-    if (m_displayTree->parentNode())
-        m_displayTree->remove(ASSERT_NO_EXCEPTION);
+    m_displayTree->remove(ASSERT_NO_EXCEPTION);
 }
 
 std::pair<double, double> TextTrackCue::getPositionCoordinates() const

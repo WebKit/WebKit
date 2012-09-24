@@ -35,6 +35,9 @@ module core {
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString internalSubset;        
 
+        // DOM 4
+        void remove()
+            raises(DOMException);
     };
 
 }

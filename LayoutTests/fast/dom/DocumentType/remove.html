@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+description('This tests the DOM 4 remove method on a DocumentType node.');
+
+var doctype = document.doctype;
+shouldBe('document.childNodes.length', '2');
+doctype.remove();
+shouldBe('document.childNodes.length', '1');
+doctype.remove();
+shouldBe('document.childNodes.length', '1');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

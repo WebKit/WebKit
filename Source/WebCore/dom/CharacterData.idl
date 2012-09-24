@@ -45,7 +45,10 @@ module core {
                                         in [IsIndex,Optional=DefaultIsUndefined] unsigned long length,
                                         in [Optional=DefaultIsUndefined] DOMString data)
             raises(DOMException);
-    
+
+        // DOM 4
+        void remove()
+            raises(DOMException);
     };
 
 }

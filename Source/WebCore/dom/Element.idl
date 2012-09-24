@@ -120,6 +120,10 @@ module core {
         readonly attribute Element nextElementSibling;
         readonly attribute unsigned long childElementCount;
 
+        // DOM 4
+        void remove()
+            raises(DOMException);
+
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // CSSOM View Module API
         ClientRectList getClientRects();
