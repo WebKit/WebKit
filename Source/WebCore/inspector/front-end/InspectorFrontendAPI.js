@@ -101,7 +101,7 @@ InspectorFrontendAPI = {
 
     enterInspectElementMode: function()
     {
-        WebInspector.panel("elements").toggleSearchingForNode();
+        WebInspector.toggleSearchingForNode();
     },
 
     savedURL: function(url)
