@@ -1,3 +1,16 @@
+2012-09-24  Peter Beverloo  <peter@chromium.org>
+
+        Allow robots to index bugs on Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=95688
+
+        Reviewed by Eric Seidel.
+
+        This allows robots to access show_bug.cgi, thus granting them access to
+        index contents and discussion on WebKit bugs. All other pages, except
+        for the site index itself, still have indexing disabled.
+
+        * robots.txt:
+
 2012-07-13  Ojan Vafai  <ojan@chromium.org>
 
         PrettyPatch.rb complains about missing checksum for new pixel results
