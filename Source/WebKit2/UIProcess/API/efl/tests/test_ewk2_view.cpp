@@ -715,6 +715,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
         ecore_main_loop_iterate();
     evas_object_smart_callback_del(webView(), "input,type,color,request", onColorPickerDone);
 }
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 TEST_F(EWK2UnitTestBase, ewk_view_context_get)
 {
@@ -748,4 +749,3 @@ TEST_F(EWK2UnitTestBase, ewk_view_feed_touch_event)
 
     eina_list_free(points);
 }
-#endif // ENABLE(INPUT_TYPE_COLOR)
