@@ -1,18 +1,18 @@
 CONSOLE MESSAGE: line 10: Error: Invalid negative value for <svg> attribute width="-100"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x132
-  RenderBlock {html} at (0,0) size 800x132
-    RenderBody {body} at (8,8) size 784x101
-      RenderBlock (anonymous) at (0,0) size 784x26
-        RenderSVGRoot {svg} at (8,9) size 0x0
+layer at (0,0) size 800x99
+  RenderBlock {html} at (0,0) size 800x99
+    RenderBody {body} at (8,8) size 784x75
+      RenderBlock (anonymous) at (0,0) size 784x23
+        RenderSVGRoot {svg} at (8,8) size 0x0
           RenderSVGText {text} at (10,21) size 125x12 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 125x12
               chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 30 width 125.00: "FAIL (This should not render.)"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,49) size 784x52 [color=#008000]
-        RenderText {#text} at (0,0) size 757x52
-          text run at (0,0) width 616: "This line should be green, the word \"FAIL\" should not appear on "
-          text run at (616,0) width 141: "this page, but a"
-          text run at (0,26) width 451: "highly perceivable indication of error should be "
-          text run at (451,26) width 185: "present somewhere."
+      RenderBlock {p} at (0,39) size 784x36 [color=#008000]
+        RenderText {#text} at (0,0) size 749x37
+          text run at (0,0) width 417: "This line should be green, the word \"FAIL\" should not appear on "
+          text run at (417,0) width 332: "this page, but a highly perceivable indication of error"
+          text run at (0,18) width 65: "should be "
+          text run at (65,18) width 125: "present somewhere."

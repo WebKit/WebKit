@@ -401,6 +401,8 @@ http/tests/websocket/tests/hybi/
 
 # Hits Cairo assertion
 fast/repaint/moving-shadow-on-container.html
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
 
 # Needs a rebaseline
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
@@ -465,57 +467,9 @@ scrollbars/scroll-rtl-or-bt-layer.html
 svg/animations/animate-text-nested-transforms.html
 svg/as-border-image/svg-as-border-image-2.html
 svg/as-border-image/svg-as-border-image.html
-svg/as-image/animated-svg-as-image.html
-svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
-svg/as-image/animated-svg-as-image-same-image.html
-svg/as-image/img-preserveAspectRatio-support-1.html
-svg/as-image/img-preserveAspectRatio-support-2.html
-svg/as-image/same-image-two-instances.html
-svg/as-image/svg-image-change-content-size.xhtml
-svg/batik/masking/maskRegions.svg
-svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
-svg/css/composite-shadow-example.html
-svg/css/composite-shadow-with-opacity.html
-svg/css/getComputedStyle-basic.xhtml
-svg/css/path-gradient-stroke-shadow.svg
-svg/dom/css-transforms.xhtml
+
+# Failing, the 2 bars are not identical
 svg/hixie/data-types/002.xhtml
-svg/hixie/error/012.xml
-svg/hixie/error/013.xml
-svg/hixie/mixed/003.xml
-svg/hixie/mixed/004.xml
-svg/hixie/mixed/005.xml
-svg/hixie/mixed/006.xml
-svg/hixie/mixed/007.xml
-svg/hixie/mixed/008.xml
-svg/hixie/mixed/009.xml
-svg/hixie/mixed/010.xml
-svg/hixie/mixed/011.xml
-svg/hixie/perf/007.xml
-svg/hixie/processing-model/003.xml
-svg/hixie/processing-model/004.xml
-svg/hixie/rendering-model/003.xhtml
-svg/hixie/rendering-model/004.xhtml
-svg/hixie/text/003.html
-svg/in-html/by-reference.html
-svg/in-html/circle.html
-svg/overflow/overflow-on-inner-svg-element.svg
-svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto.xhtml
-svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml
-svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml
-svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml
-svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml
-svg/repaint/inner-svg-change-viewPort-relative.svg
-svg/transforms/animated-path-inside-transformed-html.xhtml
-svg/transforms/svg-css-transforms-clip-path.xhtml
-svg/transforms/svg-css-transforms.xhtml
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-with-svg-transform.svg
-svg/wicd/rightsizing-grid.xhtml
-svg/wicd/test-rightsizing-a.xhtml
-svg/wicd/test-rightsizing-b.xhtml
-svg/wicd/test-scalable-background-image1.xhtml
-svg/wicd/test-scalable-background-image2.xhtml
 
 # Failing, text size is not the same
 svg/zoom/text/zoom-hixie-mixed-009.xml

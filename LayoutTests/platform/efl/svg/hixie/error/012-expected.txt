@@ -1,20 +1,20 @@
-layer at (0,0) size 866x848
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 785x848
-  RenderBlock {html} at (0,0) size 785x848
-    RenderBody {body} at (8,23) size 769x817
-      RenderBlock {parsererror} at (23,0) size 723x189 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (25,28) size 673x31
-          RenderText {#text} at (0,0) size 468x31
-            text run at (0,0) width 468: "This page contains the following errors:"
-        RenderBlock {div} at (25,85) size 673x19
-          RenderText {#text} at (0,-1) size 810x21
-            text run at (0,-1) width 810: "error on line 5 at column 7: Opening and ending tag mismatch: rect line 0 and svg"
-            text run at (810,-1) width 0: " "
-        RenderBlock {h3} at (25,130) size 673x31
-          RenderText {#text} at (0,0) size 618x31
-            text run at (0,0) width 618: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,212) size 769x605
-        RenderSVGRoot {svg} at (18,245) size 200x200
-          RenderSVGRect {rect} at (18,245) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
-          RenderSVGRect {rect} at (18,245) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+layer at (0,0) size 785x777
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x777
+  RenderBlock {html} at (0,0) size 785x777
+    RenderBody {body} at (8,16) size 769x753
+      RenderBlock {parsererror} at (16,0) size 737x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 701x22
+          RenderText {#text} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,60) size 701x14
+          RenderText {#text} at (0,0) size 567x14
+            text run at (0,0) width 567: "error on line 5 at column 7: Opening and ending tag mismatch: rect line 0 and svg"
+            text run at (567,0) width 0: " "
+        RenderBlock {h3} at (18,92) size 701x22
+          RenderText {#text} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 769x603
+        RenderSVGRoot {svg} at (18,176) size 200x200
+          RenderSVGRect {rect} at (18,176) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+          RenderSVGRect {rect} at (18,176) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]

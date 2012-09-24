@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
     RenderSVGForeignObject {foreignObject} at (0,0) size 400x400
-      RenderBlock {p} at (0,0) size 400x26
-        RenderText {#text} at (0,0) size 56x26
-          text run at (0,0) width 56: "PASS"
+      RenderBlock {p} at (0,0) size 400x18
+        RenderText {#text} at (0,0) size 39x19
+          text run at (0,0) width 39: "PASS"

@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x356
-  RenderBlock {HTML} at (0,0) size 800x356
-    RenderBody {BODY} at (8,30) size 784x318
-      RenderBlock {H1} at (0,0) size 784x53
-        RenderText {#text} at (0,1) size 322x51
-          text run at (0,1) width 322: "No size specified"
-      RenderBlock (anonymous) at (0,83) size 784x235
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,21) size 784x291
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 223x36
+          text run at (0,0) width 223: "No size specified"
+      RenderBlock (anonymous) at (0,58) size 784x233
         RenderImage {IMG} at (0,0) size 230x230 [border: (2px dashed #800000)]
-        RenderText {#text} at (230,209) size 6x26
-          text run at (230,209) width 6: " "
-        RenderEmbeddedObject {OBJECT} at (236,2) size 228x228 [border: (1px dashed #008000)]
+        RenderText {#text} at (230,215) size 4x19
+          text run at (230,215) width 4: " "
+        RenderEmbeddedObject {OBJECT} at (234,2) size 228x228 [border: (1px dashed #008000)]
           layer at (0,0) size 220x220
             RenderView at (0,0) size 220x220
           layer at (0,0) size 220x220
             RenderSVGRoot {svg} at (0,0) size 220x220
-              RenderSVGPath {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+              RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
         RenderText {#text} at (0,0) size 0x0

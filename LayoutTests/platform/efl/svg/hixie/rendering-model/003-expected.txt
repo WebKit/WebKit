@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x583
-  RenderBlock {html} at (0,0) size 800x583
-    RenderBody {body} at (8,23) size 784x537
-      RenderBlock {p} at (0,0) size 784x26
-        RenderText {#text} at (0,0) size 639x26
-          text run at (0,0) width 639: "There should be two identical blue squares below, and no scrollbars."
-      RenderBlock {div} at (0,49) size 230x230 [bgcolor=#000080]
-      RenderBlock {p} at (0,302) size 784x235
-        RenderPartObject {iframe} at (0,0) size 230x230 [bgcolor=#FF0000]
-          layer at (0,0) size 230x230
-            RenderView at (0,0) size 230x230
-          layer at (0,0) size 230x230
-            RenderSVGRoot {svg} at (0,0) size 230x230
-              RenderSVGRect {rect} at (0,0) size 230x230 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=230.00] [height=230.00]
+layer at (0,0) size 800x405
+  RenderBlock {html} at (0,0) size 800x405
+    RenderBody {body} at (8,16) size 784x373
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 431x19
+          text run at (0,0) width 431: "There should be two identical blue squares below, and no scrollbars."
+      RenderBlock {div} at (0,34) size 160x160 [bgcolor=#000080]
+      RenderBlock {p} at (0,210) size 784x163
+        RenderPartObject {iframe} at (0,0) size 160x160 [bgcolor=#FF0000]
+          layer at (0,0) size 160x160
+            RenderView at (0,0) size 160x160
+          layer at (0,0) size 160x160
+            RenderSVGRoot {svg} at (0,0) size 160x160
+              RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=160.00] [height=160.00]

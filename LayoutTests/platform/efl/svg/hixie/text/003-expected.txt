@@ -1,13 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x478
-  RenderBlock {HTML} at (0,0) size 800x478
-    RenderBody {BODY} at (8,23) size 784x432
-      RenderBlock {P} at (0,0) size 784x52
-        RenderText {#text} at (0,0) size 777x52
-          text run at (0,0) width 777: "The following two blocks should look identical (to the pixel), and they should both"
-          text run at (0,26) width 117: "say \"PASS\":"
-      RenderBlock {P} at (0,75) size 784x167
+layer at (0,0) size 800x412
+  RenderBlock {HTML} at (0,0) size 800x412
+    RenderBody {BODY} at (8,16) size 784x380
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 608x19
+          text run at (0,0) width 608: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
+      RenderBlock {P} at (0,34) size 784x165
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
@@ -16,7 +15,7 @@ layer at (0,0) size 800x478
               RenderSVGText {text} at (0,-1) size 3x2 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 3x2
                   chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.40: "PASS"
-      RenderBlock {P} at (0,265) size 784x167
+      RenderBlock {P} at (0,215) size 784x165
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
