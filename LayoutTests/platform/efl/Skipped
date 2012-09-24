@@ -529,22 +529,17 @@ fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
 
 # following tests started failing on EFL afrer r122952.
-http/tests/inspector/inspect-element.html
-http/tests/inspector/network/network-initiator.html
 http/tests/inspector/network/network-content-replacement-embed.html
 http/tests/inspector/network/network-embed.html
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
 http/tests/inspector/network/network-size.html
 http/tests/inspector/resource-har-conversion.html
-http/tests/inspector/console-cd-completions.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 http/tests/inspector/resource-parameters.html
-http/tests/inspector/console-cd.html
 http/tests/inspector/extensions-useragent.html
 http/tests/inspector/compiler-source-mapping-debug.html
 http/tests/inspector/console-websocket-error.html
-inspector/styles/variables/css-variables.html
 inspector/styles/svg-style.xhtml
 inspector/styles/override-screen-size.html
 inspector/console/console-long-eval-crash.html
