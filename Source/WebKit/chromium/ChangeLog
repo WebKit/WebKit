@@ -1,3 +1,14 @@
+2012-09-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add setters to WebFilterOperation for IPC pickling
+        https://bugs.webkit.org/show_bug.cgi?id=97147
+
+        Reviewed by James Robinson.
+
+        * tests/FilterOperationsTest.cpp:
+        (WebKit):
+        (WebKit::TEST):
+
 2012-09-24  Patrick Gansterer  <paroga@webkit.org>
 
         Remove remaining WTF_DEPRECATED_STRING_OPERATORS from cpp files

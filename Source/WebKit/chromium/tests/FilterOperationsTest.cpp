@@ -89,5 +89,108 @@ TEST(WebFilterOperationsTest, getOutsetsDropShadow)
     EXPECT_EQ(54, left);
 }
 
+#define SAVE_RESTORE_AMOUNT(Type, a) \
+    { \
+        WebFilterOperation op = WebFilterOperation::create##Type##Filter(a); \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op.type()); \
+        EXPECT_EQ(a, op.amount()); \
+        \
+        WebFilterOperation op2 = WebFilterOperation::createEmptyFilter(); \
+        op2.setType(WebFilterOperation::FilterType##Type); \
+        \
+        EXPECT_NE(a, op2.amount()); \
+        \
+        op2.setAmount(a); \
+        \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op2.type()); \
+        EXPECT_EQ(a, op2.amount()); \
+    }
+
+#define SAVE_RESTORE_OFFSET_AMOUNT_COLOR(Type, a, b, c) \
+    { \
+        WebFilterOperation op = WebFilterOperation::create##Type##Filter(a, b, c); \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op.type()); \
+        EXPECT_EQ(a, op.dropShadowOffset()); \
+        EXPECT_EQ(b, op.amount()); \
+        EXPECT_EQ(c, op.dropShadowColor()); \
+        \
+        WebFilterOperation op2 = WebFilterOperation::createEmptyFilter(); \
+        op2.setType(WebFilterOperation::FilterType##Type); \
+        \
+        EXPECT_NE(a, op2.dropShadowOffset()); \
+        EXPECT_NE(b, op2.amount()); \
+        EXPECT_NE(c, op2.dropShadowColor()); \
+        \
+        op2.setDropShadowOffset(a); \
+        op2.setAmount(b); \
+        op2.setDropShadowColor(c); \
+        \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op2.type()); \
+        EXPECT_EQ(a, op2.dropShadowOffset()); \
+        EXPECT_EQ(b, op2.amount()); \
+        EXPECT_EQ(c, op2.dropShadowColor()); \
+    }
+
+#define SAVE_RESTORE_MATRIX(Type, a) \
+    { \
+        WebFilterOperation op = WebFilterOperation::create##Type##Filter(a); \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op.type());     \
+        for (unsigned i = 0; i < 20; ++i) \
+            EXPECT_EQ(a[i], op.matrix()[i]); \
+        \
+        WebFilterOperation op2 = WebFilterOperation::createEmptyFilter(); \
+        op2.setType(WebFilterOperation::FilterType##Type); \
+        \
+        for (unsigned i = 0; i < 20; ++i) \
+            EXPECT_NE(a[i], op2.matrix()[i]); \
+        \
+        op2.setMatrix(a); \
+        \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op2.type()); \
+        for (unsigned i = 0; i < 20; ++i) \
+            EXPECT_EQ(a[i], op.matrix()[i]); \
+    }
+
+#define SAVE_RESTORE_ZOOMRECT_AMOUNT(Type, a, b) \
+    { \
+        WebFilterOperation op = WebFilterOperation::create##Type##Filter(a, b); \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op.type()); \
+        EXPECT_EQ(a, op.zoomRect()); \
+        EXPECT_EQ(b, op.amount()); \
+        \
+        WebFilterOperation op2 = WebFilterOperation::createEmptyFilter(); \
+        op2.setType(WebFilterOperation::FilterType##Type); \
+        \
+        EXPECT_NE(a, op2.zoomRect()); \
+        EXPECT_NE(b, op2.amount()); \
+        \
+        op2.setZoomRect(a); \
+        op2.setAmount(b); \
+        \
+        EXPECT_EQ(WebFilterOperation::FilterType##Type, op2.type()); \
+        EXPECT_EQ(a, op2.zoomRect()); \
+        EXPECT_EQ(b, op2.amount()); \
+    }
+
+
+TEST(WebFilterOperationsTest, saveAndRestore)
+{
+    SAVE_RESTORE_AMOUNT(Grayscale, 0.6f);
+    SAVE_RESTORE_AMOUNT(Sepia, 0.6f);
+    SAVE_RESTORE_AMOUNT(Saturate, 0.6f);
+    SAVE_RESTORE_AMOUNT(HueRotate, 0.6f);
+    SAVE_RESTORE_AMOUNT(Invert, 0.6f);
+    SAVE_RESTORE_AMOUNT(Brightness, 0.6f);
+    SAVE_RESTORE_AMOUNT(Contrast, 0.6f);
+    SAVE_RESTORE_AMOUNT(Opacity, 0.6f);
+    SAVE_RESTORE_AMOUNT(Blur, 0.6f);
+    SAVE_RESTORE_OFFSET_AMOUNT_COLOR(DropShadow, WebPoint(3, 4), 0.4f, 0xffffff00);
+
+    SkScalar matrix[20] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+    SAVE_RESTORE_MATRIX(ColorMatrix, matrix);
+
+    SAVE_RESTORE_ZOOMRECT_AMOUNT(Zoom, WebRect(20, 19, 18, 17), 32);
+}
+
 }
 
