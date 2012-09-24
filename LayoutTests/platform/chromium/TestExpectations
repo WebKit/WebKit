@@ -3255,9 +3255,6 @@ webkit.org/b/91372 [ Win ] css2.1/20110323/vertical-align-boxes-001.htm [ ImageO
 # Fails on Win
 webkit.org/b/93624 [ Win Release ] inspector/console/console-format-collections.html [ Failure Pass ]
 
-# Times out in DRT, but works in chrome
-webkit.org/b/92776 storage/indexeddb/intversion-delete-in-upgradeneeded.html
-
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
 
