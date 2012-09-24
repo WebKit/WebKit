@@ -30,7 +30,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGSlowPathGenerator.h"
-#include "JSVariableObject.h"
+#include "JSActivation.h"
 
 namespace JSC { namespace DFG {
 
@@ -4070,16 +4070,38 @@ void SpeculativeJIT::compile(Node& node)
         
     case TearOffActivation: {
         JSValueOperand activationValue(this, node.child1());
+        GPRTemporary scratch(this);
         
         GPRReg activationValueTagGPR = activationValue.tagGPR();
         GPRReg activationValuePayloadGPR = activationValue.payloadGPR();
+        GPRReg scratchGPR = scratch.gpr();
 
-        JITCompiler::Jump created = m_jit.branch32(JITCompiler::NotEqual, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+        JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
 
-        addSlowPathGenerator(
-            slowPathCall(
-                created, this, operationTearOffActivation, NoResult, activationValuePayloadGPR));
+        SharedSymbolTable* symbolTable = m_jit.symbolTableFor(node.codeOrigin);
+        int registersOffset = JSActivation::registersOffset(symbolTable);
+
+        int captureEnd = symbolTable->captureEnd();
+        for (int i = symbolTable->captureStart(); i < captureEnd; ++i) {
+            m_jit.loadPtr(
+                JITCompiler::Address(
+                    GPRInfo::callFrameRegister, i * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+                scratchGPR);
+            m_jit.storePtr(
+                scratchGPR, JITCompiler::Address(
+                    activationValuePayloadGPR, registersOffset + i * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+            m_jit.loadPtr(
+                JITCompiler::Address(
+                    GPRInfo::callFrameRegister, i * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+                scratchGPR);
+            m_jit.storePtr(
+                scratchGPR, JITCompiler::Address(
+                    activationValuePayloadGPR, registersOffset + i * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        }
+        m_jit.addPtr(TrustedImm32(registersOffset), activationValuePayloadGPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValuePayloadGPR, JSActivation::offsetOfRegisters()));
         
+        notCreated.link(&m_jit);
         noResult(m_compileIndex);
         break;
     }

@@ -1,3 +1,31 @@
+2012-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Inlined activation tear-off in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=97487
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h: Activation tear-off is always inlined now, so I
+        removed its out-of-line implementation.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Inlined the variable copy and update
+        of JSVariableObject::m_registers. This usually turns into < 10 instructions,
+        which is close to pure win as compared to the operation function call.
+
+        * runtime/JSActivation.h:
+        (JSActivation):
+        (JSC::JSActivation::registersOffset):
+        (JSC::JSActivation::tearOff):
+        (JSC::JSActivation::isTornOff):
+        (JSC):
+        (JSC::JSActivation::storageOffset):
+        (JSC::JSActivation::storage): Tiny bit of refactoring so the JIT can
+        share the pointer math helper functions we use internally.
+
 2012-09-24  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         MIPS: store8 functions added to MacroAssembler.

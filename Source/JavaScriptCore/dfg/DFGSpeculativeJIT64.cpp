@@ -4041,14 +4041,28 @@ void SpeculativeJIT::compile(Node& node)
         ASSERT(!node.codeOrigin.inlineCallFrame);
 
         JSValueOperand activationValue(this, node.child1());
+        GPRTemporary scratch(this);
         GPRReg activationValueGPR = activationValue.gpr();
+        GPRReg scratchGPR = scratch.gpr();
 
-        JITCompiler::Jump created = m_jit.branchTestPtr(JITCompiler::NonZero, activationValueGPR);
-        
-        addSlowPathGenerator(
-            slowPathCall(
-                created, this, operationTearOffActivation, NoResult, activationValueGPR));
-        
+        JITCompiler::Jump notCreated = m_jit.branchTestPtr(JITCompiler::Zero, activationValueGPR);
+
+        SharedSymbolTable* symbolTable = m_jit.symbolTableFor(node.codeOrigin);
+        int registersOffset = JSActivation::registersOffset(symbolTable);
+
+        int captureEnd = symbolTable->captureEnd();
+        for (int i = symbolTable->captureStart(); i < captureEnd; ++i) {
+            m_jit.loadPtr(
+                JITCompiler::Address(
+                    GPRInfo::callFrameRegister, i * sizeof(Register)), scratchGPR);
+            m_jit.storePtr(
+                scratchGPR, JITCompiler::Address(
+                    activationValueGPR, registersOffset + i * sizeof(Register)));
+        }
+        m_jit.addPtr(TrustedImm32(registersOffset), activationValueGPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, JITCompiler::Address(activationValueGPR, JSActivation::offsetOfRegisters()));
+
+        notCreated.link(&m_jit);
         noResult(m_compileIndex);
         break;
     }

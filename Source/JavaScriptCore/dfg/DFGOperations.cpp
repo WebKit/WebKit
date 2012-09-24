@@ -1167,13 +1167,6 @@ JSCell* DFG_OPERATION operationCreateInlinedArguments(
     return result;
 }
 
-void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell)
-{
-    JSGlobalData& globalData = exec->globalData();
-    NativeCallFrameTracer tracer(&globalData, exec);
-    jsCast<JSActivation*>(activationCell)->tearOff(exec->globalData());
-}
-
 void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell* activationCell)
 {
     ASSERT(exec->codeBlock()->usesArguments());

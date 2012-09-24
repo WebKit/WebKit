@@ -84,6 +84,8 @@ namespace JSC {
         bool isValidIndex(int) const;
         bool isValid(const SymbolTableEntry&) const;
         bool isTornOff();
+        int registersOffset();
+        static int registersOffset(SharedSymbolTable*);
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
@@ -99,8 +101,8 @@ namespace JSC {
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
         static size_t allocationSize(SharedSymbolTable*);
+        static size_t storageOffset();
 
-        int registerOffset();
         WriteBarrier<Unknown>* storage(); // captureCount() number of registers.
     };
 
@@ -141,17 +143,17 @@ namespace JSC {
         return false;
     }
 
-    inline int JSActivation::registerOffset()
+    inline int JSActivation::registersOffset(SharedSymbolTable* symbolTable)
     {
-        return -symbolTable()->captureStart();
+        return storageOffset() - (symbolTable->captureStart() * sizeof(WriteBarrier<Unknown>));
     }
 
     inline void JSActivation::tearOff(JSGlobalData& globalData)
     {
         ASSERT(!isTornOff());
 
-        int registerOffset = this->registerOffset();
-        WriteBarrierBase<Unknown>* dst = storage() + registerOffset;
+        WriteBarrierBase<Unknown>* dst = reinterpret_cast<WriteBarrierBase<Unknown>*>(
+            reinterpret_cast<char*>(this) + registersOffset(symbolTable()));
         WriteBarrierBase<Unknown>* src = m_registers;
 
         int captureEnd = symbolTable()->captureEnd();
@@ -164,15 +166,19 @@ namespace JSC {
 
     inline bool JSActivation::isTornOff()
     {
-        return m_registers == storage() + registerOffset();
+        return m_registers == reinterpret_cast<WriteBarrierBase<Unknown>*>(
+            reinterpret_cast<char*>(this) + registersOffset(symbolTable()));
+    }
+
+    inline size_t JSActivation::storageOffset()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSActivation));
     }
 
     inline WriteBarrier<Unknown>* JSActivation::storage()
     {
         return reinterpret_cast<WriteBarrier<Unknown>*>(
-            reinterpret_cast<char*>(this) +
-                WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSActivation))
-        );
+            reinterpret_cast<char*>(this) + storageOffset());
     }
 
     inline size_t JSActivation::allocationSize(SharedSymbolTable* symbolTable)
