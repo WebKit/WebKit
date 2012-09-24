@@ -227,6 +227,15 @@ public:
 #endif
     }
 
+    FractionalLayoutUnit fraction() const
+    {   
+        // Add the fraction to the size (as opposed to the full location) to avoid overflows.
+        // Compute fraction using the mod operator to preserve the sign of the value as it may affect rounding.
+        FractionalLayoutUnit fraction;
+        fraction.setRawValue(rawValue() % kFixedPointDenominator);
+        return fraction;
+    }
+
 #if ENABLE(SUBPIXEL_LAYOUT)
     static float epsilon() { return 1.0f / kFixedPointDenominator; }
 #else
@@ -807,7 +816,7 @@ inline float& operator/=(float& a, const FractionalLayoutUnit& b)
 
 inline int snapSizeToPixel(FractionalLayoutUnit size, FractionalLayoutUnit location) 
 {
-    FractionalLayoutUnit fraction = location - location.floor();
+    FractionalLayoutUnit fraction = location.fraction();
     return (fraction + size).round() - fraction.round();
 }
 

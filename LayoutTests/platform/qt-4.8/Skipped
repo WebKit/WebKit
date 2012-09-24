@@ -106,6 +106,7 @@ fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
+fast/sub-pixel/snap-negative-location.html
 
 # SVG Fonts are only supported when using QRawFont, which is not
 # supported with Qt 4.
