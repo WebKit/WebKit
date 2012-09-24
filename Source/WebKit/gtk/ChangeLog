@@ -1,3 +1,17 @@
+2012-09-24  Joone Hur  <joone.hur@intel.com>
+
+        [GTK] Implement GraphicsLayer using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73767
+
+        Reviewed by Martin Robinson.
+
+        This patch is needed for enabling Accelerated Compositing(Clutter backend)
+        with the patches submitted in bug 92045 and 91940.
+
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        (WebKit::AcceleratedCompositingContext::scrollNonCompositedContents): Added to fix bulid break.
+        (WebKit):
+
 2012-09-19  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [gtk] add enable-media-stream to websettings

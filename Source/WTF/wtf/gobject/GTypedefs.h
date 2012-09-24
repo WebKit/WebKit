@@ -71,6 +71,11 @@ typedef struct _cairo_surface cairo_surface_t;
 typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 #endif
 
+#if USE(CLUTTER)
+typedef struct _ClutterActor ClutterActor;
+typedef struct _GraphicsLayerActor GraphicsLayerActor;
+#endif
+
 #if PLATFORM(GTK)
 typedef struct _GtkAction GtkAction;
 typedef struct _GtkAdjustment GtkAdjustment;

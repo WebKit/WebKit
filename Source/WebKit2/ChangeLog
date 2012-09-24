@@ -1,3 +1,14 @@
+2012-09-24  Joone Hur  <joone.hur@intel.com>, Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Implement GraphicsLayer using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73767
+
+        Reviewed by Martin Robinson.
+
+        Fixed link errors by adding Clutter library and header to WebKit2 build.
+
+        * GNUmakefile.am:
+
 2012-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView:is-loading is not updated when the is loaded is started by link clicked navigation action

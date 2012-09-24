@@ -1,3 +1,14 @@
+2012-09-24  Joone Hur  <joone.hur@intel.com>
+
+        [GTK] Implement GraphicsLayer using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73767
+
+        Reviewed by Martin Robinson.
+
+        Add ClutterActor and GraphicsLayerActor to GTypedefs.h.
+
+        * wtf/gobject/GTypedefs.h:
+
 2012-09-23  Byungwoo Lee  <bw80.lee@gmail.com>
 
         Fix build warnings : -Wunused-parameter, -Wparentheses, -Wuninitialized.

@@ -112,6 +112,11 @@ void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
     gtk_widget_size_allocate(GTK_WIDGET(m_rootLayerEmbedder), &allocation);
 }
 
+void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    notImplemented();
+}
+
 static gboolean flushAndRenderLayersCallback(AcceleratedCompositingContext* context)
 {
     context->flushAndRenderLayers();

@@ -101,6 +101,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
+	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
@@ -162,6 +163,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
+	$(CLUTTER_LIBS) \
 	$(COVERAGE_LDFLAGS) \
 	$(FARSTREAM_LIBS) \
 	$(GAIL_LIBS) \

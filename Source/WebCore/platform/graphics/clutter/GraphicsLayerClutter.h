@@ -29,10 +29,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "GRefPtrClutter.h"
 #include "GraphicsLayer.h"
 
 #include <clutter/clutter.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
 
