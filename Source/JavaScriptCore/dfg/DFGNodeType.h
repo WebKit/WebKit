@@ -147,7 +147,7 @@ namespace JSC { namespace DFG {
     macro(GetScope, NodeResultJS) \
     macro(GetScopeRegisters, NodeResultStorage) \
     macro(GetScopedVar, NodeResultJS) \
-    macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutScopedVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \
     macro(PutGlobalVar, NodeMustGenerate) \
     macro(GlobalVarWatchpoint, NodeMustGenerate) \

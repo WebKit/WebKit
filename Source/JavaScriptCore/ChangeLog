@@ -1,5 +1,20 @@
 2012-09-23  Geoffrey Garen  <ggaren@apple.com>
 
+        PutScopedVar should not be marked as clobbering the world
+        https://bugs.webkit.org/show_bug.cgi?id=97416
+
+        Reviewed by Filip Pizlo.
+
+        No performance change.
+
+        PutScopedVar doesn't have arbitrary side-effects, so it shouldn't be marked
+        as such.
+
+        * dfg/DFGNodeType.h:
+        (DFG):
+
+2012-09-23  Geoffrey Garen  <ggaren@apple.com>
+
         I accidentally the whole 32-bit :(.
 
         Unbreak the DFG in 32-bit with the 32-bit path I forgot in my last patch.
