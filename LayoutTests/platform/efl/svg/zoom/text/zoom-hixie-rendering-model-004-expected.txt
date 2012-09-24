@@ -1,28 +1,15 @@
-layer at (0,0) size 1997x10461
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 785x10461
-  RenderBlock {html} at (0,0) size 785x10461
-    RenderBody {body} at (8,511) size 769x9942
-      RenderBlock {p} at (0,0) size 769x8232 [color=#000080]
-        RenderText {#text} at (0,10) size 1989x8211
-          text run at (0,10) width 1221: "Zoom"
-          text run at (0,598) width 398: "in"
-          text run at (0,1186) width 739: "and"
-          text run at (0,1774) width 782: "out."
-          text run at (0,2362) width 795: "The"
-          text run at (0,2950) width 1989: "following"
-          text run at (0,3538) width 767: "two"
-          text run at (0,4126) width 1534: "squares"
-          text run at (0,4714) width 1365: "should"
-          text run at (0,5302) width 1420: "always"
-          text run at (0,5890) width 483: "be"
-          text run at (0,6478) width 625: "the"
-          text run at (0,7066) width 1050: "same"
-          text run at (0,7654) width 923: "size."
-      RenderBlock {div} at (0,8743) size 100x100 [bgcolor=#000080]
-      RenderBlock (anonymous) at (0,9354) size 769x588
-        RenderSVGRoot {svg} at (8,10231) size 100x100
-          RenderSVGRect {rect} at (8,10231) size 100x100 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x308
+  RenderBlock {html} at (0,0) size 800x308
+    RenderBody {body} at (8,23) size 784x277
+      RenderBlock {p} at (0,0) size 784x26 [color=#000080]
+        RenderText {#text} at (0,0) size 719x26
+          text run at (0,0) width 719: "Zoom in and out. The following two squares should always be the same size."
+      RenderBlock {div} at (0,49) size 100x100 [bgcolor=#000080]
+      RenderBlock (anonymous) at (0,172) size 784x105
+        RenderSVGRoot {svg} at (8,195) size 100x100
+          RenderSVGRect {rect} at (8,195) size 100x100 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

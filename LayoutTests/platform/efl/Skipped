@@ -516,38 +516,12 @@ svg/wicd/test-rightsizing-a.xhtml
 svg/wicd/test-rightsizing-b.xhtml
 svg/wicd/test-scalable-background-image1.xhtml
 svg/wicd/test-scalable-background-image2.xhtml
-svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
-svg/zoom/page/zoom-mask-with-percentages.svg
-svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
-svg/zoom/text/zoom-coords-viewattr-01-b.svg
-svg/zoom/text/zoom-hixie-mixed-008.xml
+
+# Failing, text size is not the same
 svg/zoom/text/zoom-hixie-mixed-009.xml
-svg/zoom/text/zoom-hixie-rendering-model-004.xhtml
-svg/zoom/text/zoom-svg-float-border-padding.xml
-svg/W3C-I18N/g-dirRTL-ubNone.svg
-svg/W3C-I18N/g-dirRTL-ubOverride.svg
-svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg
-svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg
-svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg
-svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg
-svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg
-svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg
-svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg
-svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg
-svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg
-svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg
-svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg
-svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg
-svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg
-svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg
-svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg
-svg/W3C-I18N/text-anchor-no-markup.svg
+
+# Failing, last gradiant rectangle is blank
 svg/batik/paints/gradientLimit.svg
-svg/batik/text/textOnPath.svg
-svg/batik/text/textProperties2.svg
-svg/hixie/perf/004.xml
-svg/hixie/perf/005.xml
-svg/hixie/perf/006.xml
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 fast/overflow/overflow-height-float-not-removed-crash3.html

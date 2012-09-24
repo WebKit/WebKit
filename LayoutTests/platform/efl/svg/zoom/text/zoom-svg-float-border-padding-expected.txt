@@ -1,83 +1,27 @@
-layer at (0,0) size 2725x58044
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 785x58044
-  RenderBlock {html} at (0,0) size 785x58044
-    RenderBody {body} at (8,8) size 769x57300
-      RenderBlock (anonymous) at (0,0) size 769x16074
-        RenderText {#text} at (0,15) size 2717x16044
-          text run at (0,15) width 1145: "The"
-          text run at (0,861) width 1104: "two"
-          text run at (0,1707) width 1921: "blocks"
-          text run at (0,2553) width 1962: "should"
-          text run at (0,3399) width 1308: "look"
-          text run at (0,4245) width 2717: "identical."
-          text run at (0,5091) width 1227: "One"
-          text run at (0,5937) width 1267: "uses"
-          text run at (0,6783) width 695: "an"
-          text run at (0,7629) width 1657: "SVG,"
-          text run at (0,8475) width 1063: "and"
-          text run at (0,9321) width 899: "the"
-          text run at (0,10167) width 1512: "other"
-          text run at (0,11013) width 1062: "just"
-          text run at (0,11859) width 1267: "uses"
-          text run at (0,12705) width 327: "a"
-          text run at (0,13551) width 2084: "normal"
-          text run at (0,14397) width 2086: "HTML"
-          text run at (0,15243) width 1124: "div."
-      RenderBlock {p} at (0,16810) size 769x9306
-        RenderText {#text} at (0,15) size 2043x9276
-          text run at (0,15) width 1717: "There"
-          text run at (0,861) width 1962: "should"
-          text run at (0,1707) width 695: "be"
-          text run at (0,2553) width 327: "a"
-          text run at (0,3399) width 1124: "red,"
-          text run at (0,4245) width 1635: "white"
-          text run at (0,5091) width 1063: "and"
-          text run at (0,5937) width 1267: "blue"
-          text run at (0,6783) width 2043: "pattern"
-          text run at (0,7629) width 1799: "below"
-          text run at (0,8475) width 1062: "this"
-      RenderSVGRoot {svg} at (18,26870) size 140x140
-        RenderSVGRect {rect} at (38,26890) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderBlock {p} at (0,27012) size 769x9306
-        RenderText {#text} at (0,15) size 2043x9276
-          text run at (0,15) width 1717: "There"
-          text run at (0,861) width 1962: "should"
-          text run at (0,1707) width 695: "be"
-          text run at (0,2553) width 327: "a"
-          text run at (0,3399) width 1124: "red,"
-          text run at (0,4245) width 1635: "white"
-          text run at (0,5091) width 1063: "and"
-          text run at (0,5937) width 1267: "blue"
-          text run at (0,6783) width 2043: "pattern"
-          text run at (0,7629) width 1758: "above"
-          text run at (0,8475) width 1062: "this"
-      RenderBlock {hr} at (0,37054) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {p} at (0,37792) size 769x9306
-        RenderText {#text} at (0,15) size 2043x9276
-          text run at (0,15) width 1717: "There"
-          text run at (0,861) width 1962: "should"
-          text run at (0,1707) width 695: "be"
-          text run at (0,2553) width 327: "a"
-          text run at (0,3399) width 1124: "red,"
-          text run at (0,4245) width 1635: "white"
-          text run at (0,5091) width 1063: "and"
-          text run at (0,5937) width 1267: "blue"
-          text run at (0,6783) width 2043: "pattern"
-          text run at (0,7629) width 1799: "below"
-          text run at (0,8475) width 1062: "this"
-      RenderBlock (floating) {div} at (10,47844) size 140x140 [border: (10px solid #FF0000)]
+layer at (0,0) size 785x624
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x624
+  RenderBlock {html} at (0,0) size 785x624
+    RenderBody {body} at (8,8) size 769x593
+      RenderBlock (anonymous) at (0,0) size 769x52
+        RenderText {#text} at (0,0) size 758x52
+          text run at (0,0) width 357: "The two blocks should look identical. "
+          text run at (357,0) width 401: "One uses an SVG, and the other just uses a"
+          text run at (0,26) width 179: "normal HTML div."
+      RenderBlock {p} at (0,75) size 769x26
+        RenderText {#text} at (0,0) size 524x26
+          text run at (0,0) width 524: "There should be a red, white and blue pattern below this"
+      RenderSVGRoot {svg} at (18,142) size 140x140
+        RenderSVGRect {rect} at (38,162) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderBlock {p} at (0,284) size 769x26
+        RenderText {#text} at (0,0) size 523x26
+          text run at (0,0) width 523: "There should be a red, white and blue pattern above this"
+      RenderBlock {hr} at (0,333) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,358) size 769x26
+        RenderText {#text} at (0,0) size 524x26
+          text run at (0,0) width 524: "There should be a red, white and blue pattern below this"
+      RenderBlock (floating) {div} at (10,417) size 140x140 [border: (10px solid #FF0000)]
         RenderBlock {div} at (20,20) size 100x100 [bgcolor=#0000FF]
-      RenderBlock {p} at (0,47994) size 769x9306
-        RenderText {#text} at (0,15) size 2043x9276
-          text run at (0,15) width 1717: "There"
-          text run at (0,861) width 1962: "should"
-          text run at (0,1707) width 695: "be"
-          text run at (0,2553) width 327: "a"
-          text run at (0,3399) width 1124: "red,"
-          text run at (0,4245) width 1635: "white"
-          text run at (0,5091) width 1063: "and"
-          text run at (0,5937) width 1267: "blue"
-          text run at (0,6783) width 2043: "pattern"
-          text run at (0,7629) width 1758: "above"
-          text run at (0,8475) width 1062: "this"
+      RenderBlock {p} at (0,567) size 769x26
+        RenderText {#text} at (0,0) size 523x26
+          text run at (0,0) width 523: "There should be a red, white and blue pattern above this"
