@@ -15,97 +15,178 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 dbname = "open-close-version.html"
 
 TEST: setVersion blocked on open handles
-self.testname = 'test1'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h2.open'
-'h2.open.onsuccess'
-'h1.setVersion'
-'h2.onversionchange'
-    h2 closing, but not immediately
-'h1.setVersion.onblocked'
-'h2.close'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
+testname = 'test1'
+ver = 1
+blockedEventFired = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+indexedDB.open(dbname + testname)
+
+h2OpenOnSuccess():
+h2 = event.target.result
+h1.setVersion(String(ver++))
+
+h2OnVersionChange():
+old = 1
+new = "1"
+scheduling timeout to close h2
+
+h1SetVersionOnBlocked():
+blockedEventFired = true
+
+timeoutCallback():
+h2.close()
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
 PASS blockedEventFired is true
 
 TEST: setVersion not blocked if handle closed immediately
-self.testname = 'test2'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h2.open'
-'h2.open.onsuccess'
-'h1.setVersion'
-'h2.onversionchange'
-    h2 closing immediately
-'h2.close'
-'h1.setVersion.onblocked'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
-NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
+testname = 'test2'
+ver = 1
+blockedEventFired = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h2 = event.target.result
+h1.setVersion(String(ver++))
+
+h2OnVersionChange():
+old = 1
+new = "1"
+h2.close()
+
+h1SetVersionOnBlocked():
+blockedEventFired = true
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
+FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130
 FAIL blockedEventFired should be false. Was true.
 
 TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - close when blocked
-self.testname = 'test3'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h2.open'
-'h2.open.onsuccess'
-'h1.setVersion'
-'h2.setVersion'
-'h2.onversionchange'
-'h1.setVersion.onblocked'
-'h1.onversionchange'
-'h2.setVersion.onblocked'
-    h2 blocked so closing
-'h2.close'
-'h3.open'
-'h2.setVersion.onerror'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
-'h3.open.onsuccess'
+testname = 'test3'
+ver = 1
+blockedEventFired = false
+versionChangeComplete = false
+errorEventFired = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+indexedDB.open(dbname + testname)
+
+h2OpenOnSuccess():
+h2 = event.target.result
+h1.setVersion(String(ver++))
+h2.setVersion(String(ver++))
+
+h2OnVersionChange():
+old = 1
+new = "1"
+
+h1SetVersionOnBlocked():
+blockedEventFired = true
+
+h1OnVersionChange():
+old = 1
+new = "2"
+
+h2SetVersionOnBlocked():
+h2.close()
+indexedDB.open(dbname + testname)
+
+h2SetVersionOnError():
+errorEventFired = true
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
+versionChangeComplete = true
+
+h3OpenOnSuccess():
 PASS blockedEventFired is true
 PASS versionChangeComplete is true
+PASS errorEventFired is true
 
 TEST: open and setVersion blocked if a VERSION_CHANGE transaction is running - just close
-self.testname = 'test4'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h2.open'
-'h2.open.onsuccess'
-'h1.setVersion'
-'h3.open'
-'h2.close'
-'h1.setVersion.onblocked'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
-'h3.open.onsuccess'
-NOTE: Will FAIL with extra bogus h1.setVersion.onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
+testname = 'test4'
+ver = 1
+blockedEventFired = false
+versionChangeComplete = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+indexedDB.open(dbname + testname)
+
+h2OpenOnSuccess():
+h2 = event.target.result
+h1.setVersion(String(ver++))
+indexedDB.open(dbname + testname)
+h2.close()
+
+h1SetVersionOnBlocked():
+blockedEventFired = true
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
+versionChangeComplete = true
+
+h3OpenOnSuccess():
+FIXME: blocked should not fire as connection was closed. http://webkit.org/b/71130
 FAIL blockedEventFired should be false. Was true.
 PASS versionChangeComplete is true
 
 TEST: open blocked if a VERSION_CHANGE transaction is running
-self.testname = 'test5'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h1.setVersion'
-'h2.open'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
-'h2.open.onsuccess'
+testname = 'test5'
+ver = 1
+versionChangeComplete = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+h1.setVersion(String(ver++))
+indexedDB.open(dbname + testname)
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
+versionChangeComplete = true
+
+h2OpenOnSuccess():
+h2 = event.target.result
 PASS versionChangeComplete is true
 
 TEST: two setVersions from the same connection
-self.testname = 'test6'; self.ver = 1
-'h1.open'
-'h1.open.onsuccess'
-'h1.setVersion'
-'h1.setVersion'
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
+testname = 'test6'
+ver = 1
+versionChangeComplete = false
+indexedDB.open(dbname + testname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+h1.setVersion(String(ver++))
+h1.setVersion(String(ver++))
+
+h1SetVersionOnSuccess1():
+
+transactionOnComplete1():
 half done
-'h1.setVersion.onsuccess'
-'h1.setVersion.transaction-complete'
+versionChangeComplete = true
+
+h1SetVersionOnSuccess2():
+
+transactionOnComplete2():
 PASS versionChangeComplete is true
 PASS successfullyParsed is true
 
