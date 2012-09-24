@@ -5994,7 +5994,7 @@ bool CSSParser::parseFlex(CSSParserValueList* args, bool important)
     }
 
     if (flexGrow == unsetValue)
-        flexGrow = 0;
+        flexGrow = 1;
     if (flexShrink == unsetValue)
         flexShrink = 1;
     if (!flexBasis)

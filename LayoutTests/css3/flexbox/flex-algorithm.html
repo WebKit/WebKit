@@ -175,6 +175,16 @@ if (window.testRunner)
   <div data-expected-width="200" style="-webkit-flex: 1"></div>
 </div>
 
+<div class="flexbox">
+  <div data-expected-width="200" style="-webkit-flex: auto">
+      <div style="width: 100px;"></div>
+  </div>
+  <div data-expected-width="100" style="-webkit-flex: auto"></div>
+  <div data-expected-width="300" style="-webkit-flex: auto">
+      <div style="width: 200px;"></div>
+  </div>
+</div>
+
 <!-- Test border/padding/margin on the flexbox itself. -->
 <div data-expected-width="830" style="border: 10px solid; display: inline-block;">
     <div data-expected-width="700" style="display: -webkit-flex; padding-left: 10px; padding-right: 20px; border-left: 30px solid; border-right: 40px solid; margin-left: 50px; margin-right:60px;" class="flexbox ">

@@ -40,20 +40,20 @@ shouldBeEqualToString('flexitem.style.webkitFlex', '1.5 1 0px');
 shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1.5 1 0px');
 
 flexitem.style.webkitFlex = 'auto';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 auto');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 auto');
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 1 auto');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 1 auto');
 
 flexitem.style.webkitFlex = '1px';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 1px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 1px');
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 1 1px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 1 1px');
 
 flexitem.style.webkitFlex = '2em';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 2em');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 32px');
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 1 2em');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 1 32px');
 
 flexitem.style.webkitFlex = '0px';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 0px');
+shouldBeEqualToString('flexitem.style.webkitFlex', '1 1 0px');
+shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 1 0px');
 
 flexitem.style.webkitFlex = 'none';
 flexitem.style.webkitFlex = '-2'; // Invalid, return previous value.
