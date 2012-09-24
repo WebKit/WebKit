@@ -6313,6 +6313,8 @@
           'testing/MallocStatistics.idl',
         ],
         'webcore_test_support_files': [
+            'inspector/InspectorFrontendClientLocal.cpp',
+            'inspector/InspectorFrontendClientLocal.h',
             'testing/v8/WebCoreTestSupport.cpp',
             'testing/v8/WebCoreTestSupport.h',
             'testing/js/WebCoreTestSupport.cpp',

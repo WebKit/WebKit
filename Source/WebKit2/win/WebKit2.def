@@ -289,3 +289,23 @@ EXPORTS
         ?numberOfPages@PrintContext@WebCore@@SAHPAVFrame@2@ABVFloatSize@2@@Z
         ?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@PBDH@Z
         ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z
+        ??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z
+        ??1InspectorFrontendClientLocal@WebCore@@UAE@XZ
+        ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
+        ?close@DOMWindow@WebCore@@QAEXPAVScriptExecutionContext@2@@Z
+        ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@2@@Z
+        ?disconnectFrontend@InspectorController@WebCore@@QAEXXZ
+        ?document@DOMWindow@WebCore@@QBEPAVDocument@2@XZ
+        ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z
+        ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z
+        ?moveWindowBy@InspectorFrontendClientLocal@WebCore@@UAEXMM@Z
+        ?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0PAV12@2@Z
+        ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
+        ?requestAttachWindow@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?requestDetachWindow@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
+        ?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z
+        ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z
+        ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ        

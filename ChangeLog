@@ -1,3 +1,15 @@
+2012-09-24  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: implement testing harness for pure protocol tests.
+        https://bugs.webkit.org/show_bug.cgi?id=90675
+
+        Reviewed by Yury Semikhatsky.
+
+        Added export symbols required for Gtk+ to support the Inspector Protocol
+        testing harness.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-24  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with latest Qt 5

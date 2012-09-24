@@ -171,6 +171,8 @@ module window {
         [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
         [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
         [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
+        [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(in DOMString url);
+        [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
 
         DOMString counterValue(in Element element);
         long pageNumber(in Element element, in [Optional] float pageWidth, in [Optional] float pageHeight);

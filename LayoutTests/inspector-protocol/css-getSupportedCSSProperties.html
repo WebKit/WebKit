@@ -1,0 +1,35 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    function handleSupportedCSSProperties(messageObject)
+    {
+        if ("error" in messageObject)
+            InspectorTest.log(messageObject.error.message);
+        else {
+            var cssProperty = "box-shadow";
+            var entries = messageObject["result"]["cssProperties"];
+
+            for (var i = 0; i < entries.length; ++i) {
+                if (entries[i].name === cssProperty) {
+                    InspectorTest.log(entries[i].name + " is supported");
+                    break;
+                }
+            }
+
+            if (i === entries.length)
+                InspectorTest.log(cssProperty + " is NOT supported");
+        }
+
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("CSS.getSupportedCSSProperties", {}, handleSupportedCSSProperties);
+}
+</script>
+</head>
+<body onLoad="runTest();">
+</body>
+</html>

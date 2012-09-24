@@ -38,10 +38,12 @@ namespace WebCore {
 class ClientRect;
 class ClientRectList;
 class DOMStringList;
+class DOMWindow;
 class Document;
 class DocumentMarker;
 class Element;
 class Frame;
+class InspectorFrontendChannelDummy;
 class InternalSettings;
 class Node;
 class PagePopupController;
@@ -192,6 +194,8 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     Vector<String> consoleMessageArgumentCounts(Document*) const;
+    PassRefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
+    void closeDummyInspectorFrontend();
 #endif
 
     String counterValue(Element*);
@@ -223,6 +227,10 @@ private:
     Frame* frame() const;
 
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
+#if ENABLE(INSPECTOR)
+    RefPtr<DOMWindow> m_frontendWindow;
+    OwnPtr<InspectorFrontendChannelDummy> m_frontendChannel;
+#endif
 };
 
 } // namespace WebCore

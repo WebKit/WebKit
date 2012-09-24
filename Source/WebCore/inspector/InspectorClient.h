@@ -71,7 +71,7 @@ public:
 
     virtual bool supportsFrameInstrumentation() { return false; }
 
-    bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
+    static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 
 } // namespace WebCore
