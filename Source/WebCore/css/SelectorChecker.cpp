@@ -31,6 +31,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -783,7 +784,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 if (m_mode == ResolvingStyle) {
                     if (context.elementStyle)
                         context.elementStyle->setEmptyState(result);
-                    else if (element->renderStyle() && (element->document()->usesSiblingRules() || element->renderStyle()->unique()))
+                    else if (element->renderStyle() && (element->document()->styleSheetCollection()->usesSiblingRules() || element->renderStyle()->unique()))
                         element->renderStyle()->setEmptyState(result);
                 }
                 return result;
@@ -1183,7 +1184,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         PseudoId pseudoId = CSSSelector::pseudoId(selector->pseudoType());
         if (pseudoId == FIRST_LETTER) {
             if (Document* document = element->document())
-                document->setUsesFirstLetterRules(true);
+                document->styleSheetCollection()->setUsesFirstLetterRules(true);
         }
         if (pseudoId != NOPSEUDO)
             dynamicPseudo = pseudoId;

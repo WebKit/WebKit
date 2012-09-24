@@ -60,6 +60,7 @@
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
+#include "DocumentStyleSheetCollection.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -428,12 +429,13 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     // Note that there usually is only 1 sheet for scoped rules, so auto-shrink-to-fit is fine.
     m_authorStyle->disableAutoShrinkToFit();
 
+    DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
     // FIXME: This sucks! The user sheet is reparsed every time!
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
-    if (CSSStyleSheet* pageUserSheet = document->pageUserSheet())
+    if (CSSStyleSheet* pageUserSheet = styleSheetCollection->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), *m_medium, this);
-    addAuthorRulesAndCollectUserRulesFromSheets(document->pageGroupUserSheets(), *tempUserStyle);
-    addAuthorRulesAndCollectUserRulesFromSheets(document->documentUserSheets(), *tempUserStyle);
+    addAuthorRulesAndCollectUserRulesFromSheets(styleSheetCollection->pageGroupUserSheets(), *tempUserStyle);
+    addAuthorRulesAndCollectUserRulesFromSheets(styleSheetCollection->documentUserSheets(), *tempUserStyle);
     if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
         m_userStyle = tempUserStyle.release();
 
@@ -447,7 +449,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 #endif
 
     addStylesheetsFromSeamlessParents();
-    appendAuthorStylesheets(0, document->styleSheets()->vector());
+    appendAuthorStylesheets(0, styleSheetCollection->authorStyleSheets()->vector());
 }
 
 void StyleResolver::addStylesheetsFromSeamlessParents()
@@ -708,7 +710,6 @@ void StyleResolver::sweepMatchedPropertiesCache()
 StyleResolver::Features::Features()
     : usesFirstLineRules(false)
     , usesBeforeAfterRules(false)
-    , usesLinkRules(false)
 {
 }
 
@@ -728,7 +729,6 @@ void StyleResolver::Features::add(const StyleResolver::Features& other)
     uncommonAttributeRules.append(other.uncommonAttributeRules);
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
     usesBeforeAfterRules = usesBeforeAfterRules || other.usesBeforeAfterRules;
-    usesLinkRules = usesLinkRules || other.usesLinkRules;
 }
 
 void StyleResolver::Features::clear()
@@ -739,7 +739,6 @@ void StyleResolver::Features::clear()
     uncommonAttributeRules.clear();
     usesFirstLineRules = false;
     usesBeforeAfterRules = false;
-    usesLinkRules = false;
 }
 
 void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -2605,10 +2604,6 @@ static inline void collectFeaturesFromSelector(StyleResolver::Features& features
     case CSSSelector::PseudoAfter:
         features.usesBeforeAfterRules = true;
         break;
-    case CSSSelector::PseudoLink:
-    case CSSSelector::PseudoVisited:
-        features.usesLinkRules = true;
-        break;
     default:
         break;
     }
@@ -3181,25 +3176,25 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
     collectCSSOMWrappers(wrapperMap, styleSheetWrapper.get());
 }
 
-static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, Document* document)
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, DocumentStyleSheetCollection* styleSheetCollection)
 {
-    const Vector<RefPtr<StyleSheet> >& styleSheets = document->styleSheets()->vector();
+    const Vector<RefPtr<StyleSheet> >& styleSheets = styleSheetCollection->authorStyleSheets()->vector();
     for (unsigned i = 0; i < styleSheets.size(); ++i) {
         StyleSheet* styleSheet = styleSheets[i].get();
         if (!styleSheet->isCSSStyleSheet())
             continue;
         collectCSSOMWrappers(wrapperMap, static_cast<CSSStyleSheet*>(styleSheet));
     }
-    collectCSSOMWrappers(wrapperMap, document->pageUserSheet());
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->pageUserSheet());
     {
-        const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = document->pageGroupUserSheets();
+        const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = styleSheetCollection->pageGroupUserSheets();
         if (pageGroupUserSheets) {
             for (size_t i = 0, size = pageGroupUserSheets->size(); i < size; ++i)
                 collectCSSOMWrappers(wrapperMap, pageGroupUserSheets->at(i).get());
         }
     }
     {
-        const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = document->documentUserSheets();
+        const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = styleSheetCollection->documentUserSheets();
         if (documentUserSheets) {
             for (size_t i = 0, size = documentUserSheets->size(); i < size; ++i)
                 collectCSSOMWrappers(wrapperMap, documentUserSheets->at(i).get());
@@ -3218,7 +3213,7 @@ CSSStyleRule* StyleResolver::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
         collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, mediaControlsStyleSheet);
         collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, m_styleSheetCSSOMWrapperSet, fullscreenStyleSheet);
 
-        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, document());
+        collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, document()->styleSheetCollection());
     }
     return m_styleRuleToCSSOMWrapperMap.get(rule).get();
 }

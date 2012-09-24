@@ -55,7 +55,7 @@ void RenderTableRow::willBeRemovedFromTree()
 
 void RenderTableRow::updateBeforeAndAfterContent()
 {
-    if (!isAnonymous() && document()->usesBeforeAfterRules()) {
+    if (!isAnonymous() && document()->styleSheetCollection()->usesBeforeAfterRules()) {
         children()->updateBeforeAfterContent(this, BEFORE);
         children()->updateBeforeAfterContent(this, AFTER);
     }

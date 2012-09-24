@@ -29,6 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "Frame.h"
 #include "GroupSettings.h"
 #include "Page.h"
@@ -391,7 +392,7 @@ void PageGroup::resetUserStyleCacheInAllFrames()
     HashSet<Page*>::const_iterator end = m_pages.end();
     for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->updatePageGroupUserSheets();
+            frame->document()->styleSheetCollection()->updatePageGroupUserSheets();
     }
 }
 

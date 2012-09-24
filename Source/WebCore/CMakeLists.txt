@@ -1125,6 +1125,7 @@ SET(WebCore_SOURCES
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
     dom/DocumentOrderedMap.cpp
+    dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp

@@ -244,7 +244,6 @@ public:
     bool usesSiblingRules() const { return !m_features.siblingRules.isEmpty(); }
     bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
     bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
-    bool usesLinkRules() const { return m_features.usesLinkRules; }
 
     static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
@@ -297,7 +296,6 @@ public:
         Vector<RuleFeature> uncommonAttributeRules;
         bool usesFirstLineRules;
         bool usesBeforeAfterRules;
-        bool usesLinkRules;
     };
 
 private:

@@ -29,6 +29,7 @@
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
 #include "DocumentMarkerController.h"
+#include "DocumentStyleSheetCollection.h"
 #include "DragController.h"
 #include "EditorClient.h"
 #include "Event.h"
@@ -838,7 +839,7 @@ void Page::userStyleSheetLocationChanged()
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
-            frame->document()->updatePageUserSheet();
+            frame->document()->styleSheetCollection()->updatePageUserSheet();
     }
 }
 

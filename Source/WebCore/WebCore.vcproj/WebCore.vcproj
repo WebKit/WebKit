@@ -50406,6 +50406,14 @@
 				RelativePath="..\dom\DocumentParser.h"
 				>
 			</File>
+            <File
+				RelativePath="..\dom\DocumentStyleSheetCollection.cpp"
+				>
+			</File>
+            <File
+				RelativePath="..\dom\DocumentStyleSheetCollection.h"
+				>
+			</File>
 			<File
 				RelativePath="..\dom\DocumentTiming.h"
 				>

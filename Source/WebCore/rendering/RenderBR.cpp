@@ -40,7 +40,7 @@ RenderBR::~RenderBR()
 
 int RenderBR::lineHeight(bool firstLine) const
 {
-    if (firstLine && document()->usesFirstLineRules()) {
+    if (firstLine && document()->styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(view());

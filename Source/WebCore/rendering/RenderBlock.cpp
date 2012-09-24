@@ -347,7 +347,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.
-    if (!isAnonymous() && document()->usesBeforeAfterRules() && canHaveGeneratedChildren()) {
+    if (!isAnonymous() && document()->styleSheetCollection()->usesBeforeAfterRules() && canHaveGeneratedChildren()) {
         updateBeforeAfterContent(BEFORE);
         updateBeforeAfterContent(AFTER);
     }
@@ -602,7 +602,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
     RenderBoxModelObject* currChild = this;
     RenderObject* currChildNextSibling = currChild->nextSibling();
-    bool documentUsesBeforeAfterRules = document()->usesBeforeAfterRules(); 
+    bool documentUsesBeforeAfterRules = document()->styleSheetCollection()->usesBeforeAfterRules();
 
     // Note: |this| can be destroyed inside this loop if it is an empty anonymous
     // block and we try to call updateBeforeAfterContent inside which removes the
@@ -877,7 +877,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             // content gets properly destroyed.
             bool isFirstChild = (beforeChild == firstChild());
             bool isLastChild = (beforeChild == lastChild());
-            if (document()->usesBeforeAfterRules())
+            if (document()->styleSheetCollection()->usesBeforeAfterRules())
                 children()->updateBeforeAfterContent(this, AFTER);
             if (isLastChild && beforeChild != lastChild()) {
                 // We destroyed the last child, so now we need to update our insertion
@@ -6153,7 +6153,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (isReplaced() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
-    if (firstLine && document()->usesFirstLineRules()) {
+    if (firstLine && document()->styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(view());
@@ -6461,7 +6461,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
 
 void RenderBlock::updateFirstLetter()
 {
-    if (!document()->usesFirstLetterRules())
+    if (!document()->styleSheetCollection()->usesFirstLetterRules())
         return;
     // Don't recur
     if (style()->styleType() == FIRST_LETTER)

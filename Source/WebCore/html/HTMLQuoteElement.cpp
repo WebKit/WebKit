@@ -24,6 +24,7 @@
 #include "HTMLQuoteElement.h"
 
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -44,7 +45,7 @@ PassRefPtr<HTMLQuoteElement> HTMLQuoteElement::create(const QualifiedName& tagNa
 Node::InsertionNotificationRequest HTMLQuoteElement::insertedInto(ContainerNode* insertionPoint)
 {
     if (hasTagName(qTag))
-        document()->setUsesBeforeAfterRules(true);
+        document()->styleSheetCollection()->setUsesBeforeAfterRulesOverride(true);
 
     return HTMLElement::insertedInto(insertionPoint);
 }

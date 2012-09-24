@@ -24,6 +24,7 @@
 #include "Attribute.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "Element.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -63,7 +64,7 @@ void StyleElement::insertedIntoDocument(Document* document, Element* element)
 {
     ASSERT(document);
     ASSERT(element);
-    document->addStyleSheetCandidateNode(element, m_createdByParser);
+    document->styleSheetCollection()->addStyleSheetCandidateNode(element, m_createdByParser);
     if (m_createdByParser)
         return;
 
@@ -74,7 +75,7 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
 {
     ASSERT(document);
     ASSERT(element);
-    document->removeStyleSheetCandidateNode(element);
+    document->styleSheetCollection()->removeStyleSheetCandidateNode(element);
 
     if (m_sheet)
         clearSheet();
@@ -90,7 +91,7 @@ void StyleElement::clearDocumentData(Document* document, Element* element)
         m_sheet->clearOwnerNode();
 
     if (element->inDocument())
-        document->removeStyleSheetCandidateNode(element);
+        document->styleSheetCollection()->removeStyleSheetCandidateNode(element);
 }
 
 void StyleElement::childrenChanged(Element* element)
@@ -152,7 +153,7 @@ void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, c
     Document* document = e->document();
     if (m_sheet) {
         if (m_sheet->isLoading())
-            document->removePendingSheet();
+            document->styleSheetCollection()->removePendingSheet();
         clearSheet();
     }
 
@@ -168,7 +169,7 @@ void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, c
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
         if (screenEval.eval(mediaQueries.get()) || printEval.eval(mediaQueries.get())) {
-            document->addPendingSheet();
+            document->styleSheetCollection()->addPendingSheet();
             m_loading = true;
 
             m_sheet = CSSStyleSheet::createInline(e, KURL(), document->inputEncoding());
@@ -197,14 +198,14 @@ bool StyleElement::sheetLoaded(Document* document)
     if (isLoading())
         return false;
 
-    document->removePendingSheet();
+    document->styleSheetCollection()->removePendingSheet();
     return true;
 }
 
 void StyleElement::startLoadingDynamicSheet(Document* document)
 {
     ASSERT(document);
-    document->addPendingSheet();
+    document->styleSheetCollection()->addPendingSheet();
 }
 
 }

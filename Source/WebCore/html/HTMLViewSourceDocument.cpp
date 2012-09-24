@@ -27,6 +27,7 @@
 
 #include "Attribute.h"
 #include "DOMImplementation.h"
+#include "DocumentStyleSheetCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
@@ -52,7 +53,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
     : HTMLDocument(frame, url)
     , m_type(mimeType)
 {
-    setUsesBeforeAfterRules(true);
+    styleSheetCollection()->setUsesBeforeAfterRulesOverride(true);
     setIsViewSource(true);
 
     setCompatibilityMode(QuirksMode);

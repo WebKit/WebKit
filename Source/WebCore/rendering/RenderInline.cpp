@@ -194,7 +194,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 
     // Update pseudos for :before and :after now.
-    if (!isAnonymous() && document()->usesBeforeAfterRules()) {
+    if (!isAnonymous() && document()->styleSheetCollection()->usesBeforeAfterRules()) {
         children()->updateBeforeAfterContent(this, BEFORE);
         children()->updateBeforeAfterContent(this, AFTER);
     }
@@ -218,7 +218,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || parentStyle->lineHeight() != style()->lineHeight()))
         || (inRenderFlowThread() && enclosingRenderFlowThread()->hasRegionsWithStyling());
 
-    if (!alwaysCreateLineBoxes && checkFonts && document()->usesFirstLineRules()) {
+    if (!alwaysCreateLineBoxes && checkFonts && document()->styleSheetCollection()->usesFirstLineRules()) {
         // Have to check the first line style as well.
         parentStyle = parent()->style(true);
         RenderStyle* childStyle = style(true);
@@ -324,7 +324,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
         // content gets properly destroyed.
         bool isLastChild = (beforeChild == lastChild());
-        if (document()->usesBeforeAfterRules())
+        if (document()->styleSheetCollection()->usesBeforeAfterRules())
             children()->updateBeforeAfterContent(this, AFTER);
         if (isLastChild && beforeChild != lastChild())
             beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
@@ -399,7 +399,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
             // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
             // content gets properly destroyed.
-            if (document()->usesBeforeAfterRules())
+            if (document()->styleSheetCollection()->usesBeforeAfterRules())
                 inlineCurr->children()->updateBeforeAfterContent(inlineCurr, AFTER);
 
             // Now we need to take all of the children starting from the first child
@@ -1283,7 +1283,7 @@ InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 
 LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
-    if (firstLine && document()->usesFirstLineRules()) {
+    if (firstLine && document()->styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(view());

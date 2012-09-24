@@ -369,7 +369,7 @@ static RenderObject* ensureBeforeAfterContainer(RenderObject* owner, PseudoId ty
 void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject)
 {
     // Double check that the document did in fact use generated content rules.  Otherwise we should not have been called.
-    ASSERT(owner->document()->usesBeforeAfterRules());
+    ASSERT(owner->document()->styleSheetCollection()->usesBeforeAfterRules());
 
     // In CSS2, before/after pseudo-content cannot nest.  Check this first.
     if (owner->style()->styleType() == BEFORE || owner->style()->styleType() == AFTER)
