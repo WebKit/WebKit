@@ -46,7 +46,6 @@ public:
     virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
 
     virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
-    virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
 };
 
 } // namespace WebCore

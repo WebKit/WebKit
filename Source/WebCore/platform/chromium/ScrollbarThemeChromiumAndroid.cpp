@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumAndroid.h"
 
-#include "LayoutTestSupport.h"
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformSupport.h"
@@ -50,21 +49,12 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 
 int ScrollbarThemeChromiumAndroid::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    if (isRunningLayoutTest()) {
-        // Match Chromium-Linux for DumpRenderTree, so the layout test results
-        // can be shared. The width of scrollbar down arrow should equal the
-        // width of the vertical scrollbar.
-        IntSize scrollbarSize = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarDownArrow);
-        return scrollbarSize.width();
-    }
-
     return scrollbarWidth + scrollbarMargin;
 }
 
 bool ScrollbarThemeChromiumAndroid::usesOverlayScrollbars() const
 {
-    // In layout test mode, match Chromium-Linux.
-    return !isRunningLayoutTest();
+    return true;
 }
 
 int ScrollbarThemeChromiumAndroid::thumbPosition(ScrollbarThemeClient* scrollbar)
@@ -92,8 +82,7 @@ int ScrollbarThemeChromiumAndroid::thumbLength(ScrollbarThemeClient* scrollbar)
 
 bool ScrollbarThemeChromiumAndroid::hasThumb(ScrollbarThemeClient* scrollbar)
 {
-    // In layout test mode, match Chromium-Linux.
-    return !isRunningLayoutTest();
+    return true;
 }
 
 IntRect ScrollbarThemeChromiumAndroid::backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool)
@@ -155,14 +144,6 @@ void ScrollbarThemeChromiumAndroid::paintThumb(GraphicsContext* context, Scrollb
     else
         thumbRect.setWidth(thumbRect.width() - scrollbarMargin);
     fillSmoothEdgedRect(context, thumbRect, Color(128, 128, 128, 128));
-}
-
-void ScrollbarThemeChromiumAndroid::paintScrollbarBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
-{
-    // Paint black background in DumpRenderTree, otherwise the pixels in the scrollbar area depend
-    // on their previous state, which makes the dumped result undetermined.
-    if (isRunningLayoutTest())
-        context->fillRect(scrollbar->frameRect(), Color::black, ColorSpaceDeviceRGB);
 }
 
 } // namespace WebCore
