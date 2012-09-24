@@ -62,6 +62,15 @@ void HTMLDialogElement::show()
     setBooleanAttribute(openAttr, true);
 }
 
+void HTMLDialogElement::showModal(ExceptionCode& ec)
+{
+    if (fastHasAttribute(openAttr) || !inDocument()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    setBooleanAttribute(openAttr, true);
+}
+
 bool HTMLDialogElement::isPresentationAttribute(const QualifiedName& name) const
 {
     // FIXME: Workaround for <https://bugs.webkit.org/show_bug.cgi?id=91058>: modifying an attribute for which there is an attribute selector

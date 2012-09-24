@@ -41,6 +41,7 @@ public:
 
     void close(ExceptionCode&);
     void show();
+    void showModal(ExceptionCode&);
 
 private:
     HTMLDialogElement(const QualifiedName&, Document*);
