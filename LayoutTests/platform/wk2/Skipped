@@ -844,30 +844,6 @@ editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
 editing/style/style-boundary-005.html
 
-# Unexplained failures that were formerly in the dumpChildFramesAsText list.
-http/tests/security/cross-frame-access-private-browsing.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
-http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
-http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
-http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html
-http/tests/security/host-compare-case-insensitive.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode.html
-http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS.html
-http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-subframe.html
-
 # Unexplained failures that were formerly in the setCanOpenWindows or setCloseRemainingWindowsWhenComplete lists.
 fast/dom/Window/new-window-opener.html
 http/tests/misc/set-window-opener-to-null.html
