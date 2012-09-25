@@ -2006,11 +2006,11 @@
                 "description": "This object identifies a CSS rule in a unique way."
             },
             {
-                "id": "PseudoIdRules",
+                "id": "PseudoIdMatches",
                 "type": "object",
                 "properties": [
                     { "name": "pseudoId", "type": "integer", "description": "Pseudo style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."},
-                    { "name": "rules", "type": "array", "items": { "$ref": "CSSRule" }, "description": "CSS rules applicable to the pseudo style."}
+                    { "name": "matches", "type": "array", "items": { "$ref": "RuleMatch" }, "description": "Matches of CSS rules applicable to the pseudo style."}
                 ],
                 "description": "CSS rule collection for a single pseudo style."
             },
@@ -2019,9 +2019,28 @@
                 "type": "object",
                 "properties": [
                     { "name": "inlineStyle", "$ref": "CSSStyle", "optional": true, "description": "The ancestor node's inline style, if any, in the style inheritance chain." },
-                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "CSSRule" }, "description": "CSS rules matching the ancestor node in the style inheritance chain." }
+                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "RuleMatch" }, "description": "Matches of CSS rules matching the ancestor node in the style inheritance chain." }
                 ],
                 "description": "CSS rule collection for a single pseudo style."
+            },
+            {
+                "id": "RuleMatch",
+                "type": "object",
+                "properties": [
+                    { "name": "rule", "$ref": "CSSRule", "description": "CSS rule in the match." },
+                    { "name": "matchingSelectors", "type": "array", "items": { "type": "integer" }, "description": "Matching selector indices in the rule's selectorList selectors (0-based)." }
+                ],
+                "description": "Match data for a CSS rule."
+            },
+            {
+                "id": "SelectorList",
+                "type": "object",
+                "properties": [
+                    { "name": "selectors", "type": "array", "items": { "type": "string" }, "description": "Selectors in the list." },
+                    { "name": "text", "type": "string", "description": "Rule selector text." },
+                    { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Rule selector range in the underlying resource (if available)." }
+                ],
+                "description": "Selector list data."
             },
             {
                 "id": "CSSStyleAttribute",
@@ -2060,12 +2079,11 @@
                 "type": "object",
                 "properties": [
                     { "name": "ruleId", "$ref": "CSSRuleId", "optional": true, "description": "The CSS rule identifier (absent for user agent stylesheet and user-specified stylesheet rules)."},
-                    { "name": "selectorText", "type": "string", "description": "Rule selector."},
+                    { "name": "selectorList", "$ref": "SelectorList", "description": "Rule selector data." },
                     { "name": "sourceURL", "type": "string", "optional": true, "description": "Parent stylesheet resource URL (for regular rules)."},
                     { "name": "sourceLine", "type": "integer", "description": "Line ordinal of the rule selector start character in the resource."},
                     { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Parent stylesheet's origin."},
                     { "name": "style", "$ref": "CSSStyle", "description": "Associated style declaration." },
-                    { "name": "selectorRange", "$ref": "SourceRange", "optional": true, "description": "The rule selector range in the underlying resource (if available)." },
                     { "name": "media", "type": "array", "items": { "$ref": "CSSMedia" }, "optional": true, "description": "Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards." }
                 ],
                 "description": "CSS rule representation."
@@ -2205,8 +2223,8 @@
                     { "name": "includeInherited", "type": "boolean", "optional": true, "description": "Whether to include inherited styles (default: true)." }
                 ],
                 "returns": [
-                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "CSSRule" }, "optional": true, "description": "CSS rules matching this node, from all applicable stylesheets." },
-                    { "name": "pseudoElements", "type": "array", "items": { "$ref": "PseudoIdRules" }, "optional": true, "description": "Pseudo style rules for this node." },
+                    { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "RuleMatch" }, "optional": true, "description": "CSS rules matching this node, from all applicable stylesheets." },
+                    { "name": "pseudoElements", "type": "array", "items": { "$ref": "PseudoIdMatches" }, "optional": true, "description": "Pseudo style matches for this node." },
                     { "name": "inherited", "type": "array", "items": { "$ref": "InheritedStyleEntry" }, "optional": true, "description": "A chain of inherited styles (from the immediate node parent up to the DOM tree root)." }
                 ],
                 "description": "Returns requested styles for a DOM node identified by <code>nodeId</code>."

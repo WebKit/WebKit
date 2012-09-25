@@ -18,7 +18,7 @@ function test()
             if (ruleOrStyle.origin !== "regular")
                 return;
             style = ruleOrStyle.style;
-            header = ruleOrStyle.selectorText + ": [" + (ruleOrStyle.selectorRange ? ruleOrStyle.selectorRange.start + "-" + ruleOrStyle.selectorRange.end : "")  + "]";
+            header = ruleOrStyle.selectorList.text + ": [" + (ruleOrStyle.selectorList.range ? ruleOrStyle.selectorList.range.start + "-" + ruleOrStyle.selectorList.range.end : "")  + "]";
         } else {
             style = ruleOrStyle;
             header = "element.style:";
@@ -69,7 +69,7 @@ function test()
     {
         var matchedCSSRules = resultStyles.matchedCSSRules;
         for (var i = 0; i < matchedCSSRules.length; ++i)
-            dumpStyleData(matchedCSSRules[i]);
+            dumpStyleData(matchedCSSRules[i].rule);
         dumpStyleData(resultStyles.inlineStyle);
         InspectorTest.completeTest();
     }

@@ -25,13 +25,13 @@ function test()
 
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Matched rules for body ===");
-            dumpRulesArray(styles.matchedCSSRules);
+            dumpRuleMatchesArray(styles.matchedCSSRules);
 
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Pseudo rules for body ===");
             for (var i = 0; i < styles.pseudoElements.length; ++i) {
                 InspectorTest.addResult("PseudoId=" + styles.pseudoElements[i].pseudoId);
-                dumpRulesArray(styles.pseudoElements[i].rules);
+                dumpRuleMatchesArray(styles.pseudoElements[i].matches);
             }
 
             InspectorTest.addResult("");
@@ -39,7 +39,7 @@ function test()
             for (var i = 0; i < styles.inherited.length; ++i) {
                 InspectorTest.addResult("Level=" + (i + 1));
                 dumpStyle(styles.inherited[i].inlineStyle);
-                dumpRulesArray(styles.inherited[i].matchedCSSRules);
+                dumpRuleMatchesArray(styles.inherited[i].matchedCSSRules);
             }
 
             InspectorTest.addResult("");
@@ -102,7 +102,7 @@ function test()
         function matchedCallback(error, matchedRules)
         {
             InspectorTest.addResult("=== BODY with forced :hover ===");
-            dumpRulesArray(matchedRules);
+            dumpRuleMatchesArray(matchedRules);
             CSSAgent.forcePseudoState(bodyId, ["hover"], test_tableStyles);
         }
     }
@@ -208,7 +208,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Matched rules after rule added ===");
-            dumpRulesArray(matchedCSSRules);
+            dumpRuleMatchesArray(matchedCSSRules);
             test_disableProperty();
         }
 
@@ -262,7 +262,7 @@ function test()
             // -moz-goog: 1***;
             // border-width: 0px;
 
-            var styleId = matchedCSSRules[1].style.styleId;
+            var styleId = matchedCSSRules[1].rule.style.styleId;
             CSSAgent.toggleProperty(styleId, 0, true); // height: 100%
             CSSAgent.toggleProperty(styleId, 7, true); // border-width: 0px
             CSSAgent.setPropertyText(styleId, 7, "font-size: 12px;", false);
@@ -315,11 +315,20 @@ function test()
 
     function dumpRulesArray(rules, currentIndent)
     {
-        currentIndent = currentIndent || "";
         if (!rules)
             return;
+        currentIndent = currentIndent || "";
         for (var i = 0; i < rules.length; ++i)
             dumpRule(rules[i], currentIndent);
+    }
+
+    function dumpRuleMatchesArray(matches, currentIndent)
+    {
+        if (!matches)
+            return;
+        currentIndent = currentIndent || "";
+        for (var i = 0; i < matches.length; ++i)
+            dumpRule(matches[i].rule, currentIndent);
     }
 
     function dumpRule(rule, currentIndent)
@@ -327,7 +336,7 @@ function test()
         currentIndent = currentIndent || "";
 
         if (!rule.type || rule.type === "style") {
-            InspectorTest.addResult(currentIndent + rule.selectorText + ": [" + rule.origin + "] {");
+            InspectorTest.addResult(currentIndent + rule.selectorList.text + ": [" + rule.origin + "] {");
             dumpStyle(rule.style, currentIndent + indent);
             InspectorTest.addResult(currentIndent + "}");
             return;
@@ -347,9 +356,9 @@ function test()
 
         if (rule.type === "page" || rule.type === "font-face") {
             if (rule.type === "page")
-                InspectorTest.addResult(currentIndent + rule.selectorText + " {");
+                InspectorTest.addResult(currentIndent + rule.selectorList.text + " {");
             else
-                InspectorTest.addResult(currentIndent + "@" + rule.type + " " + (rule.selectorText ? rule.selectorText + " " : "")  + "{");
+                InspectorTest.addResult(currentIndent + "@" + rule.type + " " + (rule.selectorList.text ? rule.selectorList.text + " " : "")  + "{");
             dumpStyle(rule.style, currentIndent + indent);
             InspectorTest.addResult(currentIndent + "}");
             return;

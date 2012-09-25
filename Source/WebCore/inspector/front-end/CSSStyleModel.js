@@ -56,6 +56,17 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
     return result;
 }
 
+/**
+ * @param {Array.<CSSAgent.RuleMatch>} matchArray
+ */
+WebInspector.CSSStyleModel.parseRuleMatchArrayPayload = function(matchArray)
+{
+    var result = [];
+    for (var i = 0; i < matchArray.length; ++i)
+        result.push(WebInspector.CSSRule.parsePayload(matchArray[i].rule, matchArray[i].matchingSelectors));
+    return result;
+}
+
 WebInspector.CSSStyleModel.Events = {
     StyleSheetChanged: "StyleSheetChanged",
     MediaQueryResultChanged: "MediaQueryResultChanged",
@@ -90,13 +101,13 @@ WebInspector.CSSStyleModel.prototype = {
 
             var result = {};
             if (matchedPayload)
-                result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(matchedPayload);
+                result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleMatchArrayPayload(matchedPayload);
 
             if (pseudoPayload) {
                 result.pseudoElements = [];
                 for (var i = 0; i < pseudoPayload.length; ++i) {
                     var entryPayload = pseudoPayload[i];
-                    result.pseudoElements.push({ pseudoId: entryPayload.pseudoId, rules: WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.rules) });
+                    result.pseudoElements.push({ pseudoId: entryPayload.pseudoId, rules: WebInspector.CSSStyleModel.parseRuleMatchArrayPayload(entryPayload.matches) });
                 }
             }
 
@@ -108,7 +119,7 @@ WebInspector.CSSStyleModel.prototype = {
                     if (entryPayload.inlineStyle)
                         entry.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(entryPayload.inlineStyle);
                     if (entryPayload.matchedCSSRules)
-                        entry.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.matchedCSSRules);
+                        entry.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleMatchArrayPayload(entryPayload.matchedCSSRules);
                     result.inherited.push(entry);
                 }
             }
@@ -724,11 +735,16 @@ WebInspector.CSSStyleDeclaration.prototype = {
 /**
  * @constructor
  * @param {CSSAgent.CSSRule} payload
+ * @param {Array.<number>=} matchingSelectors
  */
-WebInspector.CSSRule = function(payload)
+WebInspector.CSSRule = function(payload, matchingSelectors)
 {
     this.id = payload.ruleId;
-    this.selectorText = payload.selectorText;
+    if (matchingSelectors)
+        this.matchingSelectors = matchingSelectors;
+    this.selectors = payload.selectorList.selectors;
+    this.selectorText = payload.selectorList.text;
+    this.selectorRange = payload.selectorList.range;
     this.sourceLine = payload.sourceLine;
     this.sourceURL = payload.sourceURL;
     if (payload.sourceURL)
@@ -736,18 +752,18 @@ WebInspector.CSSRule = function(payload)
     this.origin = payload.origin;
     this.style = WebInspector.CSSStyleDeclaration.parsePayload(payload.style);
     this.style.parentRule = this;
-    this.selectorRange = payload.selectorRange;
     if (payload.media)
         this.media = WebInspector.CSSMedia.parseMediaArrayPayload(payload.media);
 }
 
 /**
  * @param {CSSAgent.CSSRule} payload
+ * @param {Array.<number>=} matchingIndices
  * @return {WebInspector.CSSRule}
  */
-WebInspector.CSSRule.parsePayload = function(payload)
+WebInspector.CSSRule.parsePayload = function(payload, matchingIndices)
 {
-    return new WebInspector.CSSRule(payload);
+    return new WebInspector.CSSRule(payload, matchingIndices);
 }
 
 WebInspector.CSSRule.prototype = {

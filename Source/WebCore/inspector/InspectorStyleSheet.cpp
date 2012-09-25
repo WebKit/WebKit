@@ -911,6 +911,25 @@ PassRefPtr<TypeBuilder::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObje
     return result.release();
 }
 
+PassRefPtr<TypeBuilder::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule)
+{
+    RefPtr<TypeBuilder::Array<String> > selectors = TypeBuilder::Array<String>::create();
+    const CSSSelectorList& selectorList = rule->styleRule()->selectorList();
+    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
+        selectors->addItem(selector->selectorText());
+
+    RefPtr<TypeBuilder::CSS::SelectorList> result = TypeBuilder::CSS::SelectorList::create()
+        .setSelectors(selectors)
+        .setText(rule->selectorText());
+
+    RefPtr<CSSRuleSourceData> sourceData;
+    if (ensureParsedDataReady())
+        sourceData = ruleSourceDataFor(rule->style());
+    if (sourceData)
+        result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange));
+    return result.release();
+}
+
 PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
 {
     CSSStyleSheet* styleSheet = pageStyleSheet();
@@ -918,7 +937,7 @@ PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CS
         return 0;
 
     RefPtr<TypeBuilder::CSS::CSSRule> result = TypeBuilder::CSS::CSSRule::create()
-        .setSelectorText(rule->selectorText())
+        .setSelectorList(buildObjectForSelectorList(rule))
         .setSourceLine(rule->styleRule()->sourceLine())
         .setOrigin(m_origin)
         .setStyle(buildObjectForStyle(rule->style()));
@@ -932,12 +951,6 @@ PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CS
         if (!id.isEmpty())
             result->setRuleId(id.asProtocolValue<TypeBuilder::CSS::CSSRuleId>());
     }
-
-    RefPtr<CSSRuleSourceData> sourceData;
-    if (ensureParsedDataReady())
-        sourceData = ruleSourceDataFor(rule->style());
-    if (sourceData)
-        result->setSelectorRange(buildSourceRangeObject(sourceData->ruleHeaderRange));
 
     RefPtr<Array<TypeBuilder::CSS::CSSMedia> > mediaArray = Array<TypeBuilder::CSS::CSSMedia>::create();
 

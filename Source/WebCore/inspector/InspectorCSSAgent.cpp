@@ -678,7 +678,7 @@ bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoTy
     }
 }
 
-void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> >& matchedCSSRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules> >& pseudoIdRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> >& inheritedEntries)
+void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::RuleMatch> >& matchedCSSRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdMatches> >& pseudoIdMatches, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> >& inheritedEntries)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -687,44 +687,44 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
     // Matched rules.
     StyleResolver* styleResolver = element->ownerDocument()->styleResolver();
     RefPtr<CSSRuleList> matchedRules = styleResolver->styleRulesForElement(element, StyleResolver::AllCSSRules);
-    matchedCSSRules = buildArrayForRuleList(matchedRules.get(), styleResolver);
+    matchedCSSRules = buildArrayForMatchedRuleList(matchedRules.get(), styleResolver, element);
 
     // Pseudo elements.
     if (!includePseudo || *includePseudo) {
-        RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules> > pseudoElements = TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules>::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdMatches> > pseudoElements = TypeBuilder::Array<TypeBuilder::CSS::PseudoIdMatches>::create();
         for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
             RefPtr<CSSRuleList> matchedRules = styleResolver->pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
             if (matchedRules && matchedRules->length()) {
-                RefPtr<TypeBuilder::CSS::PseudoIdRules> pseudoStyles = TypeBuilder::CSS::PseudoIdRules::create()
+                RefPtr<TypeBuilder::CSS::PseudoIdMatches> matches = TypeBuilder::CSS::PseudoIdMatches::create()
                     .setPseudoId(static_cast<int>(pseudoId))
-                    .setRules(buildArrayForRuleList(matchedRules.get(), styleResolver));
-                pseudoElements->addItem(pseudoStyles.release());
+                    .setMatches(buildArrayForMatchedRuleList(matchedRules.get(), styleResolver, element));
+                pseudoElements->addItem(matches.release());
             }
         }
 
-        pseudoIdRules = pseudoElements.release();
+        pseudoIdMatches = pseudoElements.release();
     }
 
     // Inherited styles.
     if (!includeInherited || *includeInherited) {
-        RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> > inheritedStyles = TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry>::create();
+        RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> > entries = TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry>::create();
         Element* parentElement = element->parentElement();
         while (parentElement) {
-            StyleResolver* parentStyleResolver= parentElement->ownerDocument()->styleResolver();
+            StyleResolver* parentStyleResolver = parentElement->ownerDocument()->styleResolver();
             RefPtr<CSSRuleList> parentMatchedRules = parentStyleResolver->styleRulesForElement(parentElement, StyleResolver::AllCSSRules);
-            RefPtr<TypeBuilder::CSS::InheritedStyleEntry> parentStyle = TypeBuilder::CSS::InheritedStyleEntry::create()
-                .setMatchedCSSRules(buildArrayForRuleList(parentMatchedRules.get(), styleResolver));
+            RefPtr<TypeBuilder::CSS::InheritedStyleEntry> entry = TypeBuilder::CSS::InheritedStyleEntry::create()
+                .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules.get(), styleResolver, parentElement));
             if (parentElement->style() && parentElement->style()->length()) {
                 InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(parentElement);
                 if (styleSheet)
-                    parentStyle->setInlineStyle(styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
+                    entry->setInlineStyle(styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
             }
 
-            inheritedStyles->addItem(parentStyle.release());
+            entries->addItem(entry.release());
             parentElement = parentElement->parentElement();
         }
 
-        inheritedEntries = inheritedStyles.release();
+        inheritedEntries = entries.release();
     }
 }
 
@@ -1116,6 +1116,23 @@ TypeBuilder::CSS::StyleSheetOrigin::Enum InspectorCSSAgent::detectOrigin(CSSStyl
     return origin;
 }
 
+PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule, StyleResolver* styleResolver)
+{
+    if (!rule)
+        return 0;
+
+    // CSSRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
+    // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
+    // FIXME: This could be factored better. StyleResolver::styleRulesForElement should return a StyleRule vector, not a CSSRuleList.
+    if (!rule->parentStyleSheet()) {
+        rule = styleResolver->ensureFullCSSOMWrapperForInspector(rule->styleRule());
+        if (!rule)
+            return 0;
+    }
+    InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(rule->parentStyleSheet());
+    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule) : 0;
+}
+
 PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorCSSAgent::buildArrayForRuleList(CSSRuleList* ruleList, StyleResolver* styleResolver)
 {
     RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > result = TypeBuilder::Array<TypeBuilder::CSS::CSSRule>::create();
@@ -1124,22 +1141,42 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorCSSAgent::bu
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
         CSSStyleRule* rule = asCSSStyleRule(ruleList->item(i));
-        if (!rule)
+        RefPtr<TypeBuilder::CSS::CSSRule> ruleObject = buildObjectForRule(rule, styleResolver);
+        if (!ruleObject)
             continue;
-
-        // CSSRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
-        // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-        // FIXME: This could be factored better. StyleResolver::styleRulesForElement should return a StyleRule vector, not a CSSRuleList.
-        if (!rule->parentStyleSheet()) {
-            rule = styleResolver->ensureFullCSSOMWrapperForInspector(rule->styleRule());
-            if (!rule)
-                continue;
-        }
-        InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(rule->parentStyleSheet());
-        if (inspectorStyleSheet)
-            result->addItem(inspectorStyleSheet->buildObjectForRule(rule));
+        result->addItem(ruleObject);
     }
     return result.release();
+}
+
+PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::RuleMatch> > InspectorCSSAgent::buildArrayForMatchedRuleList(CSSRuleList* ruleList, StyleResolver* styleResolver, Element* element)
+{
+    RefPtr<TypeBuilder::Array<TypeBuilder::CSS::RuleMatch> > result = TypeBuilder::Array<TypeBuilder::CSS::RuleMatch>::create();
+    if (!ruleList)
+        return result.release();
+
+    for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
+        CSSStyleRule* rule = asCSSStyleRule(ruleList->item(i));
+        RefPtr<TypeBuilder::CSS::CSSRule> ruleObject = buildObjectForRule(rule, styleResolver);
+        if (!ruleObject)
+            continue;
+        RefPtr<TypeBuilder::Array<int> > matchingSelectors = TypeBuilder::Array<int>::create();
+        const CSSSelectorList& selectorList = rule->styleRule()->selectorList();
+        long index = 0;
+        for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+            ExceptionCode ec;
+            bool matched = element->webkitMatchesSelector(selector->selectorText(), ec);
+            if (matched)
+                matchingSelectors->addItem(index);
+            ++index;
+        }
+        RefPtr<TypeBuilder::CSS::RuleMatch> match = TypeBuilder::CSS::RuleMatch::create()
+            .setRule(ruleObject)
+            .setMatchingSelectors(matchingSelectors);
+        result->addItem(match);
+    }
+
+    return result;
 }
 
 PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)

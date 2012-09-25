@@ -234,6 +234,7 @@ private:
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
     PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*);
+    PassRefPtr<TypeBuilder::CSS::SelectorList> buildObjectForSelectorList(CSSStyleRule*);
 
     InspectorPageAgent* m_pageAgent;
     String m_id;

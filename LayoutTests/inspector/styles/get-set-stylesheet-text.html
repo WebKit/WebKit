@@ -64,7 +64,7 @@ function test()
             }
 
             InspectorTest.addResult("=== Matched rules for h1 after setText() ===");
-            dumpRulesArray(matchedCSSRules);
+            dumpMatchesArray(matchedCSSRules);
             InspectorTest.completeTest();
         }
 
@@ -79,12 +79,12 @@ function test()
 
     // Data dumping
 
-    function dumpRulesArray(rules)
+    function dumpMatchesArray(rules)
     {
         if (!rules)
             return;
         for (var i = 0; i < rules.length; ++i)
-            dumpRuleOrStyle(rules[i]);
+            dumpRuleOrStyle(rules[i].rule);
     }
 
     function dumpRuleOrStyle(ruleOrStyle)
@@ -95,7 +95,7 @@ function test()
         var style = isRule ? ruleOrStyle.style : ruleOrStyle;
         InspectorTest.addResult("");
         InspectorTest.addResult(isRule ? "rule" : "style");
-        InspectorTest.addResult((isRule ? (ruleOrStyle.selectorText + ": [" + ruleOrStyle.origin + "]") : "raw style"));
+        InspectorTest.addResult((isRule ? (ruleOrStyle.selectorList.text + ": [" + ruleOrStyle.origin + "]") : "raw style"));
         for (var i = 0; i < style.cssProperties.length; ++i) {
             var property = style.cssProperties[i];
             if (property.status !== "disabled")
