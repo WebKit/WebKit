@@ -3767,8 +3767,6 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addMutationEventListenerTypeIfEnabled(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
     else if (eventType == eventNames().DOMNodeInsertedIntoDocumentEvent)
         addMutationEventListenerTypeIfEnabled(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
-    else if (eventType == eventNames().DOMAttrModifiedEvent)
-        addMutationEventListenerTypeIfEnabled(DOMATTRMODIFIED_LISTENER);
     else if (eventType == eventNames().DOMCharacterDataModifiedEvent)
         addMutationEventListenerTypeIfEnabled(DOMCHARACTERDATAMODIFIED_LISTENER);
     else if (eventType == eventNames().overflowchangedEvent)

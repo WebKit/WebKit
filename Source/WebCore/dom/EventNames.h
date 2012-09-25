@@ -126,7 +126,6 @@ namespace WebCore {
     macro(DOMActivate) \
     macro(DOMFocusIn) \
     macro(DOMFocusOut) \
-    macro(DOMAttrModified) \
     macro(DOMCharacterDataModified) \
     macro(DOMNodeInserted) \
     macro(DOMNodeInsertedIntoDocument) \

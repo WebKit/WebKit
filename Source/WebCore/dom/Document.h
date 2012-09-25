@@ -757,20 +757,20 @@ public:
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
     enum ListenerType {
-        DOMSUBTREEMODIFIED_LISTENER          = 0x01,
-        DOMNODEINSERTED_LISTENER             = 0x02,
-        DOMNODEREMOVED_LISTENER              = 0x04,
-        DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 0x08,
-        DOMNODEINSERTEDINTODOCUMENT_LISTENER = 0x10,
-        DOMATTRMODIFIED_LISTENER             = 0x20,
-        DOMCHARACTERDATAMODIFIED_LISTENER    = 0x40,
-        OVERFLOWCHANGED_LISTENER             = 0x80,
-        ANIMATIONEND_LISTENER                = 0x100,
-        ANIMATIONSTART_LISTENER              = 0x200,
-        ANIMATIONITERATION_LISTENER          = 0x400,
-        TRANSITIONEND_LISTENER               = 0x800,
-        BEFORELOAD_LISTENER                  = 0x1000,
-        SCROLL_LISTENER                      = 0x2000
+        DOMSUBTREEMODIFIED_LISTENER          = 1,
+        DOMNODEINSERTED_LISTENER             = 1 << 1,
+        DOMNODEREMOVED_LISTENER              = 1 << 2,
+        DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 1 << 3,
+        DOMNODEINSERTEDINTODOCUMENT_LISTENER = 1 << 4,
+        DOMCHARACTERDATAMODIFIED_LISTENER    = 1 << 5,
+        OVERFLOWCHANGED_LISTENER             = 1 << 6,
+        ANIMATIONEND_LISTENER                = 1 << 7,
+        ANIMATIONSTART_LISTENER              = 1 << 8,
+        ANIMATIONITERATION_LISTENER          = 1 << 9,
+        TRANSITIONEND_LISTENER               = 1 << 10,
+        BEFORELOAD_LISTENER                  = 1 << 11,
+        SCROLL_LISTENER                      = 1 << 12
+        // 3 bits remaining
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
