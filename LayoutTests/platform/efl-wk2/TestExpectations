@@ -159,21 +159,8 @@ webkit.org/b/42674 http/tests/navigation/response204.html [ Failure ]
 webkit.org/b/93470 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 
-# WebKitTestRunner eventSender needs touch events support
-webkit.org/b/96465 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/basic-multi-touch-events.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/basic-single-touch-events.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/multi-touch-grouped-targets.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/send-oncancel-event.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/tap-highlight-color.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-active-state.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-inside-iframe.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-inside-iframe-scrolled.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-slider.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-stale-node-crash.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-target-limited.html [ Failure ]
-webkit.org/b/96465 fast/events/touch/touch-target.html [ Failure ]
+# WebKitTestRunner setTouchPointRadius() is not supported
+Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 
 # WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
 Bug(EFL) fast/media/media-query-list-02.html [ Failure ]

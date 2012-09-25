@@ -34,6 +34,7 @@
 #include <gdk/gdk.h>
 #include <wtf/Vector.h>
 #elif PLATFORM(EFL)
+#include <WebKit2/EWebKit2.h>
 #include <wtf/Deque.h>
 #endif
 
@@ -50,6 +51,7 @@ struct WTREvent;
 class EventSenderProxy {
 public:
     explicit EventSenderProxy(TestController*);
+    ~EventSenderProxy();
 
     void mouseDown(unsigned button, WKEventModifiers);
     void mouseUp(unsigned button, WKEventModifiers);
@@ -97,6 +99,9 @@ private:
 #elif PLATFORM(EFL)
     void sendOrQueueEvent(const WTREvent&);
     void dispatchEvent(const WTREvent&);
+#if ENABLE(TOUCH_EVENTS)
+    void sendTouchEvent(Ewk_Touch_Event_Type);
+#endif
 #endif
 
     double m_time;
@@ -123,6 +128,9 @@ private:
 #elif PLATFORM(EFL)
     Deque<WTREvent> m_eventQueue;
     unsigned m_mouseButton;
+#if ENABLE(TOUCH_EVENTS)
+    Eina_List* m_touchPoints;
+#endif
 #endif
 };
 

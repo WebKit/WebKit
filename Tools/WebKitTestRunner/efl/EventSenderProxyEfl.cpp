@@ -45,6 +45,8 @@
 
 namespace WTR {
 
+static const char* modifierNames[] = { "Shift", "Control", "Alt", "Meta" };
+
 enum WTREventType {
     WTREventTypeNone = 0,
     WTREventTypeMouseDown,
@@ -133,7 +135,6 @@ static unsigned evasMouseButton(unsigned button)
 
 static void setEvasModifiers(Evas* evas, WKEventModifiers wkModifiers)
 {
-    static const char* modifierNames[] = { "Shift", "Control", "Alt", "Meta" };
     for (unsigned modifier = 0; modifier < (sizeof(modifierNames) / sizeof(char*)); ++modifier) {
         if (wkModifiers & (1 << modifier))
             evas_key_modifier_on(evas, modifierNames[modifier]);
@@ -293,7 +294,17 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     , m_clickTime(0)
     , m_clickButton(WTRMouseButtonNone)
     , m_mouseButton(WTRMouseButtonNone)
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchPoints(0)
+#endif
 {
+}
+
+EventSenderProxy::~EventSenderProxy()
+{
+#if ENABLE(TOUCH_EVENTS)
+    clearTouchPoints();
+#endif
 }
 
 void EventSenderProxy::updateClickCountForButton(int button)
@@ -432,54 +443,117 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 }
 
 #if ENABLE(TOUCH_EVENTS)
+void EventSenderProxy::sendTouchEvent(Ewk_Touch_Event_Type eventType)
+{
+    ASSERT(m_touchPoints);
+
+    Evas_Object* ewkView = m_testController->mainWebView()->platformView();
+    ewk_view_feed_touch_event(ewkView, eventType, m_touchPoints, evas_key_modifier_get(evas_object_evas_get(ewkView)));
+
+    Eina_List* list;
+    Eina_List* listNext;
+    void* data;
+    EINA_LIST_FOREACH_SAFE(m_touchPoints, list, listNext, data) {
+         Ewk_Touch_Point* touchPoint = static_cast<Ewk_Touch_Point*>(data);
+         ASSERT(touchPoint);
+
+         if ((touchPoint->state == EVAS_TOUCH_POINT_UP) || (touchPoint->state == EVAS_TOUCH_POINT_CANCEL)) {
+             delete touchPoint;
+             m_touchPoints = eina_list_remove_list(m_touchPoints, list);
+         } else
+             touchPoint->state = EVAS_TOUCH_POINT_STILL;
+     }
+}
+
 void EventSenderProxy::addTouchPoint(int x, int y)
 {
-    notImplemented();
+    int id = 0;
+    if (m_touchPoints) {
+        Eina_List* last = eina_list_last(m_touchPoints);
+        Ewk_Touch_Point* touchPoint = static_cast<Ewk_Touch_Point*>(eina_list_data_get(last));
+        ASSERT(touchPoint);
+
+        id = touchPoint->id + 1;
+    }
+
+    Ewk_Touch_Point* touchPoint = new Ewk_Touch_Point;
+    touchPoint->id = id;
+    touchPoint->x = x;
+    touchPoint->y = y;
+    touchPoint->state = EVAS_TOUCH_POINT_DOWN;
+
+    m_touchPoints = eina_list_append(m_touchPoints, touchPoint);
 }
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 {
-    notImplemented();
+    ASSERT(index >= 0 && index < eina_list_count(m_touchPoints));
+
+    Ewk_Touch_Point* touchPoint = static_cast<Ewk_Touch_Point*>(eina_list_nth(m_touchPoints, index));
+    ASSERT(touchPoint);
+
+    touchPoint->x = x;
+    touchPoint->y = y;
+    touchPoint->state = EVAS_TOUCH_POINT_MOVE;
 }
 
 void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
 {
-    notImplemented();
+    for (unsigned index = 0; index < (sizeof(modifierNames) / sizeof(char*)); ++index) {
+        if (modifier & (1 << index)) {
+            if (enable)
+                evas_key_modifier_on(evas_object_evas_get(m_testController->mainWebView()->platformView()), modifierNames[index]);
+            else
+                evas_key_modifier_off(evas_object_evas_get(m_testController->mainWebView()->platformView()), modifierNames[index]);
+        }
+    }
 }
 
 void EventSenderProxy::touchStart()
 {
-    notImplemented();
+    sendTouchEvent(EWK_TOUCH_START);
 }
 
 void EventSenderProxy::touchMove()
 {
-    notImplemented();
+    sendTouchEvent(EWK_TOUCH_MOVE);
 }
 
 void EventSenderProxy::touchEnd()
 {
-    notImplemented();
+    sendTouchEvent(EWK_TOUCH_END);
 }
 
 void EventSenderProxy::touchCancel()
 {
-    notImplemented();
+    sendTouchEvent(EWK_TOUCH_CANCEL);
 }
 
 void EventSenderProxy::clearTouchPoints()
 {
-    notImplemented();
+    void* data = 0;
+    EINA_LIST_FREE(m_touchPoints, data)
+        delete static_cast<Ewk_Touch_Point*>(data);
 }
 
 void EventSenderProxy::releaseTouchPoint(int index)
 {
-    notImplemented();
+    ASSERT(index >= 0 && index < eina_list_count(m_touchPoints));
+
+    Ewk_Touch_Point* touchPoint = static_cast<Ewk_Touch_Point*>(eina_list_nth(m_touchPoints, index));
+    ASSERT(touchPoint);
+
+    touchPoint->state = EVAS_TOUCH_POINT_UP;
 }
 
 void EventSenderProxy::cancelTouchPoint(int index)
 {
-    notImplemented();
+    ASSERT(index >= 0 && index < eina_list_count(m_touchPoints));
+
+    Ewk_Touch_Point* touchPoint = static_cast<Ewk_Touch_Point*>(eina_list_nth(m_touchPoints, index));
+    ASSERT(touchPoint);
+
+    touchPoint->state = EVAS_TOUCH_POINT_CANCEL;
 }
 
 void EventSenderProxy::setTouchPointRadius(int radiusX, int radiusY)

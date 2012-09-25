@@ -1,3 +1,33 @@
+2012-09-24  Nikhil Bansal  <n.bansal@samsung.com>
+
+        [EFL][WK2] TestRunner needs touch events support.
+        https://bugs.webkit.org/show_bug.cgi?id=96465
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Simulate touch events in WebkitTestRunner for touch related
+        layout tests. This patch uses ewk_view_feed_touch_event() to
+        generate touch events.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (EventSenderProxy):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR):
+        (WTR::setEvasModifiers):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::~EventSenderProxy):
+        (WTR::EventSenderProxy::sendTouchEvent):
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchModifier):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::touchCancel):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::cancelTouchPoint):
+
 2012-09-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] TestRunner does not support overridePreference with value "0"
