@@ -67,10 +67,32 @@ G_BEGIN_DECLS
  *
  * The select all command. Selects all the content of the current text field in
  * a #WebKitWebView.
- * It is always possible to select all text, no matter wheter the #WebKitWebView content
- * is editable or not. You can still check it with webkit_web_view_can_execute_editing_command().
+ * It is always possible to select all text, no matter whether the
+ * #WebKitWebView content is editable or not. You can still check it
+ * with webkit_web_view_can_execute_editing_command().
  */
 #define WEBKIT_EDITING_COMMAND_SELECT_ALL "SelectAll"
+
+/**
+ * WEBKIT_EDITING_COMMAND_UNDO:
+ *
+ * The undo command. Undoes the last editing command in a #WebKitWebView.
+ * You can check whether it's possible to execute the command with
+ * webkit_web_view_can_execute_editing_command(). It's only possible
+ * to undo a command after a previously executed editing operation.
+ */
+#define WEBKIT_EDITING_COMMAND_UNDO "Undo"
+
+/**
+ * WEBKIT_EDITING_COMMAND_REDO:
+ *
+ * The redo command. Redoes a previously undone editing command in
+ * a #WebKitWebView.
+ * You can check whether it's possible to execute the command with
+ * webkit_web_view_can_execute_editing_command(). It's only possible
+ * to redo a command when it has been previously undone.
+ */
+#define WEBKIT_EDITING_COMMAND_REDO "Redo"
 
 G_END_DECLS
 

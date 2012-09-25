@@ -1,3 +1,16 @@
+2012-09-25  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add Undo / Redo method to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=97553
+
+        Reviewed by Martin Robinson.
+
+        Add the macros for Undo / Redo support, and include them
+        in the documentation.
+
+        * UIProcess/API/gtk/WebKitEditingCommands.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Abstract as much devicePixelRatio logic as possible behind PageViewportController
