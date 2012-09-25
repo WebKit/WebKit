@@ -1,3 +1,25 @@
+2012-09-25  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] Focus out is not handled properly
+        https://bugs.webkit.org/show_bug.cgi?id=96997
+
+        Reviewed by Simon Hausmann.
+
+        Adds a handler for QQuickWebView::itemChange event that is sent to
+        QQuickItems when their focus has been changed to replace focusOutEvent.
+
+        This fixes the problem because the focus has been updated when
+        itemChange is called, while it is not yet update when focusOutEvent
+        is called.
+
+        * UIProcess/API/qt/qquickwebview.cpp: Removed focusOutEvent.
+        (QQuickWebView::itemChange): Added in place of focusOutEvent.
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::handleFocusLost): Renamed from handleFocusOutEvent, parameter removed.
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+
 2012-09-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Supported media MIME types are not included to the list of shown MIME types.

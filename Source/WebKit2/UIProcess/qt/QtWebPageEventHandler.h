@@ -61,7 +61,7 @@ public:
     void handleKeyPressEvent(QKeyEvent*);
     void handleKeyReleaseEvent(QKeyEvent*);
     void handleFocusInEvent(QFocusEvent*);
-    void handleFocusOutEvent(QFocusEvent*);
+    void handleFocusLost();
     void handleMouseMoveEvent(QMouseEvent*);
     void handleMousePressEvent(QMouseEvent*);
     void handleMouseReleaseEvent(QMouseEvent*);

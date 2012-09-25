@@ -300,7 +300,7 @@ void QtWebPageEventHandler::handleFocusInEvent(QFocusEvent*)
     m_webPageProxy->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
-void QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
+void QtWebPageEventHandler::handleFocusLost()
 {
     m_webPageProxy->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }

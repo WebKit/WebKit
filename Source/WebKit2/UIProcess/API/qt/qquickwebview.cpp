@@ -1857,10 +1857,15 @@ void QQuickWebView::focusInEvent(QFocusEvent* event)
     d->pageView->eventHandler()->handleFocusInEvent(event);
 }
 
-void QQuickWebView::focusOutEvent(QFocusEvent* event)
+void QQuickWebView::itemChange(ItemChange change, const ItemChangeData &value)
 {
     Q_D(QQuickWebView);
-    d->pageView->eventHandler()->handleFocusOutEvent(event);
+    if (change == ItemActiveFocusHasChanged) {
+        bool focus = value.boolValue;
+        if (!focus)
+            d->pageView->eventHandler()->handleFocusLost();
+    }
+    QQuickFlickable::itemChange(change, value);
 }
 
 void QQuickWebView::touchEvent(QTouchEvent* event)

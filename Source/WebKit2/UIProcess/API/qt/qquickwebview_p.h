@@ -178,7 +178,7 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent*);
     virtual void inputMethodEvent(QInputMethodEvent*);
     virtual void focusInEvent(QFocusEvent*);
-    virtual void focusOutEvent(QFocusEvent*);
+    virtual void itemChange(ItemChange change, const ItemChangeData &value);
     virtual void touchEvent(QTouchEvent*);
     virtual void mousePressEvent(QMouseEvent*);
     virtual void mouseMoveEvent(QMouseEvent*);
