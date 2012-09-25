@@ -350,6 +350,14 @@ class TestResultTests(DataStoreTestsBase):
         self.assertEqual(result.valueStdev, 3.25)
         self.assertEqual(result.valueMin, 30.5)
         self.assertEqual(result.valueMax, 45)
+        self.assertEqual(result.values, [])
+
+    def test_get_or_insert_stat_value_with_values(self):
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
+        result = TestResult.get_or_insert_from_parsed_json('some-test', build,
+            {"avg": 40, "median": "40.1", "stdev": 3.25, "min": 30.5, "max": 45, "values": [1.0, 2.0, 3.0]})
+        self.assertEqual(result.values, [1.0, 2.0, 3.0])
 
     def test_replace_to_change_test_name(self):
         branch, platform, builder = _create_some_builder()
@@ -451,6 +459,12 @@ class ReportLogTests(DataStoreTestsBase):
         assert_results_are_well_formed('{"results": {"test": {"avg": 456, "median": "hello"}}}', False)
         assert_results_are_well_formed('{"results": {"test": {"avg": 456, "median": 789}}}', True)
         assert_results_are_well_formed('{"results": {"test": {"avg": 456, "unit": "bytes"}}}', True)
+        assert_results_are_well_formed('{"results": {"test": {"avg": 456, "unit": "bytes", "values": [1.0, 2.0, 3.0]}}}', True)
+
+        assert_results_are_well_formed('[]', False)
+        assert_results_are_well_formed('[{"results": {"test": 123}}]', True)
+        assert_results_are_well_formed('[{"results": {"test": 123}}, {"results": {"test": 123}}]', False)
+        assert_results_are_well_formed('[{"results": {"test": {"avg": 456, "unit": "bytes", "values": [1.0, 2.0, 3.0]}}}]', True)
 
     def test_builder(self):
         log = self._create_log_with_payload('{"key": "value"}')
@@ -500,12 +514,19 @@ class ReportLogTests(DataStoreTestsBase):
         log = self._create_log_with_payload('{"webkit-revision": 123}')
         self.assertEqual(log.webkit_revision(), 123)
 
-    def chromium_revision(self):
+    def test_chromium_revision(self):
         log = self._create_log_with_payload('{"chromium-revision": 123}')
-        self.assertEqual(log.webkit_revision(), 123)
+        self.assertEqual(log.chromium_revision(), 123)
 
         log = self._create_log_with_payload('{"key": "value"}')
-        self.assertEqual(log.webkit_revision(), None)
+        self.assertEqual(log.chromium_revision(), None)
+
+    def test_results_in_array(self):
+        platform = Platform.create_if_possible("some-platform", "Some Platform")
+        log = self._create_log_with_payload('[{"platform": "some-platform", "build-number": 123, "webkit-revision": 456}]')
+        self.assertEqual(log.platform().key(), platform.key())
+        self.assertEqual(log.build_number(), 123)
+        self.assertEqual(log.webkit_revision(), 456)
 
 
 class PersistentCacheTests(DataStoreTestsBase):

@@ -202,6 +202,7 @@ class TestResult(db.Model):
     valueStdev = db.FloatProperty()
     valueMin = db.FloatProperty()
     valueMax = db.FloatProperty()
+    values = db.ListProperty(float)
 
     @staticmethod
     def key_name(build, test_name):
@@ -222,7 +223,8 @@ class TestResult(db.Model):
 
         return cls.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
             valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
-            valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))
+            valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'),
+            values=result.get('values', []))
 
     def replace_to_change_test_name(self, new_name):
         clone = TestResult(key_name=TestResult.key_name(self.build, new_name), name=new_name, build=self.build,
@@ -247,9 +249,12 @@ class ReportLog(db.Model):
         return self._parsed
 
     def get_value(self, keyName):
-        if not self._parsed_payload():
+        parsed = self._parsed_payload()
+        if not parsed:
             return None
-        return self._parsed.get(keyName)
+        if isinstance(parsed, list):
+            parsed = parsed[0]
+        return parsed.get(keyName)
 
     def results(self):
         return self.get_value('results')
@@ -265,13 +270,22 @@ class ReportLog(db.Model):
             except ValueError:
                 return False
 
+        if isinstance(self._parsed_payload(), list) and len(self._parsed_payload()) != 1:
+            return False
+
         if not isinstance(self.results(), dict):
             return False
 
         for testResult in self.results().values():
             if isinstance(testResult, dict):
                 for key, value in testResult.iteritems():
-                    if key != "unit" and not _is_float_convertible(value):
+                    if key == "values":
+                        if not isinstance(value, list):
+                            return False
+                        for item in value:
+                            if not _is_float_convertible(item):
+                                return False
+                    elif key != "unit" and not _is_float_convertible(value):
                         return False
                 if 'avg' not in testResult:
                     return False

@@ -1,3 +1,31 @@
+2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic should store "values" and support array'ed input
+        https://bugs.webkit.org/show_bug.cgi?id=97601
+
+        Reviewed by Dirk Pranke.
+
+        Support new JSON format where the outermost structure is an array instead of a dictionary and results may
+        contain "values". This change will let us remove some code from run-perf-tests.
+
+        Old: {"webkit-revision": 123456, "results": {"test": {"avg": 123}}
+        New: [{"webkit-revision": 123456, "results": {"test": {"avg": 123, values: [122, 123, 124]}}}]
+
+        * Websites/webkit-perf.appspot.com/app.yaml: Incremented the version number.
+        * Websites/webkit-perf.appspot.com/models.py:
+        (TestResult): Added values property.
+        (TestResult.get_or_insert_from_parsed_json): Pass in "values" to the constructor if the value is present.
+        (ReportLog.get_value): Use the first item in the array if self._parsed uses the new format.
+        (ReportLog.results_are_well_formed): Verifies that items in "values" are floats convertible. Also verify that
+        if the JSON uses new format, there is exactly one set of results. In theory, we could support multiple results
+        but we don't do that now for its complexity.
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (TestResultTests.test_get_or_insert_stat_value): Make sure values is present and is an empty list.
+        (TestResultTests.test_get_or_insert_stat_value_with_values): Added.
+        (ReportLogTests.test_results_are_well_formed):
+        (ReportLogTests.test_chromium_revision): Renamed from chromium_revision so that it actually runs.
+        (ReportLogTests.test_results_in_array):
+
 2012-09-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Update minimal required versions for dependencies
