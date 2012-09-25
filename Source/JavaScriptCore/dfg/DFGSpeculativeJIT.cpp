@@ -1907,9 +1907,10 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
         SpeculateBooleanOperand op1(this, node.child1());
         GPRTemporary result(this, op1);
         
-        m_jit.and32(JITCompiler::TrustedImm32(1), op1.gpr());
+        m_jit.move(op1.gpr(), result.gpr());
+        m_jit.and32(JITCompiler::TrustedImm32(1), result.gpr());
         
-        integerResult(op1.gpr(), m_compileIndex);
+        integerResult(result.gpr(), m_compileIndex);
         return;
     }
     

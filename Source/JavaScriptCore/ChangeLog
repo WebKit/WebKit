@@ -1,3 +1,14 @@
+2012-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueToInt32 bool case does bad things to registers
+        https://bugs.webkit.org/show_bug.cgi?id=97505
+        <rdar://problem/12356331>
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+
 2012-09-24  Mark Lam  <mark.lam@apple.com>
 
         Add cloopDo instruction for debugging the llint C++ backend.
