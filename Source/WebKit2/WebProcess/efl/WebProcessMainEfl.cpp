@@ -90,7 +90,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     SoupCache* soupCache = soup_cache_new(soupCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER);
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache));
     soup_cache_load(soupCache);
-    g_object_unref(soupCache);
 
 #if USE(COORDINATED_GRAPHICS)
     CoordinatedGraphicsLayer::initFactory();
@@ -101,6 +100,10 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
     RunLoop::run();
+
+    soup_cache_flush(soupCache);
+    soup_cache_dump(soupCache);
+    g_object_unref(soupCache);
 
     return 0;
 

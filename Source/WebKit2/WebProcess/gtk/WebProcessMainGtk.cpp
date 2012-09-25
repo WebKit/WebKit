@@ -85,6 +85,9 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
 
     RunLoop::run();
 
+    soup_cache_flush(soupCache.get());
+    soup_cache_dump(soupCache.get());
+
     return 0;
 }
 

@@ -171,11 +171,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::platformTerminate()
 {
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    SoupCache* cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
-    soup_cache_flush(cache);
-    soup_cache_dump(cache);
-
     WebCore::removeLanguageChangeObserver(this);
 }
 

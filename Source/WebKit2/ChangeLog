@@ -1,3 +1,26 @@
+2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][EFL] Disk cache is never dumped to disk in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=97583
+
+        Reviewed by Martin Robinson.
+
+        The problem is that WebProcess::platformTerminate(), where the
+        cache is currently dumped, is not called when the web process
+        finishes because the UI process closes the connection. The cache
+        is created and loaded in the main() so it can also be flushed and
+        dumped there, so that we also make sure it's always called when
+        the process finishes normally when the main loop quits.
+
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl): Flush and dump the disk cache when
+        the main loop returns.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): Ditto.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformTerminate): Do not flush and dump
+        the disk cache.
+
 2012-09-25  Benjamin Poulain  <bpoulain@apple.com>
 
         Add missing support for Geolocation tests on WebKit2
