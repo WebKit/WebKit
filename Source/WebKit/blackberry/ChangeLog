@@ -1,3 +1,18 @@
+2012-09-25  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Suspend the backingstore while adjusting the view on input field focus.
+        https://bugs.webkit.org/show_bug.cgi?id=97595
+
+        Reviewed by Antonio Gomes.
+
+        PR 188751.
+
+        Avoid jumpiness when both a scroll and zoom are required to
+        move an input field into focus by suspending the backingstore.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-09-25  Pratik Solanki  <psolanki@apple.com>
 
         Remove HAVE_SBRK since we never set use_sbrk to true
