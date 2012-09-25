@@ -41,6 +41,7 @@
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
+      <dep package="fontconfig"/>
       <dep package="pixman"/>
     </dependencies>
     <branch module="releases/cairo-1.10.2.tar.gz" version="1.10.2"
