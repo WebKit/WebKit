@@ -1,3 +1,13 @@
+2012-09-25  Lucas Forschler  <lforschler@apple.com>
+
+        Python tests fail on Windows bots when running with more than one child process.  Temporarily use only one child process until the problem can be fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=97465
+        
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunPythonTests.start):
+
 2012-09-25  Mike West  <mkwst@chromium.org>
 
         Unreviewed. Adding myself as a committer.
