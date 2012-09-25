@@ -63,6 +63,13 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
+#if ENABLE(CSS_EXCLUSIONS)
+static inline WrapShapeInfo* layoutWrapShapeInfo(const RenderBlock* block)
+{
+    return block->view()->layoutState()->wrapShapeInfo();
+}
+#endif
+
 class LineWidth {
 public:
     LineWidth(RenderBlock* block, bool isFirstLine)
@@ -80,7 +87,7 @@ public:
     {
         ASSERT(block);
 #if ENABLE(CSS_EXCLUSIONS)
-        WrapShapeInfo* wrapShapeInfo = m_block->wrapShapeInfo();
+        WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(m_block);
         // FIXME: Bug 91878: Add support for multiple segments, currently we only support one
         if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
             // All interior shape positions should have at least one segment
@@ -804,7 +811,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
     float logicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
+    WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(this);
     if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
         logicalLeft = max<float>(roundToInt(wrapShapeInfo->segments()[0].logicalLeft), logicalLeft);
         logicalRight = min<float>(floorToInt(wrapShapeInfo->segments()[0].logicalRight), logicalRight);
@@ -1296,10 +1303,18 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
     LineBreaker lineBreaker(this);
 
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
-    // Move to the top of the shape inside to begin layout
-    if (wrapShapeInfo && logicalHeight() < wrapShapeInfo->shapeLogicalTop())
-        setLogicalHeight(wrapShapeInfo->shapeLogicalTop());
+    LayoutUnit absoluteLogicalTop;
+    WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(this);
+    if (wrapShapeInfo) {
+        if (wrapShapeInfo != this->wrapShapeInfo()) {
+            // FIXME: If layout state is disabled, the offset will be incorrect.
+            LayoutSize layoutOffset = view()->layoutState()->layoutOffset();
+            absoluteLogicalTop = logicalTop() + (isHorizontalWritingMode() ? layoutOffset.height() : layoutOffset.width());
+        }
+        // Begin layout at the logical top of our shape inside.
+        if (logicalHeight() + absoluteLogicalTop < wrapShapeInfo->shapeLogicalTop())
+            setLogicalHeight(wrapShapeInfo->shapeLogicalTop() - absoluteLogicalTop);
+    }
 #endif
 
     while (!end.atEnd()) {
@@ -1321,10 +1336,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
 #if ENABLE(CSS_EXCLUSIONS)
-        // FIXME: Bug 89993: If the wrap shape comes from a parent, we will need to adjust
-        // the height coordinate
         if (wrapShapeInfo)
-            wrapShapeInfo->computeSegmentsForLine(logicalHeight());
+            wrapShapeInfo->computeSegmentsForLine(logicalHeight() + absoluteLogicalTop);
 #endif
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
         if (resolver.position().atEnd()) {
