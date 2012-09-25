@@ -307,7 +307,7 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
     if (m_isWaitingForDidUpdateBackingStoreState)
         return;
 
-    if (m_webPageProxy->viewSize().isEmpty())
+    if (m_webPageProxy->viewSize().isEmpty() && !m_webPageProxy->useFixedLayout())
         return;
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
