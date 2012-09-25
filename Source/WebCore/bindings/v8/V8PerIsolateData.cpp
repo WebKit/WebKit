@@ -28,6 +28,7 @@
 
 #include "ScriptGCEvent.h"
 #include "V8Binding.h"
+#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addHashMap(m_rawTemplates);
     info.addHashMap(m_templates);
     info.addMember(m_stringCache);
-    info.addVector(m_domDataList);
+    info.addMember(m_domDataList);
 
     for (size_t i = 0; i < m_domDataList.size(); i++)
         info.addMember(m_domDataList[i]);

@@ -31,6 +31,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleSheetContents.h"
 #include <wtf/BitArray.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG
@@ -1121,7 +1122,7 @@ void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : immutableStylePropertySetSize(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS, actualSize);
     if (m_isMutable)
-        info.addVectorPtr(m_mutablePropertyVector);
+        info.addMember(m_mutablePropertyVector);
 
     unsigned count = propertyCount();
     for (unsigned i = 0; i < count; ++i)

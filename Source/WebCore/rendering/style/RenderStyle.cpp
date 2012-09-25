@@ -40,6 +40,7 @@
 #include "RenderTheme.h"
 #endif
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
@@ -1615,8 +1616,7 @@ void RenderStyle::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(rareInheritedData);
     // FIXME: inherited contains StyleImage and Font fields that might need to be instrumented.
     info.addMember(inherited);
-    if (m_cachedPseudoStyles)
-        info.addVectorPtr(m_cachedPseudoStyles.get());
+    info.addMember(m_cachedPseudoStyles);
 #if ENABLE(SVG)
     info.addMember(m_svgStyle);
 #endif

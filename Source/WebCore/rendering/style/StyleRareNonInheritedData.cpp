@@ -31,6 +31,7 @@
 #include "StyleImage.h"
 #include "StyleResolver.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -306,7 +307,7 @@ void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObject
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
 #if ENABLE(DASHBOARD_SUPPORT)
-    info.addVector(m_dashboardRegions);
+    info.addMember(m_dashboardRegions);
 #endif
     info.addMember(m_deprecatedFlexibleBox);
     info.addMember(m_flexibleBox);

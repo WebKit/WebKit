@@ -1,3 +1,27 @@
+2012-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: extract Vector instrumentation from core NMI code into MemoryInstrumentationVector.h header.
+        https://bugs.webkit.org/show_bug.cgi?id=96650
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added reportMemoryUsage free template function with default body to core NMI code
+        and add custom version of reportMemoryUsage function for Vectors.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MemoryInstrumentation.h:
+        (WTF):
+        (MemoryInstrumentation):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        * wtf/MemoryInstrumentationVector.h: Added.
+        (WTF):
+        (WTF::instrumentVectorValues):
+        (WTF::reportMemoryUsage):
+
 2012-09-24  Mark Lam  <mark.lam@apple.com>
 
         Deleting the classic interpreter and cleaning up some build options.

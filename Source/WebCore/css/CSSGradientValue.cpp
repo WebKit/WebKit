@@ -37,6 +37,7 @@
 #include "RenderObject.h"
 #include "StyleResolver.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -469,7 +470,7 @@ void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObject
     info.addMember(m_firstY);
     info.addMember(m_secondX);
     info.addMember(m_secondY);
-    info.addInstrumentedVector(m_stops);
+    info.addMember(m_stops);
 }
 
 String CSSLinearGradientValue::customCssText() const

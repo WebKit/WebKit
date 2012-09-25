@@ -31,6 +31,7 @@
 
 #include "MediaQueryExp.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/NonCopyingSort.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -138,7 +139,7 @@ void MediaQuery::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_mediaType);
-    info.addInstrumentedVectorPtr(m_expressions);
+    info.addMember(m_expressions);
     info.addMember(m_serializationCache);
 }
 

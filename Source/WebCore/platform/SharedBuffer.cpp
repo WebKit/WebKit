@@ -29,6 +29,7 @@
 
 #include "PlatformMemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
@@ -251,8 +252,8 @@ const Vector<char>& SharedBuffer::buffer() const
 void SharedBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-    info.addVector(m_buffer);
-    info.addVector(m_segments);
+    info.addMember(m_buffer);
+    info.addMember(m_segments);
     for (unsigned i = 0; i < m_segments.size(); ++i)
         info.addRawBuffer(m_segments[i], segmentSize);
     info.addMember(m_purgeableBuffer.get());

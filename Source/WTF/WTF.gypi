@@ -50,6 +50,7 @@
             'wtf/MainThread.h',
             'wtf/MathExtras.h',
             'wtf/MemoryInstrumentation.h',
+            'wtf/MemoryInstrumentationVector.h',
             'wtf/MessageQueue.h',
             'wtf/NonCopyingSort.h',
             'wtf/Noncopyable.h',

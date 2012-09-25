@@ -46,6 +46,7 @@
 #include "StyleSheetList.h"
 #include "UserContentURLPattern.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -472,10 +473,9 @@ void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObj
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     info.addMember(m_pageUserSheet);
-    if (m_pageGroupUserSheets)
-        info.addInstrumentedVectorPtr(m_pageGroupUserSheets);
-    if (m_userSheets)
-        info.addInstrumentedVectorPtr(m_userSheets);
+    info.addMember(m_pageGroupUserSheets);
+    info.addMember(m_userSheets);
+    info.addMember(m_authorStyleSheets);
     info.addListHashSet(m_styleSheetCandidateNodes);
     info.addMember(m_preferredStylesheetSetName);
     info.addMember(m_selectedStylesheetSetName);

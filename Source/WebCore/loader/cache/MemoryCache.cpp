@@ -45,6 +45,7 @@
 #include "WorkerThread.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
@@ -724,7 +725,7 @@ void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         info.addMember(i->first);
         info.addMember(i->second);
     }
-    info.addVector(m_allResources);
+    info.addMember(m_allResources);
     info.addMember(m_liveDecodedResources);
 }
 

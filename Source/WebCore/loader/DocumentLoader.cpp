@@ -53,6 +53,7 @@
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
@@ -368,16 +369,16 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_substituteData);
     info.addMember(m_pageTitle.string());
     info.addMember(m_overrideEncoding);
-    info.addVector(m_responses);
+    info.addMember(m_responses);
     info.addMember(m_originalRequest);
     info.addMember(m_originalRequestCopy);
     info.addMember(m_request);
     info.addMember(m_response);
     info.addMember(m_lastCheckedRequest);
-    info.addInstrumentedVector(m_responses);
+    info.addMember(m_responses);
     info.addHashMap(m_pendingSubstituteResources);
     info.addInstrumentedHashSet(m_resourcesClientKnowsAbout);
-    info.addVector(m_resourcesLoadedFromMemoryCacheForClientNotification);
+    info.addMember(m_resourcesLoadedFromMemoryCacheForClientNotification);
     info.addMember(m_clientRedirectSourceForHistory);
     info.addMember(m_mainResourceData);
 }

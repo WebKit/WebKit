@@ -38,6 +38,7 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -187,7 +188,7 @@ void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_ownerNode);
     info.addMember(m_ownerRule);
     info.addMember(m_mediaCSSOMWrapper);
-    info.addInstrumentedVector(m_childRuleCSSOMWrappers);
+    info.addMember(m_childRuleCSSOMWrappers);
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

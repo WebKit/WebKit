@@ -1,3 +1,17 @@
+2012-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: extract Vector instrumentation from core NMI code into MemoryInstrumentationVector.h header.
+        https://bugs.webkit.org/show_bug.cgi?id=96650
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test for instrumented vector.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedOwner::InstrumentedOwner):
+        (WebCore::TEST):
+        (WebCore):
+
 2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix Geolocation error reporting in the test support

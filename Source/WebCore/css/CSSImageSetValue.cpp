@@ -37,6 +37,7 @@
 #include "StyleCachedImageSet.h"
 #include "StylePendingImage.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -168,7 +169,7 @@ void CSSImageSetValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjec
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
-    info.addInstrumentedVector(m_imagesInSet);
+    info.addMember(m_imagesInSet);
 }
 
 void CSSImageSetValue::ImageWithScale::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

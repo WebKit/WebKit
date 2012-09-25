@@ -33,6 +33,7 @@
 #include "StyleSheet.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframeRule.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -90,7 +91,7 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedVector(m_keyframes);
+    info.addMember(m_keyframes);
     info.addMember(m_name);
 }
 
@@ -211,7 +212,7 @@ void WebKitCSSKeyframesRule::reportDescendantMemoryUsage(MemoryObjectInfo* memor
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addMember(m_keyframesRule);
-    info.addInstrumentedVector(m_childRuleCSSOMWrappers);
+    info.addMember(m_childRuleCSSOMWrappers);
     info.addMember(m_ruleListCSSOMWrapper);
 }
 

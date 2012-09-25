@@ -31,6 +31,7 @@
 #include "CSSStyleSheet.h"
 #include "StyledElement.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
 
@@ -300,7 +301,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addMember(m_classNames);
     info.addMember(m_idForStyleResolution);
     if (m_isMutable)
-        info.addVector(mutableAttributeVector());
+        info.addMember(mutableAttributeVector());
     for (unsigned i = 0, len = length(); i < len; i++)
         info.addMember(*attributeItem(i));
 }

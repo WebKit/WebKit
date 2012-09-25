@@ -126,6 +126,7 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -746,8 +747,8 @@ void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectIn
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addHashSet(idsInRules);
     info.addHashSet(attrsInRules);
-    info.addVector(siblingRules);
-    info.addVector(uncommonAttributeRules);
+    info.addMember(siblingRules);
+    info.addMember(uncommonAttributeRules);
 }
 
 static StyleSheetContents* parseUASheet(const String& str)
@@ -2567,7 +2568,7 @@ static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap&
 {
     info->addHashMap(atomicRuleMap);
     for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
-        info->addInstrumentedVector(*it->second);
+        info->addMember(*it->second);
 }
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -2577,11 +2578,11 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     reportAtomRuleMap(&info, m_classRules);
     reportAtomRuleMap(&info, m_tagRules);
     reportAtomRuleMap(&info, m_shadowPseudoElementRules);
-    info.addInstrumentedVector(m_linkPseudoClassRules);
-    info.addInstrumentedVector(m_focusPseudoClassRules);
-    info.addInstrumentedVector(m_universalRules);
-    info.addVector(m_pageRules);
-    info.addInstrumentedVector(m_regionSelectorsAndRuleSets);
+    info.addMember(m_linkPseudoClassRules);
+    info.addMember(m_focusPseudoClassRules);
+    info.addMember(m_universalRules);
+    info.addMember(m_pageRules);
+    info.addMember(m_regionSelectorsAndRuleSets);
 }
 
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -5762,7 +5763,7 @@ void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memor
 void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addInstrumentedVector(matchedProperties);
+    info.addMember(matchedProperties);
 }
 
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -5782,13 +5783,13 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashMap(m_keyframesRuleMap);
     info.addHashMap(m_matchedPropertiesCache);
     info.addInstrumentedMapValues(m_matchedPropertiesCache);
-    info.addVector(m_matchedRules);
+    info.addMember(m_matchedRules);
 
     info.addMember(m_ruleList);
     info.addHashMap(m_pendingImageProperties);
     info.addInstrumentedMapValues(m_pendingImageProperties);
     info.addMember(m_lineHeightValue);
-    info.addInstrumentedVector(m_viewportDependentMediaQueryResults);
+    info.addMember(m_viewportDependentMediaQueryResults);
     info.addHashMap(m_styleRuleToCSSOMWrapperMap);
     info.addInstrumentedMapEntries(m_styleRuleToCSSOMWrapperMap);
     info.addInstrumentedHashSet(m_styleSheetCSSOMWrapperSet);
@@ -5798,7 +5799,7 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if ENABLE(STYLE_SCOPED)
     info.addHashMap(m_scopedAuthorStyles);
     info.addInstrumentedMapEntries(m_scopedAuthorStyles);
-    info.addVector(m_scopeStack);
+    info.addMember(m_scopeStack);
 #endif
 
     // FIXME: move this to a place where it would be called only once?

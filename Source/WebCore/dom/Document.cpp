@@ -174,6 +174,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
@@ -5865,7 +5866,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     info.addMember(m_styleResolver);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
-    info.addVector(m_customFonts);
+    info.addMember(m_customFonts);
     info.addMember(m_url);
     info.addMember(m_baseURL);
     info.addMember(m_baseURLOverride);
@@ -5888,17 +5889,17 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashMap(m_documentNamedItemCollections);
     info.addHashMap(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)
-    info.addVector(m_dashboardRegions);
+    info.addMember(m_dashboardRegions);
 #endif
     info.addHashMap(m_cssCanvasElements);
-    info.addVector(m_iconURLs);
+    info.addMember(m_iconURLs);
     info.addHashSet(m_documentSuspensionCallbackElements);
     info.addHashSet(m_mediaVolumeCallbackElements);
     info.addHashSet(m_privateBrowsingStateChangedElements);
     info.addHashMap(m_elementsByAccessKey);
     info.addMember(m_eventQueue);
     info.addHashSet(m_mediaCanStartListeners);
-    info.addVector(m_pendingTasks);
+    info.addMember(m_pendingTasks);
 }
 
 #if ENABLE(UNDO_MANAGER)
