@@ -182,7 +182,7 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Fail
 
 # Visited link color is incorrect
 Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
-Bug(EFL) fast/history/visited-link-background-color.html [ Failure ]
+webkit.org/b/81797 fast/history/visited-link-background-color.html [ Failure ]
 
 # Unclassified failures
 Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
