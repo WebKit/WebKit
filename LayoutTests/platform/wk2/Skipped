@@ -254,6 +254,7 @@ editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/move-left-right.html
 editing/style/text-indent.html
+fast/dom/tab-in-right-alignment.html
 fast/events/ime-composition-events-001.html
 fast/forms/cursor-at-editable-content-boundary.html
 fast/text/international/thai-cursor-position.html
@@ -321,6 +322,7 @@ fast/frames/frame-display-none-focus.html
 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/reload-policy-delegate.html
+http/tests/navigation/fallback-anchor-reload.html
 
 # WebKitTestRunner needs layoutTestController.queueLoad
 # <https://bugs.webkit.org/show_bug.cgi?id=42674>
@@ -899,46 +901,19 @@ http/tests/security/cross-frame-access-location-get.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 
-# Unexplained failures
-fast/block/basic/truncation-rtl.html
-fast/dom/beforeload/remove-frame-in-beforeload-listener.html
-fast/dom/Document/open-with-pending-load.html
-fast/dom/StyleSheet/detached-style-2.html
-fast/dom/StyleSheet/detached-style-pi-2.xhtml
-fast/dom/StyleSheet/detached-style-pi.xhtml
-fast/dom/StyleSheet/detached-style.html
-fast/dom/Window/window-appendages-cleared.html
-fast/dom/tab-in-right-alignment.html
-fast/events/popup-blocked-from-fake-user-gesture.html
-fast/frames/frame-element-name.html
-fast/frames/iframe-onload-remove-self-no-crash.html
-fast/frames/sandboxed-iframe-plugins.html
-fast/frames/sandboxed-iframe-storage.html
+# Wrong color for visited link
 fast/history/multiple-classes-visited.html
-fast/history/saves-state-after-fragment-nav.html
-fast/html/empty-fragment-id-goto-top.html
-fast/loader/frame-creation-removal.html
-fast/loader/hashchange-event-async.html
-fast/loader/hashchange-event.html
-fast/loader/onhashchange-attribute-listeners.html
-fast/loader/stateobjects/popstate-fires-on-history-traversal.html
-fast/overflow/overflow_hidden.html
+
+# Flaky tests (slow)
 fast/workers/storage/interrupt-database.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
-fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
-http/tests/appcache/different-https-origin-resource-main.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
-http/tests/history/back-during-onload-triggered-by-back.html
-http/tests/media/reload-after-dialog.html
-http/tests/misc/slow-loading-mask.html
-http/tests/misc/unloadable-script.html
-http/tests/navigation/back-send-referrer.html
-http/tests/navigation/fallback-anchor-reload.html
-http/tests/navigation/history-back-across-form-submission-to-fragment.html
-http/tests/security/cross-frame-access-put.html
-http/tests/security/originHeader/origin-header-for-https.html
-http/tests/storage/callbacks-are-called-in-correct-context.html
+
+# Unexplained failures
+fast/frames/sandboxed-iframe-plugins.html
+fast/frames/sandboxed-iframe-storage.html
+fast/overflow/overflow_hidden.html
 media/controls-after-reload.html
 media/controls-styling.html
 platform/mac/fast/loader/non-html-load-event.html

@@ -372,7 +372,6 @@ http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
 http/tests/security/no-referrer.html
 http/tests/security/originHeader/origin-header-for-empty.html
-http/tests/security/originHeader/origin-header-for-https.html
 http/tests/security/redirect-BLOCKED-to-localURL.html
 http/tests/security/referrer-policy-redirect-link.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
