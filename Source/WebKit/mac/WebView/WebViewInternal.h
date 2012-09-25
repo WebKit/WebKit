@@ -37,6 +37,7 @@
 #import <WebCore/AlternativeTextClient.h>
 #import <WebCore/FindOptions.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/LayoutMilestones.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 
@@ -64,6 +65,9 @@ struct DictationAlternative;
 #ifdef __cplusplus
 
 WebCore::FindOptions coreOptions(WebFindOptions options);
+
+WebCore::LayoutMilestones coreLayoutMilestones(WebLayoutMilestones);
+WebLayoutMilestones kitLayoutMilestones(WebCore::LayoutMilestones);
 
 #if USE(DICTATION_ALTERNATIVES)
 OBJC_CLASS NSTextAlternatives;

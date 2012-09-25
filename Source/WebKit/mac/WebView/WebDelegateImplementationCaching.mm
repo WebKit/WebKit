@@ -248,6 +248,18 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     return nil;
 }
 
+static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, NSUInteger integer)
+{
+    if (!delegate)
+        return nil;
+    @try {
+        return implementation(delegate, selector, self, integer);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return nil;
+}
+
 static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SEL selector, id object)
 {
     if (!delegate)
@@ -448,6 +460,11 @@ BOOL CallUIDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, id
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector)
 {
     return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector);
+}
+
+id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, NSUInteger integer)
+{
+    return CallDelegate(implementation, self, self->_private->frameLoadDelegate, selector, integer);
 }
 
 id CallFrameLoadDelegate(IMP implementation, WebView *self, SEL selector, id object)

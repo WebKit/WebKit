@@ -32,6 +32,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "IconURL.h"
+#include "LayoutMilestones.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -162,10 +163,8 @@ namespace WebCore {
         virtual void dispatchDidFinishDocumentLoad() = 0;
         virtual void dispatchDidFinishLoad() = 0;
 
-        virtual void dispatchDidFirstLayout() = 0;
-        virtual void dispatchDidFirstVisuallyNonEmptyLayout() = 0;
-        virtual void dispatchDidNewFirstVisuallyNonEmptyLayout() { }
         virtual void dispatchDidLayout() { }
+        virtual void dispatchDidLayout(LayoutMilestones) { }
 
         virtual Frame* dispatchCreatePage(const NavigationAction&) = 0;
         virtual void dispatchShow() = 0;

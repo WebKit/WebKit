@@ -2432,11 +2432,18 @@ void FrameView::performPostLayoutTasks()
     m_frame->selection()->setCaretRectNeedsUpdate();
     m_frame->selection()->updateAppearance();
 
+    LayoutMilestones milestonesOfInterest = 0;
+    LayoutMilestones milestonesAchieved = 0;
+    Page* page = m_frame->page();
+    if (page)
+        milestonesOfInterest = page->layoutMilestones();
+
     if (m_nestedLayoutCount <= 1) {
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
-            m_frame->loader()->didFirstLayout();
-            if (Page* page = m_frame->page()) {
+            if (milestonesOfInterest & DidFirstLayout)
+                milestonesAchieved |= DidFirstLayout;
+            if (page) {
                 if (page->mainFrame() == m_frame)
                     page->startCountingRelevantRepaintedObjects();
             }
@@ -2449,10 +2456,15 @@ void FrameView::performPostLayoutTasks()
         // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
         if (m_isVisuallyNonEmpty && !m_frame->document()->didLayoutWithPendingStylesheets() && m_firstVisuallyNonEmptyLayoutCallbackPending) {
             m_firstVisuallyNonEmptyLayoutCallbackPending = false;
-            m_frame->loader()->didFirstVisuallyNonEmptyLayout();
+            if (milestonesOfInterest & DidFirstVisuallyNonEmptyLayout)
+                milestonesAchieved |= DidFirstVisuallyNonEmptyLayout;
         }
     }
 
+    m_frame->loader()->didLayout(milestonesAchieved);
+    
+    // FIXME: We should consider adding DidLayout as a LayoutMilestone. That would let us merge this
+    // with didLayout(LayoutMilestones).
     m_frame->loader()->client()->dispatchDidLayout();
 
     RenderView* root = rootRenderer(this);
@@ -2464,7 +2476,7 @@ void FrameView::performPostLayoutTasks()
             break;
     }
 
-    if (Page* page = m_frame->page()) {
+    if (page) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewLayoutUpdated(this);
     }
@@ -2493,7 +2505,7 @@ void FrameView::performPostLayoutTasks()
 
 #if ENABLE(INSPECTOR)
             if (InspectorInstrumentation::hasFrontends()) {
-                if (Page* page = m_frame->page()) {
+                if (page) {
                     if (page->mainFrame() == m_frame) {
                         if (InspectorClient* inspectorClient = page->inspectorController()->inspectorClient())
                             inspectorClient->didResizeMainFrame(m_frame.get());

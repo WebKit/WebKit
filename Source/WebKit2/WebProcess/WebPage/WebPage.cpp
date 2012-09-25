@@ -396,6 +396,22 @@ void WebPage::initializeInjectedBundleFormClient(WKBundlePageFormClient* client)
 
 void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient* client)
 {
+    // It would be nice to get rid of this code and transition all clients to using didLayout instead of
+    // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
+    // for backwards compatibility.
+    LayoutMilestones milestones = 0;
+    if (client) {
+        if (client->didFirstLayoutForFrame)
+            milestones |= WebCore::DidFirstLayout;
+        if (client->didFirstVisuallyNonEmptyLayoutForFrame)
+            milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+        if (client->didNewFirstVisuallyNonEmptyLayout)
+            milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+    }
+
+    if (milestones)
+        listenForLayoutMilestones(milestones);
+
     m_loaderClient.initialize(client);
 }
 
@@ -558,13 +574,6 @@ uint64_t WebPage::renderTreeSize() const
     if (!m_page)
         return 0;
     return m_page->renderTreeSize().treeSize;
-}
-
-void WebPage::setPaintedObjectsCounterThreshold(uint64_t threshold)
-{
-    if (!m_page)
-        return;
-    m_page->setRelevantRepaintedObjectsCounterThreshold(threshold);
 }
 
 void WebPage::setTracksRepaints(bool trackRepaints)
@@ -1121,6 +1130,13 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
     // Do not force it until the first layout, this would then become our first layout prematurely.
     if (view->didFirstLayout())
         view->forceLayout();
+}
+
+void WebPage::listenForLayoutMilestones(uint32_t milestones)
+{
+    if (!m_page)
+        return;
+    m_page->addLayoutMilestones(static_cast<LayoutMilestones>(milestones));
 }
 
 void WebPage::setSuppressScrollbarAnimations(bool suppressAnimations)

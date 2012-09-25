@@ -556,6 +556,8 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_webSettings->setUserAgentString(defaultUserAgent());
     m_page->setDeviceScaleFactor(m_webSettings->devicePixelRatio());
 
+    m_page->addLayoutMilestones(DidFirstVisuallyNonEmptyLayout);
+
 #if USE(ACCELERATED_COMPOSITING)
     m_tapHighlight = DefaultTapHighlight::create(this);
     m_selectionOverlay = SelectionOverlay::create(this);

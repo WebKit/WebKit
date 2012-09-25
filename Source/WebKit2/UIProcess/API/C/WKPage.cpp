@@ -330,6 +330,11 @@ WKSize WKPageFixedLayoutSize(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->fixedLayoutSize());
 }
 
+void WKPageListenForLayoutMilestones(WKPageRef pageRef, WKLayoutMilestones milestones)
+{
+    toImpl(pageRef)->listenForLayoutMilestones(toLayoutMilestones(milestones));
+}
+
 bool WKPageHasHorizontalScrollbar(WKPageRef pageRef)
 {
     return toImpl(pageRef)->hasHorizontalScrollbar();

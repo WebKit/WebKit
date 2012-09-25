@@ -184,6 +184,9 @@ bool WebHelperPluginImpl::initPage(WebKit::WebViewImpl* webView, const String& p
     m_page->settings()->setScriptEnabled(true);
     m_page->settings()->setPluginsEnabled(true);
 
+    unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
+    m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
+
     webView->client()->initializeHelperPluginWebFrame(this);
 
     // The page's main frame was set in initializeFrame() as a result of the above call.

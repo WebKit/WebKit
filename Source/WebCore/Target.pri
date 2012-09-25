@@ -1994,6 +1994,7 @@ HEADERS += \
     page/GestureTapHighlighter.h\
     page/GroupSettings.h \
     page/History.h \
+    page/LayoutMilestones.h \
     page/Location.h \
     page/MouseEventWithHitTestResults.h \
     page/NavigatorBase.h \

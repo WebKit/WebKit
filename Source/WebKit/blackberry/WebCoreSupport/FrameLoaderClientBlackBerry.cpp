@@ -848,35 +848,37 @@ void FrameLoaderClientBlackBerry::postProgressEstimateChangedNotification()
     m_webPagePrivate->m_client->notifyLoadProgress(m_frame->page()->progress()->estimatedProgress() * 100);
 }
 
-void FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout()
+void FrameLoaderClientBlackBerry::dispatchDidLayout(LayoutMilestones milestones)
 {
     if (!isMainFrame())
         return;
 
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "dispatchDidFirstVisuallyNonEmptyLayout");
+    if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "dispatchDidFirstVisuallyNonEmptyLayout");
 
-    readyToRender(true);
+        readyToRender(true);
 
-    // For FrameLoadTypeSame or FrameLoadTypeStandard load, the layout timer can be fired which can call
-    // dispatchDidFirstVisuallyNonEmptyLayout() after the load Finished state, in which case the web page
-    // will have no chance to zoom to initial scale. So we should give it a chance, otherwise the scale of
-    // the web page can be incorrect.
-    FrameLoadType frameLoadType = m_frame->loader()->loadType();
-    if (m_webPagePrivate->loadState() == WebPagePrivate::Finished && (frameLoadType == FrameLoadTypeSame || frameLoadType == FrameLoadTypeStandard))
-        m_webPagePrivate->setShouldZoomToInitialScaleAfterLoadFinished(true);
+        // For FrameLoadTypeSame or FrameLoadTypeStandard load, the layout timer can be fired which can call
+        // dispatchDidFirstVisuallyNonEmptyLayout() after the load Finished state, in which case the web page
+        // will have no chance to zoom to initial scale. So we should give it a chance, otherwise the scale of
+        // the web page can be incorrect.
+        FrameLoadType frameLoadType = m_frame->loader()->loadType();
+        if (m_webPagePrivate->loadState() == WebPagePrivate::Finished && (frameLoadType == FrameLoadTypeSame || frameLoadType == FrameLoadTypeStandard))
+            m_webPagePrivate->setShouldZoomToInitialScaleAfterLoadFinished(true);
 
-    if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
-        BackingStorePrivate* backingStorePrivate = m_webPagePrivate->m_backingStore->d;
-        m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
-        backingStorePrivate->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
-        if (backingStorePrivate->renderVisibleContents()) {
-            if (!backingStorePrivate->shouldDirectRenderingToWindow())
-                backingStorePrivate->blitVisibleContents();
-            m_webPagePrivate->m_client->notifyContentRendered(backingStorePrivate->visibleContentsRect());
+        if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
+            BackingStorePrivate* backingStorePrivate = m_webPagePrivate->m_backingStore->d;
+            m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
+            backingStorePrivate->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
+            if (backingStorePrivate->renderVisibleContents()) {
+                if (!backingStorePrivate->shouldDirectRenderingToWindow())
+                    backingStorePrivate->blitVisibleContents();
+                m_webPagePrivate->m_client->notifyContentRendered(backingStorePrivate->visibleContentsRect());
+            }
         }
-    }
 
-    m_webPagePrivate->m_client->notifyFirstVisuallyNonEmptyLayout();
+        m_webPagePrivate->m_client->notifyFirstVisuallyNonEmptyLayout();
+    }
 }
 
 void FrameLoaderClientBlackBerry::postProgressFinishedNotification()

@@ -442,6 +442,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // pluginDidFail
         0, // didReceiveIntentForFrame
         0, // registerIntentServiceForFrame
+        0, // didLayout
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }

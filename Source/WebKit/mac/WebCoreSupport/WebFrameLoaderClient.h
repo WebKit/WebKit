@@ -108,8 +108,7 @@ private:
     virtual void dispatchDidFailLoad(const WebCore::ResourceError&) OVERRIDE;
     virtual void dispatchDidFinishDocumentLoad() OVERRIDE;
     virtual void dispatchDidFinishLoad() OVERRIDE;
-    virtual void dispatchDidFirstLayout() OVERRIDE;
-    virtual void dispatchDidFirstVisuallyNonEmptyLayout() OVERRIDE;
+    virtual void dispatchDidLayout(WebCore::LayoutMilestones) OVERRIDE;
 
     virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&) OVERRIDE;
     virtual void dispatchShow() OVERRIDE;

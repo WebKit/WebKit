@@ -3628,6 +3628,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     priv->corePage = new Page(pageClients);
 
+    priv->corePage->addLayoutMilestones(DidFirstVisuallyNonEmptyLayout);
+
 #if ENABLE(GEOLOCATION)
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
         priv->geolocationClientMock = adoptPtr(new GeolocationClientMock);

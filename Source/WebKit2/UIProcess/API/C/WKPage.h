@@ -75,6 +75,7 @@ typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBack
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
 typedef void (*WKPageDidReceiveIntentForFrameCallback)(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageRegisterIntentServiceForFrameCallback)(WKPageRef page, WKFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageDidLayoutCallback)(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void *clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
@@ -115,7 +116,8 @@ struct WKPageLoaderClient {
     // Version 1
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 
-    // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.
+    // FIXME: didNewFirstVisuallyNonEmptyLayout should be removed. We should consider removing didFirstVisuallyNonEmptyLayoutForFrame
+    // as well. Their functionality is replaced by didLayout.
     WKPageDidNewFirstVisuallyNonEmptyLayoutCallback                     didNewFirstVisuallyNonEmptyLayout;
 
     WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
@@ -126,6 +128,8 @@ struct WKPageLoaderClient {
     // Version 2
     WKPageDidReceiveIntentForFrameCallback                              didReceiveIntentForFrame;
     WKPageRegisterIntentServiceForFrameCallback                         registerIntentServiceForFrame;
+
+    WKPageDidLayoutCallback                                             didLayout;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
@@ -424,6 +428,8 @@ WK_EXPORT void WKPageSetUseFixedLayout(WKPageRef page, bool fixed);
 WK_EXPORT void WKPageSetFixedLayoutSize(WKPageRef page, WKSize size);
 WK_EXPORT bool WKPageUseFixedLayout(WKPageRef page);
 WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef page);
+
+WK_EXPORT void WKPageListenForLayoutMilestones(WKPageRef page, WKLayoutMilestones milestones);
 
 WK_EXPORT bool WKPageHasHorizontalScrollbar(WKPageRef page);
 WK_EXPORT bool WKPageHasVerticalScrollbar(WKPageRef page);

@@ -1,3 +1,102 @@
+2012-09-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=95397
+        Need to merge didFirstVisuallyNonEmptyLayout and 
+        didNewFirstVisuallyNonEmptyLayout
+        -and corresponding-
+        <rdar://problem/10791680>
+
+        Reviewed by Sam Weinig.
+
+        The new API has two parts. First, the client has to opt into which 
+        layout milestones they are interested in hearing about using 
+        WKPageListenForLayoutMilestones or 
+        WKBundlePageListenForLayoutMilestones(). Then, WebKit will call 
+        the didLayout(WKLayoutMilestones) callback on the appropriate 
+        clients when the specified layout milestones have fired. didLayout 
+        takes the WKLayoutMilestones bit mask, which will indicate which 
+        milestones have fired since it is possible for two to fire at the 
+        same time.
+
+        Define WKLayoutMilestoneOptions.
+        * Shared/API/c/WKPageLoadTypes.h:
+
+        Define conversions between WKLayoutMilestoneOptions and 
+        WebCore::LayoutMilestoneOptions
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKLayoutMilestoneOptions):
+        (WebKit):
+        (WebKit::toLayoutMilestoneOptions):
+
+        New API.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageListenForLayoutMilestones):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didLayout):
+        (WebKit):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+
+        didFirstLayoutForFrame, didFirstVisuallyNonEmptyLayoutForFrame, 
+        and didNewFirstVisuallyNonEmptyLayout are now implemented with 
+        didLayout under the hood. So if those old callbacks have been 
+        defined, be sure to add the appropriate layout milestones here for 
+        backwards-compatibility.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeLoaderClient):
+
+        New API.
+        (WebKit::WebPageProxy::listenForLayoutMilestones):
+        (WebKit):
+        (WebKit::WebPageProxy::didLayout):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+
+        New API. And remove the now-unnecessary 
+        WKBundlePageSetPaintedObjectsCounterThreshold. 
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageListenForLayoutMilestones):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
+        New API.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didNewFirstVisuallyNonEmptyLayout):
+        (WebKit):
+        (WebKit::InjectedBundlePageLoaderClient::didLayout):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (InjectedBundlePageLoaderClient):
+
+        Remove dispatchDidFirstLayout, 
+        dispatchDidFirstVisuallyNonEmptyLayout, and 
+        dispatchDidNewFirstVisuallyNonEmptyLayout. They are now replaced 
+        by dispatchDidLayout(LayoutMilestoneOptions)
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+
+        didFirstLayoutForFrame, didFirstVisuallyNonEmptyLayoutForFrame, 
+        and didNewFirstVisuallyNonEmptyLayout are now implemented with 
+        didLayout under the hood. So if those old callbacks have been 
+        defined, be sure to add the appropriate layout milestones here for 
+        backwards-compatibility.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleLoaderClient):
+        (WebKit):
+
+        Call into WebCore to set the layout milestones.
+        (WebKit::WebPage::listenForLayoutMilestones):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Account for the new member of PageLoadClient.
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL] Disk cache is never dumped to disk in WebKit2

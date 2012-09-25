@@ -82,8 +82,7 @@ public:
     virtual void dispatchDidFailLoad(const ResourceError&);
     virtual void dispatchDidFinishDocumentLoad();
     virtual void dispatchDidFinishLoad();
-    virtual void dispatchDidFirstLayout() { notImplemented(); }
-    virtual void dispatchDidFirstVisuallyNonEmptyLayout();
+    virtual void dispatchDidLayout(LayoutMilestones);
     virtual Frame* dispatchCreatePage(const NavigationAction&);
     virtual void dispatchShow() { notImplemented(); }
 

@@ -32,7 +32,7 @@
 
 namespace TestWebKitAPI {
 
-static bool didNewFirstVisuallyNonEmptyLayoutSucceed;
+static bool didHitRelevantRepaintedObjectsAreaThresholdAchieved;
 static bool test1Done;
 static bool test2Done;
     
@@ -48,9 +48,10 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     WKPageForceRepaint(page, 0, didForceRepaint);
 }
 
-static void didNewFirstVisuallyNonEmptyLayout(WKPageRef, WKTypeRef, const void *)
+static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void *)
 {
-    didNewFirstVisuallyNonEmptyLayoutSucceed = true;
+    if (type == kWKDidHitRelevantRepaintedObjectsAreaThreshold)
+        didHitRelevantRepaintedObjectsAreaThresholdAchieved = true;
 }
 
 static void setPageLoaderClient(WKPageRef page)
@@ -59,7 +60,7 @@ static void setPageLoaderClient(WKPageRef page)
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.version = kWKPageLoaderClientCurrentVersion;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.didNewFirstVisuallyNonEmptyLayout = didNewFirstVisuallyNonEmptyLayout;
+    loaderClient.didLayout = didLayout;
 
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
@@ -80,7 +81,7 @@ TEST(WebKit2, NewFirstVisuallyNonEmptyLayoutFails)
 
     // By the time the forced repaint has finished, the counter would have been hit 
     // if it was sized reasonably for the page.
-    EXPECT_FALSE(didNewFirstVisuallyNonEmptyLayoutSucceed);
+    EXPECT_FALSE(didHitRelevantRepaintedObjectsAreaThresholdAchieved);
 }
 
 } // namespace TestWebKitAPI

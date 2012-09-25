@@ -321,6 +321,11 @@ double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
     return toImpl(pageRef)->deviceScaleFactor();
 }
 
+void WKBundlePageListenForLayoutMilestones(WKBundlePageRef pageRef, WKLayoutMilestones milestones)
+{
+    toImpl(pageRef)->listenForLayoutMilestones(toLayoutMilestones(milestones));
+}
+
 void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef frameRef, WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
@@ -368,11 +373,6 @@ WKRenderObjectRef WKBundlePageCopyRenderTree(WKBundlePageRef pageRef)
 WKRenderLayerRef WKBundlePageCopyRenderLayerTree(WKBundlePageRef pageRef)
 {
     return toAPI(WebRenderLayer::create(toImpl(pageRef)).leakRef());
-}
-
-void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold)
-{
-    toImpl(page)->setPaintedObjectsCounterThreshold(threshold);
 }
 
 void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)

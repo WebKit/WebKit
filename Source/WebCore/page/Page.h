@@ -24,6 +24,7 @@
 #include "FeatureObserver.h"
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
+#include "LayoutMilestones.h"
 #include "LayoutTypes.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
@@ -326,8 +327,10 @@ namespace WebCore {
 
         PlatformDisplayID displayID() const { return m_displayID; }
 
+        void addLayoutMilestones(LayoutMilestones);
+        LayoutMilestones layoutMilestones() const { return m_layoutMilestones; }
+
         bool isCountingRelevantRepaintedObjects() const;
-        void setRelevantRepaintedObjectsCounterThreshold(uint64_t);
         void startCountingRelevantRepaintedObjects();
         void resetRelevantPaintedObjectCounter();
         void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
@@ -446,6 +449,8 @@ namespace WebCore {
         PageVisibilityState m_visibilityState;
 #endif
         PlatformDisplayID m_displayID;
+
+        LayoutMilestones m_layoutMilestones;
 
         HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
         Region m_relevantPaintedRegion;

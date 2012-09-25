@@ -328,7 +328,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didFinishProgress, // didFinishProgress
         0, // shouldForceUniversalAccessFromLocalURL
         didReceiveIntentForFrame, // didReceiveIntentForFrame
-        registerIntentServiceForFrame // registerIntentServiceForFrame
+        registerIntentServiceForFrame, // registerIntentServiceForFrame
+        0, // didLayout
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 

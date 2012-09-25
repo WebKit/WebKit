@@ -260,9 +260,7 @@ public:
     virtual void dispatchDidFailLoad(const ResourceError&) { }
     virtual void dispatchDidFinishDocumentLoad() { }
     virtual void dispatchDidFinishLoad() { }
-    virtual void dispatchDidFirstLayout() { }
-    virtual void dispatchDidFirstVisuallyNonEmptyLayout() { }
-    virtual void dispatchDidNewFirstVisuallyNonEmptyLayout() { }
+    virtual void dispatchDidLayout(LayoutMilestones) { }
 
     virtual Frame* dispatchCreatePage(const NavigationAction&) { return 0; }
     virtual void dispatchShow() { }

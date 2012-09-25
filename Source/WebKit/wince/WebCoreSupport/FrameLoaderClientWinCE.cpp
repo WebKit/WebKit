@@ -376,12 +376,7 @@ void FrameLoaderClientWinCE::dispatchDidFinishDocumentLoad()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::dispatchDidFirstLayout()
-{
-    notImplemented();
-}
-
-void FrameLoaderClientWinCE::dispatchDidFirstVisuallyNonEmptyLayout()
+void FrameLoaderClientWinCE::dispatchDidLayout(LayoutMilestones)
 {
     notImplemented();
 }

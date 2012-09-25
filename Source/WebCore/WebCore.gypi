@@ -3127,6 +3127,7 @@
             'page/GroupSettings.cpp',
             'page/History.cpp',
             'page/History.h',
+            'page/LayoutMilestones.h',
             'page/Location.cpp',
             'page/Location.h',
             'page/MemoryInfo.cpp',

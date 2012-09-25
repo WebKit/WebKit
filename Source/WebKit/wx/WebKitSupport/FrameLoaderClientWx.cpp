@@ -354,13 +354,7 @@ void FrameLoaderClientWx::dispatchDidFinishLoad()
     notImplemented();
 }
 
-
-void FrameLoaderClientWx::dispatchDidFirstLayout()
-{
-    notImplemented();
-}
-
-void FrameLoaderClientWx::dispatchDidFirstVisuallyNonEmptyLayout()
+void FrameLoaderClientWx::dispatchDidLayout(LayoutMilestones)
 {
     notImplemented();
 }

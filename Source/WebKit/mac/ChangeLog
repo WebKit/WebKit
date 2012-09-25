@@ -1,3 +1,55 @@
+2012-09-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=95397
+        Need to merge didFirstVisuallyNonEmptyLayout and 
+        didNewFirstVisuallyNonEmptyLayout
+        -and corresponding-
+        <rdar://problem/10791680>
+
+        Reviewed by Sam Weinig.
+
+        The new API has two parts. First, the client has to opt into which 
+        layout milestones they are interested in hearing about using 
+        [WebView _layoutMilestones]. Then, WebKit will call 
+        the WebFrameLoader delegate's didLayout(WebLayoutMilestones) 
+        callback when the specified layout milestones have fired. 
+        didLayout takes the WebLayoutMilestones bit mask, which will 
+        indicate which milestones have fired since it is possible for two 
+        to fire at the same time.
+
+        Remove dispatchDidFirstLayout, 
+        dispatchDidFirstVisuallyNonEmptyLayout, and 
+        dispatchDidNewFirstVisuallyNonEmptyLayout. They are now replaced 
+        by dispatchDidLayout(LayoutMilestones)
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLayout):
+
+        Add new function to the delegate for didLayout.
+        * WebView/WebDelegateImplementationCaching.h:
+        (WebFrameLoadDelegateImplementationCache):
+
+        We need a delegate template that takes an NSUInteger.
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate):
+        (CallFrameLoadDelegate):
+
+        Convert between WebCore and WebKit versions of the bit mask.
+        * WebView/WebView.mm:
+        (coreLayoutMilestones):
+        (kitLayoutMilestones):
+
+        Add new delegate, and set the appropriate layout milestones in 
+        WebCore based on old delegates having implementations.
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+
+        Call into WebCore.
+        (-[WebView _listenForLayoutMilestones:]):
+        (-[WebView _layoutMilestones]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix Geolocation error reporting in the test support

@@ -254,7 +254,17 @@ void InjectedBundlePageLoaderClient::didNewFirstVisuallyNonEmptyLayout(WebPage* 
     WKTypeRef userDataToPass = 0;
     m_client.didNewFirstVisuallyNonEmptyLayout(toAPI(page), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
-}    
+}
+
+void InjectedBundlePageLoaderClient::didLayout(WebPage* page, LayoutMilestones milestones, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didLayout)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didLayout(toAPI(page), toWKLayoutMilestones(milestones), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
 
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
 {

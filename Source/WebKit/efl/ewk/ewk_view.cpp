@@ -777,6 +777,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->pageSettings = priv->page->settings();
 
+    WebCore::LayoutMilestones layoutMilestones = WebCore::DidFirstLayout | WebCore::DidFirstVisuallyNonEmptyLayout;
+    priv->page->addLayoutMilestones(layoutMilestones);
+
     priv->viewportArguments.width = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.height = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.initialScale = WebCore::ViewportArguments::ValueAuto;

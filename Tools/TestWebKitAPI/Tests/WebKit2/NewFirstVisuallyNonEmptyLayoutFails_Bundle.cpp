@@ -41,9 +41,7 @@ public:
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
-        // Setting the painted objects counter is necessary at this time to opt into
-        // the didNewFirstVisuallyNonEmptyLayout heuristic.
-        WKBundlePageSetPaintedObjectsCounterThreshold(page, 1);
+        WKBundlePageListenForLayoutMilestones(page, kWKDidFirstLayout | kWKDidFirstVisuallyNonEmptyLayout | kWKDidHitRelevantRepaintedObjectsAreaThreshold);
     }
     
 };

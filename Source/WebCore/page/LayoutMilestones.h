@@ -23,29 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundleTest.h"
+#ifndef LayoutMilestones_h
+#define LayoutMilestones_h
 
-#include "PlatformUtilities.h"
-#include <WebKit2/WKBundlePage.h>
-#include <WebKit2/WKBundlePagePrivate.h>
+namespace WebCore {
 
-namespace TestWebKitAPI {
-
-class NewFirstVisuallyNonEmptyLayoutFramesTest : public InjectedBundleTest {
-public:
-    NewFirstVisuallyNonEmptyLayoutFramesTest(const std::string& identifier)
-        : InjectedBundleTest(identifier)
-    {
-    }
-
-    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
-    {
-        WKBundlePageListenForLayoutMilestones(page, kWKDidFirstLayout | kWKDidFirstVisuallyNonEmptyLayout | kWKDidHitRelevantRepaintedObjectsAreaThreshold);
-    }
-    
+enum LayoutMilestoneFlag {
+    DidFirstLayout = 1 << 0,
+    DidFirstVisuallyNonEmptyLayout = 1 << 1,
+    DidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2
 };
 
-static InjectedBundleTest::Register<NewFirstVisuallyNonEmptyLayoutFramesTest> registrar("NewFirstVisuallyNonEmptyLayoutFramesTest");
+typedef unsigned LayoutMilestones;
 
-} // namespace TestWebKitAPI
+} // namespace WebCore
+
+#endif // LayoutMilestones_h

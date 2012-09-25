@@ -416,20 +416,20 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
         frameLoadDelegate->didFinishLoadForFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidFirstLayout()
-{
-    WebView* webView = m_webFrame->webView();
-    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
-    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) && frameLoadDelegatePriv)
-        frameLoadDelegatePriv->didFirstLayoutInFrame(webView, m_webFrame);
-}
-
-void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
+void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
-    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
-        frameLoadDelegatePrivate->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
+
+    if (milestones & DidFirstLayout) {
+        if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
+            frameLoadDelegatePrivate->didFirstLayoutInFrame(webView, m_webFrame);
+    }
+
+    if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
+            frameLoadDelegatePrivate->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
+    }
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction&)

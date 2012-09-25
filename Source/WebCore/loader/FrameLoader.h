@@ -38,6 +38,7 @@
 #include "HistoryController.h"
 #include "IconController.h"
 #include "IconURL.h"
+#include "LayoutMilestones.h"
 #include "PolicyChecker.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadNotifier.h"
@@ -174,12 +175,7 @@ public:
 
     CachePolicy subresourceCachePolicy() const;
 
-    void didFirstLayout();
-
-    // FIXME: didFirstVisuallyNonEmptyLayout() and didNewFirstVisuallyNonEmptyLayout() should be merged.
-    // The only reason for both to exist is to experiment with different heuristics for the time being.
-    void didFirstVisuallyNonEmptyLayout();
-    void didNewFirstVisuallyNonEmptyLayout();
+    void didLayout(LayoutMilestones);
 
     void loadedResourceFromMemoryCache(CachedResource*);
     void tellClientAboutPastMemoryCacheLoads();

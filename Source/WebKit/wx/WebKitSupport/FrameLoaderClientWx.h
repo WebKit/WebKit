@@ -114,8 +114,7 @@ namespace WebCore {
         virtual void dispatchDidCommitLoad();
         virtual void dispatchDidFinishDocumentLoad();
         virtual void dispatchDidFinishLoad();
-        virtual void dispatchDidFirstLayout();
-        virtual void dispatchDidFirstVisuallyNonEmptyLayout();
+        virtual void dispatchDidLayout(WebCore::LayoutMilestones);
         virtual void dispatchDidChangeIcons(WebCore::IconType);
 
         virtual void dispatchShow();

@@ -2691,6 +2691,9 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_page = new Page(pageClients);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));
 
+    unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
+    m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
+
     BString localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath)))
         m_page->settings()->setLocalStorageDatabasePath(toString(localStoragePath));

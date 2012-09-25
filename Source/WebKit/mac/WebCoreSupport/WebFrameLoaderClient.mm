@@ -662,29 +662,36 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:nil];
 }
 
-void WebFrameLoaderClient::dispatchDidFirstLayout()
+void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didFirstLayoutInFrameFunc)
-        CallFrameLoadDelegate(implementations->didFirstLayoutInFrameFunc, webView, @selector(webView:didFirstLayoutInFrame:), m_webFrame.get());
-    
-    // See WebFrameLoaderClient::provisionalLoadStarted.
-    WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
-    if ([getWebView(m_webFrame.get()) drawsBackground])
-        [scrollView setDrawsBackground:YES];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
-    [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
-#endif
-}
 
-void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
-{
-    WebView *webView = getWebView(m_webFrame.get());
-    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
-    if (implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc)
-        CallFrameLoadDelegate(implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc, webView, @selector(webView:didFirstVisuallyNonEmptyLayoutInFrame:), m_webFrame.get());
+    if (implementations->didLayoutFunc)
+        CallFrameLoadDelegate(implementations->didLayoutFunc, webView, @selector(webView:didLayout:), kitLayoutMilestones(milestones));
+
+    if (milestones & DidFirstLayout) {
+        // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
+        // new didLayout API.
+        if (implementations->didFirstLayoutInFrameFunc)
+            CallFrameLoadDelegate(implementations->didFirstLayoutInFrameFunc, webView, @selector(webView:didFirstLayoutInFrame:), m_webFrame.get());
+
+        // See WebFrameLoaderClient::provisionalLoadStarted.
+        WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
+        if ([getWebView(m_webFrame.get()) drawsBackground])
+            [scrollView setDrawsBackground:YES];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+        [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
+        [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
+#endif
+    }
+
+    if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
+        // double duty with the new didLayout API.
+        if (implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc)
+            CallFrameLoadDelegate(implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc, webView, @selector(webView:didFirstVisuallyNonEmptyLayoutInFrame:), m_webFrame.get());
+    }
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction&)

@@ -527,14 +527,12 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
     emitLoadFinished(true);
 }
 
-
-void FrameLoaderClientQt::dispatchDidFirstLayout()
+void FrameLoaderClientQt::dispatchDidLayout(LayoutMilestones milestones)
 {
-}
+    if (!m_webFrame)
+        return;
 
-void FrameLoaderClientQt::dispatchDidFirstVisuallyNonEmptyLayout()
-{
-    if (m_webFrame)
+    if (milestones & DidFirstVisuallyNonEmptyLayout)
         emit m_webFrame->initialLayoutCompleted();
 }
 

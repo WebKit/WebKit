@@ -30,11 +30,29 @@
 
 namespace TestWebKitAPI {
 
-static bool didNewFirstVisuallyNonEmptyLayoutSucceed;
+static bool didFirstLayoutAchieved;
+static bool didFirstVisuallyNonEmptyLayoutAchieved;
+static bool didHitRelevantRepaintedObjectsAreaThresholdAchieved;
+static bool didUnlockAllLayoutMilestones;
 
-static void didNewFirstVisuallyNonEmptyLayout(WKPageRef, WKTypeRef, const void *)
+static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void *)
 {
-    didNewFirstVisuallyNonEmptyLayoutSucceed = true;
+    switch (type) {
+    case kWKDidFirstLayout:
+        didFirstLayoutAchieved = true;
+        break;
+    case kWKDidFirstVisuallyNonEmptyLayout:
+        didFirstVisuallyNonEmptyLayoutAchieved = true;
+        break;
+    case kWKDidHitRelevantRepaintedObjectsAreaThreshold:
+        didHitRelevantRepaintedObjectsAreaThresholdAchieved = true;
+        break;
+    default:
+        break;
+    }
+    
+    if (didFirstLayoutAchieved && didFirstVisuallyNonEmptyLayoutAchieved && didHitRelevantRepaintedObjectsAreaThresholdAchieved)
+        didUnlockAllLayoutMilestones = true;
 }
 
 static void setPageLoaderClient(WKPageRef page)
@@ -42,11 +60,15 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.version = kWKPageLoaderClientCurrentVersion;
-    loaderClient.didNewFirstVisuallyNonEmptyLayout = didNewFirstVisuallyNonEmptyLayout;
+    loaderClient.didLayout = didLayout;
 
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
 
+// FIXME: This test has been broken since http://trac.webkit.org/changeset/115752 It's failing because
+// the frame load is completing before didLayout() manages to unlock the
+// kWKDidHitRelevantRepaintedObjectsAreaThreshold achievement. We probably need to fix this by making
+// this test have a long-running resource.
 TEST(WebKit2, DISABLED_NewFirstVisuallyNonEmptyLayout)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutTest"));
@@ -58,8 +80,8 @@ TEST(WebKit2, DISABLED_NewFirstVisuallyNonEmptyLayout)
     // objects take up more than 10% of the view.
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("lots-of-text", "html")).get());
 
-    Util::run(&didNewFirstVisuallyNonEmptyLayoutSucceed);
-    EXPECT_TRUE(didNewFirstVisuallyNonEmptyLayoutSucceed);
+    Util::run(&didUnlockAllLayoutMilestones);
+    EXPECT_TRUE(didUnlockAllLayoutMilestones);
 }
 
 } // namespace TestWebKitAPI

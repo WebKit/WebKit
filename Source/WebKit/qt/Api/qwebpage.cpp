@@ -358,6 +358,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     // as expected out of the box, we use a default group similar to what other ports are doing.
     page->setGroupName("Default Group");
 
+    page->addLayoutMilestones(DidFirstVisuallyNonEmptyLayout);
+
     settings = new QWebSettings(page->settings());
 
     history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardListImpl*>(page->backForwardList()));

@@ -111,6 +111,7 @@ typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
 typedef void (*WKBundlePageDidReceiveIntentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRequestRef intentRequest, WKTypeRef* userData, const void* clientInfo);
 typedef void (*WKBundlePageRegisterIntentServiceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePageDidLayoutCallback)(WKBundlePageRef page, WKLayoutMilestones milestones, WKTypeRef* userData, const void *clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -153,6 +154,7 @@ struct WKBundlePageLoaderClient {
     // Version 3
     WKBundlePageDidReceiveIntentForFrameCallback                            didReceiveIntentForFrame;
     WKBundlePageRegisterIntentServiceForFrameCallback                       registerIntentServiceForFrame;
+    WKBundlePageDidLayoutCallback                                           didLayout;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
@@ -418,6 +420,8 @@ WK_EXPORT WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePag
 WK_EXPORT WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef page, WKRect rect, double scaleFactor, WKImageOptions options);
 
 WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
+
+WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLayoutMilestones milestones);
 
 WK_EXPORT void WKBundlePageDeliverIntentToFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRef intent);
 

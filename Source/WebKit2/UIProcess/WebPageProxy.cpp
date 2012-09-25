@@ -284,6 +284,20 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
     if (!loadClient)
         return;
 
+    // It would be nice to get rid of this code and transition all clients to using didLayout instead of
+    // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
+    // for backwards compatibility.
+    WebCore::LayoutMilestones milestones = 0;
+    if (loadClient->didFirstLayoutForFrame)
+        milestones |= WebCore::DidFirstLayout;
+    if (loadClient->didFirstVisuallyNonEmptyLayoutForFrame)
+        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+    if (loadClient->didNewFirstVisuallyNonEmptyLayout)
+        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+
+    if (milestones)
+        m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
+
     m_process->send(Messages::WebPage::SetWillGoToBackForwardItemCallbackEnabled(loadClient->version > 0), m_pageID);
 }
 
@@ -1512,6 +1526,14 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
     m_process->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
 }
 
+void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestones)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
+}
+
 void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
 {
     if (!isValid())
@@ -2162,6 +2184,16 @@ void WebPageProxy::didNewFirstVisuallyNonEmptyLayout(CoreIPC::ArgumentDecoder* a
         return;
 
     m_loaderClient.didNewFirstVisuallyNonEmptyLayout(this, userData.get());
+}
+
+void WebPageProxy::didLayout(uint32_t layoutMilestones, CoreIPC::ArgumentDecoder* arguments)
+{
+    RefPtr<APIObject> userData;
+    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    if (!arguments->decode(messageDecoder))
+        return;
+
+    m_loaderClient.didLayout(this, static_cast<LayoutMilestones>(layoutMilestones), userData.get());
 }
 
 void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)

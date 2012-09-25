@@ -483,6 +483,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
     m_page->setGroupName(pageGroupName);
 
+    unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
+    m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
+
 #if ENABLE(PAGE_VISIBILITY_API)
     if (m_client)
         setVisibilityState(m_client->visibilityState(), true);

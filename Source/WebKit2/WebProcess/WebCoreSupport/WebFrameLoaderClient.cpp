@@ -544,7 +544,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
         loadListener->didFinishLoad(m_frame);
 }
 
-void WebFrameLoaderClient::dispatchDidFirstLayout()
+void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -552,49 +552,38 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
 
     RefPtr<APIObject> userData;
 
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(webPage, m_frame, userData);
+    webPage->injectedBundleLoaderClient().didLayout(webPage, milestones, userData);
+    webPage->send(Messages::WebPageProxy::DidLayout(milestones, InjectedBundleUserMessageEncoder(userData.get())));
 
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
+    if (milestones & DidFirstLayout) {
+        // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
+        // new didLayout API.
+        webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(webPage, m_frame, userData);
+        webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
-    if (m_frame == m_frame->page()->mainWebFrame() && !webPage->corePage()->settings()->suppressesIncrementalRendering())
-        webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
-
-#if USE(TILED_BACKING_STORE)
-    // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
-    ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
-#endif
-}
-
-void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<APIObject> userData;
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(webPage, m_frame, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
-}
-
-void WebFrameLoaderClient::dispatchDidNewFirstVisuallyNonEmptyLayout()
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<APIObject> userData;
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didNewFirstVisuallyNonEmptyLayout(webPage, userData);
+        if (m_frame == m_frame->page()->mainWebFrame()) {
+            if (!webPage->corePage()->settings()->suppressesIncrementalRendering())
+                webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
+        }
     
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidNewFirstVisuallyNonEmptyLayout(InjectedBundleUserMessageEncoder(userData.get())));
+#if USE(TILED_BACKING_STORE)
+        // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
+        ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
+#endif
+    }
+
+    if (milestones & DidFirstVisuallyNonEmptyLayout) {
+        // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
+        // double duty with the new didLayout API.
+        webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(webPage, m_frame, userData);
+        webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
+    }
+
+    if (milestones & DidHitRelevantRepaintedObjectsAreaThreshold) {
+        // FIXME: This can go away when we remove didNewFirstVisuallyNonEmptyLayout.
+        webPage->injectedBundleLoaderClient().didNewFirstVisuallyNonEmptyLayout(webPage, userData);
+        webPage->send(Messages::WebPageProxy::DidNewFirstVisuallyNonEmptyLayout(InjectedBundleUserMessageEncoder(userData.get())));
+    }
 }
 
 void WebFrameLoaderClient::dispatchDidLayout()

@@ -32,8 +32,8 @@
 
 namespace TestWebKitAPI {
 
-static bool didNewFirstVisuallyNonEmptyLayoutFireMoreThanOnce;
-static unsigned newVisuallyNonEmptyLayoutCounter;
+static bool didHitRelevantRepaintedObjectsAreaThresholdMoreThanOnce;
+static unsigned didHitRelevantRepaintedObjectsAreaThresholdCounter;
 static bool test1Done;
 static bool test2Done;
     
@@ -49,11 +49,14 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     WKPageForceRepaint(page, 0, didForceRepaint);
 }
 
-static void didNewFirstVisuallyNonEmptyLayout(WKPageRef, WKTypeRef, const void *)
+static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void *)
 {
-    ++newVisuallyNonEmptyLayoutCounter;
-    if (newVisuallyNonEmptyLayoutCounter > 1)
-        didNewFirstVisuallyNonEmptyLayoutFireMoreThanOnce = true;
+    if (type != kWKDidHitRelevantRepaintedObjectsAreaThreshold)
+        return;
+
+    ++didHitRelevantRepaintedObjectsAreaThresholdCounter;
+    if (didHitRelevantRepaintedObjectsAreaThresholdCounter > 1)
+        didHitRelevantRepaintedObjectsAreaThresholdMoreThanOnce = true;
 }
 
 static void setPageLoaderClient(WKPageRef page)
@@ -62,14 +65,14 @@ static void setPageLoaderClient(WKPageRef page)
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.version = kWKPageLoaderClientCurrentVersion;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.didNewFirstVisuallyNonEmptyLayout = didNewFirstVisuallyNonEmptyLayout;
+    loaderClient.didLayout = didLayout;
 
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
 
 TEST(WebKit2, NewFirstVisuallyNonEmptyLayoutFrames)
 {
-    newVisuallyNonEmptyLayoutCounter = 0;
+    didHitRelevantRepaintedObjectsAreaThresholdCounter = 0;
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutFramesTest"));
 
     PlatformWebView webView(context.get());
@@ -82,7 +85,7 @@ TEST(WebKit2, NewFirstVisuallyNonEmptyLayoutFrames)
 
     // By the time the forced repaint has finished, the counter would have been hit 
     // if it was sized reasonably for the page.
-    EXPECT_FALSE(didNewFirstVisuallyNonEmptyLayoutFireMoreThanOnce);
+    EXPECT_FALSE(didHitRelevantRepaintedObjectsAreaThresholdMoreThanOnce);
 }
 
 } // namespace TestWebKitAPI

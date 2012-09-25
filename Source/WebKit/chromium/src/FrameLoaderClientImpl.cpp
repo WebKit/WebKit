@@ -867,15 +867,14 @@ void FrameLoaderClientImpl::dispatchDidFinishLoad()
     // provisional load succeeds or fails, not the "real" one.
 }
 
-void FrameLoaderClientImpl::dispatchDidFirstLayout()
+void FrameLoaderClientImpl::dispatchDidLayout(LayoutMilestones milestones)
 {
-    if (m_webFrame->client())
-        m_webFrame->client()->didFirstLayout(m_webFrame);
-}
+    if (!m_webFrame->client())
+        return;
 
-void FrameLoaderClientImpl::dispatchDidFirstVisuallyNonEmptyLayout()
-{
-    if (m_webFrame->client())
+    if (milestones & DidFirstLayout)
+        m_webFrame->client()->didFirstLayout(m_webFrame);
+    if (milestones & DidFirstVisuallyNonEmptyLayout)
         m_webFrame->client()->didFirstVisuallyNonEmptyLayout(m_webFrame);
 }
 

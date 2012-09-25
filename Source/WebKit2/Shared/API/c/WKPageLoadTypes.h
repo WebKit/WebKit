@@ -48,6 +48,13 @@ enum {
 };
 typedef uint32_t WKSameDocumentNavigationType;
 
+enum {
+    kWKDidFirstLayout = 1 << 0,
+    kWKDidFirstVisuallyNonEmptyLayout = 1 << 1,
+    kWKDidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2
+};
+typedef uint32_t WKLayoutMilestones;
+
 #ifdef __cplusplus
 }
 #endif

@@ -47,6 +47,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/LayoutMilestones.h>
 #include <wtf/TypeTraits.h>
 
 namespace WebKit {
@@ -746,6 +747,34 @@ inline WKSameDocumentNavigationType toAPI(SameDocumentNavigationType type)
     }
     
     return wkType;
+}
+
+inline WKLayoutMilestones toWKLayoutMilestones(WebCore::LayoutMilestones milestones)
+{
+    unsigned wkMilestones = 0;
+
+    if (milestones & WebCore::DidFirstLayout)
+        wkMilestones |= kWKDidFirstLayout;
+    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+        wkMilestones |= kWKDidFirstVisuallyNonEmptyLayout;
+    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+        wkMilestones |= kWKDidHitRelevantRepaintedObjectsAreaThreshold;
+    
+    return wkMilestones;
+}
+
+inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilestones)
+{
+    WebCore::LayoutMilestones milestones = 0;
+
+    if (wkMilestones & kWKDidFirstLayout)
+        milestones |= WebCore::DidFirstLayout;
+    if (wkMilestones & kWKDidFirstVisuallyNonEmptyLayout)
+        milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
+    if (wkMilestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
+        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
+    
+    return milestones;
 }
 
 inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)

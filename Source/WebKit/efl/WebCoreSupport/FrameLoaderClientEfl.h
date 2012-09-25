@@ -106,8 +106,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchDidFailLoad(const ResourceError&);
     virtual void dispatchDidFinishDocumentLoad();
     virtual void dispatchDidFinishLoad();
-    virtual void dispatchDidFirstLayout();
-    virtual void dispatchDidFirstVisuallyNonEmptyLayout();
+    virtual void dispatchDidLayout(LayoutMilestones);
 
     virtual Frame* dispatchCreatePage(const WebCore::NavigationAction&);
     virtual void dispatchShow();

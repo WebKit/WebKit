@@ -108,6 +108,13 @@ typedef enum {
     WebPaginationModeBottomToTop,
 } WebPaginationMode;
 
+enum {
+    WebDidFirstLayout = 1 << 0,
+    WebDidFirstVisuallyNonEmptyLayout = 1 << 1,
+    WebDidHitRelevantRepaintedObjectsAreaThreshold = 1 << 2
+};
+typedef NSUInteger WebLayoutMilestones;
+
 // This needs to be in sync with WebCore::NotificationClient::Permission
 typedef enum {
     WebNotificationPermissionAllowed,
@@ -566,6 +573,9 @@ Could be worth adding to the API.
 - (void)_setPaginationMode:(WebPaginationMode)paginationMode;
 - (WebPaginationMode)_paginationMode;
 
+- (void)_listenForLayoutMilestones:(WebLayoutMilestones)layoutMilestones;
+- (WebLayoutMilestones)_layoutMilestones;
+
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns;
@@ -758,6 +768,8 @@ Could be worth adding to the API.
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 
 - (void)webView:(WebView *)sender didFirstVisuallyNonEmptyLayoutInFrame:(WebFrame *)frame;
+
+- (void)webView:(WebView *)sender didLayout:(WebLayoutMilestones)milestones;
 
 // For implementing the WebInspector's test harness
 - (void)webView:(WebView *)webView didClearInspectorWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame;

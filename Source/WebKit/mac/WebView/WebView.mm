@@ -392,6 +392,20 @@ FindOptions coreOptions(WebFindOptions options)
         | (options & WebFindOptionsStartInSelection ? StartInSelection : 0);
 }
 
+LayoutMilestones coreLayoutMilestones(WebLayoutMilestones milestones)
+{
+    return (milestones & WebDidFirstLayout ? DidFirstLayout : 0)
+        | (milestones & WebDidFirstVisuallyNonEmptyLayout ? DidFirstVisuallyNonEmptyLayout : 0)
+        | (milestones & WebDidHitRelevantRepaintedObjectsAreaThreshold ? DidHitRelevantRepaintedObjectsAreaThreshold : 0);
+}
+
+WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
+{
+    return (milestones & DidFirstLayout ? WebDidFirstLayout : 0)
+        | (milestones & DidFirstVisuallyNonEmptyLayout ? WebDidFirstVisuallyNonEmptyLayout : 0)
+        | (milestones & DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
+}
+
 @interface WebView (WebFileInternal)
 - (float)_deviceScaleFactor;
 - (BOOL)_isLoading;
@@ -1623,6 +1637,7 @@ static inline IMP getMethod(id o, SEL s)
     cache->didFinishLoadForFrameFunc = getMethod(delegate, @selector(webView:didFinishLoadForFrame:));
     cache->didFirstLayoutInFrameFunc = getMethod(delegate, @selector(webView:didFirstLayoutInFrame:));
     cache->didFirstVisuallyNonEmptyLayoutInFrameFunc = getMethod(delegate, @selector(webView:didFirstVisuallyNonEmptyLayoutInFrame:));
+    cache->didLayoutFunc = getMethod(delegate, @selector(webView:didLayout:));
     cache->didHandleOnloadEventsForFrameFunc = getMethod(delegate, @selector(webView:didHandleOnloadEventsForFrame:));
     cache->didReceiveIconForFrameFunc = getMethod(delegate, @selector(webView:didReceiveIcon:forFrame:));
     cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = getMethod(delegate, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
@@ -1634,6 +1649,19 @@ static inline IMP getMethod(id o, SEL s)
     cache->didDisplayInsecureContentFunc = getMethod(delegate, @selector(webViewDidDisplayInsecureContent:));
     cache->didRunInsecureContentFunc = getMethod(delegate, @selector(webView:didRunInsecureContent:));
     cache->didDetectXSSFunc = getMethod(delegate, @selector(webView:didDetectXSS:));
+
+    // It would be nice to get rid of this code and transition all clients to using didLayout instead of
+    // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
+    // for backwards compatibility.
+    Page* page = core(self);
+    if (page) {
+        unsigned milestones = 0;
+        if (cache->didFirstLayoutInFrameFunc)
+            milestones |= DidFirstLayout;
+        if (cache->didFirstVisuallyNonEmptyLayoutInFrameFunc)
+            milestones |= DidFirstVisuallyNonEmptyLayout;
+        page->addLayoutMilestones(static_cast<LayoutMilestones>(milestones));
+    }
 }
 
 - (void)_cacheScriptDebugDelegateImplementations
@@ -2861,6 +2889,24 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
     ASSERT_NOT_REACHED();
     return WebPaginationModeUnpaginated;
+}
+
+- (void)_listenForLayoutMilestones:(WebLayoutMilestones)layoutMilestones
+{
+    Page* page = core(self);
+    if (!page)
+        return;
+
+    page->addLayoutMilestones(coreLayoutMilestones(layoutMilestones));
+}
+
+- (WebLayoutMilestones)_layoutMilestones
+{
+    Page* page = core(self);
+    if (!page)
+        return 0;
+
+    return kitLayoutMilestones(page->layoutMilestones());
 }
 
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns

@@ -89,8 +89,7 @@ namespace WebKit {
         virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
         virtual void dispatchDidFinishDocumentLoad();
         virtual void dispatchDidFinishLoad();
-        virtual void dispatchDidFirstLayout();
-        virtual void dispatchDidFirstVisuallyNonEmptyLayout();
+        virtual void dispatchDidLayout(WebCore::LayoutMilestones);
 
         virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&);
         virtual void dispatchShow();

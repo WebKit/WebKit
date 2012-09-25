@@ -3992,6 +3992,7 @@ webcore_sources += \
 	Source/WebCore/page/GroupSettings.h \
 	Source/WebCore/page/History.cpp \
 	Source/WebCore/page/History.h \
+    Source/WebCore/page/LayoutMilestones.h \
 	Source/WebCore/page/Location.cpp \
 	Source/WebCore/page/Location.h \
 	Source/WebCore/page/MediaCanStartListener.h \
