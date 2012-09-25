@@ -163,7 +163,23 @@ webkit.org/b/86623 editing/pasteboard/smart-drag-drop.html [ Missing ]
 webkit.org/b/86623 editing/pasteboard/subframe-dragndrop-1.html [ Missing ]
 
 # CSS Sticky (-webkit-sticky) not supported by EFL.
-webkit.org/b/95182 fast/css/sticky [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/inflow-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-as-positioning-container.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-left.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-side-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-stacking-context.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-top-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 
 # Testcase assumes a thumb width of 12px, default there uses 29px.
 webkit.org/b/95071 fast/forms/range/slider-in-multi-column.html [ Failure ]
@@ -298,7 +314,7 @@ Bug(EFL) media/media-document-audio-repaint.html [ Failure Pass ]
 Bug(EFL) media/media-controls-clone.html [ Failure Pass ]
 
 webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass ]
-webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Pass Timeout ]
+webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Failure Pass Timeout ]
 webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 

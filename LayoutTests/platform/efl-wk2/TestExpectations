@@ -194,3 +194,5 @@ Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
 # Fails after r128056.
 webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]
 
+# Fails after it was unskipped in r129372.
+webkit.org/b/97545 inspector/styles/variables/css-variables.html [ Failure ]
