@@ -202,7 +202,7 @@ WebInspector.CookiesTable.prototype = {
         data[2] = cookie.domain || "";
         data[3] = cookie.path || "";
         data[4] = cookie.type === WebInspector.Cookie.Type.Request ? "" :
-            (cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toGMTString());
+            (cookie.session ? WebInspector.UIString("Session") : cookie.expires().toUTCString());
         data[5] = cookie.size;
         const checkmark = "\u2713";
         data[6] = (cookie.httpOnly ? checkmark : "");
