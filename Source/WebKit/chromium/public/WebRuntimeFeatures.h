@@ -76,10 +76,6 @@ public:
     WEBKIT_EXPORT static void enableWebAudio(bool);
     WEBKIT_EXPORT static bool isWebAudioEnabled();
 
-    // TODO: Remove these (since they're no-ops) once Chromium code stops calling them.
-    WEBKIT_EXPORT static void enablePushState(bool);
-    WEBKIT_EXPORT static bool isPushStateEnabled(bool);
-
     WEBKIT_EXPORT static void enableTouch(bool);
     WEBKIT_EXPORT static bool isTouchEnabled();
 
