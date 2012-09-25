@@ -42,7 +42,7 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterProgram.h"
 #include "CustomFilterOperation.h"
@@ -84,7 +84,7 @@ inline bool isFilterSizeValid(FloatRect rect)
     return true;
 }
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 static bool isCSSCustomFilterEnabled(Document* document)
 {
     // We only want to enable shaders if WebGL is also enabled on this platform.
@@ -192,7 +192,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
 
 bool FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
 {
-#if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
+#if !ENABLE(CSS_SHADERS) || !USE(3D_GRAPHICS)
     UNUSED_PARAM(document);
 #endif
 
@@ -348,7 +348,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
                                                 dropShadowOperation->x(), dropShadowOperation->y(), dropShadowOperation->color(), 1);
             break;
         }
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
         case FilterOperation::CUSTOM: {
             CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);
             effect = createCustomFilterEffect(this, document, customFilterOperation);

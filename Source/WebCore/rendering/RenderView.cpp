@@ -45,7 +45,7 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
 #endif
 
@@ -911,7 +911,7 @@ void RenderView::willMoveOffscreen()
 #endif
 }
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 CustomFilterGlobalContext* RenderView::customFilterGlobalContext()
 {
     if (!m_customFilterGlobalContext)
