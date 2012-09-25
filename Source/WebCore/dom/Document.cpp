@@ -630,6 +630,9 @@ Document::~Document()
 
     m_decoder = 0;
 
+    if (m_styleSheetList)
+        m_styleSheetList->detachFromDocument();
+
     m_styleSheetCollection.clear();
 
     if (m_namedFlows)
@@ -778,7 +781,7 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
 {
     if (m_compatibilityModeLocked || mode == m_compatibilityMode)
         return;
-    ASSERT(!m_styleSheetCollection->authorStyleSheets()->length());
+    ASSERT(m_styleSheetCollection->authorStyleSheets().isEmpty());
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
     selectorQueryCache()->invalidate();
@@ -3193,7 +3196,9 @@ PassRefPtr<Node> Document::cloneNode(bool /*deep*/)
 
 StyleSheetList* Document::styleSheets()
 {
-    return m_styleSheetCollection->authorStyleSheets();
+    if (!m_styleSheetList)
+        m_styleSheetList = StyleSheetList::create(this);
+    return m_styleSheetList.get();
 }
 
 String Document::preferredStylesheetSet() const

@@ -1319,6 +1319,7 @@ private:
 
 
     OwnPtr<DocumentStyleSheetCollection> m_styleSheetCollection;
+    RefPtr<StyleSheetList> m_styleSheetList;
 
     OwnPtr<FormController> m_formController;
 

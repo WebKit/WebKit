@@ -53,7 +53,6 @@ using namespace HTMLNames;
 
 DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document* document)
     : m_document(document)
-    , m_authorStyleSheets(StyleSheetList::create(document))
     , m_pendingStylesheets(0)
     , m_pageGroupUserSheetCacheValid(false)
     , m_hadActiveLoadingStylesheet(false)
@@ -70,8 +69,6 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document* document)
 
 DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
 {
-    m_authorStyleSheets->documentDestroyed();
-
     if (m_pageUserSheet)
         m_pageUserSheet->clearOwnerNode();
     if (m_pageGroupUserSheets) {
@@ -400,11 +397,11 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
         return;
 
     // See if we are just adding stylesheets.
-    unsigned oldStylesheetCount = m_authorStyleSheets->length();
+    unsigned oldStylesheetCount = m_authorStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
         return;
     for (unsigned i = 0; i < oldStylesheetCount; ++i) {
-        if (m_authorStyleSheets->item(i) != newStylesheets[i])
+        if (m_authorStyleSheets[i] != newStylesheets[i])
             return;
     }
     requiresStyleResolverReset = false;
@@ -448,7 +445,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (!m_document->renderer() || !m_document->attached())
         return false;
 
-    StyleSheetVector newStylesheets;
+    Vector<RefPtr<StyleSheet> > newStylesheets;
     collectActiveStyleSheets(newStylesheets);
 
     bool requiresStyleResolverReset;
@@ -458,12 +455,12 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (requiresStyleResolverReset)
         m_document->clearStyleResolver();
     else {
-        m_document->styleResolver()->appendAuthorStylesheets(m_authorStyleSheets->length(), newStylesheets);
+        m_document->styleResolver()->appendAuthorStylesheets(m_authorStyleSheets.size(), newStylesheets);
         resetCSSFeatureFlags();
     }
-    m_authorStyleSheets->swap(newStylesheets);
+    m_authorStyleSheets.swap(newStylesheets);
 
-    m_usesRemUnits = styleSheetsUseRemUnits(m_authorStyleSheets->vector());
+    m_usesRemUnits = styleSheetsUseRemUnits(m_authorStyleSheets);
     m_needsUpdateActiveStylesheetsOnStyleRecalc = false;
 
     m_document->notifySeamlessChildDocumentsOfStylesheetUpdate();

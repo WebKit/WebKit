@@ -23,6 +23,7 @@
 
 #include "CSSStyleSheet.h"
 #include "Document.h"
+#include "DocumentStyleSheetCollection.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include <wtf/text/WTFString.h>
@@ -31,8 +32,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-StyleSheetList::StyleSheetList(Document* doc)
-    : m_doc(doc)
+StyleSheetList::StyleSheetList(Document* document)
+    : m_document(document)
 {
 }
 
@@ -40,24 +41,33 @@ StyleSheetList::~StyleSheetList()
 {
 }
 
-void StyleSheetList::documentDestroyed()
+inline const Vector<RefPtr<StyleSheet> >& StyleSheetList::styleSheets() const
 {
-    m_doc = 0;
+    if (!m_document)
+        return m_detachedStyleSheets;
+    return m_document->styleSheetCollection()->authorStyleSheets();
+}
+
+void StyleSheetList::detachFromDocument()
+{
+    m_detachedStyleSheets = m_document->styleSheetCollection()->authorStyleSheets();
+    m_document = 0;
 }
 
 unsigned StyleSheetList::length() const
 {
-    return m_sheets.size();
+    return styleSheets().size();
 }
 
 StyleSheet* StyleSheetList::item(unsigned index)
 {
-    return index < length() ? m_sheets[index].get() : 0;
+    const Vector<RefPtr<StyleSheet> >& sheets = styleSheets();
+    return index < sheets.size() ? sheets[index].get() : 0;
 }
 
 HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
 {
-    if (!m_doc)
+    if (!m_document)
         return 0;
 
     // IE also supports retrieving a stylesheet by name, using the name/id of the <style> tag
@@ -65,8 +75,7 @@ HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
     // ### Bad implementation because returns a single element (are IDs always unique?)
     // and doesn't look for name attribute.
     // But unicity of stylesheet ids is good practice anyway ;)
-
-    Element* element = m_doc->getElementById(name);
+    Element* element = m_document->getElementById(name);
     if (element && element->hasTagName(styleTag))
         return static_cast<HTMLStyleElement*>(element);
     return 0;

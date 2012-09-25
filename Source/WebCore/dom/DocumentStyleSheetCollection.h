@@ -49,7 +49,7 @@ public:
     DocumentStyleSheetCollection(Document*);
     ~DocumentStyleSheetCollection();
 
-    StyleSheetList* authorStyleSheets() { return m_authorStyleSheets.get(); }
+    const Vector<RefPtr<StyleSheet> >& authorStyleSheets() { return m_authorStyleSheets; }
 
     CSSStyleSheet* pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets() const;
@@ -106,7 +106,7 @@ private:
 
     Document* m_document;
 
-    RefPtr<StyleSheetList> m_authorStyleSheets;
+    Vector<RefPtr<StyleSheet> > m_authorStyleSheets;
 
     // Track the number of currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.

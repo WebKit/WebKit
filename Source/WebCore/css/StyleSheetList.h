@@ -32,40 +32,26 @@ class Document;
 class HTMLStyleElement;
 class StyleSheet;
 
-typedef Vector<RefPtr<StyleSheet> > StyleSheetVector;
-
 class StyleSheetList : public RefCounted<StyleSheetList> {
 public:
-    static PassRefPtr<StyleSheetList> create(Document* doc) { return adoptRef(new StyleSheetList(doc)); }
+    static PassRefPtr<StyleSheetList> create(Document* document) { return adoptRef(new StyleSheetList(document)); }
     ~StyleSheetList();
-
-    void documentDestroyed();
 
     unsigned length() const;
     StyleSheet* item(unsigned index);
 
     HTMLStyleElement* getNamedItem(const String&) const;
 
-    const StyleSheetVector& vector() const
-    {
-        return m_sheets;
-    }
+    Document* document() { return m_document; }
 
-    void swap(StyleSheetVector& sheets)
-    {
-        m_sheets.swap(sheets);
-    }
-
-    Document* document()
-    {
-        return m_doc;
-    }
+    void detachFromDocument();
 
 private:
     StyleSheetList(Document*);
+    const Vector<RefPtr<StyleSheet> >& styleSheets() const;
 
-    Document* m_doc;
-    StyleSheetVector m_sheets;
+    Document* m_document;
+    Vector<RefPtr<StyleSheet> > m_detachedStyleSheets;
 };
 
 } // namespace WebCore
