@@ -106,15 +106,14 @@ void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& con
         return;
     }
 
+    // Inform the web process about the requested visible content rect immediately so that new tiles
+    // are rendered at the final destination during the animation.
+    m_controller->setVisibleContentsRect(contentRect, viewportScaleForRect(contentRect));
+
     // Since we have to animate scale and position at the same time the scale animation interpolates
     // from the current viewport rect in content coordinates to a visible rect of the content.
     m_scaleAnimation->setStartValue(viewportRectInContentCoords);
     m_scaleAnimation->setEndValue(contentRect);
-
-    // Inform the web process about the requested visible content rect
-    // if zooming-out so that no white tiles are exposed during animation.
-    if (viewportRectInContentCoords.width() / contentRect.width() < m_pageItem->contentsScale())
-        m_controller->setVisibleContentsRect(contentRect, viewportScaleForRect(contentRect));
 
     m_scaleAnimation->start();
 }
@@ -461,11 +460,6 @@ void PageViewportControllerClientQt::pinchGestureRequestUpdate(const QPointF& pi
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
 
     m_viewportItem->setContentPos(m_viewportItem->contentPos() - positionDiff);
-
-    // Inform the web process to render the currently visible area with low-resolution tiles not
-    // to expose white tiles during pinch gestures and to show fixed position layers correctly.
-    // The actual scale is restored after the pinch gesture ends.
-    updateViewportController(QPointF(), 1);
 }
 
 void PageViewportControllerClientQt::pinchGestureEnded()
