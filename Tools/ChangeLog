@@ -1,3 +1,30 @@
+2012-09-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] TestRunner does not support overridePreference with value "0"
+        https://bugs.webkit.org/show_bug.cgi?id=97457
+
+        Reviewed by Alexey Proskuryakov.
+
+        testRunner.overridePreference() was marked as taking a boolean
+        in argument in testRunner.idl even though the test cases are
+        passing strings to it. The current code works if the test
+        case wants to enable a setting and therefore passes "1" string.
+        However, if the test wants to disable a setting and passes "0"
+        string, the current code also evaluates this to true causing
+        certain test cases to fail.
+
+        The argument to testRunner.overridePreference() is now of string
+        type and a function has been added to convert the string passed
+        by the test to a boolean value.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::toBool):
+        (WTR):
+        (WTR::TestRunner::overridePreference):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
 2012-09-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129343.

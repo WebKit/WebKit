@@ -318,7 +318,6 @@ fast/frames/flattening/frameset-flattening-advanced.html
 fast/history/form-submit-in-frame-via-onclick.html
 fast/history/form-submit-in-frame.html
 fast/history/saves-state-after-frame-nav.html
-fast/regions/css-regions-disabled.html
 http/tests/inspector/extensions-ignore-cache.html
 http/tests/security/credentials-in-referer.html
 http/tests/workers/terminate-during-sync-operation.html

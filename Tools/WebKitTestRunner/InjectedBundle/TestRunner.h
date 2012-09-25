@@ -228,7 +228,7 @@ public:
     void callFocusWebViewCallback();
     void callSetBackingScaleFactorCallback();
 
-    void overridePreference(JSStringRef preference, bool value);
+    void overridePreference(JSStringRef preference, JSStringRef value);
 
     // Web intents testing.
     void sendWebIntentResponse(JSStringRef reply);

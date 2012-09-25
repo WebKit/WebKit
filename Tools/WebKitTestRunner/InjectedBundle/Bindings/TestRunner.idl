@@ -160,8 +160,7 @@ module WTR {
         // Cookies testing
         void setAlwaysAcceptCookies(in boolean accept);
 
-        // FIXME: handle non-boolean preferences.
-        void overridePreference(in DOMString preference, in boolean value);
+        void overridePreference(in DOMString preference, in DOMString value);
 
         // Page Visibility API
         void setPageVisibility(in DOMString state);

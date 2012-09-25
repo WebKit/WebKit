@@ -649,9 +649,15 @@ void TestRunner::callSetBackingScaleFactorCallback()
     callTestRunnerCallback(SetBackingScaleFactorCallbackID);
 }
 
-void TestRunner::overridePreference(JSStringRef preference, bool value)
+static inline bool toBool(JSStringRef value)
 {
-    WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), value);
+    return JSStringIsEqualToUTF8CString(value, "true") || JSStringIsEqualToUTF8CString(value, "1");
+}
+
+void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
+{
+    // FIXME: handle non-boolean preferences.
+    WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), toBool(value));
 }
 
 void TestRunner::sendWebIntentResponse(JSStringRef reply)
