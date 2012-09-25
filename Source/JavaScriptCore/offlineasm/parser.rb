@@ -103,7 +103,11 @@ def lex(str, fileName)
             annotationType = whitespaceFound ? :local : :global
         when /\A\n/
             # We've found a '\n'.  Emit the last comment recorded if appropriate:
-            if $enableInstrAnnotations and annotation
+            # We need to parse annotations regardless of whether the backend does
+            # anything with them or not. This is because the C++ backend may make
+            # use of this for its cloopDo debugging utility even if
+            # enableInstrAnnotations is not enabled.
+            if annotation
                 result << Annotation.new(CodeOrigin.new(fileName, lineNumber),
                                          annotationType, annotation)
                 annotation = nil

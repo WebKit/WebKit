@@ -507,7 +507,7 @@ end
 class Instruction
     def lowerC_LOOP
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
-        $asm.annotation annotation if $enableInstrAnnotations
+        $asm.annotation annotation if $enableInstrAnnotations && (opcode != "cloopDo")
 
         case opcode
         when "addi"
@@ -980,6 +980,12 @@ class Instruction
         # have a fixed prototype too. See cloopEmitCallSlowPath() for details.
         when "cloopCallSlowPath"
             cloopEmitCallSlowPath(operands)
+
+        # For debugging only. This is used to insert instrumentation into the
+        # generated LLIntAssembly.h during llint development only. Do not use
+        # for production code.
+        when "cloopDo"
+            $asm.putc "#{annotation}"
 
         else
             lowerDefault

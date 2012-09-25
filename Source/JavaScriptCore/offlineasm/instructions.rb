@@ -227,6 +227,14 @@ CXX_INSTRUCTIONS =
      "cloopCallJSFunction",  # operands: callee
      "cloopCallNative",      # operands: callee
      "cloopCallSlowPath",    # operands: callTarget, currentFrame, currentPC
+
+     # For debugging only:
+     # Takes no operands but simply emits whatever follows in // comments as
+     # a line of C++ code in the generated LLIntAssembly.h file. This can be
+     # used to insert instrumentation into the interpreter loop to inspect
+     # variables of interest. Do not leave these instructions in production
+     # code.
+     "cloopDo",              # no operands
     ]
 
 INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARMv7_INSTRUCTIONS + CXX_INSTRUCTIONS

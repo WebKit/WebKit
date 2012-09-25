@@ -1,3 +1,14 @@
+2012-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Add cloopDo instruction for debugging the llint C++ backend.
+        https://bugs.webkit.org/show_bug.cgi?id=97502.
+
+        Reviewed by Geoffrey Garen.
+
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/parser.rb:
+
 2012-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray::putByIndex asserts with readonly property on prototype
