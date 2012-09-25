@@ -1,3 +1,22 @@
+2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't kill automatically the web process when the ui process finishes
+        https://bugs.webkit.org/show_bug.cgi?id=97580
+
+        Reviewed by Martin Robinson.
+
+        We use prctl(PR_SET_PDEATHSIG, SIGKILL); in linux to make sure the
+        web process is killed when the UI process finishes. This is not
+        needed any more since now the web process stops the main loop when
+        the connection with the UI process is closed in
+        WebProcess::didClose(). This approach is better because it works
+        for any platform and makes the web process finish normally from
+        main().
+
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::childSetupFunction): Don't call prctl(PR_SET_PDEATHSIG,
+        SIGKILL) in the child process.
+
 2012-09-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix, GeolocationClientMock should not be included by WebProcess InjectedBundle

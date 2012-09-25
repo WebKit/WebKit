@@ -60,11 +60,6 @@ static void childSetupFunction(gpointer userData)
 
     // Make child process inherit parent's locale.
     g_setenv("LC_ALL", setlocale(LC_ALL, 0), TRUE);
-
-#if OS(LINUX)
-    // Kill child process when parent dies.
-    prctl(PR_SET_PDEATHSIG, SIGKILL);
-#endif
 }
 
 static void childFinishedFunction(GPid, gint status, gpointer userData)
