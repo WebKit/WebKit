@@ -93,6 +93,7 @@ public:
     // Geolocation.
     void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+    void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
 
 private:
     InjectedBundle();

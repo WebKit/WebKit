@@ -46,6 +46,7 @@ static void stopUpdatingCallback(WKGeolocationManagerRef geolocationManager, con
 
 GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
     : m_isActive(false)
+    , m_hasError(false)
 {
     m_geolocationManager = WKContextGetGeolocationManager(context);
 
@@ -57,11 +58,17 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
     WKGeolocationManagerSetProvider(m_geolocationManager, &providerCallback);
 }
 
-void GeolocationProviderMock::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy)
 {
     m_position.adopt(WKGeolocationPositionCreate(currentTime(), latitude, longitude, accuracy));
-    if (m_isActive)
-        WKGeolocationManagerProviderDidChangePosition(m_geolocationManager, m_position.get());
+    sendPositionIfNeeded();
+}
+
+void GeolocationProviderMock::setPositionUnavailableError(WKStringRef errorMessage)
+{
+    m_errorMessage = errorMessage;
+    m_hasError = true;
+    sendErrorIfNeeded();
 }
 
 void GeolocationProviderMock::startUpdating(WKGeolocationManagerRef geolocationManager)
@@ -69,8 +76,8 @@ void GeolocationProviderMock::startUpdating(WKGeolocationManagerRef geolocationM
     ASSERT_UNUSED(geolocationManager, geolocationManager == m_geolocationManager);
 
     m_isActive = true;
-    if (m_position)
-        WKGeolocationManagerProviderDidChangePosition(m_geolocationManager, m_position.get());
+    sendPositionIfNeeded();
+    sendErrorIfNeeded();
 }
 
 void GeolocationProviderMock::stopUpdating(WKGeolocationManagerRef geolocationManager)
@@ -78,6 +85,23 @@ void GeolocationProviderMock::stopUpdating(WKGeolocationManagerRef geolocationMa
     ASSERT_UNUSED(geolocationManager, geolocationManager == m_geolocationManager);
 
     m_isActive = false;
+}
+
+void GeolocationProviderMock::sendPositionIfNeeded()
+{
+    if (m_isActive && m_position) {
+        WKGeolocationManagerProviderDidChangePosition(m_geolocationManager, m_position.get());
+        m_position.clear();
+    }
+}
+
+void GeolocationProviderMock::sendErrorIfNeeded()
+{
+    if (m_isActive && m_hasError) {
+        m_hasError = false;
+        WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(m_geolocationManager, m_errorMessage.get());
+        m_errorMessage.clear();
+    }
 }
 
 } // namespace WTR

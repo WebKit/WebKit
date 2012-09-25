@@ -292,17 +292,7 @@ platform/mac/editing/deleting/deletionUI-differing-background.html
 platform/mac/editing/deleting/deletionUI-minimum-size.html
 platform/mac/editing/deleting/deletionUI-successful-deletion.html
 
-# Geolocation Tests for which WebKitTestRunner still misses support.
-fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
-fast/dom/Geolocation/delayed-permission-allowed.html
-fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
-fast/dom/Geolocation/delayed-permission-denied.html
-fast/dom/Geolocation/error-clear-watch.html
-fast/dom/Geolocation/error.html
-fast/dom/Geolocation/maximum-age.html
-fast/dom/Geolocation/permission-denied-already-error.html
-fast/dom/Geolocation/reentrant-error.html
-fast/dom/Geolocation/watch.html
+# Fail on WebKit2, the test crash.
 fast/dom/Geolocation/window-close-crash.html
 
 # WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
@@ -560,7 +550,6 @@ fast/text-autosizing
 # https://bugs.webkit.org/show_bug.cgi?id=94554
 inspector/geolocation-error.html
 inspector/geolocation-success.html
-inspector/geolocation-watchPosition.html
 
 # WebFrameLoaderClient::dispatchDecidePolicy methods should consider 
 # 'WKBundlePagePolicyActionPassThrough' policy action 
@@ -953,8 +942,6 @@ plugins/destroy-on-setwindow.html
 fast/forms/input-align.html
 
 # WebProcess sometimes terminates when running these tests
-fast/dom/Geolocation/notimer-after-unload.html
-fast/dom/Geolocation/remove-remote-context-in-error-callback-crash.html
 fast/forms/form-associated-element-crash.html
 
 # New history tests added in r76205 fail on WebKit2 (perhaps the change

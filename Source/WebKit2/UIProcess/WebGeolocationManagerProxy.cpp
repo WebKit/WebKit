@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,12 +64,12 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
     m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
 }
 
-void WebGeolocationManagerProxy::providerDidFailToDeterminePosition()
+void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
 {
     if (!m_context)
         return;
 
-    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition());
+    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
 void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

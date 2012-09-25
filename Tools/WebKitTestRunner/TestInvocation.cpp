@@ -375,6 +375,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockGeolocationPositionUnavailableError")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef errorMessage = static_cast<WKStringRef>(messageBody);
+        TestController::shared().setMockGeolocationPositionUnavailableError(errorMessage);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

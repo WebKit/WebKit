@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,8 @@ WK_EXPORT void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocati
 
 WK_EXPORT void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManager, WKGeolocationPositionRef position);
 WK_EXPORT void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManager);
+
+WK_EXPORT void WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(WKGeolocationManagerRef geolocationManager, WKStringRef errorMessage);
 
 #ifdef __cplusplus
 }

@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WTR {
 
@@ -67,9 +68,10 @@ public:
     void simulateWebNotificationClick(uint64_t notificationID);
 
     // Geolocation.
-    void setGeolocationPermission(bool enabled) { m_isGeolocationPermissionAllowed = enabled; }
-    bool isGeolocationPermissionAllowed() const { return m_isGeolocationPermissionAllowed; }
+    void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+    void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
+    void handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef);
 
     bool resetStateToConsistentValues();
 
@@ -86,6 +88,8 @@ private:
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
+
+    void decidePolicyForGeolocationPermissionRequestIfPossible();
 
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
@@ -129,7 +133,6 @@ private:
     OwnPtr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
-    OwnPtr<GeolocationProviderMock> m_geolocationProvider;
 
     enum State {
         Initial,
@@ -150,6 +153,9 @@ private:
     
     bool m_beforeUnloadReturnValue;
 
+    OwnPtr<GeolocationProviderMock> m_geolocationProvider;
+    Vector<WKGeolocationPermissionRequestRef> m_geolocationPermissionRequests;
+    bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
 
     EventSenderProxy* m_eventSenderProxy;

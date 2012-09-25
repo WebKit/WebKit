@@ -785,6 +785,12 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     InjectedBundle::shared().setMockGeolocationPosition(latitude, longitude, accuracy);
 }
 
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
+{
+    WKRetainPtr<WKStringRef> messageWK = toWK(message);
+    InjectedBundle::shared().setMockGeolocationPositionUnavailableError(messageWK.get());
+}
+
 bool TestRunner::callShouldCloseOnWebView()
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());

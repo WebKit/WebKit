@@ -34,16 +34,23 @@ class GeolocationProviderMock {
 public:
     GeolocationProviderMock(WKContextRef);
 
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
+    void setPosition(double latitude, double longitude, double accuracy);
+    void setPositionUnavailableError(WKStringRef errorMessage);
 
     void startUpdating(WKGeolocationManagerRef);
     void stopUpdating(WKGeolocationManagerRef);
 
 private:
+    void sendPositionIfNeeded();
+    void sendErrorIfNeeded();
+
     WKGeolocationManagerRef m_geolocationManager;
     bool m_isActive;
 
     WKRetainPtr<WKGeolocationPositionRef> m_position;
+
+    bool m_hasError;
+    WKRetainPtr<WKStringRef> m_errorMessage;
 };
 
 } // namespace WTR

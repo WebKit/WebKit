@@ -386,4 +386,10 @@ void InjectedBundle::setMockGeolocationPosition(double latitude, double longitud
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
+void InjectedBundle::setMockGeolocationPositionUnavailableError(WKStringRef errorMessage)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGeolocationPositionUnavailableError"));
+    WKBundlePostMessage(m_bundle, messageName.get(), errorMessage);
+}
+
 } // namespace WTR

@@ -1,3 +1,30 @@
+2012-09-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add missing support for Geolocation tests on WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=97518
+
+        Reviewed by Sam Weinig.
+
+        The existing API for reporting error does not support passing and error message.
+
+        The interface UIProcess<->WebProcess is changed to take an error message, the
+        existing API now pass a null String, and the new function
+        WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage() provide
+        the extended support with error message.
+
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage):
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::providerDidFailToDeterminePosition):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebGeolocationManagerProxy):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+
 2012-09-25  Akash Vaswani  <avaswani@apple.com>
 
         Crash after clicking in plugin at kauaiexplorer.com

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,4 +49,9 @@ void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolo
 void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManagerRef)
 {
     toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
+}
+
+void WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(WKGeolocationManagerRef geolocationManagerRef, WKStringRef errorMessage)
+{
+    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition(toWTFString(errorMessage));
 }

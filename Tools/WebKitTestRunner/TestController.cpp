@@ -91,6 +91,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
+    , m_isGeolocationPermissionSet(false)
     , m_isGeolocationPermissionAllowed(false)
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     , m_eventSenderProxy(new EventSenderProxy(this))
@@ -174,10 +175,7 @@ static void unfocus(WKPageRef page, const void* clientInfo)
 static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
 {
     TestController* testController = static_cast<TestController*>(const_cast<void*>(clientInfo));
-    if (testController->isGeolocationPermissionAllowed())
-        WKGeolocationPermissionRequestAllow(permissionRequest);
-    else
-        WKGeolocationPermissionRequestDeny(permissionRequest);
+    testController->handleGeolocationPermissionRequest(permissionRequest);
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
@@ -527,6 +525,11 @@ bool TestController::resetStateToConsistentValues()
 
     // Reset notification permissions
     m_webNotificationProvider.reset();
+
+    // Reset Geolocation permissions.
+    m_geolocationPermissionRequests.clear();
+    m_isGeolocationPermissionSet = false;
+    m_isGeolocationPermissionAllowed = false;
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -999,9 +1002,41 @@ void TestController::simulateWebNotificationClick(uint64_t notificationID)
     m_webNotificationProvider.simulateWebNotificationClick(notificationID);
 }
 
+void TestController::setGeolocationPermission(bool enabled)
+{
+    m_isGeolocationPermissionSet = true;
+    m_isGeolocationPermissionAllowed = enabled;
+    decidePolicyForGeolocationPermissionRequestIfPossible();
+}
+
 void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    m_geolocationProvider->setMockGeolocationPosition(latitude, longitude, accuracy);
+    m_geolocationProvider->setPosition(latitude, longitude, accuracy);
+}
+
+void TestController::setMockGeolocationPositionUnavailableError(WKStringRef errorMessage)
+{
+    m_geolocationProvider->setPositionUnavailableError(errorMessage);
+}
+
+void TestController::handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef geolocationPermissionRequest)
+{
+    m_geolocationPermissionRequests.append(geolocationPermissionRequest);
+    decidePolicyForGeolocationPermissionRequestIfPossible();
+}
+
+void TestController::decidePolicyForGeolocationPermissionRequestIfPossible()
+{
+    if (!m_isGeolocationPermissionSet)
+        return;
+
+    for (size_t i = 0; i < m_geolocationPermissionRequests.size(); ++i) {
+        WKGeolocationPermissionRequestRef& permissionRequest = m_geolocationPermissionRequests[i];
+        if (m_isGeolocationPermissionAllowed)
+            WKGeolocationPermissionRequestAllow(permissionRequest);
+        else
+            WKGeolocationPermissionRequestDeny(permissionRequest);
+    }
 }
 
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void* clientInfo)

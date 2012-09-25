@@ -1,3 +1,46 @@
+2012-09-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add missing support for Geolocation tests on WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=97518
+
+        Reviewed by Sam Weinig.
+
+        There are two main features added to the tooling to make the test run:
+        -Add support for error reporting for position errors through setMockGeolocationPositionUnavailableError.
+        -Support the 3 states permission: undefined-allowed-denied.
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::GeolocationProviderMock):
+        (WTR::GeolocationProviderMock::setPosition):
+        (WTR::GeolocationProviderMock::setPositionUnavailableError):
+        (WTR::GeolocationProviderMock::startUpdating):
+        (WTR::GeolocationProviderMock::sendPositionIfNeeded):
+        (WTR::GeolocationProviderMock::sendErrorIfNeeded):
+        * WebKitTestRunner/GeolocationProviderMock.h:
+        (GeolocationProviderMock):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setMockGeolocationPositionUnavailableError):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMockGeolocationPositionUnavailableError):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::decidePolicyForGeolocationPermissionRequest):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::setGeolocationPermission):
+        (WTR::TestController::setMockGeolocationPosition):
+        (WTR::TestController::setMockGeolocationPositionUnavailableError):
+        (WTR::TestController::handleGeolocationPermissionRequest):
+        (WTR::TestController::decidePolicyForGeolocationPermissionRequestIfPossible):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2012-09-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129517.

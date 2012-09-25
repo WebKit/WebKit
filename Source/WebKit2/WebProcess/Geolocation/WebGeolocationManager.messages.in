@@ -22,5 +22,5 @@
 
 messages -> WebGeolocationManager {
     DidChangePosition(WebKit::WebGeolocationPosition::Data position);
-    DidFailToDeterminePosition();
+    DidFailToDeterminePosition(WTF::String errorMessage);
 }

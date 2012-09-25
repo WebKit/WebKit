@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,10 @@ namespace WebCore {
 class Geolocation;
 }
 
+namespace WTF {
+class String;
+}
+
 namespace WebKit {
 
 class WebProcess;
@@ -64,7 +68,7 @@ private:
     void didReceiveWebGeolocationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     void didChangePosition(const WebGeolocationPosition::Data&);
-    void didFailToDeterminePosition();
+    void didFailToDeterminePosition(const WTF::String& errorMessage);
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;

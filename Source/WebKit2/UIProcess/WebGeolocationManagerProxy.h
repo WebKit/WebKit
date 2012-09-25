@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "MessageID.h"
 #include "WebGeolocationProvider.h"
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -53,7 +54,7 @@ public:
     void initializeProvider(const WKGeolocationProvider*);
 
     void providerDidChangePosition(WebGeolocationPosition*);
-    void providerDidFailToDeterminePosition();
+    void providerDidFailToDeterminePosition(const String& errorMessage = String());
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
