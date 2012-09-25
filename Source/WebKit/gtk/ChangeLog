@@ -1,3 +1,17 @@
+2012-09-25  Paweł Forysiuk  <tuxator@o2.pl>
+
+        [GTK] Webkit 1.8.2 fails to build with MinGW with spellchecking enabled
+        https://bugs.webkit.org/show_bug.cgi?id=93255
+
+        Reviewed by Martin Robinson.
+
+        Build dies because of invalid cast. Additionaly word "interface" is in use with MinGW compiler.
+
+        * WebCoreSupport/TextCheckerClientGtk.cpp:
+        (WebKit::TextCheckerClientGtk::checkSpellingOfString): Use String to avoid unneded casting
+        * webkit/webkitspellcheckerenchant.cpp:
+        (webkit_spell_checker_enchant_spell_checker_interface_init): rename interface -> checkerInterface
+
 2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix Geolocation error reporting in the test support
