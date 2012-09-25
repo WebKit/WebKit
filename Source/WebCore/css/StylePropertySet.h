@@ -33,7 +33,9 @@ namespace WebCore {
 
 class CSSRule;
 class CSSStyleDeclaration;
+class ImmutableStylePropertySet;
 class KURL;
+class MutableStylePropertySet;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 class StylePropertyShorthand;
@@ -43,14 +45,12 @@ class StylePropertySet : public RefCounted<StylePropertySet> {
 public:
     ~StylePropertySet();
 
-    static PassRefPtr<StylePropertySet> create(CSSParserMode cssParserMode = CSSQuirksMode)
-    {
-        return adoptRef(new StylePropertySet(cssParserMode));
-    }
-    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, unsigned count)
-    {
-        return adoptRef(new StylePropertySet(properties, count, CSSStrictMode, /* makeMutable */ true));
-    }
+    // Override RefCounted's deref() to ensure operator delete is called on
+    // the appropriate subclass type.
+    void deref();
+
+    static PassRefPtr<StylePropertySet> create(CSSParserMode = CSSQuirksMode);
+    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, unsigned count);
     static PassRefPtr<StylePropertySet> createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const;
@@ -114,12 +114,33 @@ public:
 #ifndef NDEBUG
     void showStyle();
 #endif
+
+    const CSSProperty* immutablePropertyArray() const;
+
+protected:
+    StylePropertySet(CSSParserMode cssParserMode)
+        : m_cssParserMode(cssParserMode)
+        , m_ownsCSSOMWrapper(false)
+        , m_isMutable(true)
+        , m_arraySize(0)
+    { }
+
+    StylePropertySet(CSSParserMode cssParserMode, unsigned immutableArraySize)
+        : m_cssParserMode(cssParserMode)
+        , m_ownsCSSOMWrapper(false)
+        , m_isMutable(false)
+        , m_arraySize(immutableArraySize)
+    { }
+
+    Vector<CSSProperty, 4>& mutablePropertyVector();
+    const Vector<CSSProperty, 4>& mutablePropertyVector() const;
+
+    unsigned m_cssParserMode : 2;
+    mutable unsigned m_ownsCSSOMWrapper : 1;
+    mutable unsigned m_isMutable : 1;
+    unsigned m_arraySize : 28;
     
 private:
-    StylePropertySet(CSSParserMode);
-    StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode, bool makeMutable);
-    StylePropertySet(const StylePropertySet&);
-
     void setNeedsStyleRecalc();
 
     String getShorthandValue(const StylePropertyShorthand&) const;
@@ -139,40 +160,63 @@ private:
     CSSProperty* findPropertyWithId(CSSPropertyID);
 
     void append(const CSSProperty&);
-    CSSProperty* array();
-    const CSSProperty* array() const;
 
-    unsigned m_cssParserMode : 2;
-    mutable unsigned m_ownsCSSOMWrapper : 1;
-    mutable unsigned m_isMutable : 1;
-    unsigned m_arraySize : 28;
-
-    union {
-        Vector<CSSProperty>* m_mutablePropertyVector;
-        void* m_properties;
-    };
-    
     friend class PropertySetCSSStyleDeclaration;
 };
 
+class ImmutableStylePropertySet : public StylePropertySet {
+public:
+    ImmutableStylePropertySet(const CSSProperty*, unsigned count, CSSParserMode);
+    ~ImmutableStylePropertySet();
+
+    void* m_propertyArray;
+};
+
+class MutableStylePropertySet : public StylePropertySet {
+public:
+    MutableStylePropertySet(CSSParserMode cssParserMode)
+        : StylePropertySet(cssParserMode)
+    { }
+    MutableStylePropertySet(const CSSProperty* properties, unsigned count);
+    MutableStylePropertySet(const StylePropertySet&);
+
+    Vector<CSSProperty, 4> m_propertyVector;
+};
+
+inline Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector()
+{
+    ASSERT(m_isMutable);
+    return static_cast<MutableStylePropertySet*>(this)->m_propertyVector;
+}
+
+inline const Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector() const
+{
+    ASSERT(m_isMutable);
+    return static_cast<const MutableStylePropertySet*>(this)->m_propertyVector;
+}
+
+inline const CSSProperty* StylePropertySet::immutablePropertyArray() const
+{
+    ASSERT(!m_isMutable);
+    return reinterpret_cast<const CSSProperty*>(&static_cast<const ImmutableStylePropertySet*>(this)->m_propertyArray);
+}
+
 inline CSSProperty& StylePropertySet::propertyAt(unsigned index)
 {
-    if (isMutable())
-        return m_mutablePropertyVector->at(index);
-    return array()[index];
+    return mutablePropertyVector().at(index);
 }
 
 inline const CSSProperty& StylePropertySet::propertyAt(unsigned index) const
 {
-    if (isMutable())
-        return m_mutablePropertyVector->at(index);
-    return array()[index];
+    if (m_isMutable)
+        return mutablePropertyVector().at(index);
+    return immutablePropertyArray()[index];
 }
 
 inline unsigned StylePropertySet::propertyCount() const
 {
-    if (isMutable())
-        return m_mutablePropertyVector->size();
+    if (m_isMutable)
+        return mutablePropertyVector().size();
     return m_arraySize;
 }
 
@@ -181,16 +225,15 @@ inline bool StylePropertySet::isEmpty() const
     return !propertyCount();
 }
 
-inline CSSProperty* StylePropertySet::array()
+inline void StylePropertySet::deref()
 {
-    ASSERT(!isMutable());
-    return reinterpret_cast<CSSProperty*>(&m_properties);
-}
+    if (!derefBase())
+        return;
 
-inline const CSSProperty* StylePropertySet::array() const
-{
-    ASSERT(!isMutable());
-    return reinterpret_cast<const CSSProperty*>(&m_properties);
+    if (m_isMutable)
+        delete static_cast<MutableStylePropertySet*>(this);
+    else
+        delete static_cast<ImmutableStylePropertySet*>(this);
 }
 
 } // namespace WebCore
