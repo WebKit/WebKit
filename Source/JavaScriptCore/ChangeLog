@@ -1,3 +1,18 @@
+2012-09-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Bug in numeric accessors on global environment
+        https://bugs.webkit.org/show_bug.cgi?id=97526
+
+        Reviewed by Geoff Garen.
+
+        I've hit this assert in test262 in browser, but haven't yet worked out how to repro in a test case :-/
+        The sparsemap is failing to map back from the global object to the window shell.
+        A test case would need to resolve a numeric property name against the global environment.
+
+        (JSC::SparseArrayEntry::get):
+        (JSC::SparseArrayEntry::put):
+            - Add missing toThisObject calls.
+
 2012-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         SerializedScriptValue isn't aware of indexed storage, but should be

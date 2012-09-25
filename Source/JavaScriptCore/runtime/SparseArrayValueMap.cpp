@@ -159,7 +159,7 @@ JSValue SparseArrayEntry::get(ExecState* exec, JSObject* array) const
 
     CallData callData;
     CallType callType = getter->methodTable()->getCallData(getter, callData);
-    return call(exec, getter, callType, callData, array, exec->emptyList());
+    return call(exec, getter, callType, callData, array->methodTable()->toThisObject(array, exec), exec->emptyList());
 }
 
 void SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
@@ -189,6 +189,8 @@ void SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
     CallType callType = setter->methodTable()->getCallData(setter, callData);
     MarkedArgumentBuffer args;
     args.append(value);
+    if (thisValue.isObject())
+        thisValue = asObject(thisValue)->methodTable()->toThisObject(asObject(thisValue), exec);
     call(exec, setter, callType, callData, thisValue, args);
 }
 
