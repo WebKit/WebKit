@@ -73,6 +73,7 @@ public:
     void resetState();
 
     virtual void causesRecompilation(ErrorString*, bool*);
+    virtual void recompileScript() = 0;
     virtual void isSampling(ErrorString*, bool*);
     virtual void hasHeapProfiler(ErrorString*, bool*);
 

@@ -48,6 +48,7 @@
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
+#include "WorkerScriptDebugServer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -70,6 +71,11 @@ public:
     virtual ~PageProfilerAgent() { }
 
 private:
+    virtual void recompileScript()
+    {
+        PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+    }
+
     virtual void startProfiling(const String& title)
     {
         ScriptProfiler::startForPage(m_inspectedPage, title);
@@ -88,7 +94,6 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
     return adoptPtr(new PageProfilerAgent(instrumentingAgents, consoleAgent, inspectedPage, inspectorState, injectedScriptManager));
 }
 
-
 #if ENABLE(WORKERS)
 class WorkerProfilerAgent : public InspectorProfilerAgent {
 public:
@@ -97,6 +102,8 @@ public:
     virtual ~WorkerProfilerAgent() { }
 
 private:
+    virtual void recompileScript() { }
+
     virtual void startProfiling(const String& title)
     {
         ScriptProfiler::startForWorkerContext(m_workerContext, title);
@@ -222,7 +229,7 @@ void InspectorProfilerAgent::disable()
         return;
     m_enabled = false;
     m_headersRequested = false;
-    PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+    recompileScript();
 }
 
 void InspectorProfilerAgent::enable(bool skipRecompile)
@@ -231,7 +238,7 @@ void InspectorProfilerAgent::enable(bool skipRecompile)
         return;
     m_enabled = true;
     if (!skipRecompile)
-        PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+        recompileScript();
 }
 
 String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool incrementProfileNumber)
