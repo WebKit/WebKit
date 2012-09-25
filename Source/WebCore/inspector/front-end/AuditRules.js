@@ -755,8 +755,8 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             var src = node.getAttribute("src");
             if (!src.asParsedURL()) {
                 for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
-                    if (frameOwnerCandidate.documentURL) {
-                        var completeSrc = WebInspector.ParsedURL.completeURL(frameOwnerCandidate.documentURL, src);
+                    if (frameOwnerCandidate.baseURL) {
+                        var completeSrc = WebInspector.ParsedURL.completeURL(frameOwnerCandidate.baseURL, src);
                         break;
                     }
                 }
@@ -902,7 +902,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
                 var externalStylesheetHrefs = [];
                 for (var j = 0; j < externalStylesheetNodeIds.length; ++j) {
                     var linkNode = WebInspector.domAgent.nodeForId(externalStylesheetNodeIds[j]);
-                    var completeHref = WebInspector.ParsedURL.completeURL(linkNode.ownerDocument.documentURL, linkNode.getAttribute("href"));
+                    var completeHref = WebInspector.ParsedURL.completeURL(linkNode.ownerDocument.baseURL, linkNode.getAttribute("href"));
                     externalStylesheetHrefs.push(completeHref || "<empty>");
                 }
                 urlToViolationsArray[root.documentURL] = [inlineStyleNodeIds.length, externalStylesheetHrefs];
@@ -989,7 +989,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
                 var lateStyleUrls = [];
                 for (var i = 0; i < lateStyleIds.length; ++i) {
                     var lateStyleNode = WebInspector.domAgent.nodeForId(lateStyleIds[i]);
-                    var completeHref = WebInspector.ParsedURL.completeURL(lateStyleNode.ownerDocument.documentURL, lateStyleNode.getAttribute("href"));
+                    var completeHref = WebInspector.ParsedURL.completeURL(lateStyleNode.ownerDocument.baseURL, lateStyleNode.getAttribute("href"));
                     lateStyleUrls.push(completeHref || "<empty>");
                 }
                 result = [ lateStyleUrls, cssBeforeInlineCount ];

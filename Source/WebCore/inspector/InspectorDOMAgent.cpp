@@ -1176,6 +1176,11 @@ String InspectorDOMAgent::documentURLString(Document* document)
     return document->url().string();
 }
 
+static String documentBaseURLString(Document* document)
+{
+    return document->completeURL("").string();
+}
+
 PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap)
 {
     int id = bind(node, nodesMap);
@@ -1240,6 +1245,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
     } else if (node->isDocumentNode()) {
         Document* document = static_cast<Document*>(node);
         value->setDocumentURL(documentURLString(document));
+        value->setBaseURL(documentBaseURLString(document));
         value->setXmlVersion(document->xmlVersion());
     } else if (node->nodeType() == Node::DOCUMENT_TYPE_NODE) {
         DocumentType* docType = static_cast<DocumentType*>(node);

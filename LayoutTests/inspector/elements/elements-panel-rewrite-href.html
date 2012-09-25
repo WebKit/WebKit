@@ -24,6 +24,10 @@ function test()
                     segments.push("<empty>");
                     continue;
                 }
+                if (href.startsWith("http:")) {
+                    InspectorTest.addResult(href);
+                    continue;
+                }
                 var parsedURL = href.asParsedURL();
                 if (!parsedURL)
                     testController.notifyDone("FAIL: no URL match for <" + href + ">");
@@ -42,12 +46,12 @@ function test()
 </script>
 </head>
 
-<body onload="runTest()">
+<body>
 <p>
 Tests that src and href element targets are rewritten properly.
 </p>
 
 <a style="display:none" href=" javascript:alert('foo') "></a>
-
+<iframe src="resources/elements-panel-rewrite-href-iframe.html" onload="runTest()"></iframe>
 </body>
 </html>

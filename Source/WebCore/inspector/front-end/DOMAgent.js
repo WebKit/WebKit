@@ -747,8 +747,8 @@ WebInspector.DOMNode.prototype = {
         if (!url)
             return url;
         for (var frameOwnerCandidate = this; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
-            if (frameOwnerCandidate.documentURL)
-                return WebInspector.ParsedURL.completeURL(frameOwnerCandidate.documentURL, url);
+            if (frameOwnerCandidate.baseURL)
+                return WebInspector.ParsedURL.completeURL(frameOwnerCandidate.baseURL, url);
         }
         return null;
     }
@@ -764,6 +764,7 @@ WebInspector.DOMDocument = function(domAgent, payload)
 {
     WebInspector.DOMNode.call(this, domAgent, this, false, payload);
     this.documentURL = payload.documentURL || "";
+    this.baseURL = payload.baseURL;
     this.xmlVersion = payload.xmlVersion;
     this._listeners = {};
 }
