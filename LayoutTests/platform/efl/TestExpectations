@@ -47,6 +47,9 @@ Bug(EFL) fast/dom/Element/id-in-deletebutton.html
 # This test is out-dated since r95899.
 webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
 
+# Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
+Bug(EFL) fast/forms/input-text-click-outside.html
+
 # Exclusions implementation not complete yet.
 webkit.org/b/83898 fast/exclusions
 

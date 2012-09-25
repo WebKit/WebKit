@@ -67,6 +67,9 @@ Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 webkit.org/b/84835 editing/execCommand/indent-paragraphs.html [ Failure ]
 
+# Incomplete policy delegate dumping (missing "originated from")
+Bug(EFL) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
+
 # Custom font loading delaying text drawing on Canvas
 webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 
