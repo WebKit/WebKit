@@ -243,6 +243,7 @@ fast/dom/shadow/shadow-element-rendering-single.html
 fast/dom/shadow/shadow-element-rendering-multiple.html
 fast/dom/shadow/shadow-nested-pseudo-id.html
 fast/dom/shadow/shadow-on-image.html
+fast/dom/shadow/shadow-removechild-and-blur-event.html
 fast/dom/shadow/shadow-root-activeElement.html
 fast/dom/shadow/shadow-root-append.html
 fast/dom/shadow/shadow-root-applyAuthorStyles.html
@@ -1321,6 +1322,12 @@ css3/filters/custom/effect-custom-parameters.html
 css3/filters/custom/filter-repaint-custom-clipped.html
 css3/filters/custom/filter-repaint-custom-rotated.html
 css3/filters/custom/filter-repaint-custom.html
+
+# ERROR: TestRunner::overridePreference() does not support the 'WebKitDisplayImagesKey' preference
+# http://trac.webkit.org/changeset/129462
+fast/loader/display-image-unset-allows-cached-image-load.html
+fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
+fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
 
 # ReferenceError: Can't find variable: MediaKeyError
 # http://trac.webkit.org/changeset/114067
