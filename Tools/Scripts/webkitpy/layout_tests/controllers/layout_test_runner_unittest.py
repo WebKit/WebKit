@@ -152,13 +152,13 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._expectations = expectations
 
         result_summary = ResultSummary(expectations, [test], 1, set())
-        result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()], is_reftest=True)
+        result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()], reftest_type=['!='])
         runner._update_summary_with_result(result_summary, result)
         self.assertEquals(1, result_summary.expected)
         self.assertEquals(0, result_summary.unexpected)
 
         result_summary = ResultSummary(expectations, [test], 1, set())
-        result = TestResult(test_name=test, failures=[], is_reftest=True)
+        result = TestResult(test_name=test, failures=[], reftest_type=['=='])
         runner._update_summary_with_result(result_summary, result)
         self.assertEquals(0, result_summary.expected)
         self.assertEquals(1, result_summary.unexpected)

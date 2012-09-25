@@ -94,7 +94,8 @@ class SingleTestRunner(object):
     def run(self):
         if self._reference_files:
             if self._port.get_option('no_ref_tests') or self._options.reset_results:
-                result = TestResult(self._test_name, is_reftest=True)
+                reftest_type = set([reference_file[0] for reference_file in self._reference_files])
+                result = TestResult(self._test_name, reftest_type=reftest_type)
                 result.type = test_expectations.SKIP
                 return result
             return self._run_reftest()
@@ -303,7 +304,8 @@ class SingleTestRunner(object):
 
         assert(reference_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, test_output, reference_output, test_result.failures)
-        return TestResult(self._test_name, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, is_reftest=True)
+        reftest_type = set([reference_file[0] for reference_file in self._reference_files])
+        return TestResult(self._test_name, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type)
 
     def _compare_output_with_reference(self, reference_driver_output, actual_driver_output, reference_filename, mismatch):
         total_test_time = reference_driver_output.test_time + actual_driver_output.test_time

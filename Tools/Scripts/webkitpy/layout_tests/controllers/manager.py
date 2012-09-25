@@ -75,7 +75,7 @@ def interpret_test_failures(port, test_name, failures):
         test_name: test name relative to layout_tests directory
         failures: list of test failures
     Returns:
-        A dictionary like {'is_reftest': True, ...}
+        A dictionary like {'is_missing_text': True, ...}
     """
     test_dict = {}
     failure_types = [type(failure) for failure in failures]
@@ -84,20 +84,16 @@ def interpret_test_failures(port, test_name, failures):
     if test_failures.FailureMissingAudio in failure_types:
         test_dict['is_missing_audio'] = True
 
-    for failure in failures:
-        if isinstance(failure, test_failures.FailureImageHashMismatch):
-            test_dict['image_diff_percent'] = failure.diff_percent
-        elif isinstance(failure, test_failures.FailureReftestMismatch):
-            test_dict['is_reftest'] = True
-            test_dict['image_diff_percent'] = failure.diff_percent
-        elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
-            test_dict['is_mismatch_reftest'] = True
-
     if test_failures.FailureMissingResult in failure_types:
         test_dict['is_missing_text'] = True
 
     if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
         test_dict['is_missing_image'] = True
+
+    for failure in failures:
+        if isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch):
+            test_dict['image_diff_percent'] = failure.diff_percent
+
     return test_dict
 
 
@@ -171,6 +167,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         test_dict = {}
         if result.has_stderr:
             test_dict['has_stderr'] = True
+
+        if result.reftest_type:
+            test_dict.update(reftest_type=list(result.reftest_type))
 
         if expectations.has_modifier(test_name, test_expectations.WONTFIX):
             test_dict['wontfix'] = True

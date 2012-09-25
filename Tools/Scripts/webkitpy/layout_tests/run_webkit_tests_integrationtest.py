@@ -968,7 +968,7 @@ class EndToEndTest(unittest.TestCase):
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-mismatch-failure.html"],
             {"expected": "PASS", "actual": "IMAGE", "is_mismatch_reftest": True})
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-both-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "is_mismatch_reftest": True})
+            {"expected": "PASS", "actual": "IMAGE", "is_mismatch_reftest": True, "is_reftest": True})
 
 
 class RebaselineTest(unittest.TestCase, StreamTestingMixin):

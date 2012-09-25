@@ -104,24 +104,32 @@ class ResultSummaryTest(unittest.TestCase):
 
     def test_interpret_test_failures(self):
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
-            [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
-        self.assertTrue('is_reftest' in test_dict)
-        self.assertFalse('is_mismatch_reftest' in test_dict)
+            [test_failures.FailureImageHashMismatch(diff_percent=0.42)])
+        self.assertEqual(test_dict['image_diff_percent'], 0.42)
 
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
-            [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/common.html'))])
-        self.assertTrue('is_reftest' in test_dict)
-        self.assertFalse('is_mismatch_reftest' in test_dict)
+            [test_failures.FailureReftestMismatch(self.port.abspath_for_test('foo/reftest-expected.html'))])
+        self.assertTrue('image_diff_percent' in test_dict)
 
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
             [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
-        self.assertFalse('is_reftest' in test_dict)
-        self.assertTrue(test_dict['is_mismatch_reftest'])
+        self.assertDictEqual(test_dict, {})
 
-        test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
-            [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/common.html'))])
-        self.assertFalse('is_reftest' in test_dict)
-        self.assertTrue(test_dict['is_mismatch_reftest'])
+        test_dict = interpret_test_failures(self.port, 'foo/audio-test.html',
+            [test_failures.FailureMissingAudio()])
+        self.assertTrue('is_missing_audio' in test_dict)
+
+        test_dict = interpret_test_failures(self.port, 'foo/text-test.html',
+            [test_failures.FailureMissingResult()])
+        self.assertTrue('is_missing_text' in test_dict)
+
+        test_dict = interpret_test_failures(self.port, 'foo/pixel-test.html',
+            [test_failures.FailureMissingImage()])
+        self.assertTrue('is_missing_image' in test_dict)
+
+        test_dict = interpret_test_failures(self.port, 'foo/pixel-test.html',
+            [test_failures.FailureMissingImageHash()])
+        self.assertTrue('is_missing_image' in test_dict)
 
     def get_result(self, test_name, result_type=test_expectations.PASS, run_time=0):
         failures = []

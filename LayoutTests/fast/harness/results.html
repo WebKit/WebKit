@@ -512,7 +512,7 @@ function processGlobalStateFor(testObject)
     }
 
     if (actual == 'PASS' && expected != 'PASS') {
-        if (expected != 'IMAGE' || globalState().results.pixel_tests_enabled) {
+        if (expected != 'IMAGE' || (globalState().results.pixel_tests_enabled || testObject.reftest_type)) {
             globalState().unexpectedPassTests.push(testObject);
         }
         return;
@@ -568,7 +568,7 @@ function tableRow(testObject)
     var row = '<tbody'
     if (globalState().results.uses_expectations_file)
         row += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
-    if (testObject.is_mismatch_reftest)
+    if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1)
         row += ' mismatchreftest=true';
     row += '><tr>';
 
@@ -602,11 +602,11 @@ function tableRow(testObject)
     if (actual.indexOf('IMAGE') != -1) {
         globalState().hasImageFailures = true;
 
-        if (testObject.is_mismatch_reftest) {
+        if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1) {
             row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html');
             row += resultLink(test_prefix, '-actual.png', 'actual');
         } else {
-            if (testObject.is_reftest) {
+            if (testObject.reftest_type && testObject.reftest_type.indexOf('==') != -1) {
                 row += resultLink(test_prefix, '-expected.html', 'ref html');
             }
             if (globalState().shouldToggleImages) {

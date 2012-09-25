@@ -198,7 +198,7 @@ class LayoutTestRunner(object):
             exp_str = got_str = 'SKIP'
             expected = True
         else:
-            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.is_reftest)
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.reftest_type)
             exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
 

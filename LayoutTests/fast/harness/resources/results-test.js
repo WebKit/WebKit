@@ -266,14 +266,29 @@ function runTests()
 
     results = mockResults();
     results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE', 1);
-    results.tests['bar-reftest.html'].is_reftest = true;
+    results.tests['bar-reftest.html'].reftest_type = ['=='];
     runSingleRowTest(results, false, '', 'ref html images diff (1%) ');
 
     results = mockResults();
     results.tests['bar-reftest-mismatch.html'] = mockExpectation('PASS', 'IMAGE');
-    results.tests['bar-reftest-mismatch.html'].is_mismatch_reftest = true;
+    results.tests['bar-reftest-mismatch.html'].reftest_type = ['!='];
     runSingleRowTest(results, false, '', 'ref mismatch html actual ');
 
+    results = mockResults();
+    results.tests['bar-reftest.html'] = mockExpectation('IMAGE', 'PASS');
+    results.tests['bar-reftest.html'].reftest_type = ['=='];
+    results.pixel_tests_enabled = false;
+    runTest(results, function() {
+        assertTrue(document.querySelector('tbody td:nth-child(1)').textContent == 'bar-reftest.html \u2691');
+    });
+
+    results = mockResults();
+    results.tests['bar-reftest-mismatch.html'] = mockExpectation('IMAGE', 'PASS');
+    results.tests['bar-reftest-mismatch.html'].reftest_type = ['!='];
+    results.pixel_tests_enabled = false;
+    runTest(results, function() {
+        assertTrue(document.querySelector('tbody td:nth-child(1)').textContent == 'bar-reftest-mismatch.html \u2691');
+    });
 
     results = mockResults();
     var subtree = results.tests['foo'] = {}
