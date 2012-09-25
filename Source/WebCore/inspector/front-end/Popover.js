@@ -74,8 +74,10 @@ WebInspector.Popover.prototype = {
         document.body.appendChild(this.element);
         this._positionElement(anchor, preferredWidth, preferredHeight);
         this._visible = true;
-        if (this._popoverHelper)
+        if (this._popoverHelper) {
             contentElement.addEventListener("mousemove", this._popoverHelper._killHidePopoverTimer.bind(this._popoverHelper), true);
+            this.element.addEventListener("mouseout", this._popoverHelper._mouseOut.bind(this._popoverHelper), true);
+        }
     },
 
     hide: function()
@@ -237,7 +239,11 @@ WebInspector.PopoverHelper.prototype = {
 
     _mouseOut: function(event)
     {
-        if (event.target === this._hoverElement)
+        // isPopoverMouseOut - check the mouse is out of the popover window   
+        var isPopoverMouseOut = this.isPopoverVisible()
+            && event.relatedTarget
+            && !event.relatedTarget.isSelfOrDescendant(this._popover._contentDiv);
+        if (event.target === this._hoverElement || isPopoverMouseOut)
             this._startHidePopoverTimer();
     },
 
