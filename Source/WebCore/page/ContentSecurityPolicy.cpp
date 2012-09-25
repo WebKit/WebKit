@@ -887,7 +887,12 @@ bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directiv
 {
     if (checkEval(directive))
         return true;
-    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n", KURL(), contextURL, contextLine, callStack);
+
+    String suffix = String();
+    if (directive == m_defaultSrc)
+        suffix = " Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.";
+
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", KURL(), contextURL, contextLine, callStack);
     if (!m_reportOnly) {
         m_policy->reportBlockedScriptExecutionToInspector(directive->text());
         return false;
@@ -920,7 +925,12 @@ bool CSPDirectiveList::checkInlineAndReportViolation(SourceListDirective* direct
 {
     if (checkInline(directive))
         return true;
-    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n", KURL(), contextURL, contextLine);
+
+    String suffix = String();
+    if (directive == m_defaultSrc)
+        suffix = makeString(" Note that '", (isScript ? "script" : "style"), "-src' was not explicitly set, so 'default-src' is used as a fallback.");
+
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", KURL(), contextURL, contextLine);
 
     if (!m_reportOnly) {
         if (isScript)
@@ -941,7 +951,11 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
     if (type == "form")
         prefix = "Refused to send form data to '";
 
-    reportViolation(directive->text(), makeString(prefix, url.string(), "' because it violates the following Content Security Policy directive: \"", directive->text(), "\".\n"), url);
+    String suffix = String();
+    if (directive == m_defaultSrc)
+        suffix = " Note that '" + type + "-src' was not explicitly set, so 'default-src' is used as a fallback.";
+
+    reportViolation(directive->text(), prefix + url.string() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\"." + suffix + "\n", url);
     return denyIfEnforcingPolicy();
 }
 
