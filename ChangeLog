@@ -1,3 +1,14 @@
+2012-09-25  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Update minimal required versions for dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=97523
+
+        Reviewed by Gyuyoung Kim.
+
+        Use the same versions numbers for dependencies as in Tools/efl/jhbuild.modules.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-09-24  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with latest Qt 5
