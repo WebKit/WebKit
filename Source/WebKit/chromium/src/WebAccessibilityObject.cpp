@@ -580,10 +580,42 @@ unsigned WebAccessibilityObject::selectionStart() const
     return m_private->selectedTextRange().start;
 }
 
+unsigned WebAccessibilityObject::selectionEndLineNumber() const
+{
+    if (isDetached())
+        return 0;
+
+    VisiblePosition position = m_private->visiblePositionForIndex(selectionEnd());
+    int lineNumber = m_private->lineForPosition(position);
+    if (lineNumber < 0)
+        return 0;
+    return lineNumber;
+}
+
+unsigned WebAccessibilityObject::selectionStartLineNumber() const
+{
+    if (isDetached())
+        return 0;
+
+    VisiblePosition position = m_private->visiblePositionForIndex(selectionStart());
+    int lineNumber = m_private->lineForPosition(position);
+    if (lineNumber < 0)
+        return 0;
+    return lineNumber;
+}
+
 void WebAccessibilityObject::setFocused(bool on) const
 {
     if (!isDetached())
         m_private->setFocused(on);
+}
+
+void WebAccessibilityObject::setSelectedTextRange(int selectionStart, int selectionEnd) const
+{
+    if (isDetached())
+        return;
+
+    m_private->setSelectedTextRange(PlainTextRange(selectionStart, selectionEnd - selectionStart));
 }
 
 WebString WebAccessibilityObject::stringValue() const
@@ -731,21 +763,15 @@ bool WebAccessibilityObject::lineBreaks(WebVector<int>& result) const
     if (isDetached())
         return false;
 
-    int textLength = m_private->textLength();
-    if (!textLength)
-        return false;
+    Vector<int> lineBreaksVector;
+    m_private->lineBreaks(lineBreaksVector);
 
-    VisiblePosition pos = m_private->visiblePositionForIndex(textLength);
-    int lineBreakCount = m_private->lineForPosition(pos);
-    if (lineBreakCount <= 0)
-        return false;
+    size_t vectorSize = lineBreaksVector.size();
+    WebVector<int> lineBreaksWebVector(vectorSize);
+    for (size_t i = 0; i< vectorSize; i++)
+        lineBreaksWebVector[i] = lineBreaksVector[i];
+    result.swap(lineBreaksWebVector);
 
-    WebVector<int> lineBreaks(static_cast<size_t>(lineBreakCount));
-    for (int i = 0; i < lineBreakCount; i++) {
-        PlainTextRange range = m_private->doAXRangeForLine(i);
-        lineBreaks[i] = range.start + range.length;
-    }
-    result.swap(lineBreaks);
     return true;
 }
 

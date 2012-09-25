@@ -634,6 +634,7 @@ public:
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual int index(const VisiblePosition&) const { return -1; }
 
+    virtual void lineBreaks(Vector<int>&) const { }
     virtual PlainTextRange doAXRangeForLine(unsigned) const { return PlainTextRange(); }
     PlainTextRange doAXRangeForPosition(const IntPoint&) const;
     virtual PlainTextRange doAXRangeForIndex(unsigned) const { return PlainTextRange(); }

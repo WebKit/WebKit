@@ -1,3 +1,29 @@
+2012-09-25  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Chromium doesn't pass accessibility text range and line number tests
+        https://bugs.webkit.org/show_bug.cgi?id=97246
+
+        Reviewed by Chris Fleizach.
+
+        Use improved implementation of AccessibilityRenderObject::lineBreaks
+        and implement methods to get the line number of the selection and
+        to set the text range.
+
+        Enables four existing tests to pass on Chromium:
+        Tests: accessibility/textarea-insertion-point-line-number.html
+               accessibility/textarea-line-for-index.html
+               accessibility/textarea-selected-text-range.html
+               accessibility/textbox-role-reports-selection.html
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::selectionEndLineNumber):
+        (WebKit):
+        (WebKit::WebAccessibilityObject::selectionStartLineNumber):
+        (WebKit::WebAccessibilityObject::setSelectedTextRange):
+        (WebKit::WebAccessibilityObject::lineBreaks):
+
 2012-09-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update getUserMedia to match the latest specification

@@ -140,11 +140,11 @@ public:
     WEBKIT_EXPORT int hierarchicalLevel() const;
     WEBKIT_EXPORT WebAccessibilityObject hitTest(const WebPoint&) const;
     WEBKIT_EXPORT WebString keyboardShortcut() const;
-    WEBKIT_EXPORT bool performDefaultAction() const;
     WEBKIT_EXPORT WebAccessibilityRole roleValue() const;
     WEBKIT_EXPORT unsigned selectionEnd() const;
+    WEBKIT_EXPORT unsigned selectionEndLineNumber() const;
     WEBKIT_EXPORT unsigned selectionStart() const;
-    WEBKIT_EXPORT void setFocused(bool) const;
+    WEBKIT_EXPORT unsigned selectionStartLineNumber() const;
     WEBKIT_EXPORT WebString stringValue() const;
     WEBKIT_EXPORT WebString title() const;
     WEBKIT_EXPORT WebAccessibilityObject titleUIElement() const;
@@ -162,6 +162,11 @@ public:
     WEBKIT_EXPORT WebString computedStyleDisplay() const;
     WEBKIT_EXPORT bool accessibilityIsIgnored() const;
     WEBKIT_EXPORT bool lineBreaks(WebVector<int>&) const;
+
+    // Actions
+    WEBKIT_EXPORT void setFocused(bool) const;
+    WEBKIT_EXPORT bool performDefaultAction() const;
+    WEBKIT_EXPORT void setSelectedTextRange(int selectionStart, int selectionEnd) const;
 
     // For a table
     WEBKIT_EXPORT unsigned columnCount() const;

@@ -2021,6 +2021,21 @@ int AccessibilityRenderObject::index(const VisiblePosition& position) const
     return -1;
 }
 
+void AccessibilityRenderObject::lineBreaks(Vector<int>& lineBreaks) const
+{
+    if (!isTextControl())
+        return;
+
+    VisiblePosition visiblePos = visiblePositionForIndex(0);
+    VisiblePosition savedVisiblePos = visiblePos;
+    visiblePos = nextLinePosition(visiblePos, 0);
+    while (!visiblePos.isNull() && visiblePos != savedVisiblePos) {
+        lineBreaks.append(indexForVisiblePosition(visiblePos));
+        savedVisiblePos = visiblePos;
+        visiblePos = nextLinePosition(visiblePos, 0);
+    }
+}
+
 // Given a line number, the range of characters of the text associated with this accessibility
 // object that contains the line number.
 PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) const

@@ -198,6 +198,7 @@ public:
     virtual VisiblePosition visiblePositionForIndex(int) const;
     virtual int indexForVisiblePosition(const VisiblePosition&) const;
 
+    virtual void lineBreaks(Vector<int>&) const;
     virtual PlainTextRange doAXRangeForLine(unsigned) const;
     virtual PlainTextRange doAXRangeForIndex(unsigned) const;
     
