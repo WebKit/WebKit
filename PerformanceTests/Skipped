@@ -20,6 +20,9 @@ PageLoad/svg/files/mtsthelens.svg
 SunSpider
 XSSAuditor
 
+# https://bugs.webkit.org/show_bug.cgi?id=95376
+Dromaeo/jslib-modify-jquery.html
+
 # We have pure JS tests separately outside Dromaeo.
 Dromaeo/sunspider-3d-morph.html
 Dromaeo/sunspider-3d-raytrace.html

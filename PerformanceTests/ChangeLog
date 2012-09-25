@@ -1,3 +1,11 @@
+2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip Dromaeo/jslib-modify-jquery.html per bug 95376.
+        It runs out of memory on Chromium port, and it takes unreasonably long time (~5 minutes)
+        to run on other ports.
+
+        * Skipped:
+
 2012-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Results page should show indivisual value
