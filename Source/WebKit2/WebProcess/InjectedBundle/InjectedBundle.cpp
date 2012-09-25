@@ -52,7 +52,6 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GeolocationClient.h>
-#include <WebCore/GeolocationClientMock.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationPosition.h>
 #include <WebCore/JSDOMWindow.h>

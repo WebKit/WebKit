@@ -1,3 +1,14 @@
+2012-09-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Build fix, GeolocationClientMock should not be included by WebProcess InjectedBundle
+
+        Unreviewed.
+
+        The patch r129252 removes the dependencies on GeolocationClientMock, r129444 removes
+        GeolocationClientMock from the Mac port. The #include breaks new Mac build.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+
 2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] PageViewportController: Consolidate positionRangeForViewportAtScale and boundPosition
