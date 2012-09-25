@@ -140,7 +140,11 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         charCode = KEYCODE_BACKSPACE;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
-        if (WTF::isASCIIUpper(charCode))
+        if (0x8 == charCode)
+            charCode = KEYCODE_BACKSPACE;
+        else if (0x7F == charCode)
+            charCode = KEYCODE_DELETE;
+        else if (WTF::isASCIIUpper(charCode))
             needsShiftKeyModifier = true;
     }
     JSStringRelease(character);

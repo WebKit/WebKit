@@ -1,3 +1,15 @@
+2012-09-25  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] [DRT] fast/forms/textarea-live-pseudo-selectors.html failed
+        https://bugs.webkit.org/show_bug.cgi?id=97189
+
+        Reviewed by Rob Buis.
+
+        Translate ASCII key code to BlackBerry key code for BACKSPACE and DELETE key.
+
+        * DumpRenderTree/blackberry/EventSender.cpp:
+        (keyDownCallback):
+
 2012-09-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WTR bundle client loads binary data as text
