@@ -28,53 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMediaConstraints_h
-#define WebMediaConstraints_h
+#ifndef MockConstraints_h
+#define MockConstraints_h
 
-#include "WebCommon.h"
-#include "WebNonCopyable.h"
-#include "WebPrivatePtr.h"
-#include "WebString.h"
-#include "WebVector.h"
-
-namespace WebCore {
-class MediaConstraints;
-}
+#if ENABLE(MEDIA_STREAM)
 
 namespace WebKit {
+class WebMediaConstraints;
+}
 
-class WebMediaConstraints {
-public:
-    WebMediaConstraints() { }
-    WebMediaConstraints(const WebMediaConstraints& other) { assign(other); }
-    ~WebMediaConstraints() { reset(); }
+namespace MockConstraints {
 
-    WebMediaConstraints& operator=(const WebMediaConstraints& other)
-    {
-        assign(other);
-        return *this;
-    }
+bool verify(const WebKit::WebMediaConstraints&);
 
-    WEBKIT_EXPORT void assign(const WebMediaConstraints&);
+} // namespace MockConstraints
 
-    WEBKIT_EXPORT void reset();
-    bool isNull() const;
+#endif // ENABLE(MEDIA_STREAM)
 
-    WEBKIT_EXPORT void getMandatoryConstraintNames(WebVector<WebString>& names) const;
-    WEBKIT_EXPORT void getOptionalConstraintNames(WebVector<WebString>& names) const;
+#endif // MockConstraints_h
 
-    WEBKIT_EXPORT bool getMandatoryConstraintValue(const WebString& name, WebString& value) const;
-    WEBKIT_EXPORT bool getOptionalConstraintValue(const WebString& name, WebString& value) const;
-
-#if WEBKIT_IMPLEMENTATION
-    WebMediaConstraints(const WTF::PassRefPtr<WebCore::MediaConstraints>&);
-    WebMediaConstraints(WebCore::MediaConstraints*);
-#endif
-
-private:
-    WebPrivatePtr<WebCore::MediaConstraints> m_private;
-};
-
-} // namespace WebKit
-
-#endif // WebMediaConstraints_h

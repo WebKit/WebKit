@@ -33,15 +33,41 @@
 
 #include "WebUserMediaClientMock.h"
 
+#include "MockConstraints.h"
 #include "WebDocument.h"
 #include "WebMediaStreamRegistry.h"
 #include "WebUserMediaRequest.h"
-#include "platform/WebMediaStreamDescriptor.h"
-#include "platform/WebMediaStreamSource.h"
-#include "platform/WebVector.h"
+#include <public/WebMediaConstraints.h>
+#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStreamSource.h>
+#include <public/WebVector.h>
 #include <wtf/Assertions.h>
 
-namespace WebKit {
+using namespace WebKit;
+
+class UserMediaRequestTask : public MethodTask<WebUserMediaClientMock> {
+public:
+    UserMediaRequestTask(WebUserMediaClientMock* object, const WebUserMediaRequest& request, const WebMediaStreamDescriptor result)
+        : MethodTask<WebUserMediaClientMock>(object)
+        , m_request(request)
+        , m_result(result)
+    {
+    }
+
+    virtual void runIfValid() OVERRIDE
+    {
+        if (m_result.isNull())
+            m_request.requestFailed();
+        else
+            m_request.requestSucceeded(m_result);
+    }
+
+private:
+    WebUserMediaRequest m_request;
+    WebMediaStreamDescriptor m_result;
+};
+
+////////////////////////////////
 
 class MockExtraData : public WebMediaStreamDescriptor::ExtraData {
 public:
@@ -59,7 +85,18 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     WebUserMediaRequest request = streamRequest;
 
     if (request.ownerDocument().isNull() || !request.ownerDocument().frame()) {
-        request.requestFailed();
+        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
+        return;
+    }
+
+    WebMediaConstraints constraints = request.audioConstraints();
+    if (!constraints.isNull() && !MockConstraints::verify(constraints)) {
+        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
+        return;
+    }
+    constraints = request.videoConstraints();
+    if (!constraints.isNull() && !MockConstraints::verify(constraints)) {
+        postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
         return;
     }
 
@@ -74,18 +111,16 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     if (request.video())
         videoSources[0].initialize("MockVideoDevice#1", WebMediaStreamSource::TypeVideo, "Mock video device");
 
-    WebKit::WebMediaStreamDescriptor descriptor;
-    descriptor.initialize("foobar", audioSources, videoSources);
+    WebMediaStreamDescriptor stream;
+    stream.initialize("foobar", audioSources, videoSources);
 
-    descriptor.setExtraData(new MockExtraData());
+    stream.setExtraData(new MockExtraData());
 
-    request.requestSucceeded(descriptor);
+    postTask(new UserMediaRequestTask(this, request, stream));
 }
 
 void WebUserMediaClientMock::cancelUserMediaRequest(const WebUserMediaRequest&)
 {
 }
-
-} // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)

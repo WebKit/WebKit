@@ -1,3 +1,37 @@
+2012-09-25  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update getUserMedia to match the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=97540
+
+        Reviewed by Adam Barth.
+
+        Adding mock support for the enhanced getUserMedia call.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockConstraints.cpp: Copied from Source/WebCore/platform/chromium/support/WebMediaConstraints.cpp.
+        (MockConstraints):
+        (MockConstraints::isSupported):
+        (MockConstraints::isValid):
+        (MockConstraints::verify):
+        * DumpRenderTree/chromium/MockConstraints.h: Copied from Tools/DumpRenderTree/chromium/WebUserMediaClientMock.h.
+        (WebKit):
+        (MockConstraints):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCSessionDescriptionRequestSuccededTask::RTCSessionDescriptionRequestSuccededTask):
+        (RTCSessionDescriptionRequestFailedTask::RTCSessionDescriptionRequestFailedTask):
+        (RTCVoidRequestTask::RTCVoidRequestTask):
+        (MockWebRTCPeerConnectionHandler::initialize):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (UserMediaRequestTask):
+        (UserMediaRequestTask::UserMediaRequestTask):
+        (WebUserMediaClientMock::requestUserMedia):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.h:
+        (WebUserMediaClientMock):
+        (WebUserMediaClientMock::taskList):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebKit):
+        (WebViewHost):
+
 2012-09-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Do not dump inspector output in DRT

@@ -28,36 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserMediaClientMock_h
-#define WebUserMediaClientMock_h
-
+#include "config.h"
 #if ENABLE(MEDIA_STREAM)
 
-#include "Task.h"
-#include "WebUserMediaClient.h"
-#include "webkit/support/test_media_stream_client.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
-#include <public/WebURL.h>
-#include <wtf/PassOwnPtr.h>
+#include "MockConstraints.h"
 
-class WebUserMediaClientMock : public WebKit::WebUserMediaClient {
-public:
-    static PassOwnPtr<WebUserMediaClientMock> create();
-    ~WebUserMediaClientMock() { }
+#include <public/WebMediaConstraints.h>
 
-    virtual void requestUserMedia(const WebKit::WebUserMediaRequest&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&) OVERRIDE;
-    virtual void cancelUserMediaRequest(const WebKit::WebUserMediaRequest&);
+using namespace WebKit;
 
-    // Task related methods
-    TaskList* taskList() { return &m_taskList; }
+namespace MockConstraints {
 
-private:
-    WebUserMediaClientMock() { }
+static bool isSupported(const WebString& constraint)
+{
+    return constraint == "valid_and_supported_1" || constraint == "valid_and_supported_2";
+}
 
-    TaskList m_taskList;
-};
+static bool isValid(const WebString& constraint)
+{
+    return isSupported(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
+}
+
+bool verify(const WebMediaConstraints& constraints)
+{
+    WebVector<WebString> mandatoryConstraintNames;
+    constraints.getMandatoryConstraintNames(mandatoryConstraintNames);
+    if (mandatoryConstraintNames.size()) {
+        for (size_t i = 0; i < mandatoryConstraintNames.size(); ++i) {
+            if (!isSupported(mandatoryConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getMandatoryConstraintValue(mandatoryConstraintNames[i], value);
+            if (value != "1")
+                return false;
+        }
+    }
+
+    WebVector<WebString> optionalConstraintNames;
+    constraints.getOptionalConstraintNames(optionalConstraintNames);
+    if (optionalConstraintNames.size()) {
+        for (size_t i = 0; i < optionalConstraintNames.size(); ++i) {
+            if (!isValid(optionalConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getOptionalConstraintValue(optionalConstraintNames[i], value);
+            if (value != "0")
+                return false;
+        }
+    }
+
+    return true;
+}
+
+} // namespace MockConstraints
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // WebUserMediaClientMock_h

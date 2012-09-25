@@ -35,16 +35,18 @@
 #include "WebUserMediaRequest.h"
 
 #include "Document.h"
+#include "MediaConstraints.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
 #include "SecurityOrigin.h"
 #include "UserMediaRequest.h"
 #include "WebDocument.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebMediaStreamDescriptor.h"
-#include "platform/WebMediaStreamSource.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebMediaConstraints.h>
+#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStreamSource.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -71,6 +73,18 @@ bool WebUserMediaRequest::video() const
 {
     ASSERT(!isNull());
     return m_private->video();
+}
+
+WebMediaConstraints WebUserMediaRequest::audioConstraints() const
+{
+    ASSERT(!isNull());
+    return m_private->audioConstraints();
+}
+
+WebMediaConstraints WebUserMediaRequest::videoConstraints() const
+{
+    ASSERT(!isNull());
+    return m_private->videoConstraints();
 }
 
 WebSecurityOrigin WebUserMediaRequest::securityOrigin() const
