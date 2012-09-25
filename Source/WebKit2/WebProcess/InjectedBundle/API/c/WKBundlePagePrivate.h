@@ -58,6 +58,10 @@ WK_EXPORT uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef page);
 WK_EXPORT WKRenderObjectRef WKBundlePageCopyRenderTree(WKBundlePageRef page);
 WK_EXPORT WKRenderLayerRef WKBundlePageCopyRenderLayerTree(WKBundlePageRef page);
 
+// FIXME: This function is only still here to keep open source Mac builds building. It doesn't do anything anymore!
+// We should remove it as soon as we can.
+WK_EXPORT void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold);
+
 WK_EXPORT void WKBundlePageSetTracksRepaints(WKBundlePageRef page, bool trackRepaints);
 WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);

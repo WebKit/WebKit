@@ -375,6 +375,12 @@ WKRenderLayerRef WKBundlePageCopyRenderLayerTree(WKBundlePageRef pageRef)
     return toAPI(WebRenderLayer::create(toImpl(pageRef)).leakRef());
 }
 
+void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef, uint64_t)
+{
+    // FIXME: This function is only still here to keep open source Mac builds building.
+    // We should remove it as soon as we can.
+}
+
 void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)
 {
     toImpl(pageRef)->setTracksRepaints(trackRepaints);
