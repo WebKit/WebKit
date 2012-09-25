@@ -649,7 +649,7 @@ static unsigned char setColorPickerColor(void* data)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
 
-    // 3. Change color to changed color.
+    // 4. Change color to changed color.
     EXPECT_TRUE(ewk_view_color_picker_color_set(smartData->self, changedRed, changedGreen, changedBlue, changedAlpha));
 
     evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
@@ -664,7 +664,7 @@ static Eina_Bool showColorPicker(Ewk_View_Smart_Data* smartData, int r, int g, i
     isColorPickerShown = true;
 
     if (isFirstRun) {
-        // 1. Check initial value from html file.
+        // 2. Check initial value from html file.
         EXPECT_EQ(r, initialRed);
         EXPECT_EQ(g, initialGreen);
         EXPECT_EQ(b, initialBlue);
@@ -672,23 +672,34 @@ static Eina_Bool showColorPicker(Ewk_View_Smart_Data* smartData, int r, int g, i
 
         isFirstRun = false;
     } else {
-        // 4. Input values should be same as changed color.
+        // 7. Input values should be same as changed color.
         EXPECT_EQ(r, changedRed);
         EXPECT_EQ(g, changedGreen);
         EXPECT_EQ(b, changedBlue);
         EXPECT_EQ(a, changedAlpha);
+
+        evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
+        return true;
     }
 
-    // 2. Return after making a color picker.
+    // 3. Return after making a color picker.
     ecore_timer_add(0.0, setColorPickerColor, smartData);
     return true;
 }
 
 static Eina_Bool hideColorPicker(Ewk_View_Smart_Data*)
 {
-    // Test color picker is shown.
+    // 5. Test color picker is shown.
     EXPECT_TRUE(isColorPickerShown);
     isColorPickerShown = false;
+}
+
+static Eina_Bool hideColorPickerByRemovingElement(Ewk_View_Smart_Data* smartData)
+{
+    // 9. input_picker_color_dismiss() is called if the element is removed.
+    EXPECT_TRUE(isColorPickerShown);
+    isColorPickerShown = false;
+    evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
@@ -697,9 +708,28 @@ TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
     api->input_picker_color_request = showColorPicker;
     api->input_picker_color_dismiss = hideColorPicker;
 
-    loadUrlSync("data:text/html,<input type='color' value='#123456'>");
+    const char colorPickerHTML[] =
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<script>function removeInputElement(){"
+        "var parentElement = document.getElementById('parent');"
+        "var inputElement = document.getElementById('color');"
+        "parentElement.removeChild(inputElement);"
+        "}</script>"
+        "</head>"
+        "<body>"
+        "<div id='parent'>"
+        "<input type='color' value='#123456' id='color'>"
+        "<button onclick='removeInputElement();'>Remove Element</button>"
+        "</div>"
+        "</body>"
+        "</html>";
 
-    // Click input element.
+    ewk_view_html_string_load(webView(), colorPickerHTML, 0, 0);
+    waitUntilLoadFinished();
+
+    // 1. Click input element to show color picker.
     mouseClick(30, 20);
 
     bool handled = false;
@@ -707,8 +737,16 @@ TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
     while (!handled)
         ecore_main_loop_iterate();
 
-    // Click input element again.
+    // 6. Click input element to show color picker again.
     mouseClick(30, 20);
+
+    handled = false;
+    while (!handled)
+        ecore_main_loop_iterate();
+
+    // 8. Click button to remove input element during color picker is shown.
+    api->input_picker_color_dismiss = hideColorPickerByRemovingElement;
+    mouseClick(80, 20);
 
     handled = false;
     while (!handled)
