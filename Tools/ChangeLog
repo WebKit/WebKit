@@ -1,3 +1,15 @@
+2012-09-24  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with latest Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=97479
+
+        Reviewed by Tor Arne Vestbø.
+
+        The variables for syncqt handling are now set in api.pri, but let's add a comment here that we can
+        remove them from default_pre.prf once we're past Qt 5 beta2.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-09-25  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, adjusting the test cases after r129459. The JSON data
