@@ -155,6 +155,7 @@
     }
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static NSString *testPathFromURL(NSURL* url)
 {
     if ([url isFileURL]) {
@@ -175,6 +176,7 @@ static NSString *testPathFromURL(NSURL* url)
 
     return nil;
 }
+#endif
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {

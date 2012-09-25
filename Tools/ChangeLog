@@ -1,3 +1,9 @@
+2012-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the build after r129566.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+
 2012-09-25  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: AccessibilityUIElementChromium.cpp won't build on Windows without wtf/StringExtras.h
