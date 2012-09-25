@@ -461,6 +461,8 @@ void WKHideWordDefinitionWindow(void);
 
 CFStringRef WKCopyDefaultSearchProviderDisplayName(void);
 
+void WKSetCrashReportApplicationSpecificInformation(CFStringRef);
+
 NSURL* WKAVAssetResolvedURL(AVAsset*);
 
 NSCursor *WKCursor(const char *name);

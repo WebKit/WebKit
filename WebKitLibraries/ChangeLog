@@ -1,3 +1,16 @@
+2012-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed
+
+        Reviewed by Tim Horton.
+
+        New WKSI libraries and header.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-09-08  Sam Weinig  <sam@webkit.org>
 
         Switch to entering the sandbox directly from main(), rather than waiting for the initialization message
