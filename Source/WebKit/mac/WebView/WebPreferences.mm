@@ -400,6 +400,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitScreenFontSubstitutionEnabledKey,
+        [NSNumber numberWithInt:WebAllowAllStorage], WebKitStorageBlockingPolicyKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1748,6 +1749,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setScreenFontSubstitutionEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitScreenFontSubstitutionEnabledKey];
+}
+
+- (void)setStorageBlockingPolicy:(WebStorageBlockingPolicy)storageBlockingPolicy
+{
+    [self _setIntegerValue:storageBlockingPolicy forKey:WebKitStorageBlockingPolicyKey];
+}
+
+- (WebStorageBlockingPolicy)storageBlockingPolicy
+{
+    return static_cast<WebStorageBlockingPolicy>([self _integerValueForKey:WebKitStorageBlockingPolicyKey]);
 }
 
 @end

@@ -3562,6 +3562,9 @@ webkit.org/b/97179 http/tests/css/link-css-disabled-value-with-slow-loading-shee
 # The test should pass after harfbuzz transition.
 webkit.org/b/97296 [ Linux Win ] fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
 
+# Expected to fail until storage blocking settings have a WebKit1 API in Chromium.
+webkit.org/b/97491 http/tests/security/cross-origin-local-storage-wk1.html [ Failure Pass ]
+
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]

@@ -1,3 +1,19 @@
+2012-09-21  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add WebKit1 SPI for storage blocking preference
+        https://bugs.webkit.org/show_bug.cgi?id=97356
+
+        Reviewed by Brady Eidson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setStorageBlockingPolicy:]):
+        (-[WebPreferences storageBlockingPolicy]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed

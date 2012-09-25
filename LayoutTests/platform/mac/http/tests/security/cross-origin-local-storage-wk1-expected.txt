@@ -1,0 +1,16 @@
+This iframe should return a security error:
+
+
+This iframe should not return any errors:
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+SECURITY_ERR
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+No exception
