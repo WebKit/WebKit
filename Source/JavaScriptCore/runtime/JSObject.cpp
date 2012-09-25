@@ -1350,10 +1350,13 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
     }
         
     case NonArrayWithSlowPutArrayStorage:
-    case ArrayWithSlowPutArrayStorage:
-        if (attemptToInterceptPutByIndexOnHole(exec, i, value, shouldThrow))
+    case ArrayWithSlowPutArrayStorage: {
+        // No own property present in the vector, but there might be in the sparse map!
+        SparseArrayValueMap* map = arrayStorage()->m_sparseMap.get();
+        if (!(map && map->contains(i)) && attemptToInterceptPutByIndexOnHole(exec, i, value, shouldThrow))
             return;
         // Otherwise, fall though.
+    }
 
     case NonArrayWithArrayStorage:
     case ArrayWithArrayStorage:

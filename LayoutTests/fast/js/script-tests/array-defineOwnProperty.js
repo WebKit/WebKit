@@ -50,4 +50,11 @@ shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: Math 
 shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: undefined })[0]");
 shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: null })[0]");
 
+Object.defineProperty(Array.prototype, "0", { set: function () { throw false; } });
+Object.defineProperty(Array.prototype, "1", { set: function () { throw false; } });
+var arrObj = [ , false ];
+Object.defineProperty(arrObj, "0", { set: function (x) { this.set = x === 42; } });
+shouldBeTrue("arrObj[0] = 42; arrObj.set;");
+shouldBeTrue("arrObj[1] = true; arrObj[1];");
+
 successfullyParsed = true;

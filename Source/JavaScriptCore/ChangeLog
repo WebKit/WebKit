@@ -1,3 +1,14 @@
+2012-09-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Regression: put beyond vector length prefers prototype setters to sparse properties
+        https://bugs.webkit.org/show_bug.cgi?id=97593
+
+        Reviewed by Geoff Garen & Filip Pizlo.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+            - Check for self properties in the sparse map - if present, don't examine the protochain.
+
 2012-09-24  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=97530

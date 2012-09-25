@@ -36,6 +36,8 @@ PASS Object.defineProperty(Object.defineProperty([], '0', { value: false }), '0'
 PASS Object.defineProperty(Object.defineProperty([], '0', { value: Math }), '0', { value: Object })[0] threw exception TypeError: Attempting to change value of a readonly property..
 PASS Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: undefined })[0] threw exception TypeError: Attempting to change value of a readonly property..
 PASS Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: null })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS arrObj[0] = 42; arrObj.set; is true
+PASS arrObj[1] = true; arrObj[1]; is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
