@@ -253,6 +253,7 @@ webkit.org/b/86079 http/tests/misc/link-rel-icon-beforeload.html [ Failure Pass 
 webkit.org/b/86081 loader/navigation-while-deferring-loads.html [ Failure Pass ]
 webkit.org/b/86082 security/block-test.html [ Failure Pass ]
 webkit.org/b/86084 svg/dom/SVGScriptElement/script-onerror-bubbling.svg [ Failure Pass ]
+webkit.org/b/88230 svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/60103 fast/replaced/border-radius-clip.html [ Failure Pass ]
 webkit.org/b/91366 fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Failure Pass ]
 webkit.org/b/92112 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
@@ -1159,3 +1160,9 @@ webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFail
 
 # Frame does not get focus as expected
 webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
+
+# Fails after r129456
+webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
+
+# Fails after r129462
+webkit.org/b/97055 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
