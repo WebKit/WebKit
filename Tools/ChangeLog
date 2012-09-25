@@ -1,3 +1,12 @@
+2012-09-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, adjusting the test cases after r129459. The JSON data
+        for reftests now contains the 'reftest_type' key and no more 'is_reftest'
+        or 'is_mismatch_reftest' keys.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (EndToEndTest.test_reftest_with_two_notrefs):
+
 2012-09-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unexpected reftest passes are only reported when pixel testing is enabled in results.html as well

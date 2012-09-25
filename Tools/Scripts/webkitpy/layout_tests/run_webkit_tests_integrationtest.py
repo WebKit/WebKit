@@ -964,11 +964,11 @@ class EndToEndTest(unittest.TestCase):
         self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertTrue("multiple-both-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-match-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "image_diff_percent": 1, 'is_reftest': True})
+            {"expected": "PASS", "actual": "IMAGE", "reftest_type": ["=="], "image_diff_percent": 1})
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-mismatch-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "is_mismatch_reftest": True})
+            {"expected": "PASS", "actual": "IMAGE", "reftest_type": ["!="]})
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-both-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "is_mismatch_reftest": True, "is_reftest": True})
+            {"expected": "PASS", "actual": "IMAGE", "reftest_type": ["==", "!="]})
 
 
 class RebaselineTest(unittest.TestCase, StreamTestingMixin):
