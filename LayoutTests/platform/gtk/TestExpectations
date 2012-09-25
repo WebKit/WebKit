@@ -560,6 +560,8 @@ webkit.org/b/95430 fast/layers/scroll-no-visible-content-but-visible-descendant.
 
 webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
+webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1158,7 +1160,6 @@ webkit.org/b/62204 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
 
 webkit.org/b/78673 svg/animations/animate-text-nested-transforms.html [ Failure ]
 
-webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
 webkit.org/b/73409 fast/forms/textarea/textarea-placeholder-paint-order.html [ ImageOnlyFailure ]
 webkit.org/b/73409 fast/forms/input-placeholder-paint-order.html [ ImageOnlyFailure ]
 
@@ -1215,16 +1216,10 @@ webkit.org/b/85376 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
 webkit.org/b/84761 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
-webkit.org/b/84764 ietestcenter/css3/multicolumn/column-width-applies-to-001.htm [ ImageOnlyFailure ]
-webkit.org/b/84767 ietestcenter/css3/multicolumn/column-width-applies-to-002.htm [ ImageOnlyFailure ]
-webkit.org/b/84768 ietestcenter/css3/multicolumn/column-width-applies-to-003.htm [ ImageOnlyFailure ]
-webkit.org/b/84769 ietestcenter/css3/multicolumn/column-width-applies-to-004.htm [ ImageOnlyFailure ]
 webkit.org/b/84770 ietestcenter/css3/multicolumn/column-width-applies-to-007.htm [ ImageOnlyFailure ]
 webkit.org/b/84771 ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure ]
 webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
-webkit.org/b/84775 ietestcenter/css3/multicolumn/column-width-applies-to-013.htm [ ImageOnlyFailure ]
-webkit.org/b/84776 ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 webkit.org/b/84778 ietestcenter/css3/multicolumn/column-width-negative-001.htm [ ImageOnlyFailure ]
 
@@ -1297,9 +1292,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
 
-# Accelerated compositing is disabled for elements in a RenderFlowThread
-webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
-
 webkit.org/b/89231 fast/js/global-constructors.html [ Failure ]
 
 webkit.org/b/91009 [ Debug ] fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
@@ -1370,7 +1362,6 @@ webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-without-shadow.html [ 
 webkit.org/b/97469 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
 
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ ImageOnlyFailure ]
