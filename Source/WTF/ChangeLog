@@ -1,3 +1,14 @@
+2012-09-25  Cosmin Truta  <ctruta@rim.com>
+
+        [BlackBerry] Enable LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=97604
+
+        Reviewed by Yong Li.
+
+        Set the prefix of LOCAL_LABEL_STRING to ".L" on QNX.
+
+        * wtf/InlineASM.h:
+
 2012-09-25  Patrick Gansterer  <paroga@webkit.org>
 
         Do not enable DFG JIT for COMPILER(MSVC).

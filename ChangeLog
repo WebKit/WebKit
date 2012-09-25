@@ -1,3 +1,12 @@
+2012-09-25  Cosmin Truta  <ctruta@rim.com>
+
+        [BlackBerry] Enable LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=97604
+
+        Reviewed by Yong Li.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf-o-matic should store "values" and support array'ed input

@@ -75,14 +75,15 @@
 #endif
 
 // FIXME: figure out how this works on all the platforms. I know that
-// on Linux, the preferred form is ".Lstuff" as opposed to "Lstuff".
+// on ELF, the preferred form is ".Lstuff" as opposed to "Lstuff".
 // Don't know about any of the others.
 #if PLATFORM(MAC)
 #define LOCAL_LABEL_STRING(name) "L" #name
 #elif   OS(LINUX)               \
      || OS(FREEBSD)             \
      || OS(OPENBSD)             \
-     || OS(NETBSD)
+     || OS(NETBSD)              \
+     || OS(QNX)
     // GNU as-compatible syntax.
 #define LOCAL_LABEL_STRING(name) ".L" #name
 #endif
