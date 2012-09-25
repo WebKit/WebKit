@@ -519,3 +519,12 @@ fast/dom/Geolocation/success-clear-watch.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timestamp.html
+
+# Unskipped by r129486 (wk2/Skipped list), but still fail on Qt WK2
+fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
+fast/dom/Geolocation/delayed-permission-allowed.html
+fast/dom/Geolocation/error-clear-watch.html
+fast/dom/Geolocation/error.html
+fast/dom/Geolocation/maximum-age.html
+fast/dom/Geolocation/reentrant-error.html
+fast/dom/Geolocation/watch.html
