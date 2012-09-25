@@ -71,6 +71,7 @@ private:
         virtual void didBlurFromControl() OVERRIDE FINAL;
         virtual void didFocusOnControl() OVERRIDE FINAL;
         virtual void editControlValueChanged() OVERRIDE FINAL;
+        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
         virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
         virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
 

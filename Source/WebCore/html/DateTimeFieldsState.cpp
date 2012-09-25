@@ -67,6 +67,13 @@ DateTimeFieldsState::DateTimeFieldsState()
 {
 }
 
+unsigned DateTimeFieldsState::hour23() const
+{
+    if (!hasHour() || !hasAMPM())
+        return emptyValue;
+    return (m_hour % 12) + (m_ampm == AMPMValuePM ? 12 : 0);
+}
+
 DateTimeFieldsState DateTimeFieldsState::restoreFormControlState(const FormControlState& state)
 {
     DateTimeFieldsState dateTimeFieldsState;

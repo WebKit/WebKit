@@ -48,6 +48,7 @@
 #include "KeyboardEvent.h"
 #include "Localizer.h"
 #include "ShadowRoot.h"
+#include <wtf/text/WTFString.h>
 #endif
 
 namespace WebCore {
@@ -149,11 +150,30 @@ void TimeInputType::DateTimeEditControlOwnerImpl::didFocusOnControl()
 void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
 {
     RefPtr<HTMLInputElement> input(m_timeInputType.element());
-    input->setValueInternal(m_timeInputType.serialize(Decimal::fromDouble(m_timeInputType.m_dateTimeEditElement->valueAsDouble())), DispatchNoEvent);
+    input->setValueInternal(m_timeInputType.m_dateTimeEditElement->value(), DispatchNoEvent);
     input->setNeedsStyleRecalc();
     input->dispatchFormControlInputEvent();
     input->dispatchFormControlChangeEvent();
     input->notifyFormStateChanged();
+}
+
+
+String TimeInputType::DateTimeEditControlOwnerImpl::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
+{
+    if (!dateTimeFieldsState.hasHour() || !dateTimeFieldsState.hasMinute() || !dateTimeFieldsState.hasAMPM())
+        return emptyString();
+    if (dateTimeFieldsState.hasMillisecond() && dateTimeFieldsState.millisecond())
+        return String::format("%02u:%02u:%02u.%03u",
+                dateTimeFieldsState.hour23(),
+                dateTimeFieldsState.minute(),
+                dateTimeFieldsState.hasSecond() ? dateTimeFieldsState.second() : 0,
+                dateTimeFieldsState.millisecond());
+    if (dateTimeFieldsState.hasSecond() && dateTimeFieldsState.second())
+        return String::format("%02u:%02u:%02u",
+                dateTimeFieldsState.hour23(),
+                dateTimeFieldsState.minute(),
+                dateTimeFieldsState.second());
+    return String::format("%02u:%02u", dateTimeFieldsState.hour23(), dateTimeFieldsState.minute());
 }
 
 bool TimeInputType::hasCustomFocusLogic() const
@@ -271,7 +291,7 @@ void TimeInputType::restoreFormControlState(const FormControlState& state)
     setMillisecondToDateComponents(createStepRange(AnyIsDefaultStep).minimum().toDouble(), &date);
     DateTimeFieldsState dateTimeFieldsState = DateTimeFieldsState::restoreFormControlState(state);
     m_dateTimeEditElement->setValueAsDateTimeFieldsState(dateTimeFieldsState, date);
-    element()->setValueInternal(serialize(Decimal::fromDouble(m_dateTimeEditElement->valueAsDouble())), DispatchNoEvent);
+    element()->setValueInternal(m_dateTimeEditElement->value(), DispatchNoEvent);
 }
 
 FormControlState TimeInputType::saveFormControlState() const

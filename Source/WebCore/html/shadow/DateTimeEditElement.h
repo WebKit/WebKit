@@ -55,6 +55,7 @@ public:
         virtual void didBlurFromControl() = 0;
         virtual void didFocusOnControl() = 0;
         virtual void editControlValueChanged() = 0;
+        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
         virtual bool isEditControlOwnerDisabled() const = 0;
         virtual bool isEditControlOwnerReadOnly() const = 0;
     };
@@ -88,6 +89,7 @@ public:
     void setEmptyValue(const LayoutParameters&, const DateComponents& dateForReadOnlyField);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
     void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField);
+    String value() const;
     DateTimeFieldsState valueAsDateTimeFieldsState() const;
     double valueAsDouble() const;
 
