@@ -238,7 +238,7 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
     event->motion.time = GDK_CURRENT_TIME;
     event->motion.window = gtk_widget_get_window(viewWidget);
     g_object_ref(event->motion.window);
-    event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
+    event->motion.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
     event->motion.state = mouseModifiers;
     event->motion.axes = 0;
 

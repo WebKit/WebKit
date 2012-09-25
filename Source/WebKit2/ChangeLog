@@ -1,3 +1,18 @@
+2012-09-25  Simon Pena  <spena@igalia.com>
+
+        [GTK] Fix typo in accessing union field in a GdkEvent in a WebKit2 unit test
+        https://bugs.webkit.org/show_bug.cgi?id=97564
+
+        Reviewed by Martin Robinson.
+
+        In the WebViewTest::moveMouseTo method, the wrong field in
+        a union was being accessed in a GdkEvent: instead of the button
+        field, we were supposed to act on the motion one. This patch
+        fixes the typo.
+
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::mouseMoveTo):
+
 2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use the C API internally in WebKitFindController
