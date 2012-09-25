@@ -138,6 +138,7 @@ module WTR {
         void setTextDirection(in DOMString direction);
 
         void setWillSendRequestReturnsNull(in boolean flag);
+        void setWillSendRequestReturnsNullOnRedirect(in boolean flag);
         
         void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
 

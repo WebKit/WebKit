@@ -1147,9 +1147,6 @@ static inline bool isHTTPOrHTTPSScheme(WKStringRef scheme)
 
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef response)
 {
-    if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().testRunner()->willSendRequestReturnsNull())
-        return 0;
-
     if (InjectedBundle::shared().isTestRunning()
         && InjectedBundle::shared().testRunner()->shouldDumpResourceLoadCallbacks()) {
         dumpResourceURL(identifier);
@@ -1158,6 +1155,15 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
         InjectedBundle::shared().stringBuilder()->appendLiteral(" redirectResponse ");
         dumpResponseDescriptionSuitableForTestResult(response);
         InjectedBundle::shared().stringBuilder()->append('\n');
+    }
+
+    if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().testRunner()->willSendRequestReturnsNull())
+        return 0;
+
+    WKRetainPtr<WKURLRef> redirectURL = adoptWK(WKURLResponseCopyURL(response));
+    if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().testRunner()->willSendRequestReturnsNullOnRedirect() && redirectURL) {
+        InjectedBundle::shared().stringBuilder()->appendLiteral("Returning null for this redirect\n");
+        return 0;
     }
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));

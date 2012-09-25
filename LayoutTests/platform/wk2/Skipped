@@ -577,9 +577,6 @@ fast/loader/onload-policy-ignore-for-frame.html
 # WebKitTestRunner needs layoutTestController.shouldPaintBrockenImage
 fast/images/support-broken-image-delegate.html
 
-# WebKitTestRunner needs layoutTestController.setWillSendRequestReturnNullOnRedirect
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-
 # WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html

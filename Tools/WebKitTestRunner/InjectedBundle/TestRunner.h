@@ -199,8 +199,10 @@ public:
 
     void setPOSIXLocale(JSStringRef);
 
-    bool willSendRequestReturnsNull() { return m_willSendRequestReturnsNull; }
+    bool willSendRequestReturnsNull() const { return m_willSendRequestReturnsNull; }
     void setWillSendRequestReturnsNull(bool f) { m_willSendRequestReturnsNull = f; }
+    bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
+    void setWillSendRequestReturnsNullOnRedirect(bool f) { m_willSendRequestReturnsNullOnRedirect = f; }
 
     void setTextDirection(JSStringRef);
 
@@ -291,6 +293,7 @@ private:
     bool m_testRepaintSweepHorizontally;
 
     bool m_willSendRequestReturnsNull;
+    bool m_willSendRequestReturnsNullOnRedirect;
     bool m_shouldStopProvisionalFrameLoads;
 
     bool m_policyDelegateEnabled;
