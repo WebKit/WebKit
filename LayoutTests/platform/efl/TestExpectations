@@ -1185,4 +1185,4 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
 
 # Fails after r129462
-webkit.org/b/97055 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
+webkit.org/b/96883 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
