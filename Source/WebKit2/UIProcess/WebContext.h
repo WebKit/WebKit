@@ -307,8 +307,6 @@ private:
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;
 
-    Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
-
     CacheModel m_cacheModel;
 
     WebDownloadClient m_downloadClient;

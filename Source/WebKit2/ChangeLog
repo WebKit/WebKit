@@ -1,3 +1,17 @@
+2012-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of WebContext::m_pendingMessagesToPostToInjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=94368
+
+        Reviewed by Anders Carlsson.
+
+        It doesn't appear to be of any use.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        * UIProcess/WebContext.h:
+
 2012-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed

@@ -366,13 +366,6 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get())), 0);
 
-    for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
-        pair<String, RefPtr<APIObject> >& message = m_pendingMessagesToPostToInjectedBundle[i];
-        process->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message.first, WebContextUserMessageEncoder(message.second.get())));
-    }
-    // FIXME (Multi-WebProcess) (94368): What does this mean in the brave new world?
-    m_pendingMessagesToPostToInjectedBundle.clear();
-
     return process.release();
 }
 
@@ -566,18 +559,14 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (m_processes.isEmpty()) {
-        m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
+    if (m_processes.isEmpty())
         return;
-    }
+
+    // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
 
     for (size_t i = 0; i < m_processes.size(); ++i) {
-        // FIXME (Multi-WebProcess): Evolve m_pendingMessagesToPostToInjectedBundle to work with multiple secondary processes.
-        if (!m_processes[i]->canSendMessage()) {
-            m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
-            continue;
-        }
         // FIXME: We should consider returning false from this function if the messageBody cannot be encoded.
+        // FIXME: Can we encode the message body outside the loop for all the processes?
         m_processes[i]->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
     }
 }
