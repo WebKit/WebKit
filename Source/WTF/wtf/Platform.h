@@ -931,6 +931,22 @@
 #endif
 #endif
 
+/* If the jit is not available, enable the LLInt C Loop: */
+#if !ENABLE(JIT)
+#undef ENABLE_LLINT        /* Undef so that we can redefine it. */
+#undef ENABLE_LLINT_C_LOOP /* Undef so that we can redefine it. */
+#undef ENABLE_DFG_JIT      /* Undef so that we can redefine it. */
+#define ENABLE_LLINT 1
+#define ENABLE_LLINT_C_LOOP 1
+#define ENABLE_DFG_JIT 0
+#endif
+
+/* Do a sanity check to make sure that we at least have one execution engine in
+   use: */
+#if !(ENABLE(JIT) || ENABLE(LLINT))
+#error You have to have at least one execution model enabled to build JSC
+#endif
+
 /* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you
    can enable it manually with DFG turned off if you want to use it as a standalone
    profiler. In that case, you probably want to also enable VERBOSE_VALUE_PROFILE
@@ -951,19 +967,6 @@
    set ENABLE_SAMPLING_COUNTERS to 1. */
 #if !defined(ENABLE_WRITE_BARRIER_PROFILING)
 #define ENABLE_WRITE_BARRIER_PROFILING 0
-#endif
-
-/* If the jit and classic interpreter is not available, enable the LLInt C Loop: */
-#if !ENABLE(JIT)
-    #define ENABLE_LLINT 1
-    #define ENABLE_LLINT_C_LOOP 1
-    #define ENABLE_DFG_JIT 0
-#endif
-
-/* Do a sanity check to make sure that we at least have one execution engine in
-   use: */
-#if !(ENABLE(JIT) || ENABLE(LLINT))
-#error You have to have at least one execution model enabled to build JSC
 #endif
 
 /* Configure the JIT */

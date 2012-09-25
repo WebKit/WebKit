@@ -1,3 +1,12 @@
+2012-09-25  Mark Lam  <mark.lam@apple.com>
+
+        #undef some symbols before redefining them.
+        https://bugs.webkit.org/show_bug.cgi?id=97568.
+
+        Reviewed by Michael Saboff.
+
+        * wtf/Platform.h:
+
 2012-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extract Vector instrumentation from core NMI code into MemoryInstrumentationVector.h header.
