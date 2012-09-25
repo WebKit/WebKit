@@ -39,6 +39,8 @@ Bug(EFL) fast/dom/unregister-protocol-handler.html [ Crash ]
 Bug(EFL) fast/dom/HTMLAnchorElement/anchor-download.html [ Crash ]
 Bug(EFL) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash ]
 
+webkit.org/b/97565 fast/loader/reload-zero-byte-plugin.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
