@@ -68,6 +68,15 @@ Bug(EFL) media/unsupported-rtsp.html [ Skip ]
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]
 
+# Pre-HMTL5 parser quirks only apply to the mac port for now.
+fast/parser/pre-html5-parser-quirks.html [ WontFix ]
+
+# This port doesn't support v8 i18n extension.
+fast/js/i18n-bindings-locale.html [ WontFix ]
+
+# No CORS support for media elements is implemented yet.
+Bug(EFL) http/tests/security/video-cross-origin-readback.html [ Failure ]
+
 # Perf tests are way too slow and some may fail due to timeout.
 perf/adding-radio-buttons.html [ WontFix ]
 perf/array-binary-search.html [ WontFix ]
@@ -97,16 +106,53 @@ webkit.org/b/86623 editing/pasteboard/drop-inputtext-acquires-style.html [ Failu
 webkit.org/b/86623 editing/pasteboard/drop-link.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/drop-text-events.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
+webkit.org/b/86623 fast/block/positioning/hittest-on-relative-positioned-children.html
 webkit.org/b/86623 fast/dom/shadow/drop-event-for-input-in-shadow.html [ Failure ]
 webkit.org/b/86623 fast/dom/shadow/drop-event-in-shadow.html [ Failure ]
+webkit.org/b/86623 fast/events/5056619.html
+webkit.org/b/86623 fast/events/bogus-dropEffect-effectAllowed.html
+webkit.org/b/86623 fast/events/click-count.html
+webkit.org/b/86623 fast/events/content-changed-during-drop.html
+webkit.org/b/86623 fast/events/crash-on-mutate-during-drop.html
+webkit.org/b/86623 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+webkit.org/b/86623 fast/events/drag-and-drop-fire-drag-dragover.html
+webkit.org/b/86623 fast/events/drag-and-drop.html
+webkit.org/b/86623 fast/events/drag-customData.html
+webkit.org/b/86623 fast/events/drag-dataTransferItemList.html
 webkit.org/b/86623 fast/events/drag-display-none-element.html [ Failure ]
+webkit.org/b/86623 fast/events/drag-image-filename.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-in-frames.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-link.html [ Failure ]
 webkit.org/b/86623 fast/events/drag-parent-node.html [ Failure ]
+webkit.org/b/86623 fast/events/drag-selects-image.html
+webkit.org/b/86623 fast/events/dropzone-001.html
+webkit.org/b/86623 fast/events/dropzone-002.html
+webkit.org/b/86623 fast/events/dropzone-003.html
+webkit.org/b/86623 fast/events/dropzone-005.html
 webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events.html [ Failure ]
 webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Failure ]
+webkit.org/b/86623 fast/events/ondragenter.html
+webkit.org/b/86623 fast/events/ondrop-text-html.html
 webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
+webkit.org/b/86623 fast/events/selectstart-by-double-triple-clicks.html
+webkit.org/b/86623 fast/events/selectstart-by-drag.html
+webkit.org/b/86623 fast/events/standalone-image-drag-to-editable.html
+webkit.org/b/86623 fast/forms/drag-into-textarea.html
+webkit.org/b/86623 fast/forms/drag-out-of-textarea.html
+webkit.org/b/86623 fast/forms/focus-change-on-keypress.html
+webkit.org/b/86623 fast/forms/search-cancel-button-mouseup.html
+webkit.org/b/86623 fast/forms/search-disabled-readonly.html
+webkit.org/b/86623 fast/forms/textfield-drag-into-disabled.html
+webkit.org/b/86623 fast/lists/drag-into-marker.html
+webkit.org/b/86623 fast/table/click-near-anonymous-table.html
+webkit.org/b/86623 fast/text/offsetForPosition-complex-fallback.html
+webkit.org/b/86623 http/tests/local/drag-over-remote-content.html
 webkit.org/b/86623 http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
+webkit.org/b/86623 http/tests/misc/bubble-drag-events.html
+webkit.org/b/86623 http/tests/misc/drag-over-iframe-invalid-source-crash.html
+webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
+webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
+webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
 
 # Missing drag'n'drop, needs baselines
 webkit.org/b/86623 editing/pasteboard/drag-drop-dead-frame.html [ Missing ]
@@ -253,6 +299,7 @@ Bug(EFL) media/media-controls-clone.html [ Failure Pass ]
 webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass ]
 webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Pass Timeout ]
 webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
+webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -279,6 +326,16 @@ webkit.org/b/83907 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure
 webkit.org/b/83909 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 webkit.org/b/83912 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
 webkit.org/b/83913 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
+
+# EFL's EventSender does not implement continuousMouseScrollBy yet
+Bug(EFL) fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
+Bug(EFL) fast/events/wheelevent-direction-inverted-from-device.html [ Failure ]
+Bug(EFL) fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
+Bug(EFL) fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+
+# EFL's EventSender does not implement gesture-related callbacks
+Bug(EFL) fast/events/touch/gesture
+Bug(EFL) fast/events/touch/page-scaled-touch-gesture-click.html
 
 # EventSender.beginDragWithFiles is not implemented
 webkit.org/b/84333 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Failure ]
@@ -395,6 +452,35 @@ webkit.org/b/84338 fast/events/clipboard-dataTransferItemList.html [ Failure ]
 webkit.org/b/84338 fast/forms/input-paste-undo.html [ Failure ]
 webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Missing ]
 webkit.org/b/84338 fast/forms/textarea-paste-newline.html [ Failure ]
+
+# MathML: Absolute and Integral operators are not stacked properly
+webkit.org/b/47744 mathml/presentation/mo.xhtml
+webkit.org/b/47744 mathml/presentation/row.xhtml
+webkit.org/b/47744 mathml/presentation/over.xhtml
+
+# EFL has not fully implemented about some SVG attributes
+Bug(EFL) svg/custom
+Bug(EFL) svg/dom/altGlyph-dom.xhtml
+Bug(EFL) svg/text
+Bug(EFL) svg/W3C-SVG-1.1
+Bug(EFL) svg/W3C-SVG-1.1-SE
+Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
+
+# EFL's TestRunner does not implement setMediaType
+Bug(EFL) fast/media/print-restores-previous-mediatype.html [ Failure ]
+
+# EFL's TestRunner does not implement enableAutoResizeMode
+Bug(EFL) fast/autoresize
+
+# EFL's TestRunner does not implement setScrollbarPolicy
+Bug(EFL) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
+
+# The EFL port has no support for loading a PDF as an image
+Bug(EFL) fast/images/pdf-as-background.html
+Bug(EFL) fast/images/pdf-as-image-landscape.html
+Bug(EFL) fast/images/pdf-as-image.html
+Bug(EFL) fast/images/pdf-as-tiled-background.html
+Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]

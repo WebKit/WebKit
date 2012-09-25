@@ -2,77 +2,8 @@
 # Tests which depend on features which have not been implemented yet
 # --------------------------------------------------------------------
 
-# EFL's EventSender does not implement dumpFilenameBeingDragged
-fast/events/drag-image-filename.html
-
-# EFL's EventSender does not implement continuousMouseScrollBy yet
-fast/events/continuous-platform-wheelevent-in-scrolling-div.html
-fast/events/wheelevent-direction-inverted-from-device.html
-fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
-fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
-
-# EFL has not fully implemented about some SVG attributes
-svg/custom
-svg/dom/altGlyph-dom.xhtml
-svg/text
-svg/W3C-SVG-1.1
-svg/W3C-SVG-1.1-SE
-svg/zoom/page/zoom-zoom-coords.xhtml
-
-# EFL's EventSender does not implement gesture-related callbacks
-fast/events/touch/gesture
-fast/events/touch/page-scaled-touch-gesture-click.html
-
-# EFL's port requires implementation of ClipboardEfl and DragClientEfl classes in order to suppport drag n drop functionality
-fast/block/positioning/hittest-on-relative-positioned-children.html
-fast/events/5056619.html
-fast/events/bogus-dropEffect-effectAllowed.html
-fast/events/click-count.html
-fast/events/content-changed-during-drop.html
-fast/events/crash-on-mutate-during-drop.html
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-fast/events/drag-and-drop-fire-drag-dragover.html
-fast/events/drag-and-drop.html
-fast/events/drag-customData.html
-fast/events/drag-dataTransferItemList.html
-fast/events/drag-selects-image.html
-fast/events/dropzone-001.html
-fast/events/dropzone-002.html
-fast/events/dropzone-003.html
-fast/events/dropzone-005.html
-fast/events/ondragenter.html
-fast/events/ondrop-text-html.html
-fast/events/selectstart-by-double-triple-clicks.html
-fast/events/selectstart-by-drag.html
-fast/events/standalone-image-drag-to-editable.html
-fast/forms/drag-into-textarea.html
-fast/forms/drag-out-of-textarea.html
-fast/forms/focus-change-on-keypress.html
-fast/forms/search-cancel-button-mouseup.html
-fast/forms/search-disabled-readonly.html
-fast/forms/textfield-drag-into-disabled.html
-fast/lists/drag-into-marker.html
-fast/table/click-near-anonymous-table.html
-fast/text/offsetForPosition-complex-fallback.html
-http/tests/local/drag-over-remote-content.html
-http/tests/misc/bubble-drag-events.html
-http/tests/misc/drag-over-iframe-invalid-source-crash.html
-http/tests/security/dataTransfer-set-data-file-url.html
-http/tests/security/drag-drop-different-origin.html
-http/tests/security/drag-over-remote-content-iframe.html
-
-# EFL's LayoutTestController does not implement setMediaType
-fast/media/print-restores-previous-mediatype.html
-
 # EFL's LayoutTestController does not implement keepWebHistory
-fast/history/visited-link-background-color.html
 fast/history/window-open.html
-
-# EFL's LayoutTestController does not implement setScrollbarPolicy
-fast/overflow/scrollbar-restored-and-then-locked.html
-
-# EFL's LayoutTestController does not implement enableAutoResizeMode
-fast/autoresize
 
 # EFL's LayoutTestController does not implement setWindowIsKey
 fast/dom/Window/window-onFocus.html
@@ -86,9 +17,6 @@ editing/selection
 editing/spelling
 editing/style
 
-# EFL's LayoutTestController overridePreference does not implement WebKitUsePreHTML5ParserQuirks preference
-fast/parser/pre-html5-parser-quirks.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
 media/video-volume-slider.html
 
@@ -100,9 +28,6 @@ fast/history/back-forward-reset-after-error-handling.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
-
-# This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html
 
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
@@ -118,19 +43,9 @@ http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-o
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
 
-# The EFL port has no support for loading a PDF as an image
-fast/images/pdf-as-background.html
-fast/images/pdf-as-image-landscape.html
-fast/images/pdf-as-image.html
-fast/images/pdf-as-tiled-background.html
-fast/replaced/pdf-as-image.html
-
 # The EFL port has no support for detecting slow unload handlers
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
-
-# No CORS support for media elements is implemented yet.
-http/tests/security/video-cross-origin-readback.html
 
 # ----------------------------------------
 # Tests which also fail in other platforms
@@ -364,22 +279,6 @@ fast/forms/input-readonly-autoscroll.html
 
 # Needs investigation: this test passes when run alone
 fast/forms/submit-to-blank-multiple-times.html
-
-# Flaky test. https://bugs.webkit.org/show_bug.cgi?id=68536
-media/media-blocked-by-beforeload.html
-
-# Flaky test. https://bugs.webkit.org/show_bug.cgi?id=68878
-media/video-playing-and-pause.html
-
-# Flaky test. https://bugs.webkit.org/show_bug.cgi?id=44199
-perf/typing-at-end-of-line.html
-
-# BUG: "|" is shown as a dotted line, not a straight one.
-mathml/presentation/mo.xhtml
-mathml/presentation/row.xhtml
-
-# BUG: Integral symbol is drawn almost like a straight line.
-mathml/presentation/over.xhtml
 
 # Flaky tests (text diff mismatch)
 http/tests/navigation/document-location-mouseover.html

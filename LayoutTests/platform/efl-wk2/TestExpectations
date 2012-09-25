@@ -180,6 +180,10 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 # WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
+# Visited link color is incorrect
+Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
+Bug(EFL) fast/history/visited-link-background-color.html [ Failure ]
+
 # Unclassified failures
 Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
 Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
