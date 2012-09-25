@@ -347,13 +347,16 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
-    // Only process paint calls coming via the accelerated compositing code
-    // path, where we get called with a null graphics context. See
-    // LayerCompositingThread::drawTextures(). Ignore calls from the regular
-    // rendering path.
-    if (!context)
-        m_platformPlayer->notifyOutputUpdate(BlackBerry::Platform::IntRect(rect.x(), rect.y(), rect.width(), rect.height()));
-    return;
+    if (supportsAcceleratedRendering()) {
+        // Only process paint calls coming via the accelerated compositing code
+        // path, where we get called with a null graphics context. See
+        // LayerCompositingThread::drawTextures(). Ignore calls from the regular
+        // rendering path.
+        if (!context)
+            m_platformPlayer->notifyOutputUpdate(BlackBerry::Platform::IntRect(rect.x(), rect.y(), rect.width(), rect.height()));
+
+        return;
+    }
 #endif
 
     paintCurrentFrameInContext(context, rect);
@@ -540,7 +543,7 @@ void MediaPlayerPrivate::updateStates()
             m_showBufferingImage = false;
             m_mediaIsBuffering = false;
             // Create platform layer for video (create hole punch rect).
-            if (!m_platformLayer)
+            if (!m_platformLayer && supportsAcceleratedRendering())
                 m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
 #endif
             break;
@@ -818,6 +821,13 @@ bool MediaPlayerPrivate::isElementPaused() const
 bool MediaPlayerPrivate::isTabVisible() const
 {
     return m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient()->isVisible();
+}
+
+bool MediaPlayerPrivate::supportsAcceleratedRendering() const
+{
+    if (m_platformPlayer)
+        return m_platformPlayer->supportsAcceleratedRendering();
+    return false;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

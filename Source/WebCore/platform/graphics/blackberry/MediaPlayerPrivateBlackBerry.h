@@ -96,7 +96,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     // Whether accelerated rendering is supported by the media engine for the current media.
-    virtual bool supportsAcceleratedRendering() const { return true; }
+    virtual bool supportsAcceleratedRendering() const;
     // Called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() { }
 #endif
