@@ -1,3 +1,14 @@
+2012-09-25  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: AccessibilityUIElementChromium.cpp won't build on Windows without wtf/StringExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=97614
+
+        Unreviewed, fixing windows breakage.
+
+        Added wtf/StringExtras.h to the includes to fix the Chromium/Windows build.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+
 2012-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed

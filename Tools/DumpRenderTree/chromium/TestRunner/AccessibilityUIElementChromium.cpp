@@ -37,6 +37,7 @@
 #include "platform/WebRect.h"
 #include "platform/WebString.h"
 #include <wtf/Assertions.h>
+#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 using namespace std;
