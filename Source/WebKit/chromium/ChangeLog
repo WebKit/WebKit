@@ -1,3 +1,9 @@
+2012-09-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Roll DEPS for Chromium.
+
+        * DEPS:
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397
