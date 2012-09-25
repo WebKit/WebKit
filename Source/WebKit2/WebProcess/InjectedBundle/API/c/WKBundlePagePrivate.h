@@ -71,8 +71,10 @@ WK_EXPORT bool WKBundlePageHasComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmCompositionWithText(WKBundlePageRef page, WKStringRef text);
 
+WK_EXPORT bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeType);
+
 WK_EXPORT void* WKAccessibilityRootObject(WKBundlePageRef);
-WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);    
+WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 
 #ifdef __cplusplus
 }

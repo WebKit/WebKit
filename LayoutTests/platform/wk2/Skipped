@@ -809,7 +809,6 @@ webarchive/loading/test-loading-archive-subresource-null-mimetype.html
 # Should pass now on ports other than EFL and GTK.
 # But it needs to be checked first.
 http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/text-content-type-with-binary-extension.html
 
 # Some elements are skipped when focus is moved.
 fast/spatial-navigation/snav-container-white-space.html

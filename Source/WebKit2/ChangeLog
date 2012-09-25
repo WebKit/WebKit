@@ -1,3 +1,18 @@
+2012-09-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WTR bundle client loads binary data as text
+        https://bugs.webkit.org/show_bug.cgi?id=97532
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added WKBundlePageCanShowMIMEType() function to WKBundlePage private API.
+        This function is put to WKBundlePage to keep consistency with WebKit::WebPageProxy::canShowMIMEType().
+        Actually it does not need anything from page.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCanShowMIMEType):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use the C API internally in WebKitWebView

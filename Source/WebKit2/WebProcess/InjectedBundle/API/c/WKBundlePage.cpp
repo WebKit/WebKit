@@ -44,6 +44,7 @@
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
 
 #if ENABLE(WEB_INTENTS)
@@ -412,4 +413,22 @@ void WKBundlePageConfirmComposition(WKBundlePageRef pageRef)
 void WKBundlePageConfirmCompositionWithText(WKBundlePageRef pageRef, WKStringRef text)
 {
     toImpl(pageRef)->confirmCompositionForTesting(toImpl(text)->string());
+}
+
+bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeTypeRef)
+{
+    using WebCore::MIMETypeRegistry;
+
+    const WTF::String mimeType = toImpl(mimeTypeRef)->string();
+
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
+        return true;
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return true;
+
+    if (mimeType.startsWith("text/", false))
+        return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
+
+    return false;
 }

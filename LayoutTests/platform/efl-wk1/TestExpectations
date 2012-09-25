@@ -105,3 +105,6 @@ webkit.org/b/82864 fast/events/keypress-insert-tab.html [ Failure ]
 # scrolling with fixed position does not work correctly when using ewk_view_tiled. 
 webkit.org/b/84933 compositing/geometry/fixed-position.html [ ImageOnlyFailure Pass ]
 
+# Fail after r128393.
+webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
+webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
