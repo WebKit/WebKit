@@ -1,3 +1,18 @@
+2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Make sure that desktop pages honour the devicePixelRatio
+        https://bugs.webkit.org/show_bug.cgi?id=97215
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The desktopWidth given to computeViewportAttributes is expected to be pixel-ratio adjusted already.
+        We need to make sure that the viewport size is divided by the pixel ratio to prevent
+        the equivalent of a 1.0 devicePixelRatio to be in effect once viewportSize.width() is larger
+        than layoutFallbackWidth.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2012-09-25  Simon Pena  <spena@igalia.com>
 
         [GTK] Add Undo / Redo method to WebKit2 GTK+ API
