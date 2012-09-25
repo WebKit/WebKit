@@ -1,3 +1,21 @@
+2012-09-25  Akash Vaswani  <avaswani@apple.com>
+
+        Crash after clicking in plugin at kauaiexplorer.com
+        <rdar://problem/11525987/> and https://bugs.webkit.org/show_bug.cgi?id=90925
+
+        Reviewed by Sam Weinig.
+
+        Bug: Clicking the plugin to navigate away from the page caused the browser to crash.
+             This is because it is possible for a beforeunload handler to destroy the plugin
+             while it is still needed. In this case the handler set visibility to "none" and
+             then accessed a property on the plugin script object. This forced a layout
+             that destroyed the plugin.
+        Fix: Protecting PluginView objects until they are no longer required.
+             This was done by adding a RefPtr at the beginning of performURLRequest() 
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performURLRequest):
+
 2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't kill automatically the web process when the ui process finishes
