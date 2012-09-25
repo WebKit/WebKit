@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionCoordinator> IDBTransactionCoordinator::create()
+PassOwnPtr<IDBTransactionCoordinator> IDBTransactionCoordinator::create()
 {
-    return adoptRef(new IDBTransactionCoordinator());
+    return adoptPtr(new IDBTransactionCoordinator());
 }
 
-IDBTransactionCoordinator::IDBTransactionCoordinator() 
+IDBTransactionCoordinator::IDBTransactionCoordinator()
 {
 }
 

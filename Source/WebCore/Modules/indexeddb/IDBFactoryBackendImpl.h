@@ -41,7 +41,6 @@ class DOMStringList;
 
 class IDBBackingStore;
 class IDBDatabaseBackendImpl;
-class IDBTransactionCoordinator;
 
 class IDBFactoryBackendImpl : public IDBFactoryBackendInterface {
 public:
@@ -70,8 +69,6 @@ private:
 
     typedef HashMap<String, IDBBackingStore*> IDBBackingStoreMap;
     IDBBackingStoreMap m_backingStoreMap;
-
-    RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
 
     // Only one instance of the factory should exist at any given time.
     static IDBFactoryBackendImpl* idbFactoryBackendImpl;

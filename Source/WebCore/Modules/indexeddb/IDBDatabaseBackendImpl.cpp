@@ -119,9 +119,9 @@ private:
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };
 
-PassRefPtr<IDBDatabaseBackendImpl> IDBDatabaseBackendImpl::create(const String& name, IDBBackingStore* database, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackendImpl> IDBDatabaseBackendImpl::create(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
 {
-    RefPtr<IDBDatabaseBackendImpl> backend = adoptRef(new IDBDatabaseBackendImpl(name, database, coordinator, factory, uniqueIdentifier));
+    RefPtr<IDBDatabaseBackendImpl> backend = adoptRef(new IDBDatabaseBackendImpl(name, database, factory, uniqueIdentifier));
     if (!backend->openInternal())
         return 0;
     return backend.release();
@@ -131,7 +131,7 @@ namespace {
 const char* NoStringVersion = "";
 }
 
-IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
+IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_id(InvalidId)
     , m_name(name)
@@ -139,7 +139,7 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_intVersion(IDBDatabaseMetadata::NoIntVersion)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
-    , m_transactionCoordinator(coordinator)
+    , m_transactionCoordinator(IDBTransactionCoordinator::create())
 {
     ASSERT(!m_name.isNull());
 }

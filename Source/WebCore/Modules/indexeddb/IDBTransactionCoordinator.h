@@ -40,9 +40,9 @@ class IDBTransactionCallbacks;
 class IDBDatabaseBackendImpl;
 
 // Transactions are executed in the order the were created.
-class IDBTransactionCoordinator : public RefCounted<IDBTransactionCoordinator> {
+class IDBTransactionCoordinator {
 public:
-    static PassRefPtr<IDBTransactionCoordinator> create();
+    static PassOwnPtr<IDBTransactionCoordinator> create();
     virtual ~IDBTransactionCoordinator();
 
     // Called by transactions as they start and finish.

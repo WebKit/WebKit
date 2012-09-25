@@ -1,3 +1,14 @@
+2012-09-25  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: One transaction coordinator per database
+        https://bugs.webkit.org/show_bug.cgi?id=97501
+
+        Reviewed by Tony Chang.
+
+        Remove obsolete argument.
+
+        * tests/IDBDatabaseBackendTest.h:
+
 2012-09-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129517.

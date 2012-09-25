@@ -47,7 +47,7 @@ class IDBTransactionCoordinator;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
+    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
     virtual ~IDBDatabaseBackendImpl();
 
     PassRefPtr<IDBBackingStore> backingStore() const;
@@ -75,7 +75,7 @@ public:
     void transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendImpl>);
 
 private:
-    IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
+    IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     bool openInternal();
     void runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
@@ -106,7 +106,7 @@ private:
     typedef HashMap<String, RefPtr<IDBObjectStoreBackendImpl> > ObjectStoreMap;
     ObjectStoreMap m_objectStores;
 
-    RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
+    OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
     RefPtr<IDBTransactionBackendImpl> m_runningVersionChangeTransaction;
 
     typedef HashSet<IDBTransactionBackendImpl*> TransactionSet;

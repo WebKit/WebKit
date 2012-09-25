@@ -32,7 +32,6 @@
 #include "IDBFakeBackingStore.h"
 #include "IDBIndexBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
-#include "IDBTransactionCoordinator.h"
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseImpl.h"
 
@@ -53,9 +52,8 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
     RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
     EXPECT_TRUE(backingStore->hasOneRef());
 
-    IDBTransactionCoordinator* coordinator = 0;
     IDBFactoryBackendImpl* factory = 0;
-    RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
+    RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), factory, "uniqueid");
     EXPECT_GT(backingStore->refCount(), 1);
 
     const bool autoIncrement = false;
@@ -118,9 +116,8 @@ TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
     RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
     EXPECT_TRUE(backingStore->hasOneRef());
 
-    IDBTransactionCoordinator* coordinator = 0;
     IDBFactoryBackendImpl* factory = 0;
-    RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
+    RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), factory, "uniqueid");
     EXPECT_GT(backingStore->refCount(), 1);
 
     RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
@@ -177,9 +174,8 @@ TEST(IDBDatabaseBackendTest, ForcedClose)
     RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
     EXPECT_TRUE(backingStore->hasOneRef());
 
-    IDBTransactionCoordinator* coordinator = 0;
     IDBFactoryBackendImpl* factory = 0;
-    RefPtr<IDBDatabaseBackendImpl> backend = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
+    RefPtr<IDBDatabaseBackendImpl> backend = IDBDatabaseBackendImpl::create("db", backingStore.get(), factory, "uniqueid");
     EXPECT_GT(backingStore->refCount(), 1);
 
     RefPtr<FakeIDBDatabaseCallbacks> connection = FakeIDBDatabaseCallbacks::create();
