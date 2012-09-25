@@ -76,22 +76,18 @@ public:
 
     WebCore::FloatRect positionRangeForContentAtScale(float viewportScale) const;
 
-    float convertFromViewport(float value) const { return value / m_devicePixelRatio; }
-    float convertToViewport(float value) const { return value * m_devicePixelRatio; }
-    WebCore::FloatRect convertToViewport(const WebCore::FloatRect&) const;
-
-    float innerBoundedContentsScale(float) const;
-    float outerBoundedContentsScale(float) const;
+    float innerBoundedViewportScale(float) const;
+    float outerBoundedViewportScale(float) const;
 
     bool hasSuspendedContent() const { return m_hasSuspendedContent; }
     bool hadUserInteraction() const { return m_hadUserInteraction; }
     bool allowsUserScaling() const { return m_allowsUserScaling; }
 
     WebCore::FloatSize contentsLayoutSize() const { return m_rawAttributes.layoutSize; }
-    float devicePixelRatio() const { return m_devicePixelRatio; }
-    float minimumContentsScale() const { return m_minimumScale; }
-    float maximumContentsScale() const { return m_maximumScale; }
-    float currentContentsScale() const { return convertFromViewport(m_effectiveScale); }
+    float devicePixelRatio() const;
+    float minimumContentsScale() const { return m_minimumScaleToFit; }
+    float maximumContentsScale() const { return m_rawAttributes.maximumScale; }
+    float currentContentsScale() const { return fromViewportScale(m_effectiveScale); }
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
@@ -105,7 +101,10 @@ public:
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
 private:
+    float fromViewportScale(float scale) const { return scale / devicePixelRatio(); }
+    float toViewportScale(float scale) const { return scale * devicePixelRatio(); }
     void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
+    void updateMinimumScaleToFit();
 
     WebPageProxy* const m_webPageProxy;
     PageViewportControllerClient* m_client;
@@ -113,9 +112,7 @@ private:
     WebCore::ViewportAttributes m_rawAttributes;
 
     bool m_allowsUserScaling;
-    float m_minimumScale;
-    float m_maximumScale;
-    float m_devicePixelRatio;
+    float m_minimumScaleToFit;
 
     int m_activeDeferrerCount;
     bool m_hasSuspendedContent;

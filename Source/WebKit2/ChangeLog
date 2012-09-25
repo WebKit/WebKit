@@ -1,3 +1,48 @@
+2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Abstract as much devicePixelRatio logic as possible behind PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=97214
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently the client is required to multiply the scales it receives each bime by the
+        devicePixelRatio. This shouldn't be required since essentially, the only places that the
+        devicePixelRatio should be in use, is to adjust the layout size, multiply the base scale
+        and for scale constants.
+
+        Other related changes:
+        - Make sure that the controller and it's client are only exchanging effective scales
+         (cssScale * devicePixelRatio)
+        - Remove members duplicating m_rawAttributes values
+        - Use a separate member for the minimum scale to fit the page, separate from the viewport arguments
+        - Make sure that the minimum scale to fit is adjusted if the contents size isn't
+          updated after the viewport attributes changed
+        - Make the scale conversion functions private to discourage this logic from spreading in the client
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::innerBoundedViewportScale):
+        (WebKit::PageViewportController::outerBoundedViewportScale):
+        (WebKit):
+        (WebKit::PageViewportController::devicePixelRatio):
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::resumeContent):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        (WebKit::PageViewportController::minimumContentsScale):
+        (WebKit::PageViewportController::maximumContentsScale):
+        (WebKit::PageViewportController::currentContentsScale):
+        (WebKit::PageViewportController::fromViewportScale):
+        (WebKit::PageViewportController::toViewportScale):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::nearestValidVisibleContentsRect):
+        (WebKit::PageViewportControllerClientQt::setContentsRectToNearestValidBounds):
+        (WebKit::PageViewportControllerClientQt::pinchGestureRequestUpdate):
+
 2012-09-25  Simon Pena  <spena@igalia.com>
 
         [GTK] Fix typo in accessing union field in a GdkEvent in a WebKit2 unit test

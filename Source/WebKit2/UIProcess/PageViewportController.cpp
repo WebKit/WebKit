@@ -73,9 +73,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     : m_webPageProxy(proxy)
     , m_client(client)
     , m_allowsUserScaling(false)
-    , m_minimumScale(1)
-    , m_maximumScale(1)
-    , m_devicePixelRatio(1)
+    , m_minimumScaleToFit(1)
     , m_activeDeferrerCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
@@ -84,38 +82,33 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     // Initializing Viewport Raw Attributes to avoid random negative scale factors
     // if there is a race condition between the first layout and setting the viewport attributes for the first time.
     m_rawAttributes.initialScale = 1;
-    m_rawAttributes.minimumScale = m_minimumScale;
-    m_rawAttributes.maximumScale = m_maximumScale;
+    m_rawAttributes.minimumScale = 1;
+    m_rawAttributes.maximumScale = 1;
     m_rawAttributes.userScalable = m_allowsUserScaling;
 
     ASSERT(m_client);
     m_client->setController(this);
 }
 
-FloatRect PageViewportController::convertToViewport(const FloatRect& cssRect) const
+float PageViewportController::innerBoundedViewportScale(float viewportScale) const
 {
-    return FloatRect(
-        convertToViewport(cssRect.x()),
-        convertToViewport(cssRect.y()),
-        convertToViewport(cssRect.width()),
-        convertToViewport(cssRect.height())
-    );
+    return bound(toViewportScale(m_minimumScaleToFit), viewportScale, toViewportScale(m_rawAttributes.maximumScale));
 }
 
-float PageViewportController::innerBoundedContentsScale(float cssScale) const
-{
-    return bound(m_minimumScale, cssScale, m_maximumScale);
-}
-
-float PageViewportController::outerBoundedContentsScale(float cssScale) const
+float PageViewportController::outerBoundedViewportScale(float viewportScale) const
 {
     if (m_allowsUserScaling) {
         // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
-        float hardMin = std::max<float>(0.1, 0.5 * m_minimumScale);
-        float hardMax = std::min<float>(10, 2 * m_maximumScale);
-        return bound(hardMin, cssScale, hardMax);
+        float hardMin = toViewportScale(std::max<float>(0.1, 0.5 * m_minimumScaleToFit));
+        float hardMax = toViewportScale(std::min<float>(10, 2 * m_rawAttributes.maximumScale));
+        return bound(hardMin, viewportScale, hardMax);
     }
-    return innerBoundedContentsScale(cssScale);
+    return innerBoundedViewportScale(viewportScale);
+}
+
+float PageViewportController::devicePixelRatio() const
+{
+    return m_webPageProxy->deviceScaleFactor();
 }
 
 void PageViewportController::didChangeContentsSize(const IntSize& newSize)
@@ -124,17 +117,7 @@ void PageViewportController::didChangeContentsSize(const IntSize& newSize)
         return;
 
     m_contentsSize = newSize;
-
-    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), newSize);
-
-    if (!fuzzyCompare(minimumScale, m_rawAttributes.minimumScale, 0.001)) {
-        m_minimumScale = minimumScale;
-
-        if (!m_hadUserInteraction && !hasSuspendedContent())
-            m_client->setContentsScale(convertToViewport(minimumScale), true /* isInitialScale */);
-
-        m_client->didChangeViewportAttributes();
-    }
+    updateMinimumScaleToFit();
 
     m_client->didChangeContentsSize();
 }
@@ -193,10 +176,8 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
     m_rawAttributes = newAttributes;
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
-    m_devicePixelRatio = m_webPageProxy->deviceScaleFactor();
     m_allowsUserScaling = !!m_rawAttributes.userScalable;
-    m_minimumScale = m_rawAttributes.minimumScale;
-    m_maximumScale = m_rawAttributes.maximumScale;
+    updateMinimumScaleToFit();
 
     m_client->didChangeViewportAttributes();
 }
@@ -214,7 +195,7 @@ void PageViewportController::resumeContent()
 {
     if (!m_rawAttributes.layoutSize.isEmpty() && m_rawAttributes.initialScale > 0) {
         m_hadUserInteraction = false;
-        m_client->setContentsScale(convertToViewport(innerBoundedContentsScale(m_rawAttributes.initialScale)), /* isInitialScale */ true);
+        m_client->setContentsScale(innerBoundedViewportScale(toViewportScale(m_rawAttributes.initialScale)), /* isInitialScale */ true);
         m_rawAttributes.initialScale = -1; // Mark used.
     }
 
@@ -225,6 +206,20 @@ void PageViewportController::resumeContent()
 
     m_hasSuspendedContent = false;
     m_webPageProxy->resumeActiveDOMObjectsAndAnimations();
+}
+
+void PageViewportController::updateMinimumScaleToFit()
+{
+    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize));
+
+    if (!fuzzyCompare(minimumScale, m_minimumScaleToFit, 0.001)) {
+        m_minimumScaleToFit = minimumScale;
+
+        if (!m_hadUserInteraction && !hasSuspendedContent())
+            m_client->setContentsScale(toViewportScale(minimumScale), true /* isInitialScale */);
+
+        m_client->didChangeViewportAttributes();
+    }
 }
 
 FloatRect PageViewportController::positionRangeForContentAtScale(float viewportScale) const
