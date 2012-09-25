@@ -45,6 +45,7 @@ WebInspector.ResourceScriptMapping = function(workspace)
     this._temporaryUISourceCodes = new Map();
     /** @type {Object.<string, number>} */
     this._nextDynamicScriptIndexForURL = {};
+    this._scripts = [];
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -82,6 +83,7 @@ WebInspector.ResourceScriptMapping.prototype = {
 
         var isDynamicScript = false;
         if (!script.isAnonymousScript()) {
+            this._scripts.push(script);
             var uiSourceCode = this._workspace.uiSourceCodeForURL(script.sourceURL);
             isDynamicScript = !!uiSourceCode && uiSourceCode.contentType() === WebInspector.resourceTypes.Document && !script.isInlineScript();
             if (uiSourceCode && !isDynamicScript && !this._temporaryUISourceCodes.get(uiSourceCode))
@@ -122,7 +124,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             return script.sourceURL === sourceURL && script.isInlineScript() === isInlineScript;
         }
 
-        return Object.values(WebInspector.debuggerModel.scripts).filter(filter);
+        return this._scripts.filter(filter.bind(this));
     },
 
     /**
@@ -220,5 +222,6 @@ WebInspector.ResourceScriptMapping.prototype = {
         this._scriptIdForUISourceCode.clear();
         this._temporaryUISourceCodes.clear();
         this._nextDynamicScriptIndexForURL = {};
+        this._scripts = [];
     },
 }

@@ -2,11 +2,20 @@
 <head>
 <script src="inspector-test.js"></script>
 <script src="debugger-test.js"></script>
+<script src="workspace-test.js"></script>
 
 <script>
 
 function test()
 {
+    function createCompilerScriptMapping()
+    {
+        InspectorTest.createWorkspace();
+        var compilerScriptMapping = new WebInspector.CompilerScriptMapping(InspectorTest.testWorkspace);
+        var resourceScriptMapping = new WebInspector.ResourceScriptMapping(InspectorTest.testWorkspace);
+        return compilerScriptMapping;
+    }
+
     function checkMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, sourceColumnNumber, mapping)
     {
         var entry = mapping.findEntry(compiledLineNumber, compiledColumnNumber);
@@ -126,38 +135,64 @@ function test()
 
         function testCompilerScriptMapping(next)
         {
+            var script;
             WebInspector.debuggerModel._reset();
-            var workspace = new WebInspector.Workspace();
-            var mapping = new WebInspector.CompilerScriptMapping(workspace);
-            var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
-            script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
-            mapping.addScript(script);
+            var mapping = createCompilerScriptMapping();
+            step1();
 
-            var uiSourceCode1 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source1.js"];
-            var uiSourceCode2 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source2.js"];
-            var originalUISourceCode = mapping._originalUISourceCodeForScriptId[script.scriptId];
-
-            InspectorTest.checkUILocation(uiSourceCode1, 4, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 81)));
-            InspectorTest.checkUILocation(uiSourceCode1, 5, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 93)));
-            InspectorTest.checkUILocation(uiSourceCode2, 7, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 151)));
-            InspectorTest.checkUILocation(originalUISourceCode, 1, 200, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 200)));
-
-            InspectorTest.checkRawLocation(script, 0, 42, mapping.uiLocationToRawLocation(uiSourceCode1, 3, 10));
-            InspectorTest.checkRawLocation(script, 1, 85, mapping.uiLocationToRawLocation(uiSourceCode2, 0, 0));
-            InspectorTest.checkRawLocation(script, 1, 110, mapping.uiLocationToRawLocation(uiSourceCode2, 5, 2));
-
-            uiSourceCode1.requestContent(didRequestContent1);
-
-            function didRequestContent1(content, contentEncoded, mimeType)
+            function step1()
             {
-                InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
-                uiSourceCode2.requestContent(didRequestContent2);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
+                script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
+                script.setSourceMapping(mapping);
+                mapping.addScript(script);
             }
 
-            function didRequestContent2(content, contentEncoded, mimeType)
+            function originalUISourceCodeAdded(uiSourceCode)
             {
-                InspectorTest.assertEquals(0, content.indexOf("function ClickHandler()"));
-                next();
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(firstUISourceCodeAdded);
+            }
+
+            function firstUISourceCodeAdded(uiSourceCode)
+            {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(secondUISourceCodeAdded);
+            }
+
+            function secondUISourceCodeAdded(uiSourceCode)
+            {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalResourceUISourceCodeAdded);
+                InspectorTest.addMockUISourceCodeToWorkspace("compiled.js", WebInspector.resourceTypes.Script, "");
+            }
+
+            function originalResourceUISourceCodeAdded(uiSourceCode)
+            {
+                var uiSourceCode1 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source1.js"];
+                var uiSourceCode2 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source2.js"];
+                var originalUISourceCode = mapping._originalUISourceCodeForScriptId[script.scriptId];
+
+                InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
+                InspectorTest.checkUILocation(uiSourceCode1, 5, 4, script.rawLocationToUILocation(0, 93));
+                InspectorTest.checkUILocation(uiSourceCode2, 7, 4, script.rawLocationToUILocation(1, 151));
+                InspectorTest.checkUILocation(originalUISourceCode, 1, 200, script.rawLocationToUILocation(1, 200));
+
+                InspectorTest.checkRawLocation(script, 0, 42, uiSourceCode1.uiLocationToRawLocation(3, 10));
+                InspectorTest.checkRawLocation(script, 1, 85, uiSourceCode2.uiLocationToRawLocation(0, 0));
+                InspectorTest.checkRawLocation(script, 1, 110, uiSourceCode2.uiLocationToRawLocation(5, 2));
+
+                uiSourceCode1.requestContent(didRequestContent1);
+
+                function didRequestContent1(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
+                    uiSourceCode2.requestContent(didRequestContent2);
+                }
+
+                function didRequestContent2(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.assertEquals(0, content.indexOf("function ClickHandler()"));
+                    next();
+                }
             }
         },
 
