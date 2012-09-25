@@ -500,13 +500,15 @@ bool CSPSourceList::parsePath(const UChar* begin, const UChar* end, String& path
     // path/to/file.js?query=string || path/to/file.js#anchor
     //                ^                               ^
     if (position < end)
-        return false;
+        m_policy->reportInvalidPathCharacter(m_directiveName, String(begin, end - begin), *position);
 
-    path = decodeURLEscapeSequences(String(begin, end - begin));
+    path = decodeURLEscapeSequences(String(begin, position - begin));
     if (!path.endsWith('/'))
         path = path + '/';
 
-    ASSERT(position == end && path.endsWith('/'));
+    ASSERT(position <= end);
+    ASSERT(position == end || (*position == '#' || *position == '?'));
+    ASSERT(path.endsWith('/'));
     return true;
 }
 
@@ -1570,6 +1572,17 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
 void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const
 {
     String message = makeString("The value for Content Security Policy directive '", directiveName, "' contains an invalid character: '", value, "'. Non-whitespace characters outside ASCII 0x21-0x7E must be percent-encoded, as described in RFC 3986, section 2.1: http://tools.ietf.org/html/rfc3986#section-2.1.");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidPathCharacter(const String& directiveName, const String& value, const char invalidChar) const
+{
+    ASSERT(invalidChar == '#' || invalidChar == '?');
+
+    String ignoring = "The fragment identifier, including the '#', will be ignored.";
+    if (invalidChar == '?')
+        ignoring = "The query component, including the '?', will be ignored.";
+    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains a source with an invalid path: '", value, "'. ", ignoring);
     logToConsole(message);
 }
 

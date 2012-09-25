@@ -101,6 +101,7 @@ public:
 
     void reportDuplicateDirective(const String&) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
+    void reportInvalidPathCharacter(const String& directiveName, const String& value, const char) const;
     void reportInvalidNonce(const String&) const;
     void reportInvalidPluginTypes(const String&) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;

@@ -1,7 +1,9 @@
-CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '127.0.0.1:*/not-security#query=string'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/security#query=string'. The fragment identifier, including the '#', will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/security?query=string'. The query component, including the '?', will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/not-security#query=string'. The fragment identifier, including the '#', will be ignored.
 CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 127.0.0.1:*/not-security#query=string".
 
-CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '127.0.0.1:*/not-security?query=string'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/not-security?query=string'. The query component, including the '?', will be ignored.
 CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 127.0.0.1:*/not-security?query=string".
 
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'not-contentSecurityPolicy'.
@@ -37,5 +39,15 @@ PASS
 
 --------
 Frame: '<!--framePath //<!--frame5-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame7-->-->'
 --------
 PASS

@@ -4,6 +4,8 @@
 <script src='resources/multiple-iframe-test.js'></script>
 <script>
 var tests = [
+    ['yes', 'script-src 127.0.0.1:*/security#query=string', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/security?query=string', 'resources/script.js'],
     ['no', 'script-src 127.0.0.1:*/not-security#query=string', 'resources/script.js'],
     ['no', 'script-src 127.0.0.1:*/not-security?query=string', 'resources/script.js'],
     ['yes', 'script-src 127.0.0.1:*/security', 'resources/script.js'],
