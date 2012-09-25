@@ -144,10 +144,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
 
-# BUG: <canvas>'s toDataURL has problems with non-image/png mimetypes
-fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html
-fast/canvas/toDataURL-supportedTypes.html
-
 # BUG: wrong test results that need investigation
 compositing/checkerboard.html
 compositing/framesets/composited-frame-alignment.html
