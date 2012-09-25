@@ -1,3 +1,19 @@
+2012-09-25  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] When zooming into an input field take the current zoom level into account.
+        https://bugs.webkit.org/show_bug.cgi?id=97594
+
+        Reviewed by Antonio Gomes.
+
+        PR 188751.
+
+        Perform the zoom action prior to scroll to avoid breaking scrolling
+        rules.  Take the current scale into account when calculating the
+        zoom factor.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-09-25  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Handling required for multiple consecutive whitespace

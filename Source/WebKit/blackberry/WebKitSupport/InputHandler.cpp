@@ -1050,10 +1050,30 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         break;
     }
     case VisibleSelection::NoSelection:
+        if (m_focusZoomScale) {
+            m_webPage->zoomAboutPoint(m_focusZoomScale, m_focusZoomLocation);
+            m_focusZoomScale = 0.0;
+            m_focusZoomLocation = WebCore::IntPoint();
+        }
         return;
     }
 
     int fontHeight = selectionFocusRect.height();
+
+    // If the text is too small, zoom in to make it a minimum size.
+    // The minimum size being defined as 3 mm is a good value based on my observations.
+    static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
+
+    if (fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels) {
+        if (!m_focusZoomScale) {
+            m_focusZoomScale = m_webPage->currentScale();
+            m_focusZoomLocation = selectionFocusRect.location();
+        }
+        m_webPage->zoomAboutPoint(s_minimumTextHeightInPixels / fontHeight, m_focusZoomLocation);
+    } else {
+        m_focusZoomScale = 0.0;
+        m_focusZoomLocation = WebCore::IntPoint();
+    }
 
     if (elementFrame != mainFrame) { // Element is in a subframe.
         // Remove any scroll offset within the subframe to get the point relative to the main frame.
@@ -1125,18 +1145,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             mainFrameView->setScrollPosition(scrollLocation);
             mainFrameView->setConstrainsScrollingToContentEdge(true);
         }
-    }
-
-    // If the text is too small, zoom in to make it a minimum size.
-    // The minimum size being defined as 3 mm is a good value based on my observations.
-    static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->widthInMMToPixels(3);
-    if (fontHeight && fontHeight < s_minimumTextHeightInPixels) {
-        m_focusZoomScale = s_minimumTextHeightInPixels / fontHeight;
-        m_focusZoomLocation = selectionFocusRect.location();
-        m_webPage->zoomAboutPoint(m_focusZoomScale, m_focusZoomLocation);
-    } else {
-        m_focusZoomScale = 0.0;
-        m_focusZoomLocation = WebCore::IntPoint();
     }
 }
 
