@@ -13,7 +13,7 @@ PASS document.getElementById("url").list is document.getElementById("dl1")
 PASS document.getElementById("telephone").list is document.getElementById("dl1")
 PASS document.getElementById("email").list is document.getElementById("dl1")
 FAIL document.getElementById("datetime").list should be [object HTMLDataListElement]. Was null.
-FAIL document.getElementById("date").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("date").list is document.getElementById("dl1")
 FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("week").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("time").list should be [object HTMLDataListElement]. Was null.
