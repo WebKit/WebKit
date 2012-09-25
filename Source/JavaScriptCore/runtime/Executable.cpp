@@ -231,11 +231,6 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!m_jitCodeForCall)
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
-    else
-#endif
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
@@ -356,12 +351,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!m_jitCodeForCall)
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
-    else
-#endif
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
 #endif
@@ -534,12 +524,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!m_jitCodeForCall)
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
-    else
-#endif
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
 #endif
@@ -576,11 +561,6 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
 #endif
 
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!m_jitCodeForConstruct)
-        Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
-    else
-#endif
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct.size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));

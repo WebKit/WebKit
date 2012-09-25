@@ -204,27 +204,14 @@ namespace JSC {
         OpcodeID getOpcodeID(Opcode opcode)
         {
             ASSERT(m_initialized);
-#if ENABLE(COMPUTED_GOTO_OPCODES)
-#if ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
             ASSERT(isOpcode(opcode));
             return m_opcodeIDTable.get(opcode);
-#elif ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
-            ASSERT(isOpcode(opcode));
-            if (!m_classicEnabled)
-                return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
-
-            return m_opcodeIDTable.get(opcode);
-#endif // ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
-#else // !ENABLE(COMPUTED_GOTO_OPCODES)
+#else
             return opcode;
-#endif // !ENABLE(COMPUTED_GOTO_OPCODES)
+#endif
         }
         
-        bool classicEnabled()
-        {
-            return m_classicEnabled;
-        }
-
         bool isOpcode(Opcode);
 
         JSValue execute(ProgramExecutable*, CallFrame*, JSObject* thisObj);
@@ -260,15 +247,6 @@ namespace JSC {
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
 
-#if ENABLE(CLASSIC_INTERPRETER)
-        NEVER_INLINE JSScope* createNameScope(CallFrame*, const Instruction* vPC);
-
-        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
-        void uncacheGetByID(CodeBlock*, Instruction* vPC);
-        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const PutPropertySlot&);
-        void uncachePutByID(CodeBlock*, Instruction* vPC);        
-#endif // ENABLE(CLASSIC_INTERPRETER)
-
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
@@ -291,20 +269,14 @@ namespace JSC {
 
         RegisterFile m_registerFile;
         
-#if ENABLE(COMPUTED_GOTO_OPCODES)
-#if ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
-#elif ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
-        Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
-        HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
-#endif // ENABLE(COMPUTED_GOTO_OPCODES)
 
 #if !ASSERT_DISABLED
         bool m_initialized;
 #endif
-        bool m_classicEnabled;
     };
 
     // This value must not be an object that would require this conversion (WebCore's global object).

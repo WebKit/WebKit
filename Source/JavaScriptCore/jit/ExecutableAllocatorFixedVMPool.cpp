@@ -54,7 +54,7 @@ public:
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
     {
         m_reservation = PageReservation::reserveWithGuardPages(fixedExecutableMemoryPoolSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-#if !(ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+#if !ENABLE(LLINT)
         if (!m_reservation)
             CRASH();
 #endif

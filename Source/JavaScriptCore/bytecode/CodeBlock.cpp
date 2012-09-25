@@ -588,25 +588,6 @@ void CodeBlock::dump(ExecState* exec)
         } while (i < m_globalResolveInfos.size());
     }
 #endif
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!m_globalResolveInstructions.isEmpty() || !m_propertyAccessInstructions.isEmpty())
-        dataLog("\nStructures:\n");
-
-    if (!m_globalResolveInstructions.isEmpty()) {
-        size_t i = 0;
-        do {
-             printStructures(&instructions()[m_globalResolveInstructions[i]]);
-             ++i;
-        } while (i < m_globalResolveInstructions.size());
-    }
-    if (!m_propertyAccessInstructions.isEmpty()) {
-        size_t i = 0;
-        do {
-            printStructures(&instructions()[m_propertyAccessInstructions[i]]);
-             ++i;
-        } while (i < m_propertyAccessInstructions.size());
-    }
-#endif
 
     if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
         dataLog("\nException Handlers:\n");
@@ -2065,9 +2046,7 @@ void CodeBlock::finalizeUnconditionally()
 {
 #if ENABLE(LLINT)
     Interpreter* interpreter = m_globalData->interpreter;
-    // interpreter->classicEnabled() returns true if the old C++ interpreter is enabled. If that's enabled
-    // then we're not using LLInt.
-    if (!interpreter->classicEnabled() && !!numberOfInstructions()) {
+    if (!!numberOfInstructions()) {
         for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
             Instruction* curInstruction = &instructions()[m_propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
@@ -2260,14 +2239,6 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (m_globalData->interpreter->classicEnabled() && !!numberOfInstructions()) {
-        for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
-            visitStructures(visitor, &instructions()[m_propertyAccessInstructions[i]]);
-        for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
-            visitStructures(visitor, &instructions()[m_globalResolveInstructions[i]]);
-    }
-#endif
 
     updateAllPredictions(Collection);
 }
@@ -2444,27 +2415,6 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     return;
 }
 
-#if ENABLE(CLASSIC_INTERPRETER)
-bool CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset)
-{
-    if (m_globalResolveInstructions.isEmpty())
-        return false;
-
-    int low = 0;
-    int high = m_globalResolveInstructions.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (m_globalResolveInstructions[mid] <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low || m_globalResolveInstructions[low - 1] != bytecodeOffset)
-        return false;
-    return true;
-}
-#endif
 #if ENABLE(JIT)
 bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
 {

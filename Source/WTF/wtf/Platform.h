@@ -604,11 +604,9 @@
 #define WTF_USE_PTHREADS 1
 
 #if PLATFORM(IOS_SIMULATOR)
-    #define ENABLE_CLASSIC_INTERPRETER 1
     #define ENABLE_JIT 0
     #define ENABLE_YARR_JIT 0
 #else
-    #define ENABLE_CLASSIC_INTERPRETER 0
     #define ENABLE_JIT 1
     #define ENABLE_LLINT 1
     #define ENABLE_YARR_JIT 1
@@ -641,7 +639,9 @@
 
 #if PLATFORM(WX)
 #if !CPU(PPC)
+#if !defined(ENABLE_ASSEMBLER)
 #define ENABLE_ASSEMBLER 1
+#endif
 #define ENABLE_JIT 1
 #endif
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
@@ -953,13 +953,8 @@
 #define ENABLE_WRITE_BARRIER_PROFILING 0
 #endif
 
-/* Ensure that either the JIT or the interpreter has been enabled. */
-#if !defined(ENABLE_CLASSIC_INTERPRETER) && !ENABLE(JIT) && !ENABLE(LLINT)
-#define ENABLE_CLASSIC_INTERPRETER 1
-#endif
-
 /* If the jit and classic interpreter is not available, enable the LLInt C Loop: */
-#if !ENABLE(JIT) && !ENABLE(CLASSIC_INTERPRETER)
+#if !ENABLE(JIT)
     #define ENABLE_LLINT 1
     #define ENABLE_LLINT_C_LOOP 1
     #define ENABLE_DFG_JIT 0
@@ -967,13 +962,8 @@
 
 /* Do a sanity check to make sure that we at least have one execution engine in
    use: */
-#if !(ENABLE(JIT) || ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+#if !(ENABLE(JIT) || ENABLE(LLINT))
 #error You have to have at least one execution model enabled to build JSC
-#endif
-/* Do a sanity check to make sure that we don't have both the classic interpreter
-   and the llint C loop in use at the same time: */
-#if ENABLE(CLASSIC_INTERPRETER) && ENABLE(LLINT_C_LOOP)
-#error You cannot build both the classic interpreter and the llint C loop together
 #endif
 
 /* Configure the JIT */
@@ -989,12 +979,9 @@
 #if COMPILER(GCC) || (RVCT_VERSION_AT_LEAST(4, 0, 0, 0) && defined(__GNUC__))
 #define HAVE_COMPUTED_GOTO 1
 #endif
-#if HAVE(COMPUTED_GOTO) && ENABLE(CLASSIC_INTERPRETER)
-#define ENABLE_COMPUTED_GOTO_CLASSIC_INTERPRETER 1
-#endif
 
 /* Determine if we need to enable Computed Goto Opcodes or not: */
-#if (HAVE(COMPUTED_GOTO) && ENABLE(LLINT)) || ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#if HAVE(COMPUTED_GOTO) && ENABLE(LLINT)
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
@@ -1009,8 +996,15 @@
 #define ENABLE_YARR_JIT_DEBUG 0
 #endif
 
+/* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
+   enabled as well: */
 #if ENABLE(JIT) || ENABLE(YARR_JIT)
+#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
+#error "Cannot enable the JIT or RegExp JIT without enabling the Assembler"
+#else
+#undef ENABLE_ASSEMBLER
 #define ENABLE_ASSEMBLER 1
+#endif
 #endif
 
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.

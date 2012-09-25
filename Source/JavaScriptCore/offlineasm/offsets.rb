@@ -38,7 +38,6 @@ OFFSET_MAGIC_NUMBERS = [ to32Bit(0xec577ac7), to32Bit(0x0ff5e755) ]
 # MissingMagicValuesException
 #
 # Thrown when magic values are missing from the binary.
-# This is usually an indication that the classic interpreter is enabled.
 #
 
 class MissingMagicValuesException < Exception

@@ -45,12 +45,6 @@ AbstractPC::AbstractPC(JSGlobalData& globalData, ExecState* exec)
         return;
     }
 #endif
-    
-#if ENABLE(CLASSIC_INTERPRETER)
-    UNUSED_PARAM(globalData);
-    m_pointer = exec->returnVPC();
-    m_mode = Interpreter;
-#endif
 }
 
 } // namespace JSC

@@ -148,9 +148,6 @@ namespace JSC  {
             return 0;
         }
 #endif
-#if ENABLE(CLASSIC_INTERPRETER)
-        Instruction* returnVPC() const { return this[RegisterFile::ReturnPC].vPC(); }
-#endif
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {

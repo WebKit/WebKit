@@ -154,7 +154,7 @@ namespace JSC {
         
         Instruction(Opcode opcode)
         {
-#if !ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#if !ENABLE(COMPUTED_GOTO_OPCODES)
             // We have to initialize one of the pointer members to ensure that
             // the entire struct is initialized, when opcode is not a pointer.
             u.jsCell.clear();

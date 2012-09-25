@@ -266,7 +266,6 @@ namespace JSC {
 #if ENABLE(JIT)
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
         {
-            ASSERT(!globalData.interpreter->classicEnabled());
             NativeExecutable* executable;
             if (!callThunk) {
                 executable = new (NotNull, allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
@@ -279,7 +278,7 @@ namespace JSC {
         }
 #endif
 
-#if ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT_C_LOOP)
+#if ENABLE(LLINT_C_LOOP)
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
             ASSERT(!globalData.canUseJIT());
@@ -306,22 +305,12 @@ namespace JSC {
 #if ENABLE(JIT)
         void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
         {
-            ASSERT(!globalData.interpreter->classicEnabled());
             Base::finishCreation(globalData);
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;
             m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
             m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
             m_intrinsic = intrinsic;
-        }
-#endif
-
-#if ENABLE(CLASSIC_INTERPRETER)
-        void finishCreation(JSGlobalData& globalData)
-        {
-            ASSERT(!globalData.canUseJIT());
-            Base::finishCreation(globalData);
-            m_intrinsic = NoIntrinsic;
         }
 #endif
 

@@ -97,7 +97,11 @@ extern const HashTable regExpPrototypeTable;
 extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
-#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+// Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
+// ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
+// just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
+
+#if ENABLE(ASSEMBLER)
 static bool enableAssembler(ExecutableAllocator& executableAllocator)
 {
     if (!executableAllocator.isValid() || (!Options::useJIT() && !Options::useRegExpJIT()))
@@ -124,7 +128,7 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
     return true;
 #endif
 }
-#endif
+#endif // ENABLE(!ASSEMBLER)
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapType heapType)
     :
@@ -180,9 +184,13 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , m_timeoutCount(512)
 #endif
     , m_newStringsSinceLastHashConst(0)
-#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+#if ENABLE(ASSEMBLER)
     , m_canUseAssembler(enableAssembler(executableAllocator))
+#endif
+#if ENABLE(JIT)
     , m_canUseJIT(m_canUseAssembler && Options::useJIT())
+#endif
+#if ENABLE(YARR_JIT)
     , m_canUseRegExpJIT(m_canUseAssembler && Options::useRegExpJIT())
 #endif
 #if ENABLE(GC_VALIDATION)
@@ -370,10 +378,6 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
-#if ENABLE(CLASSIC_INTERPRETER)
-    if (!canUseJIT())
-        return NativeExecutable::create(*this, function, constructor);
-#endif
     return jitStubs->hostFunctionStub(this, function, constructor);
 }
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, Intrinsic intrinsic)

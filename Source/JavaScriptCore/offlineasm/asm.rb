@@ -225,7 +225,7 @@ $stderr.puts "offlineasm: Parsing #{asmFile} and #{offsetsFile} and creating ass
 begin
     configurationList = offsetsAndConfigurationIndex(offsetsFile)
 rescue MissingMagicValuesException
-    $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation assuming the classic interpreter is enabled."
+    $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation."
     exit 0
 end
 

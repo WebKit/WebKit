@@ -280,20 +280,18 @@ namespace JSC {
             return m_enabledProfiler;
         }
 
-#if !ENABLE(JIT)
-        bool canUseJIT() { return false; } // interpreter only
-#elif !ENABLE(CLASSIC_INTERPRETER) && !ENABLE(LLINT)
+#if ENABLE(JIT) && ENABLE(LLINT)
+        bool canUseJIT() { return m_canUseJIT; }
+#elif ENABLE(JIT)
         bool canUseJIT() { return true; } // jit only
 #else
-        bool canUseJIT() { return m_canUseJIT; }
+        bool canUseJIT() { return false; } // interpreter only
 #endif
 
-#if !ENABLE(YARR_JIT)
-        bool canUseRegExpJIT() { return false; } // interpreter only
-#elif !ENABLE(CLASSIC_INTERPRETER) && !ENABLE(LLINT)
-        bool canUseRegExpJIT() { return true; } // jit only
-#else
+#if ENABLE(YARR_JIT)
         bool canUseRegExpJIT() { return m_canUseRegExpJIT; }
+#else
+        bool canUseRegExpJIT() { return false; } // interpreter only
 #endif
 
         PrivateName m_inheritorIDKey;
@@ -440,9 +438,13 @@ namespace JSC {
         JSGlobalData(GlobalDataType, ThreadStackType, HeapType);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
-#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+#if ENABLE(ASSEMBLER)
         bool m_canUseAssembler;
+#endif
+#if ENABLE(JIT)
         bool m_canUseJIT;
+#endif
+#if ENABLE(YARR_JIT)
         bool m_canUseRegExpJIT;
 #endif
 #if ENABLE(GC_VALIDATION)

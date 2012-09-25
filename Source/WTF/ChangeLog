@@ -1,3 +1,14 @@
+2012-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Deleting the classic interpreter and cleaning up some build options.
+        https://bugs.webkit.org/show_bug.cgi?id=96969.
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+        * wtf/Platform.h:
+
 2012-09-24  Patrick Gansterer  <paroga@webkit.org>
 
         Remove String::operator+=()
