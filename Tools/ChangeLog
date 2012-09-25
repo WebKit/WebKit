@@ -1,3 +1,18 @@
+2012-09-25  Julie Parent  <jparent@chromium.org>
+
+        Make test_shell_tests show up in flakiness dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=97585
+
+        Reviewed by Dirk Pranke.
+
+        test_shell_tests run only on chromium.org, and on the same bots as
+        the layout tests, so do not use the generic fallbacks.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (currentBuilderGroupCategory):
+
 2012-09-25  Lucas Forschler  <lforschler@apple.com>
 
         Python tests fail on Windows bots when running with more than one child process.  Temporarily use only one child process until the problem can be fixed.

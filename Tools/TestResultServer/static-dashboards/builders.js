@@ -279,6 +279,21 @@ function loadBuildersList(groupName, testType) {
             break;
         }
         break;
+   
+    case 'test_shell_tests':
+        switch(groupName) {
+        case '@ToT - chromium.org':
+            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
+            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup);
+            break;
+
+        case '@DEPS - chromium.org':
+            var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
+            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup);
+            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumDepsAVTestRunner, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, builderGroup);
+            break;
+        }
+        break;    
 
     default:
         switch(groupName) {
@@ -303,6 +318,11 @@ function loadBuildersList(groupName, testType) {
         break;
     }
 }
+
+var TEST_SHELL_TESTS_BUILDER_GROUPS = {
+    '@ToT - chromium.org': null,
+    '@DEPS - chromium.org': null,
+};
 
 var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@ToT - chromium.org': null,
