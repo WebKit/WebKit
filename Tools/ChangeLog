@@ -1,3 +1,18 @@
+2012-09-25  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Android's build archives have grown from 38M to 102M in 11 days
+        https://bugs.webkit.org/show_bug.cgi?id=97336
+
+        Reviewed by Adam Barth.
+
+        Each WebKit target results in four APKs in the out/{Debug,Release}/ directory,
+        while we really only need one. Ignoring the unsigned APKs removes six from
+        the archive will make sure that we only archive a single APK per target,
+        bringing its size back to rougly 40 megabytes.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2012-09-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update getUserMedia to match the latest specification

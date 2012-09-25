@@ -169,7 +169,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
                           'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate']
 
         if fullPlatform and fullPlatform == 'chromium-android':
-            ignorePatterns.extend(['*.so', '*-unaligned.apk'])
+            ignorePatterns.extend(['*.so', '*-unaligned.apk', '*-unsigned.apk'])
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(configurationBuildDirectory, thinDirectory, ignorePatterns)
