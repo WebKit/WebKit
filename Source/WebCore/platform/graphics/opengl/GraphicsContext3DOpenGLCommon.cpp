@@ -454,10 +454,9 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     if (!translatedShaderSource.length())
         return;
 
-    int translatedShaderLength = translatedShaderSource.length();
-
     const CString& translatedShaderCString = translatedShaderSource.utf8();
     const char* translatedShaderPtr = translatedShaderCString.data();
+    int translatedShaderLength = translatedShaderCString.length();
     
     ::glShaderSource(shader, 1, &translatedShaderPtr, &translatedShaderLength);
     
