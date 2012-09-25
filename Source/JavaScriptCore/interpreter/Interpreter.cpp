@@ -166,6 +166,9 @@ JSValue eval(CallFrame* callFrame)
                     return parsedObject;                
             }
         }
+        
+        // If the literal parser bailed, it should not have thrown exceptions.
+        ASSERT(!callFrame->globalData().exception);
 
         JSValue exceptionValue;
         eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain, exceptionValue);

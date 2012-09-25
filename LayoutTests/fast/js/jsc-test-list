@@ -46,6 +46,7 @@ fast/js/comparefn-sort-stability
 fast/js/comparison-operators-greater
 fast/js/comparison-operators-less
 fast/js/comparison-operators
+fast/js/concat-while-having-a-bad-time
 fast/js/const-without-initializer
 fast/js/constant-count
 fast/js/constant-encoding

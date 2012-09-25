@@ -570,7 +570,8 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 goto startParseExpression;
             }
             case DoParseArrayEndExpression: {
-                 asArray(objectStack.last())->push(m_exec, lastValue);
+                JSArray* array = asArray(objectStack.last());
+                array->putDirectIndex(m_exec, array->length(), lastValue);
                 
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseArrayStartExpression;

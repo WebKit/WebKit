@@ -1,3 +1,29 @@
+2012-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        JSArray::putByIndex asserts with readonly property on prototype
+        https://bugs.webkit.org/show_bug.cgi?id=97435
+        <rdar://problem/12357084>
+
+        Reviewed by Geoffrey Garen.
+
+        Boy, there were some problems:
+        
+        - putDirectIndex() should know that it can set the index quickly even if it's a hole and we're
+          in SlowPut mode, since that's the whole point of PutDirect.
+        
+        - We should have a fast path for putByIndex().
+        
+        - The LiteralParser should not use push(), since that may throw if we're having a bad time.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSObject):
+        (JSC::JSObject::putDirectIndex):
+        * runtime/LiteralParser.cpp:
+        (JSC::::parse):
+
 2012-09-24  Mark Lam  <mark.lam@apple.com>
 
         Added a missing "if VALUE_PROFILER" around an access to ArrayProfile record.

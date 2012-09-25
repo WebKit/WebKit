@@ -172,6 +172,15 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
         JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
+        void putByIndexInline(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+        {
+            if (canSetIndexQuickly(propertyName)) {
+                setIndexQuickly(exec->globalData(), propertyName, value);
+                return;
+            }
+            methodTable()->putByIndex(this, exec, propertyName, value, shouldThrow);
+        }
+        
         // This is similar to the putDirect* methods:
         //  - the prototype chain is not consulted
         //  - accessors are not called.
@@ -179,7 +188,7 @@ namespace JSC {
         // This method creates a property with attributes writable, enumerable and configurable all set to true.
         bool putDirectIndex(ExecState* exec, unsigned propertyName, JSValue value, unsigned attributes, PutDirectIndexMode mode)
         {
-            if (!attributes && canSetIndexQuickly(propertyName)) {
+            if (!attributes && canSetIndexQuicklyForPutDirect(propertyName)) {
                 setIndexQuickly(exec->globalData(), propertyName, value);
                 return true;
             }
@@ -229,6 +238,19 @@ namespace JSC {
             case ArrayWithSlowPutArrayStorage:
                 return i < m_butterfly->arrayStorage()->vectorLength()
                     && !!m_butterfly->arrayStorage()->m_vector[i];
+            default:
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        }
+        
+        bool canSetIndexQuicklyForPutDirect(unsigned i)
+        {
+            switch (structure()->indexingType()) {
+            case ALL_BLANK_INDEXING_TYPES:
+                return false;
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                return i < m_butterfly->arrayStorage()->vectorLength();
             default:
                 ASSERT_NOT_REACHED();
                 return false;
