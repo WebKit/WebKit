@@ -737,6 +737,9 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return true;
 
+    if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+        return true;
+
     if (mimeType.startsWith("text/", false))
         return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
 

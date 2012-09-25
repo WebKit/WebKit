@@ -427,6 +427,9 @@ bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeTypeRef)
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return true;
 
+    if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+        return true;
+
     if (mimeType.startsWith("text/", false))
         return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
 

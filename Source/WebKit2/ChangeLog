@@ -1,3 +1,18 @@
+2012-09-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Supported media MIME types are not included to the list of shown MIME types.
+        https://bugs.webkit.org/show_bug.cgi?id=97552
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added supported media MIME types to the list of shown MIME types in order to fix
+        media tests regression after r129479.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCanShowMIMEType):
+
 2012-09-25  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WK2] Added hideColorPicker test case
