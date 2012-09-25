@@ -46,7 +46,7 @@ struct CSSParserString {
         m_is8Bit = false;
     }
 
-    void init(String string)
+    void init(const String& string)
     {
         m_length = string.length();
         if (m_length && string.is8Bit()) {
