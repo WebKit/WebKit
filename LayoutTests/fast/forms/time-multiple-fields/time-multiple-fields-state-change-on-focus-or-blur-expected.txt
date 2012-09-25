@@ -8,6 +8,8 @@ Entering focus event handler
 Existing focus event handler
 focus() finished
 
+Entering blur event handler
+Existing blur event handler
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="container">
+<input autofocus id="test" type="time" value="12:34">
+</div>
+<script>
+description('Check adoptNode dispatchs blur event for multiple fields time input UI');
+var container = document.getElementById("container");
+var testInput = document.getElementById('test');
+var logs = [];
+testInput.addEventListener('blur', function () { logs.push('blur'); });
+logs.push('start-adoptNode');
+document.implementation.createDocument('', '', null).adoptNode(testInput);
+logs.push('end-adoptNode');
+testInput.setAttribute('x', 'x');
+testInput.setAttribute('type', 'submit');
+container.appendChild(testInput);
+logs.push('start-focus');
+testInput.focus();
+logs.push('end-focus');
+shouldBeEqualToString('logs.toString()', 'start-adoptNode,blur,end-adoptNode,start-focus,end-focus');
+debug('');
+document.body.removeChild(container);
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

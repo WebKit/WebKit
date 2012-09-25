@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<span id=test></span>
+<div id="console"></div>
+<script>
+description('Check focused shadow node dispatchs blur event on removeChild of host.');
+var logs = [];
+var test = document.getElementById('test');
+var shadow = new WebKitShadowRoot(test);
+var input = document.createElement("input");
+shadow.appendChild(input);
+input.addEventListener('blur', function () { logs.push('blur'); });
+input.focus();
+logs.push('start-removeChild');
+test.parentNode.removeChild(test);
+logs.push('end-removeChild');
+shouldBeEqualToString('logs.toString()', 'start-removeChild,blur,end-removeChild');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -3308,12 +3308,16 @@ void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
 {
     if (!m_focusedNode || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
         return;
-        
+
+    Node* focusedNode = node->treeScope()->focusedNode();
+    if (!focusedNode)
+        return;
+
     bool nodeInSubtree = false;
     if (amongChildrenOnly)
-        nodeInSubtree = m_focusedNode->isDescendantOf(node);
+        nodeInSubtree = focusedNode->isDescendantOf(node);
     else
-        nodeInSubtree = (m_focusedNode == node) || m_focusedNode->isDescendantOf(node);
+        nodeInSubtree = (focusedNode == node) || focusedNode->isDescendantOf(node);
     
     if (nodeInSubtree)
         document()->focusedNodeRemoved();
