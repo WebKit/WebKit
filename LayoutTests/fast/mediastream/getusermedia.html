@@ -10,70 +10,47 @@
 <script>
 description("Tests webkitGetUserMedia.");
 
-var stream;
-
 function error() {
-    testFailed('Error callback called.');
+  testFailed('Stream generation failed.');
+  finishJSTest();
+}
+
+function getUserMedia(dictionary, callback) {
+  try {
+    navigator.webkitGetUserMedia(dictionary, callback, error);
+  } catch (e) {
+    testFailed('webkitGetUserMedia threw exception :' + e);
     finishJSTest();
-}
-
-function gotStreamInError(s) {
-    testFailed('Stream generated.');
-    finishJSTest();
-}
-
-function gotStream5(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
-    finishJSTest();
-}
-
-function error1() {
-    testPassed('Error callback called.');
-
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
-}
-
-function gotStream4(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
-
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
+  }
 }
 
 function gotStream3(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '1');
-
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
+  stream = s;
+  testPassed('{audio:true, video:true} generated stream');
+  shouldBe('stream.audioTracks.length', '1');
+  shouldBe('stream.videoTracks.length', '1');
+  finishJSTest();
 }
 
 function gotStream2(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '0');
-    shouldBe('stream.videoTracks.length', '1');
+  stream = s;
+  testPassed('{video:true} generated stream');
+  shouldBe('stream.audioTracks.length', '0');
+  shouldBe('stream.videoTracks.length', '1');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error);");
+  getUserMedia({audio:true, video:true}, gotStream3);
 }
 
 function gotStream1(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.audioTracks.length', '1');
-    shouldBe('stream.videoTracks.length', '0');
+  stream = s;
+  testPassed('{audio:true} generated stream');
+  shouldBe('stream.audioTracks.length', '1');
+  shouldBe('stream.videoTracks.length', '0');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
+  getUserMedia({video:true}, gotStream2);
 }
 
-shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
-shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream1, error);");
+getUserMedia({audio:true}, gotStream1);
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

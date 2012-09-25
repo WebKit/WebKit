@@ -45,11 +45,6 @@ WebMediaConstraints::WebMediaConstraints(const PassRefPtr<MediaConstraints>& con
 {
 }
 
-WebMediaConstraints::WebMediaConstraints(MediaConstraints* constraints)
-    : m_private(constraints)
-{
-}
-
 void WebMediaConstraints::assign(const WebMediaConstraints& other)
 {
     m_private = other.m_private;

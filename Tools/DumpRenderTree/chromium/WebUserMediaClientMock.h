@@ -33,30 +33,28 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Task.h"
 #include "WebUserMediaClient.h"
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include "webkit/support/test_media_stream_client.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
-#include <public/WebURL.h>
 #include <wtf/PassOwnPtr.h>
 
-class WebUserMediaClientMock : public WebKit::WebUserMediaClient {
+namespace WebKit {
+
+class WebUserMediaClientMock : public WebUserMediaClient {
 public:
     static PassOwnPtr<WebUserMediaClientMock> create();
     ~WebUserMediaClientMock() { }
 
-    virtual void requestUserMedia(const WebKit::WebUserMediaRequest&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&) OVERRIDE;
-    virtual void cancelUserMediaRequest(const WebKit::WebUserMediaRequest&);
-
-    // Task related methods
-    TaskList* taskList() { return &m_taskList; }
+    virtual void requestUserMedia(const WebUserMediaRequest&, const WebVector<WebMediaStreamSource>&, const WebVector<WebMediaStreamSource>&) OVERRIDE;
+    virtual void cancelUserMediaRequest(const WebUserMediaRequest&);
 
 private:
     WebUserMediaClientMock() { }
-
-    TaskList m_taskList;
 };
+
+} // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)
 

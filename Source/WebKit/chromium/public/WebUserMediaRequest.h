@@ -41,7 +41,6 @@ class UserMediaRequest;
 
 namespace WebKit {
 class WebDocument;
-class WebMediaConstraints;
 class WebMediaStreamDescriptor;
 class WebMediaStreamSource;
 class WebString;
@@ -66,8 +65,6 @@ public:
 
     WEBKIT_EXPORT bool audio() const;
     WEBKIT_EXPORT bool video() const;
-    WEBKIT_EXPORT WebMediaConstraints audioConstraints() const;
-    WEBKIT_EXPORT WebMediaConstraints videoConstraints() const;
 
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
     WEBKIT_EXPORT WebDocument ownerDocument() const;

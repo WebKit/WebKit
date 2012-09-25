@@ -33,7 +33,6 @@
 
 #include "MockWebRTCPeerConnectionHandler.h"
 
-#include "MockConstraints.h"
 #include <public/WebMediaConstraints.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebRTCSessionDescription.h>
@@ -46,7 +45,7 @@ using namespace WebKit;
 
 class RTCSessionDescriptionRequestSuccededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
 public:
-    RTCSessionDescriptionRequestSuccededTask(MockWebRTCPeerConnectionHandler* object, const WebRTCSessionDescriptionRequest& request, const WebRTCSessionDescription& result)
+    RTCSessionDescriptionRequestSuccededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request, const WebKit::WebRTCSessionDescription& result)
         : MethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
         , m_result(result)
@@ -59,13 +58,13 @@ public:
     }
 
 private:
-    WebRTCSessionDescriptionRequest m_request;
-    WebRTCSessionDescription m_result;
+    WebKit::WebRTCSessionDescriptionRequest m_request;
+    WebKit::WebRTCSessionDescription m_result;
 };
 
 class RTCSessionDescriptionRequestFailedTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
 public:
-    RTCSessionDescriptionRequestFailedTask(MockWebRTCPeerConnectionHandler* object, const WebRTCSessionDescriptionRequest& request)
+    RTCSessionDescriptionRequestFailedTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request)
         : MethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
     {
@@ -77,12 +76,12 @@ public:
     }
 
 private:
-    WebRTCSessionDescriptionRequest m_request;
+    WebKit::WebRTCSessionDescriptionRequest m_request;
 };
 
 class RTCVoidRequestTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
 public:
-    RTCVoidRequestTask(MockWebRTCPeerConnectionHandler* object, const WebRTCVoidRequest& request, bool succeeded)
+    RTCVoidRequestTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCVoidRequest& request, bool succeeded)
         : MethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
         , m_succeeded(succeeded)
@@ -98,7 +97,7 @@ public:
     }
 
 private:
-    WebRTCVoidRequest m_request;
+    WebKit::WebRTCVoidRequest m_request;
     bool m_succeeded;
 };
 
@@ -109,9 +108,45 @@ MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConne
 {
 }
 
+static bool isSupportedConstraint(const WebString& constraint)
+{
+    return constraint == "valid_and_supported_1" || constraint == "valid_and_supported_2";
+}
+
+static bool isValidConstraint(const WebString& constraint)
+{
+    return isSupportedConstraint(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
+}
+
 bool MockWebRTCPeerConnectionHandler::initialize(const WebRTCConfiguration&, const WebMediaConstraints& constraints)
 {
-    return MockConstraints::verify(constraints);
+    WebVector<WebString> mandatoryConstraintNames;
+    constraints.getMandatoryConstraintNames(mandatoryConstraintNames);
+    if (mandatoryConstraintNames.size()) {
+        for (size_t i = 0; i < mandatoryConstraintNames.size(); ++i) {
+            if (!isSupportedConstraint(mandatoryConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getMandatoryConstraintValue(mandatoryConstraintNames[i], value);
+            if (value != "1")
+                return false;
+        }
+    }
+
+    WebVector<WebString> optionalConstraintNames;
+    constraints.getOptionalConstraintNames(optionalConstraintNames);
+    if (optionalConstraintNames.size()) {
+        for (size_t i = 0; i < optionalConstraintNames.size(); ++i) {
+            if (!isValidConstraint(optionalConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getOptionalConstraintValue(optionalConstraintNames[i], value);
+            if (value != "0")
+                return false;
+        }
+    }
+
+    return true;
 }
 
 void MockWebRTCPeerConnectionHandler::createOffer(const WebRTCSessionDescriptionRequest& request, const WebMediaConstraints& constraints)

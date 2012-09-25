@@ -52,7 +52,6 @@ class MockWebSpeechInputController;
 class MockWebSpeechRecognizer;
 class SkCanvas;
 class TestShell;
-class WebUserMediaClientMock;
 
 namespace WebKit {
 class WebFrame;
@@ -67,6 +66,7 @@ class WebSharedWorkerClient;
 class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebURL;
+class WebUserMediaClientMock;
 struct WebRect;
 struct WebURLError;
 struct WebWindowFeatures;
@@ -343,7 +343,7 @@ private:
     void discardBackingStore();
 
 #if ENABLE(MEDIA_STREAM)
-    WebUserMediaClientMock* userMediaClientMock();
+    WebKit::WebUserMediaClientMock* userMediaClientMock();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
 #endif
 
@@ -430,7 +430,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    OwnPtr<WebUserMediaClientMock> m_userMediaClientMock;
+    OwnPtr<WebKit::WebUserMediaClientMock> m_userMediaClientMock;
     OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
 #endif
 

@@ -51,11 +51,6 @@ PassRefPtr<MediaConstraintsImpl> MediaConstraintsImpl::create(const Dictionary& 
     return object.release();
 }
 
-PassRefPtr<MediaConstraintsImpl> MediaConstraintsImpl::create()
-{
-    return adoptRef(new MediaConstraintsImpl());
-}
-
 bool MediaConstraintsImpl::initialize(const Dictionary& constraints)
 {
     if (constraints.isUndefinedOrNull())

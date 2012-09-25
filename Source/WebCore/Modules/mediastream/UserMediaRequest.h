@@ -34,7 +34,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include "ExceptionBase.h"
 #include "MediaStreamSource.h"
 #include "MediaStreamSourcesQueryClient.h"
 #include "NavigatorUserMediaErrorCallback.h"
@@ -47,14 +46,12 @@ namespace WebCore {
 
 class Dictionary;
 class Document;
-class MediaConstraints;
-class MediaConstraintsImpl;
 class MediaStreamDescriptor;
 class UserMediaController;
 
 class UserMediaRequest : public MediaStreamSourcesQueryClient, public ContextDestructionObserver {
 public:
-    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
+    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
     ~UserMediaRequest();
 
     NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
@@ -67,22 +64,19 @@ public:
     void succeed(PassRefPtr<MediaStreamDescriptor>);
     void fail();
 
-    MediaConstraints* audioConstraints() const;
-    MediaConstraints* videoConstraints() const;
-
     // MediaStreamSourcesQueryClient
-    virtual bool audio() const;
-    virtual bool video() const;
+    virtual bool audio() const { return m_audio; }
+    virtual bool video() const { return m_video; }
     virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
     // ContextDestructionObserver
     virtual void contextDestroyed();
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraintsImpl> audio, PassRefPtr<MediaConstraintsImpl> video, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
 
-    RefPtr<MediaConstraintsImpl> m_audio;
-    RefPtr<MediaConstraintsImpl> m_video;
+    bool m_audio;
+    bool m_video;
 
     UserMediaController* m_controller;
 
