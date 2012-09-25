@@ -31,7 +31,7 @@
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include <WebCore/GraphicsContext.h>
-#include <cairo/cairo.h>
+#include <cairo.h>
 
 #if PLATFORM(EFL)
 #include "ewk_view_private.h"

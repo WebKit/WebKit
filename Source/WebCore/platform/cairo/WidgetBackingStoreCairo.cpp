@@ -22,7 +22,7 @@
 
 #include "CairoUtilities.h"
 #include "RefPtrCairo.h"
-#include <cairo/cairo.h>
+#include <cairo.h>
 
 #if PLATFORM(GTK)
 #include "GtkVersioning.h"

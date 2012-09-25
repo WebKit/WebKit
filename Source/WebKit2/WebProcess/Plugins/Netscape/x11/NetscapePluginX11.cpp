@@ -39,7 +39,7 @@
 #elif PLATFORM(GTK)
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
-#include <cairo/cairo-xlib.h>
+#include <cairo-xlib.h>
 #include <gtk/gtk.h>
 #ifndef GTK_API_VERSION_2
 #include <gtk/gtkx.h>

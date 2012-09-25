@@ -76,7 +76,7 @@
 #define Bool int // this got undefined somewhere
 #define Status int // ditto
 #include <X11/extensions/Xrender.h>
-#include <cairo/cairo-xlib.h>
+#include <cairo-xlib.h>
 #include <gdk/gdkx.h>
 
 using JSC::ExecState;

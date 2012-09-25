@@ -1,3 +1,16 @@
+2012-09-24  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [GTK][EFL] Remove cairo prefix from include statements
+        https://bugs.webkit.org/show_bug.cgi?id=97509
+
+        Reviewed by Gyuyoung Kim.
+
+        Make the build system consistent by always assuming that directory 
+        that includes the cairo headers is included in the include path.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+
 2012-09-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129388.
