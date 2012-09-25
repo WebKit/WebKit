@@ -1,3 +1,15 @@
+2012-09-25  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Make COMPUTED_GOTO part of the HAVE section
+        https://bugs.webkit.org/show_bug.cgi?id=97600
+
+        Reviewed by Yong Li.
+
+        Also get rid of COMPUTED_GOTO_INTERPRETER and add COMPUTED_GOTO_OPCODES.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/AboutDataHaveFeatures.in:
+
 2012-09-25  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Suspend the backingstore while adjusting the view on input field focus.
