@@ -38,6 +38,7 @@ class Node;
 class Position;
 class QualifiedName;
 class Range;
+class VisiblePosition;
 class VisibleSelection;
 }
 
@@ -91,6 +92,9 @@ static const WebCore::IntPoint InvalidPoint = WebCore::IntPoint(-1, -1);
 WebCore::VisibleSelection visibleSelectionForClosestActualWordStart(const WebCore::VisibleSelection&);
 
 WebCore::Frame* incrementFrame(WebCore::Frame* curr, bool forward, bool wrapFlag);
+
+PassRefPtr<WebCore::Range> trimWhitespaceFromRange(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
+bool isEmptyRangeOrAllSpaces(WebCore::VisiblePosition, WebCore::VisiblePosition);
 
 } // DOMSupport
 } // WebKit

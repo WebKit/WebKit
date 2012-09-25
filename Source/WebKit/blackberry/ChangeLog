@@ -1,3 +1,28 @@
+2012-09-25  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Handling required for multiple consecutive whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=97575
+
+        Reviewed by Rob Buis.
+
+        PR211670
+        Need specific handling in the case where we have multiple
+        consecutive whitespaces which exceeds our character limit. This
+        breaks some of the functionality employed with the visible_units
+        methods used here to tranverse the text.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::trimWhitespaceFromRange):
+        (DOMSupport):
+        (BlackBerry::WebKit::DOMSupport::isEmptyRangeOrAllSpaces):
+        * WebKitSupport/DOMSupport.h:
+        (WebCore):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckBlock):
+        (BlackBerry::WebKit::InputHandler::getRangeForSpellCheckWithFineGranularity):
+
 2012-09-24  Mark Lam  <mark.lam@apple.com>
 
         Deleting the classic interpreter and cleaning up some build options.

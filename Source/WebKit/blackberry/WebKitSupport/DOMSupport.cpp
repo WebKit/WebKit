@@ -32,6 +32,7 @@
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "TextIterator.h"
+#include "VisiblePosition.h"
 #include "VisibleSelection.h"
 
 #include "htmlediting.h"
@@ -527,6 +528,35 @@ Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
     return forward
         ? curr->tree()->traverseNextWithWrap(wrapFlag)
         : curr->tree()->traversePreviousWithWrap(wrapFlag);
+}
+
+PassRefPtr<Range> trimWhitespaceFromRange(VisiblePosition startPosition, VisiblePosition endPosition)
+{
+    if (isEmptyRangeOrAllSpaces(startPosition, endPosition))
+        return VisibleSelection(endPosition, endPosition).toNormalizedRange();
+
+    while (isWhitespace(startPosition.characterAfter()))
+        startPosition = startPosition.next();
+
+    while (isWhitespace(endPosition.characterBefore()))
+        endPosition = endPosition.previous();
+
+    return VisibleSelection(startPosition, endPosition).toNormalizedRange();
+}
+
+bool isEmptyRangeOrAllSpaces(VisiblePosition startPosition, VisiblePosition endPosition)
+{
+    if (startPosition == endPosition)
+        return true;
+
+    while (isWhitespace(startPosition.characterAfter())) {
+        startPosition = startPosition.next();
+
+        if (startPosition == endPosition)
+            return true;
+    }
+
+    return false;
 }
 
 } // DOMSupport
