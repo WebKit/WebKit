@@ -83,7 +83,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
     _data = [[WKProcessGroupData alloc] init];
     
     if (bundleURL)
-        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL absoluteString])).get()));
+        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
     else
         _data->_contextRef = adoptWK(WKContextCreate());
 

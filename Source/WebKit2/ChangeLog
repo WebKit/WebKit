@@ -1,5 +1,17 @@
 2012-09-24  Sam Weinig  <sam@webkit.org>
 
+        WKProcessGroup can't load injected bundle with file URL
+        <rdar://problem/12322774>
+        https://bugs.webkit.org/show_bug.cgi?id=97520
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        Fix typo. We need to pass the string as path, not as a URL.
+
+2012-09-24  Sam Weinig  <sam@webkit.org>
+
         Use NSUserDefaults rather than an environment variable to control whether to use an XPC Service for the WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=97514
 
