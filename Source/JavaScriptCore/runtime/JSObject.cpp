@@ -601,7 +601,7 @@ Structure* JSObject::inheritorID(JSGlobalData& globalData)
 
 bool JSObject::allowsAccessFrom(ExecState* exec)
 {
-    JSGlobalObject* globalObject = unwrappedGlobalObject();
+    JSGlobalObject* globalObject = this->globalObject();
     return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
@@ -924,13 +924,6 @@ JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
     return jsCast<JSObject*>(cell);
 }
 
-JSObject* JSObject::unwrappedObject()
-{
-    if (isGlobalThis())
-        return jsCast<JSGlobalThis*>(this)->unwrappedObject();
-    return this;
-}
-
 void JSObject::seal(JSGlobalData& globalData)
 {
     if (isSealed(globalData))
@@ -952,13 +945,6 @@ void JSObject::preventExtensions(JSGlobalData& globalData)
     enterDictionaryIndexingMode(globalData);
     if (isExtensible())
         setStructure(globalData, Structure::preventExtensionsTransition(globalData, structure()));
-}
-
-JSGlobalObject* JSObject::unwrappedGlobalObject()
-{
-    if (isGlobalThis())
-        return jsCast<JSGlobalThis*>(this)->unwrappedObject();
-    return structure()->globalObject();
 }
 
 // This presently will flatten to an uncachable dictionary; this is suitable
@@ -1052,7 +1038,7 @@ void JSObject::notifyUsedAsPrototype(JSGlobalData& globalData)
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    Structure* inheritorID = createEmptyObjectStructure(globalData, unwrappedGlobalObject(), this);
+    Structure* inheritorID = createEmptyObjectStructure(globalData, globalObject(), this);
     ASSERT(inheritorID->isEmpty());
 
     PutPropertySlot slot;

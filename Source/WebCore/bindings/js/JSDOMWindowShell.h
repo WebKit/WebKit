@@ -48,6 +48,7 @@ namespace WebCore {
         {
             ASSERT_ARG(window, window);
             setUnwrappedObject(globalData, window);
+            structure()->setGlobalObject(*JSDOMWindow::commonJSGlobalData(), window);
         }
         void setWindow(PassRefPtr<DOMWindow>);
 

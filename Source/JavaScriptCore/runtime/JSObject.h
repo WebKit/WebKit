@@ -343,7 +343,6 @@ namespace JSC {
         // NOTE: JSObject and its subclasses must be able to gracefully handle ExecState* = 0,
         // because this call may come from inside the compiler.
         JS_EXPORT_PRIVATE static JSObject* toThisObject(JSCell*, ExecState*);
-        JSObject* unwrappedObject();
 
         bool getPropertySpecificValue(ExecState*, PropertyName, JSCell*& specificFunction) const;
 
@@ -481,11 +480,6 @@ namespace JSC {
             ASSERT(!isGlobalObject() || ((JSObject*)structure()->globalObject()) == this);
             return structure()->globalObject();
         }
-        
-        // Does everything possible to return the global object. If it encounters an object
-        // that does not have a global object, it returns 0 instead (for example
-        // JSNotAnObject).
-        JSGlobalObject* unwrappedGlobalObject();
         
         void switchToSlowPutArrayStorage(JSGlobalData&);
         

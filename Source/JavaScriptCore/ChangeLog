@@ -1,3 +1,34 @@
+2012-09-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove JSObject::unwrappedGlobalObject(), JSObject::unwrappedObject()
+        https://bugs.webkit.org/show_bug.cgi?id=97519
+
+        Reviewed by Geoff Garen.
+
+        unwrappedGlobalObject() was only needed because globalObject() doesn't always return a helpful result -
+        specifically for WebCore's window shell the structure's globalObject is set to null. We can fix this by
+        simply keeping the structure up to date as the window navigates, obviating the need for this function.
+
+        The only other use of unwrappedObject() came from globalFuncEval(), and this can be trivially removed
+        by flipping the way we perform this globalObject check (which we may also be able to remove!) - instead
+        of getting the globalObject from the provided this value & comparing to the expected globalObject, we
+        can get the this value from the expected globalObject, and compare to that provided.
+
+        * runtime/JSGlobalObject.cpp:
+            - Call globalObject() instead of unwrappedGlobalObject().
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+            - Changed to compare this object values, instead of globalObjects -
+              this means we only need to be able to map globalObject -> this,
+              and not vice versa.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allowsAccessFrom):
+        (JSC::JSObject::createInheritorID):
+            - Call globalObject() instead of unwrappedGlobalObject().
+        * runtime/JSObject.h:
+        (JSObject):
+            - Removed unwrappedGlobalObject(), unwrappedObject().
+
 2012-09-24  Mark Lam  <mark.lam@apple.com>
 
         Deleting the classic interpreter and cleaning up some build options.

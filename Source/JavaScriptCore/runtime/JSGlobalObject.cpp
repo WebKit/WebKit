@@ -373,7 +373,7 @@ void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)
     // a different global object that have prototypes from our global object.
     bool foundGlobalObject = false;
     for (JSObject* current = object; ;) {
-        if (current->unwrappedGlobalObject() == m_globalObject) {
+        if (current->globalObject() == m_globalObject) {
             foundGlobalObject = true;
             break;
         }
