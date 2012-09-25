@@ -5621,6 +5621,12 @@ void RenderBlock::computePreferredLogicalWidths()
         m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
     }
+    
+    // Table layout uses integers, ceil the preferred widths to ensure that they can contain the contents.
+    if (isTableCell()) {
+        m_minPreferredLogicalWidth = m_minPreferredLogicalWidth.ceil();
+        m_maxPreferredLogicalWidth = m_maxPreferredLogicalWidth.ceil();
+    }
 
     LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth += borderAndPadding;

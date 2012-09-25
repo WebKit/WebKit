@@ -1,0 +1,6 @@
+PASS Cell in AutoTable has expected size
+PASS Cell in FixedTable has expected size
+Cc:	AutoTableLayout	
+foo
+FixedTableLayout
+Tests that setting the width of an element inside a cell to the computed width of said element does not change the width of the cell itself.

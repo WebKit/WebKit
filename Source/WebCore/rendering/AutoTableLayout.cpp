@@ -74,9 +74,9 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 if (cell->colSpan() == 1) {
                     if (cell->preferredLogicalWidthsDirty())
                         cell->computePreferredLogicalWidths();
-                    columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth().ceil(), columnLayout.minLogicalWidth);
+                    columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
                     if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
-                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth().ceil();
+                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
                         maxContributor = cell;
                     }
 
