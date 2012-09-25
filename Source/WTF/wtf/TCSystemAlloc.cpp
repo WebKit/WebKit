@@ -75,9 +75,6 @@ static size_t pagesize = 0;
 // to get as much virtual memory as possible.
 #ifndef WTF_CHANGES
 static bool use_devmem = false;
-#endif
-
-#if HAVE(SBRK)
 static bool use_sbrk = false;
 #endif
 
@@ -107,7 +104,7 @@ static const int32_t FLAGS_malloc_devmem_start = 0;
 static const int32_t FLAGS_malloc_devmem_limit = 0;
 #endif
 
-#if HAVE(SBRK)
+#ifndef WTF_CHANGES
 
 static void* TrySbrk(size_t size, size_t *actual_size, size_t alignment) {
   size = ((size + alignment - 1) / alignment) * alignment;
@@ -149,7 +146,7 @@ static void* TrySbrk(size_t size, size_t *actual_size, size_t alignment) {
   return reinterpret_cast<void*>(ptr);
 }
 
-#endif /* HAVE(SBRK) */
+#endif /* ifndef(WTF_CHANGES) */
 
 #if HAVE(MMAP)
 
@@ -349,9 +346,7 @@ void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size, size_t alignment) {
       void* result = TryDevMem(size, actual_size, alignment);
       if (result != NULL) return result;
     }
-#endif
     
-#if HAVE(SBRK)
     if (use_sbrk && !sbrk_failure) {
       void* result = TrySbrk(size, actual_size, alignment);
       if (result != NULL) return result;

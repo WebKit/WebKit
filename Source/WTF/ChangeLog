@@ -1,3 +1,19 @@
+2012-09-25  Pratik Solanki  <psolanki@apple.com>
+
+        Remove HAVE_SBRK since we never set use_sbrk to true
+        https://bugs.webkit.org/show_bug.cgi?id=97525
+        <rdar://problem/12363601>
+
+        Reviewed by Geoffrey Garen.
+
+        The code under HAVE(SBRK) has not been used since 2005. We use mmap not sbrk for FastMalloc
+        not sbrk. We can just remove the define and move all of this code inside #ifndef
+        WTF_CHANGES.
+
+        * wtf/Platform.h:
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemAlloc):
+
 2012-09-25  Mark Lam  <mark.lam@apple.com>
 
         #undef some symbols before redefining them.

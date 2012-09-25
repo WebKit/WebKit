@@ -1,3 +1,13 @@
+2012-09-25  Pratik Solanki  <psolanki@apple.com>
+
+        Remove HAVE_SBRK since we never set use_sbrk to true
+        https://bugs.webkit.org/show_bug.cgi?id=97525
+        <rdar://problem/12363601>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/AboutDataHaveFeatures.in: Remove SBRK from list.
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397
