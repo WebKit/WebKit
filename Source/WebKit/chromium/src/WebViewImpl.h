@@ -99,6 +99,7 @@ class PrerendererClientImpl;
 class SpeechInputClientImpl;
 class SpeechRecognitionClientProxy;
 class UserMediaClientImpl;
+class ValidationMessageClientImpl;
 class WebAccessibilityObject;
 class WebCompositorImpl;
 class WebDevToolsAgentClient;
@@ -862,6 +863,7 @@ private:
 #if ENABLE(GESTURE_EVENTS)
     OwnPtr<LinkHighlight> m_linkHighlight;
 #endif
+    OwnPtr<ValidationMessageClientImpl> m_validationMessage;
 };
 
 } // namespace WebKit

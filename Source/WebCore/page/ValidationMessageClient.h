@@ -26,6 +26,8 @@
 #ifndef ValidationMessageClient_h
 #define ValidationMessageClient_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class Element;

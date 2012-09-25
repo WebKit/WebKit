@@ -467,6 +467,8 @@
                 'src/TextFieldDecoratorImpl.cpp',
                 'src/UserMediaClientImpl.h',
                 'src/UserMediaClientImpl.cpp',
+                'src/ValidationMessageClientImpl.cpp',
+                'src/ValidationMessageClientImpl.h',
                 'src/WebTextCheckingCompletionImpl.h',
                 'src/WebTextCheckingCompletionImpl.cpp',
                 'src/WebTextCheckingResult.cpp',

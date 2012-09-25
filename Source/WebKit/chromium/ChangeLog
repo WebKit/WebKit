@@ -1,3 +1,41 @@
+2012-09-24  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Implement ValidationMessageClient for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=97167
+
+        Reviewed by Hajime Morita.
+
+        Introduce ValidationMessageClientImpl. However actual popup
+        implementation should be done in WebViewClient.
+
+        * WebKit.gyp: Add ValidationMessageClientImpl.{cpp,h}.
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::showValidationMessage): Added.
+        (WebKit::WebViewClient::hideValidationMessage): Added.
+        * src/ValidationMessageClientImpl.cpp: Added.
+        (WebKit::ValidationMessageClientImpl::ValidationMessageClientImpl):
+        (WebKit::ValidationMessageClientImpl::create):
+        (WebKit::ValidationMessageClientImpl::~ValidationMessageClientImpl):
+        Make sure that a popup is closed.
+        (WebKit::ValidationMessageClientImpl::showValidationMessage):
+        Implementataion of ValidationMessageClient::showValidationMessage.
+        minimumSecondToShowValidationMessage and secondPerCharacter are same as
+        the corresponding values in the current Shadow DOM implementation.
+        (WebKit::ValidationMessageClientImpl::hideValidationMessage):
+        Implementataion of ValidationMessageClient::hideValidationMessage.
+        (WebKit::ValidationMessageClientImpl::isValidationMessageVisible):
+        Implementataion of ValidationMessageClient::isValidationMessageVisible.
+        (WebKit::ValidationMessageClientImpl::hideCurrentValidationMessage):
+        This is a callback function for the timer.
+        * src/ValidationMessageClientImpl.h: Added.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+         - Initialize m_validationMessage.
+         - Add a comment for PageClients.
+        * src/WebViewImpl.h:
+        Add m_validationMessage.
+
 2012-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] Remove WebRuntimeFeatures::{enablePushState,isPushStateEnabled}
