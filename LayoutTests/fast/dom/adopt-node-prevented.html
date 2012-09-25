@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div id="newParent"></div>
+  <a href="#" id="target"></a>
+<script>
+description("Test that adoptNode fails safely if prevented by a DOM mutation.");
+
+function run() {
+    newParent = document.getElementById("newParent");
+    target = document.getElementById("target");
+    target.addEventListener("blur", function () { newParent.appendChild(target); }, false);
+    target.focus();
+    var anotherDocument = document.implementation.createDocument("", "", null);
+
+    try { anotherDocument.adoptNode(target); } catch(e) {}
+    shouldBe("target.ownerDocument.location", "document.location");
+}
+
+document.addEventListener("DOMContentLoaded", run, false);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

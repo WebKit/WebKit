@@ -1049,8 +1049,11 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
                 return 0;
             }
         }
-        if (source->parentNode())
+        if (source->parentNode()) {
             source->parentNode()->removeChild(source.get(), ec);
+            if (ec)
+                return 0;
+        }
     }
 
     this->adoptIfNeeded(source.get());
