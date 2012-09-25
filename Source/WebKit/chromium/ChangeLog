@@ -1,3 +1,17 @@
+2012-09-24  Andrey Kosyakov  <caseq@chromium.org>
+
+        [chromium] adding a page overlay causes endless update loop when accelerated compositing is used
+        https://bugs.webkit.org/show_bug.cgi?id=97466
+
+        Reviewed by James Robinson.
+
+        Do not update overlays in composite() -- doing so ultimately causes invalidation
+        of the view, hence another update and another call do composite(). Overlays should be
+        updated only when their content changes.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2012-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extract Vector instrumentation from core NMI code into MemoryInstrumentationVector.h header.

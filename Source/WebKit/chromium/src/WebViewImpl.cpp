@@ -1822,9 +1822,6 @@ void WebViewImpl::composite(bool)
         if (!page())
             return;
 
-        if (m_pageOverlays)
-            m_pageOverlays->update();
-
         m_layerTreeView->composite();
     }
 #endif
