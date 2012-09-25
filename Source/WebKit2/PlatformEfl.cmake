@@ -76,6 +76,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPopupMenuProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
+    UIProcess/efl/WebProcessProxyEfl.cpp
 
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp

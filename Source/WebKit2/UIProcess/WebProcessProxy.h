@@ -123,6 +123,7 @@ private:
 
     // Initializes the process launcher which will begin launching the process.
     void connect();
+    void platformConnect(ProcessLauncher::LaunchOptions&);
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.

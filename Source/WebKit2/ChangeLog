@@ -1,3 +1,42 @@
+2012-09-24  Sam Weinig  <sam@webkit.org>
+
+        Use NSUserDefaults rather than an environment variable to control whether to use an XPC Service for the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=97514
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * Target.pri:
+        Add new files.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connect):
+        Move platform specific launch options to a new function, platformConnect.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/efl/WebProcessProxyEfl.cpp: Added.
+        Move Efl specific launch options here.
+ 
+        (WebKit::WebProcessProxy::platformConnect):
+        * UIProcess/gtk/WebProcessProxyGtk.cpp: Added.
+        Add stub.
+
+        (WebKit::WebProcessProxy::platformConnect):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::platformConnect):
+        Move Mac specific launch option setting here, and switch from
+        using an environment variable to NSUserDefaults.
+
+        * UIProcess/qt/WebProcessProxyQt.cpp: Added.
+        (WebKit::WebProcessProxy::platformConnect):
+        Add stub.
+
+        * UIProcess/win/WebProcessProxyWin.cpp:
+        (WebKit::WebProcessProxy::platformConnect):
+        Add stub.
+
 2012-09-24  Laszlo Gombos  <l.gombos@samsung.com>
 
         [GTK][EFL] Remove cairo prefix from include statements

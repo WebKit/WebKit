@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,15 @@
 
 namespace WebKit {
 
-Vector<HWND> WebProcessProxy::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
+void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    return Vector<HWND>();
-}
-
-void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions&)
-{
+#ifndef NDEBUG
+    const char* webProcessCmdPrefix = getenv("WEB_PROCESS_CMD_PREFIX");
+    if (webProcessCmdPrefix && *webProcessCmdPrefix)
+        launchOptions.processCmdPrefix = String::fromUTF8(webProcessCmdPrefix);
+#else
+    UNUSED_PARAM(launchOptions);
+#endif
 }
 
 } // namespace WebKit

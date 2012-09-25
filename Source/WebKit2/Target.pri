@@ -623,6 +623,7 @@ SOURCES += \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
+    UIProcess/qt/WebProcessProxyQt.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Battery/WebBatteryManager.cpp \
