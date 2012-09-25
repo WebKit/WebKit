@@ -1,3 +1,13 @@
+2012-09-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove String::operator+=()
+        https://bugs.webkit.org/show_bug.cgi?id=96172
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/Platform.h:
+        * wtf/text/WTFString.h:
+
 2012-09-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Add support for query encoding to WTFURL

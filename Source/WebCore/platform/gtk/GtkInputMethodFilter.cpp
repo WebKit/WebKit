@@ -292,7 +292,7 @@ void GtkInputMethodFilter::handleCommit(const char* compositionString)
     if (!m_enabled)
         return;
 
-    m_confirmedComposition += String::fromUTF8(compositionString);
+    m_confirmedComposition.append(String::fromUTF8(compositionString));
 
     // If the commit was triggered outside of a key event, just send
     // the IME event now. If we are handling a key event, we'll decide

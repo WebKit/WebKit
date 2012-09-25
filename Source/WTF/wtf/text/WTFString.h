@@ -467,10 +467,6 @@ QDataStream& operator<<(QDataStream& stream, const String& str);
 QDataStream& operator>>(QDataStream& stream, String& str);
 #endif
 
-#ifdef WTF_DEPRECATED_STRING_OPERATORS
-inline String& operator+=(String& a, const String& b) { a.append(b); return a; }
-#endif
-
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
