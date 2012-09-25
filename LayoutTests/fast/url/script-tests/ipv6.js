@@ -71,7 +71,7 @@ cases = [
     // to not exceed 128 bits.
     ["[1:2:3:4:5:6::192.168.0.1]", ""],
 
-    // The contraction is for 16 bits of zero.
+    // The contraction is for 16 bits of zero. RFC 5952, Section 4.2.2.
     ["[1:2:3:4:5:6::8]", "[1:2:3:4:5:6:0:8]"],
 
     // Cannot have a trailing colon.
@@ -104,21 +104,11 @@ cases = [
     ["[::1 hello]", ""]
 ];
 
-// We test the empty string individually.
-shouldBe("canonicalize('http:///')", "'http:'");
-
 for (var i = 0; i < cases.length; ++i) {
   test_vector = cases[i][0];
   expected_result = cases[i][1];
-  if (expected_result === "") {
-    // We use "" to represent that the test vector ought not to parse.
-    // It appears that we're supposed to apply a default canonicalization,
-    // and the escape function escapes too much!
-    expected_result = test_vector.toLowerCase();
-    ['%', ' '].forEach(function(c){
-      expected_result = expected_result.replace(c, escape(c));
-    })
-  }
+  if (expected_result === "")
+    expected_result = test_vector;
   shouldBe("canonicalize('http://" + test_vector + "/')",
            "'http://" + expected_result + "/'");
 }

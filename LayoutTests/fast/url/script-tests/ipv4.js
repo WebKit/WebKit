@@ -86,17 +86,11 @@ cases = [
   ["0.00.0x.0x0", "0.0.0.0"]
 ];
 
-// We test the empty string individually.
-shouldBe("canonicalize('http:///')", "'http:'");
-
 for (var i = 0; i < cases.length; ++i) {
   test_vector = cases[i][0];
   expected_result = cases[i][1];
-  if (expected_result === "") {
-    // We use "" to represent that the test vector ought not to parse.
-    // It appears that we're supposed to apply a default canonicalization.
-    expected_result = escape(test_vector.toLowerCase());
-  }
+  if (expected_result === "")
+    expected_result = test_vector.toLowerCase();
   shouldBe("canonicalize('http://" + test_vector + "/')",
            "'http://" + expected_result + "/'");
 }

@@ -14,11 +14,21 @@ description("This ensure we do not mess up the bytes when an URL is partially pa
 
 // Those are all invalid URLs. They should not be partially modified by the parser.
 var testSet = [
+    // Empty Authority for a standard hierachical URL.
+    'http:///',
+    'https:///',
+    'ftp:///',
+    'gopher:///',
+    'ws:///',
+    'wss:///',
+
+    // Invalid Authority.
     'foo://tête à tête@host/',
     'foo://user:tête à tête@host/',
     '    foo://<>@host/    ',
     '    foo://user:<>@host/    ',
     'foo://user:password@[xxxxx]/tête à tête/',
+
     // The '?' is a path separator and make sure the hostname is not encoded in punicode. The hostname is an invalid IPV6 hostname.
     'foo://user:password@[?tête à tête/',
     'foo://user:password@[?tête à tête]/',
@@ -36,8 +46,8 @@ var testSet = [
 
 for (var i = 0; i < testSet.length; ++i) {
     src = canonicalize(testSet[i]);
-	expected = testSet[i].trim();
-	shouldBe('src', 'expected');
+    expected = testSet[i].trim();
+    shouldBe('src', 'expected');
 }
 
 successfullyParsed = true;

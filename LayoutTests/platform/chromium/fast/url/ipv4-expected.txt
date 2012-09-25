@@ -3,7 +3,6 @@ Canonicalization of IPv4 addresses.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS canonicalize('http:///') is 'http:'
 PASS canonicalize('http://./') is 'http://./'
 PASS canonicalize('http://192.168.0.1/') is 'http://192.168.0.1/'
 PASS canonicalize('http://0300.0250.00.01/') is 'http://192.168.0.1/'
@@ -22,7 +21,7 @@ PASS canonicalize('http://0xc0.052000001/') is 'http://192.168.0.1/'
 PASS canonicalize('http://192.168.1/') is 'http://192.168.0.1/'
 PASS canonicalize('http://192.168.0.0.1/') is 'http://192.168.0.0.1/'
 PASS canonicalize('http://192.168.0.1./') is 'http://192.168.0.1/'
-PASS canonicalize('http://192.168.0.1. hello/') is 'http://192.168.0.1.%20hello/'
+FAIL canonicalize('http://192.168.0.1. hello/') should be http://192.168.0.1. hello/. Was http://192.168.0.1.%20hello/.
 PASS canonicalize('http://192.168.0.1../') is 'http://192.168.0.1../'
 PASS canonicalize('http://192.168..1/') is 'http://192.168..1/'
 PASS canonicalize('http://0x100.0/') is 'http://0x100.0/'
@@ -49,7 +48,7 @@ PASS canonicalize('http://192.168.0xa20001/') is 'http://192.168.0xa20001/'
 PASS canonicalize('http://192.015052000001/') is 'http://192.015052000001/'
 PASS canonicalize('http://0X12C0a80001/') is 'http://0x12c0a80001/'
 PASS canonicalize('http://276.1.2/') is 'http://276.1.2/'
-PASS canonicalize('http://192.168.0.1 hello/') is 'http://192.168.0.1%20hello/'
+FAIL canonicalize('http://192.168.0.1 hello/') should be http://192.168.0.1 hello/. Was http://192.168.0.1%20hello/.
 PASS canonicalize('http://0000000000000300.0x00000000000000fF.00000000000000001/') is 'http://192.255.0.1/'
 PASS canonicalize('http://0000000000000300.0xffffffffFFFFFFFF.3022415481470977/') is 'http://0000000000000300.0xffffffffffffffff.3022415481470977/'
 PASS canonicalize('http://00000000000000000001/') is 'http://0.0.0.1/'
