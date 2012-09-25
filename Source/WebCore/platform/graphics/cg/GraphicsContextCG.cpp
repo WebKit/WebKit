@@ -190,24 +190,6 @@ static RetainPtr<CGImageRef> subimage(CGImageRef image, const FloatRect& rect)
 
 #endif // CACHE_SUBIMAGES
 
-static CGColorSpaceRef createLinearSRGBColorSpace()
-{
-    // If we fail to load the linearized sRGB ICC profile, fall back to DeviceRGB.
-    CGColorSpaceRef linearSRGBSpace = deviceRGBColorSpaceRef();
-    
-    CFBundleRef webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
-    RetainPtr<CFURLRef> iccProfileURL(CFBundleCopyResourceURL(webCoreBundle, CFSTR("linearSRGB"), CFSTR("icc"), 0));
-    CFDataRef iccProfileData = 0;
-    
-    if (iccProfileURL && CFURLCreateDataAndPropertiesFromResource(0, iccProfileURL.get(), &iccProfileData, 0, 0, 0))
-        linearSRGBSpace = CGColorSpaceCreateWithICCProfile(iccProfileData);
-    
-    if (iccProfileData)
-        CFRelease(iccProfileData);
-    
-    return linearSRGBSpace;
-}
-
 static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
 {
     CGContextSetFillColorWithColor(context, cachedCGColor(color, colorSpace));
@@ -235,16 +217,13 @@ CGColorSpaceRef sRGBColorSpaceRef()
 #endif
 }
 
+#if PLATFORM(WIN)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-#if PLATFORM(WIN)
     return deviceRGBColorSpaceRef();
-#else
-    static CGColorSpaceRef linearSRGBSpace = createLinearSRGBColorSpace();
-    return linearSRGBSpace;
-#endif
 }
+#endif
 
 void GraphicsContext::platformInit(CGContextRef cgContext)
 {

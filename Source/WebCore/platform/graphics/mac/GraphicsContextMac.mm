@@ -26,6 +26,7 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
+#import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
 #import <AppKit/AppKit.h>
 #import <wtf/StdLibExtras.h>
@@ -176,6 +177,26 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
     
     CGContextRestoreGState(context);
+}
+
+CGColorSpaceRef linearRGBColorSpaceRef()
+{
+    static CGColorSpaceRef linearSRGBSpace = 0;
+
+    if (linearSRGBSpace)
+        return linearSRGBSpace;
+
+    RetainPtr<NSString> iccProfilePath = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linearSRGB" ofType:@"icc"];
+    RetainPtr<NSData> iccProfileData(AdoptNS, [[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
+
+    if (iccProfileData)
+        linearSRGBSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());
+
+    // If we fail to load the linearized sRGB ICC profile, fall back to DeviceRGB.
+    if (!linearSRGBSpace)
+        return deviceRGBColorSpaceRef();
+
+    return linearSRGBSpace;
 }
 
 }
