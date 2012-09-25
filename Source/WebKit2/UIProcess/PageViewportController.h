@@ -74,10 +74,9 @@ public:
     void suspendContent();
     void resumeContent();
 
-    WebCore::FloatRect positionRangeForViewportAtScale(float viewportScale) const;
-
     float innerBoundedViewportScale(float) const;
     float outerBoundedViewportScale(float) const;
+    WebCore::FloatPoint clampViewportToContents(const WebCore::FloatPoint& viewportPos, float viewportScale);
 
     bool hasSuspendedContent() const { return m_hasSuspendedContent; }
     bool hadUserInteraction() const { return m_hadUserInteraction; }
@@ -127,7 +126,6 @@ private:
 };
 
 bool fuzzyCompare(float, float, float epsilon);
-WebCore::FloatPoint boundPosition(const WebCore::FloatPoint minPosition, const WebCore::FloatPoint& position, const WebCore::FloatPoint& maxPosition);
 
 } // namespace WebKit
 

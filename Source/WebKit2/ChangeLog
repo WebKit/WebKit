@@ -1,5 +1,30 @@
 2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] PageViewportController: Consolidate positionRangeForViewportAtScale and boundPosition
+        https://bugs.webkit.org/show_bug.cgi?id=97222
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Those methods are used together everywhere, merge them into a single
+        clampViewportToContents method.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::innerBoundedViewportScale):
+        (WebKit::PageViewportController::outerBoundedViewportScale):
+        (WebKit::PageViewportController::clampViewportToContents):
+        (WebKit):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::syncVisibleContents):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        (WebKit):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::nearestValidVisibleContentsRect):
+
+2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Unify the PageViewportController<->Client interface regarding positions
         https://bugs.webkit.org/show_bug.cgi?id=97220
 

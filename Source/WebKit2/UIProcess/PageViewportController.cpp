@@ -32,19 +32,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static inline float bound(float min, float value, float max)
-{
-    return clampTo<float>(value, min, max);
-}
-
 bool fuzzyCompare(float a, float b, float epsilon)
 {
     return std::abs(a - b) < epsilon;
-}
-
-FloatPoint boundPosition(const FloatPoint minPosition, const FloatPoint& position, const FloatPoint& maxPosition)
-{
-    return FloatPoint(bound(minPosition.x(), position.x(), maxPosition.x()), bound(minPosition.y(), position.y(), maxPosition.y()));
 }
 
 ViewportUpdateDeferrer::ViewportUpdateDeferrer(PageViewportController* PageViewportController, SuspendContentFlag suspendContentFlag)
@@ -92,7 +82,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
 
 float PageViewportController::innerBoundedViewportScale(float viewportScale) const
 {
-    return bound(toViewportScale(m_minimumScaleToFit), viewportScale, toViewportScale(m_rawAttributes.maximumScale));
+    return clampTo(viewportScale, toViewportScale(m_minimumScaleToFit), toViewportScale(m_rawAttributes.maximumScale));
 }
 
 float PageViewportController::outerBoundedViewportScale(float viewportScale) const
@@ -101,7 +91,7 @@ float PageViewportController::outerBoundedViewportScale(float viewportScale) con
         // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
         float hardMin = toViewportScale(std::max<float>(0.1, 0.5 * m_minimumScaleToFit));
         float hardMax = toViewportScale(std::min<float>(10, 2 * m_rawAttributes.maximumScale));
-        return bound(hardMin, viewportScale, hardMax);
+        return clampTo(viewportScale, hardMin, hardMax);
     }
     return innerBoundedViewportScale(viewportScale);
 }
@@ -109,6 +99,14 @@ float PageViewportController::outerBoundedViewportScale(float viewportScale) con
 float PageViewportController::devicePixelRatio() const
 {
     return m_webPageProxy->deviceScaleFactor();
+}
+
+FloatPoint PageViewportController::clampViewportToContents(const WebCore::FloatPoint& viewportPos, float viewportScale)
+{
+    const float horizontalRange = std::max(0.f, m_contentsSize.width() - m_viewportSize.width() / viewportScale);
+    const float verticalRange = std::max(0.f, m_contentsSize.height() - m_viewportSize.height() / viewportScale);
+
+    return FloatPoint(clampTo(viewportPos.x(), 0.f, horizontalRange), clampTo(viewportPos.y(), 0.f, verticalRange));
 }
 
 void PageViewportController::didChangeContentsSize(const IntSize& newSize)
@@ -128,10 +126,7 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     if (m_activeDeferrerCount)
         return;
 
-    FloatRect endPosRange = positionRangeForViewportAtScale(m_effectiveScale);
-    FloatPoint endPosition = boundPosition(endPosRange.minXMinYCorner(), cssPosition, endPosRange.maxXMaxYCorner());
-
-    m_client->setViewportPosition(endPosition);
+    m_client->setViewportPosition(clampViewportToContents(cssPosition, m_effectiveScale));
 }
 
 void PageViewportController::didChangeViewportSize(const FloatSize& newSize)
@@ -161,10 +156,7 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return;
 
-    FloatRect endPosRange = positionRangeForViewportAtScale(m_effectiveScale);
-    FloatPoint endPosition = boundPosition(endPosRange.minXMinYCorner(), m_viewportPos, endPosRange.maxXMaxYCorner());
-
-    FloatRect visibleContentsRect(endPosition, m_viewportSize / m_effectiveScale);
+    FloatRect visibleContentsRect(clampViewportToContents(m_viewportPos, m_effectiveScale), m_viewportSize / m_effectiveScale);
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
     drawingArea->setVisibleContentsRect(visibleContentsRect, m_effectiveScale, trajectoryVector);
 
@@ -223,14 +215,6 @@ void PageViewportController::updateMinimumScaleToFit()
 
         m_client->didChangeViewportAttributes();
     }
-}
-
-FloatRect PageViewportController::positionRangeForViewportAtScale(float viewportScale) const
-{
-    const float horizontalRange = m_contentsSize.width() - m_viewportSize.width() / viewportScale;
-    const float verticalRange = m_contentsSize.height() - m_viewportSize.height() / viewportScale;
-
-    return FloatRect(0, 0, horizontalRange, verticalRange);
 }
 
 } // namespace WebKit
