@@ -38,7 +38,7 @@ using namespace WebKit;
 static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, bool pageIsProvisionallyLoading, const void* clientInfo)
 {
     GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(wkRequest)->resourceRequest()));
-    webkitWebViewResourceLoadStarted(WEBKIT_WEB_VIEW(clientInfo), wkFrame, resourceIdentifier, request.get());
+    webkitWebViewResourceLoadStarted(WEBKIT_WEB_VIEW(clientInfo), toImpl(wkFrame), resourceIdentifier, request.get());
 }
 
 static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)

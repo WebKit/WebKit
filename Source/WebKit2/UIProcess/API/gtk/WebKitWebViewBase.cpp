@@ -775,7 +775,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, toAPI(context), toAPI(pageGroup));
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, pageGroup);
     return webkitWebViewBase;
 }
 
@@ -789,11 +789,11 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->pageProxy.get();
 }
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WKContextRef context, WKPageGroupRef pageGroup)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-    priv->pageProxy = toImpl(context)->createWebPage(priv->pageClient.get(), toImpl(pageGroup));
+    priv->pageProxy = context->createWebPage(priv->pageClient.get(), pageGroup);
     priv->pageProxy->initializeWebPage();
 
 #if ENABLE(FULLSCREEN_API)

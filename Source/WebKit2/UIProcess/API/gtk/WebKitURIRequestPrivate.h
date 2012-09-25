@@ -30,5 +30,6 @@
 #include <WebCore/ResourceRequest.h>
 
 WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest&);
+const WebCore::ResourceRequest& webkitURIRequestGetResourceRequest(WebKitURIRequest*);
 
 #endif // WebKitURIRequestPrivate_h

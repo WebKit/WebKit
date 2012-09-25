@@ -38,7 +38,7 @@ using namespace WebKit;
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebContext*, WebPageGroup*);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);

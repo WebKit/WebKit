@@ -1,3 +1,73 @@
+2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=96767
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        (getContextMenuFromProposedMenu):
+        * UIProcess/API/gtk/WebKitResourceLoadClient.cpp:
+        (didInitiateLoadForResource):
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (createNewPage):
+        (runJavaScriptPrompt):
+        (mouseDidMoveOverElement):
+        (printFrame):
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (webkitURIRequestCreateForResourceRequest):
+        (webkitURIRequestGetResourceRequest):
+        * UIProcess/API/gtk/WebKitURIRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (allowModalDialogsChanged):
+        (zoomTextOnlyChanged):
+        (webkitWebViewSetSettings):
+        (webkitWebViewConstructed):
+        (webkitWebViewUpdateURI):
+        (webkitWebViewCreateNewPage):
+        (webkitWebViewRunJavaScriptPrompt):
+        (webkitWebViewMouseTargetChanged):
+        (webkitWebViewPrintFrame):
+        (webkitWebViewResourceLoadStarted):
+        (webkitWebViewPopulateContextMenu):
+        (webkit_web_view_load_uri):
+        (webkit_web_view_load_html):
+        (webkit_web_view_load_alternate_html):
+        (webkit_web_view_load_plain_text):
+        (webkit_web_view_load_request):
+        (webkit_web_view_reload):
+        (webkit_web_view_reload_bypass_cache):
+        (webkit_web_view_stop_loading):
+        (webkit_web_view_go_back):
+        (webkit_web_view_can_go_back):
+        (webkit_web_view_go_forward):
+        (webkit_web_view_can_go_forward):
+        (webkit_web_view_get_custom_charset):
+        (webkit_web_view_set_custom_charset):
+        (webkit_web_view_go_to_back_forward_list_item):
+        (webkit_web_view_set_settings):
+        (webkit_web_view_set_zoom_level):
+        (webkit_web_view_get_zoom_level):
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_execute_editing_command):
+        (webkit_web_view_run_javascript):
+        (webkit_web_view_get_inspector):
+        (webkit_web_view_can_show_mime_type):
+        (ViewSaveAsyncData):
+        (getContentsAsMHTMLDataCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_finish):
+        (webkit_web_view_save_to_file):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate):
+        (webkitWebViewBaseCreateWebPage):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
 2012-09-24  Bo Liu  <boliu@chromium.org>
 
         Reland "Add in-place reload behavior to ImagesEnabled setting" with optimizations

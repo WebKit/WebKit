@@ -34,7 +34,7 @@ using namespace WebKit;
 
 static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(clientInfo), wkWindowFeatures);
+    return static_cast<WKPageRef>(toAPI(webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(clientInfo), toImpl(wkWindowFeatures))));
 }
 
 static void showPage(WKPageRef page, const void* clientInfo)
@@ -59,8 +59,9 @@ static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef
 
 static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
 {
-    return webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8(),
-                                            toImpl(defaultValue)->string().utf8());
+    CString result = webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8(),
+                                                      toImpl(defaultValue)->string().utf8());
+    return WKStringCreateWithUTF8CString(result.data());
 }
 
 static bool toolbarsAreVisible(WKPageRef page, const void* clientInfo)
@@ -131,12 +132,12 @@ static void setWindowFrame(WKPageRef page, WKRect frame, const void* clientInfo)
 
 static void mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
 {
-    webkitWebViewMouseTargetChanged(WEBKIT_WEB_VIEW(clientInfo), hitTestResult, wkEventModifiersToGdkModifiers(modifiers));
+    webkitWebViewMouseTargetChanged(WEBKIT_WEB_VIEW(clientInfo), toImpl(hitTestResult), wkEventModifiersToGdkModifiers(modifiers));
 }
 
 static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
 {
-    webkitWebViewPrintFrame(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), frame);
+    webkitWebViewPrintFrame(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(frame));
 }
 
 static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo)

@@ -117,13 +117,6 @@ WebKitURIRequest* webkit_uri_request_new(const gchar* uri)
     return WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, "uri", uri, NULL));
 }
 
-WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest& resourceRequest)
-{
-    WebKitURIRequest* uriRequest = WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, NULL));
-    uriRequest->priv->resourceRequest = resourceRequest;
-    return uriRequest;
-}
-
 /**
  * webkit_uri_request_get_uri:
  * @request: a #WebKitURIRequest
@@ -138,3 +131,14 @@ const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
     return request->priv->uri.data();
 }
 
+WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest& resourceRequest)
+{
+    WebKitURIRequest* uriRequest = WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, NULL));
+    uriRequest->priv->resourceRequest = resourceRequest;
+    return uriRequest;
+}
+
+const WebCore::ResourceRequest& webkitURIRequestGetResourceRequest(WebKitURIRequest* uriRequest)
+{
+    return uriRequest->priv->resourceRequest;
+}
