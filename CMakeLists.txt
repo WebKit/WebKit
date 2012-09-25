@@ -36,10 +36,6 @@ SET(DERIVED_SOURCES_WEBKIT2_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit2")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 INCLUDE(WebKitMacros)
 INCLUDE(WebKitFS)
 INCLUDE(WebKitHelpers)
@@ -131,9 +127,16 @@ SET(WebKit2_LIBRARY_TYPE SHARED)
 SET(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
 # -----------------------------------------------------------------------------
+# Common options
+#------------------------------------------------------------------------------
+INCLUDE(OptionsCommon)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${LIB_INSTALL_DIR})
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${LIB_INSTALL_DIR})
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${EXEC_INSTALL_DIR})
+
+# -----------------------------------------------------------------------------
 # Port-specific options
 # -----------------------------------------------------------------------------
-INCLUDE(OptionsCommon)
 INCLUDE(Options${PORT})
 
 # -----------------------------------------------------------------------------
