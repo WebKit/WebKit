@@ -720,7 +720,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     String host;
     int port;
     if (type == ProtectionSpaceProxyHTTP) {
-        String proxyAddress = BlackBerry::Platform::Client::get()->getProxyAddress(newURL.string().ascii().data()).c_str();
+        String proxyAddress = String(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str());
         KURL proxyURL(KURL(), proxyAddress);
         host = proxyURL.host();
         port = proxyURL.port();
@@ -755,8 +755,8 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String password;
 
         if (type == ProtectionSpaceProxyHTTP) {
-            username = BlackBerry::Platform::Client::get()->getProxyUsername().c_str();
-            password = BlackBerry::Platform::Client::get()->getProxyPassword().c_str();
+            username = String(BlackBerry::Platform::Settings::instance()->proxyUsername().c_str());
+            password = String(BlackBerry::Platform::Settings::instance()->proxyPassword().c_str());
         }
 
         if (username.isEmpty() || password.isEmpty()) {
