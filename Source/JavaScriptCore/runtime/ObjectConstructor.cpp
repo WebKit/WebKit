@@ -404,7 +404,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object.freeze can only be called on Objects.")));
     JSObject* object = asObject(obj);
 
-    if (isJSFinalObject(object)) {
+    if (isJSFinalObject(object) && !hasIndexedProperties(object->structure()->indexingType())) {
         object->freeze(exec->globalData());
         return JSValue::encode(obj);
     }

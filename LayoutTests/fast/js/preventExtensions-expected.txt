@@ -35,6 +35,8 @@ PASS preventExtensionsFreezeIsFrozen(function foo(){}) is true
 PASS preventExtensionsFreezeIsFrozen(function foo(){ "use strict"; }) is true
 PASS preventExtensionsFreezeIsFrozen([0,1,2]) is true
 PASS preventExtensionsFreezeIsFrozen((function(){ return arguments; })(0,1,2)) is true
+PASS Object.getOwnPropertyDescriptor(freeze({0:0}), 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(freeze({10000001:0}), 10000001).configurable is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

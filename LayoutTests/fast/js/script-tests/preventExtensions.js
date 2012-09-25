@@ -130,3 +130,5 @@ shouldBeTrue('preventExtensionsFreezeIsFrozen(function foo(){ "use strict"; })')
 shouldBeTrue('preventExtensionsFreezeIsFrozen([0,1,2])')
 shouldBeTrue('preventExtensionsFreezeIsFrozen((function(){ return arguments; })(0,1,2))')
 
+shouldBeFalse('Object.getOwnPropertyDescriptor(freeze({0:0}), 0).configurable');
+shouldBeFalse('Object.getOwnPropertyDescriptor(freeze({10000001:0}), 10000001).configurable');

@@ -1,5 +1,19 @@
 2012-09-24  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=97530
+        Regression, freeze applied to numeric properties of non-array objects
+
+        Reviewed by Filip Pizlo.
+
+        Object.freeze has a fast implementation in JSObject, but this hasn't been updated to take into account numeric properties in butterflies.
+        For now, just fall back to the generic implementation if the object has numeric properties.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorFreeze):
+            - fallback if the object has a non-zero indexed property vector length.
+
+2012-09-24  Gavin Barraclough  <barraclough@apple.com>
+
         Bug in numeric accessors on global environment
         https://bugs.webkit.org/show_bug.cgi?id=97526
 
