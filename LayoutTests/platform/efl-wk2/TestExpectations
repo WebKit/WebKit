@@ -153,6 +153,9 @@ webkit.org/b/56985 http/tests/loading/bad-server-subframe.html [ Crash Pass ]
 # Sometimes times out of the build bot
 webkit.org/b/90207 fast/forms/select/select-state-restore.html [ Failure Pass ]
 
+# Affects multiple platforms.
+webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
