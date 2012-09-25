@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -338,7 +339,7 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.
 }
 
-void TestRunner::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.

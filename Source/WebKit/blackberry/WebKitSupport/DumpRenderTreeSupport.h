@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +53,7 @@ public:
 
     static int numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::WebPage*);
     static void resetGeolocationMock(BlackBerry::WebKit::WebPage*);
-    static void setMockGeolocationError(BlackBerry::WebKit::WebPage*, int errorCode, const WTF::String message);
+    static void setMockGeolocationPositionUnavailableError(BlackBerry::WebKit::WebPage*, const WTF::String message);
     static void setMockGeolocationPermission(BlackBerry::WebKit::WebPage*, bool allowed);
     static void setMockGeolocationPosition(BlackBerry::WebKit::WebPage*, double latitude, double longitude, double accuracy);
     static void scalePageBy(BlackBerry::WebKit::WebPage*, float, float, float);

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -41,6 +42,7 @@ namespace WebCore {
 
 GeolocationClientMock::GeolocationClientMock()
     : m_controller(0)
+    , m_hasError(false)
     , m_controllerTimer(this, &GeolocationClientMock::controllerTimerFired)
     , m_permissionTimer(this, &GeolocationClientMock::permissionTimerFired)
     , m_isActive(false)
@@ -62,14 +64,15 @@ void GeolocationClientMock::setController(GeolocationController *controller)
 void GeolocationClientMock::setPosition(PassRefPtr<GeolocationPosition> position)
 {
     m_lastPosition = position;
-    m_lastError = 0;
+    clearError();
     asyncUpdateController();
 }
 
-void GeolocationClientMock::setError(PassRefPtr<GeolocationError> error)
+void GeolocationClientMock::setPositionUnavailableError(const String& errorMessage)
 {
-    m_lastError = error;
-    m_lastPosition = 0;
+    m_hasError = true;
+    m_errorMessage = errorMessage;
+    m_lastPosition = nullptr;
     asyncUpdateController();
 }
 
@@ -125,7 +128,7 @@ void GeolocationClientMock::permissionTimerFired(WebCore::Timer<GeolocationClien
 void GeolocationClientMock::reset()
 {
     m_lastPosition = 0;
-    m_lastError = 0;
+    clearError();
     m_permissionState = PermissionStateUnset;
 }
 
@@ -171,10 +174,19 @@ void GeolocationClientMock::controllerTimerFired(Timer<GeolocationClientMock>* t
     ASSERT_UNUSED(timer, timer == &m_controllerTimer);
     ASSERT(m_controller);
 
-    if (m_lastPosition.get())
+    if (m_lastPosition.get()) {
+        ASSERT(!m_hasError);
         m_controller->positionChanged(m_lastPosition.get());
-    else if (m_lastError.get())
-        m_controller->errorOccurred(m_lastError.get());
+    } else if (m_hasError) {
+        RefPtr<GeolocationError> geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, m_errorMessage);
+        m_controller->errorOccurred(geolocatioError.get());
+    }
+}
+
+void GeolocationClientMock::clearError()
+{
+    m_hasError = false;
+    m_errorMessage = String();
 }
 
 } // WebCore

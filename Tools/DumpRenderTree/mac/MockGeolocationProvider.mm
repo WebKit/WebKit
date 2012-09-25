@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,34 +38,33 @@
 {
     ASSERT(_registeredViews.isEmpty());
 
-    [_lastPosition release];
-    [_error release];
+    _lastPosition.clear();
+    _errorMessage.clear();
     [super dealloc];
+}
+
+- (void)resetError
+{
+    _hasError = NO;
+    _errorMessage.clear();
 }
 
 - (void)setPosition:(WebGeolocationPosition *)position
 {
-    if (_lastPosition != position) {
-        [_lastPosition release];
-        _lastPosition = [position retain];
-    }
+    _lastPosition = position;
     
-    [_error release];
-    _error = 0;
+    [self resetError];
 
     if (!_timer)
         _timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
 }
 
-- (void)setError:(NSError *)error
+- (void)setPositionUnavailableErrorWithMessage:(NSString *)errorMessage
 {
-    if (_error != error) {
-        [_error release];
-        _error = [error retain];
-    }
-    
-    [_lastPosition release];
-    _lastPosition = 0;
+    _hasError = YES;
+    _errorMessage = errorMessage;
+
+    _lastPosition.clear();
 
     if (!_timer)
         _timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
@@ -86,7 +85,7 @@
 
 - (WebGeolocationPosition *)lastPosition
 {
-    return _lastPosition;
+    return _lastPosition.get();
 }
 
 - (void)stopTimer
@@ -102,10 +101,10 @@
     // Expect that views won't be (un)registered while iterating.
     HashSet<WebView*> views = _registeredViews;
     for (HashSet<WebView*>::iterator iter = views.begin(); iter != views.end(); ++iter) {
-        if (_error)
-            [*iter _geolocationDidFailWithError:_error];
+        if (_hasError)
+            [*iter _geolocationDidFailWithMessage:_errorMessage.get()];
         else
-            [*iter _geolocationDidChangePosition:_lastPosition];
+            [*iter _geolocationDidChangePosition:_lastPosition.get()];
     }
 }
 

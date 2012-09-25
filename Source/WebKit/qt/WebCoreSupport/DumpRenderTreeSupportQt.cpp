@@ -2,7 +2,7 @@
     Copyright (C) 2010 Robert Hogan <robert@roberthogan.net>
     Copyright (C) 2008,2009,2010 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
-    Copyright (C) 2007 Apple Inc.
+    Copyright (C) 2007, 2012 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -753,23 +753,12 @@ void DumpRenderTreeSupportQt::setMockGeolocationPosition(QWebPage* page, double 
 #endif
 }
 
-void DumpRenderTreeSupportQt::setMockGeolocationError(QWebPage* page, int errorCode, const QString& message)
+void DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError(QWebPage* page, const QString& message)
 {
 #if ENABLE(GEOLOCATION)
     Page* corePage = QWebPagePrivate::core(page);
-
-    GeolocationError::ErrorCode code = GeolocationError::PositionUnavailable;
-    switch (errorCode) {
-    case PositionError::PERMISSION_DENIED:
-        code = GeolocationError::PermissionDenied;
-        break;
-    case PositionError::POSITION_UNAVAILABLE:
-        code = GeolocationError::PositionUnavailable;
-        break;
-    }
-
     GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(GeolocationController::from(corePage)->client());
-    mockClient->setError(GeolocationError::create(code, message));
+    mockClient->setPositionUnavailableError(message);
 #endif
 }
 

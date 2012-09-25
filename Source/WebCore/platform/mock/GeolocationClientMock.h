@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,9 +43,9 @@ namespace WebCore {
 
 class GeolocationController;
 class GeolocationPosition;
-class GeolocationError;
 
-// Provides a mock object for the geolocation client
+// FIXME: this should not be in WebCore. It should be moved to WebKit.
+// Provides a mock object for the geolocation client.
 class GeolocationClientMock : public GeolocationClient {
 public:
     GeolocationClientMock();
@@ -53,8 +54,8 @@ public:
     void reset();
     void setController(GeolocationController*);
 
-    void setError(PassRefPtr<GeolocationError>);
     void setPosition(PassRefPtr<GeolocationPosition>);
+    void setPositionUnavailableError(const String& errorMessage);
     void setPermission(bool allowed);
     int numberOfPendingPermissionRequests() const;
 
@@ -74,9 +75,12 @@ private:
     void asyncUpdatePermission();
     void permissionTimerFired(Timer<GeolocationClientMock>*);
 
+    void clearError();
+
     GeolocationController* m_controller;
     RefPtr<GeolocationPosition> m_lastPosition;
-    RefPtr<GeolocationError> m_lastError;
+    bool m_hasError;
+    String m_errorMessage;
     Timer<GeolocationClientMock> m_controllerTimer;
     Timer<GeolocationClientMock> m_permissionTimer;
     bool m_isActive;

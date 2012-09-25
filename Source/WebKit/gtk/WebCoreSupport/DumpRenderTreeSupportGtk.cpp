@@ -3,6 +3,7 @@
  *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *  Copyright (C) 2009 Google Inc. All rights reserved.
  *  Copyright (C) 2011 Igalia S.L.
+ *  Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -659,23 +660,11 @@ void DumpRenderTreeSupportGtk::setMockGeolocationPosition(WebKitWebView* webView
 #endif
 }
 
-void DumpRenderTreeSupportGtk::setMockGeolocationError(WebKitWebView* webView, int errorCode, const gchar* errorMessage)
+void DumpRenderTreeSupportGtk::setMockGeolocationPositionUnavailableError(WebKitWebView* webView, const gchar* errorMessage)
 {
 #if ENABLE(GEOLOCATION)
     GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
-
-    GeolocationError::ErrorCode code;
-    switch (errorCode) {
-    case PositionError::PERMISSION_DENIED:
-        code = GeolocationError::PermissionDenied;
-        break;
-    case PositionError::POSITION_UNAVAILABLE:
-    default:
-        code = GeolocationError::PositionUnavailable;
-        break;
-    }
-
-    mock->setError(GeolocationError::create(code, errorMessage));
+    mock->setPositionUnavailableError(errorMessage);
 #endif
 }
 

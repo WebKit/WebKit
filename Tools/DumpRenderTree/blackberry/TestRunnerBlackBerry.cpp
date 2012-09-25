@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2010, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -449,10 +450,10 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     DumpRenderTreeSupport::setMockGeolocationPosition(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), latitude, longitude, accuracy);
 }
 
-void TestRunner::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
     String messageStr = jsStringRefToWebCoreString(message);
-    DumpRenderTreeSupport::setMockGeolocationError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), code, messageStr);
+    DumpRenderTreeSupport::setMockGeolocationPositionUnavailableError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), messageStr);
 }
 
 void TestRunner::showWebInspector()

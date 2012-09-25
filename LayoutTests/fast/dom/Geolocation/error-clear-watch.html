@@ -7,12 +7,11 @@
 <script>
 description("This tests removing the watcher from an error callback does not causes assertions.");
 
-var mockCode = 2;
 var mockMessage = "debug";
 
 if (window.testRunner) {
     testRunner.setGeolocationPermission(true);
-    testRunner.setMockGeolocationError(mockCode, mockMessage);
+    testRunner.setMockGeolocationPositionUnavailableError(mockMessage);
 } else
     debug('This test can not be run without the LayoutTestController');
 

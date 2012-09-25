@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com>
@@ -379,7 +379,7 @@ void TestRunner::setMockGeolocationPosition(double, double, double)
     notImplemented();
 }
 
-void TestRunner::setMockGeolocationError(int, JSStringRef)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.

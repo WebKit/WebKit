@@ -728,7 +728,7 @@ Could be worth adding to the API.
 - (id<WebGeolocationProvider>)_geolocationProvider;
 
 - (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position;
-- (void)_geolocationDidFailWithError:(NSError *)error;
+- (void)_geolocationDidFailWithMessage:(NSString *)errorMessage;
 @end
 
 @interface WebView (WebViewNotification)

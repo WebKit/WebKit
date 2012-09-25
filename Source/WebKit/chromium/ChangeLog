@@ -1,3 +1,15 @@
+2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation error reporting in the test support
+        https://bugs.webkit.org/show_bug.cgi?id=97386
+
+        Reviewed by Sam Weinig.
+
+        * public/WebGeolocationClientMock.h:
+        (WebGeolocationClientMock):
+        * src/WebGeolocationClientMock.cpp:
+        (WebKit::WebGeolocationClientMock::setMockGeolocationPositionUnavailableError):
+
 2012-09-24  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Implement ValidationMessageClient for Chromium

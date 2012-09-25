@@ -2,7 +2,7 @@
     Copyright (C) 2010 Robert Hogan <robert@roberthogan.net>
     Copyright (C) 2008,2009,2010 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.
-    Copyright (C) 2007 Apple Inc.
+    Copyright (C) 2007, 2012 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -141,7 +141,7 @@ public:
     static void resetGeolocationMock(QWebPage*);
     static void setMockGeolocationPermission(QWebPage*, bool allowed);
     static void setMockGeolocationPosition(QWebPage*, double latitude, double longitude, double accuracy);
-    static void setMockGeolocationError(QWebPage*, int errorCode, const QString& message);
+    static void setMockGeolocationPositionUnavailableError(QWebPage*, const QString& message);
     static int numberOfPendingGeolocationPermissionRequests(QWebPage*);
 
     static int workerThreadCount();

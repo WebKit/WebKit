@@ -49,7 +49,7 @@ public:
     ~WebGeolocationClientMock() { reset(); }
 
     WEBKIT_EXPORT void setPosition(double latitude, double longitude, double accuracy);
-    WEBKIT_EXPORT void setError(int errorCode, const WebString& message);
+    WEBKIT_EXPORT void setPositionUnavailableError(const WebString& message);
     WEBKIT_EXPORT void setPermission(bool);
     WEBKIT_EXPORT int numberOfPendingPermissionRequests() const;
     WEBKIT_EXPORT void resetMock();

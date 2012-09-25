@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com>
@@ -447,7 +447,7 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     DumpRenderTreeSupportGtk::setMockGeolocationPosition(view, latitude, longitude, accuracy);
 }
 
-void TestRunner::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
     if (!view)
@@ -455,7 +455,7 @@ void TestRunner::setMockGeolocationError(int code, JSStringRef message)
     ASSERT(view);
 
     GOwnPtr<gchar> cMessage(JSStringCopyUTF8CString(message));
-    DumpRenderTreeSupportGtk::setMockGeolocationError(view, code, cMessage.get());
+    DumpRenderTreeSupportGtk::setMockGeolocationPositionUnavailableError(view, cMessage.get());
 }
 
 void TestRunner::setGeolocationPermission(bool allow)

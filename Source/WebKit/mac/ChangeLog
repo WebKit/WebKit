@@ -1,3 +1,14 @@
+2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation error reporting in the test support
+        https://bugs.webkit.org/show_bug.cgi?id=97386
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (-[WebView _geolocationDidFailWithMessage:]):
+        * WebView/WebViewPrivate.h:
+
 2012-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         suspend/resumeWidgetHierarchyUpdates should be a RAII object

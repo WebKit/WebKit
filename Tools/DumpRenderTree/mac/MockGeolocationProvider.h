@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,12 @@
 
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/HashSet.h>
+#import <wtf/RetainPtr.h>
 
 @interface MockGeolocationProvider : NSObject<WebGeolocationProvider> {
-    WebGeolocationPosition *_lastPosition;
-    NSError *_error;
+    RetainPtr<WebGeolocationPosition> _lastPosition;
+    BOOL _hasError;
+    RetainPtr<NSString> _errorMessage;
     NSTimer *_timer;
     HashSet<WebView *> _registeredViews;
 }
@@ -39,7 +41,7 @@
 + (MockGeolocationProvider *)shared;
 
 - (void)setPosition:(WebGeolocationPosition *)position;
-- (void)setError:(NSError *)error;
+- (void)setPositionUnavailableErrorWithMessage:(NSString *)errorMessage;
 
 - (void)stopTimer;
 

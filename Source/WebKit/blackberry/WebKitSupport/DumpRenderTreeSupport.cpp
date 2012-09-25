@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -95,20 +96,10 @@ void DumpRenderTreeSupport::resetGeolocationMock(WebPage* webPage)
     mockClient->reset();
 }
 
-void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorCode, const String message)
+void DumpRenderTreeSupport::setMockGeolocationPositionUnavailableError(WebPage* webPage, const String message)
 {
-    GeolocationError::ErrorCode code = GeolocationError::PositionUnavailable;
-    switch (errorCode) {
-    case PositionError::PERMISSION_DENIED:
-        code = GeolocationError::PermissionDenied;
-        break;
-    case PositionError::POSITION_UNAVAILABLE:
-        code = GeolocationError::PositionUnavailable;
-        break;
-    }
-
     GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(GeolocationController::from(corePage(webPage))->client());
-    mockClient->setError(GeolocationError::create(code, message));
+    mockClient->setPositionUnavailableError(message);
 }
 
 void DumpRenderTreeSupport::setMockGeolocationPermission(WebPage* webPage, bool allowed)

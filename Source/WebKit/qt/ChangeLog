@@ -1,3 +1,14 @@
+2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation error reporting in the test support
+        https://bugs.webkit.org/show_bug.cgi?id=97386
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2012-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable CSS regions by default

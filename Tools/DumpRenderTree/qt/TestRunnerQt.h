@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,7 +225,7 @@ public Q_SLOTS:
 
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
 
-    void setMockGeolocationError(int code, const QString& message);
+    void setMockGeolocationPositionUnavailableError(const QString& message);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void setGeolocationPermission(bool allow);
     int numberOfPendingGeolocationPermissionRequests();

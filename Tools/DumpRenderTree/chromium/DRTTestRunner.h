@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Pawel Hajdan (phajdan.jr@chromium.org)
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -337,7 +338,7 @@ public:
     // Geolocation related functions.
     void setGeolocationPermission(const CppArgumentList&, CppVariant*);
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
-    void setMockGeolocationError(const CppArgumentList&, CppVariant*);
+    void setMockGeolocationPositionUnavailableError(const CppArgumentList&, CppVariant*);
 
     // Empty stub method to keep parity with object model exposed by global DRTTestRunner.
     void abortModal(const CppArgumentList&, CppVariant*);

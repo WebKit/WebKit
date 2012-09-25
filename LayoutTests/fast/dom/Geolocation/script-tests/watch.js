@@ -4,7 +4,6 @@ var mockLatitude = 51.478;
 var mockLongitude = -0.166;
 var mockAccuracy = 100.0;
 
-var mockCode = 2;
 var mockMessage = 'test';
 
 var position;
@@ -20,7 +19,7 @@ function checkPosition(p) {
 
 function checkError(e) {
     error = e;
-    shouldBe('error.code', 'mockCode');
+    shouldBe('error.code', 'error.POSITION_UNAVAILABLE');
     shouldBe('error.message', 'mockMessage');
     debug('');
 }
@@ -42,7 +41,7 @@ navigator.geolocation.watchPosition(function(p) {
         case 1:
             checkPosition(p);
             if (window.testRunner)
-                testRunner.setMockGeolocationError(mockCode, mockMessage);
+                testRunner.setMockGeolocationPositionUnavailableError(mockMessage);
             break;
         case 3:
             checkPosition(p);

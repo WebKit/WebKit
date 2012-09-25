@@ -1,3 +1,15 @@
+2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation error reporting in the test support
+        https://bugs.webkit.org/show_bug.cgi?id=97386
+
+        Reviewed by Sam Weinig.
+
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::setMockGeolocationPositionUnavailableError):
+        * WebKitSupport/DumpRenderTreeSupport.h:
+        (DumpRenderTreeSupport):
+
 2012-09-24  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Reverting implementation for 407 error pages

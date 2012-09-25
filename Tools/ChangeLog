@@ -1,3 +1,54 @@
+2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation error reporting in the test support
+        https://bugs.webkit.org/show_bug.cgi?id=97386
+
+        Reviewed by Sam Weinig.
+        The TestRunner was exposing internal implementation details of
+        the Geolocation object through setMockGeolocationError().
+
+        In practice, only the error code PositionUnavailable is supported
+        or even implemented.
+
+        Exposing setMockGeolocationError() does not make sense for WebKit2 as
+        passing generic errors from the UIProcess is a bad idea. This is the
+        opportunity to clean TestRunner and prepare and interface suitable for WebKit2.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setMockGeolocationPositionUnavailableErrorCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/mac/MockGeolocationProvider.h:
+        * DumpRenderTree/mac/MockGeolocationProvider.mm:
+        (-[MockGeolocationProvider dealloc]):
+        (-[MockGeolocationProvider resetError]):
+        (-[MockGeolocationProvider setPosition:]):
+        (-[MockGeolocationProvider setPositionUnavailableErrorWithMessage:]):
+        (-[MockGeolocationProvider lastPosition]):
+        (-[MockGeolocationProvider timerFired]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        * DumpRenderTree/wx/TestRunnerWx.cpp:
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+
 2012-09-24  Nikhil Bansal  <n.bansal@samsung.com>
 
         [EFL][WK2] TestRunner needs touch events support.

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Pawel Hajdan (phajdan.jr@chromium.org)
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -206,7 +207,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setJavaScriptCanAccessClipboard", &DRTTestRunner::setJavaScriptCanAccessClipboard);
     bindMethod("setMinimumTimerInterval", &DRTTestRunner::setMinimumTimerInterval);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
-    bindMethod("setMockGeolocationError", &DRTTestRunner::setMockGeolocationError);
+    bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
     bindMethod("setPageVisibility", &DRTTestRunner::setPageVisibility);
     bindMethod("setPluginsEnabled", &DRTTestRunner::setPluginsEnabled);
@@ -1816,14 +1817,15 @@ void DRTTestRunner::setMockGeolocationPosition(const CppArgumentList& arguments,
         windowList[i]->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
 }
 
-void DRTTestRunner::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
+    if (arguments.size() != 1 || !arguments[0].isString())
         return;
     Vector<WebViewHost*> windowList = m_shell->windowList();
+    // FIXME: Benjamin
     for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
+        windowList[i]->geolocationClientMock()->setPositionUnavailableError(cppVariantToWebString(arguments[0]));
 }
 
 void DRTTestRunner::abortModal(const CppArgumentList& arguments, CppVariant* result)

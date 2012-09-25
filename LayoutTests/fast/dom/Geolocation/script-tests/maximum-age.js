@@ -4,7 +4,6 @@ var mockLatitude = 51.478;
 var mockLongitude = -0.166;
 var mockAccuracy = 100.0;
 
-var mockCode = 2;
 var mockMessage = 'test';
 
 var position;
@@ -21,7 +20,7 @@ function checkPosition(p) {
 function checkError(e) {
     debug('');
     error = e;
-    shouldBe('error.code', 'mockCode');
+    shouldBe('error.code', 'error.POSITION_UNAVAILABLE');
     shouldBe('error.message', 'mockMessage');
 }
 
@@ -57,7 +56,7 @@ function testZeroMaximumAge() {
 function testNonZeroMaximumAge() {
     // Update the mock service to report an error.
     if (window.testRunner)
-        testRunner.setMockGeolocationError(mockCode, mockMessage);
+        testRunner.setMockGeolocationPositionUnavailableError(mockMessage);
     // The maximumAge is non-zero, so we expect the cached position, not the error from the service.
     navigator.geolocation.getCurrentPosition(function(p) {
         checkPosition(p);

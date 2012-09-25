@@ -41,6 +41,7 @@
 #include "WebGeolocationError.h"
 #include "WebGeolocationPermissionRequest.h"
 #include "WebGeolocationPosition.h"
+#include "platform/WebString.h"
 
 using namespace WebCore;
 
@@ -58,23 +59,9 @@ void WebGeolocationClientMock::setPosition(double latitude, double longitude, do
     m_clientMock->setPosition(webPosition);
 }
 
-void WebGeolocationClientMock::setError(int errorCode, const WebString& message)
+void WebGeolocationClientMock::setPositionUnavailableError(const WebString& message)
 {
-    WebGeolocationError::Error code;
-    switch (errorCode) {
-    case PositionError::PERMISSION_DENIED:
-        code = WebGeolocationError::ErrorPermissionDenied;
-        break;
-    case PositionError::POSITION_UNAVAILABLE:
-        code = WebGeolocationError::ErrorPositionUnavailable;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    WebGeolocationError webError(code, message);
-    m_clientMock->setError(webError);
+    m_clientMock->setPositionUnavailableError(message);
 }
 
 void WebGeolocationClientMock::setPermission(bool allowed)
