@@ -113,7 +113,7 @@ class ResultSummaryTest(unittest.TestCase):
 
         test_dict = interpret_test_failures(self.port, 'foo/reftest.html',
             [test_failures.FailureReftestMismatchDidNotOccur(self.port.abspath_for_test('foo/reftest-expected-mismatch.html'))])
-        self.assertDictEqual(test_dict, {})
+        self.assertEqual(len(test_dict), 0)
 
         test_dict = interpret_test_failures(self.port, 'foo/audio-test.html',
             [test_failures.FailureMissingAudio()])

@@ -1,3 +1,12 @@
+2012-09-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, another test case adjustment after r129459. Python 2.7 doesn't
+        seem to be a requirement yet so the assertDictEqual method is not yet available
+        on all builders. Assert that the empty dictionary length equals 0 instead.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_interpret_test_failures):
+
 2012-09-24  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with latest Qt 5
