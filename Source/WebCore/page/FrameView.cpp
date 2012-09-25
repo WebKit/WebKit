@@ -2441,6 +2441,7 @@ void FrameView::performPostLayoutTasks()
     if (m_nestedLayoutCount <= 1) {
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
+            m_frame->loader()->didFirstLayout();
             if (milestonesOfInterest & DidFirstLayout)
                 milestonesAchieved |= DidFirstLayout;
             if (page) {

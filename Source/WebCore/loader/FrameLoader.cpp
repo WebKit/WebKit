@@ -2287,15 +2287,16 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 
 void FrameLoader::didLayout(LayoutMilestones milestones)
 {
-    if (milestones & DidFirstLayout) {
-        if (m_frame->page() && isBackForwardLoadType(m_loadType))
-            history()->restoreScrollPositionAndViewState();
-
-        if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
-            m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);    
-    }
-
     m_client->dispatchDidLayout(milestones);
+}
+
+void FrameLoader::didFirstLayout()
+{
+    if (m_frame->page() && isBackForwardLoadType(m_loadType))
+        history()->restoreScrollPositionAndViewState();
+
+    if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
 }
 
 void FrameLoader::frameLoadCompleted()

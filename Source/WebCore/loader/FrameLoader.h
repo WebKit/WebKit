@@ -176,6 +176,7 @@ public:
     CachePolicy subresourceCachePolicy() const;
 
     void didLayout(LayoutMilestones);
+    void didFirstLayout();
 
     void loadedResourceFromMemoryCache(CachedResource*);
     void tellClientAboutPastMemoryCacheLoads();
