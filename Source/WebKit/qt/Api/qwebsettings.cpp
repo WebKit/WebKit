@@ -670,14 +670,18 @@ void QWebSettings::setIconDatabasePath(const QString& path)
 
     WebCore::IconDatabase::delayDatabaseCleanup();
 
+    WebCore::IconDatabaseBase& db = WebCore::iconDatabase();
+
     if (!path.isEmpty()) {
-        WebCore::iconDatabase().setEnabled(true);
+        db.setEnabled(true);
+        if (db.isOpen())
+            db.close();
         QFileInfo info(path);
         if (info.isDir() && info.isWritable())
-            WebCore::iconDatabase().open(path, WebCore::IconDatabase::defaultDatabaseFilename());
+            db.open(path, WebCore::IconDatabase::defaultDatabaseFilename());
     } else {
-        WebCore::iconDatabase().setEnabled(false);
-        WebCore::iconDatabase().close();
+        db.setEnabled(false);
+        db.close();
     }
 }
 

@@ -1,3 +1,15 @@
+2012-09-25  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix failing assertion when calling QWebSettings::setIconDatabasePath multiple times
+
+        Reviewed by Jocelyn Turcotte.
+
+        This happens in various auto-tests. We can implement this by closing the database before
+        opening it with the new path.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::setIconDatabasePath):
+
 2012-09-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix Geolocation error reporting in the test support
