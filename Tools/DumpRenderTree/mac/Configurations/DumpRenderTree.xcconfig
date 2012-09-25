@@ -21,7 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-OTHER_LDFLAGS = -sectcreate __DATA Ahem qt/fonts/AHEM____.TTF -sectcreate __DATA WeightWatcher100 fonts/WebKitWeightWatcher100.ttf -sectcreate __DATA WeightWatcher200 fonts/WebKitWeightWatcher200.ttf -sectcreate __DATA WeightWatcher300 fonts/WebKitWeightWatcher300.ttf -sectcreate __DATA WeightWatcher400 fonts/WebKitWeightWatcher400.ttf -sectcreate __DATA WeightWatcher500 fonts/WebKitWeightWatcher500.ttf -sectcreate __DATA WeightWatcher600 fonts/WebKitWeightWatcher600.ttf -sectcreate __DATA WeightWatcher700 fonts/WebKitWeightWatcher700.ttf -sectcreate __DATA WeightWatcher800 fonts/WebKitWeightWatcher800.ttf -sectcreate __DATA WeightWatcher900 fonts/WebKitWeightWatcher900.ttf -sectcreate __DATA HiraMaruMono-W4 fonts/SampleFont.sfont
+OTHER_LDFLAGS = -sectcreate __DATA Ahem qt/fonts/AHEM____.TTF -sectcreate __DATA WeightWatcher100 fonts/WebKitWeightWatcher100.ttf -sectcreate __DATA WeightWatcher200 fonts/WebKitWeightWatcher200.ttf -sectcreate __DATA WeightWatcher300 fonts/WebKitWeightWatcher300.ttf -sectcreate __DATA WeightWatcher400 fonts/WebKitWeightWatcher400.ttf -sectcreate __DATA WeightWatcher500 fonts/WebKitWeightWatcher500.ttf -sectcreate __DATA WeightWatcher600 fonts/WebKitWeightWatcher600.ttf -sectcreate __DATA WeightWatcher700 fonts/WebKitWeightWatcher700.ttf -sectcreate __DATA WeightWatcher800 fonts/WebKitWeightWatcher800.ttf -sectcreate __DATA WeightWatcher900 fonts/WebKitWeightWatcher900.ttf -sectcreate __DATA HiraMaruMono-W4 fonts/SampleFont.sfont -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 PRODUCT_NAME = DumpRenderTree
 GCC_ENABLE_OBJC_EXCEPTIONS = YES

@@ -743,6 +743,8 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
+    platformDidStartProvisionalLoadForFrame(frame);
+
     if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks()) {
         dumpFrameDescriptionSuitableForTestResult(frame);
         InjectedBundle::shared().stringBuilder()->appendLiteral(" - didStartProvisionalLoadForFrame\n");
@@ -1869,5 +1871,11 @@ void InjectedBundlePage::dumpBackForwardList()
 
     InjectedBundle::shared().stringBuilder()->appendLiteral("===============================================\n");
 }
+
+#if !PLATFORM(MAC)
+void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef)
+{
+}
+#endif
 
 } // namespace WTR

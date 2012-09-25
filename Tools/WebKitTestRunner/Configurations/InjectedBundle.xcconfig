@@ -26,3 +26,4 @@ PRODUCT_NAME = WebKitTestRunnerInjectedBundle;
 
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Resources;
 SKIP_INSTALL = NO;
+OTHER_LDFLAGS = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)

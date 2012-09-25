@@ -1,3 +1,31 @@
+2012-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed
+
+        Reviewed by Mark Rowe.
+
+        Use a new WebKitSytemInterface function to add data to crash logs about which 
+        test was running when the crash happened.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig: Make sure WEBKIT_SYSTEM_INTERFACE_LIBRARY is defined.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: link with the WebKitSystemInterface library.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (testPathFromURL): Given a (probably) file URL, return the part after "/LayoutTests/"
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]): Tell Crash Reporter which test was running,
+        if we're the main frame and the test is active.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig: Make sure WEBKIT_SYSTEM_INTERFACE_LIBRARY is defined.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: link the injected bundle with the WebKitSystemInterface library.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame): Call platformDidStartProvisionalLoadForFrame().
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame): Stub for non-Mac platforms.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        Add a platformDidStartProvisionalLoadForFrame() for platform-specific work.
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundlePageMac.mm: Added.
+        (WTR::testPathFromURL): Given a (probably) file URL, return the part after "/LayoutTests/"
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame): Tell Crash Reporter which test was running,
+        if we're the main frame.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Add InjectedBundlePageMac.mm.
+
 2012-09-25  Julie Parent  <jparent@chromium.org>
 
         Make test_shell_tests show up in flakiness dashboard.

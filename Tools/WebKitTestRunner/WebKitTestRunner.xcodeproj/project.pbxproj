@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		0FAF67EF160D6C100077CB2B /* InjectedBundlePageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FAF67EE160D6C100077CB2B /* InjectedBundlePageMac.mm */; };
 		26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
@@ -102,6 +103,7 @@
 
 /* Begin PBXFileReference section */
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FAF67EE160D6C100077CB2B /* InjectedBundlePageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundlePageMac.mm; sourceTree = "<group>"; };
 		26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationProviderMock.cpp; sourceTree = "<group>"; };
 		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
 		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
@@ -325,6 +327,7 @@
 			children = (
 				65EB859F11EC67CC0034D300 /* ActivateFonts.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
+				0FAF67EE160D6C100077CB2B /* InjectedBundlePageMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -618,6 +621,7 @@
 				29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */,
 				8097338A14874A5A008156D9 /* AccessibilityNotificationHandler.mm in Sources */,
 				8034C6621487636400AC32E9 /* AccessibilityControllerMac.mm in Sources */,
+				0FAF67EF160D6C100077CB2B /* InjectedBundlePageMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

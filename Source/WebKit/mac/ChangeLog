@@ -1,3 +1,15 @@
+2012-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed
+
+        Reviewed by Mark Rowe.
+
+        Use a new WebKitSytemInterface function to add data to crash logs about which 
+        test was running when the crash happened.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Hook up the function pointer for [wk|WK]SetCrashReportApplicationSpecificInformation.
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397

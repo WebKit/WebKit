@@ -124,6 +124,7 @@ void InitWebCoreSystemInterface(void)
         INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);
+        INIT(SetCrashReportApplicationSpecificInformation);
         INIT(AVAssetResolvedURL);
         INIT(Cursor);
 #else

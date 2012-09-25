@@ -144,6 +144,7 @@ int (*wkRecommendedScrollerStyle)(void);
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
+void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 
 NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 

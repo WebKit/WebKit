@@ -246,6 +246,7 @@ extern int (*wkRecommendedScrollerStyle)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
+extern void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 
 extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 

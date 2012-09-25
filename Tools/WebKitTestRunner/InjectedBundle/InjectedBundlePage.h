@@ -172,6 +172,8 @@ private:
     void dumpAllFramesText();
     void dumpAllFrameScrollPositions();
 
+    void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
+
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;

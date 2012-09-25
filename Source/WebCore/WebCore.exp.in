@@ -2036,6 +2036,7 @@ _wkIOSurfaceContextCreateImage
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 _wkAVAssetResolvedURL
 _wkCopyDefaultSearchProviderDisplayName
+_wkSetCrashReportApplicationSpecificInformation
 _wkCreateVMPressureDispatchOnMainQueue
 _wkCursor
 _wkExecutableWasLinkedOnOrBeforeSnowLeopard
