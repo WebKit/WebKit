@@ -2483,6 +2483,7 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
                     context.start = afterFinally;
                     m_tryContextStack.append(context);
                 }
+                poppedTryContexts.clear();
             }
             if (flipLabelScopes)
                 m_labelScopes = savedLabelScopes;
