@@ -45,9 +45,30 @@ using namespace std;
 
 namespace WebCore {
 
+static inline String languageFromLocale(const String& locale)
+{
+    String normalizedLocale = locale;
+    normalizedLocale.replace('-', '_');
+    size_t separatorPosition = normalizedLocale.find('_');
+    if (separatorPosition == notFound)
+        return normalizedLocale;
+    return normalizedLocale.left(separatorPosition);
+}
+
+static NSLocale* determineLocale(const String& locale)
+{
+    NSLocale* currentLocale = [NSLocale currentLocale];
+    String currentLocaleLanguage = languageFromLocale(String([currentLocale localeIdentifier]));
+    String localeLanguage = languageFromLocale(locale);
+    if (equalIgnoringCase(currentLocaleLanguage, localeLanguage))
+        return currentLocale;
+    // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
+    return [[NSLocale alloc] initWithLocaleIdentifier:locale];
+}
+
 PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
 {
-    return LocaleMac::create(locale.string());
+    return LocaleMac::create(determineLocale(locale.string()));
 }
 
 static NSDateFormatter* createDateTimeFormatter(NSLocale* locale, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
@@ -65,12 +86,6 @@ LocaleMac::LocaleMac(NSLocale* locale)
     : m_locale(locale)
     , m_didInitializeNumberData(false)
 {
-}
-
-LocaleMac::LocaleMac(const String& localeIdentifier)
-    : m_locale([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier])
-    , m_didInitializeNumberData(false)
-{
     NSArray* availableLanguages = [NSLocale ISOLanguageCodes];
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
     NSString* language = [m_locale.get() objectForKey:NSLocaleLanguageCode];
@@ -84,33 +99,17 @@ LocaleMac::~LocaleMac()
 
 PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
 {
-    return adoptPtr(new LocaleMac(localeIdentifier));
+    return adoptPtr(new LocaleMac([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier]));
 }
 
-static inline String languageFromLocale(const String& locale)
+PassOwnPtr<LocaleMac> LocaleMac::create(NSLocale* locale)
 {
-    String normalizedLocale = locale;
-    normalizedLocale.replace('-', '_');
-    size_t separatorPosition = normalizedLocale.find('_');
-    if (separatorPosition == notFound)
-        return normalizedLocale;
-    return normalizedLocale.left(separatorPosition);
-}
-
-static NSLocale* determineLocale()
-{
-    NSLocale* currentLocale = [NSLocale currentLocale];
-    String currentLocaleLanguage = languageFromLocale(String([currentLocale localeIdentifier]));
-    String browserLanguage = languageFromLocale(defaultLanguage());
-    if (equalIgnoringCase(currentLocaleLanguage, browserLanguage))
-        return currentLocale;
-    // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
-    return [[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()];
+    return adoptPtr(new LocaleMac(locale));
 }
 
 LocaleMac* LocaleMac::currentLocale()
 {
-    static LocaleMac* currentLocale = new LocaleMac(determineLocale());
+    static LocaleMac* currentLocale = new LocaleMac(determineLocale(defaultLanguage()));
     return currentLocale;
 }
 

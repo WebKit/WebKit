@@ -47,6 +47,7 @@ class DateComponents;
 class LocaleMac : public Localizer {
 public:
     static PassOwnPtr<LocaleMac> create(const String&);
+    static PassOwnPtr<LocaleMac> create(NSLocale*);
     static LocaleMac* currentLocale();
     ~LocaleMac();
     double parseDate(const String&);
@@ -67,7 +68,6 @@ public:
 
 private:
     explicit LocaleMac(NSLocale*);
-    explicit LocaleMac(const String&);
     NSDateFormatter *createShortDateFormatter();
     virtual void initializeLocalizerData() OVERRIDE;
 
