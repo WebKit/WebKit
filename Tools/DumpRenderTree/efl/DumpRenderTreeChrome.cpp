@@ -145,6 +145,10 @@ Evas_Object* DumpRenderTreeChrome::createWebInspectorView()
     if (!inspectorView)
         return 0;
 
+    // Inspector-related views are not expected to have their output logged.
+    const bool ignoreMessages = true;
+    evas_object_data_set(inspectorView, "ignore-console-messages", &ignoreMessages);
+
     ewk_view_theme_set(inspectorView, DATA_DIR"/default.edj");
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(inspectorView);

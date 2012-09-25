@@ -1,3 +1,24 @@
+2012-09-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Do not dump inspector output in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=97018
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Some inspector-related layout tests expect console output from the
+        inspector view to be suppressed. Do that by setting a property in
+        the inspector view that makes the onConsoleMessage callback return
+        early and not output anything.
+
+        Using evas_object_data_{get,set} is not very beautiful, but it is
+        still better than properly subclassing Ewk_View and having to
+        implement something similar to drt_view_console_message_enable_set().
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createWebInspectorView):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onConsoleMessage):
+
 2012-09-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner needs support for setWillSendRequestReturnsNullOnRedirect

@@ -400,7 +400,6 @@ fast/profiler/dead-time.html
 http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 http/tests/inspector/resource-parameters.html
-http/tests/inspector/extensions-useragent.html
 http/tests/inspector/compiler-source-mapping-debug.html
 http/tests/inspector/console-websocket-error.html
 inspector/styles/svg-style.xhtml
@@ -414,10 +413,6 @@ inspector/debugger/debugger-compile-and-run.html
 inspector/debugger/dom-breakpoints.html
 inspector/timeline/timeline-paint.html
 inspector/timeline/timeline-receive-response-event.html
-inspector/extensions/extensions-api.html
-inspector/extensions/extensions-audits-content-script.html
-inspector/extensions/extensions-audits.html
-inspector/extensions/extensions-eval-content-script.html
 
 # ENABLE(WIDGET_REGION) is disabled
 fast/css/widget-region-parser.html
