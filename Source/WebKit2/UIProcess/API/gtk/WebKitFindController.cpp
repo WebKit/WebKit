@@ -63,11 +63,11 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitFindController, webkit_find_controller, G_TYPE_OBJECT)
 
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE, kWKFindOptionsCaseInsensitive);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_AT_WORD_STARTS, kWKFindOptionsAtWordStarts);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, kWKFindOptionsTreatMedialCapitalAsWordStart);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_BACKWARDS, kWKFindOptionsBackwards);
-COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_WRAP_AROUND, kWKFindOptionsWrapAround);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE, FindOptionsCaseInsensitive);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_AT_WORD_STARTS, FindOptionsAtWordStarts);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, FindOptionsTreatMedialCapitalAsWordStart);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_BACKWARDS, FindOptionsBackwards);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_FIND_OPTIONS_WRAP_AROUND, FindOptionsWrapAround);
 
 static void didFindString(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo)
 {
@@ -91,9 +91,9 @@ static void webkit_find_controller_init(WebKitFindController* findController)
     new (priv) WebKitFindControllerPrivate();
 }
 
-static WKPageRef inline getWKPageFromWebKitWebView(WebKitWebView* webView)
+static inline WebPageProxy* getPage(WebKitFindController* findController)
 {
-    return toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    return webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(findController->priv->webView));
 }
 
 static void webkitFindControllerConstructed(GObject* object)
@@ -107,7 +107,7 @@ static void webkitFindControllerConstructed(GObject* object)
         didCountStringMatches
     };
 
-    WKPageSetPageFindClient(getWKPageFromWebKitWebView(findController->priv->webView), &wkFindClient);
+    WKPageSetPageFindClient(toAPI(getPage(findController)), &wkFindClient);
 }
 
 static void webkitFindControllerGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
@@ -342,15 +342,14 @@ WebKitWebView* webkit_find_controller_get_web_view(WebKitFindController* findCon
 
 static void webKitFindControllerPerform(WebKitFindController* findController, WebKitFindControllerOperation operation)
 {
-    WKFindOptions wkFindOptions = static_cast<WKFindOptions>(findController->priv->findOptions);
-    WKRetainPtr<WKStringRef> wkSearchText(AdoptWK, WKStringCreateWithUTF8CString(findController->priv->searchText.data()));
-    WKPageRef wkPage = getWKPageFromWebKitWebView(findController->priv->webView);
-
+    WebKitFindControllerPrivate* priv = findController->priv;
     if (operation == CountOperation) {
-        WKPageCountStringMatches(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
+        getPage(findController)->countStringMatches(String::fromUTF8(priv->searchText.data()),
+                                                    static_cast<WebKit::FindOptions>(priv->findOptions), priv->maxMatchCount);
         return;
     }
 
+    uint32_t findOptions = priv->findOptions;
     if (operation == FindOperation)
         // Unconditionally highlight text matches when the search
         // starts. WK1 API was forcing clients to enable/disable
@@ -359,9 +358,10 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
         // unconditionally show highlights. Both search_next() and
         // search_prev() should not enable highlighting to avoid an
         // extra unmarkAllTextMatches() + markAllTextMatches()
-        wkFindOptions = static_cast<WKFindOptions>(findController->priv->findOptions | kWKFindOptionsShowHighlight);
+        findOptions |= FindOptionsShowHighlight;
 
-    WKPageFindString(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
+    getPage(findController)->findString(String::fromUTF8(priv->searchText.data()), static_cast<WebKit::FindOptions>(findOptions),
+                                        priv->maxMatchCount);
 }
 
 static inline void webKitFindControllerSetSearchData(WebKitFindController* findController, const gchar* searchText, guint32 findOptions, guint maxMatchCount)
@@ -420,8 +420,8 @@ void webkit_find_controller_search_next(WebKitFindController* findController)
 {
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
-    findController->priv->findOptions = findController->priv->findOptions & ~WEBKIT_FIND_OPTIONS_BACKWARDS;
-    findController->priv->findOptions = findController->priv->findOptions & ~kWKFindOptionsShowHighlight;
+    findController->priv->findOptions &= ~WEBKIT_FIND_OPTIONS_BACKWARDS;
+    findController->priv->findOptions &= ~FindOptionsShowHighlight;
     webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 
@@ -438,8 +438,8 @@ void webkit_find_controller_search_previous(WebKitFindController* findController
 {
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
-    findController->priv->findOptions = findController->priv->findOptions | WEBKIT_FIND_OPTIONS_BACKWARDS;
-    findController->priv->findOptions = findController->priv->findOptions & ~kWKFindOptionsShowHighlight;
+    findController->priv->findOptions |= WEBKIT_FIND_OPTIONS_BACKWARDS;
+    findController->priv->findOptions &= ~FindOptionsShowHighlight;
     webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 
@@ -479,5 +479,5 @@ void webkit_find_controller_search_finish(WebKitFindController* findController)
 {
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
-    WKPageHideFindUI(getWKPageFromWebKitWebView(findController->priv->webView));
+    getPage(findController)->hideFindUI();
 }

@@ -1,3 +1,22 @@
+2012-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitFindController
+        https://bugs.webkit.org/show_bug.cgi?id=96775
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        (getPage):
+        (webkitFindControllerConstructed):
+        (webKitFindControllerPerform):
+        (webkit_find_controller_search_next):
+        (webkit_find_controller_search_previous):
+        (webkit_find_controller_search_finish):
+
 2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Apply the devicePixelRatio as soon as possible
