@@ -125,7 +125,7 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
 #if PLATFORM(MAC)
     const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
-    if (vendor && (std::strstr(vendor, "ATI") || std::strstr(vendor, "AMD")))
+    if (vendor && (std::strstr(vendor, "ATI") || std::strstr(vendor, "AMD") || std::strstr(vendor, "Intel")))
         extraCompileOptions |= SH_EMULATE_BUILT_IN_FUNCTIONS;
 #endif
 
