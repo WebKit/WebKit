@@ -277,6 +277,7 @@ EXPORTS
     ?put@JSObject@JSC@@SAXPAVJSCell@2@PAVExecState@2@VPropertyName@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?putByIndex@JSObject@JSC@@SAXPAVJSCell@2@PAVExecState@2@IVJSValue@2@_N@Z
     ?putDirectIndexBeyondVectorLength@JSObject@JSC@@AAE_NPAVExecState@2@IVJSValue@2@IW4PutDirectIndexMode@2@@Z
+    ?putDirectMayBeIndex@JSObject@JSC@@QAEXPAVExecState@2@VPropertyName@2@VJSValue@2@@Z
     ?putDirectVirtual@JSGlobalObject@JSC@@SAXPAVJSObject@2@PAVExecState@2@VPropertyName@2@VJSValue@2@I@Z
     ?putDirectVirtual@JSObject@JSC@@SAXPAV12@PAVExecState@2@VPropertyName@2@VJSValue@2@I@Z
     ?randomNumber@WTF@@YANXZ

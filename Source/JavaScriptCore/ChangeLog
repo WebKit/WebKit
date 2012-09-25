@@ -1,3 +1,17 @@
+2012-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        SerializedScriptValue isn't aware of indexed storage, but should be
+        https://bugs.webkit.org/show_bug.cgi?id=97515
+        <rdar://problem/12361874>
+
+        Reviewed by Sam Weinig.
+
+        Export a method that WebCore now uses.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSObject.h:
+        (JSObject):
+
 2012-09-24  Gavin Barraclough  <barraclough@apple.com>
 
         Remove JSObject::unwrappedGlobalObject(), JSObject::unwrappedObject()

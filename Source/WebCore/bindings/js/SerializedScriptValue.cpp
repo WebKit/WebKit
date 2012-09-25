@@ -1320,7 +1320,7 @@ private:
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)
     {
-        object->putDirect(m_exec->globalData(), property, value);
+        object->putDirectMayBeIndex(m_exec, property, value);
     }
 
     bool readFile(RefPtr<File>& file)

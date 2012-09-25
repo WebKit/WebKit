@@ -200,7 +200,7 @@ namespace JSC {
         }
 
         // A non-throwing version of putDirect and putDirectIndex.
-        void putDirectMayBeIndex(ExecState*, PropertyName, JSValue);
+        JS_EXPORT_PRIVATE void putDirectMayBeIndex(ExecState*, PropertyName, JSValue);
         
         bool canGetIndexQuickly(unsigned i)
         {
