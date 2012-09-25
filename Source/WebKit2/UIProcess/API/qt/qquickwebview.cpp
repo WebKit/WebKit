@@ -868,7 +868,7 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     Q_Q(QQuickWebView);
 
     if (m_pageViewportController)
-        m_pageViewportController->setViewportSize(QSizeF(q->width(), q->height()));
+        m_pageViewportController->didChangeViewportSize(QSizeF(q->width(), q->height()));
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)

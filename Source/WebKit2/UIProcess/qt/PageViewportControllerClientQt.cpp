@@ -108,7 +108,7 @@ void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& con
 
     // Inform the web process about the requested visible content rect immediately so that new tiles
     // are rendered at the final destination during the animation.
-    m_controller->setVisibleContentsRect(contentRect, viewportScaleForRect(contentRect));
+    m_controller->didChangeContentsVisibility(contentRect.topLeft(), viewportScaleForRect(contentRect));
 
     // Since we have to animate scale and position at the same time the scale animation interpolates
     // from the current viewport rect in content coordinates to a visible rect of the content.
@@ -206,12 +206,12 @@ void PageViewportControllerClientQt::focusEditableArea(const QRectF& caretArea, 
     const QPointF hotspot = QPointF(targetArea.x(), targetArea.center().y());
     const QPointF viewportHotspot = QPointF(x, /* FIXME: visibleCenter */ viewportRect.center().y());
 
-    QPointF endPosition = hotspot * targetScale - viewportHotspot;
-    QRectF endPosRange = m_controller->positionRangeForContentAtScale(targetScale);
+    QPointF endPosition = hotspot - viewportHotspot / targetScale;
+    QRectF endPosRange = m_controller->positionRangeForViewportAtScale(targetScale);
 
     endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
 
-    QRectF endVisibleContentRect(endPosition / targetScale, viewportRect.size() / targetScale);
+    QRectF endVisibleContentRect(endPosition, viewportRect.size() / targetScale);
 
     animateContentRectVisible(endVisibleContentRect);
 }
@@ -243,12 +243,12 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
     const QPointF hotspot = QPointF(endArea.center().x(), touchPoint.y());
     const QPointF viewportHotspot = viewportRect.center();
 
-    QPointF endPosition = hotspot * targetScale - viewportHotspot;
+    QPointF endPosition = hotspot - viewportHotspot / targetScale;
 
-    QRectF endPosRange = m_controller->positionRangeForContentAtScale(targetScale);
+    QRectF endPosRange = m_controller->positionRangeForViewportAtScale(targetScale);
     endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
 
-    QRectF endVisibleContentRect(endPosition / targetScale, viewportRect.size() / targetScale);
+    QRectF endVisibleContentRect(endPosition, viewportRect.size() / targetScale);
 
     enum { ZoomIn, ZoomBack, ZoomOut, NoZoom } zoomAction = ZoomIn;
 
@@ -258,7 +258,7 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
         // Use fuzzy compare with a fixed error to be able to deal with largish differences due to pixel rounding.
         if (fuzzyCompare(targetScale, currentScale, 0.01)) {
             // If moving the viewport would expose more of the targetRect and move at least 40 pixels, update position but do not scale out.
-            QRectF currentContentRect(visibleContentsRect());
+            QRectF currentContentRect(m_viewportItem->mapRectToWebContent(viewportRect));
             QRectF targetIntersection = endVisibleContentRect.intersected(targetArea);
             if (!currentContentRect.contains(targetIntersection)
                     && (qAbs(endVisibleContentRect.top() - currentContentRect.top()) >= 40
@@ -274,18 +274,18 @@ void PageViewportControllerClientQt::zoomToAreaGestureEnded(const QPointF& touch
 
     switch (zoomAction) {
     case ZoomIn:
-        m_scaleStack.append(ScaleStackItem(currentScale, m_viewportItem->contentPos().x()));
+        m_scaleStack.append(ScaleStackItem(currentScale, m_viewportItem->contentPos().x() / currentScale));
         m_zoomOutScale = targetScale;
         break;
     case ZoomBack: {
         ScaleStackItem lastScale = m_scaleStack.takeLast();
         targetScale = lastScale.scale;
         // Recalculate endPosition and bound it according to new scale.
-        endPosition.setY(hotspot.y() * targetScale - viewportHotspot.y());
+        endPosition.setY(hotspot.y() - viewportHotspot.y() / targetScale);
         endPosition.setX(lastScale.xPosition);
-        endPosRange = m_controller->positionRangeForContentAtScale(targetScale);
+        endPosRange = m_controller->positionRangeForViewportAtScale(targetScale);
         endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
-        endVisibleContentRect = QRectF(endPosition / targetScale, viewportRect.size() / targetScale);
+        endVisibleContentRect = QRectF(endPosition, viewportRect.size() / targetScale);
         break;
     }
     case ZoomOut:
@@ -307,19 +307,18 @@ QRectF PageViewportControllerClientQt::nearestValidVisibleContentsRect() const
 
     const QRectF viewportRect = m_viewportItem->boundingRect();
     QPointF viewportHotspot = viewportRect.center();
-    QPointF endPosition = m_viewportItem->mapToWebContent(viewportHotspot) * targetScale - viewportHotspot;
+    // Keep the center at the position of the old center, and substract viewportHotspot / targetScale to get the top left position.
+    QPointF endPosition = m_viewportItem->mapToWebContent(viewportHotspot) - viewportHotspot / targetScale;
 
-    FloatRect endPosRange = m_controller->positionRangeForContentAtScale(targetScale);
+    FloatRect endPosRange = m_controller->positionRangeForViewportAtScale(targetScale);
     endPosition = boundPosition(endPosRange.minXMinYCorner(), endPosition, endPosRange.maxXMaxYCorner());
 
-    QRectF endVisibleContentRect(endPosition / targetScale, viewportRect.size() / targetScale);
-
-    return endVisibleContentRect;
+    return QRectF(endPosition, viewportRect.size() / targetScale);
 }
 
-void PageViewportControllerClientQt::setContentsPosition(const FloatPoint& localPoint)
+void PageViewportControllerClientQt::setViewportPosition(const FloatPoint& contentsPoint)
 {
-    QPointF newPosition(m_pageItem->pos() + QPointF(localPoint));
+    QPointF newPosition((m_pageItem->pos() + QPointF(contentsPoint)) * m_pageItem->contentsScale());
     m_viewportItem->setContentPos(newPosition);
     updateViewportController();
 }
@@ -478,12 +477,6 @@ void PageViewportControllerClientQt::pinchGestureCancelled()
     m_scaleUpdateDeferrer.reset();
 }
 
-QRectF PageViewportControllerClientQt::visibleContentsRect() const
-{
-    const QRectF visibleRect(m_viewportItem->boundingRect().intersected(m_pageItem->boundingRect()));
-    return m_viewportItem->mapRectToWebContent(visibleRect);
-}
-
 void PageViewportControllerClientQt::didChangeContentsSize()
 {
     // Emit for testing purposes, so that it can be verified that
@@ -517,9 +510,9 @@ void PageViewportControllerClientQt::didChangeViewportAttributes()
 
 void PageViewportControllerClientQt::updateViewportController(const QPointF& trajectory, qreal scale)
 {
-    FloatRect currentVisibleRect(visibleContentsRect());
-    float viewportScale = (scale < 0) ? viewportScaleForRect(currentVisibleRect) : scale;
-    m_controller->setVisibleContentsRect(currentVisibleRect, viewportScale, trajectory);
+    FloatPoint viewportPos = m_viewportItem->mapToWebContent(QPointF());
+    float viewportScale = (scale < 0) ? m_pageItem->contentsScale() : scale;
+    m_controller->didChangeContentsVisibility(viewportPos, viewportScale, trajectory);
 }
 
 void PageViewportControllerClientQt::scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates)

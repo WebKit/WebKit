@@ -74,7 +74,7 @@ public:
     void suspendContent();
     void resumeContent();
 
-    WebCore::FloatRect positionRangeForContentAtScale(float viewportScale) const;
+    WebCore::FloatRect positionRangeForViewportAtScale(float viewportScale) const;
 
     float innerBoundedViewportScale(float) const;
     float outerBoundedViewportScale(float) const;
@@ -91,9 +91,9 @@ public:
 
     void setHadUserInteraction(bool didUserInteract) { m_hadUserInteraction = didUserInteract; }
 
-    // Notifications to the WebProcess.
-    void setViewportSize(const WebCore::FloatSize& newSize);
-    void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float viewportScale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
+    // Notifications from the viewport.
+    void didChangeViewportSize(const WebCore::FloatSize& newSize);
+    void didChangeContentsVisibility(const WebCore::FloatPoint& viewportPos, float viewportScale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
 
     // Notifications from the WebProcess.
     void didChangeContentsSize(const WebCore::IntSize& newSize);
@@ -118,9 +118,9 @@ private:
     bool m_hasSuspendedContent;
     bool m_hadUserInteraction;
 
+    WebCore::FloatPoint m_viewportPos;
     WebCore::FloatSize m_viewportSize;
     WebCore::FloatSize m_contentsSize;
-    WebCore::FloatRect m_visibleContentsRect;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
 
     friend class ViewportUpdateDeferrer;

@@ -1,5 +1,39 @@
 2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Unify the PageViewportController<->Client interface regarding positions
+        https://bugs.webkit.org/show_bug.cgi?id=97220
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        - Make sure that css units are used for all position arguments
+        - Make sure that all positions represent the viewport relatively to the contents
+          rather than the other way around
+        - Delay clamping the viewport to the contents size in the controller rather than in the client
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::didChangeViewportSize):
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::positionRangeForViewportAtScale):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/PageViewportControllerClient.h:
+        (PageViewportControllerClient):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::nearestValidVisibleContentsRect):
+        (WebKit::PageViewportControllerClientQt::setViewportPosition):
+        (WebKit::PageViewportControllerClientQt::updateViewportController):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
+2012-09-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Make sure that desktop pages honour the devicePixelRatio
         https://bugs.webkit.org/show_bug.cgi?id=97215
 

@@ -128,15 +128,13 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     if (m_activeDeferrerCount)
         return;
 
-    FloatRect endPosRange = positionRangeForContentAtScale(m_effectiveScale);
-    FloatPoint endPosition(cssPosition);
-    endPosition.scale(m_effectiveScale, m_effectiveScale);
-    endPosition = boundPosition(endPosRange.minXMinYCorner(), endPosition, endPosRange.maxXMaxYCorner());
+    FloatRect endPosRange = positionRangeForViewportAtScale(m_effectiveScale);
+    FloatPoint endPosition = boundPosition(endPosRange.minXMinYCorner(), cssPosition, endPosRange.maxXMaxYCorner());
 
-    m_client->setContentsPosition(endPosition);
+    m_client->setViewportPosition(endPosition);
 }
 
-void PageViewportController::setViewportSize(const FloatSize& newSize)
+void PageViewportController::didChangeViewportSize(const FloatSize& newSize)
 {
     if (newSize.isEmpty())
         return;
@@ -150,9 +148,9 @@ void PageViewportController::setViewportSize(const FloatSize& newSize)
     syncVisibleContents();
 }
 
-void PageViewportController::setVisibleContentsRect(const FloatRect& visibleContentsRect, float viewportScale, const FloatPoint& trajectoryVector)
+void PageViewportController::didChangeContentsVisibility(const FloatPoint& viewportPos, float viewportScale, const FloatPoint& trajectoryVector)
 {
-    m_visibleContentsRect = visibleContentsRect;
+    m_viewportPos = viewportPos;
     m_effectiveScale = viewportScale;
     syncVisibleContents(trajectoryVector);
 }
@@ -160,10 +158,15 @@ void PageViewportController::setVisibleContentsRect(const FloatRect& visibleCont
 void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
 {
     DrawingAreaProxy* const drawingArea = m_webPageProxy->drawingArea();
-    if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty() || m_visibleContentsRect.isEmpty())
+    if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return;
 
-    drawingArea->setVisibleContentsRect(m_visibleContentsRect, m_effectiveScale, trajectoryVector);
+    FloatRect endPosRange = positionRangeForViewportAtScale(m_effectiveScale);
+    FloatPoint endPosition = boundPosition(endPosRange.minXMinYCorner(), m_viewportPos, endPosRange.maxXMaxYCorner());
+
+    FloatRect visibleContentsRect(endPosition, m_viewportSize / m_effectiveScale);
+    visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
+    drawingArea->setVisibleContentsRect(visibleContentsRect, m_effectiveScale, trajectoryVector);
 
     m_client->didChangeVisibleContents();
 }
@@ -222,12 +225,10 @@ void PageViewportController::updateMinimumScaleToFit()
     }
 }
 
-FloatRect PageViewportController::positionRangeForContentAtScale(float viewportScale) const
+FloatRect PageViewportController::positionRangeForViewportAtScale(float viewportScale) const
 {
-    const FloatSize contentSize = m_contentsSize * viewportScale;
-
-    const float horizontalRange = contentSize.width() - m_viewportSize.width();
-    const float verticalRange = contentSize.height() - m_viewportSize.height();
+    const float horizontalRange = m_contentsSize.width() - m_viewportSize.width() / viewportScale;
+    const float verticalRange = m_contentsSize.height() - m_viewportSize.height() / viewportScale;
 
     return FloatRect(0, 0, horizontalRange, verticalRange);
 }
