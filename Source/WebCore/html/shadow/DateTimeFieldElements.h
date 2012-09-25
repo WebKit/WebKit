@@ -45,7 +45,6 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
-    virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
 
@@ -69,7 +68,6 @@ private:
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-    virtual double unitInMillisecond() const OVERRIDE FINAL;
     virtual int valueAsInteger() const OVERRIDE FINAL;
 
     const int m_alignment;
@@ -88,7 +86,6 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
-    virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
 class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
@@ -104,7 +101,6 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
-    virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
 class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
@@ -120,7 +116,6 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
-    virtual double unitInMillisecond() const OVERRIDE FINAL;
 };
 
 } // namespace WebCore

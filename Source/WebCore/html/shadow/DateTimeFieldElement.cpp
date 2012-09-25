@@ -186,11 +186,6 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
         m_fieldOwner->fieldValueChanged();
 }
 
-double DateTimeFieldElement::valueAsDouble() const
-{
-    return hasValue() ? valueAsInteger() * unitInMillisecond() : std::numeric_limits<double>::quiet_NaN();
-}
-
 } // namespace WebCore
 
 #endif

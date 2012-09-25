@@ -70,7 +70,6 @@ public:
     virtual void stepDown() = 0;
     virtual void stepUp() = 0;
     virtual String value() const = 0;
-    double valueAsDouble() const;
     virtual int valueAsInteger() const = 0;
     virtual String visibleValue() const = 0;
 
@@ -83,7 +82,6 @@ protected:
     void initialize(const AtomicString& shadowPseudoId, const String& axHelpText);
     virtual int maximum() const = 0;
     virtual int minimum() const = 0;
-    virtual double unitInMillisecond() const = 0;
     void updateVisibleValue(EventBehavior);
 
 private:

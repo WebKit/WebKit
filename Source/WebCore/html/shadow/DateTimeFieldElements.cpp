@@ -30,7 +30,6 @@
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "LocalizedStrings.h"
-#include <wtf/DateMath.h>
 
 namespace WebCore {
 
@@ -66,11 +65,6 @@ void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
         setValueAsInteger(dateTimeFieldsState.ampm());
     else
         setEmptyValue(dateForReadOnlyField);
-}
-
-double DateTimeAMPMFieldElement::unitInMillisecond() const
-{
-    return msPerHour * 12;
 }
 
 // ----------------------------
@@ -173,11 +167,6 @@ void DateTimeHourFieldElement::setValueAsInteger(int valueAsHour23, EventBehavio
     DateTimeNumericFieldElement::setValueAsInteger(range().minimum && !value ? m_alignment : value, eventBehavior);
 }
 
-double DateTimeHourFieldElement::unitInMillisecond() const
-{
-    return msPerHour;
-}
-
 int DateTimeHourFieldElement::valueAsInteger() const
 {
     return hasValue() ? DateTimeNumericFieldElement::valueAsInteger() % m_alignment : -1;
@@ -224,11 +213,6 @@ void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTi
     setValueAsInteger(value);
 }
 
-double DateTimeMillisecondFieldElement::unitInMillisecond() const
-{
-    return 1;
-}
-
 // ----------------------------
 
 DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldOwner& fieldOwner)
@@ -270,11 +254,6 @@ void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
     setValueAsInteger(value);
 }
 
-double DateTimeMinuteFieldElement::unitInMillisecond() const
-{
-    return msPerMinute;
-}
-
 // ----------------------------
 
 DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldOwner& fieldOwner)
@@ -314,11 +293,6 @@ void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
     }
 
     setValueAsInteger(value);
-}
-
-double DateTimeSecondFieldElement::unitInMillisecond() const
-{
-    return msPerSecond;
 }
 
 } // namespace WebCore

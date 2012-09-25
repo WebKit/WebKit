@@ -465,20 +465,6 @@ DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState() const
     return dateTimeFieldsState;
 }
 
-double DateTimeEditElement::valueAsDouble() const
-{
-    double value = 0;
-
-    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
-        const DateTimeFieldElement* const field = m_fields[fieldIndex];
-        if (!field->hasValue())
-            return std::numeric_limits<double>::quiet_NaN();
-        value += field->valueAsDouble();
-    }
-
-    return value;
-}
-
 } // namespace WebCore
 
 #endif

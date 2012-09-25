@@ -91,7 +91,6 @@ public:
     void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField);
     String value() const;
     DateTimeFieldsState valueAsDateTimeFieldsState() const;
-    double valueAsDouble() const;
 
 private:
     static const size_t invalidFieldIndex = static_cast<size_t>(-1);
