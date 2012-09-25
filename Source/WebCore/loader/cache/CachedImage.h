@@ -82,8 +82,7 @@ public:
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
 
     virtual bool isImage() const { return true; }
-    bool stillNeedsLoad() const { return !errorOccurred() && status() == Unknown && !isLoading(); }
-    void load();
+    virtual bool stillNeedsLoad() const OVERRIDE { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver
     virtual void decodedSizeChanged(const Image* image, int delta);

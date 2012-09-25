@@ -5,6 +5,4 @@ PERMISSION CLIENT: allowImage((file test):platform/chromium/permissionclient/res
 
 
 PASS: first image loaded
-PASS: error event for not cached image
-PASS: error event for image from cache
 

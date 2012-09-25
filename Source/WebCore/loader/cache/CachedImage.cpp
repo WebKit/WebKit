@@ -29,7 +29,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"

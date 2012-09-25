@@ -45,7 +45,6 @@ class CachedMetadata;
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
-class Frame;
 class InspectorResource;
 class PurgeableBuffer;
 class SecurityOrigin;
@@ -144,6 +143,7 @@ public:
 
     bool isLoading() const { return m_loading; }
     void setLoading(bool b) { m_loading = b; }
+    virtual bool stillNeedsLoad() const { return false; }
 
     SubresourceLoader* loader() { return m_loader.get(); }
 
