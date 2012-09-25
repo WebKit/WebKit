@@ -72,12 +72,7 @@ bool ArrayValue::get(size_t index, Dictionary& value) const
     if (isUndefinedOrNull())
         return false;
 
-    JSArray* array = asArray(m_value);
-    // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
-    if (!array->canGetIndexQuickly(index))
-        return false;
-
-    JSValue indexedValue = array->getIndexQuickly(index);
+    JSValue indexedValue = asArray(m_value)->getIndex(m_exec, index);
     if (indexedValue.isUndefinedOrNull() || !indexedValue.isObject())
         return false;
 

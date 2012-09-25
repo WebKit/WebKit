@@ -33,9 +33,8 @@ PassRefPtr<DOMStringList> toDOMStringList(ExecState* exec, JSValue value)
 
     JSArray* array = asArray(value);
     RefPtr<DOMStringList> stringList = DOMStringList::create();
-    // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
     for (unsigned i = 0; i < array->length(); ++i)
-        stringList->append(array->getIndexQuickly(i).toString(exec)->value(exec));
+        stringList->append(array->getIndex(exec, i).toString(exec)->value(exec));
 
     return stringList.release();
 }

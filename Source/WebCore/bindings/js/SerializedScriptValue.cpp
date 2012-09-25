@@ -471,22 +471,6 @@ private:
         write(TerminatorTag);
     }
 
-    JSValue getSparseIndex(JSArray* array, unsigned propertyName, bool& hasIndex)
-    {
-        PropertySlot slot(array);
-        if (isJSArray(array)) {
-            if (JSArray::getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
-                hasIndex = true;
-                return slot.getValue(m_exec, propertyName);
-            }
-        } else if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
-            hasIndex = true;
-            return slot.getValue(m_exec, propertyName);
-        }
-        hasIndex = false;
-        return jsNull();
-    }
-
     JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
         PropertySlot slot(object);
@@ -894,16 +878,10 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     lengthStack.removeLast();
                     break;
                 }
-                // FIXME: What if the array is in sparse mode? https://bugs.webkit.org/show_bug.cgi?id=95610
-                if (array->canGetIndexQuickly(index))
-                    inValue = array->getIndexQuickly(index);
-                else {
-                    bool hasIndex = false;
-                    inValue = getSparseIndex(array, index, hasIndex);
-                    if (!hasIndex) {
-                        indexStack.last()++;
-                        goto arrayStartVisitMember;
-                    }
+                inValue = array->getDirectIndex(m_exec, index);
+                if (!inValue) {
+                    indexStack.last()++;
+                    goto arrayStartVisitMember;
                 }
 
                 write(index);

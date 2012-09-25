@@ -1,5 +1,20 @@
 2012-09-25  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC bindings appear to sometimes ignore the possibility of arrays being in sparse mode
+        https://bugs.webkit.org/show_bug.cgi?id=95610
+
+        Reviewed by Oliver Hunt.
+
+        Add better support for quickly accessing the indexed storage from bindings.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSObject):
+        (JSC::JSObject::getDirectIndex):
+        (JSC::JSObject::getIndex):
+
+2012-09-25  Filip Pizlo  <fpizlo@apple.com>
+
         Structure check hoisting phase doesn't know about the side-effecting nature of Arrayify
         https://bugs.webkit.org/show_bug.cgi?id=97537
 

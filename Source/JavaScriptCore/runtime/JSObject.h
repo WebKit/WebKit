@@ -226,6 +226,42 @@ namespace JSC {
             }
         }
         
+        JSValue tryGetIndexQuickly(unsigned i)
+        {
+            switch (structure()->indexingType()) {
+            case ALL_BLANK_INDEXING_TYPES:
+                break;
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                if (i < m_butterfly->arrayStorage()->vectorLength()) {
+                    JSValue v = m_butterfly->arrayStorage()->m_vector[i].get();
+                    if (v)
+                        return v;
+                }
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            return JSValue();
+        }
+        
+        JSValue getDirectIndex(ExecState* exec, unsigned i)
+        {
+            if (JSValue result = tryGetIndexQuickly(i))
+                return result;
+            PropertySlot slot(this);
+            if (methodTable()->getOwnPropertySlotByIndex(this, exec, i, slot))
+                return slot.getValue(exec, i);
+            return JSValue();
+        }
+        
+        JSValue getIndex(ExecState* exec, unsigned i)
+        {
+            if (JSValue result = tryGetIndexQuickly(i))
+                return result;
+            return get(exec, i);
+        }
+        
         bool canSetIndexQuickly(unsigned i)
         {
             switch (structure()->indexingType()) {
