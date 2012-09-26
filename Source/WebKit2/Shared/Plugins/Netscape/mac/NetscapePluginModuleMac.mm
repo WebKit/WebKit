@@ -93,14 +93,11 @@ static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
 
 static RetainPtr<CFDictionaryRef> contentsOfPropertyListAtURL(CFURLRef propertyListURL)
 {
-    CFDataRef propertyListData;
-    CFURLCreateDataAndPropertiesFromResource(kCFAllocatorDefault, propertyListURL, &propertyListData, 0, 0, 0);
+    RetainPtr<NSData> propertyListData = adoptNS([[NSData alloc] initWithContentsOfURL:(NSURL *)propertyListURL]);
     if (!propertyListData)
         return 0;
 
-    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(kCFAllocatorDefault, propertyListData, kCFPropertyListImmutable, 0, 0));
-    CFRelease(propertyListData);
-
+    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(kCFAllocatorDefault, (CFDataRef)propertyListData.get(), kCFPropertyListImmutable, 0, 0));
     if (!propertyList)
         return 0;
 
