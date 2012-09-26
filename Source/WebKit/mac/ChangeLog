@@ -1,3 +1,17 @@
+2012-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Stop using kCFURLHFSPathStyle
+        https://bugs.webkit.org/show_bug.cgi?id=97731
+        <rdar://problem/12378980>
+
+        Reviewed by Tim Horton.
+
+        Stop passing Carbon style paths to the plug-in. Both WebKitPluginHost, WebKit2 and Firefox
+        pass POSIX style paths which makes more sense.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::destroyStream):
+
 2012-09-25  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac part of <rdar://problem/11455228> [mac] Stop using screen fonts

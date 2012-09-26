@@ -56,8 +56,6 @@ using namespace std;
 
 #define WEB_REASON_NONE -1
 
-static NSString *CarbonPathFromPOSIXPath(NSString *posixPath);
-
 class PluginStopDeferrer {
 public:
     PluginStopDeferrer(WebNetscapePluginView* pluginView)
@@ -393,12 +391,10 @@ void WebNetscapePluginStream::destroyStream()
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(m_fileDescriptor == -1);
             ASSERT(m_path);
-            NSString *carbonPath = CarbonPathFromPOSIXPath(m_path.get());
-            ASSERT(carbonPath != NULL);
-            
+
             PluginStopDeferrer deferrer(m_pluginView.get());
-            m_pluginFuncs->asfile(m_plugin, &m_stream, [carbonPath fileSystemRepresentation]);
-            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", m_responseURL.get(), carbonPath);
+            m_pluginFuncs->asfile(m_plugin, &m_stream, [m_path.get() fileSystemRepresentation]);
+            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", m_responseURL.get(), m_path.get());
         }
 
         if (m_path) {
@@ -627,18 +623,6 @@ void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const 
         deliverDataToFile(data);
     
     [data release];
-}
-
-static NSString *CarbonPathFromPOSIXPath(NSString *posixPath)
-{
-    // Doesn't add a trailing colon for directories; this is a problem for paths to a volume,
-    // so this function would need to be revised if we ever wanted to call it with that.
-
-    CFURLRef url = (CFURLRef)[NSURL fileURLWithPath:posixPath];
-    if (!url)
-        return nil;
-
-    return WebCFAutorelease(CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle));
 }
 
 #endif
