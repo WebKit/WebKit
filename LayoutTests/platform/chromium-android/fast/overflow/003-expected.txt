@@ -1,0 +1,188 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (10,10) size 780x302
+  RenderBlock {fake} at (10,10) size 780x302 [bgcolor=#FFFF00]
+layer at (10,10) size 282x302 clip at (11,11) size 280x300 scrollHeight 1232
+  RenderBlock {channel} at (0,0) size 282x302 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+    RenderBlock {title} at (11,11) size 270x18
+      RenderText {#text} at (0,0) size 153x18
+        text run at (0,0) width 153: "scottandrew.com"
+    RenderBlock {description} at (11,39) size 270x12
+      RenderText {#text} at (0,0) size 192x12
+        text run at (0,0) width 192: "DHTML, DOM and JavaScript News"
+    RenderBlock {item} at (1,61) size 280x78 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 229x14
+        RenderText {#text} at (10,11) size 229x14
+          text run at (10,11) width 229: "DHTML Animation Array Generator"
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {description} at (0,0) size 258x42
+        RenderText {#text} at (10,25) size 258x42
+          text run at (10,25) width 245: "Robert points us to the first third-party"
+          text run at (10,39) width 258: "tool for the DomAPI: The Animation Array"
+          text run at (10,53) width 236: "Generator, a visual tool for creating..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,149) size 280x78 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 175x14
+        RenderText {#text} at (10,11) size 175x14
+          text run at (10,11) width 175: "DOM and Extended Entries"
+      RenderText {#text} at (185,11) size 4x14
+        text run at (185,11) width 4: " "
+      RenderInline {description} at (0,0) size 255x56
+        RenderText {#text} at (189,11) size 255x56
+          text run at (189,11) width 75: "Aarondot: A"
+          text run at (10,25) width 255: "Better Way To Display Extended Entries."
+          text run at (10,39) width 209: "Very cool, and uses the DOM and"
+          text run at (10,53) width 224: "JavaScript to reveal the extended..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,237) size 280x78 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 162x14
+        RenderText {#text} at (10,11) size 162x14
+          text run at (10,11) width 162: "cellspacing and the DOM"
+      RenderText {#text} at (172,11) size 4x14
+        text run at (172,11) width 4: " "
+      RenderInline {description} at (0,0) size 257x56
+        RenderText {#text} at (176,11) size 257x56
+          text run at (176,11) width 85: "By the way, if"
+          text run at (10,25) width 256: "you're using the DOM to generate TABLE"
+          text run at (10,39) width 257: "elements, you have to use setAttribute()"
+          text run at (10,53) width 74: "to set the..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,325) size 280x92 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 175x14
+        RenderText {#text} at (10,11) size 175x14
+          text run at (10,11) width 175: "contenteditable for Mozilla"
+      RenderText {#text} at (185,11) size 4x14
+        text run at (185,11) width 4: " "
+      RenderInline {description} at (0,0) size 257x70
+        RenderText {#text} at (189,11) size 257x70
+          text run at (189,11) width 78: "The folks art"
+          text run at (10,25) width 199: "Q42, creator of Quek (cute little"
+          text run at (10,39) width 254: "avatar/chat) and Xopus (browser-based"
+          text run at (10,53) width 232: "WYSIWYG XML-editor) have released"
+          text run at (10,67) width 136: "code that simulates..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,427) size 280x78 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 249x14
+        RenderText {#text} at (10,11) size 249x14
+          text run at (10,11) width 249: "DHTML Timeline/Keyframe Animation"
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {description} at (0,0) size 235x42
+        RenderText {#text} at (10,25) size 235x42
+          text run at (10,25) width 235: "Tim Morgan is working on a Flash-like"
+          text run at (10,39) width 221: "timeline/keyframe extension for his"
+          text run at (10,53) width 106: "DHTML toolset...."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,515) size 280x92 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 243x28
+        RenderText {#text} at (10,11) size 243x28
+          text run at (10,11) width 243: "DynAPI 2.9 and Mozilla compatibility"
+          text run at (10,25) width 34: "ports"
+      RenderText {#text} at (44,25) size 4x14
+        text run at (44,25) width 4: " "
+      RenderInline {description} at (0,0) size 260x56
+        RenderText {#text} at (48,25) size 260x56
+          text run at (48,25) width 215: "DynAPI 2.9 is the latest release of"
+          text run at (10,39) width 260: "the popular cross-browser DHTML library,"
+          text run at (10,53) width 217: "and is available at Dan Steinman's"
+          text run at (10,67) width 89: "original site...."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,617) size 280x64 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 152x14
+        RenderText {#text} at (10,11) size 152x14
+          text run at (10,11) width 152: "!lineDraw bookmarklet"
+      RenderText {#text} at (162,11) size 4x14
+        text run at (162,11) width 4: " "
+      RenderInline {description} at (0,0) size 223x42
+        RenderText {#text} at (166,11) size 223x42
+          text run at (166,11) width 41: "Milov's"
+          text run at (10,25) width 223: "!lineDraw bookmarklet is in fact the"
+          text run at (10,39) width 178: "Coolest Bookmarklet Ever...."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,691) size 280x92 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 200x14
+        RenderText {#text} at (10,11) size 200x14
+          text run at (10,11) width 200: "Mozilla, DHTML and DOM links"
+      RenderText {#text} at (210,11) size 4x14
+        text run at (210,11) width 4: " "
+      RenderInline {description} at (0,0) size 243x70
+        RenderText {#text} at (214,11) size 243x70
+          text run at (214,11) width 28: "Why"
+          text run at (10,25) width 218: "Mozilla Rules (Link via Dean) Steve"
+          text run at (10,39) width 243: "Champeon: Why DHTML Will Win. Glish"
+          text run at (10,53) width 203: "finds a not-quite-DOM-compliant"
+          text run at (10,67) width 198: "replacement for innerHTML. It..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,793) size 280x64 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 103x14
+        RenderText {#text} at (10,11) size 103x14
+          text run at (10,11) width 103: "Mozilla 1.0 RC2"
+      RenderText {#text} at (113,11) size 4x14
+        text run at (113,11) width 4: " "
+      RenderInline {description} at (0,0) size 246x42
+        RenderText {#text} at (117,11) size 246x42
+          text run at (117,11) width 133: "I'm late for this train:"
+          text run at (10,25) width 246: "Mozilla 1.0 Release Candidate 2 is now"
+          text run at (10,39) width 72: "available...."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,867) size 280x92 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 251x14
+        RenderText {#text} at (10,11) size 251x14
+          text run at (10,11) width 251: "javascript: is deprecated. Don't use it."
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {description} at (0,0) size 240x56
+        RenderText {#text} at (10,25) size 240x56
+          text run at (10,25) width 191: "Repeat after me: javascript: is"
+          text run at (10,39) width 240: "deprecated. Don't use it. javascript: is"
+          text run at (10,53) width 240: "deprecated. Don't use it. javascript: is"
+          text run at (10,67) width 152: "deprecated. Don't use..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,969) size 280x64 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 173x14
+        RenderText {#text} at (10,11) size 173x14
+          text run at (10,11) width 173: "Conditional Script Loading"
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {description} at (0,0) size 246x28
+        RenderText {#text} at (10,25) size 246x28
+          text run at (10,25) width 246: "Webreference: DOM-Based Conditional"
+          text run at (10,39) width 183: "Script Loading in JavaScript..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,1043) size 280x78 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 114x14
+        RenderText {#text} at (10,11) size 114x14
+          text run at (10,11) width 114: "Stories and Tools"
+      RenderText {#text} at (124,11) size 4x14
+        text run at (124,11) width 4: " "
+      RenderInline {description} at (0,0) size 255x56
+        RenderText {#text} at (128,11) size 255x56
+          text run at (128,11) width 133: "Anil Dash talks about"
+          text run at (10,25) width 251: "Stories and Tools, drawing comparisons"
+          text run at (10,39) width 255: "between the Web as a text medium and"
+          text run at (10,53) width 85: "the Web as..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {item} at (1,1131) size 280x92 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
+      RenderInline {title} at (0,0) size 164x14
+        RenderText {#text} at (10,11) size 164x14
+          text run at (10,11) width 164: "Whole Lotto Gecko Links"
+      RenderText {#text} at (174,11) size 4x14
+        text run at (174,11) width 4: " "
+      RenderInline {description} at (0,0) size 255x70
+        RenderText {#text} at (178,11) size 255x70
+          text run at (178,11) width 67: "AOL Gecko"
+          text run at (10,25) width 225: "Browser Detection Tips Establishing"
+          text run at (10,39) width 201: "Dreamweaver compatibility with"
+          text run at (10,53) width 255: "Netscape 6 Stylesheets and MIME Types"
+          text run at (10,67) width 65: "in Gecko..."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,186 @@
+layer at (0,0) size 163020x1800
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1800
+  RenderBlock {HTML} at (0,0) size 800x1800
+    RenderBody {BODY} at (8,16) size 784x1768
+      RenderBlock {P} at (0,0) size 784x80 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 767x79
+          text run at (0,0) width 767: "The following lines test various combinations of letter-spacing (especially negative values) and opacity. All of the lines should say"
+          text run at (0,20) width 757: "\"Hello, world\" but the spacing and background shading will vary from test to test. The W3C specs are fairly silent on how user"
+          text run at (0,40) width 754: "agents should handle unusual values of letter-spacing, especially negative ones, which are explicitly implementation-dependent."
+          text run at (0,60) width 632: "Different browsers will render these differently, but hopefully the WebKit ports will be consistent, at least."
+      RenderBlock {P} at (0,96) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 241x19
+          text run at (0,0) width 241: "The first line should be normally spaced."
+      RenderBlock {P} at (0,132) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 75x19
+          RenderText {#text} at (160,0) size 75x19
+            text run at (160,0) width 75: "Hello, world"
+      RenderBlock {P} at (0,168) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 617x19
+          text run at (0,0) width 617: "The next line tests a slight positive letter spacing, and should be slightly spaced out (wider than normal)."
+      RenderBlock {P} at (0,204) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 171x19
+          RenderText {#text} at (160,0) size 171x19
+            text run at (160,0) width 171: "Hello, world"
+      RenderBlock {P} at (0,240) size 784x40 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 780x39
+          text run at (0,0) width 765: "The next line tests a large positive letter spacing, and should be *very* spaced out. You may only see an 'H' and a 'w', perhaps "
+          text run at (765,0) width 15: "on"
+          text run at (0,20) width 313: "two different lines, unless you scroll way to the right."
+      RenderBlock {P} at (0,296) size 784x40 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 19396x39
+          RenderText {#text} at (160,0) size 19396x39
+            text run at (160,0) width 19236: "Hello,"
+            text run at (0,20) width 16035: "world"
+      RenderBlock {P} at (0,352) size 784x40 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 767x39
+          text run at (0,0) width 767: "The next line tests a very large positive letter spacing, and should also be *very* spaced out. You may only see an 'H' and a 'w',"
+          text run at (0,20) width 384: "perhaps on two different lines, unless you scroll way to the right."
+      RenderBlock {P} at (0,408) size 784x40 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 163012x39
+          RenderText {#text} at (160,0) size 163012x39
+            text run at (160,0) width 162852: "Hello,"
+            text run at (0,20) width 135715: "world"
+      RenderBlock {P} at (0,464) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 501x19
+          text run at (0,0) width 501: "The next line tests a small negative line spacing, and should be crammed backwards"
+      RenderBlock {P} at (0,500) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 0x19
+          RenderText {#text} at (160,0) size 0x19
+            text run at (160,0) width 0: "Hello, world"
+      RenderBlock {P} at (0,536) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 479x19
+          text run at (0,0) width 479: "The next line tests a large negative line spacing, and should be just display an 'H'"
+      RenderBlock {P} at (0,572) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 0x19
+          RenderText {#text} at (160,0) size 0x19
+            text run at (160,0) width 0: "Hello, world"
+      RenderBlock {P} at (0,608) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 480x19
+          text run at (0,0) width 480: "The next line tests a very large negative line spacing, and should just have an 'H'."
+      RenderBlock {P} at (0,644) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 0x19
+          RenderText {#text} at (160,0) size 0x19
+            text run at (160,0) width 0: "Hello, world"
+      RenderBlock {P} at (0,680) size 784x40 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 723x39
+          text run at (0,0) width 671: "The next few lines test the interaction with opacity. The first line should be normally spaced out, slightly opaque, "
+          text run at (671,0) width 52: "and on a"
+          text run at (0,20) width 187: "differently-colored background"
+      RenderBlock {P} at (0,736) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,772) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 674x19
+          text run at (0,0) width 309: "The next line tests a small positive line spacing, and "
+          text run at (309,0) width 365: "should be slightly spaced out, opaque, and on a background."
+      RenderBlock {P} at (0,808) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,844) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 600x19
+          text run at (0,0) width 600: "The next line tests a large positive line spacing, and should be very widely spaced, on a background."
+      RenderBlock {P} at (0,880) size 784x40 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,936) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 716x19
+          text run at (0,0) width 312: "The next line tests a very large positive line spacing, "
+          text run at (312,0) width 404: "and should be very widely spaced but blank, and on a background."
+      RenderBlock {P} at (0,972) size 784x40 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1028) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 411x19
+          text run at (0,0) width 411: "The next line tests a small negative line spacing, and should be blank."
+      RenderBlock {P} at (0,1064) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1100) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 410x19
+          text run at (0,0) width 410: "The next line tests a large negative line spacing, and should be blank."
+      RenderBlock {P} at (0,1136) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1172) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 440x19
+          text run at (0,0) width 440: "The next line tests a very large negative line spacing, and should be blank."
+      RenderBlock {P} at (0,1208) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1244) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "Now we do a few basic right-to-left tests:"
+      RenderBlock {P} at (0,1280) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 241x19
+          text run at (0,0) width 241: "The first line should be normally spaced."
+      RenderBlock {P} at (0,1316) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 75x19
+          RenderText {#text} at (160,0) size 75x19
+            text run at (160,0) width 75 RTL override: "Hello, world"
+      RenderBlock {P} at (0,1352) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 378x19
+          text run at (0,0) width 378: "The next line should be slightly spaced out (wider than normal)."
+      RenderBlock {P} at (0,1388) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 171x19
+          RenderText {#text} at (160,0) size 171x19
+            text run at (160,0) width 171 RTL override: "Hello, world"
+      RenderBlock {P} at (0,1424) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 451x19
+          text run at (0,0) width 330: "The next line should be crammed backwards, just as if "
+          text run at (330,0) width 121: "it wasn't right-to-left"
+      RenderBlock {P} at (0,1460) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 0x19
+          RenderText {#text} at (160,0) size 0x19
+            text run at (160,0) width 0 RTL override: "Hello, world"
+      RenderBlock {P} at (0,1496) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 435x19
+          text run at (0,0) width 311: "The next line tests a large negative line spacing, and "
+          text run at (311,0) width 124: "should just print a 'd'"
+      RenderBlock {P} at (0,1532) size 784x20 [bgcolor=#EEEEEE]
+        RenderInline {SPAN} at (0,0) size 0x19
+          RenderText {#text} at (160,0) size 0x19
+            text run at (160,0) width 0 RTL override: "Hello, world"
+      RenderBlock {P} at (0,1568) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 774x19
+          text run at (0,0) width 142: "Now, opacity as well - "
+          text run at (142,0) width 374: "The next line should be printed right to left, slightly spaced out "
+          text run at (516,0) width 258: "(wider than normal), and on a background."
+      RenderBlock {P} at (0,1604) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1640) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 411x19
+          text run at (0,0) width 411: "The next line tests a small negative line spacing, and should be blank."
+      RenderBlock {P} at (0,1676) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {P} at (0,1712) size 784x20 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 421x19
+          text run at (0,0) width 421: "The next line tests a large negative line spacing, and it should be blank."
+      RenderBlock {P} at (0,1748) size 784x20 [bgcolor=#EEEEEE]
+layer at (8,752) size 75x19
+  RenderInline {SPAN} at (0,0) size 75x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 75x19
+      text run at (160,0) width 75: "Hello, world"
+layer at (8,824) size 171x19
+  RenderInline {SPAN} at (0,0) size 171x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 171x19
+      text run at (160,0) width 171: "Hello, world"
+layer at (8,896) size 19396x39
+  RenderInline {SPAN} at (0,0) size 19396x39 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 19396x39
+      text run at (160,0) width 19236: "Hello,"
+      text run at (0,20) width 16035: "world"
+layer at (8,988) size 163012x39
+  RenderInline {SPAN} at (0,0) size 163012x39 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 163012x39
+      text run at (160,0) width 162852: "Hello,"
+      text run at (0,20) width 135715: "world"
+layer at (8,1080) size 0x19
+  RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 0x19
+      text run at (160,0) width 0: "Hello, world"
+layer at (8,1152) size 0x19
+  RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 0x19
+      text run at (160,0) width 0: "Hello, world"
+layer at (8,1224) size 0x19
+  RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 0x19
+      text run at (160,0) width 0: "Hello, world"
+layer at (8,1620) size 171x19
+  RenderInline {SPAN} at (0,0) size 171x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 171x19
+      text run at (160,0) width 171 RTL override: "Hello, world"
+layer at (8,1692) size 0x19
+  RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 0x19
+      text run at (160,0) width 0 RTL override: "Hello, world"
+layer at (8,1764) size 0x19
+  RenderInline {SPAN} at (0,0) size 0x19 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 0x19
+      text run at (160,0) width 0 RTL override: "Hello, world"
