@@ -3565,6 +3565,13 @@ webkit.org/b/97296 [ Linux Win ] fast/text/international/hebrew-selection.html [
 # Expected to fail until storage blocking settings have a WebKit1 API in Chromium.
 webkit.org/b/97491 http/tests/security/cross-origin-local-storage-wk1.html [ Failure Pass ]
 
+# Failing after r129601
+webkit.org/b/97672 fast/js/string-localeCompare.html [ Failure ]
+
+# Failing after r129588
+webkit.org/b/97672 fast/js/dfg-array-push-bad-time.html [ Failure ]
+webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
+
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
