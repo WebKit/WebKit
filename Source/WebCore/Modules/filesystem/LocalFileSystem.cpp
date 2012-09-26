@@ -101,7 +101,7 @@ void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSys
     context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), true, callbacks));
 }
 
-void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassRefPtr<AsyncFileSystemCallbacks> callbacks)
+void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     // AsyncFileSystem::deleteFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
     context->postTask(createCallbackTask(&deleteFileSystem, filesystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
