@@ -54,6 +54,12 @@ namespace WebKit {
 #define DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED false
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#define DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED false
+#else
+#define DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED true
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(LoadsImagesAutomatically, loadsImagesAutomatically, Bool, bool, true) \
@@ -128,7 +134,7 @@ namespace WebKit {
     macro(ScrollingPerformanceLoggingEnabled, scrollingPerformanceLoggingEnabled, Bool, bool, false) \
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, 0) \
     macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED) \
-    macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, true) \
+    macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

@@ -674,6 +674,8 @@ static void resetDefaultsToConsistentValues()
     [preferences setWebAudioEnabled:YES];
 #endif
 
+    [preferences setScreenFontSubstitutionEnabled:YES];
+
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
     
     TestRunner::setSerializeHTTPLoads(false);

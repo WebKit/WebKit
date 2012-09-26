@@ -115,6 +115,7 @@ struct WebProcessCreationParameters {
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
+    bool shouldForceScreenFontSubstitution;
 #elif PLATFORM(WIN)
     String cfURLCachePath;
     uint64_t cfURLCacheDiskCapacity;

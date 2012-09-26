@@ -1,3 +1,33 @@
+2012-09-25  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/11455228> [mac] Stop using screen fonts
+        https://bugs.webkit.org/show_bug.cgi?id=97620
+
+        Reviewed by John Sullivan.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit): Changed the default value of the screenFontSubstitutionEnabled preference to false.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters): Added an initializer for
+        the new shouldForceScreenFontSubstitution data member.
+        (WebKit::WebProcessCreationParameters::encode): Added encoding of shouldForceScreenFontSubstitution.
+        (WebKit::WebProcessCreationParameters::decode): Added decoding of shouldForceScreenFontSubstitution.
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters): Added shouldForceScreenFontSubstitution boolean data member.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess): Added code to set shouldForceScreenFontSubstitution
+        in the process creation parameters to the value of the NSFontDefaultScreenFontSubstitutionEnabled user
+        defaults key.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Changed to enable screen font substitution also if
+        shouldForceScreenFontSubstitution() is true.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::shouldForceScreenFontSubstitution): Added this getter.
+        (WebProcess): Added m_shouldForceScreenFontSubstitution boolean data member.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Added initialization of
+        m_shouldForceScreenFontSubstitution from the creation parameters.
+
 2012-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of WebContext::m_pendingMessagesToPostToInjectedBundle

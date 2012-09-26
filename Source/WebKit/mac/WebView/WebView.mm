@@ -1444,7 +1444,12 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setUsesEncodingDetector([preferences usesEncodingDetector]);
     settings->setFantasyFontFamily([preferences fantasyFontFamily]);
     settings->setFixedFontFamily([preferences fixedFontFamily]);
-    settings->setScreenFontSubstitutionEnabled([preferences screenFontSubstitutionEnabled]);
+    settings->setScreenFontSubstitutionEnabled(
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [[NSUserDefaults standardUserDefaults] boolForKey:@"NSFontDefaultScreenFontSubstitutionEnabled"] ||
+#endif
+        [preferences screenFontSubstitutionEnabled]
+    );
     settings->setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
     settings->setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
     settings->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);

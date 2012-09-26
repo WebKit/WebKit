@@ -271,6 +271,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
 
+    m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
+
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

@@ -1,3 +1,16 @@
+2012-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Tools part of <rdar://problem/11455228> [mac] Stop using screen fonts
+        https://bugs.webkit.org/show_bug.cgi?id=97620
+
+        Reviewed by John Sullivan.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Enable screen font substitution when
+        running the tests.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Ditto.
+
 2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. "values" doesn't necessarily contain multiple values but it needs to be always parsed as an array.

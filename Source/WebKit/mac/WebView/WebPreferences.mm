@@ -399,7 +399,12 @@ public:
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
-        [NSNumber numberWithBool:YES],  WebKitScreenFontSubstitutionEnabledKey,
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [NSNumber numberWithBool:NO],
+#else
+        [NSNumber numberWithBool:YES],
+#endif
+                                        WebKitScreenFontSubstitutionEnabledKey,
         [NSNumber numberWithInt:WebAllowAllStorage], WebKitStorageBlockingPolicyKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,

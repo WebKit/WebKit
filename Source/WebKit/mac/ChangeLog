@@ -1,3 +1,17 @@
+2012-09-25  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of <rdar://problem/11455228> [mac] Stop using screen fonts
+        https://bugs.webkit.org/show_bug.cgi?id=97620
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Changed the default value of the screenFontSubstitutionEnabled
+        preference to NO.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):  Changed to enable screen font substitution also if
+        the value of the NSFontDefaultScreenFontSubstitutionEnabled user defaults key is YES.
+
 2012-09-21  Jeffrey Pfau  <jpfau@apple.com>
 
         Add WebKit1 SPI for storage blocking preference
