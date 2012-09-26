@@ -1100,3 +1100,6 @@ webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFail
 
 # Frame does not get focus as expected
 webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
+
+# Marking this as failing again, since r129592 was rolled out.
+webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
