@@ -57,6 +57,8 @@ private:
     bool m_firstTime;
     double m_desiredDelayFrames;
 
+    AudioFloatArray m_delayTimes;
+
     DelayProcessor* delayProcessor() { return static_cast<DelayProcessor*>(processor()); }
     size_t bufferLengthForDelay(double delayTime, double sampleRate) const;
 };
