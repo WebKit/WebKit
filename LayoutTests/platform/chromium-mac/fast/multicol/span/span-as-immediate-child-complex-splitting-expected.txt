@@ -86,7 +86,7 @@ layer at (13,525) size 750x124
         text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
         text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
-layer at (13,717) size 750x124
+layer at (13,716) size 750x124
   RenderBlock (anonymous multi-column) at (5,196) size 750x125
     RenderBlock {P} at (0,16) size 367x198
       RenderText {#text} at (0,0) size 362x198

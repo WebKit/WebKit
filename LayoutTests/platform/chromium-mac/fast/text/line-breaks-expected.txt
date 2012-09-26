@@ -14,7 +14,7 @@ layer at (0,0) size 800x483
       RenderBlock (anonymous) at (0,110) size 784x19
         RenderText {#text} at (0,0) size 284x18
           text run at (0,0) width 284: "The following three should look like \x{201C}good\x{201D}:"
-      RenderBlock {DIV} at (0,150) size 100x193
+      RenderBlock {DIV} at (0,149) size 100x194
         RenderBlock {P} at (0,0) size 100x50 [border: (1px solid #0000FF)]
           RenderText {#text} at (35,1) size 64x48
             text run at (35,1) width 64: "Lorem"
@@ -27,7 +27,7 @@ layer at (0,0) size 800x483
           RenderText {#text} at (35,1) size 64x48
             text run at (35,1) width 64: "Lore\x{1E3F}"
             text run at (36,25) width 63: "ipsum"
-      RenderBlock (anonymous) at (0,364) size 784x18
+      RenderBlock (anonymous) at (0,363) size 784x19
         RenderText {#text} at (0,0) size 73x18
           text run at (0,0) width 73: "This is bad:"
       RenderBlock {DIV} at (0,403) size 100x51

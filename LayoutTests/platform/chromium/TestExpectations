@@ -1503,7 +1503,7 @@ crbug.com/10384 [ Mac ] fast/dom/Window/new-window-opener.html [ Failure Pass Sl
 crbug.com/10399 [ Mac ] fast/encoding/char-decoding-mac.html [ Failure ]
 crbug.com/10399 [ Mac ] fast/encoding/char-encoding-mac.html [ Failure ]
 
-crbug.com/23496 [ Mac ] fast/text/whitespace/normal-after-nowrap-breaking.html [ ImageOnlyFailure ]
+crbug.com/23496 [ Lion ] fast/text/whitespace/normal-after-nowrap-breaking.html [ ImageOnlyFailure ]
 crbug.com/23496 [ Mac ] tables/mozilla_expected_failures/core/captions1.html [ Failure ]
 crbug.com/23496 [ Mac ] tables/mozilla_expected_failures/core/captions2.html [ Failure ]
 

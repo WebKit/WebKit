@@ -470,25 +470,25 @@ layer at (0,0) size 785x1478
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderBlock {SUMMARY} at (0,0) size 20x120
                     RenderDetailsMarker {DIV} at (3,51) size 11x11: down
-                    RenderText {#text} at (0,61) size 19x59
-                      text run at (0,61) width 58: "summary"
+                    RenderText {#text} at (0,62) size 19x58
+                      text run at (0,62) width 58: "summary"
                 RenderBlock {DETAILS} at (20,0) size 20x120
                   RenderBlock {SUMMARY} at (0,0) size 20x120
                     RenderDetailsMarker {DIV} at (3,51) size 11x11: right
-                    RenderText {#text} at (0,61) size 19x59
-                      text run at (0,61) width 58: "summary"
+                    RenderText {#text} at (0,62) size 19x58
+                      text run at (0,62) width 58: "summary"
             RenderTableCell {TD} at (484,98) size 124x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderBlock {SUMMARY} at (0,0) size 20x120
                     RenderDetailsMarker {DIV} at (5,51) size 11x11: down
-                    RenderText {#text} at (2,61) size 18x59
-                      text run at (2,61) width 58: "summary"
+                    RenderText {#text} at (2,62) size 18x58
+                      text run at (2,62) width 58: "summary"
                 RenderBlock {DETAILS} at (20,0) size 20x120
                   RenderBlock {SUMMARY} at (0,0) size 20x120
                     RenderDetailsMarker {DIV} at (5,51) size 11x11: left
-                    RenderText {#text} at (2,61) size 18x59
-                      text run at (2,61) width 58: "summary"
+                    RenderText {#text} at (2,62) size 18x58
+                      text run at (2,62) width 58: "summary"
           RenderTableRow {TR} at (0,224) size 610x124
             RenderTableCell {TH} at (76,271) size 28x30 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 16x18

@@ -48,7 +48,7 @@ layer at (0,0) size 785x779
             text run at (0,16) width 764: "difference between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the padding"
             text run at (0,32) width 240: "and border should not effect the line height. "
             text run at (240,32) width 524: "The span's border should have vertical lines only at the beginning and end of the whole span, not"
-            text run at (0,47) width 69: "on each line."
+            text run at (0,48) width 69: "on each line."
         RenderText {#text} at (83,48) size 415x15
           text run at (83,48) width 3: " "
           text run at (86,48) width 412: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
@@ -90,7 +90,7 @@ layer at (0,0) size 785x779
                     text run at (0,16) width 716: "difference between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the"
                     text run at (0,32) width 288: "padding and border should not effect the line height. "
                     text run at (288,32) width 436: "The span's border should have vertical lines only at the beginning and end of the"
-                    text run at (0,47) width 157: "whole span, not on each line."
+                    text run at (0,48) width 157: "whole span, not on each line."
                 RenderText {#text} at (171,48) size 415x15
                   text run at (171,48) width 3: " "
                   text run at (174,48) width 412: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."

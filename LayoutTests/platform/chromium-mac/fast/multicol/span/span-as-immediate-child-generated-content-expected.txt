@@ -111,7 +111,7 @@ layer at (13,851) size 750x18
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 156x18
         text run at (0,0) width 156: "After Generated Content"
-layer at (8,890) size 760x454
+layer at (8,890) size 760x453
   RenderBlock {DIV} at (0,873) size 760x455 [border: (5px solid #800000)]
     RenderBlock (anonymous multi-column span) at (5,147) size 750x68
       RenderBlock {H2} at (0,19) size 750x29 [bgcolor=#EEEEEE]
@@ -138,7 +138,7 @@ layer at (13,895) size 750x142
         text run at (233,180) width 121: "Lorem ipsum dolor"
         text run at (0,198) width 363: "sit amet, consectetuer adipiscing elit. Nulla varius enim ac"
         text run at (0,216) width 20: "mi."
-layer at (13,1105) size 750x234
+layer at (13,1104) size 750x234
   RenderBlock (anonymous multi-column) at (5,214) size 750x235
     RenderBlock {P} at (0,16) size 367x398
       RenderText {#text} at (0,0) size 363x398
@@ -168,13 +168,13 @@ layer at (13,1105) size 750x234
     RenderBlock (generated) at (0,430) size 367x20 [bgcolor=#FFFF00]
       RenderText at (0,0) size 156x18
         text run at (0,0) width 156: "After Generated Content"
-layer at (8,1360) size 760x437
+layer at (8,1359) size 760x438
   RenderBlock {DIV} at (0,1343) size 760x439 [border: (5px solid #800000)]
     RenderBlock (anonymous multi-column span) at (5,131) size 750x68
       RenderBlock {H2} at (0,19) size 750x29 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x28
           text run at (0,0) width 276: "This is a spanning element."
-layer at (13,1365) size 750x126
+layer at (13,1364) size 750x126
   RenderBlock (anonymous multi-column) at (5,5) size 750x126
     RenderBlock (generated) at (0,0) size 367x18 [bgcolor=#FFFF00]
       RenderText at (0,0) size 166x18
