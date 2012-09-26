@@ -2183,19 +2183,21 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
                 m_layoutRoot->markContainingBlocksForLayout(false, relayoutRoot);
                 m_layoutRoot = relayoutRoot;
                 ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
+                InspectorInstrumentation::didInvalidateLayout(m_frame.get());
             } else {
                 // Just do a full relayout
                 if (m_layoutRoot)
                     m_layoutRoot->markContainingBlocksForLayout(false);
                 m_layoutRoot = 0;
                 relayoutRoot->markContainingBlocksForLayout(false);
+                InspectorInstrumentation::didInvalidateLayout(m_frame.get());
             }
         }
     } else if (m_layoutSchedulingEnabled) {
-        InspectorInstrumentation::didInvalidateLayout(m_frame.get());
         int delay = m_frame->document()->minimumLayoutDelay();
         m_layoutRoot = relayoutRoot;
         ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
+        InspectorInstrumentation::didInvalidateLayout(m_frame.get());
         m_delayedLayout = delay != 0;
         m_layoutTimer.startOneShot(delay * 0.001);
     }

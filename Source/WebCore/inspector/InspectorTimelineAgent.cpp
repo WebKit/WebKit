@@ -234,8 +234,6 @@ void InspectorTimelineAgent::didDispatchEvent()
 
 void InspectorTimelineAgent::didInvalidateLayout(Frame* frame)
 {
-    if (frame->view()->layoutPending())
-        return;
     appendRecord(InspectorObject::create(), TimelineRecordType::InvalidateLayout, true, frame);
 }
 
