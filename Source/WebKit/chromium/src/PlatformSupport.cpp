@@ -209,6 +209,11 @@ bool PlatformSupport::cookiesEnabled(const Document* document)
 #if OS(WINDOWS)
 bool PlatformSupport::ensureFontLoaded(HFONT font)
 {
+    WebSandboxSupport* ss = WebKit::Platform::current()->sandboxSupport();
+
+    // if there is no sandbox, then we can assume the font
+    // was able to be loaded successfully already
+    return ss ? ss->ensureFontLoaded(font) : true;
 }
 #endif
 

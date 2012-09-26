@@ -49,6 +49,10 @@ typedef struct NPObject NPObject;
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
 
+#if OS(WINDOWS)
+typedef struct HFONT__* HFONT;
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -81,6 +85,11 @@ public:
     static bool rawCookies(const Document*, const KURL&, Vector<Cookie>&);
     static void deleteCookie(const Document*, const KURL&, const String& cookieName);
     static bool cookiesEnabled(const Document*);
+
+    // Font ---------------------------------------------------------------
+#if OS(WINDOWS)
+    static bool ensureFontLoaded(HFONT);
+#endif
 
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();

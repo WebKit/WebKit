@@ -1,3 +1,14 @@
+2012-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129673.
+        http://trac.webkit.org/changeset/129673
+        https://bugs.webkit.org/show_bug.cgi?id=97723
+
+        Causing window build breakage (Requested by alecf on #webkit).
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::ensureFontLoaded):
+
 2012-09-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Do not dispatch touch-events to plugins unless they explicitly request for touch-events.

@@ -35,15 +35,13 @@
 #include "Gradient.h"
 #include "Pattern.h"
 #include "PlatformContextSkia.h"
+#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
 #include "SkPaint.h"
 #include "SkShader.h"
 #include "SkTemplates.h"
-
-#include <public/Platform.h>
-#include <public/win/WebSandboxSupport.h>
 
 namespace WebCore {
 
@@ -223,14 +221,8 @@ static void paintSkiaText(GraphicsContext* context, HFONT hfont,
     SkCanvas* canvas = platformContext->canvas();
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
     // Ensure font load for printing, because PDF device needs it.
-    if (canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability) {
-        WebKit::WebSandboxSupport* sandboxSupport = WebKit::Platform::current()->sandboxSupport();
-
-        // if there is no sandbox, then we can assume the font
-        // was able to be loaded successfully already
-        if (sandboxSupport)
-            sandboxSupport->ensureFontLoaded(font);
-    }
+    if (canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability)
+        PlatformSupport::ensureFontLoaded(hfont);
 
     // Filling (if necessary). This is the common case.
     SkPaint paint;
