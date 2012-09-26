@@ -190,7 +190,7 @@ public:
     virtual String extraFullScreenStyleSheet();
 #endif
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
+    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
 
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);

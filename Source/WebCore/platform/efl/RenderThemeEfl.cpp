@@ -1093,6 +1093,11 @@ String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float d
     return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
 }
 
+bool RenderThemeEfl::hasOwnDisabledStateHandlingFor(ControlPart part) const
+{
+    return (part != MediaMuteButtonPart);
+}
+
 bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;

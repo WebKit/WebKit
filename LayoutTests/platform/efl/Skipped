@@ -225,9 +225,6 @@ fast/forms/range/input-appearance-range-rtl.html
 fast/text/international/bidi-menulist.html
 fast/text/international/pop-up-button-text-alignment-and-direction.html
 
-# BUG: volume control rendered when there is no audio
-media/video-no-audio.html
-
 # BUG: video sizes not being set properly
 media/video-size-intrinsic-scale.html
 
