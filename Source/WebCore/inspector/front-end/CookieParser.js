@@ -255,16 +255,8 @@ WebInspector.Cookie.prototype = {
      */ 
     expires: function(requestDate)
     {
-        // RFC 6265 indicates that the max-age attribute takes precedence over the expires attribute
-        if (this._attributes["max-age"]) {
-            var targetDate = requestDate === null ? new Date() : requestDate;
-            return new Date(targetDate.getTime() + 1000 * this._attributes["max-age"]);
-        }
-
-        if (this._attributes["expires"])
-            return new Date(this._attributes["expires"]);
-
-        return null;
+        return this._attributes["expires"] ? new Date(this._attributes["expires"]) :
+            (this._attributes["max-age"] ? new Date(requestDate.getTime() + 1000 * this._attributes["max-age"]) : null);
     },
 
     /**
