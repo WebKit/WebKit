@@ -42,6 +42,23 @@
 
 #define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 
+#ifdef NDEBUG
+// Mask freelist pointers to detect corruption and prevent freelist spraying.
+// We use an arbitray function and rely on ASLR to randomize it.
+// The first value in RenderObject (or any class) is a vtable pointer, which always
+// overlaps with the next pointer. This change guarantees that the masked vtable/next
+// pointer will never point to valid memory. So, we should immediately crash on the
+// first invalid vtable access for a stale RenderObject pointer.
+// See http://download.crowdstrike.com/papers/hes-exploiting-a-coalmine.pdf.
+static void* MaskPtr(void* p)
+{
+    // The bottom bits are predictable because the binary is loaded on a boundary.
+    // This just shifts most of those predictable bits out.
+    const uintptr_t mask = ~(reinterpret_cast<uintptr_t>(WTF::fastMalloc) >> 13);
+    return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(p) ^ mask);
+}
+#endif
+
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -103,7 +120,7 @@ void* RenderArena::allocate(size_t size)
         result = m_recyclers[index];
         if (result) {
             // Need to move to the next object
-            void* next = *((void**)result);
+            void* next = MaskPtr(*((void**)result));
             m_recyclers[index] = next;
         }
     }
@@ -143,7 +160,7 @@ void RenderArena::free(size_t size, void* ptr)
         const int index = size >> 2;
         void* currentTop = m_recyclers[index];
         m_recyclers[index] = ptr;
-        *((void**)ptr) = currentTop;
+        *((void**)ptr) = MaskPtr(currentTop);
     }
 #endif
 }
