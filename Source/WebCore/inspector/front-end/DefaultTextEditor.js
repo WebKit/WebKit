@@ -2029,7 +2029,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             var rangeBoundary = lineRow.rangeBoundaryForOffset(column);
         else {
             var offset = column;
-            for (var i = chunk.startLine; i < line; ++i)
+            for (var i = chunk.startLine; i < line && i < this._textModel.linesCount; ++i)
                 offset += this._textModel.lineLength(i) + 1; // \n
             lineRow = chunk.element;
             if (lineRow.firstChild)
