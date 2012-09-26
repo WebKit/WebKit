@@ -159,7 +159,8 @@ public:
     void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
     void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
     bool hasParentNode() const { return m_parentNode; }
-    
+
+    void resetAuthorStyle();
     void appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >&);
     
     // Find the ids or classes the selectors on a stylesheet are scoped to. The selectors only apply to elements in subtrees where the root element matches the scope.

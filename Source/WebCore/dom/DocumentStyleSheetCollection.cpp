@@ -374,9 +374,9 @@ bool DocumentStyleSheetCollection::testAddedStyleSheetRequiresStyleRecalc(StyleS
     return false;
 }
 
-void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleResolverReset, bool& requiresFullStyleRecalc)
+void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
 {
-    requiresStyleResolverReset = true;
+    styleResolverUpdateType = Reconstruct;
     requiresFullStyleRecalc = true;
     
     // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
@@ -397,25 +397,41 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     if (!m_document->styleResolverIfExists())
         return;
 
-    // See if we are just adding stylesheets.
+    // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_authorStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
         return;
-    for (unsigned i = 0; i < oldStylesheetCount; ++i) {
-        if (m_authorStyleSheets[i] != newStylesheets[i])
+    Vector<StyleSheet*> addedSheets;
+    unsigned newIndex = 0;
+    for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
+        if (newIndex >= newStylesheetCount)
             return;
+        while (m_authorStyleSheets[oldIndex] != newStylesheets[newIndex]) {
+            addedSheets.append(newStylesheets[newIndex].get());
+            ++newIndex;
+            if (newIndex == newStylesheetCount)
+                return;
+        }
+        ++newIndex;
     }
-    requiresStyleResolverReset = false;
+    bool hasInsertions = !addedSheets.isEmpty();
+    while (newIndex < newStylesheetCount) {
+        addedSheets.append(newStylesheets[newIndex].get());
+        ++newIndex;
+    }
+    // If all new sheets were added at the end of the list we can just add them to existing StyleResolver.
+    // If there were insertions we need to re-add all the stylesheets so rules are ordered correctly.
+    styleResolverUpdateType = hasInsertions ? Reset : Additive;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
     if (!m_document->body() || m_document->hasNodesWithPlaceholderStyle())
         return;
-    for (unsigned i = oldStylesheetCount; i < newStylesheetCount; ++i) {
-        if (!newStylesheets[i]->isCSSStyleSheet())
+    for (unsigned i = 0; i < addedSheets.size(); ++i) {
+        if (!addedSheets[i]->isCSSStyleSheet())
             return;
-        if (newStylesheets[i]->disabled())
+        if (addedSheets[i]->disabled())
             continue;
-        if (testAddedStyleSheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())->contents()))
+        if (testAddedStyleSheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(addedSheets[i])->contents()))
             return;
     }
     requiresFullStyleRecalc = false;
@@ -449,14 +465,21 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     Vector<RefPtr<StyleSheet> > newStylesheets;
     collectActiveStyleSheets(newStylesheets);
 
-    bool requiresStyleResolverReset;
+    StyleResolverUpdateType styleResolverUpdateType;
     bool requiresFullStyleRecalc;
-    analyzeStyleSheetChange(updateFlag, newStylesheets, requiresStyleResolverReset, requiresFullStyleRecalc);
+    analyzeStyleSheetChange(updateFlag, newStylesheets, styleResolverUpdateType, requiresFullStyleRecalc);
 
-    if (requiresStyleResolverReset)
+    if (styleResolverUpdateType == Reconstruct)
         m_document->clearStyleResolver();
     else {
-        m_document->styleResolver()->appendAuthorStylesheets(m_authorStyleSheets.size(), newStylesheets);
+        StyleResolver* styleResolver = m_document->styleResolver();
+        if (styleResolverUpdateType == Reset) {
+            styleResolver->resetAuthorStyle();
+            styleResolver->appendAuthorStylesheets(0, newStylesheets);
+        } else {
+            ASSERT(styleResolverUpdateType == Additive);
+            styleResolver->appendAuthorStylesheets(m_authorStyleSheets.size(), newStylesheets);
+        }
         resetCSSFeatureFlags();
     }
     m_authorStyleSheets.swap(newStylesheets);

@@ -425,11 +425,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     if (m_rootDefaultStyle && view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
-    m_authorStyle = RuleSet::create();
-    // Adding rules from multiple sheets, shrink at the end.
-    // Adding global rules from multiple sheets, shrink at the end.
-    // Note that there usually is only 1 sheet for scoped rules, so auto-shrink-to-fit is fine.
-    m_authorStyle->disableAutoShrinkToFit();
+    resetAuthorStyle();
 
     DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
     // FIXME: This sucks! The user sheet is reparsed every time!
@@ -546,6 +542,12 @@ inline RuleSet* StyleResolver::ruleSetForScope(const ContainerNode* scope) const
     return it != m_scopedAuthorStyles.end() ? it->second.get() : 0; 
 }
 #endif
+
+void StyleResolver::resetAuthorStyle()
+{
+    m_authorStyle = RuleSet::create();
+    m_authorStyle->disableAutoShrinkToFit();
+}
 
 void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >& stylesheets)
 {

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<iframe></iframe>
+</body>
+<script>
+var frame = document.getElementsByTagName("iframe")[0];
+var testDoc = frame.contentDocument;
+var docText = "";
+docText += "<body><style>.foo {color:red}</style>";
+docText += "<div class='bar'>Foo</div>";
+for (var i = 0; i < 10000; ++i)
+    docText += "<div class='foo'>Foo</div>";
+testDoc.body.innerHTML = docText;
+
+PerfTestRunner.run(function() {
+    var styleElem = testDoc.createElement("style");
+    styleElem.innerText = ".bar {color:green}";
+    testDoc.body.insertBefore(styleElem, testDoc.body.firstChild);
+}, 50, 10);
+</script>
+</html>

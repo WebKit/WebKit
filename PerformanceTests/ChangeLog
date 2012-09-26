@@ -1,3 +1,14 @@
+2012-09-25  Antti Koivisto  <antti@apple.com>
+
+        Optimize stylesheet insertions
+        https://bugs.webkit.org/show_bug.cgi?id=97627
+
+        Reviewed by Andreas Kling.
+
+        Add synthetic performance test for avoiding style recalcs on stylesheet inserts.
+
+        * CSS/StyleSheetInsert.html: Added.
+
 2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip Dromaeo/jslib-modify-jquery.html per bug 95376.
