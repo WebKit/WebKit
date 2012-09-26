@@ -462,6 +462,82 @@ void WebDevToolsAgentImpl::autoZoomPageToFitWidth()
         m_metricsSupport->autoZoomPageToFitWidthOnNavigation(m_webViewImpl->mainFrameImpl()->frame());
 }
 
+void WebDevToolsAgentImpl::getAllocatedObjects(HashSet<const void*>& set)
+{
+    class CountingVisitor : public WebDevToolsAgentClient::AllocatedObjectVisitor {
+    public:
+        CountingVisitor() : m_totalObjectsCount(0)
+        {
+        }
+        virtual bool visitObject(const void* ptr)
+        {
+            ++m_totalObjectsCount;
+            return true;
+        }
+        size_t totalObjectsCount()
+        {
+            return m_totalObjectsCount;
+        }
+
+    private:
+        size_t m_totalObjectsCount;
+    };
+
+    CountingVisitor counter;
+    m_client->visitAllocatedObjects(&counter);
+
+    class PointerCollector : public WebDevToolsAgentClient::AllocatedObjectVisitor {
+    public:
+        explicit PointerCollector(size_t maxObjectsCount)
+            : m_maxObjectsCount(maxObjectsCount)
+            , m_index(0)
+            , m_success(true)
+            , m_pointers(new const void*[maxObjectsCount])
+        {
+        }
+        ~PointerCollector()
+        {
+            delete[] m_pointers;
+        }
+        virtual bool visitObject(const void* ptr)
+        {
+            if (m_index == m_maxObjectsCount) {
+                m_success = false;
+                return false;
+            }
+            m_pointers[m_index++] = ptr;
+            return true;
+        }
+
+        bool success() const { return m_success; }
+
+        void copyTo(HashSet<const void*>& set)
+        {
+            for (size_t i = 0; i < m_index; i++)
+                set.add(m_pointers[i]);
+        }
+
+    private:
+        const size_t m_maxObjectsCount;
+        size_t m_index;
+        bool m_success;
+        const void** m_pointers;
+    };
+
+    // Double size to allow room for all objects that may have been allocated
+    // since we counted them.
+    size_t estimatedMaxObjectsCount = counter.totalObjectsCount() * 2;
+    while (true) {
+        PointerCollector collector(estimatedMaxObjectsCount);
+        m_client->visitAllocatedObjects(&collector);
+        if (collector.success()) {
+            collector.copyTo(set);
+            break;
+        }
+        estimatedMaxObjectsCount *= 2;
+    }
+}
+
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
     inspectorController()->dispatchMessageFromFrontend(message);

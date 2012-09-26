@@ -1,3 +1,16 @@
+2012-09-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: compare objects counted by the memory instrumentation with those allocated in the heap
+        https://bugs.webkit.org/show_bug.cgi?id=97641
+
+        Reviewed by Pavel Feldman.
+
+        Added a method for checking if reported object was actually allocated in the heap.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+
 2012-09-26  Gavin Barraclough  <barraclough@apple.com>
 
         String.localeCompare should normalize input

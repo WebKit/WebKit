@@ -46,7 +46,7 @@ typedef HashSet<const void*> VisitedObjects;
 
 class MemoryInstrumentationImpl : public WTF::MemoryInstrumentation {
 public:
-    explicit MemoryInstrumentationImpl(VisitedObjects&);
+    MemoryInstrumentationImpl(VisitedObjects&, const VisitedObjects* allocatedObjects = 0);
 
     size_t selfSize() const;
     size_t totalSize(MemoryObjectType objectType) const
@@ -68,11 +68,14 @@ private:
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
     virtual void processDeferredInstrumentedPointers() OVERRIDE;
+    virtual void checkCountedObject(const void*) OVERRIDE;
 
     typedef HashMap<MemoryObjectType, size_t> TypeToSizeMap;
     TypeToSizeMap m_totalSizes;
     VisitedObjects& m_visitedObjects;
     Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
+    const VisitedObjects* m_allocatedObjects;
+    size_t m_totalCountedObjects;
 };
 
 } // namespace WebCore

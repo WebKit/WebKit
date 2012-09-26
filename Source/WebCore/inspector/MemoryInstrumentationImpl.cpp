@@ -33,11 +33,15 @@
 #if ENABLE(INSPECTOR)
 
 #include "MemoryInstrumentationImpl.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-MemoryInstrumentationImpl::MemoryInstrumentationImpl(VisitedObjects& visitedObjects)
+MemoryInstrumentationImpl::MemoryInstrumentationImpl(VisitedObjects& visitedObjects, const VisitedObjects* allocatedObjects
+    )
     : m_visitedObjects(visitedObjects)
+    , m_allocatedObjects(allocatedObjects)
+    , m_totalCountedObjects(0)
 {
 }
 
@@ -56,6 +60,7 @@ void MemoryInstrumentationImpl::countObjectSize(MemoryObjectType objectType, siz
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
     if (!result.isNewEntry)
         result.iterator->second += size;
+    ++m_totalCountedObjects;
 }
 
 void MemoryInstrumentationImpl::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
@@ -66,6 +71,16 @@ void MemoryInstrumentationImpl::deferInstrumentedPointer(PassOwnPtr<Instrumented
 bool MemoryInstrumentationImpl::visited(const void* object)
 {
     return !m_visitedObjects.add(object).isNewEntry;
+}
+
+void MemoryInstrumentationImpl::checkCountedObject(const void* object)
+{
+    if (!m_allocatedObjects)
+        return;
+    if (!m_allocatedObjects->contains(object)) {
+        printf("Found unknwown object referenced byPointer: %p\n", object);
+        WTFReportBacktrace();
+    }
 }
 
 size_t MemoryInstrumentationImpl::selfSize() const

@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
+#include "InspectorClient.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
@@ -516,9 +517,12 @@ private:
 
 }
 
-static void collectDomTreeInfo(Page* page, VisitedObjects& visitedObjects, TypeBuilder::Array<InspectorMemoryBlock>* children, InspectorDataCounter* inspectorData)
+static void collectDomTreeInfo(Page* page, InspectorClient* inspectorClient, VisitedObjects& visitedObjects, TypeBuilder::Array<InspectorMemoryBlock>* children, InspectorDataCounter* inspectorData)
 {
-    MemoryInstrumentationImpl memoryInstrumentation(visitedObjects);
+    HashSet<const void*> allocatedObjects;
+    inspectorClient->getAllocatedObjects(allocatedObjects);
+    MemoryInstrumentationImpl memoryInstrumentation(visitedObjects, allocatedObjects.isEmpty() ? 0 : &allocatedObjects);
+
     DOMTreesIterator domTreesIterator(page, memoryInstrumentation);
 
     ScriptProfiler::visitNodeWrappers(&domTreesIterator);
@@ -588,7 +592,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     children->addItem(jsHeapInfo());
     children->addItem(renderTreeInfo(m_page)); // FIXME: collect for all pages?
     children->addItem(jsExternalResourcesInfo(visitedObjects));
-    collectDomTreeInfo(m_page, visitedObjects, children.get(), &inspectorData); // FIXME: collect for all pages?
+    collectDomTreeInfo(m_page, m_inspectorClient, visitedObjects, children.get(), &inspectorData); // FIXME: collect for all pages?
     children->addItem(inspectorData.dumpStatistics());
     children->addItem(dumpDOMStorageCache(m_domStorageAgent->memoryBytesUsedByStorageCache()));
     addPlatformComponentsInfo(children);
@@ -600,8 +604,9 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     processMemory->setSize(privateBytes);
 }
 
-InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMStorageAgent* domStorageAgent)
+InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorState* state, Page* page, InspectorDOMStorageAgent* domStorageAgent)
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
+    , m_inspectorClient(client)
     , m_page(page)
     , m_domStorageAgent(domStorageAgent)
 {

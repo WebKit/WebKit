@@ -107,6 +107,7 @@ private:
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
     virtual bool visited(const void*) = 0;
     virtual void processDeferredInstrumentedPointers() = 0;
+    virtual void checkCountedObject(const void*) = 0;
 
     friend class MemoryClassInfo;
     template<typename T> friend void reportMemoryUsage(const T* const&, MemoryObjectInfo*);
@@ -224,6 +225,7 @@ void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectTy
     } else {
         if (!object || visited(object))
             return;
+        checkCountedObject(object);
         deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object, ownerObjectType)));
     }
 }
@@ -231,16 +233,20 @@ void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectTy
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer && !visited(object))
+    if (owningType == byPointer && !visited(object)) {
         countObjectSize(ownerObjectType, sizeof(*object));
+        checkCountedObject(object);
+    }
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer && !visited(object))
+    if (owningType == byPointer && !visited(object)) {
         countObjectSize(ownerObjectType, sizeof(*object));
+        checkCountedObject(object);
+    }
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 

@@ -78,6 +78,8 @@ public:
 
     virtual bool supportsFrameInstrumentation();
 
+    virtual void getAllocatedObjects(HashSet<const void*>&);
+
 private:
     // WebThread::TaskObserver
     virtual void willProcessTask();

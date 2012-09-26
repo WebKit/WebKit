@@ -106,6 +106,8 @@ public:
     virtual void overrideDeviceMetrics(int width, int height, float fontScaleFactor, bool fitWindow);
     virtual void autoZoomPageToFitWidth();
 
+    virtual void getAllocatedObjects(HashSet<const void*>&);
+
     int hostId() { return m_hostId; }
 
     // WebPageOverlay

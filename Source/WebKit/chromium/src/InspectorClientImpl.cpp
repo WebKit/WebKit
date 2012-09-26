@@ -163,6 +163,12 @@ bool InspectorClientImpl::supportsFrameInstrumentation()
     return true;
 }
 
+void InspectorClientImpl::getAllocatedObjects(HashSet<const void*>& set)
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->getAllocatedObjects(set);
+}
+
 void InspectorClientImpl::willProcessTask()
 {
     InspectorInstrumentation::willProcessTask(m_inspectedWebView->page());
