@@ -1818,6 +1818,9 @@ webkit.org/b/71758 fast/url/idna2003.html [ Failure Pass ]
 # New testRunner function added at r57993
 crbug.com/42696 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Timeout ]
 
+# Skia DEPS roll 5677
+crbug.com/152503 svg/batik/filters/feTile.svg [ ImageOnlyFailure ]
+
 # WebKit roll 58304:58400
 webkit.org/b/93221 [ Mac ] fast/text/international/bold-bengali.html [ ImageOnlyFailure ]
 webkit.org/b/93221 [ Win7 ] fast/text/international/bold-bengali.html [ Failure ]
