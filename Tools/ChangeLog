@@ -1,5 +1,12 @@
 2012-09-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Speculative build fix for Production builds.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
+2012-09-25  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the build after r129566.
 
         * DumpRenderTree/mac/FrameLoadDelegate.mm:
