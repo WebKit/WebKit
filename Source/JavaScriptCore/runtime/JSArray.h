@@ -72,7 +72,7 @@ namespace JSC {
         JSValue pop(ExecState*);
 
         bool shiftCount(ExecState*, unsigned count);
-        bool unshiftCount(ExecState*, unsigned count);
+        bool unshiftCount(ExecState*, unsigned, unsigned);
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
         void copyToArguments(ExecState*, CallFrame*, uint32_t length);
@@ -101,7 +101,7 @@ namespace JSC {
 
         void setLengthWritable(ExecState*, bool writable);
 
-        bool unshiftCountSlowCase(JSGlobalData&, unsigned count);
+        bool unshiftCountSlowCase(JSGlobalData&, bool, unsigned);
         
         unsigned compactForSorting(JSGlobalData&);
     };

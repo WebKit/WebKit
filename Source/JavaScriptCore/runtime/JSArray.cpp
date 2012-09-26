@@ -246,7 +246,7 @@ void JSArray::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pro
 }
 
 // This method makes room in the vector, but leaves the new space uncleared.
-bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
+bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, bool addToFront, unsigned count)
 {
     ArrayStorage* storage = ensureArrayStorage(globalData);
     Butterfly* butterfly = storage->butterfly();
@@ -254,7 +254,7 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
     unsigned propertySize = structure()->outOfLineSize();
 
     // If not, we should have handled this on the fast path.
-    ASSERT(count > storage->m_indexBias);
+    ASSERT(!addToFront || count > storage->m_indexBias);
 
     // Step 1:
     // Gather 4 key metrics:
@@ -278,7 +278,7 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
     unsigned desiredCapacity = min(MAX_STORAGE_VECTOR_LENGTH, max(BASE_VECTOR_LEN, requiredVectorLength) << 1);
 
     // Step 2:
-    // We're either going to choose to allocate a new ArrayStorage, or we're going to reuse the existing on.
+    // We're either going to choose to allocate a new ArrayStorage, or we're going to reuse the existing one.
 
     void* newAllocBase = 0;
     unsigned newStorageCapacity;
@@ -297,11 +297,14 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
     // Work out where we're going to move things to.
 
     // Determine how much of the vector to use as pre-capacity, and how much as post-capacity.
+    // If we're adding to the end, we'll add all the new space to the end.
     // If the vector had no free post-capacity (length >= m_vectorLength), don't give it any.
     // If it did, we calculate the amount that will remain based on an atomic decay - leave the
     // vector with half the post-capacity it had previously.
     unsigned postCapacity = 0;
-    if (length < storage->vectorLength()) {
+    if (!addToFront)
+        postCapacity = max(newStorageCapacity - requiredVectorLength, count);
+    else if (length < storage->vectorLength()) {
         // Atomic decay, + the post-capacity cannot be greater than what is available.
         postCapacity = min((storage->vectorLength() - length) >> 1, newStorageCapacity - requiredVectorLength);
         // If we're moving contents within the same allocation, the post-capacity is being reduced.
@@ -312,8 +315,12 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
     unsigned newIndexBias = newStorageCapacity - newVectorLength;
 
     Butterfly* newButterfly = Butterfly::fromBase(newAllocBase, newIndexBias, propertyCapacity);
-    
-    memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+
+    if (addToFront)
+        memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+    else if (newAllocBase != butterfly->base(structure()))
+        memmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+
     memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
     
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
@@ -529,7 +536,7 @@ bool JSArray::shiftCount(ExecState* exec, unsigned count)
 }
 
 // Returns true if the unshift can be handled, false to fallback.    
-bool JSArray::unshiftCount(ExecState* exec, unsigned count)
+bool JSArray::unshiftCount(ExecState* exec, unsigned startIndex, unsigned count)
 {
     ArrayStorage* storage = ensureArrayStorage(exec->globalData());
     unsigned length = storage->length();
@@ -539,12 +546,18 @@ bool JSArray::unshiftCount(ExecState* exec, unsigned count)
     if (length != storage->m_numValuesInVector || storage->inSparseMode())
         return false;
 
-    if (storage->m_indexBias >= count) {
+    bool moveFront = !startIndex || startIndex < length / 2;
+
+    unsigned vectorLength = storage->vectorLength();
+
+    if (moveFront && storage->m_indexBias >= count) {
         m_butterfly = storage->butterfly()->unshift(structure(), count);
         storage = m_butterfly->arrayStorage();
         storage->m_indexBias -= count;
-        storage->setVectorLength(storage->vectorLength() + count);
-    } else if (unshiftCountSlowCase(exec->globalData(), count))
+        storage->setVectorLength(vectorLength + count);
+    } else if (!moveFront && vectorLength - length >= count)
+        storage = storage->butterfly()->arrayStorage();
+    else if (unshiftCountSlowCase(exec->globalData(), moveFront, count))
         storage = arrayStorage();
     else {
         throwOutOfMemoryError(exec);
@@ -552,8 +565,16 @@ bool JSArray::unshiftCount(ExecState* exec, unsigned count)
     }
 
     WriteBarrier<Unknown>* vector = storage->m_vector;
+
+    if (startIndex) {
+        if (moveFront)
+            memmove(vector, vector + count, startIndex * sizeof(JSValue));
+        else
+            memmove(vector + startIndex + count, vector + startIndex, (length - startIndex) * sizeof(JSValue));
+    }
+
     for (unsigned i = 0; i < count; i++)
-        vector[i].clear();
+        vector[i + startIndex].clear();
     return true;
 }
 

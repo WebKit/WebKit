@@ -1,3 +1,26 @@
+2012-09-26  Michael Saboff  <msaboff@apple.com>
+
+        Add ability for JSArray::unshiftCount to unshift in middle of an array
+        https://bugs.webkit.org/show_bug.cgi?id=97691
+
+        Reviewed by Filip Pizlo.
+
+        Changed JSArray::unshiftCount and unshiftCountSlowCase to handle unshifting from the middle of an
+        array.  Depending on where the unshift point is, either the front part of the array will be moved
+        "left" or the back part will be moved right.  Given that unshiftCount only works on contiguous
+        arrays it is safe to use memmove for the moves.
+
+        This change is worth 25% performance improvement on pdfjs.  It doesn't seem to have any impact on
+        any other benchmarks.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::unshift):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::unshiftCount):
+        * runtime/JSArray.h:
+        (JSArray):
+
 2012-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129592.
