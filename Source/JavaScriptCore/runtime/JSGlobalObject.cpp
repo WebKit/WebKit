@@ -502,6 +502,11 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_internalFunctionStructure);
 }
 
+JSObject* JSGlobalObject::toThisObject(JSCell* cell, ExecState*)
+{
+    return jsCast<JSGlobalObject*>(cell)->globalThis();
+}
+
 ExecState* JSGlobalObject::globalExec()
 {
     return CallFrame::create(m_globalCallFrame + RegisterFile::CallFrameHeaderSize);

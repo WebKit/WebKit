@@ -544,8 +544,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSGlobalObjectFunctions.cpp \
 	Source/JavaScriptCore/runtime/JSGlobalObjectFunctions.h \
 	Source/JavaScriptCore/runtime/JSGlobalObject.h \
-	Source/JavaScriptCore/runtime/JSGlobalThis.cpp \
-	Source/JavaScriptCore/runtime/JSGlobalThis.h \
+	Source/JavaScriptCore/runtime/JSProxy.cpp \
+	Source/JavaScriptCore/runtime/JSProxy.h \
 	Source/JavaScriptCore/runtime/JSLock.cpp \
 	Source/JavaScriptCore/runtime/JSLock.h \
 	Source/JavaScriptCore/runtime/JSNotAnObject.cpp \

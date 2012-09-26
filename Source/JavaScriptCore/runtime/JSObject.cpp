@@ -32,7 +32,6 @@
 #include "IndexingHeaderInlineMethods.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSGlobalThis.h"
 #include "Lookup.h"
 #include "NativeErrorConstructor.h"
 #include "Nodes.h"

@@ -314,7 +314,7 @@ EXPORTS
     ?setSetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setToCurrentLocalTime@GregorianDateTime@WTF@@QAEXXZ
     ?setUndefined@PropertyDescriptor@JSC@@QAEXXZ
-    ?setUnwrappedObject@JSGlobalThis@JSC@@IAEXAAVJSGlobalData@2@PAVJSGlobalObject@2@@Z
+    ?setTarget@JSProxy@JSC@@IAEXAAVJSGlobalData@2@PAVJSGlobalObject@2@@Z
     ?setUpStaticFunctionSlot@JSC@@YA_NPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@VPropertyName@1@AAVPropertySlot@1@@Z
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
@@ -368,7 +368,7 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?validate@SlotVisitor@JSC@@CAXPAVJSCell@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
-    ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
+    ?visitChildren@JSProxy@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHI@Z

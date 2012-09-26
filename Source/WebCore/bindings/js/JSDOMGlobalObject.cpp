@@ -60,7 +60,7 @@ void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData)
     ASSERT(inherits(&s_info));
 }
 
-void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalThis* thisValue)
+void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSObject* thisValue)
 {
     Base::finishCreation(globalData, thisValue);
     ASSERT(inherits(&s_info));

@@ -48,7 +48,7 @@ enum JSType {
     NameInstanceType,
     NumberObjectType,
     ErrorInstanceType,
-    GlobalThisType,
+    ProxyType,
     WithScopeType,
 
     NameScopeObjectType,

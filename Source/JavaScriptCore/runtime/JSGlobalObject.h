@@ -24,7 +24,6 @@
 
 #include "JSArray.h"
 #include "JSGlobalData.h"
-#include "JSGlobalThis.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
@@ -192,7 +191,7 @@ namespace JSC {
             init(this);
         }
 
-        void finishCreation(JSGlobalData& globalData, JSGlobalThis* thisValue)
+        void finishCreation(JSGlobalData& globalData, JSObject* thisValue)
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);
@@ -365,6 +364,8 @@ namespace JSC {
             unsigned attributes;
         };
         JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
+
+        JS_EXPORT_PRIVATE static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
 
     private:
         friend class LLIntOffsetsExtractor;

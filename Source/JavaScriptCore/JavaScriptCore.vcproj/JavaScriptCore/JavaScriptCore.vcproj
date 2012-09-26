@@ -874,11 +874,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSGlobalThis.cpp"
+				RelativePath="..\..\runtime\JSProxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSGlobalThis.h"
+				RelativePath="..\..\runtime\JSProxy.h"
 				>
 			</File>
 			<File

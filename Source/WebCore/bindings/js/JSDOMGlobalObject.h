@@ -29,7 +29,6 @@
 
 #include "PlatformExportMacros.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSGlobalThis.h>
 
 
 namespace WebCore {
@@ -52,7 +51,7 @@ namespace WebCore {
         JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>, const JSC::GlobalObjectMethodTable* = 0);
         static void destroy(JSC::JSCell*);
         void finishCreation(JSC::JSGlobalData&);
-        void finishCreation(JSC::JSGlobalData&, JSC::JSGlobalThis*);
+        void finishCreation(JSC::JSGlobalData&, JSC::JSObject*);
 
     public:
         JSDOMStructureMap& structures() { return m_structures; }
