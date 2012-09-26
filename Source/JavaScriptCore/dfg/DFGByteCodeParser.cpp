@@ -1567,13 +1567,22 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
         
         Array::Mode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
-        if (!modeIsJSArray(arrayMode))
+        switch (arrayMode) {
+        case Array::ArrayWithArrayStorageToHole:
+            ASSERT_NOT_REACHED();
+            
+        case Array::ArrayWithArrayStorage:
+        case Array::ArrayWithArrayStorageOutOfBounds: {
+            NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
+            if (usesResult)
+                set(resultOperand, arrayPush);
+            
+            return true;
+        }
+            
+        default:
             return false;
-        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
-        if (usesResult)
-            set(resultOperand, arrayPush);
-        
-        return true;
+        }
     }
         
     case ArrayPopIntrinsic: {
@@ -1581,12 +1590,21 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
         
         Array::Mode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
-        if (!modeIsJSArray(arrayMode))
+        switch (arrayMode) {
+        case Array::ArrayWithArrayStorageToHole:
+            ASSERT_NOT_REACHED();
+            
+        case Array::ArrayWithArrayStorage:
+        case Array::ArrayWithArrayStorageOutOfBounds: {
+            NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
+            if (usesResult)
+                set(resultOperand, arrayPop);
+            return true;
+        }
+            
+        default:
             return false;
-        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
-        if (usesResult)
-            set(resultOperand, arrayPop);
-        return true;
+        }
     }
 
     case CharCodeAtIntrinsic: {

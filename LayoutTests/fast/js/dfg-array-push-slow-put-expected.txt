@@ -1,0 +1,210 @@
+Tests that defining a setter on the Array prototype works with ArrayPush.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+Ouch!
+PASS "0,1,2,,4" is "0,1,2,,4"
+PASS ouches is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

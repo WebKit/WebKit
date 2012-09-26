@@ -315,6 +315,8 @@ public:
                 case ResolveBase:
                 case ResolveBaseStrictPut:
                 case ResolveGlobal:
+                case ArrayPush:
+                case ArrayPop:
                 case Arrayify:
                     clobber(live);
                     break;

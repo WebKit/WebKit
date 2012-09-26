@@ -1,3 +1,17 @@
+2012-09-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ArrayPush, ArrayPop don't handle clobbering or having a bad time correctly
+        https://bugs.webkit.org/show_bug.cgi?id=97535
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
 2012-09-25  Geoffrey Garen  <ggaren@apple.com>
 
         JSC should dump object size inference statistics

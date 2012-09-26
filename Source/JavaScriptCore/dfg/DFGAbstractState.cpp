@@ -1001,11 +1001,13 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case ArrayPush:
         node.setCanExit(true);
+        clobberWorld(node.codeOrigin, indexInBlock);
         forNode(nodeIndex).set(SpecNumber);
         break;
             
     case ArrayPop:
         node.setCanExit(true);
+        clobberWorld(node.codeOrigin, indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             

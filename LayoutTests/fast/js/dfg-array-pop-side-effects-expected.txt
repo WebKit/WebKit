@@ -1,0 +1,260 @@
+Tests that ArrayPop is known to the DFG to be a side effect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+PASS foo(a, b) is 45
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+Ouch!
+PASS foo(a, b) is 0/0
+PASS ouches is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

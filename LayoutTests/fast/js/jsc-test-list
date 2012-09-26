@@ -80,6 +80,9 @@ fast/js/dfg-arguments-osr-exit
 fast/js/dfg-arguments-out-of-bounds
 fast/js/dfg-arguments-unexpected-escape
 fast/js/dfg-array-length-dead
+fast/js/dfg-array-pop-side-effects
+fast/js/dfg-array-push-bad-time
+fast/js/dfg-array-push-slow-put
 fast/js/dfg-bool-to-int32-reuse
 fast/js/dfg-branch-not-fail
 fast/js/dfg-check-two-structures
