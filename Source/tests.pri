@@ -27,8 +27,6 @@ linux-* {
     SUBDIRS += $$WEBKIT_TESTS_DIR/MIMESniffing
 }
 
-have?(QQUICK1): SUBDIRS += $$WEBKIT_TESTS_DIR/qdeclarativewebview
-
 # Benchmarks
 SUBDIRS += \
     $$WEBKIT_TESTS_DIR/benchmarks/painting \

@@ -1,3 +1,42 @@
+2012-09-26  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Remove Qt Quick 1 support
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        It is being moved to the Qt5 QtQuick1 module.
+
+        A circular dependency exists otherwise in Qt, where QtWebKit would depend on QtQuick1,
+        which in turn depends on QtTools (for designer plugin), which in turn depends on QtWebKit
+        (for assistant help html rendering).
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+        * declarative/public.pri:
+        * declarative/qdeclarativewebview.cpp: Removed.
+        * declarative/qdeclarativewebview_p.h: Removed.
+        * tests/qdeclarativewebview/qdeclarativewebview.pro: Removed.
+        * tests/qdeclarativewebview/resources/basic.html: Removed.
+        * tests/qdeclarativewebview/resources/basic.png: Removed.
+        * tests/qdeclarativewebview/resources/basic.qml: Removed.
+        * tests/qdeclarativewebview/resources/elements.html: Removed.
+        * tests/qdeclarativewebview/resources/elements.qml: Removed.
+        * tests/qdeclarativewebview/resources/forward.html: Removed.
+        * tests/qdeclarativewebview/resources/forward.png: Removed.
+        * tests/qdeclarativewebview/resources/javaScript.html: Removed.
+        * tests/qdeclarativewebview/resources/javaScript.qml: Removed.
+        * tests/qdeclarativewebview/resources/loadError.qml: Removed.
+        * tests/qdeclarativewebview/resources/newwindows.html: Removed.
+        * tests/qdeclarativewebview/resources/newwindows.qml: Removed.
+        * tests/qdeclarativewebview/resources/propertychanges.qml: Removed.
+        * tests/qdeclarativewebview/resources/sample.html: Removed.
+        * tests/qdeclarativewebview/resources/sethtml.qml: Removed.
+        * tests/qdeclarativewebview/resources/webviewbackgroundcolor.qml: Removed.
+        * tests/qdeclarativewebview/resources/webviewtest.qml: Removed.
+        * tests/qdeclarativewebview/resources/webviewtestdefault.qml: Removed.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp: Removed.
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.qrc: Removed.
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397

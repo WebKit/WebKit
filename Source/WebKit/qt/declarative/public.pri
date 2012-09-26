@@ -26,11 +26,6 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 
 QT += webkit webkit-private widgets quick quick-private
 
-have?(QQUICK1) {
-    SOURCES += qdeclarativewebview.cpp
-    HEADERS += qdeclarativewebview_p.h
-}
-
 WEBKIT += wtf
 
 DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
