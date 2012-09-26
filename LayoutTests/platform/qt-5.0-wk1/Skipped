@@ -68,3 +68,6 @@ touchadjustment/focusout-on-touch.html
 # [Qt][WK1] xmlviewer/extensions-api.html times out
 # https://bugs.webkit.org/show_bug.cgi?id=97389
 xmlviewer/extensions-api.html
+
+# [Qt][WK1] ERROR: TestRunner::overridePreference() does not support the 'WebKitStorageBlockingPolicy' preference
+http/tests/security/cross-origin-local-storage-wk1.html
