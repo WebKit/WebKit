@@ -187,6 +187,7 @@ namespace WebCore {
         GRefPtr<GInputStream> m_inputStream;
         GRefPtr<GCancellable> m_cancellable;
         GRefPtr<GAsyncResult> m_deferredResult;
+        GRefPtr<GSource> m_timeoutSource;
         char* m_buffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;

@@ -7,6 +7,7 @@
  * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2009, 2010, 2011 Igalia S.L.
  * Copyright (C) 2009 John Kjellberg <john.kjellberg@power.alstom.com>
+ * Copyright (C) 2012 Intel Corporation
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,6 +71,9 @@
 namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
+
+// Use the same value as in NSURLError.h
+static const int gTimeoutError = -1001;
 
 static bool loadingSynchronousRequest = false;
 
@@ -201,6 +205,7 @@ static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
 static void closeCallback(GObject*, GAsyncResult*, gpointer);
+static gboolean requestTimeoutCallback(void*);
 static bool startNonHTTPRequest(ResourceHandle*, KURL);
 #if ENABLE(WEB_TIMING)
 static int  milisecondsSinceRequest(double requestTime);
@@ -377,6 +382,11 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     if (d->m_buffer) {
         g_slice_free1(READ_BUFFER_SIZE, d->m_buffer);
         d->m_buffer = 0;
+    }
+
+    if (d->m_timeoutSource) {
+        g_source_destroy(d->m_timeoutSource.get());
+        d->m_timeoutSource.clear();
     }
 
     if (!isDestroying)
@@ -754,6 +764,10 @@ static bool startHTTPRequest(ResourceHandle* handle)
 #if ENABLE(WEB_TIMING)
         d->m_response.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
 #endif
+        if (d->m_firstRequest.timeoutInterval() > 0) {
+            // soup_add_timeout returns a GSource* whose only reference is owned by the context. We need to have our own reference to it, hence not using adoptRef.
+            d->m_timeoutSource = soup_add_timeout(g_main_context_get_thread_default(), d->m_firstRequest.timeoutInterval() * 1000, requestTimeoutCallback, handle);
+        }
         d->m_cancellable = adoptGRef(g_cancellable_new());
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
     }
@@ -839,9 +853,12 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     if (d->m_cancelled)
         return;
 
-    // We only need to take action here to UN-defer loading.
-    if (defersLoading)
+    // Except when canceling a possible timeout timer, we only need to take action here to UN-defer loading.
+    if (defersLoading) {
+        g_source_destroy(d->m_timeoutSource.get());
+        d->m_timeoutSource.clear();
         return;
+    }
 
     // We need to check for d->m_soupRequest because the request may
     // have raised a failure (for example invalid URLs). We cannot
@@ -853,6 +870,10 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
             d->m_response.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
 #endif
         d->m_cancellable = adoptGRef(g_cancellable_new());
+        if (d->m_firstRequest.timeoutInterval() > 0) {
+            // soup_add_timeout returns a GSource* whose only reference is owned by the context. We need to have our own reference to it, hence not using adoptRef.
+            d->m_timeoutSource = soup_add_timeout(g_main_context_get_thread_default(), d->m_firstRequest.timeoutInterval() * 1000, requestTimeoutCallback, this);
+        }
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, this);
         return;
     }
@@ -973,6 +994,20 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
                               d->m_cancellable.get(), readCallback, handle.get());
 }
 
+static gboolean requestTimeoutCallback(gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+    ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
+
+    ResourceError timeoutError("WebKitNetworkError", gTimeoutError, d->m_firstRequest.url().string(), "Request timed out");
+    timeoutError.setIsTimeout(true);
+    client->didFail(handle.get(), timeoutError);
+    cleanupSoupRequestOperation(handle.get());
+
+    return FALSE;
+}
+
 static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
 {
     ASSERT(handle);
@@ -1001,6 +1036,10 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
+        if (d->m_firstRequest.timeoutInterval() > 0) {
+            // soup_add_timeout returns a GSource* whose only reference is owned by the context. We need to have our own reference to it, hence not using adoptRef.
+            d->m_timeoutSource = soup_add_timeout(g_main_context_get_thread_default(), d->m_firstRequest.timeoutInterval() * 1000, requestTimeoutCallback, handle);
+        }
         soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, handle);
     }
 
