@@ -147,17 +147,16 @@ inline bool needsLineBreakIterator(UChar ch)
     return ch > asciiLineBreakTableLastChar && ch != noBreakSpace;
 }
 
-template<bool treatNoBreakSpaceAsBreak>
-static inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
+template<typename CharacterType, bool treatNoBreakSpaceAsBreak>
+static inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* str, unsigned length, int pos)
 {
-    const UChar* str = lazyBreakIterator.string();
-    int len = lazyBreakIterator.length();
+    int len = static_cast<int>(length);
     int nextBreak = -1;
 
-    UChar lastLastCh = pos > 1 ? str[pos - 2] : 0;
-    UChar lastCh = pos > 0 ? str[pos - 1] : 0;
+    CharacterType lastLastCh = pos > 1 ? str[pos - 2] : 0;
+    CharacterType lastCh = pos > 0 ? str[pos - 1] : 0;
     for (int i = pos; i < len; i++) {
-        UChar ch = str[i];
+        CharacterType ch = str[i];
 
         if (isBreakableSpace<treatNoBreakSpaceAsBreak>(ch) || shouldBreakAfter(lastLastCh, lastCh, ch))
             return i;
@@ -181,12 +180,18 @@ static inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator
 
 int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, int pos)
 {
-    return nextBreakablePosition<false>(lazyBreakIterator, pos);
+    String string = lazyBreakIterator.string();
+    if (string.is8Bit())
+        return nextBreakablePosition<LChar, false>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePosition<UChar, false>(lazyBreakIterator, string.characters16(), string.length(), pos);
 }
 
 int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
 {
-    return nextBreakablePosition<true>(lazyBreakIterator, pos);
+    String string = lazyBreakIterator.string();
+    if (string.is8Bit())
+        return nextBreakablePosition<LChar, true>(lazyBreakIterator, string.characters8(), string.length(), pos);
+    return nextBreakablePosition<UChar, true>(lazyBreakIterator, string.characters16(), string.length(), pos);
 }
 
 } // namespace WebCore

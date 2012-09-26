@@ -54,12 +54,240 @@ static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator
     return iterator;
 }
 
+static const int s_UTextCharacterBufferSize = 16;
+
+typedef struct {
+    UText uTextStruct;
+    UChar uCharBuffer[s_UTextCharacterBufferSize + 1];
+} UTextWithBuffer;
+
+static UText emptyUText = UTEXT_INITIALIZER;
+
+static UText* uTextLatin1Clone(UText*, const UText*, UBool, UErrorCode*);
+static int64_t uTextLatin1NativeLength(UText*);
+static UBool uTextLatin1Access(UText*, int64_t, UBool);
+static int32_t uTextLatin1Extract(UText*, int64_t, int64_t, UChar*, int32_t, UErrorCode*);
+static int64_t uTextLatin1MapOffsetToNative(const UText*);
+static int32_t uTextLatin1MapNativeIndexToUTF16(const UText*, int64_t);
+static void uTextLatin1Close(UText*);
+
+static struct UTextFuncs uTextLatin1Funcs = {
+    sizeof(UTextFuncs),
+    0, 0, 0,
+    uTextLatin1Clone,
+    uTextLatin1NativeLength,
+    uTextLatin1Access,
+    uTextLatin1Extract,
+    0,
+    0,
+    uTextLatin1MapOffsetToNative,
+    uTextLatin1MapNativeIndexToUTF16,
+    uTextLatin1Close,
+    0, 0, 0
+};
+
+static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool deep, UErrorCode* status)
+{
+    ASSERT_UNUSED(deep, !deep);
+
+    if (U_FAILURE(*status))
+        return 0;
+
+    UText* result = utext_setup(destination, sizeof(UChar) * (s_UTextCharacterBufferSize + 1), status);
+    if (U_FAILURE(*status))
+        return destination;
+    
+    result->providerProperties = source->providerProperties;
+    
+    /* Point at the same position, but with an empty buffer */
+    result->chunkNativeStart = source->chunkNativeStart;
+    result->chunkNativeLimit = source->chunkNativeStart;
+    result->nativeIndexingLimit = source->chunkNativeStart;
+    result->chunkOffset = 0;
+    result->context = source->context;
+    result->a = source->a;
+    result->pFuncs = &uTextLatin1Funcs;
+    result->chunkContents = (UChar*)result->pExtra;
+    memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * (s_UTextCharacterBufferSize + 1));
+
+    return result;
+}
+
+static int64_t uTextLatin1NativeLength(UText* uText)
+{
+    return uText->a;
+}
+
+static UBool uTextLatin1Access(UText* uText, int64_t index, UBool forward)
+{
+    int64_t length = uText->a;
+
+    if (forward) {
+        if (index < uText->chunkNativeLimit && index >= uText->chunkNativeStart) {
+            /* Already inside the buffer. Set the new offset. */
+            uText->chunkOffset = (int32_t)(index - uText->chunkNativeStart);
+            return TRUE;
+        }
+        if (index >= length && uText->chunkNativeLimit == length) {
+            /* Off the end of the buffer, but we can't get it. */
+            uText->chunkOffset = uText->chunkLength;
+            return FALSE;
+        }
+    } else {
+        if (index <= uText->chunkNativeLimit && index > uText->chunkNativeStart) {
+            /* Already inside the buffer. Set the new offset. */
+            uText->chunkOffset = (int32_t)(index - uText->chunkNativeStart);
+            return TRUE;
+        }
+        if (!index && !uText->chunkNativeStart) {
+            /* Already at the beginning; can't go any farther */
+            uText->chunkOffset = 0;
+            return FALSE;
+        }
+    }
+    
+    if (forward) {
+        uText->chunkNativeStart = index;
+        uText->chunkNativeLimit = uText->chunkNativeStart + s_UTextCharacterBufferSize;
+        if (uText->chunkNativeLimit > length)
+            uText->chunkNativeLimit = length;
+
+        uText->chunkOffset = 0;
+    } else {
+        uText->chunkNativeLimit = index;
+        if (uText->chunkNativeLimit > length)
+            uText->chunkNativeLimit = length;
+
+        uText->chunkNativeStart = uText->chunkNativeLimit -  s_UTextCharacterBufferSize;
+        if (uText->chunkNativeStart < 0)
+            uText->chunkNativeStart = 0;
+
+        uText->chunkOffset = uText->chunkLength;
+    }
+    uText->chunkLength = (int32_t) (uText->chunkNativeLimit - uText->chunkNativeStart);
+
+    StringImpl::copyChars(const_cast<UChar*>(uText->chunkContents), static_cast<const LChar*>(uText->context) + uText->chunkNativeStart, static_cast<unsigned>(uText->chunkLength));
+
+    uText->nativeIndexingLimit = uText->chunkLength;
+
+    return TRUE;
+}
+
+static int32_t uTextLatin1Extract(UText* uText, int64_t start, int64_t limit, UChar* dest, int32_t destCapacity, UErrorCode* status)
+{
+    int64_t length = uText->a;
+    if (U_FAILURE(*status))
+        return 0;
+
+    if (destCapacity < 0 || (!dest && destCapacity > 0)) {
+        *status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+
+    if (start < 0 || start > limit || (limit - start) > INT32_MAX) {
+        *status = U_INDEX_OUTOFBOUNDS_ERROR;
+        return 0;
+    }
+
+    if (start > length)
+        start = length;
+    if (limit > length)
+        limit = length;
+
+    length = limit - start;
+    
+    if (!length)
+        return 0;
+
+    if (destCapacity > 0 && !dest) {
+        int32_t trimmedLength = length;
+        if (trimmedLength > destCapacity)
+            trimmedLength = destCapacity;
+
+        StringImpl::copyChars(dest, static_cast<const LChar*>(uText->context) + start, static_cast<unsigned>(trimmedLength));
+    }
+
+    if (length < destCapacity) {
+        dest[length] = 0;
+        if (*status == U_STRING_NOT_TERMINATED_WARNING)
+            *status = U_ZERO_ERROR;
+    } else if (length == destCapacity)
+        *status = U_STRING_NOT_TERMINATED_WARNING;
+    else
+        *status = U_BUFFER_OVERFLOW_ERROR;
+
+    return length;
+}
+
+static int64_t uTextLatin1MapOffsetToNative(const UText* uText)
+{
+    return uText->chunkNativeStart + uText->chunkOffset;
+}
+
+static int32_t uTextLatin1MapNativeIndexToUTF16(const UText* uText, int64_t nativeIndex)
+{
+    ASSERT_UNUSED(uText, uText->chunkNativeStart >= nativeIndex);
+    ASSERT_UNUSED(uText, nativeIndex < uText->chunkNativeLimit);
+    return nativeIndex;
+}
+
+static void uTextLatin1Close(UText* uText)
+{
+    uText->context = 0;
+}
+
+static UText* UTextOpenLatin1(UTextWithBuffer* uTextLatin1, const LChar* string, unsigned length, UErrorCode* errorCode)
+{
+    UText* result = utext_setup(reinterpret_cast<UText*>(uTextLatin1), sizeof(UChar) * (s_UTextCharacterBufferSize + 1), errorCode);
+    
+    if (!U_SUCCESS(*errorCode))
+        return 0;
+
+    result->context = string;
+    result->a = (int64_t)length;
+    result->pFuncs = &uTextLatin1Funcs;
+    result->chunkContents = (UChar*)result->pExtra;
+    memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * (s_UTextCharacterBufferSize + 1));
+    
+    return result;
+}
+
 TextBreakIterator* wordBreakIterator(const UChar* string, int length)
 {
     static bool createdWordBreakIterator = false;
     static TextBreakIterator* staticWordBreakIterator;
     return setUpIterator(createdWordBreakIterator,
         staticWordBreakIterator, UBRK_WORD, string, length);
+}
+
+TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, const AtomicString& locale)
+{
+    UBreakIterator* iterator = LineBreakIteratorPool::sharedPool().take(locale);
+    if (!iterator)
+        return 0;
+
+    UTextWithBuffer uTextLatin1Local;
+    uTextLatin1Local.uTextStruct = emptyUText;
+    uTextLatin1Local.uTextStruct.extraSize = sizeof(uTextLatin1Local.uCharBuffer);
+    uTextLatin1Local.uTextStruct.pExtra = uTextLatin1Local.uCharBuffer;
+
+    UErrorCode uTextOpenStatus = U_ZERO_ERROR;
+    UText* uTextLatin1 = UTextOpenLatin1(&uTextLatin1Local, string, length, &uTextOpenStatus);
+    if (U_FAILURE(uTextOpenStatus)) {
+        LOG_ERROR("UTextOpenLatin1 failed with status %d", uTextOpenStatus);
+        return 0;
+    }
+
+    UErrorCode setTextStatus = U_ZERO_ERROR;
+    ubrk_setUText(iterator, uTextLatin1, &setTextStatus);
+    if (U_FAILURE(setTextStatus)) {
+        LOG_ERROR("ubrk_setUText failed with status %d", setTextStatus);
+        return 0;
+    }
+
+    utext_close(uTextLatin1);
+
+    return reinterpret_cast<TextBreakIterator*>(iterator);
 }
 
 TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString& locale)

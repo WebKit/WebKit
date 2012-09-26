@@ -2450,7 +2450,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 renderTextInfo.m_text = t;
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
-                renderTextInfo.m_lineBreakIterator.reset(t->characters(), t->textLength(), style->locale());
+                renderTextInfo.m_lineBreakIterator.reset(t->text(), style->locale());
             } else if (renderTextInfo.m_layout && renderTextInfo.m_font != &f) {
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
