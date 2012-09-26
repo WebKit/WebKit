@@ -116,6 +116,7 @@
 		BC0E24E00E2D9451001B6BC2 /* AccessibilityUIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */; };
 		BC0E24E10E2D9451001B6BC2 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */; };
 		BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */; };
+		BC0E24E00E2D9451001B6BC3 /* AccessibilityCommonMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E24DE0E2D9451001B6BC3 /* AccessibilityCommonMac.h */; };
 		BC0E26150E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */; };
 		BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4741290D038A4C0072B006 /* JavaScriptThreading.h */; };
 		BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4741400D038A570072B006 /* JavaScriptThreadingPthreads.cpp */; };
@@ -324,6 +325,7 @@
 		BC0131D80C9772010087317D /* TestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunner.cpp; sourceTree = "<group>"; };
 		BC0131D90C9772010087317D /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
 		BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElement.h; sourceTree = "<group>"; };
+		BC0E24DE0E2D9451001B6BC3 /* AccessibilityCommonMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac/AccessibilityCommonMac.h; sourceTree = "<group>"; };
 		BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityUIElement.cpp; sourceTree = "<group>"; };
 		BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityUIElementMac.mm; path = mac/AccessibilityUIElementMac.mm; sourceTree = "<group>"; };
 		BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityCommonMac.mm; path = mac/AccessibilityCommonMac.mm; sourceTree = "<group>"; };
@@ -505,7 +507,7 @@
 				BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */,
 				BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */,
 				BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */,
-				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
+				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.h */,
 				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCA18B360C9B021900114369 /* AppleScriptController.h */,
 				BCA18B370C9B021900114369 /* AppleScriptController.m */,

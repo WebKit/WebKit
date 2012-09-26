@@ -1,3 +1,11 @@
+2012-09-26  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build change.
+
+        Reverting inadvertent change to project file.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2012-09-26  Harald Tveit Alvestrand  <harald@alvestrand.no>
 
         Implement the GetStats interface on PeerConnection
