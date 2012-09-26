@@ -22,9 +22,9 @@
 
 #include "BridgeJSC.h"
 #include "JSWeakObjectMapRefPrivate.h"
-#include <QPointer>
 #include "Weak.h"
 #include "runtime_root.h"
+#include <QPointer>
 #include <qhash.h>
 #include <qset.h>
 

@@ -48,8 +48,8 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#include <QGuiApplication>
 #include <QClipboard>
+#include <QGuiApplication>
 #include <QImage>
 #include <QList>
 #include <QMimeData>

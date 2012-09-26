@@ -28,11 +28,11 @@
 #define ImageDecoderQt_h
 
 #include "ImageDecoder.h"
+#include <QtCore/QBuffer>
+#include <QtCore/QHash>
+#include <QtCore/QList>
 #include <QtGui/QImageReader>
 #include <QtGui/QPixmap>
-#include <QtCore/QList>
-#include <QtCore/QHash>
-#include <QtCore/QBuffer>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

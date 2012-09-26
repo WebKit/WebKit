@@ -34,7 +34,7 @@
 #include <QSocketNotifier>
 
 extern "C" {
-    #include <libudev.h>
+#include <libudev.h>
 }
 
 #include <unistd.h>

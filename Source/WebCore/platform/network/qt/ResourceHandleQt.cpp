@@ -42,10 +42,10 @@
 
 #include <QAbstractNetworkCache>
 #include <QCoreApplication>
-#include <QUrl>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QUrl>
 
 namespace WebCore {
 

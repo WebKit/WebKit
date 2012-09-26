@@ -30,8 +30,8 @@
 #include "PropertyNameArray.h"
 #include "qt_class.h"
 #include "qt_runtime.h"
-#include "runtime_object.h"
 #include "runtime/FunctionPrototype.h"
+#include "runtime_object.h"
 
 #include <qdebug.h>
 #include <qhash.h>

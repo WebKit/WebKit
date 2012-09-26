@@ -35,9 +35,9 @@
 #include "Image.h"
 #include "RenderImage.h"
 #include "markup.h"
-#include <qguiapplication.h>
 #include <qclipboard.h>
 #include <qdebug.h>
+#include <qguiapplication.h>
 #include <qmimedata.h>
 #include <qurl.h>
 

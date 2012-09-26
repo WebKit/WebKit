@@ -28,9 +28,9 @@
 #include "PluginPackage.h"
 
 #include "MIMETypeRegistry.h"
-#include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
+#include "npruntime_impl.h"
 #include <QFileInfo>
 #include <wtf/text/CString.h>
 

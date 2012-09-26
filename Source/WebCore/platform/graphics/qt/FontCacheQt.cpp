@@ -25,9 +25,9 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "Font.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
-#include "Font.h"
 #include <utility>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>

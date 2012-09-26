@@ -38,8 +38,8 @@
 #include "NativeImageQt.h"
 #include "StrokeStyleApplier.h"
 #include <QPainterPath>
-#include <QTransform>
 #include <QString>
+#include <QTransform>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>

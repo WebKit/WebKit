@@ -19,9 +19,9 @@
 #ifndef DnsPrefetchHelper_h
 #define DnsPrefetchHelper_h
 
-#include <QObject>
 #include <QCache>
 #include <QHostInfo>
+#include <QObject>
 #include <QSet>
 #include <QString>
 #include <QTime>

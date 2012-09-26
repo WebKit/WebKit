@@ -36,8 +36,8 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
-#include "Widget.h"
 #include "QWebPageClient.h"
+#include "Widget.h"
 #include <QGuiApplication>
 #include <QScreen>
 

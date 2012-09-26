@@ -28,10 +28,9 @@
 #include "Interpreter.h"
 #include "JSArray.h"
 #include "JSContextRefPrivate.h"
-#include "JSDocument.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
-#include <JSFunction.h>
+#include "JSDocument.h"
 #include "JSGlobalObject.h"
 #include "JSHTMLElement.h"
 #include "JSLock.h"
@@ -49,6 +48,7 @@
 #include "qt_instance.h"
 #include "qt_pixmapruntime.h"
 #include "qvarlengtharray.h"
+#include <JSFunction.h>
 
 #include <wtf/DateMath.h>
 

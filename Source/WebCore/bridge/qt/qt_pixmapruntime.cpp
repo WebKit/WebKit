@@ -31,13 +31,13 @@
 #include "JSRetainPtr.h"
 #include "JavaScript.h"
 #include "StillImageQt.h"
-#include <QtEndian>
 #include <QBuffer>
 #include <QByteArray>
 #include <QColor>
 #include <QImage>
 #include <QPixmap>
 #include <QVariant>
+#include <QtEndian>
 
 using namespace WebCore;
 namespace JSC {
