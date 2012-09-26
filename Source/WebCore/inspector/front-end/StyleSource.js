@@ -29,11 +29,11 @@
 /**
  * @constructor
  * @extends {WebInspector.UISourceCode}
- * @param {WebInspector.Resource} resource
+ * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.StyleSource = function(resource)
+WebInspector.StyleSource = function(contentProvider)
 {
-    WebInspector.UISourceCode.call(this, resource.url, resource, resource);
+    WebInspector.UISourceCode.call(this, contentProvider.contentURL(), contentProvider);
 }
 
 WebInspector.StyleSource.updateTimeout = 200;

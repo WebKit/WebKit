@@ -72,7 +72,6 @@ var test = function()
 
             function uiSourceCodeDumped()
             {
-                InspectorTest.addResult("UI resource: " + uiSourceCode.resource());
                 InspectorTest.assertTrue(!seenUISourceCodes.get(uiSourceCode), "UISourceCode matches two scripts: " + uiSourceCode.url);
                 seenUISourceCodes.put(uiSourceCode, uiSourceCode);
                 ++index;

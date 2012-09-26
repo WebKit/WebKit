@@ -72,10 +72,10 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             uiSourceCode = new WebInspector.StyleSource(resource);
             break;
         case WebInspector.resourceTypes.Document:
-            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, resource, false);
+            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, false);
             break;
         case WebInspector.resourceTypes.Script:
-            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, resource, true);
+            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, true);
             break;
         }
         if (uiSourceCode) {

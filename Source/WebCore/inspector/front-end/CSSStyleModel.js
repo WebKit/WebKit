@@ -1118,7 +1118,7 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
      */
     setStyleContent: function(styleSource, content, majorChange, userCallback)
     {
-        var resource = styleSource.resource();
+        var resource = WebInspector.resourceForURL(styleSource.url);
         if (this._styleSheetIdForResource(resource)) {
             this._innerSetContent(resource, content, majorChange, userCallback, null);
             return;

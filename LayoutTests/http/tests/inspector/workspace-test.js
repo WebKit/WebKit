@@ -39,7 +39,7 @@ InspectorTest.addMockUISourceCodeToWorkspace = function(url, type, content)
 {
     var isDocument = type === WebInspector.resourceTypes.Document;
     var mockContentProvider = new WebInspector.StaticContentProvider(type, content);
-    var uiSourceCode = new WebInspector.JavaScriptSource(url, null, mockContentProvider, !isDocument);
+    var uiSourceCode = new WebInspector.JavaScriptSource(url, mockContentProvider, !isDocument);
     InspectorTest.testWorkspace.project().addUISourceCode(uiSourceCode);
 }
 

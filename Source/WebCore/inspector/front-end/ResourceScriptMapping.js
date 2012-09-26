@@ -150,7 +150,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             url += " (" + nextIndex + ")";
             this._nextDynamicScriptIndexForURL[script.sourceURL] = nextIndex + 1;
         }
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, contentProvider, !script.isInlineScript());
+        var uiSourceCode = new WebInspector.JavaScriptSource(url, contentProvider, !script.isInlineScript());
         this._temporaryUISourceCodes.put(uiSourceCode, uiSourceCode);
         this._bindUISourceCodeToScripts(uiSourceCode, scripts);
 

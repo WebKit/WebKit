@@ -32,12 +32,11 @@
  * @constructor
  * @extends {WebInspector.UISourceCode}
  * @param {string} url
- * @param {WebInspector.Resource} resource
  * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.JavaScriptSource = function(url, resource, contentProvider, isEditable)
+WebInspector.JavaScriptSource = function(url, contentProvider, isEditable)
 {
-    WebInspector.UISourceCode.call(this, url, resource, contentProvider);
+    WebInspector.UISourceCode.call(this, url, contentProvider);
     this._isEditable = isEditable;
 }
 

@@ -280,7 +280,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _createUISourceCodeForScript: function(script)
     {
-        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, null, script, false);
+        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, false);
         uiSourceCode.setSourceMapping(this._snippetScriptMapping); 
         uiSourceCode.isSnippetEvaluation = true;
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
@@ -379,7 +379,7 @@ WebInspector.ScriptSnippetModel.prototype.__proto__ = WebInspector.Object.protot
  */
 WebInspector.SnippetJavaScriptSource = function(snippetId, snippetName, contentProvider, scriptSnippetModel)
 {
-    WebInspector.JavaScriptSource.call(this, snippetName, null, contentProvider, true);
+    WebInspector.JavaScriptSource.call(this, snippetName, contentProvider, true);
     this._snippetId = snippetId;
     this._scriptSnippetModel = scriptSnippetModel;
     this.isSnippet = true;

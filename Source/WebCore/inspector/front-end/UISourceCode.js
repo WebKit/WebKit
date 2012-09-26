@@ -34,13 +34,11 @@
  * @extends {WebInspector.Object}
  * @implements {WebInspector.ContentProvider}
  * @param {string} url
- * @param {WebInspector.Resource} resource
  * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.UISourceCode = function(url, resource, contentProvider)
+WebInspector.UISourceCode = function(url, contentProvider)
 {
     this._url = url;
-    this._resource = resource;
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentProvider = contentProvider;
     this.isContentScript = false;
@@ -91,14 +89,6 @@ WebInspector.UISourceCode.prototype = {
         this._url = url;
         this._parsedURL = new WebInspector.ParsedURL(this._url);
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.TitleChanged, null);
-    },
-
-    /**
-     * @return {WebInspector.Resource}
-     */
-    resource: function()
-    {
-        return this._resource;
     },
 
     /**

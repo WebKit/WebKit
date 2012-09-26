@@ -1100,8 +1100,9 @@ WebInspector.ScriptsPanel.prototype = {
 
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ target;
         contextMenu.appendItem(WebInspector.UIString("Local modifications..."), this._showLocalHistory.bind(this, uiSourceCode));
-        if (uiSourceCode.resource() && uiSourceCode.resource().request)
-            contextMenu.appendApplicableItems(uiSourceCode.resource().request);
+        var resource = WebInspector.resourceForURL(uiSourceCode.url);
+        if (resource && resource.request)
+            contextMenu.appendApplicableItems(resource.request);
     },
 
     /** 

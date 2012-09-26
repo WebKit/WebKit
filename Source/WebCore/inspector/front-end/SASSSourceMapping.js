@@ -167,7 +167,7 @@ WebInspector.SASSSource = function(sassURL)
 {
     var content = InspectorFrontendHost.loadResourceSynchronously(sassURL);
     var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-    WebInspector.UISourceCode.call(this, sassURL, null, contentProvider);
+    WebInspector.UISourceCode.call(this, sassURL, contentProvider);
 }
 
 WebInspector.SASSSource.prototype = {

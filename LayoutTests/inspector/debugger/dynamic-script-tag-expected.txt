@@ -14,12 +14,10 @@ UISourceCode is editable: true
 UISourceCode is content script: false
 Mime type: text/javascript
 UISourceCode content: function foo() { }
-UI resource: null
 UISourceCode: LayoutTests/inspector/debugger/dynamic-script-tag.html (2)
 UISourceCode is editable: true
 UISourceCode is content script: false
 Mime type: text/javascript
 UISourceCode content: function bar() { }
-UI resource: null
 Debugger was disabled.
 
