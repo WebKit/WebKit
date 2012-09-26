@@ -42,11 +42,11 @@ function testGetX()
     shouldBe('frames[0].eval("x")', frames[0].eval("x"), 1);
 
     window.eval = frameEval;
-    shouldBe('window.eval("x")', (function() { try { return window.eval("x") } catch(e) { return e.name; } })(), 1);
+    shouldBe('window.eval("x")', (function() { try { return window.eval("x") } catch(e) { return e.name; } })(), "EvalError");
     window.eval = topEval;
 
     frames[0].eval = topEval;
-    shouldBe('frames[0].eval("x")', (function() { try { frames[0].eval("x") } catch(e) { return e.name; } })(), undefined);
+    shouldBe('frames[0].eval("x")', (function() { try { frames[0].eval("x") } catch(e) { return e.name; } })(), "EvalError");
     frames[0].eval = frameEval;
 }
 
@@ -58,11 +58,11 @@ function testGetXX()
     shouldBe('frames[0].eval("xx")', (function() { try { return frames[0].eval("xx") } catch(e) { return e.name; } })(), "ReferenceError");
 
     window.eval = frameEval;
-    shouldBe('window.eval("xx")', (function() { try { return window.eval("xx") } catch(e) { return e.name; } })(), "ReferenceError");
+    shouldBe('window.eval("xx")', (function() { try { return window.eval("xx") } catch(e) { return e.name; } })(), "EvalError");
     window.eval = topEval;
 
     frames[0].eval = topEval;
-    shouldBe('frames[0].eval("xx")', (function() { try { return frames[0].eval("xx") } catch(e) { return e.name; } })(), "ReferenceError");
+    shouldBe('frames[0].eval("xx")', (function() { try { return frames[0].eval("xx") } catch(e) { return e.name; } })(), "EvalError");
     frames[0].eval = frameEval;
 }
 
@@ -77,13 +77,13 @@ function testVarY()
     delete frames[0].y;
 
     window.eval = frameEval;
-    shouldBe('window.eval("var y; \"y\" in top.frames[0]")', (function() { try { window.eval("var y; \"y\" in top.frames[0]") } catch(e) { return e.name; } })(), undefined);
+    shouldBe('window.eval("var y; \"y\" in top.frames[0]")', (function() { try { window.eval("var y; \"y\" in top.frames[0]") } catch(e) { return e.name; } })(), "EvalError");
     delete window.y;
     delete frames[0].y;
     window.eval = topEval;
 
     frames[0].eval = topEval;
-    shouldBe('frames[0].eval("var y; \"y\" in top")', (function() { try { frames[0].eval("var y; \"y\" in top") } catch(e) { return e.name; } })(), undefined);
+    shouldBe('frames[0].eval("var y; \"y\" in top")', (function() { try { frames[0].eval("var y; \"y\" in top") } catch(e) { return e.name; } })(), "EvalError");
     delete window.y;
     delete frames[0].y;
     frames[0].eval = frameEval;
@@ -99,25 +99,25 @@ function testSetZ()
     shouldBe('frames[0].eval("z = 2; top.frames[0].z")', frames[0].eval("z = 2; top.frames[0].z"), 2);
 
     window.eval = frameEval;
-    shouldBe('window.eval("z = 3; top.frames[0].z")', (function() { try { window.eval("z = 3; top.frames[0].z") } catch(e) { return e.name; } })(), undefined);
+    shouldBe('window.eval("z = 3; top.frames[0].z")', (function() { try { window.eval("z = 3; top.frames[0].z") } catch(e) { return e.name; } })(), "EvalError");
     window.eval = topEval;
 
     frames[0].eval = topEval;
-    shouldBe('frames[0].eval("z = 4; top.z")', (function() { try { frames[0].eval("z = 4; top.z") } catch(e) { return e.name; } })(), undefined);
+    shouldBe('frames[0].eval("z = 4; top.z")', (function() { try { frames[0].eval("z = 4; top.z") } catch(e) { return e.name; } })(), "EvalError");
     frames[0].eval = frameEval;
 }
 
 function testThis()
 {
-    shouldBe('window.eval("this")', window.eval.call("wrong", "this"), window);
-    shouldBe('frames[0].eval("this")', frames[0].eval.call("wrong", "this"), frames[0]);
+    shouldBe('window.eval("this")', window.eval("this"), window);
+    shouldBe('frames[0].eval("this")', frames[0].eval("this"), frames[0]);
 
     window.eval = frameEval;
-    shouldBe('window.eval("this")', (function() { try { window.eval.call("wrong", "this"), frames[0] } catch(e) { return e.name; } })(), undefined);
+    shouldBe('window.eval("this")', (function() { try { window.eval("this"), frames[0] } catch(e) { return e.name; } })(), "EvalError");
     window.eval = topEval;
 
     frames[0].eval = topEval;
-    shouldBe('frames[0].eval("this")', (function() { try { frames[0].eval.call("wrong", "this"), window } catch(e) { return e.name; } })(), undefined);
+    shouldBe('frames[0].eval("this")', (function() { try { frames[0].eval("this"), window } catch(e) { return e.name; } })(), "EvalError");
     frames[0].eval = frameEval;
 }
 

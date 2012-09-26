@@ -497,6 +497,11 @@ static double parseFloat(const String& s)
 
 EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 {
+    JSObject* thisObject = exec->hostThisValue().toThisObject(exec);
+    JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
+    if (thisObject != exec->callee()->globalObject()->globalThis())
+        return throwVMError(exec, createEvalError(exec, ASCIILiteral("The \"this\" value passed to eval must be the global object from which eval originated")));
+
     JSValue x = exec->argument(0);
     if (!x.isString())
         return JSValue::encode(x);
@@ -513,13 +518,12 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
             return JSValue::encode(parsedObject);        
     }
 
-    JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
     EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false);
     JSObject* error = eval->compile(exec, calleeGlobalObject);
     if (error)
         return throwVMError(exec, error);
 
-    return JSValue::encode(exec->interpreter()->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject));
+    return JSValue::encode(exec->interpreter()->execute(eval, exec, thisObject, calleeGlobalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
