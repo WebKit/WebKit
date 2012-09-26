@@ -62,7 +62,7 @@
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
 #if ENABLE(CSS_EXCLUSIONS)
-#include "WrapShapeInfo.h"
+#include "ExclusionShapeInsideInfo.h"
 #endif
 
 using namespace std;
@@ -279,7 +279,7 @@ void RenderBlock::willBeDestroyed()
         lineGridBox()->destroy(renderArena());
 
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo::removeWrapShapeInfoForRenderBlock(this);
+    ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(this);
 #endif
 
     if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
@@ -328,9 +328,9 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     RenderBox::styleDidChange(diff, oldStyle);
 
 #if ENABLE(CSS_EXCLUSIONS)
-    // FIXME: Bug 89993: Style changes should affect the WrapShapeInfos for other render blocks that
-    // share the same WrapShapeInfo
-    updateWrapShapeInfoAfterStyleChange(style()->wrapShapeInside(), oldStyle ? oldStyle->wrapShapeInside() : 0);
+    // FIXME: Bug 89993: Style changes should affect the ExclusionShapeInsideInfos for other render blocks that
+    // share the same ExclusionShapeInsideInfo
+    updateExclusionShapeInsideInfoAfterStyleChange(style()->wrapShapeInside(), oldStyle ? oldStyle->wrapShapeInside() : 0);
 #endif
 
     if (!isAnonymousBlock()) {
@@ -1380,24 +1380,24 @@ void RenderBlock::layout()
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
-void RenderBlock::updateWrapShapeInfoAfterStyleChange(const BasicShape* wrapShape, const BasicShape* oldWrapShape)
+void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const BasicShape* wrapShape, const BasicShape* oldWrapShape)
 {
     // FIXME: A future optimization would do a deep comparison for equality.
     if (wrapShape == oldWrapShape)
         return;
 
     if (wrapShape) {
-        WrapShapeInfo* wrapShapeInfo = WrapShapeInfo::ensureWrapShapeInfoForRenderBlock(this);
-        wrapShapeInfo->dirtyWrapShapeSize();
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ExclusionShapeInsideInfo::ensureExclusionShapeInsideInfoForRenderBlock(this);
+        exclusionShapeInsideInfo->dirtyShapeSize();
     } else
-        WrapShapeInfo::removeWrapShapeInfoForRenderBlock(this);
+        ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(this);
 }
 #endif
 
 void RenderBlock::updateRegionsAndExclusionsLogicalSize()
 {
 #if ENABLE(CSS_EXCLUSIONS)
-    if (!inRenderFlowThread() && !wrapShapeInfo())
+    if (!inRenderFlowThread() && !exclusionShapeInsideInfo())
 #else
     if (!inRenderFlowThread())
 #endif
@@ -1426,10 +1426,10 @@ void RenderBlock::updateRegionsAndExclusionsLogicalSize()
 #if ENABLE(CSS_EXCLUSIONS)
 void RenderBlock::computeExclusionShapeSize()
 {
-    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
-    if (wrapShapeInfo) {
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = this->exclusionShapeInsideInfo();
+    if (exclusionShapeInsideInfo) {
         bool percentageLogicalHeightResolvable = percentageLogicalHeightIsResolvableFromBlock(this, false);
-        wrapShapeInfo->computeShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : ZERO_LAYOUT_UNIT);
+        exclusionShapeInsideInfo->computeShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : ZERO_LAYOUT_UNIT);
     }
 }
 #endif

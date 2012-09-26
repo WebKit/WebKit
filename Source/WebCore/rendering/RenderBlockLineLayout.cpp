@@ -46,7 +46,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
-#include "WrapShapeInfo.h"
+#include "ExclusionShapeInsideInfo.h"
 #endif
 
 #if ENABLE(SVG)
@@ -64,9 +64,9 @@ namespace WebCore {
 const unsigned cMaxLineDepth = 200;
 
 #if ENABLE(CSS_EXCLUSIONS)
-static inline WrapShapeInfo* layoutWrapShapeInfo(const RenderBlock* block)
+static inline ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo(const RenderBlock* block)
 {
-    return block->view()->layoutState()->wrapShapeInfo();
+    return block->view()->layoutState()->exclusionShapeInsideInfo();
 }
 #endif
 
@@ -87,10 +87,10 @@ public:
     {
         ASSERT(block);
 #if ENABLE(CSS_EXCLUSIONS)
-        WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(m_block);
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(m_block);
         // FIXME: Bug 91878: Add support for multiple segments, currently we only support one
-        if (wrapShapeInfo && wrapShapeInfo->hasSegments())
-            m_segment = &wrapShapeInfo->segments()[0];
+        if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments())
+            m_segment = &exclusionShapeInsideInfo->segments()[0];
 #endif
         updateAvailableWidth();
     }
@@ -808,10 +808,10 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
     float logicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(this);
-    if (wrapShapeInfo && wrapShapeInfo->hasSegments()) {
-        logicalLeft = max<float>(roundToInt(wrapShapeInfo->segments()[0].logicalLeft), logicalLeft);
-        logicalRight = min<float>(floorToInt(wrapShapeInfo->segments()[0].logicalRight), logicalRight);
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
+    if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments()) {
+        logicalLeft = max<float>(roundToInt(exclusionShapeInsideInfo->segments()[0].logicalLeft), logicalLeft);
+        logicalRight = min<float>(floorToInt(exclusionShapeInsideInfo->segments()[0].logicalRight), logicalRight);
     }
 #endif
     float availableLogicalWidth = logicalRight - logicalLeft;
@@ -1301,16 +1301,16 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
 #if ENABLE(CSS_EXCLUSIONS)
     LayoutUnit absoluteLogicalTop;
-    WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(this);
-    if (wrapShapeInfo) {
-        if (wrapShapeInfo != this->wrapShapeInfo()) {
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
+    if (exclusionShapeInsideInfo) {
+        if (exclusionShapeInsideInfo != this->exclusionShapeInsideInfo()) {
             // FIXME: If layout state is disabled, the offset will be incorrect.
             LayoutSize layoutOffset = view()->layoutState()->layoutOffset();
             absoluteLogicalTop = logicalTop() + (isHorizontalWritingMode() ? layoutOffset.height() : layoutOffset.width());
         }
         // Begin layout at the logical top of our shape inside.
-        if (logicalHeight() + absoluteLogicalTop < wrapShapeInfo->shapeLogicalTop())
-            setLogicalHeight(wrapShapeInfo->shapeLogicalTop() - absoluteLogicalTop);
+        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop())
+            setLogicalHeight(exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop);
     }
 #endif
 
@@ -1335,10 +1335,10 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #if ENABLE(CSS_EXCLUSIONS)
         // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
         // case these segments may be incorrect.
-        if (wrapShapeInfo) {
+        if (exclusionShapeInsideInfo) {
             LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
             LayoutUnit lineBottom = lineTop + lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-            wrapShapeInfo->computeSegmentsForLine(lineTop, lineBottom);
+            exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineBottom);
         }
 #endif
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);

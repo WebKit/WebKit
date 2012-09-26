@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WrapShapeInfo_h
-#define WrapShapeInfo_h
+#ifndef ExclusionShapeInsideInfo_h
+#define ExclusionShapeInsideInfo_h
 
 #if ENABLE(CSS_EXCLUSIONS)
 
@@ -43,16 +43,16 @@ namespace WebCore {
 
 class RenderBlock;
 
-class WrapShapeInfo {
+class ExclusionShapeInsideInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ~WrapShapeInfo();
+    ~ExclusionShapeInsideInfo();
 
-    static PassOwnPtr<WrapShapeInfo> create(RenderBlock* block) { return adoptPtr(new WrapShapeInfo(block)); }
-    static WrapShapeInfo* wrapShapeInfoForRenderBlock(const RenderBlock*);
-    static WrapShapeInfo* ensureWrapShapeInfoForRenderBlock(RenderBlock*);
-    static void removeWrapShapeInfoForRenderBlock(const RenderBlock*);
-    static bool isWrapShapeInfoEnabledForRenderBlock(const RenderBlock*);
+    static PassOwnPtr<ExclusionShapeInsideInfo> create(RenderBlock* block) { return adoptPtr(new ExclusionShapeInsideInfo(block)); }
+    static ExclusionShapeInsideInfo* exclusionShapeInsideInfoForRenderBlock(const RenderBlock*);
+    static ExclusionShapeInsideInfo* ensureExclusionShapeInsideInfoForRenderBlock(RenderBlock*);
+    static void removeExclusionShapeInsideInfoForRenderBlock(const RenderBlock*);
+    static bool isExclusionShapeInsideInfoEnabledForRenderBlock(const RenderBlock*);
 
     LayoutUnit shapeLogicalTop() const 
     { 
@@ -76,10 +76,10 @@ public:
     bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom);
     bool lineOverlapsShapeBounds() const;
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
-    void dirtyWrapShapeSize() { m_wrapShapeSizeDirty = true; }
+    void dirtyShapeSize() { m_shapeSizeDirty = true; }
 
 private:
-    WrapShapeInfo(RenderBlock*);
+    ExclusionShapeInsideInfo(RenderBlock*);
 
     RenderBlock* m_block;
     OwnPtr<ExclusionShape> m_shape;
@@ -90,10 +90,10 @@ private:
     LayoutUnit m_logicalHeight;
 
     SegmentList m_segments;
-    bool m_wrapShapeSizeDirty;
+    bool m_shapeSizeDirty;
 };
 
-inline bool WrapShapeInfo::lineOverlapsShapeBounds() const
+inline bool ExclusionShapeInsideInfo::lineOverlapsShapeBounds() const
 {
     ASSERT(m_shape);
     FloatRect shapeBounds = m_shape->shapeLogicalBoundingBox();

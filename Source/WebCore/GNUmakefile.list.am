@@ -4893,6 +4893,8 @@ webcore_sources += \
 	Source/WebCore/rendering/ExclusionRectangle.h \
 	Source/WebCore/rendering/ExclusionShape.cpp \
 	Source/WebCore/rendering/ExclusionShape.h \
+	Source/WebCore/rendering/ExclusionShapeInsideInfo.cpp \
+	Source/WebCore/rendering/ExclusionShapeInsideInfo.h \
 	Source/WebCore/rendering/FilterEffectRenderer.cpp \
 	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \
@@ -5096,8 +5098,6 @@ webcore_sources += \
 	Source/WebCore/rendering/ScrollBehavior.cpp \
 	Source/WebCore/rendering/ScrollBehavior.h \
 	Source/WebCore/rendering/VerticalPositionCache.h \
-	Source/WebCore/rendering/WrapShapeInfo.cpp \
-	Source/WebCore/rendering/WrapShapeInfo.h \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \
 	Source/WebCore/rendering/mathml/RenderMathMLFenced.cpp \

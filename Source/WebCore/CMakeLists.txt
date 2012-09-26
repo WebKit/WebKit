@@ -2024,6 +2024,7 @@ SET(WebCore_SOURCES
     rendering/ExclusionInterval.cpp
     rendering/ExclusionRectangle.cpp
     rendering/ExclusionShape.cpp
+    rendering/ExclusionShapeInsideInfo.cpp
     rendering/FilterEffectRenderer.cpp
     rendering/FixedTableLayout.cpp
     rendering/FlowThreadController.cpp
@@ -2119,7 +2120,6 @@ SET(WebCore_SOURCES
     rendering/RenderWordBreak.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
-    rendering/WrapShapeInfo.cpp
     rendering/break_lines.cpp
 
     rendering/mathml/RenderMathMLBlock.cpp

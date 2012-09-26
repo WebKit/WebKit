@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "WrapShapeInfo.h"
+#include "ExclusionShapeInsideInfo.h"
 
 #if ENABLE(CSS_EXCLUSIONS)
 
@@ -39,56 +39,56 @@
 
 namespace WebCore {
 
-typedef HashMap<const RenderBlock*, OwnPtr<WrapShapeInfo> > WrapShapeInfoMap;
+typedef HashMap<const RenderBlock*, OwnPtr<ExclusionShapeInsideInfo> > ExclusionShapeInsideInfoMap;
 
-static WrapShapeInfoMap& wrapShapeInfoMap()
+static ExclusionShapeInsideInfoMap& exclusionShapeInsideInfoMap()
 {
-    DEFINE_STATIC_LOCAL(WrapShapeInfoMap, staticWrapShapeInfoMap, ());
-    return staticWrapShapeInfoMap;
+    DEFINE_STATIC_LOCAL(ExclusionShapeInsideInfoMap, staticExclusionShapeInsideInfoMap, ());
+    return staticExclusionShapeInsideInfoMap;
 }
 
-WrapShapeInfo::WrapShapeInfo(RenderBlock* block)
+ExclusionShapeInsideInfo::ExclusionShapeInsideInfo(RenderBlock* block)
     : m_block(block)
-    , m_wrapShapeSizeDirty(true)
+    , m_shapeSizeDirty(true)
 {
 }
 
-WrapShapeInfo::~WrapShapeInfo()
+ExclusionShapeInsideInfo::~ExclusionShapeInsideInfo()
 {
 }
 
-WrapShapeInfo* WrapShapeInfo::ensureWrapShapeInfoForRenderBlock(RenderBlock* block)
+ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::ensureExclusionShapeInsideInfoForRenderBlock(RenderBlock* block)
 {
-    WrapShapeInfoMap::AddResult result = wrapShapeInfoMap().add(block, create(block));
+    ExclusionShapeInsideInfoMap::AddResult result = exclusionShapeInsideInfoMap().add(block, create(block));
     return result.iterator->second.get();
 }
 
-WrapShapeInfo* WrapShapeInfo::wrapShapeInfoForRenderBlock(const RenderBlock* block)
+ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(const RenderBlock* block)
 {
     ASSERT(block->style()->wrapShapeInside());
-    return wrapShapeInfoMap().get(block);
+    return exclusionShapeInsideInfoMap().get(block);
 }
 
-bool WrapShapeInfo::isWrapShapeInfoEnabledForRenderBlock(const RenderBlock* block)
+bool ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock(const RenderBlock* block)
 {
     // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
     BasicShape* shape = block->style()->wrapShapeInside();
     return (shape && shape->type() == BasicShape::BASIC_SHAPE_RECTANGLE);
 }
 
-void WrapShapeInfo::removeWrapShapeInfoForRenderBlock(const RenderBlock* block)
+void ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(const RenderBlock* block)
 {
     if (!block->style() || !block->style()->wrapShapeInside())
         return;
-    wrapShapeInfoMap().remove(block);
+    exclusionShapeInsideInfoMap().remove(block);
 }
 
-void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
+void ExclusionShapeInsideInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
 {
-    if (!m_wrapShapeSizeDirty && logicalWidth == m_logicalWidth && logicalHeight == m_logicalHeight)
+    if (!m_shapeSizeDirty && logicalWidth == m_logicalWidth && logicalHeight == m_logicalHeight)
         return;
 
-    m_wrapShapeSizeDirty = false;
+    m_shapeSizeDirty = false;
     m_logicalWidth = logicalWidth;
     m_logicalHeight = logicalHeight;
 
@@ -100,7 +100,7 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
     ASSERT(m_shape);
 }
 
-bool WrapShapeInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom)
+bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     ASSERT(lineTop <= lineBottom);
     m_lineTop = lineTop;

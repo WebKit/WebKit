@@ -6472,8 +6472,8 @@
 		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
 		FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */; };
 		FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */; };
-		FD748ABF15BF74ED0059CF0D /* WrapShapeInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */; };
-		FD748AC015BF74ED0059CF0D /* WrapShapeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD748ABF15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */; };
+		FD748AC015BF74ED0059CF0D /* ExclusionShapeInsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */; };
 		FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */; };
 		FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */; };
@@ -13916,8 +13916,8 @@
 		FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaElementAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaElementAudioSourceNode.idl; sourceTree = "<group>"; };
-		FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapShapeInfo.cpp; sourceTree = "<group>"; };
-		FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapShapeInfo.h; sourceTree = "<group>"; };
+		FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShapeInsideInfo.cpp; sourceTree = "<group>"; };
+		FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShapeInsideInfo.h; sourceTree = "<group>"; };
 		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperDSPKernel.cpp; sourceTree = "<group>"; };
@@ -21352,6 +21352,8 @@
 				6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */,
 				6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */,
 				6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */,
+				FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */,
+				FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */,
 				31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */,
 				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
@@ -21562,8 +21564,6 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
-				FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */,
-				FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -23389,6 +23389,7 @@
 				6E8798BB15F81E4A00BFE4AA /* ExclusionInterval.h in Headers */,
 				6E8798BD15F81E4A00BFE4AA /* ExclusionRectangle.h in Headers */,
 				6E8798BF15F81E4A00BFE4AA /* ExclusionShape.h in Headers */,
+				FD748AC015BF74ED0059CF0D /* ExclusionShapeInsideInfo.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
 				44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */,
@@ -25528,7 +25529,6 @@
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
-				FD748AC015BF74ED0059CF0D /* WrapShapeInfo.h in Headers */,
 				9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */,
 				14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
@@ -26644,6 +26644,7 @@
 				6E8798BA15F81E4A00BFE4AA /* ExclusionInterval.cpp in Sources */,
 				6E8798BC15F81E4A00BFE4AA /* ExclusionRectangle.cpp in Sources */,
 				6E8798BE15F81E4A00BFE4AA /* ExclusionShape.cpp in Sources */,
+				FD748ABF15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
@@ -28630,7 +28631,6 @@
 				0B9056F80F2685F30095FF6A /* WorkerThreadableLoader.cpp in Sources */,
 				97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
-				FD748ABF15BF74ED0059CF0D /* WrapShapeInfo.cpp in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */,
 				00B9318713BA8DB30035A948 /* XMLDocumentParser.cpp in Sources */,

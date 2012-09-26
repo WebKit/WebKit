@@ -38447,6 +38447,14 @@
                                 >
                         </File>
 			<File
+				RelativePath="..\rendering\ExclusionShapeInsideInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\ExclusionShapeInsideInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\FilterEffectRenderer.cpp"
 				>
 				<FileConfiguration
@@ -42216,14 +42224,6 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderSlider.h"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\WrapShapeInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\WrapShapeInfo.h"
 				>
 			</File>
 			<File

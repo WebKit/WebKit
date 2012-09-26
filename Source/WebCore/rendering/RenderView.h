@@ -225,7 +225,7 @@ private:
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer->hasColumns() || renderer->inRenderFlowThread()
             || m_layoutState->lineGrid() || (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
 #if ENABLE(CSS_EXCLUSIONS)
-            || (renderer->isRenderBlock() && toRenderBlock(renderer)->wrapShapeInfo())
+            || (renderer->isRenderBlock() && toRenderBlock(renderer)->exclusionShapeInsideInfo())
 #endif
             ) {
             m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, pageHeightChanged, colInfo);

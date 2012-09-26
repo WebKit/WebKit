@@ -39,7 +39,7 @@ class RenderBox;
 class RenderObject;
 class RenderFlowThread;
 #if ENABLE(CSS_EXCLUSIONS)
-class WrapShapeInfo;
+class ExclusionShapeInsideInfo;
 #endif
 
 class LayoutState {
@@ -57,7 +57,7 @@ public:
         , m_renderer(0)
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
-        , m_wrapShapeInfo(0)
+        , m_exclusionShapeInsideInfo(0)
 #endif
     {
     }
@@ -95,7 +95,7 @@ public:
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo* wrapShapeInfo() const { return m_wrapShapeInfo; }
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const { return m_exclusionShapeInsideInfo; }
 #endif
 private:
     // The normal operator new is disallowed.
@@ -139,7 +139,7 @@ public:
     RenderObject* m_renderer;
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
-    WrapShapeInfo* m_wrapShapeInfo;
+    ExclusionShapeInsideInfo* m_exclusionShapeInsideInfo;
 #endif
 };
 
