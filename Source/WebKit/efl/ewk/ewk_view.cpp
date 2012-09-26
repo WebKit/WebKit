@@ -4634,7 +4634,7 @@ void ewk_view_fullscreen_exit(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
 
-    if (!smartData->api->fullscreen_enter || !smartData->api->fullscreen_enter(smartData)) {
+    if (!smartData->api->fullscreen_exit || !smartData->api->fullscreen_exit(smartData)) {
         Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
         ecore_evas_fullscreen_set(ecoreEvas, false);
     }

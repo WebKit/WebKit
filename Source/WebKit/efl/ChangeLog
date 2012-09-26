@@ -1,3 +1,15 @@
+2012-09-26  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Fix the typo in the ewk_view_fullscreen_exit()
+        https://bugs.webkit.org/show_bug.cgi?id=97635
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix the silly typo in the ewk_view_fullscreen_exit() API.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fullscreen_exit):
+
 2012-09-25  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Add fullscreen set/get APIs and callbacks
