@@ -367,13 +367,14 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
 
+        JS_EXPORT_PRIVATE void setGlobalThis(JSGlobalData&, JSObject* globalThis);
+
     private:
         friend class LLIntOffsetsExtractor;
         
         // FIXME: Fold reset into init.
         JS_EXPORT_PRIVATE void init(JSObject* thisValue);
         void reset(JSValue prototype);
-        void setGlobalThis(JSGlobalData&, JSObject* globalThis);
 
         void createThrowTypeError(ExecState*);
 

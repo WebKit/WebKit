@@ -34,10 +34,10 @@ class JSProxy : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static JSProxy* create(JSGlobalData& globalData, Structure* structure)
+    static JSProxy* create(JSGlobalData& globalData, Structure* structure, JSObject* target)
     {
         JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(globalData.heap)) JSProxy(globalData, structure);
-        proxy->finishCreation(globalData);
+        proxy->finishCreation(globalData, target);
         return proxy;
     }
 
@@ -48,7 +48,7 @@ public:
 
     static JS_EXPORTDATA const ClassInfo s_info;
 
-    JSGlobalObject* target() const { return m_target.get(); }
+    JSObject* target() const { return m_target.get(); }
 
 protected:
     JSProxy(JSGlobalData& globalData, Structure* structure)
@@ -59,6 +59,12 @@ protected:
     void finishCreation(JSGlobalData& globalData)
     {
         Base::finishCreation(globalData);
+    }
+
+    void finishCreation(JSGlobalData& globalData, JSObject* target)
+    {
+        Base::finishCreation(globalData);
+        m_target.set(globalData, this, target);
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
@@ -81,7 +87,7 @@ protected:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
 
 private:
-    WriteBarrier<JSGlobalObject> m_target;
+    WriteBarrier<JSObject> m_target;
 };
 
 } // namespace JSC

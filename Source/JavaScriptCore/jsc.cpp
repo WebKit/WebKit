@@ -33,6 +33,7 @@
 #include "JSCTypedArrayStubs.h"
 #include "JSFunction.h"
 #include "JSLock.h"
+#include "JSProxy.h"
 #include "JSString.h"
 #include "SamplingTool.h"
 #include <math.h>
@@ -176,6 +177,7 @@ public:
     {
         GlobalObject* object = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
         object->finishCreation(globalData, arguments);
+        object->setGlobalThis(globalData, JSProxy::create(globalData, JSProxy::createStructure(globalData, object), object));
         return object;
     }
 

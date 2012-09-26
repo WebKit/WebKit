@@ -1,5 +1,28 @@
 2012-09-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Proxy the global this in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=97734
+
+        Reviewed by Oliver Hunt.
+
+        Having jsc diverge from WebCore here is not beneficial; it potentially masks bugs and/or performance
+        problems from command line testing.
+
+        * jsc.cpp:
+        (GlobalObject::create):
+            - Create a this value proxy for the global object.
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+            - Make setGlobalThis protected.
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::create):
+        (JSC::JSProxy::target):
+        (JSC::JSProxy::finishCreation):
+        (JSProxy):
+            - Allow proxy target to be a JSObject, add target to create method.
+
+2012-09-26  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
