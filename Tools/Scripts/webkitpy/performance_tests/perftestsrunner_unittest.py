@@ -473,7 +473,7 @@ max 548000 bytes
 
     def test_run_with_slave_config_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
-            '--source-json-path=/mock-checkout/slave-config.json', '--test-results-server=some.host'])
+            '--slave-config-json-path=/mock-checkout/slave-config.json', '--test-results-server=some.host'])
         port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(runner.load_output_json(), [{
@@ -625,8 +625,10 @@ max 548000 bytes
                 '--builder-name', 'webkit-mac-1',
                 '--build-number=56',
                 '--time-out-ms=42',
+                '--no-show-results',
+                '--reset-results',
                 '--output-json-path=a/output.json',
-                '--source-json-path=a/source.json',
+                '--slave-config-json-path=a/source.json',
                 '--test-results-server=somehost',
                 '--debug'])
         self.assertEqual(options.build, True)
@@ -636,6 +638,8 @@ max 548000 bytes
         self.assertEqual(options.build_number, '56')
         self.assertEqual(options.time_out_ms, '42')
         self.assertEqual(options.configuration, 'Debug')
+        self.assertEqual(options.show_results, False)
+        self.assertEqual(options.reset_results, True)
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.slave_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')

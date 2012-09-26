@@ -1,3 +1,20 @@
+2012-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove deprecated code from perftestrunner.py
+        https://bugs.webkit.org/show_bug.cgi?id=97724
+
+        Reviewed by Adam Barth.
+
+        Remove the code deprecated in r129580 now that we have landed r129597,
+        which updated master.cfg to use new options, and restarted the buildbot master.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._generate_and_show_results):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_with_slave_config_json):
+        (test_parse_args):
+
 2012-09-26  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=97629
