@@ -24,6 +24,7 @@
 #include <wtf/RefCounted.h>
 #include "CSSPrimitiveValue.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,10 +50,33 @@ public:
     void setFirst(PassRefPtr<CSSPrimitiveValue> first) { m_first = first; }
     void setSecond(PassRefPtr<CSSPrimitiveValue> second) { m_second = second; }
 
+    String cssText() const
+    {
+    
+        return generateCSSString(first()->cssText(), second()->cssText());
+    }
+
+#if ENABLE(CSS_VARIABLES)
+    String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+    {
+        return generateCSSString(first()->customSerializeResolvingVariables(variables),
+                                 second()->customSerializeResolvingVariables(variables));
+    }
+    
+    bool hasVariableReference() const { return first()->hasVariableReference() || second()->hasVariableReference(); }
+#endif
+
 private:
     Pair() : m_first(0), m_second(0) { }
     Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
         : m_first(first), m_second(second) { }
+
+    static String generateCSSString(const String& first, const String& second)
+    {
+        if (first == second)
+            return first;
+        return first + ' ' + second;
+    }
 
     RefPtr<CSSPrimitiveValue> m_first;
     RefPtr<CSSPrimitiveValue> m_second;

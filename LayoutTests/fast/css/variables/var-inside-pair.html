@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.internals)
+    internals.settings.setCSSVariablesEnabled(true);
+</script>
+<style>
+body {
+    border: 1px solid green;
+    border-top-left-radius: -webkit-var(a) -webkit-var(b);
+    -webkit-var-a: 3px;
+    -webkit-var-b: 6px;
+}
+</style>
+This text should be surrounded by a green border with a rounded top left corner.
+</html>

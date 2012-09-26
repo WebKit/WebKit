@@ -988,31 +988,12 @@ String CSSPrimitiveValue::customCssText() const
             text = result.toString();
             break;
         }
-        case CSS_RECT: {
-            Rect* rectVal = getRectValue();
-            text = "rect(" + rectVal->top()->cssText() + ' ' + rectVal->right()->cssText() + ' ' + rectVal->bottom()->cssText() + ' ' + rectVal->left()->cssText() + ')';
+        case CSS_RECT:
+            text = getRectValue()->cssText();
             break;
-        }
-        case CSS_QUAD: {
-            Quad* quadVal = getQuadValue();
-            Vector<UChar> result;
-            result.reserveInitialCapacity(32);
-            append(result, quadVal->top()->cssText());
-            if (quadVal->right() != quadVal->top() || quadVal->bottom() != quadVal->top() || quadVal->left() != quadVal->top()) {
-                result.append(' ');
-                append(result, quadVal->right()->cssText());
-                if (quadVal->bottom() != quadVal->top() || quadVal->right() != quadVal->left()) {
-                    result.append(' ');
-                    append(result, quadVal->bottom()->cssText());
-                    if (quadVal->left() != quadVal->right()) {
-                        result.append(' ');
-                        append(result, quadVal->left()->cssText());
-                    }
-                }
-            }
-            text = String::adopt(result);
+        case CSS_QUAD:
+            text = getQuadValue()->cssText();
             break;
-        }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
             RGBA32 rgbColor = m_value.rgbcolor;
@@ -1047,16 +1028,9 @@ String CSSPrimitiveValue::customCssText() const
             text = String::adopt(result);
             break;
         }
-        case CSS_PAIR: {
-            StringBuilder result;
-            result.append(m_value.pair->first()->cssText());
-            if (m_value.pair->second() != m_value.pair->first()) {
-                result.append(' ');
-                result.append(m_value.pair->second()->cssText());
-            }
-            text = result.toString();
+        case CSS_PAIR:
+            text = getPairValue()->cssText();
             break;
-        }
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         case CSS_DASHBOARD_REGION: {
             StringBuilder result;
@@ -1141,9 +1115,32 @@ String CSSPrimitiveValue::customSerializeResolvingVariables(const HashMap<Atomic
 {
     if (isVariableName() && variables.contains(m_value.string))
         return variables.get(m_value.string);
-    if (isCalculated())
-        return cssCalcValue()->customSerializeResolvingVariables(variables);
+    if (CSSCalcValue* calcValue = cssCalcValue())
+        return calcValue->customSerializeResolvingVariables(variables);
+    if (Pair* pairValue = getPairValue())
+        return pairValue->serializeResolvingVariables(variables);
+    if (Rect* rectVal = getRectValue())
+        return rectVal->serializeResolvingVariables(variables);
+    if (Quad* quadVal = getQuadValue())
+        return quadVal->serializeResolvingVariables(variables);
+    if (CSSBasicShape* shapeValue = getShapeValue())
+        return shapeValue->serializeResolvingVariables(variables);
     return customCssText();
+}
+
+bool CSSPrimitiveValue::hasVariableReference() const
+{
+    if (CSSCalcValue* calcValue = cssCalcValue())
+        return calcValue->hasVariableReference();
+    if (Pair* pairValue = getPairValue())
+        return pairValue->hasVariableReference();
+    if (Quad* quadValue = getQuadValue())
+        return quadValue->hasVariableReference();
+    if (Rect* rectValue = getRectValue())
+        return rectValue->hasVariableReference();
+    if (CSSBasicShape* shapeValue = getShapeValue())
+        return shapeValue->hasVariableReference();
+    return isVariableName();
 }
 #endif
 

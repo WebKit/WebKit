@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.internals)
+    internals.settings.setCSSVariablesEnabled(true);
+</script>
+<style>
+:root {
+    -webkit-var-a: 100px;
+}
+.a {
+    -webkit-shape-inside: ellipse(-webkit-var(a), -webkit-var(a), -webkit-var(a), -webkit-var(a));
+}
+.b {
+    -webkit-shape-inside: circle(-webkit-var(a), -webkit-var(a), -webkit-var(a)));
+}
+.c {
+    -webkit-shape-inside: rectange(-webkit-var(a));
+}
+.d {
+    -webkit-shape-inside: polygon(-webkit-var(a), -webkit-var(a), -webkit-var(a), -webkit-var(a));
+}
+</style>
+<div class="a">
+Some text.
+</div>
+<div class="b">
+Some text.
+</div>
+<div class="c">
+Some text.
+</div>
+<div class="d">
+Some text.
+</div>
+</html>

@@ -37,74 +37,134 @@ using namespace WTF;
 
 namespace WebCore {
 
-String CSSBasicShapeRectangle::cssText() const
+static String buildRectangleString(const String& x, const String& y, const String& width, const String& height, const String& radiusX, const String& radiusY)
 {
     StringBuilder result;
-    result.reserveCapacity(32);
-
     result.appendLiteral("rectangle(");
-
-    result.append(m_x->cssText());
+    result.append(x);
     result.appendLiteral(", ");
-
-    result.append(m_y->cssText());
+    result.append(y);
     result.appendLiteral(", ");
-
-    result.append(m_width->cssText());
+    result.append(width);
     result.appendLiteral(", ");
-
-    result.append(m_height->cssText());
-
-    if (m_radiusX.get()) {
+    result.append(height);
+    if (!radiusX.isNull()) {
         result.appendLiteral(", ");
-        result.append(m_radiusX->cssText());
-
-        if (m_radiusY.get()) {
+        result.append(radiusX);
+        if (!radiusY.isNull()) {
             result.appendLiteral(", ");
-            result.append(m_radiusY->cssText());
+            result.append(radiusY);
         }
     }
-
     result.append(')');
-
     return result.toString();
+}
+
+String CSSBasicShapeRectangle::cssText() const
+{
+    return buildRectangleString(m_x->cssText(),
+                                m_y->cssText(),
+                                m_width->cssText(),
+                                m_height->cssText(),
+                                m_radiusX.get() ? m_radiusX->cssText() : String(),
+                                m_radiusY.get() ? m_radiusY->cssText() : String());
+}
+
+#if ENABLE(CSS_VARIABLES)
+String CSSBasicShapeRectangle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    return buildRectangleString(m_x->serializeResolvingVariables(variables),
+                                m_y->serializeResolvingVariables(variables),
+                                m_width->serializeResolvingVariables(variables),
+                                m_height->serializeResolvingVariables(variables),
+                                m_radiusX.get() ? m_radiusX->serializeResolvingVariables(variables) : String(),
+                                m_radiusY.get() ? m_radiusY->serializeResolvingVariables(variables) : String());
+}
+
+bool CSSBasicShapeRectangle::hasVariableReference() const
+{
+    return m_x->hasVariableReference()
+        || m_y->hasVariableReference()
+        || m_width->hasVariableReference()
+        || m_height->hasVariableReference()
+        || (m_radiusX.get() && m_radiusX->hasVariableReference())
+        || (m_radiusY.get() && m_radiusY->hasVariableReference());
+}
+#endif
+
+static String buildCircleString(const String& x, const String& y, const String& radius)
+{
+    return "circle(" + x + ", " + y + ", " + radius + ')';
 }
 
 String CSSBasicShapeCircle::cssText() const
 {
-    StringBuilder result;
-    result.reserveCapacity(32);
+    return buildCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText());
+}
 
-    result.appendLiteral("circle(");
+#if ENABLE(CSS_VARIABLES)
+String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    return buildCircleString(m_centerX->serializeResolvingVariables(variables),
+                             m_centerY->serializeResolvingVariables(variables),
+                             m_radius->serializeResolvingVariables(variables));
+}
 
-    result.append(m_centerX->cssText());
-    result.appendLiteral(", ");
+bool CSSBasicShapeCircle::hasVariableReference() const
+{
+    return m_centerX->hasVariableReference()
+        || m_centerY->hasVariableReference()
+        || m_radius->hasVariableReference();
+}
+#endif
 
-    result.append(m_centerY->cssText());
-    result.appendLiteral(", ");
-
-    result.append(m_radius->cssText());
-    result.append(')');
-
-    return result.toString();
+static String buildEllipseString(const String& x, const String& y, const String& radiusX, const String& radiusY)
+{
+    return "ellipse(" + x + ", " + y + ", " + radiusX + ", " + radiusY + ')';
 }
 
 String CSSBasicShapeEllipse::cssText() const
 {
+    return buildEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText());
+}
+
+#if ENABLE(CSS_VARIABLES)
+String CSSBasicShapeEllipse::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    return buildEllipseString(m_centerX->serializeResolvingVariables(variables),
+                              m_centerY->serializeResolvingVariables(variables),
+                              m_radiusX->serializeResolvingVariables(variables),
+                              m_radiusY->serializeResolvingVariables(variables));
+}
+
+bool CSSBasicShapeEllipse::hasVariableReference() const
+{
+    return m_centerX->hasVariableReference()
+        || m_centerY->hasVariableReference()
+        || m_radiusX->hasVariableReference()
+        || m_radiusY->hasVariableReference();
+}
+#endif
+
+static String buildPolygonString(const WindRule& windRule, const Vector<String>& points)
+{
     StringBuilder result;
-    result.reserveCapacity(32);
-    result.appendLiteral("ellipse(");
 
-    result.append(m_centerX->cssText());
-    result.appendLiteral(", ");
+    if (windRule == RULE_EVENODD)
+        result.appendLiteral("polygon(evenodd, ");
+    else
+        result.appendLiteral("polygon(nonzero, ");
 
-    result.append(m_centerY->cssText());
-    result.appendLiteral(", ");
+    ASSERT(!(points.size() % 2));
 
-    result.append(m_radiusX->cssText());
-    result.appendLiteral(", ");
+    for (size_t i = 0; i < points.size(); i += 2) {
+        if (i)
+            result.appendLiteral(", ");
+        result.append(points[i]);
+        result.append(' ');
+        result.append(points[i + 1]);
+    }
 
-    result.append(m_radiusY->cssText());
     result.append(')');
 
     return result.toString();
@@ -112,28 +172,36 @@ String CSSBasicShapeEllipse::cssText() const
 
 String CSSBasicShapePolygon::cssText() const
 {
-    StringBuilder result;
-    result.reserveCapacity(32);
+    Vector<String> points;
+    points.reserveInitialCapacity(m_values.size());
 
-    if (m_windRule == RULE_EVENODD)
-        result.appendLiteral("polygon(evenodd, ");
-    else
-        result.appendLiteral("polygon(nonzero, ");
+    for (size_t i = 0; i < m_values.size(); ++i)
+        points.append(m_values.at(i)->cssText());
 
-    ASSERT(!(m_values.size() % 2));
-
-    for (unsigned i = 0; i < m_values.size(); i += 2) {
-        if (i)
-            result.appendLiteral(", ");
-        result.append(m_values.at(i)->cssText());
-        result.append(' ');
-        result.append(m_values.at(i + 1)->cssText());
-    }
-
-    result.append(')');
-
-    return result.toString();
+    return buildPolygonString(m_windRule, points);
 }
+
+#if ENABLE(CSS_VARIABLES)
+String CSSBasicShapePolygon::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    Vector<String> points;
+    points.reserveInitialCapacity(m_values.size());
+
+    for (size_t i = 0; i < m_values.size(); ++i)
+        points.append(m_values.at(i)->serializeResolvingVariables(variables));
+
+    return buildPolygonString(m_windRule, points);
+}
+
+bool CSSBasicShapePolygon::hasVariableReference() const
+{
+    for (size_t i = 0; i < m_values.size(); ++i) {
+        if (m_values.at(i)->hasVariableReference())
+            return true;
+    }
+    return false;
+}
+#endif
 
 } // namespace WebCore
 

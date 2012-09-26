@@ -3359,9 +3359,7 @@ static bool hasVariableReference(CSSValue* value)
 {
     if (value->isPrimitiveValue()) {
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (CSSCalcValue* calcValue = primitiveValue->cssCalcValue())
-            return calcValue->hasVariableReference();
-        return primitiveValue->isVariableName();
+        return primitiveValue->hasVariableReference();
     }
 
     if (value->isCalculationValue())

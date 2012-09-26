@@ -299,6 +299,7 @@ public:
     String customCssText() const;
 #if ENABLE(CSS_VARIABLES)
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
+    bool hasVariableReference() const;
 #endif
 
     bool isQuirkValue() { return m_isQuirkValue; }

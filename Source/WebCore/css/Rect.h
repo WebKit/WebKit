@@ -23,6 +23,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -37,6 +38,16 @@ public:
     void setRight(PassRefPtr<CSSPrimitiveValue> right) { m_right = right; }
     void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
+
+#if ENABLE(CSS_VARIABLES)
+    bool hasVariableReference() const
+    {
+        return m_top->hasVariableReference()
+            || m_right->hasVariableReference()
+            || m_bottom->hasVariableReference()
+            || m_left->hasVariableReference();
+    }
+#endif
 
 protected:
     RectBase() { }
@@ -63,9 +74,28 @@ public:
     
     PassRefPtr<Rect> cloneForCSSOM() const { return adoptRef(new Rect(*this)); }
 
+    String cssText() const
+    {
+        return generateCSSString(top()->cssText(), right()->cssText(), bottom()->cssText(), left()->cssText());
+    }
+
+#if ENABLE(CSS_VARIABLES)
+    String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+    {
+        return generateCSSString(top()->customSerializeResolvingVariables(variables),
+                                 right()->customSerializeResolvingVariables(variables),
+                                 bottom()->customSerializeResolvingVariables(variables),
+                                 left()->customSerializeResolvingVariables(variables));
+    }
+#endif
+
 private:
     Rect() { }
     Rect(const Rect& cloneFrom) : RectBase(cloneFrom), RefCounted<Rect>() { }
+    static String generateCSSString(const String& top, const String& right, const String& bottom, const String& left)
+    {
+        return "rect(" + top + ' ' + right + ' ' + bottom + ' ' + left + ')';
+    }
 };
 
 class Quad : public RectBase, public RefCounted<Quad> {
@@ -74,9 +104,42 @@ public:
     
     PassRefPtr<Quad> cloneForCSSOM() const { return adoptRef(new Quad(*this)); }
 
+    String cssText() const
+    {
+        return generateCSSString(top()->cssText(), right()->cssText(), bottom()->cssText(), left()->cssText());
+    }
+
+#if ENABLE(CSS_VARIABLES)
+    String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+    {
+        return generateCSSString(top()->customSerializeResolvingVariables(variables),
+                                 right()->customSerializeResolvingVariables(variables),
+                                 bottom()->customSerializeResolvingVariables(variables),
+                                 left()->customSerializeResolvingVariables(variables));
+    }
+#endif
+
 private:
     Quad() { }
     Quad(const Quad& cloneFrom) : RectBase(cloneFrom), RefCounted<Quad>() { }
+    static String generateCSSString(const String& top, const String& right, const String& bottom, const String& left)
+    {
+        StringBuilder result;
+        result.append(top);
+        if (right != top || bottom != top || left != top) {
+            result.append(' ');
+            result.append(right);
+            if (bottom != top || right != left) {
+                result.append(' ');
+                result.append(bottom);
+                if (left != right) {
+                    result.append(' ');
+                    result.append(left);
+                }
+            }
+        }
+        return result.toString();
+    }
 };
 
 } // namespace WebCore
