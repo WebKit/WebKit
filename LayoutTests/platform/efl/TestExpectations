@@ -1085,3 +1085,6 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 
 # Marking this as failing again, since r129592 was rolled out.
 webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
+
+# Needs rebaseline.
+webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]

@@ -227,7 +227,7 @@ private:
 
     unsigned m_column : 30;
     bool m_cellWidthChanged : 1;
-    bool m_hasAssociatedTableCellElement : 1;
+    bool m_hasHTMLTableCellElement : 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
 };

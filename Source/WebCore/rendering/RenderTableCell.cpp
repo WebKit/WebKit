@@ -36,6 +36,11 @@
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 
+#if ENABLE(MATHML)
+#include "MathMLElement.h"
+#include "MathMLNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -46,7 +51,7 @@ RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
-    , m_hasAssociatedTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
+    , m_hasHTMLTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
 {
@@ -60,27 +65,52 @@ void RenderTableCell::willBeRemovedFromTree()
     section()->removeCachedCollapsedBorders(this);
 }
 
+#if ENABLE(MATHML)
+inline bool isMathMLElement(Node* node)
+{
+    return node && node->isElementNode() && toElement(node)->isMathMLElement();
+}
+#endif
+
 unsigned RenderTableCell::colSpan() const
 {
-    if (UNLIKELY(!m_hasAssociatedTableCellElement))
+    if (UNLIKELY(!m_hasHTMLTableCellElement)) {
+#if ENABLE(MATHML)
+        if (isMathMLElement(node()))
+            return toMathMLElement(node())->colSpan();
+#endif
         return 1;
+    }
 
     return toHTMLTableCellElement(node())->colSpan();
 }
 
 unsigned RenderTableCell::rowSpan() const
 {
-    if (UNLIKELY(!m_hasAssociatedTableCellElement))
+    if (UNLIKELY(!m_hasHTMLTableCellElement)) {
+#if ENABLE(MATHML)
+        if (isMathMLElement(node()))
+            return toMathMLElement(node())->rowSpan();
+#endif
         return 1;
+    }
 
     return toHTMLTableCellElement(node())->rowSpan();
 }
 
 void RenderTableCell::colSpanOrRowSpanChanged()
 {
-    ASSERT(m_hasAssociatedTableCellElement);
+    ASSERT(m_hasHTMLTableCellElement
+#if ENABLE(MATHML)
+        || isMathMLElement(node())
+#endif
+        );
     ASSERT(node());
-    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag));
+    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag)
+#if ENABLE(MATHML)
+        || node()->hasTagName(MathMLNames::mtdTag)
+#endif
+        );
 
     setNeedsLayoutAndPrefWidthsRecalc();
     if (parent() && section())

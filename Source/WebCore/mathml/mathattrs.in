@@ -7,6 +7,7 @@ alttext
 background
 close
 color
+columnspan
 definitionURL
 denomalign
 encoding
@@ -21,5 +22,6 @@ mathsize
 mathvariant
 numalign
 open
+rowspan
 separators
 stretchy

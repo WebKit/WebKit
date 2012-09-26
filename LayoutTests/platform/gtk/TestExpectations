@@ -1358,6 +1358,9 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 
 webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
 
+# Needs rebaseline.
+webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -7,19 +7,16 @@
 <math xmlns='http://www.w3.org/1998/Math/MathML'>
 <mtable>
 <mtr>
-<mtd><msub><mi>a</mi><mn>11</mn></msub></mtd>
+<mtd rowspan="2"><msub><mi>a</mi><mn>11</mn></msub></mtd>
 <mtd><msub><mi>a</mi><mn>12</mn></msub></mtd>
 <mtd><msub><mi>a</mi><mn>13</mn></msub></mtd>
 </mtr>
 <mtr>
-<mtd><msub><mi>b</mi><mn>21</mn></msub></mtd>
 <mtd><msub><mi>b</mi><mn>22</mn></msub></mtd>
 <mtd><msub><mi>b</mi><mn>23</mn></msub></mtd>
 </mtr>
 <mtr>
-<mtd><msub><mi>c</mi><mn>31</mn></msub></mtd>
-<mtd><msub><mi>c</mi><mn>32</mn></msub></mtd>
-<mtd><msub><mi>c</mi><mn>33</mn></msub></mtd>
+<mtd columnspan="3"><msub><mi>c</mi><mn>31</mn></msub></mtd>
 </mtr>
 </mtable>
 </math>
@@ -64,13 +61,10 @@
 <mtext>, </mtext>
 <mtable columnalign="right">
 <mtr>
-<mtd><msub><mi>a</mi><mn>1</mn></msub></mtd>
-<mtd><msub><mi>a</mi><mn>12</mn></msub></mtd>
+<mtd id="mtd22"><msub><mi>a</mi><mn>1</mn></msub></mtd>
 <mtd><msub><mi>a</mi><mn>13</mn></msub></mtd>
 </mtr>
 <mtr>
-<mtd><msub><mi>b</mi><mn>21</mn></msub></mtd>
-<mtd><msub><mi>b</mi><mn>2</mn></msub></mtd>
 <mtd><msub><mi>b</mi><mn>23</mn></msub></mtd>
 </mtr>
 <mtr>
@@ -81,5 +75,16 @@
 </mtable>
 </math>
 </p>
+
+<script>
+    window.addEventListener("load", function() {
+        document.body.offsetTop;
+        
+        var mtd22 = document.getElementById("mtd22");
+        mtd22.setAttribute("rowspan", 2);
+        mtd22.setAttribute("columnspan", 2);
+    }, false);
+</script>
+
 </body>
 </html>

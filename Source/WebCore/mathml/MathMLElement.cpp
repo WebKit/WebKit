@@ -33,6 +33,7 @@
 
 #include "MathMLNames.h"
 #include "RenderObject.h"
+#include "RenderTableCell.h"
 
 namespace WebCore {
     
@@ -46,6 +47,34 @@ MathMLElement::MathMLElement(const QualifiedName& tagName, Document* document)
 PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new MathMLElement(tagName, document));
+}
+
+int MathMLElement::colSpan() const
+{
+    if (!hasTagName(mtdTag))
+        return 1;
+    const AtomicString& colSpanValue = fastGetAttribute(columnspanAttr);
+    return std::max(1, colSpanValue.toInt());
+}
+
+int MathMLElement::rowSpan() const
+{
+    if (!hasTagName(mtdTag))
+        return 1;
+    const AtomicString& rowSpanValue = fastGetAttribute(rowspanAttr);
+    return std::max(1, rowSpanValue.toInt());
+}
+
+void MathMLElement::parseAttribute(const Attribute& attribute)
+{
+    if (attribute.name() == rowspanAttr) {
+        if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
+            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
+    } else if (attribute.name() == columnspanAttr) {
+        if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
+            toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
+    } else
+        StyledElement::parseAttribute(attribute);
 }
 
 bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
