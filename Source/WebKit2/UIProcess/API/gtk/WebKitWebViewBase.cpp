@@ -75,6 +75,10 @@ using namespace WebCore;
 
 typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 
+#if USE(TEXTURE_MAPPER_GL)
+void redirectedWindowDamagedCallback(void* data);
+#endif
+
 struct _WebKitWebViewBasePrivate {
     WebKitWebViewChildrenMap children;
     OwnPtr<PageClientImpl> pageClient;
@@ -111,7 +115,6 @@ struct _WebKitWebViewBasePrivate {
 
 #if USE(TEXTURE_MAPPER_GL)
     OwnPtr<RedirectedXCompositeWindow> redirectedWindow;
-    bool readyToRenderAcceleratedCompositingResults;
 #endif
 };
 
@@ -351,7 +354,8 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 
 #if USE(TEXTURE_MAPPER_GL)
     priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1));
-    priv->readyToRenderAcceleratedCompositingResults = false;
+    if (priv->redirectedWindow)
+        priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, webkitWebViewBase);
 #endif
 }
 
@@ -364,10 +368,9 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     // To avoid flashes when initializing accelerated compositing for the first
     // time, we wait until we know there's a frame ready before rendering.
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!priv->readyToRenderAcceleratedCompositingResults)
+    if (!priv->redirectedWindow)
         return false;
 
-    ASSERT(priv->redirectedWindow);
     cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
     cairo_surface_t* surface = priv->redirectedWindow->cairoSurfaceForWidget(GTK_WIDGET(webViewBase));
     cairo_set_source_surface(cr, surface, 0, 0);
@@ -430,7 +433,7 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
     }
 
 #if USE(TEXTURE_MAPPER_GL)
-    if (sizeChanged)
+    if (sizeChanged && webViewBase->priv->redirectedWindow)
         webViewBase->priv->redirectedWindow->resize(viewRect.size());
 #endif
 
@@ -801,7 +804,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 #endif
 
 #if USE(TEXTURE_MAPPER_GL)
-    priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
+    if (priv->redirectedWindow)
+        priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());
 #endif
 }
 
@@ -928,37 +932,9 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-static gboolean queueAnotherDrawOfAcceleratedCompositingResults(gpointer* webViewBasePointer)
+void redirectedWindowDamagedCallback(void* data)
 {
-    // The WebViewBase may have been destroyed in the time since we queued this
-    // draw and the time we are actually executing.
-    if (!*webViewBasePointer) {
-        fastFree(webViewBasePointer);
-        return FALSE;
-    }
-
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(*webViewBasePointer);
-    gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
-    webViewBase->priv->readyToRenderAcceleratedCompositingResults = true;
-
-    g_object_remove_weak_pointer(G_OBJECT(webViewBase), webViewBasePointer);
-    fastFree(webViewBasePointer);
-
-    return FALSE;
-}
-
-void webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults(WebKitWebViewBase* webViewBase)
-{
-    gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
-
-    // Redraw again, one frame later, as it might take some time for the new GL frame to be available.
-    // This prevents the display from always being one frame behind in the case GL hasn't yet finished
-    // rendering to the window.
-    // TODO: Add XDamage support to RedirectedXCompositeWindow to accomplish this.
-    gpointer* webViewBasePointer = static_cast<gpointer*>(fastMalloc(sizeof(gpointer)));
-    g_object_add_weak_pointer(G_OBJECT(webViewBase), webViewBasePointer);
-    *webViewBasePointer = webViewBase;
-    g_timeout_add(1000 / 60, reinterpret_cast<GSourceFunc>(queueAnotherDrawOfAcceleratedCompositingResults), webViewBasePointer);
+    gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 #endif
 

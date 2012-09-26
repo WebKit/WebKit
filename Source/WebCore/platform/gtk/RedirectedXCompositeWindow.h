@@ -35,6 +35,8 @@
 
 typedef unsigned long Pixmap;
 typedef unsigned long Window;
+typedef unsigned long Damage;
+typedef void (*DamageNotifyCallback)(void*);
 
 namespace WebCore {
 
@@ -42,24 +44,25 @@ class RedirectedXCompositeWindow {
 public:
     static PassOwnPtr<RedirectedXCompositeWindow> create(const IntSize&);
     virtual ~RedirectedXCompositeWindow();
-
-    const IntSize& usableSize() { return m_usableSize; }
     const IntSize& size() { return m_size; }
 
     void resize(const IntSize& newSize);
     GLContext* context();
     cairo_surface_t* cairoSurfaceForWidget(GtkWidget*);
     Window windowId() { return m_window; }
+    void callDamageNotifyCallback();
+
+    void setDamageNotifyCallback(DamageNotifyCallback callback, void* data)
+    {
+        m_damageNotifyCallback = callback;
+        m_damageNotifyData = data;
+    }
 
 private:
     RedirectedXCompositeWindow(const IntSize&);
-
-    static gboolean resizeLaterCallback(RedirectedXCompositeWindow*);
-    void resizeLater();
     void cleanupPixmapAndPixmapSurface();
 
     IntSize m_size;
-    IntSize m_usableSize;
     Window m_window;
     Window m_parentWindow;
     Pixmap m_pixmap;
@@ -67,6 +70,10 @@ private:
     RefPtr<cairo_surface_t> m_surface;
     unsigned int m_pendingResizeSourceId;
     bool m_needsNewPixmapAfterResize;
+
+    Damage m_damage;
+    DamageNotifyCallback m_damageNotifyCallback;
+    void* m_damageNotifyData;
 };
 
 } // namespace WebCore

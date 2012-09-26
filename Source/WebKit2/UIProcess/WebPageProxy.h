@@ -717,7 +717,6 @@ public:
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     void setAcceleratedCompositingWindowId(uint64_t nativeWindowId);
-    void invalidateWidget();
 #endif
 
     void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }

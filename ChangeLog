@@ -1,3 +1,16 @@
+2012-09-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Use XDamage to simplify RedirectedXCompositeWindow
+        https://bugs.webkit.org/show_bug.cgi?id=97267
+
+        Reviewed by Alejandro G. Castro.
+
+        Use XDamage to queue redraws of the widget when redirecting accelerated compositing
+        to an offscreen window. This allows removing a finicky timer-based approach, improves
+        performance, and allows simplifying things greatly.
+
+        * configure.ac: Add support for finding XDamage via pkg-config.
+
 2012-09-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Remove Qt Quick 1 support

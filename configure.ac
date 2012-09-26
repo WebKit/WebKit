@@ -567,8 +567,11 @@ AC_MSG_RESULT([$with_acceleration_backend])
 
 if test "$with_acceleration_backend" = "opengl"; then
     PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite]);
+    PKG_CHECK_MODULES([XDAMAGE], [xdamage]);
     AC_SUBST(XCOMPOSITE_CFLAGS)
     AC_SUBST(XCOMPOSITE_LIBS)
+    AC_SUBST(XDAMAGE_CFLAGS)
+    AC_SUBST(XDAMAGE_LIBS)
 fi
 
 # OpenGL is turned on by default (along with WebGL and accelerated compositing), but if

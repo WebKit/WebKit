@@ -1,3 +1,37 @@
+2012-09-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Use XDamage to simplify RedirectedXCompositeWindow
+        https://bugs.webkit.org/show_bug.cgi?id=97267
+
+        Reviewed by Alejandro G. Castro.
+
+        Use XDamage to queue redraws of the widget when redirecting accelerated compositing
+        to an offscreen window. This allows removing a finicky timer-based approach, improves
+        performance, and allows simplifying things greatly.
+
+        * GNUmakefile.am: Add the XDamage CFLAGS and LIBS.
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext): Change the signature of compositeLayersToContext
+        to accept an enum that explains the composite purpose.
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::redirectedWindowDamagedCallback): Added.
+        (WebKit::AcceleratedCompositingContext::initialize): Handle the situation where
+        the RedirectedXCompositeWindow returns a null pointer.
+        (WebKit::AcceleratedCompositingContext::enabled): Ditto.
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow): Remove the code handling
+        the usable size of the RedirectedXCompositeWindow. The usable size is now always equal
+        to the size.
+        (WebKit::AcceleratedCompositingContext::compositeLayersToContext): When drawing for a
+        resize, first clear the entire context. Remove the double swap-buffer, as it's no
+        longer necessary.
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer): Handle the case that
+        the redirected window is null.
+        (WebKit::AcceleratedCompositingContext::resizeRootLayer): Instead of doing another
+        immediate layer flush, just recomposite the current layer state and schedule a new
+        flush. This should make resizing faster.
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers): We no longer need to
+        queue a redraw, unless we want to force one.
+
 2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Enable some of the unstable CSS features

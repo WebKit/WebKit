@@ -1,3 +1,33 @@
+2012-09-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Use XDamage to simplify RedirectedXCompositeWindow
+        https://bugs.webkit.org/show_bug.cgi?id=97267
+
+        Reviewed by Alejandro G. Castro.
+
+        Use XDamage to queue redraws of the widget when redirecting accelerated compositing
+        to an offscreen window. This allows removing a finicky timer-based approach, improves
+        performance, and allows simplifying things greatly.
+
+        * GNUmakefile.am: Add the XDamage CFLAGS and LIBS to the appropriate places.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate): Remove readyToRenderAcceleratedCompositingResults as
+        it's no longer necessary.
+        (webkit_web_view_base_init): Handle the situation where the RedirectedXCompositeWindow
+        is null.
+        (webkitWebViewRenderAcceleratedCompositingResults): Ditto.
+        (resizeWebKitWebViewBaseFromAllocation): Ditto.
+        (webkitWebViewBaseCreateWebPage): Ditto.
+        (redirectedWindowDamagedCallback): Added.
+        * UIProcess/WebPageProxy.h: Remove InvalidateWidget message.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+        * UIProcess/gtk/WebPageProxyGtk.cpp: Ditto.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext): No longer need to
+        trigger the invalidateWindow message.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp: Ditto.
+
 2012-09-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [DRT][WTR] Support overriding the 'WebKitDisplayImagesKey' preference
