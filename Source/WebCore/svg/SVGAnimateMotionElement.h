@@ -35,6 +35,7 @@ private:
     SVGAnimateMotionElement(const QualifiedName&, Document*);
 
     virtual bool hasValidAttributeType();
+    virtual bool hasValidAttributeName();
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const Attribute&) OVERRIDE;
