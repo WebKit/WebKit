@@ -1,3 +1,15 @@
+2012-09-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [DRT][WTR] Support overriding the 'WebKitDisplayImagesKey' preference
+        https://bugs.webkit.org/show_bug.cgi?id=96883
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Add
+        support for changing
+        WebPreferencesKey::loadsImagesAutomaticallyKey().
+
 2012-09-25  Dan Bernstein  <mitz@apple.com>
 
         Try to fix non-Mac builds.

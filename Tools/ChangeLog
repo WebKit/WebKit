@@ -1,3 +1,14 @@
+2012-09-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [DRT][WTR] Support overriding the 'WebKitDisplayImagesKey' preference
+        https://bugs.webkit.org/show_bug.cgi?id=96883
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::overridePreference): Support the
+        'WebKitDisplayImagesKey' preference.
+
 2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Enable some of the unstable CSS features
