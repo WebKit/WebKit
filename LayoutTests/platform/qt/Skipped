@@ -2532,21 +2532,7 @@ fast/workers/worker-crash-with-invalid-location.html
 fast/ruby/text-decoration-in-descendants-ruby.html
 
 # Failing since isWordTextBreak is not implemented. https://bugs.webkit.org/show_bug.cgi?id=81136
-editing/selection/move-by-word-visually-crash-test-1.html
-editing/selection/move-by-word-visually-crash-test-2.html
-editing/selection/move-by-word-visually-crash-test-3.html
-editing/selection/move-by-word-visually-crash-test-4.html
-editing/selection/move-by-word-visually-crash-test-5.html
-editing/selection/move-by-word-visually-crash-test-textarea.html
-editing/selection/move-by-word-visually-crash-test-css-generated-content.html
-editing/selection/move-by-word-visually-inline-block-positioned-element.html
 editing/selection/move-by-word-visually-multi-line.html
-editing/selection/move-by-word-visually-multi-space.html
-editing/selection/move-by-word-visually-null-box.html
-editing/selection/move-by-word-visually-single-space-inline-element.html
-editing/selection/move-by-word-visually-single-space-one-element.html
-editing/selection/move-by-word-visually-textarea.html
-editing/selection/move-by-word-visually-wrong-left-right.html
 editing/selection/move-by-word-visually-mac.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82628
