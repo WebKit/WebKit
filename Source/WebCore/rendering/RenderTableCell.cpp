@@ -100,17 +100,17 @@ unsigned RenderTableCell::rowSpan() const
 
 void RenderTableCell::colSpanOrRowSpanChanged()
 {
-    ASSERT(m_hasHTMLTableCellElement
 #if ENABLE(MATHML)
-        || isMathMLElement(node())
+    ASSERT(m_hasHTMLTableCellElement || isMathMLElement(node()));
+#else
+    ASSERT(m_hasHTMLTableCellElement);
 #endif
-        );
     ASSERT(node());
-    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag)
 #if ENABLE(MATHML)
-        || node()->hasTagName(MathMLNames::mtdTag)
+    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag) || node()->hasTagName(MathMLNames::mtdTag));
+#else
+    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag));
 #endif
-        );
 
     setNeedsLayoutAndPrefWidthsRecalc();
     if (parent() && section())
