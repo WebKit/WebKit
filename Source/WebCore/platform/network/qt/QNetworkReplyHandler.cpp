@@ -582,6 +582,12 @@ void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
     if (!client)
         return;
 
+    if (!bytesTotal) {
+        // When finished QNetworkReply emits a progress of 0 bytes.
+        // Ignore that, to avoid firing twice.
+        return;
+    }
+
     client->didSendData(m_resourceHandle, bytesSent, bytesTotal);
 }
 
