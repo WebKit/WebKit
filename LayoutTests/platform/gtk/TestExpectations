@@ -299,15 +299,6 @@ Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip 
 Bug(GTK) http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 Bug(GTK) http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
-# <style scoped> is not yet enabled.
-webkit.org/b/49142 fast/css/style-scoped [ Failure ]
-
-# CSS Regions tests for region styling and scoped styles
-Bug(GTK) fast/regions/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
-Bug(GTK) fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
-Bug(GTK) fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
-Bug(GTK) fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
-
 # CSS Filters is disabled
 Bug(GTK) css3/filters [ Skip ]
 
@@ -318,9 +309,6 @@ webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageO
 Bug(GTK) fast/css/image-set-parsing.html [ Skip ]
 Bug(GTK) fast/css/image-set-parsing-invalid.html [ Skip ]
 Bug(GTK) fast/css/image-set-setting.html [ Skip ]
-
-# CSS Sticky Position is not yet enabled
-Bug(GTK) fast/css/sticky [ Skip ]
 
 # For now, Web Audio API is disabled
 Bug(GTK) webaudio [ Skip ]
@@ -401,9 +389,6 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
-
-# CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
-webkit.org/b/58491 fast/css3-text-decoration
 
 # No CORS support for media elements is implemented yet.
 Bug(GTK) http/tests/security/video-cross-origin-readback.html [ Skip ]
@@ -1210,6 +1195,8 @@ webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failur
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 webkit.org/b/84701 fast/block/line-layout/selection-highlight-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/84701 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
+webkit.org/b/84701 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 
 webkit.org/b/85376 fullscreen/video-controls-drag.html [ Failure ]
 
@@ -1304,9 +1291,6 @@ webkit.org/b/88684 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure
 # This failure appears to be GTK-specific
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
-# Failing after r123379 on EFL and GTK.
-webkit.org/b/92063 fast/css/sticky/parsing-position-sticky.html [ Failure ]
-
 webkit.org/b/92100 accessibility/canvas-accessibilitynodeobject.html [ Failure ]
 
 # These tests depend on subpixel layout.
@@ -1370,6 +1354,8 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ 
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
+
+webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

@@ -693,7 +693,16 @@ void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool
 
 void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 {
+#if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+#endif
+}
+
+void DumpRenderTreeSupportGtk::setStyleScopedEnabled(bool enabled)
+{
+#if ENABLE(STYLE_SCOPED)
+    RuntimeEnabledFeatures::setStyleScopedEnabled(enabled);
+#endif
 }
 
 bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)

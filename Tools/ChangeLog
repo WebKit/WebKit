@@ -1,5 +1,18 @@
 2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable some of the unstable CSS features
+        https://bugs.webkit.org/show_bug.cgi?id=97572
+
+        Reviewed by Martin Robinson.
+
+        Enable the <style scoped> support via DumpRenderTreeSupportGtk method
+        whenever resetting defualts to consistent values.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
+2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
+
         REGRESSION (r126189): No more mismatch-did-not-occur failures in reftests
         https://bugs.webkit.org/show_bug.cgi?id=97112
 

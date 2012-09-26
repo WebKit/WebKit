@@ -1,3 +1,14 @@
+2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Enable some of the unstable CSS features
+        https://bugs.webkit.org/show_bug.cgi?id=97572
+
+        Reviewed by Martin Robinson.
+
+        Export the required RuntimeEnabledFeatures symbol.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-25  Cosmin Truta  <ctruta@rim.com>
 
         [BlackBerry] Enable LLInt

@@ -1,3 +1,22 @@
+2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Enable some of the unstable CSS features
+        https://bugs.webkit.org/show_bug.cgi?id=97572
+
+        Reviewed by Martin Robinson.
+
+        Add a helper DumpRenderTreeSupportGtk method for enabling
+        the <style scoped> support in WebCore. This is used in DumpRenderTree.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setShadowDOMEnabled): Add missing
+        ENABLE(SHADOW_DOM) compilation guards.
+        (DumpRenderTreeSupportGtk::setStyleScopedEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk): Remove the 'enabled' parameter name from both
+        setShadowDOMEnabled and setStyleScopedEnabled method declarations as it adds
+        no information and is causing style warnings.
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397
