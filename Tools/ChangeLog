@@ -1,3 +1,9 @@
+2012-09-26  David Michael Barr  <davidbarr@chromium.org>
+
+        Unreviewed. Upgrade myself from contributor to committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove deprecated code from perftestrunner.py
