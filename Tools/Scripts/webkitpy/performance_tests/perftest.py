@@ -138,7 +138,7 @@ class PerfTest(object):
             score = self._score_regex.match(line)
             if score:
                 key = score.group('key')
-                if ', ' in score.group('value'):
+                if key == 'values':
                     value = [float(number) for number in score.group('value').split(', ')]
                 else:
                     value = float(score.group('value'))
