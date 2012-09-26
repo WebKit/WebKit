@@ -1,3 +1,28 @@
+2012-09-25  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Fix logging in pure protocol test harness
+        https://bugs.webkit.org/show_bug.cgi?id=97579
+
+        Reviewed by Yury Semikhatsky.
+
+        JavaScript alert implementation in DumpRenderTree gets immediate flush to make sure that
+        the message survives crash or kill by timeout.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::runJavaScriptAlert):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::runModalAlertDialog):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onJavaScriptAlert):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewScriptAlert):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::javaScriptAlert):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+
 2012-09-25  Dan Bernstein  <mitz@apple.com>
 
         Tools part of <rdar://problem/11455228> [mac] Stop using screen fonts

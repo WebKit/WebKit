@@ -25,6 +25,15 @@
 var outputElement;
 
 /**
+ * Logs message to process stdout via alert (hopefully implemented with immediate flush).
+ * @param {string} text
+ */
+function debugLog(text)
+{
+    alert(text);
+}
+
+/**
  * @param {string} text
  */
 function log(text)

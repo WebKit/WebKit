@@ -664,8 +664,10 @@ void DumpRenderTree::addMessageToConsole(const String& message, unsigned int lin
 
 void DumpRenderTree::runJavaScriptAlert(const String& message)
 {
-    if (!testDone)
+    if (!testDone) {
         printf("ALERT: %s\n", message.utf8().data());
+        fflush(stdout);
+    }
 }
 
 bool DumpRenderTree::runJavaScriptConfirm(const String& message)

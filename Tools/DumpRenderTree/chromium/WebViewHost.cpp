@@ -546,6 +546,7 @@ WebString WebViewHost::autoCorrectWord(const WebString&)
 void WebViewHost::runModalAlertDialog(WebFrame*, const WebString& message)
 {
     printf("ALERT: %s\n", message.utf8().data());
+    fflush(stdout);
 }
 
 bool WebViewHost::runModalConfirmDialog(WebFrame*, const WebString& message)

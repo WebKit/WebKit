@@ -82,6 +82,7 @@ static void onConsoleMessage(Ewk_View_Smart_Data* smartData, const char* message
 static void onJavaScriptAlert(Ewk_View_Smart_Data*, Evas_Object*, const char* message)
 {
     printf("ALERT: %s\n", message);
+    fflush(stdout);
 }
 
 static Eina_Bool onJavaScriptConfirm(Ewk_View_Smart_Data*, Evas_Object*, const char* message)

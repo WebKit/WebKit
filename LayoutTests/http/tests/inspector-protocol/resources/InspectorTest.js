@@ -60,11 +60,22 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 }
 
 /**
+* Logs message to document.
 * @param {string} message
 */
 InspectorTest.log = function(message)
 {
-    this.sendCommand("Runtime.evaluate", { "expression": "log(\"" + message + "\");"} );
+    this.sendCommand("Runtime.evaluate", { "expression": "log(" + JSON.stringify(message) + ")" } );
+}
+
+/**
+* Logs message directly to process stdout via alert function (hopefully followed by flush call).
+* This message should survive process crash or kill by timeout. 
+* @param {string} message
+*/
+InspectorTest.debugLog = function(message)
+{
+    this.sendCommand("Runtime.evaluate", { "expression": "debugLog(" + JSON.stringify(message) + ")" } );
 }
 
 InspectorTest.completeTest = function()
@@ -73,5 +84,10 @@ InspectorTest.completeTest = function()
 }
 
 window.addEventListener("message", function(event) {
-    eval(event.data);
+    try {
+        eval(event.data);
+    } catch (e) {
+        alert(e.stack);
+        throw e;
+    }
 });

@@ -435,6 +435,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptAlertPanelWithMessage(
         /* [in] */ BSTR message)
 {
     printf("ALERT: %S\n", message ? message : L"");
+    fflush(stdout);
 
     return S_OK;
 }
