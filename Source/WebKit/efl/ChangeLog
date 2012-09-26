@@ -1,3 +1,29 @@
+2012-09-25  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Add fullscreen set/get APIs and callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=97421
+
+        Reviewed by Gyuyoung Kim.
+
+        Add setting APIs for JavaScript Fullscreen API and also add two callbacks to ewk_view API,
+        so that UI could customise behavior when fullscreen mode is requested.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::enterFullScreenForElement):
+        (WebCore::ChromeClientEfl::exitFullScreenForElement):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_fullscreen_get):
+        (ewk_view_setting_enable_fullscreen_set):
+        (ewk_view_fullscreen_enter):
+        (ewk_view_fullscreen_exit):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+        * tests/test_ewk_view.cpp:
+        (ewkViewEnableFullscreenCb):
+        (TEST):
+
 2012-09-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95397

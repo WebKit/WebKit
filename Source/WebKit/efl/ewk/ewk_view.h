@@ -173,6 +173,8 @@ struct _Ewk_View_Smart_Class {
     //  - if overridden, have to call parent method if desired
     Eina_Bool (*focus_in)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*focus_out)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*fullscreen_enter)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*fullscreen_exit)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*mouse_wheel)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Wheel *ev);
     Eina_Bool (*mouse_down)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Down *ev);
     Eina_Bool (*mouse_up)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Up *ev);
@@ -198,7 +200,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 6UL
+#define EWK_VIEW_SMART_CLASS_VERSION 7UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.
@@ -210,7 +212,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializes to zero a whole @a Ewk_View_Smart_Class structure.
@@ -2746,6 +2748,31 @@ EAPI Evas_Object* ewk_view_web_inspector_view_get(const Evas_Object *o);
  * @param inspector_view The view of web inspector.
  */
 EAPI void ewk_view_web_inspector_view_set(Evas_Object *o, Evas_Object *inspector_view);
+
+/**
+ * Enables/disables the fullscreen mode by javascript fullscreen API.
+ * The javascript API allows to request full screen mode, for more information see:
+ * http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html
+ *
+ * Default value for javascript fullscreen API setting is @c EINA_TRUE.
+ *
+ * @param o view object to enable javascript fullscreen API
+ * @param enable @c EINA_TRUE to enable javascript fullscreen API or
+ *               @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_setting_enable_fullscreen_set(Evas_Object *o, Eina_Bool enable);
+
+/**
+ * Queries if the fullscreen mode is enabled.
+ *
+ * @param o view object to query whether javascript fullscreen API is enabled
+ *
+ * @return @c EINA_TRUE if the javascript fullscreen API is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_view_setting_enable_fullscreen_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

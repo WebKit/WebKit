@@ -156,6 +156,11 @@ bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_N
 WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+void ewk_view_fullscreen_enter(const Evas_Object* ewkView);
+void ewk_view_fullscreen_exit(const Evas_Object* ewkView);
+#endif
+
 namespace EWKPrivate {
 WebCore::Page *corePage(const Evas_Object *ewkView);
 PlatformPageClient corePageClient(Evas_Object* ewkView);

@@ -633,6 +633,7 @@ void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)
     m_fullScreenElement = element;
 
     element->document()->webkitWillEnterFullScreenForElement(element);
+    ewk_view_fullscreen_enter(m_view);
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
@@ -644,6 +645,7 @@ void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
     ASSERT(m_fullScreenElement);
 
     m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+    ewk_view_fullscreen_exit(m_view);
     m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
 
     m_fullScreenElement.clear();

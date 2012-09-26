@@ -304,6 +304,9 @@ struct _Ewk_View_Private_Data {
         bool enableScripts : 1;
         bool enablePlugins : 1;
         bool enableFrameFlattening : 1;
+#if ENABLE(FULLSCREEN_API)
+        bool enableFullscreen : 1;
+#endif
         bool encodingDetector : 1;
         bool hyperlinkAuditingEnabled : 1;
         bool scriptsCanOpenWindows : 1;
@@ -848,6 +851,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.enableScripts = priv->pageSettings->isScriptEnabled();
     priv->settings.enablePlugins = priv->pageSettings->arePluginsEnabled();
     priv->settings.enableFrameFlattening = priv->pageSettings->frameFlatteningEnabled();
+#if ENABLE(FULLSCREEN_API)
+    priv->settings.enableFullscreen = priv->pageSettings->fullScreenEnabled();
+#endif
     priv->settings.enableXSSAuditor = priv->pageSettings->xssAuditorEnabled();
     priv->settings.hyperlinkAuditingEnabled = priv->pageSettings->hyperlinkAuditingEnabled();
     priv->settings.scriptsCanOpenWindows = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
@@ -4574,6 +4580,66 @@ void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
         ecore_evas_object_cursor_set(ecoreEvas, priv->cursorObject, EVAS_LAYER_MAX, hotspotX, hotspotY);
     }
 }
+
+Eina_Bool ewk_view_setting_enable_fullscreen_get(const Evas_Object* ewkView)
+{
+#if ENABLE(FULLSCREEN_API)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.enableFullscreen;
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_setting_enable_fullscreen_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+#if ENABLE(FULLSCREEN_API)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    enable = !!enable;
+    if (priv->settings.enableFullscreen != enable) {
+        priv->pageSettings->setFullScreenEnabled(enable);
+        priv->settings.enableFullscreen = enable;
+    }
+    return true;
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(enable);
+    return false;
+#endif
+}
+
+#if ENABLE(FULLSCREEN_API)
+/**
+ * @internal
+ * Calls fullscreen_enter callback or falls back to default behavior and enables fullscreen mode.
+ */
+void ewk_view_fullscreen_enter(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+
+    if (!smartData->api->fullscreen_enter || !smartData->api->fullscreen_enter(smartData)) {
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+        ecore_evas_fullscreen_set(ecoreEvas, true);
+    }
+}
+
+/**
+ * @internal
+ * Calls fullscreen_exit callback or falls back to default behavior and disables fullscreen mode.
+ */
+void ewk_view_fullscreen_exit(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+
+    if (!smartData->api->fullscreen_enter || !smartData->api->fullscreen_enter(smartData)) {
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+        ecore_evas_fullscreen_set(ecoreEvas, false);
+    }
+}
+#endif
 
 namespace EWKPrivate {
 
