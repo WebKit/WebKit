@@ -1563,10 +1563,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
             if (lineNumber === range.startLine)
                 newRange.startColumn = Math.max(0, newRange.startColumn - lineIndentLength);
+            if (lineNumber === range.endLine)
+                newRange.endColumn = Math.max(0, newRange.endColumn - lineIndentLength);
         }
-
-        if (lineIndentLength)
-            newRange.endColumn = Math.max(0, newRange.endColumn - lineIndentLength);
 
         this._lastEditedRange = newRange;
 

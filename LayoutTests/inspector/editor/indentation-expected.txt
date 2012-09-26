@@ -18,6 +18,12 @@ After unindenting two fully selected lines
  */
 Selection 0,0 2,0
 
+After unindenting two partially selected lines (bug 97462)
+/*
+* a comment
+ */
+Selection 0,1 1,6
+
 After unindenting three partially selected lines
 /*
 * a comment

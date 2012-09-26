@@ -31,6 +31,9 @@ function test()
     selection = textEditorMainPanel._unindentLines(new WebInspector.TextRange(0, 0, 2, 0));
     dumpTextModel("After unindenting two fully selected lines");
 
+    selection = textEditorMainPanel._unindentLines(new WebInspector.TextRange(0, 5, 1, 6));
+    dumpTextModel("After unindenting two partially selected lines (bug 97462)");
+
     selection = textEditorMainPanel._unindentLines(new WebInspector.TextRange(0, 0, 2, 3));
     dumpTextModel("After unindenting three partially selected lines");
 
