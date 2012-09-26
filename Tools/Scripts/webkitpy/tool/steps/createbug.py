@@ -53,4 +53,4 @@ class CreateBug(AbstractStep):
         if blocks:
             status = self._tool.bugs.fetch_bug(blocks).status()
             if status == 'RESOLVED':
-                self._tool.bugs.reopen_bug(blocks, "Re-opened since this is blocked by %s" % state["bug_id"])
+                self._tool.bugs.reopen_bug(blocks, "Re-opened since this is blocked by bug %s" % state["bug_id"])

@@ -1,3 +1,17 @@
+2012-09-26  Adam Barth  <abarth@webkit.org>
+
+        Rollout messages should be clickable in bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=97711
+
+        Reviewed by Simon Fraser.
+
+        If we say Bug NNNN instead of just NNNN, bugzilla will autolink to the
+        actual bug.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.run):
+
 2012-09-26  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         run-perf-tests must expand environment variables in user provided paths

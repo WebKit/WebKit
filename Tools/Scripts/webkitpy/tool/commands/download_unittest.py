@@ -285,7 +285,7 @@ Reason
 component: MOCK component
 cc: MOCK cc
 blocked: 50004
-MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by 60001'
+MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by bug 60001'
 MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r3001, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
 Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
