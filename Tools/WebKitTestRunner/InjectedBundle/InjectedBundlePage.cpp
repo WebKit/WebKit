@@ -1330,6 +1330,13 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBu
 
 WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePageRef page, WKBundleFrameRef, WKURLResponseRef response, WKURLRequestRef, WKTypeRef*)
 {
+    if (WKURLResponseIsAttachment(response)) {
+        WKRetainPtr<WKStringRef> filename = adoptWK(WKURLResponseCopySuggestedFilename(response));
+        InjectedBundle::shared().stringBuilder()->appendLiteral("Policy delegate: resource is an attachment, suggested file name \'");
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(filename));
+        InjectedBundle::shared().stringBuilder()->appendLiteral("\'\n");
+    }
+
     WKRetainPtr<WKStringRef> mimeType = adoptWK(WKURLResponseCopyMIMEType(response));
     return WKBundlePageCanShowMIMEType(page, mimeType.get()) ? WKBundlePagePolicyActionUse : WKBundlePagePolicyActionPassThrough;
 }

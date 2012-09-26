@@ -1,3 +1,18 @@
+2012-09-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] Policy client: dumping from decidePolicyForResponse callback
+        https://bugs.webkit.org/show_bug.cgi?id=97034
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added suggested filename getter to WKURLResponse interface and also added a property showing whether the response
+        is attachment.
+
+        * Shared/API/c/WKURLResponse.cpp:
+        (WKURLResponseSuggestedFilename):
+        (WKURLResponseIsAttachment):
+        * Shared/API/c/WKURLResponse.h:
+
 2012-09-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use XDamage to simplify RedirectedXCompositeWindow

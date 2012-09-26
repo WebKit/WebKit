@@ -521,9 +521,6 @@ webkit.org/b/61540 inspector/extensions/extensions-eval-content-script.html [ Fa
 #__worldID is undefined in isolated world
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
-# Needs custom policy delegate enhancement to log downloads - EFL port is missing api for getting header fields from HTTP responses. 
-webkit.org/b/87974 http/tests/download [ Failure ImageOnlyFailure ]
-
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 webkit.org/b/87972 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]

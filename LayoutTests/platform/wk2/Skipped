@@ -806,9 +806,11 @@ fast/spatial-navigation/snav-fully-aligned-vertically.html
 fast/spatial-navigation/snav-iframe-no-scrollable-content.html
 fast/spatial-navigation/snav-imagemap-overlapped-areas.html
 
-# WK2 is missing API for getting header fields from HTTP responses
-# which have to be serialized.
-http/tests/download
+# InjectedBundlePagePolicyClient::decidePolicyForResponse is not called on WK2 EFL at least.
+# Might be port-specific issue. Should be checked on other ports.
+http/tests/download/default-encoding.html
+http/tests/download/inherited-encoding-form-submission-result.html
+http/tests/download/inherited-encoding.html
 
 # WebFrameLoaderClient::canHandleRequest() has to be implemented.
 http/tests/misc/redirect-to-external-url.html

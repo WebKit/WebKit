@@ -1,3 +1,15 @@
+2012-09-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] Policy client: dumping from decidePolicyForResponse callback
+        https://bugs.webkit.org/show_bug.cgi?id=97034
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provided dumping from WTR Policy client 'decidePolicyForResponse' callback.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForResponse):
+
 2012-09-26  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][WTR] Build fix for MSVC. 

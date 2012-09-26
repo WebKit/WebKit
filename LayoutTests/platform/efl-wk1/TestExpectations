@@ -115,3 +115,6 @@ webkit.org/b/84933 compositing/geometry/fixed-position.html [ ImageOnlyFailure P
 # Fail after r128393.
 webkit.org/b/96620 http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
 webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
+
+# Needs custom policy delegate enhancement to log downloads - EFL port is missing api for getting header fields from HTTP responses.
+webkit.org/b/87974 http/tests/download [ Failure ]

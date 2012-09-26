@@ -51,3 +51,13 @@ int32_t WKURLResponseHTTPStatusCode(WKURLResponseRef responseRef)
 {
     return toImpl(responseRef)->resourceResponse().httpStatusCode();
 }
+
+WKStringRef WKURLResponseCopySuggestedFilename(WKURLResponseRef responseRef)
+{
+    return toCopiedAPI(toImpl(responseRef)->resourceResponse().suggestedFilename());
+}
+
+bool WKURLResponseIsAttachment(WKURLResponseRef responseRef)
+{
+    return toImpl(responseRef)->resourceResponse().isAttachment();
+}
