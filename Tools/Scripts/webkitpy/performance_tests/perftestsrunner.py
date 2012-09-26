@@ -29,19 +29,16 @@
 
 """Run Inspector's perf tests in perf mode."""
 
+import os
 import json
 import logging
 import optparse
-import re
-import sys
 import time
 
 from webkitpy.common import find_files
 from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
-from webkitpy.layout_tests.views import printing
 from webkitpy.performance_tests.perftest import PerfTestFactory
-from webkitpy.performance_tests.perftest import ReplayPerfTest
 
 
 _log = logging.getLogger(__name__)
@@ -73,6 +70,9 @@ class PerfTestsRunner(object):
 
     @staticmethod
     def _parse_args(args=None):
+        def _expand_path(option, opt_str, value, parser):
+            path = os.path.expandvars(os.path.expanduser(value))
+            setattr(parser.values, option.dest, path)
         perf_option_list = [
             optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
                 help='Set the configuration to Debug'),
@@ -98,13 +98,13 @@ class PerfTestsRunner(object):
                 help="Pause before running the tests to let user attach a performance monitor."),
             optparse.make_option("--no-results", action="store_false", dest="generate_results", default=True,
                 help="Do no generate results JSON and results page."),
-            optparse.make_option("--output-json-path",
+            optparse.make_option("--output-json-path", action='callback', callback=_expand_path, type="str",
                 help="Path to generate a JSON file at; may contain previous results if it already exists."),
             optparse.make_option("--reset-results", action="store_true",
                 help="Clears the content in the generated JSON file before adding the results."),
-            optparse.make_option("--slave-config-json-path",
+            optparse.make_option("--slave-config-json-path", action='callback', callback=_expand_path, type="str",
                 help="Only used on bots. Path to a slave configuration file."),
-            optparse.make_option("--source-json-path", dest="slave_config_json_path",
+            optparse.make_option("--source-json-path", action='callback', callback=_expand_path, type="str", dest="slave_config_json_path",
                 # FIXME: Remove this option once build.webkit.org is updated to use --slave-config-json-path.
                 help="Deprecated. Overrides --slave-config-json-path."),
             optparse.make_option("--description",

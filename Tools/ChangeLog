@@ -1,3 +1,24 @@
+2012-09-26  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        run-perf-tests must expand environment variables in user provided paths
+        https://bugs.webkit.org/show_bug.cgi?id=97686
+
+        Reviewed by Ryosuke Niwa.
+
+        The run-perf-tests command line options that receive paths from the
+        user now expand any possible environment variables, because Python's
+        file handling methods do not handle those.
+
+        Examples:
+        run-perf-tests --platform=qt --release --output-json-path=~/perf-results
+        run-perf-tests --platform=qt --release --output-json-path=$HOME/perf-results
+
+        Also removed unused imports.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args._expand_path): expand environment variables in a path passed via command line
+        (PerfTestsRunner._parse_args):
+
 2012-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129654.
