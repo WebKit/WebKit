@@ -26,6 +26,7 @@
 #include "TreeScope.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MathExtras.h>
+#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
@@ -138,7 +139,7 @@ void CSSCursorImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryOb
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageValue::reportDescendantMemoryUsage(memoryObjectInfo);
 #if ENABLE(SVG)
-    info.addInstrumentedHashSet(m_referencedElements);
+    info.addMember(m_referencedElements);
 #endif
 }
 

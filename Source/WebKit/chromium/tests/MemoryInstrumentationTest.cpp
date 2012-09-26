@@ -37,11 +37,13 @@
 #include <gtest/gtest.h>
 
 #include <wtf/HashSet.h>
+#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
 
@@ -436,6 +438,22 @@ TEST(MemoryInstrumentationTest, vectorWithInstrumentedType)
     InstrumentedOwner<StringVector* > root(value.get());
     impl.addRootObject(root);
     EXPECT_EQ(sizeof(StringVector) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 2, (size_t)visitedObjects.size());
+}
+
+TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
+{
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+
+    typedef HashSet<String> ValueType;
+    OwnPtr<ValueType> value = adoptPtr(new ValueType());
+    size_t count = 10;
+    for (size_t i = 0; i < count; ++i)
+        value->add(String::number(i));
+    InstrumentedOwner<ValueType* > root(value.get());
+    impl.addRootObject(root);
+    EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), impl.reportedSizeForAllTypes());
     EXPECT_EQ(count + 2, (size_t)visitedObjects.size());
 }
 

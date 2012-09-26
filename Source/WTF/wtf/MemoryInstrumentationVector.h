@@ -37,23 +37,12 @@
 namespace WTF {
 
 template<typename T, size_t inlineCapacity>
-void instrumentVectorValues(MemoryClassInfo& info, const Vector<T, inlineCapacity>* const& vector)
-{
-    for (size_t i = 0; i < vector->size(); ++i)
-        info.addMember(vector->at(i));
-}
-
-template<size_t inlineCapacity> void instrumentVectorValues(MemoryClassInfo&, const Vector<int, inlineCapacity>* const&) { }
-template<size_t inlineCapacity> void instrumentVectorValues(MemoryClassInfo&, const Vector<char, inlineCapacity>* const&) { }
-template<size_t inlineCapacity> void instrumentVectorValues(MemoryClassInfo&, const Vector<char*, inlineCapacity>* const&) { }
-
-template<typename T, size_t inlineCapacity>
 void reportMemoryUsage(const Vector<T, inlineCapacity>* const& vector, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, vector);
     if (inlineCapacity < vector->capacity())
         info.addRawBuffer(vector->data(), vector->capacity() * sizeof(T));
-    instrumentVectorValues(info, vector);
+    info.addCollectionElements(vector->begin(), vector->end());
 }
 
 }

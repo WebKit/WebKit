@@ -147,7 +147,6 @@ private:
 
     template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addObject(this, t, ownerObjectType); }
     template<typename HashMapType> void addHashMap(const HashMapType&, MemoryObjectType, bool contentOnly = false);
-    template<typename HashSetType> void addHashSet(const HashSetType&, MemoryObjectType, bool contentOnly = false);
     template<typename CollectionType> void addInstrumentedCollection(const CollectionType&, MemoryObjectType, bool contentOnly = false);
     template<typename MapType> void addInstrumentedMapEntries(const MapType&, MemoryObjectType);
     template<typename MapType> void addInstrumentedMapValues(const MapType&, MemoryObjectType);
@@ -192,11 +191,19 @@ public:
     }
 
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
+    template<typename I> void addCollectionElements(I iterator, I end)
+    {
+        while (iterator != end) {
+            addMember(*iterator);
+            ++iterator;
+        }
+    }
+    void addCollectionElements(char* const*, char* const*) { }
+    void addCollectionElements(const char*, const char*) { }
+    void addCollectionElements(const int*, const int*) { }
 
     template<typename HashMapType> void addHashMap(const HashMapType& map) { m_memoryInstrumentation->addHashMap(map, m_objectType, true); }
-    template<typename HashSetType> void addHashSet(const HashSetType& set) { m_memoryInstrumentation->addHashSet(set, m_objectType, true); }
-    template<typename HashSetType> void addHashCountedSet(const HashSetType& set) { m_memoryInstrumentation->addHashSet(set, m_objectType, true); }
-    template<typename HashSetType> void addInstrumentedHashSet(const HashSetType& set) { m_memoryInstrumentation->addInstrumentedCollection(set, m_objectType, true); }
+    template<typename HashSetType> void addHashCountedSet(const HashSetType& set) { m_memoryInstrumentation->addHashMap(set, m_objectType, true); }
     template<typename MapType> void addInstrumentedMapEntries(const MapType& map) { m_memoryInstrumentation->addInstrumentedMapEntries(map, m_objectType); }
     template<typename MapType> void addInstrumentedMapValues(const MapType& map) { m_memoryInstrumentation->addInstrumentedMapValues(map, m_objectType); }
     template<typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
@@ -256,14 +263,6 @@ void MemoryInstrumentation::addHashMap(const HashMapType& hashMap, MemoryObjectT
     if (visited(&hashMap))
         return;
     countObjectSize(ownerObjectType, calculateContainerSize(hashMap, contentOnly));
-}
-
-template<typename HashSetType>
-void MemoryInstrumentation::addHashSet(const HashSetType& hashSet, MemoryObjectType ownerObjectType, bool contentOnly)
-{
-    if (visited(&hashSet))
-        return;
-    countObjectSize(ownerObjectType, calculateContainerSize(hashSet, contentOnly));
 }
 
 template<typename CollectionType>

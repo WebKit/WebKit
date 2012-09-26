@@ -102,6 +102,7 @@
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -3279,7 +3280,7 @@ void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_provisionalDocumentLoader);
     info.addMember(m_policyDocumentLoader);
     info.addMember(m_outgoingReferrer);
-    info.addInstrumentedHashSet(m_openedFrames);
+    info.addMember(m_openedFrames);
 }
 
 bool FrameLoaderClient::hasHTMLView() const

@@ -126,6 +126,7 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
+#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -745,8 +746,8 @@ void StyleResolver::Features::clear()
 void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addHashSet(idsInRules);
-    info.addHashSet(attrsInRules);
+    info.addMember(idsInRules);
+    info.addMember(attrsInRules);
     info.addMember(siblingRules);
     info.addMember(uncommonAttributeRules);
 }
@@ -5790,7 +5791,7 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_viewportDependentMediaQueryResults);
     info.addHashMap(m_styleRuleToCSSOMWrapperMap);
     info.addInstrumentedMapEntries(m_styleRuleToCSSOMWrapperMap);
-    info.addInstrumentedHashSet(m_styleSheetCSSOMWrapperSet);
+    info.addMember(m_styleSheetCSSOMWrapperSet);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     info.addHashMap(m_pendingSVGDocuments);
 #endif

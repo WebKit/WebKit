@@ -307,6 +307,8 @@ namespace WTF {
         bool isNewEntry;
     };
 
+    class MemoryObjectInfo;
+
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable {
     public:
@@ -483,6 +485,8 @@ namespace WTF {
 
         static const int m_maxLoad = 2;
         static const int m_minLoad = 6;
+
+        template<typename K, typename V, typename E, typename H, typename T, typename KT> friend void reportMemoryUsage(const HashTable<K, V, E, H, T, KT>* const&, MemoryObjectInfo*);
 
         ValueType* m_table;
         int m_tableSize;

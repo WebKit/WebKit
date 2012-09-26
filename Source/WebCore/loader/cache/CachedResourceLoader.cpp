@@ -48,6 +48,7 @@
 #include "ResourceLoadScheduler.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -900,7 +901,7 @@ void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
         info.addMember(i->first);
         info.addMember(i->second);
     }
-    info.addHashSet(m_validatedURLs);
+    info.addMember(m_validatedURLs);
     if (m_preloads)
         info.addListHashSet(*m_preloads);
     info.addMember(m_pendingPreloads);
