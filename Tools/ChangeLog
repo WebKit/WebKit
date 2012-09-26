@@ -1,3 +1,22 @@
+2012-09-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r126189): No more mismatch-did-not-occur failures in reftests
+        https://bugs.webkit.org/show_bug.cgi?id=97112
+
+        Reviewed by Dirk Pranke.
+
+        Don't use the reftest's image hash when gathering output of its reference.
+        This indirectly forces the driver to return the reference's image output
+        as well. This specifically solves the problem when the reftest and its
+        mismatch reference are equal but the unexpected match failure is not
+        reported due to missing image output of the reference file.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.diff_image):
+        (TestDriver.run_test):
+
 2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update master.cfg to invoke run-perf-tests with --no-show-results and --reset-results

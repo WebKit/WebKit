@@ -405,6 +405,10 @@ class TestPort(Port):
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
         diffed = actual_contents != expected_contents
+        if not actual_contents and not expected_contents:
+            return (None, 0, None)
+        if not actual_contents or not expected_contents:
+            return (True, 0, None)
         if 'ref' in expected_contents:
             assert tolerance == 0
         if diffed:
@@ -568,7 +572,11 @@ class TestDriver(Driver):
         if stop_when_done:
             self.stop()
 
-        return DriverOutput(actual_text, test.actual_image, test.actual_checksum, audio,
+        if test.actual_checksum == test_input.image_hash:
+            image = None
+        else:
+            image = test.actual_image
+        return DriverOutput(actual_text, image, test.actual_checksum, audio,
             crash=test.crash or test.web_process_crash, crashed_process_name=crashed_process_name,
             crashed_pid=crashed_pid, crash_log=crash_log,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
