@@ -425,6 +425,11 @@ webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=64135
 webkit.org/b/64135 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
+webkit.org/b/97655 fast/css/style-scoped [ Failure ]
+webkit.org/b/97655 fast/regions/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
+webkit.org/b/97655 fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
+webkit.org/b/97655 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
+
 # Unexplained failures
 Bug(GTK) accessibility/accessibility-node-memory-management.html [ Failure ]
 Bug(GTK) accessibility/accessibility-node-reparent.html [ Failure ]
