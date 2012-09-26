@@ -89,11 +89,8 @@ public:
 #if ENABLE(CSS_EXCLUSIONS)
         WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(m_block);
         // FIXME: Bug 91878: Add support for multiple segments, currently we only support one
-        if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
-            // All interior shape positions should have at least one segment
-            ASSERT(wrapShapeInfo->hasSegments());
+        if (wrapShapeInfo && wrapShapeInfo->hasSegments())
             m_segment = &wrapShapeInfo->segments()[0];
-        }
 #endif
         updateAvailableWidth();
     }
@@ -812,7 +809,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     float logicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
 #if ENABLE(CSS_EXCLUSIONS)
     WrapShapeInfo* wrapShapeInfo = layoutWrapShapeInfo(this);
-    if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
+    if (wrapShapeInfo && wrapShapeInfo->hasSegments()) {
         logicalLeft = max<float>(roundToInt(wrapShapeInfo->segments()[0].logicalLeft), logicalLeft);
         logicalRight = min<float>(floorToInt(wrapShapeInfo->segments()[0].logicalRight), logicalRight);
     }
@@ -1336,8 +1333,13 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
 #if ENABLE(CSS_EXCLUSIONS)
-        if (wrapShapeInfo)
-            wrapShapeInfo->computeSegmentsForLine(logicalHeight() + absoluteLogicalTop);
+        // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
+        // case these segments may be incorrect.
+        if (wrapShapeInfo) {
+            LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
+            LayoutUnit lineBottom = lineTop + lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+            wrapShapeInfo->computeSegmentsForLine(lineTop, lineBottom);
+        }
 #endif
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
         if (resolver.position().atEnd()) {

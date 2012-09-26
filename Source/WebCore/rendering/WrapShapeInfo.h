@@ -46,12 +46,6 @@ class RenderBlock;
 class WrapShapeInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum LineState {
-        LINE_BEFORE_SHAPE,
-        LINE_INSIDE_SHAPE,
-        LINE_AFTER_SHAPE
-    };
-
     ~WrapShapeInfo();
 
     static PassOwnPtr<WrapShapeInfo> create(RenderBlock* block) { return adoptPtr(new WrapShapeInfo(block)); }
@@ -65,14 +59,22 @@ public:
         ASSERT(m_shape);
         return m_shape->shapeLogicalBoundingBox().y();
     }
-    bool hasSegments() const;
+    LayoutUnit shapeLogicalBottom() const
+    {
+        ASSERT(m_shape);
+        return m_shape->shapeLogicalBoundingBox().maxY();
+    }
+    bool hasSegments() const
+    {
+        return lineOverlapsShapeBounds() && m_segments.size();
+    }
     const SegmentList& segments() const
     {
         ASSERT(hasSegments());
         return m_segments;
     }
-    bool computeSegmentsForLine(LayoutUnit lineTop);
-    LineState lineState() const;
+    bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom);
+    bool lineOverlapsShapeBounds() const;
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
     void dirtyWrapShapeSize() { m_wrapShapeSizeDirty = true; }
 
@@ -83,6 +85,7 @@ private:
     OwnPtr<ExclusionShape> m_shape;
 
     LayoutUnit m_lineTop;
+    LayoutUnit m_lineBottom;
     LayoutUnit m_logicalWidth;
     LayoutUnit m_logicalHeight;
 
@@ -90,18 +93,11 @@ private:
     bool m_wrapShapeSizeDirty;
 };
 
-inline WrapShapeInfo::LineState WrapShapeInfo::lineState() const
+inline bool WrapShapeInfo::lineOverlapsShapeBounds() const
 {
     ASSERT(m_shape);
     FloatRect shapeBounds = m_shape->shapeLogicalBoundingBox();
-
-    if (m_lineTop < shapeBounds.y())
-        return LINE_BEFORE_SHAPE;
-
-    if (m_lineTop < shapeBounds.maxY())
-        return LINE_INSIDE_SHAPE;
-
-    return LINE_AFTER_SHAPE;
+    return m_lineTop <= shapeBounds.maxY() && m_lineBottom >= shapeBounds.y();
 }
 
 }

@@ -83,13 +83,6 @@ void WrapShapeInfo::removeWrapShapeInfoForRenderBlock(const RenderBlock* block)
     wrapShapeInfoMap().remove(block);
 }
 
-bool WrapShapeInfo::hasSegments() const
-{
-    // All line positions within a shape should have at least one segment
-    ASSERT(lineState() != LINE_INSIDE_SHAPE || m_segments.size());
-    return m_segments.size();
-}
-
 void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
 {
     if (!m_wrapShapeSizeDirty && logicalWidth == m_logicalWidth && logicalHeight == m_logicalHeight)
@@ -107,14 +100,16 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
     ASSERT(m_shape);
 }
 
-bool WrapShapeInfo::computeSegmentsForLine(LayoutUnit lineTop)
+bool WrapShapeInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom)
 {
+    ASSERT(lineTop <= lineBottom);
     m_lineTop = lineTop;
+    m_lineBottom = lineBottom;
     m_segments.clear();
 
-    if (lineState() == LINE_INSIDE_SHAPE) {
+    if (lineOverlapsShapeBounds()) {
         ASSERT(m_shape);
-        m_shape->getIncludedIntervals(lineTop, lineTop, m_segments); // FIXME: Bug 95479, workaround for now
+        m_shape->getIncludedIntervals(lineTop, std::min(lineBottom, shapeLogicalBottom()), m_segments);
     }
     return m_segments.size();
 }
