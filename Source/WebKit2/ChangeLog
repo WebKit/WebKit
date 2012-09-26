@@ -1,3 +1,37 @@
+2012-09-26  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Update WebPageProxy::reattachToWebProcess() for multi-web process mode
+        https://bugs.webkit.org/show_bug.cgi?id=97726
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureSharedWebProcess): createNewWebProcess() now takes care
+        of adding the new process to m_processes.
+        (WebKit::WebContext::createNewWebProcess): Every time we call this function, we need
+        to add the result to m_processes. Better do it internally to avoid mistakes.
+        (WebKit::WebContext::warmInitialProcess): Updated for the above.
+        (WebKit::WebContext::createWebPage): Ditto.
+        (WebKit::WebContext::relaunchProcessIfNecessary): This function makes no sense in
+        multi-web process mode. Assert that we didnt get here accidentally.
+
+        * UIProcess/WebContext.h: (WebKit::WebContext::sendToAllProcessesRelaunchingThemIfNecessary):
+        Only call relaunchProcessIfNecessary in single process mode. The functionality that
+        needs this behavior will be greatly refactored for multi-web process.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::reattachToWebProcess):
+        We already know that we need a new process, "relaunch if necessary" is not the
+        right logic. Also added a few more assertions checking that process state is
+        as expected.
+        
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::getCacheOrigins): Removed relaunchProcessIfNecessary().
+        It will be called inside sendToAllProcessesRelaunchingThemIfNecessary().
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::getSitesWithData): Ditto.
+        (WebKit::WebPluginSiteDataManager::clearSiteData): Ditto.
+
 2012-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use the C API internally in WebKitJavascriptResult

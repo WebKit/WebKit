@@ -370,7 +370,9 @@ template<typename U> inline void WebContext::sendToAllProcesses(const U& message
 
 template<typename U> void WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const U& message)
 {
-    relaunchProcessIfNecessary();
+// FIXME (Multi-WebProcess): WebContext doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
+    if (m_processModel == ProcessModelSharedSecondaryProcess)
+        relaunchProcessIfNecessary();
     sendToAllProcesses(message);
 }
 

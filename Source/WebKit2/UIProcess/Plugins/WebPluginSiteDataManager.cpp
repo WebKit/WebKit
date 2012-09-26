@@ -163,8 +163,6 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
     m_pendingGetSitesWithData.set(callbackID, state);
     state->getSitesWithDataForNextPlugin();
 #else
-    m_webContext->relaunchProcessIfNecessary();
-
     Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
     for (size_t i = 0; i < plugins.size(); ++i)
@@ -225,8 +223,6 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     m_pendingClearSiteData.set(callbackID, state);
     state->clearSiteDataForNextPlugin();
 #else
-    m_webContext->relaunchProcessIfNecessary();
-
     Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
     for (size_t i = 0; i < plugins.size(); ++i)

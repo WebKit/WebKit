@@ -342,10 +342,13 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* cl
 void WebPageProxy::reattachToWebProcess()
 {
     ASSERT(!isValid());
+    ASSERT(m_process);
+    ASSERT(!m_process->isValid());
+    ASSERT(!m_process->isLaunching());
 
     m_isValid = true;
 
-    m_process = m_process->context()->relaunchProcessIfNecessary();
+    m_process = m_process->context()->createNewWebProcess();
     m_process->addExistingWebPage(this, m_pageID);
 
     initializeWebPage();

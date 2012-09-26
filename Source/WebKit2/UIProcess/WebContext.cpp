@@ -304,7 +304,7 @@ void WebContext::textCheckerStateChanged()
 void WebContext::ensureSharedWebProcess()
 {
     if (m_processes.isEmpty())
-        m_processes.append(createNewWebProcess());
+        createNewWebProcess();
 }
 
 PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
@@ -366,6 +366,8 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get())), 0);
 
+    m_processes.append(process);
+
     return process.release();
 }
 
@@ -376,7 +378,7 @@ void WebContext::warmInitialProcess()
         return;
     }
 
-    m_processes.append(createNewWebProcess());
+    createNewWebProcess();
     m_haveInitialEmptyProcess = true;
 }
 
@@ -514,7 +516,6 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
         } else {
             // FIXME (Multi-WebProcess): <rdar://problem/12239661> Consider limiting the number of web processes in per-tab process model.
             process = createNewWebProcess();
-            m_processes.append(process);
         }
     }
 
@@ -529,10 +530,10 @@ WebProcessProxy* WebContext::relaunchProcessIfNecessary()
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         ensureSharedWebProcess();
         return m_processes[0].get();
-    } else {
-        // FIXME (Multi-WebProcess): What should this do in this model?
-        return 0;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
