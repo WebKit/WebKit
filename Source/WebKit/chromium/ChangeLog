@@ -1,3 +1,22 @@
+2012-09-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [chromium] add a test for inspector overlay update frequency
+        https://bugs.webkit.org/show_bug.cgi?id=97567
+
+        Reviewed by Yury Semikhatsky.
+
+        Added a test for reasonable number of frames caused by inspector page overlay.
+        We expect changes in nodes being inspected to cause an update, while just idling
+        should not cause large numbers of unexpected updates.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testPageOverlayUpdate):
+        (.TestSuite.prototype.testPageOverlayUpdate.innerAddRecord):
+        (.TestSuite.prototype.testPageOverlayUpdate.populatePage):
+        (.TestSuite.prototype.testPageOverlayUpdate.step2):
+        (.TestSuite.prototype.testPageOverlayUpdate.step4):
+        (.TestSuite.prototype.testPageOverlayUpdate.step5):
+
 2012-09-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: compare objects counted by the memory instrumentation with those allocated in the heap

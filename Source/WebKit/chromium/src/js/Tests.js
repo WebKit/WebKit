@@ -555,6 +555,90 @@ TestSuite.prototype.testPauseInSharedWorkerInitialization = function()
 };
 
 
+// Regression test for http://webk.it/97466
+TestSuite.prototype.testPageOverlayUpdate = function()
+{
+    var test = this;
+    var records = [];
+    var dispatchOnRecordType = {}
+
+    function addRecord(event)
+    {
+        innerAddRecord(event.data);
+    }
+
+    function innerAddRecord(record)
+    {
+        records.push(record);
+        if (typeof dispatchOnRecordType[record.type] === "function")
+            dispatchOnRecordType[record.type](record);
+
+        if (record.children)
+            record.children.forEach(innerAddRecord);
+    }
+
+    function populatePage()
+    {
+        var div1 = document.createElement("div");
+        div1.id = "div1";
+        // Force accelerated compositing.
+        div1.style.webkitTransform = "translateZ(0)";
+        document.body.appendChild(div1);
+        var div2 = document.createElement("div");
+        div2.id = "div2";
+        document.body.appendChild(div2);
+    }
+
+    function step1()
+    {
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, addRecord);
+        WebInspector.timelineManager.start();
+
+        test.evaluateInConsole_(populatePage.toString() + "; populatePage();" +
+                                "inspect(document.getElementById('div1'))", function() {});
+        WebInspector.notifications.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step2);
+    }
+
+    function step2()
+    {
+        WebInspector.notifications.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step2);
+        setTimeout(step3, 500);
+    }
+
+    function step3()
+    {
+        test.evaluateInConsole_("inspect(document.getElementById('div2'))", function() {});
+        WebInspector.notifications.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step4);
+    }
+
+    function step4()
+    {
+        WebInspector.notifications.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step4);
+        dispatchOnRecordType.TimeStamp = step5;
+        test.evaluateInConsole_("console.timeStamp('ready')", function() {});
+    }
+
+    function step5()
+    {
+        var types = {};
+        WebInspector.timelineManager.stop();
+        WebInspector.timelineManager.removeEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, addRecord);
+        for (var i = 0; i < records.length; ++i)
+            types[records[i].type] = (types[records[i].type] || 0) + 1;
+
+        var frameCount = types["BeginFrame"];
+        // There should be at least two updates caused by selection of nodes.
+        test.assertTrue(frameCount >= 2, "Not enough DevTools overlay updates");
+        // We normally expect up to 3 frames, but allow for a bit more in case
+        // of some unexpected invalidations.
+        test.assertTrue(frameCount < 6, "Too many updates caused by DevTools overlay");
+        test.releaseControl();
+    }
+
+    step1();
+    this.takeControl();
+}
+
 TestSuite.prototype.waitForTestResultsInConsole = function()
 {
     var messages = WebInspector.console.messages;
