@@ -83,6 +83,8 @@ class TestRunner:
         self._programs_path = common.build_path("Programs")
         self._tests = self._get_tests(tests)
         self._skipped_tests = TestRunner.SKIPPED
+        if not sys.stdout.isatty():
+            self._tty_colors_pattern = re.compile("\033\[[0-9;]*m")
 
         # These SPI daemons need to be active for the accessibility tests to work.
         self._spi_registryd = None
@@ -217,7 +219,11 @@ class TestRunner:
         def parse_line(line, child_pid = child_pid):
             if child_pid[0] == -1:
                 child_pid[0] = self._get_child_pid_from_test_output(line)
-            sys.stdout.write(line)
+
+            if sys.stdout.isatty():
+                sys.stdout.write(line)
+            else:
+                sys.stdout.write(self._tty_colors_pattern.sub('', line.replace('\r', '')))
 
         def waitpid(pid):
             while True:
