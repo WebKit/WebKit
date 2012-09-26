@@ -371,6 +371,7 @@ webkit.org/b/85532 fast/sub-pixel/float-wrap-with-subpixel-top.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/inline-block-should-not-wrap.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/inline-block-with-margin.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/size-of-span-with-different-positions.html [ Pass ]
+webkit.org/b/85532 fast/sub-pixel/table-cells-have-stable-width.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/table-cells-with-padding-do-not-wrap.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/table-rows-have-stable-height.html [ Skip ]
 webkit.org/b/85532 fast/sub-pixel/table-rows-no-gaps.html [ Pass ]
@@ -547,6 +548,8 @@ webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
 webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -627,8 +630,6 @@ webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout ]
 webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
 Bug(GTK) accessibility/aria-invalid.html [ Timeout ]
-
-webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout ]
 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout ]
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
@@ -1299,7 +1300,6 @@ webkit.org/b/92352 css3/flexbox/flex-rounding.html [ Failure ]
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
 
 # Tests added by https://bugs.webkit.org/show_bug.cgi?id=89826
-webkit.org/b/94008 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
 webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
@@ -1352,8 +1352,6 @@ webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ Im
 webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
-
-webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
