@@ -1,3 +1,9 @@
+2012-09-26  Dinu Jacob  <dinu.s.jacob@intel.com>
+
+        Unreviewed. Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove color codes characters from run-gtk-tests output when not writing to a TTY

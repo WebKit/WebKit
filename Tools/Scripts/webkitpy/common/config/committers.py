@@ -236,6 +236,7 @@ committers_unable_to_review = [
     Committer("David Grogan", ["dgrogan@chromium.org", "dgrogan@google.com"], "dgrogan"),
     Committer("David Smith", ["catfish.man@gmail.com", "dsmith@webkit.org"], "catfishman"),
     Committer("Diego Gonzalez", ["diegohcg@webkit.org", "diego.gonzalez@openbossa.org"], "diegohcg"),
+    Committer("Dinu Jacob", "dinu.s.jacob@intel.com", "dsjacob"),
     Committer("Dmitry Lomov", ["dslomov@google.com", "dslomov@chromium.org"], "dslomov"),
     Committer("Dominic Cooney", ["dominicc@chromium.org", "dominicc@google.com"], "dominicc"),
     Committer("Dominic Mazzoni", ["dmazzoni@google.com", "dmazzoni@chromium.org"], "dmazzoni"),
