@@ -28,12 +28,12 @@
 #include "GraphicsContext.h"
 #include "SimpleFontData.h"
 
+#include <vector>
 #include <wx/dc.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/defs.h>
-#include <wx/dcclient.h>
 #include <wx/gdicmn.h>
-#include <vector>
 
 #if USE(WXGC)
 #include <cairo.h>

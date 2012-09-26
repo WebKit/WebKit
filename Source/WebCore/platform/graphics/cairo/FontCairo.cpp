@@ -35,9 +35,9 @@
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
-#include "PlatformContextCairo.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
+#include "PlatformContextCairo.h"
 #include "ShadowBlur.h"
 #include "SimpleFontData.h"
 
