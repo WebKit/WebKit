@@ -1,3 +1,17 @@
+2012-09-26  Harald Tveit Alvestrand  <harald@alvestrand.no>
+
+        Implement the GetStats interface on PeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95193
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCStatsRequestSucceededTask):
+        (RTCStatsRequestSucceededTask::RTCStatsRequestSucceededTask):
+        (MockWebRTCPeerConnectionHandler::getStats):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+
 2012-09-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] Policy client: dumping from decidePolicyForResponse callback
