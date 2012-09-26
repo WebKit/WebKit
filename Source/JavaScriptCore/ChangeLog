@@ -1,3 +1,58 @@
+2012-09-25  Geoffrey Garen  <ggaren@apple.com>
+
+        JSC should dump object size inference statistics
+        https://bugs.webkit.org/show_bug.cgi?id=97618
+
+        Reviewed by Filip Pizlo.
+
+        Added an option to dump object size inference statistics.
+
+        To see statistics on live objects:
+
+            jsc --showHeapStatistics=1
+
+        To see cumulative statistics on all objects ever allocated:
+
+            jsc --showHeapStatistics=1 --objectsAreImmortal=1
+
+            (This is useful for showing GC churn caused by over-allocation.)
+
+        To support this second mode, I refactored Zombies to separate out their
+        immortality feature so I could reuse it.
+
+        * heap/Heap.cpp:
+        (JSC::MarkObject): Helper for making things immortal. We have to checked
+        for being zapped because blocks start out in this state.
+
+        (JSC::StorageStatistics): Gather statistics by walking the heap. Ignore
+        arrays and hash tables for now because they're not our focus. (We'll
+        remove these exceptions in future.)
+
+        (JSC::Heap::collect): Moved zombify to the end so it wouldn't interfere
+        with statistics gathering.
+
+        (JSC::Heap::showStatistics):
+        (JSC::Heap::markAllObjects): Factored out helper, so statistics could
+        take advantage of immortal objects.
+
+        (Zombify): Don't mark immortal objects -- that's another class's job now.
+
+        (JSC::Zombify::operator()):
+        (JSC::Heap::zombifyDeadObjects): Take advantage of forEachDeadCell instead
+        of rolling our own.
+
+        * heap/Heap.h:
+        (Heap):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::forEachDeadCell): Added, so clients don't have to do
+        the iteration logic themselves.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h: New options, listed above. Make sure to initialize
+        based on environment variable first, so we can override with specific settings.
+
 2012-09-25  Filip Pizlo  <fpizlo@apple.com>
 
         We shouldn't use the optimized versions of shift/unshift if the user is doing crazy things to the array

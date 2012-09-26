@@ -95,6 +95,8 @@ public:
     
     template<typename Functor> typename Functor::ReturnType forEachLiveCell(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachLiveCell();
+    template<typename Functor> typename Functor::ReturnType forEachDeadCell(Functor&);
+    template<typename Functor> typename Functor::ReturnType forEachDeadCell();
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
     
@@ -154,6 +156,22 @@ template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forE
 {
     Functor functor;
     return forEachLiveCell(functor);
+}
+
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(Functor& functor)
+{
+    canonicalizeCellLivenessData();
+
+    BlockIterator end = m_blocks.set().end();
+    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
+        (*it)->forEachDeadCell(functor);
+    return functor.returnValue();
+}
+
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell()
+{
+    Functor functor;
+    return forEachDeadCell(functor);
 }
 
 inline MarkedAllocator& MarkedSpace::firstAllocator()

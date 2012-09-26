@@ -145,6 +145,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE size_t protectedGlobalObjectCount();
         JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> protectedObjectTypeCounts();
         JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> objectTypeCounts();
+        void showStatistics();
 
         void pushTempSortVector(Vector<ValueStringPair>*);
         void popTempSortVector(Vector<ValueStringPair>*);
@@ -205,7 +206,8 @@ namespace JSC {
         void finalizeUnconditionalFinalizers();
         void deleteUnmarkedCompiledCode();
         void zombifyDeadObjects();
- 
+        void markDeadObjects();
+
         RegisterFile& registerFile();
         BlockAllocator& blockAllocator();
 

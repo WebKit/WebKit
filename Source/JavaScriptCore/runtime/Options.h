@@ -121,7 +121,8 @@ namespace JSC {
     v(unsigned, forcedWeakRandomSeed, 0) \
     \
     v(bool, useZombieMode, false) \
-    v(bool, zombiesAreImmortal, false) 
+    v(bool, objectsAreImmortal, false) \
+    v(bool, showHeapStatistics, false)
 
 
 class Options {

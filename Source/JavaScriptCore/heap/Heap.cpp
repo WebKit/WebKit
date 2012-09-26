@@ -176,6 +176,15 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
     return true;
 }
 
+struct MarkObject : public MarkedBlock::VoidFunctor {
+    void operator()(JSCell* cell)
+    {
+        if (cell->isZapped())
+            return;
+        Heap::heap(cell)->setMarked(cell);
+    }
+};
+
 struct Count : public MarkedBlock::CountFunctor {
     void operator()(JSCell*) { count(1); }
 };
@@ -224,6 +233,74 @@ inline void RecordType::operator()(JSCell* cell)
 inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
 {
     return m_typeCountSet.release();
+}
+
+class StorageStatistics : public MarkedBlock::VoidFunctor {
+public:
+    StorageStatistics();
+
+    void operator()(JSCell*);
+
+    size_t objectWithOutOfLineStorageCount();
+    size_t objectCount();
+
+    size_t storageSize();
+    size_t storageCapacity();
+
+private:
+    size_t m_objectWithOutOfLineStorageCount;
+    size_t m_objectCount;
+    size_t m_storageSize;
+    size_t m_storageCapacity;
+};
+
+inline StorageStatistics::StorageStatistics()
+    : m_objectWithOutOfLineStorageCount(0)
+    , m_objectCount(0)
+    , m_storageSize(0)
+    , m_storageCapacity(0)
+{
+}
+
+inline void StorageStatistics::operator()(JSCell* cell)
+{
+    if (!cell->isObject())
+        return;
+
+    JSObject* object = jsCast<JSObject*>(cell);
+    if (hasIndexedProperties(object->structure()->indexingType()))
+        return;
+
+    if (object->structure()->isUncacheableDictionary())
+        return;
+
+    ++m_objectCount;
+    if (!object->hasInlineStorage())
+        ++m_objectWithOutOfLineStorageCount;
+    m_storageSize += object->structure()->totalStorageSize() * sizeof(WriteBarrierBase<Unknown>);
+    m_storageCapacity += object->structure()->totalStorageCapacity() * sizeof(WriteBarrierBase<Unknown>); 
+}
+
+inline size_t StorageStatistics::objectWithOutOfLineStorageCount()
+{
+    return m_objectWithOutOfLineStorageCount;
+}
+
+inline size_t StorageStatistics::objectCount()
+{
+    return m_objectCount;
+}
+
+
+inline size_t StorageStatistics::storageSize()
+{
+    return m_storageSize;
+}
+
+
+inline size_t StorageStatistics::storageCapacity()
+{
+    return m_storageCapacity;
 }
 
 } // anonymous namespace
@@ -753,9 +830,6 @@ void Heap::collect(SweepToggle sweepToggle)
         m_objectSpace.resetAllocators();
     }
     
-    if (Options::useZombieMode())
-        zombifyDeadObjects();
-
     size_t currentHeapSize = size();
     if (fullGC) {
         m_sizeAfterLastCollect = currentHeapSize;
@@ -769,10 +843,48 @@ void Heap::collect(SweepToggle sweepToggle)
     m_bytesAllocated = 0;
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
+
     if (m_operationInProgress != Collection)
         CRASH();
     m_operationInProgress = NoOperation;
     JAVASCRIPTCORE_GC_END();
+
+    if (Options::useZombieMode())
+        zombifyDeadObjects();
+
+    if (Options::objectsAreImmortal())
+        markDeadObjects();
+
+    if (Options::showHeapStatistics())
+        showStatistics();
+}
+
+void Heap::showStatistics()
+{
+    dataLog("\n=== Heap Statistics: ===\n");
+    dataLog("size: %ldkB\n", static_cast<long>(m_sizeAfterLastCollect / KB));
+    dataLog("capacity: %ldkB\n", static_cast<long>(capacity() / KB));
+    dataLog("pause time: %lfms\n\n", m_lastGCLength);
+
+    StorageStatistics storageStatistics;
+    m_objectSpace.forEachLiveCell(storageStatistics);
+    dataLog("wasted .property storage: %ldkB (%ld%%)\n",
+        static_cast<long>(
+            (storageStatistics.storageCapacity() - storageStatistics.storageSize()) / KB),
+        static_cast<long>(
+            (storageStatistics.storageCapacity() - storageStatistics.storageSize()) * 100
+                / storageStatistics.storageCapacity()));
+    dataLog("objects with out-of-line .property storage: %ld (%ld%%)\n",
+        static_cast<long>(
+            storageStatistics.objectWithOutOfLineStorageCount()),
+        static_cast<long>(
+            storageStatistics.objectWithOutOfLineStorageCount() * 100
+                / storageStatistics.objectCount()));
+}
+
+void Heap::markDeadObjects()
+{
+    m_objectSpace.forEachDeadCell<MarkObject>();
 }
 
 void Heap::setActivityCallback(GCActivityCallback* activityCallback)
@@ -844,18 +956,10 @@ void Heap::didStartVMShutdown()
     lastChanceToFinalize();
 }
 
-class ZombifyCellFunctor : public MarkedBlock::VoidFunctor {
+class Zombify : public MarkedBlock::VoidFunctor {
 public:
-    ZombifyCellFunctor(size_t cellSize)
-        : m_cellSize(cellSize)
-    {
-    }
-
     void operator()(JSCell* cell)
     {
-        if (Options::zombiesAreImmortal())
-            MarkedBlock::blockFor(cell)->setMarked(cell);
-
         void** current = reinterpret_cast<void**>(cell);
 
         // We want to maintain zapped-ness because that's how we know if we've called 
@@ -863,30 +967,17 @@ public:
         if (cell->isZapped())
             current++;
 
-        void* limit = static_cast<void*>(reinterpret_cast<char*>(cell) + m_cellSize);
+        void* limit = static_cast<void*>(reinterpret_cast<char*>(cell) + MarkedBlock::blockFor(cell)->cellSize());
         for (; current < limit; current++)
             *current = reinterpret_cast<void*>(0xbbadbeef);
-    }
-
-private:
-    size_t m_cellSize;
-};
-
-class ZombifyBlockFunctor : public MarkedBlock::VoidFunctor {
-public:
-    void operator()(MarkedBlock* block)
-    {
-        ZombifyCellFunctor functor(block->cellSize());
-        block->forEachDeadCell(functor);
     }
 };
 
 void Heap::zombifyDeadObjects()
 {
+    // Sweep now because destructors will crash once we're zombified.
     m_objectSpace.sweep();
-
-    ZombifyBlockFunctor functor;
-    m_objectSpace.forEachBlock(functor);
+    m_objectSpace.forEachDeadCell<Zombify>();
 }
 
 } // namespace JSC
