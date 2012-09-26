@@ -286,8 +286,8 @@ void BackingStorePrivate::suspendScreenAndBackingStoreUpdates()
     ++m_suspendBackingStoreUpdates;
 
     // Make sure the user interface thread gets the message before we proceed
-    // because blitContents can be called from this thread and it must honor
-    // this flag.
+    // because blitVisibleContents() can be called from the user interface
+    // thread and it must honor this flag.
     ++m_suspendScreenUpdates;
 
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
@@ -349,8 +349,8 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
         renderVisibleContents();
 
     // Make sure the user interface thread gets the message before we proceed
-    // because blitContents can be called from the user interface thread and
-    // it must honor this flag.
+    // because blitVisibleContents() can be called from the user interface
+    // thread and it must honor this flag.
     --m_suspendScreenUpdates;
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
 
@@ -1141,35 +1141,6 @@ bool BackingStorePrivate::renderBackingStore()
     return render(frontState()->backingStoreRect());
 }
 
-void BackingStorePrivate::blitVisibleContents(bool force)
-{
-    // Blitting must never happen for direct rendering case.
-    ASSERT(!shouldDirectRenderingToWindow());
-    if (shouldDirectRenderingToWindow()) {
-        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
-            "BackingStore::blitVisibleContents operation not supported in direct rendering mode");
-        return;
-    }
-
-    if (m_suspendScreenUpdates) {
-        // Avoid client going into busy loop while updates suspended.
-        if (force)
-            m_hasBlitJobs = false;
-        return;
-    }
-
-    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
-        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(
-            BlackBerry::Platform::createMethodCallMessage(
-                &BackingStorePrivate::blitVisibleContents, this, force));
-        return;
-    }
-
-    blitContents(m_webPage->client()->userInterfaceBlittedDestinationRect(),
-                 m_webPage->client()->userInterfaceBlittedVisibleContentsRect(),
-                 force);
-}
-
 void BackingStorePrivate::copyPreviousContentsToBackSurfaceOfWindow()
 {
     Platform::IntRectRegion previousContentsRegion
@@ -1236,15 +1207,16 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
     }
 }
 
-void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
-                                       const Platform::IntRect& srcRect,
-                                       bool force)
+void BackingStorePrivate::blitVisibleContents(bool force)
 {
     // Blitting must never happen for direct rendering case.
     // Use invalidateWindow() instead.
     ASSERT(!shouldDirectRenderingToWindow());
-    if (shouldDirectRenderingToWindow())
+    if (shouldDirectRenderingToWindow()) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+            "BackingStore::blitVisibleContents operation not supported in direct rendering mode");
         return;
+    }
 
     if (!m_webPage->isVisible() || m_suspendScreenUpdates) {
         // Avoid client going into busy loop while blit is impossible.
@@ -1256,7 +1228,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
         BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(
             BlackBerry::Platform::createMethodCallMessage(
-                &BackingStorePrivate::blitContents, this, dstRect, srcRect, force));
+                &BackingStorePrivate::blitVisibleContents, this, force));
         return;
     }
 
@@ -1277,6 +1249,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     m_hasBlitJobs = false;
 
+    const Platform::IntRect dstRect = m_webPage->client()->userInterfaceBlittedDestinationRect();
+    const Platform::IntRect srcRect = m_webPage->client()->userInterfaceBlittedVisibleContentsRect();
     const Platform::IntRect contentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
 
 #if DEBUG_VISUALIZE
@@ -1284,9 +1258,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     // and the ui thread viewport rect instead of the normal source rect so we
     // can visualize the entire backingstore and what it is doing when we
     // scroll and zoom!
-    // FIXME: This should not explicitely depend on WebCore::.
-    WebCore::IntRect debugRect = frontState()->backingStoreRect();
-    debugRect.unite(m_webPage->client()->userInterfaceBlittedVisibleContentsRect());
+    Platform::IntRect debugRect = unionOfRects(srcRect, frontState()->backingStoreRect());
     if (debugRect.width() < debugRect.height())
         debugRect.setWidth(ceil(double(srcRect.width()) * (double(debugRect.height()) / srcRect.height())));
     if (debugRect.height() < debugRect.width())
@@ -1303,9 +1275,9 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
-                           "BackingStorePrivate::blitContents dstRect=(%d,%d %dx%d) srcRect=(%d,%d %dx%d)",
-                           dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(),
-                           srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height());
+        "BackingStorePrivate::blitVisibleContents dstRect=(%d,%d %dx%d) srcRect=(%d,%d %dx%d)",
+        dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(),
+        srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height());
 #endif
 
     Platform::IntPoint origin = contents.location();
@@ -1501,7 +1473,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         SurfacePool::globalSurfacePool()->createPlatformGraphicsContext(bufferDrawable);
     GraphicsContext graphicsContext(bufferPlatformGraphicsContext);
     FloatRect wkViewport = FloatRect(visibleContentsRect());
-    FloatRect uiViewport = FloatRect(m_webPage->client()->userInterfaceBlittedVisibleContentsRect());
+    FloatRect uiViewport = FloatRect(srcRect);
     wkViewport.move(-contents.x(), -contents.y());
     uiViewport.move(-contents.x(), -contents.y());
 
@@ -2625,18 +2597,6 @@ void BackingStore::setScrollingOrZooming(bool scrollingOrZooming)
 void BackingStore::blitVisibleContents()
 {
     d->blitVisibleContents(false /*force*/);
-}
-
-void BackingStore::blitContents(const BlackBerry::Platform::IntRect& dstRect, const BlackBerry::Platform::IntRect& contents)
-{
-    // Blitting during direct rendering is not supported.
-    if (isDirectRenderingToWindow()) {
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
-                               "BackingStore::blitContents operation not supported in direct rendering mode");
-        return;
-    }
-
-    d->blitContents(dstRect, contents);
 }
 
 void BackingStore::repaint(int x, int y, int width, int height,

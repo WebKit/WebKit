@@ -430,7 +430,7 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
 
     // In Frame::createView, Frame's FrameView object is set to 0 and recreated.
     // This operation is not atomic, and an attempt to blit contents might happen
-    // in the backing store from another thread (see BackingStorePrivate::blitContents method),
+    // in the backing store from another thread (see BackingStorePrivate::blitVisibleContents method),
     // so we suspend and resume screen update to make sure we do not get a invalid FrameView
     // state.
     BackingStoreClient* backingStoreClientForFrame = m_webPagePrivate->backingStoreClientForFrame(m_frame);

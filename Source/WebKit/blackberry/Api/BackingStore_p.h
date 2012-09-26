@@ -116,10 +116,10 @@ public:
 
     bool isSuspended() const { return m_suspendBackingStoreUpdates; }
 
-    // Suspends all screen updates so that 'blitContents' is disabled.
+    // Suspends all screen updates so that 'blitVisibleContents' is disabled.
     void suspendScreenAndBackingStoreUpdates();
 
-    // Resumes all screen updates so that 'blitContents' is enabled.
+    // Resumes all screen updates so that 'blitVisibleContents' is enabled.
     void resumeScreenAndBackingStoreUpdates(BackingStore::ResumeUpdateOperation);
 
     // The functions repaint(), slowScroll(), scroll(), scrollingStartedHelper() are
@@ -194,15 +194,15 @@ public:
     void copyPreviousContentsToBackSurfaceOfWindow();
     void copyPreviousContentsToBackSurfaceOfTile(const Platform::IntRect&, BackingStoreTile*);
     void paintDefaultBackground(const Platform::IntRect& contents, const WebCore::TransformationMatrix&, bool flush);
-    void blitContents(const Platform::IntRect& dstRect, const Platform::IntRect& contents, bool force = false);
     void blitOnIdle();
 
     typedef std::pair<TileIndex, Platform::IntRect> TileRect;
     Platform::IntRect blitTileRect(TileBuffer*, const TileRect&, const Platform::IntPoint&, const WebCore::TransformationMatrix&, BackingStoreGeometry*);
 
 #if USE(ACCELERATED_COMPOSITING)
-    // Use instead of blitContents if you need more control over OpenGL state.
-    // Note that contents is expressed in untransformed content coordinates.
+    // Use instead of blitVisibleContents() if you need more control over
+    // OpenGL state. Note that contents is expressed in untransformed
+    // content coordinates.
     // Preconditions: You have to call prepareFrame and setViewport on the LayerRenderer before
     //                calling this.
     void compositeContents(WebCore::LayerRenderer*, const WebCore::TransformationMatrix&, const WebCore::FloatRect& contents, bool contentsOpaque);
