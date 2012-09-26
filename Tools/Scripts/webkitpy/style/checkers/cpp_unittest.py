@@ -1086,7 +1086,8 @@ class CppStyleTest(CppStyleTestBase):
             */ ''',
         '')
         self.assert_multi_line_lint(
-            r'''/* int a = 0; multi-liner
+            '''\
+            /* int a = 0; multi-liner
             static const int b = 0;''',
             ['Could not find end of multi-line comment'
              '  [readability/multiline_comment] [5]',
@@ -1125,97 +1126,111 @@ class CppStyleTest(CppStyleTestBase):
     def test_explicit_single_argument_constructors(self):
         # missing explicit is bad
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(int f);
-               };''',
+            '''\
+            class Foo {
+                Foo(int f);
+            };''',
             'Single-argument constructors should be marked explicit.'
             '  [runtime/explicit] [5]')
         # missing explicit is bad, even with whitespace
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo (int f);
-               };''',
+            '''\
+            class Foo {
+                Foo (int f);
+            };''',
             ['Extra space before ( in function call  [whitespace/parens] [4]',
              'Single-argument constructors should be marked explicit.'
              '  [runtime/explicit] [5]'])
         # missing explicit, with distracting comment, is still bad
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(int f); // simpler than Foo(blargh, blarg)
-               };''',
+            '''\
+            class Foo {
+                Foo(int f); // simpler than Foo(blargh, blarg)
+            };''',
             'Single-argument constructors should be marked explicit.'
             '  [runtime/explicit] [5]')
         # missing explicit, with qualified classname
         self.assert_multi_line_lint(
-            '''class Qualifier::AnotherOne::Foo {
-                 Foo(int f);
-               };''',
+            '''\
+            class Qualifier::AnotherOne::Foo {
+                Foo(int f);
+            };''',
             'Single-argument constructors should be marked explicit.'
             '  [runtime/explicit] [5]')
         # structs are caught as well.
         self.assert_multi_line_lint(
-            '''struct Foo {
-                 Foo(int f);
-               };''',
+            '''\
+            struct Foo {
+                Foo(int f);
+            };''',
             'Single-argument constructors should be marked explicit.'
             '  [runtime/explicit] [5]')
         # Templatized classes are caught as well.
         self.assert_multi_line_lint(
-            '''template<typename T> class Foo {
-                 Foo(int f);
-               };''',
+            '''\
+            template<typename T> class Foo {
+                Foo(int f);
+            };''',
             'Single-argument constructors should be marked explicit.'
             '  [runtime/explicit] [5]')
         # proper style is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 explicit Foo(int f);
-               };''',
+            '''\
+            class Foo {
+                explicit Foo(int f);
+            };''',
             '')
         # two argument constructor is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(int f, int b);
-               };''',
+            '''\
+            class Foo {
+                Foo(int f, int b);
+            };''',
             '')
         # two argument constructor, across two lines, is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(int f,
-                     int b);
-               };''',
+            '''\
+            class Foo {
+                Foo(int f,
+                    int b);
+            };''',
             '')
         # non-constructor (but similar name), is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 aFoo(int f);
-               };''',
+            '''\
+            class Foo {
+                aFoo(int f);
+            };''',
             '')
         # constructor with void argument is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(void);
-               };''',
+            '''\
+            class Foo {
+                Foo(void);
+            };''',
             '')
         # single argument method is okay
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Bar(int b);
-               };''',
+            '''\
+            class Foo {
+                Bar(int b);
+            };''',
             '')
         # comments should be ignored
         self.assert_multi_line_lint(
-            '''class Foo {
-               // Foo(int f);
-               };''',
+            '''\
+            class Foo {
+            // Foo(int f);
+            };''',
             '')
         # single argument function following class definition is okay
         # (okay, it's not actually valid, but we don't want a false positive)
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(int f, int b);
-               };
-               Foo(int f);''',
+            '''\
+            class Foo {
+                Foo(int f, int b);
+            };
+            Foo(int f);''',
             '')
         # single argument function is okay
         self.assert_multi_line_lint(
@@ -1223,14 +1238,16 @@ class CppStyleTest(CppStyleTestBase):
             '')
         # single argument copy constructor is okay.
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(const Foo&);
-               };''',
+            '''\
+            class Foo {
+                Foo(const Foo&);
+            };''',
             '')
         self.assert_multi_line_lint(
-            '''class Foo {
-                 Foo(Foo&);
-               };''',
+            '''\
+            class Foo {
+                Foo(Foo&);
+            };''',
             '')
 
     def test_slash_star_comment_on_single_line(self):
@@ -1248,9 +1265,6 @@ class CppStyleTest(CppStyleTestBase):
             '''    /*/ static Foo(int f);''',
             'Could not find end of multi-line comment'
             '  [readability/multiline_comment] [5]')
-        self.assert_multi_line_lint(
-            '''    /**/ static Foo(int f);''',
-            '')
 
     # Test suspicious usage of "if" like this:
     # if (a == b) {
@@ -1383,23 +1397,27 @@ class CppStyleTest(CppStyleTestBase):
         # or initializing an array
         self.assert_lint('int a[3] = { 1, 2, 3 };', '')
         self.assert_lint(
-            '''const int foo[] =
-                   {1, 2, 3 };''',
+            '''\
+            const int foo[] =
+                {1, 2, 3 };''',
             '')
         # For single line, unmatched '}' with a ';' is ignored (not enough context)
         self.assert_multi_line_lint(
-            '''int a[3] = { 1,
-                            2,
-                            3 };''',
+            '''\
+            int a[3] = { 1,
+                2,
+                3 };''',
             '')
         self.assert_multi_line_lint(
-            '''int a[2][3] = { { 1, 2 },
-                             { 3, 4 } };''',
+            '''\
+            int a[2][3] = { { 1, 2 },
+                { 3, 4 } };''',
             '')
         self.assert_multi_line_lint(
-            '''int a[2][3] =
-                   { { 1, 2 },
-                     { 3, 4 } };''',
+            '''\
+            int a[2][3] =
+                { { 1, 2 },
+                { 3, 4 } };''',
             '')
 
     # CHECK/EXPECT_TRUE/EXPECT_FALSE replacements
@@ -1753,7 +1771,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('default:;',
                          'Semicolon defining empty statement. Use { } instead.'
                          '  [whitespace/semicolon] [5]')
-        self.assert_lint('      ;',
+        self.assert_lint('        ;',
                          'Line contains only semicolon. If this should be an empty '
                          'statement, use { } instead.'
                          '  [whitespace/semicolon] [5]')
@@ -1795,10 +1813,10 @@ class CppStyleTest(CppStyleTestBase):
                          '    VeryLongNameType veryLongNameVariable) { }', '')
         self.assert_lint('template<>\n'
                          'string FunctionTemplateSpecialization<SomeType>(\n'
-                         '      int x) { return ""; }', '')
+                         '    int x) { return ""; }', '')
         self.assert_lint('template<>\n'
                          'string FunctionTemplateSpecialization<vector<A::B>* >(\n'
-                         '      int x) { return ""; }', '')
+                         '    int x) { return ""; }', '')
 
         # should not catch methods of template classes.
         self.assert_lint('string Class<Type>::Method() const\n'
@@ -2028,21 +2046,27 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint(' char* oneSpaceIndent = "public:";',
                          'Weird number of spaces at line-start.  '
                          'Are you using a 4-space indent?  [whitespace/indent] [3]')
-        self.assert_lint(' public:', '')
-        self.assert_lint('  public:', '')
-        self.assert_lint('   public:', '')
-
-    def test_label(self):
-        self.assert_lint('public:',
-                         'Labels should always be indented at least one space.  '
-                         'If this is a member-initializer list in a constructor, '
-                         'the colon should be on the line after the definition '
-                         'header.  [whitespace/labels] [4]')
-        self.assert_lint('  public:', '')
-        self.assert_lint('   public:', '')
-        self.assert_lint(' public:', '')
-        self.assert_lint('  public:', '')
-        self.assert_lint('   public:', '')
+        self.assert_lint(' public:',
+                         'Weird number of spaces at line-start.  '
+                         'Are you using a 4-space indent?  [whitespace/indent] [3]')
+        self.assert_lint('  public:',
+                         'Weird number of spaces at line-start.  '
+                         'Are you using a 4-space indent?  [whitespace/indent] [3]')
+        self.assert_lint('   public:',
+                         'Weird number of spaces at line-start.  '
+                         'Are you using a 4-space indent?  [whitespace/indent] [3]')
+        self.assert_multi_line_lint(
+            'class Foo {\n'
+            'public:\n'
+            '    enum Bar {\n'
+            '        Alpha,\n'
+            '        Beta,\n'
+            '#if ENABLED_BETZ\n'
+            '        Charlie,\n'
+            '#endif\n'
+            '    };\n'
+            '};',
+            '')
 
     def test_not_alabel(self):
         self.assert_lint('MyVeryLongNamespace::MyVeryLongClassName::', '')
@@ -2080,8 +2104,9 @@ class CppStyleTest(CppStyleTestBase):
             'class Foo;',
             '')
         self.assert_multi_line_lint(
-            '''struct Foo*
-                 foo = NewFoo();''',
+            '''\
+            struct Foo*
+                foo = NewFoo();''',
             '')
         # Here is an example where the linter gets confused, even though
         # the code doesn't violate the style guide.
@@ -3171,31 +3196,35 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
     def test_no_error(self):
         self.assert_multi_line_lint(
-            '''class Foo {
-                   virtual ~Foo();
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    virtual ~Foo();
+                    virtual void foo();
+                };''',
             '')
 
         self.assert_multi_line_lint(
-            '''class Foo {
-                   virtual inline ~Foo();
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    virtual inline ~Foo();
+                    virtual void foo();
+                };''',
             '')
 
         self.assert_multi_line_lint(
-            '''class Foo {
-                   inline virtual ~Foo();
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    inline virtual ~Foo();
+                    virtual void foo();
+                };''',
             '')
 
         self.assert_multi_line_lint(
-            '''class Foo::Goo {
-                   virtual ~Goo();
-                   virtual void goo();
-               };''',
+            '''\
+                class Foo::Goo {
+                    virtual ~Goo();
+                    virtual void goo();
+                };''',
             '')
         self.assert_multi_line_lint(
             'class Foo { void foo(); };',
@@ -3215,92 +3244,92 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             'More than one command on the same line  [whitespace/newline] [4]')
 
         self.assert_multi_line_lint(
-            '''class Qualified::Goo : public Foo {
-                   virtual void goo();
-               };''',
-            '')
-
-        self.assert_multi_line_lint(
-            # Line-ending :
-            '''class Goo :
-               public Foo {
+            '''\
+                class Qualified::Goo : public Foo {
                     virtual void goo();
-               };''',
-            'Labels should always be indented at least one space.  If this is a '
-            'member-initializer list in a constructor, the colon should be on the '
-            'line after the definition header.  [whitespace/labels] [4]')
+                };''',
+            '')
 
     def test_no_destructor_when_virtual_needed(self):
         self.assert_multi_line_lint_re(
-            '''class Foo {
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    virtual void foo();
+                };''',
             'The class Foo probably needs a virtual destructor')
 
     def test_destructor_non_virtual_when_virtual_needed(self):
         self.assert_multi_line_lint_re(
-            '''class Foo {
-                   ~Foo();
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    ~Foo();
+                    virtual void foo();
+                };''',
             'The class Foo probably needs a virtual destructor')
 
     def test_no_warn_when_derived(self):
         self.assert_multi_line_lint(
-            '''class Foo : public Goo {
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo : public Goo {
+                    virtual void foo();
+                };''',
             '')
 
     def test_internal_braces(self):
         self.assert_multi_line_lint_re(
-            '''class Foo {
-                   enum Goo {
-                       GOO
-                   };
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    enum Goo {
+                        GOO
+                    };
+                    virtual void foo();
+                };''',
             'The class Foo probably needs a virtual destructor')
 
     def test_inner_class_needs_virtual_destructor(self):
         self.assert_multi_line_lint_re(
-            '''class Foo {
-                   class Goo {
-                       virtual void goo();
-                   };
-               };''',
+            '''\
+                class Foo {
+                    class Goo {
+                        virtual void goo();
+                    };
+                };''',
             'The class Goo probably needs a virtual destructor')
 
     def test_outer_class_needs_virtual_destructor(self):
         self.assert_multi_line_lint_re(
-            '''class Foo {
-                   class Goo {
-                   };
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo {
+                    class Goo {
+                    };
+                    virtual void foo();
+                };''',
             'The class Foo probably needs a virtual destructor')
 
     def test_qualified_class_needs_virtual_destructor(self):
         self.assert_multi_line_lint_re(
-            '''class Qualified::Foo {
-                   virtual void foo();
-               };''',
+            '''\
+                class Qualified::Foo {
+                    virtual void foo();
+                };''',
             'The class Qualified::Foo probably needs a virtual destructor')
 
     def test_multi_line_declaration_no_error(self):
         self.assert_multi_line_lint_re(
-            '''class Foo
-                   : public Goo {
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo
+                    : public Goo {
+                    virtual void foo();
+                };''',
             '')
 
     def test_multi_line_declaration_with_error(self):
         self.assert_multi_line_lint(
-            '''class Foo
-               {
-                   virtual void foo();
-               };''',
+            '''\
+                class Foo
+                {
+                    virtual void foo();
+                };''',
             ['This { should be at the end of the previous line  '
              '[whitespace/braces] [4]',
              'The class Foo probably needs a virtual destructor due to having '
@@ -3495,7 +3524,6 @@ class WebKitStyleTest(CppStyleTestBase):
             '   int goo;\n'
             '};',
             'Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]')
-        # FIXME: No tests for 8-spaces.
 
         # 3. In a header, code inside a namespace should not be indented.
         self.assert_multi_line_lint(
@@ -4180,7 +4208,14 @@ class WebKitStyleTest(CppStyleTestBase):
             '    myFunction(reallyLongParam1, reallyLongParam2,\n'
             '               reallyLongParam3);\n'
             '}\n',
-            '')
+            'Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]')
+
+        self.assert_multi_line_lint(
+            'if (true) {\n'
+            '    myFunction(reallyLongParam1, reallyLongParam2,\n'
+            '            reallyLongParam3);\n'
+            '}\n',
+            'When wrapping a line, only indent 4 spaces.  [whitespace/indent] [3]')
 
         # 4. Control clauses without a body should use empty braces.
         self.assert_multi_line_lint(
@@ -4189,7 +4224,7 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             'for ( ; current;\n'
             '     current = current->next) { }\n',
-            '')
+            'Weird number of spaces at line-start.  Are you using a 4-space indent?  [whitespace/indent] [3]')
         self.assert_multi_line_lint(
             'for ( ; current; current = current->next);\n',
             'Semicolon defining empty statement for this loop. Use { } instead.  [whitespace/semicolon] [5]')

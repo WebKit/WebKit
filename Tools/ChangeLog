@@ -1,3 +1,59 @@
+2012-09-26  Tony Chang  <tony@chromium.org>
+
+        C++ style checker should warn when the indentation is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=97602
+
+        Reviewed by Ojan Vafai.
+
+        Rewrite the indentation checker to ensure that indentation is always a factor of 4
+        and that we only indent 4 spaces from the previous line.
+
+        I deleted some of the old indentation checking code since it was filtered out
+        and didn't match the webkit style.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_indentation_amount): New function that checks indentation. Intentionally runs after
+        other indentation checks.
+        (check_style): Delete the old indentation code since we were already filtering out the whitespace/labels warnings.
+        (CppChecker): Remove the whitespace/labels filter.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_multi_line_comments): Force 4 space indent.
+        (CppStyleTest.test_explicit_single_argument_constructors):
+        (CppStyleTest.test_explicit_single_argument_constructors.Foo):
+        (CppStyleTest.test_explicit_single_argument_constructors.Qualifier):
+        (CppStyleTest.test_slash_star_comment_on_single_line):
+        (CppStyleTest.test_braces):
+        (CppStyleTest.test_spacing_before_last_semicolon):
+        (CppStyleTest.test_static_or_global_stlstrings):
+        (CppStyleTest.test_indent): Added macro test case.
+        (CppStyleTest.test_build_class):
+        (NoNonVirtualDestructorsTest.test_no_error):
+        (NoNonVirtualDestructorsTest.test_no_error.Foo):
+        (NoNonVirtualDestructorsTest.test_no_error.Qualified):
+        (NoNonVirtualDestructorsTest.test_no_destructor_when_virtual_needed):
+        (NoNonVirtualDestructorsTest.test_no_destructor_when_virtual_needed.Foo):
+        (NoNonVirtualDestructorsTest.test_destructor_non_virtual_when_virtual_needed):
+        (NoNonVirtualDestructorsTest.test_destructor_non_virtual_when_virtual_needed.Foo):
+        (NoNonVirtualDestructorsTest.test_no_warn_when_derived):
+        (NoNonVirtualDestructorsTest.test_no_warn_when_derived.Foo):
+        (NoNonVirtualDestructorsTest.test_internal_braces):
+        (NoNonVirtualDestructorsTest.test_internal_braces.Foo):
+        (NoNonVirtualDestructorsTest.test_inner_class_needs_virtual_destructor):
+        (NoNonVirtualDestructorsTest.test_inner_class_needs_virtual_destructor.Foo):
+        (NoNonVirtualDestructorsTest.test_inner_class_needs_virtual_destructor.Foo.Goo):
+        (NoNonVirtualDestructorsTest.test_outer_class_needs_virtual_destructor):
+        (NoNonVirtualDestructorsTest.test_outer_class_needs_virtual_destructor.Foo):
+        (NoNonVirtualDestructorsTest.test_outer_class_needs_virtual_destructor.Foo.Goo):
+        (NoNonVirtualDestructorsTest.test_qualified_class_needs_virtual_destructor):
+        (NoNonVirtualDestructorsTest.test_qualified_class_needs_virtual_destructor.Qualified):
+        (NoNonVirtualDestructorsTest.test_multi_line_declaration_no_error):
+        (NoNonVirtualDestructorsTest.test_multi_line_declaration_no_error.Foo):
+        (NoNonVirtualDestructorsTest.test_multi_line_declaration_with_error):
+        (NoNonVirtualDestructorsTest.test_multi_line_declaration_with_error.Foo):
+        (WebKitStyleTest.test_indentation):
+        (WebKitStyleTest.test_braces): Add test for call params spanning lines.
+
 2012-09-26  Adam Barth  <abarth@webkit.org>
 
         Rollout messages should be clickable in bugzilla

@@ -2060,6 +2060,31 @@ def check_directive_indentation(clean_lines, line_number, file_state, error):
     error(line_number, 'whitespace/indent', 4, 'preprocessor directives (e.g., #ifdef, #define, #import) should never be indented.')
 
 
+def get_initial_spaces_for_line(clean_line):
+    initial_spaces = 0
+    while initial_spaces < len(clean_line) and clean_line[initial_spaces] == ' ':
+        initial_spaces += 1
+    return initial_spaces
+
+
+def check_indentation_amount(clean_lines, line_number, error):
+    line = clean_lines.elided[line_number]
+    initial_spaces = get_initial_spaces_for_line(line)
+
+    if initial_spaces % 4:
+        error(line_number, 'whitespace/indent', 3,
+              'Weird number of spaces at line-start.  Are you using a 4-space indent?')
+        return
+
+    previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
+    if not previous_line.strip() or match(r'\s*\w+\s*:\s*$', previous_line) or previous_line[0] == '#':
+        return
+
+    previous_line_initial_spaces = get_initial_spaces_for_line(previous_line)
+    if initial_spaces > previous_line_initial_spaces + 4:
+        error(line_number, 'whitespace/indent', 3, 'When wrapping a line, only indent 4 spaces.')
+
+
 def check_using_std(clean_lines, line_number, file_state, error):
     """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
 
@@ -2535,44 +2560,10 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
         error(line_number, 'whitespace/tab', 1,
               'Tab found; better to use spaces')
 
-    # One or three blank spaces at the beginning of the line is weird; it's
-    # hard to reconcile that with 4-space indents.
-    # NOTE: here are the conditions rob pike used for his tests.  Mine aren't
-    # as sophisticated, but it may be worth becoming so:  RLENGTH==initial_spaces
-    # if(RLENGTH > 20) complain = 0;
-    # if(match($0, " +(error|private|public|protected):")) complain = 0;
-    # if(match(prev, "&& *$")) complain = 0;
-    # if(match(prev, "\\|\\| *$")) complain = 0;
-    # if(match(prev, "[\",=><] *$")) complain = 0;
-    # if(match($0, " <<")) complain = 0;
-    # if(match(prev, " +for \\(")) complain = 0;
-    # if(prevodd && match(prevprev, " +for \\(")) complain = 0;
-    initial_spaces = 0
     cleansed_line = clean_lines.elided[line_number]
-    while initial_spaces < len(line) and line[initial_spaces] == ' ':
-        initial_spaces += 1
     if line and line[-1].isspace():
         error(line_number, 'whitespace/end_of_line', 4,
               'Line ends in whitespace.  Consider deleting these extra spaces.')
-    # There are certain situations we allow one space, notably for labels
-    elif ((initial_spaces >= 1 and initial_spaces <= 3)
-          and not match(r'\s*\w+\s*:\s*$', cleansed_line)):
-        error(line_number, 'whitespace/indent', 3,
-              'Weird number of spaces at line-start.  '
-              'Are you using a 4-space indent?')
-    # Labels should always be indented at least one space.
-    elif not initial_spaces and line[:2] != '//':
-        label_match = match(r'(?P<label>[^:]+):\s*$', line)
-
-        if label_match:
-            label = label_match.group('label')
-            # Only throw errors for stuff that is definitely not a goto label,
-            # because goto labels can in fact occur at the start of the line.
-            if label in ['public', 'private', 'protected'] or label.find(' ') != -1:
-                error(line_number, 'whitespace/labels', 4,
-                      'Labels should always be indented at least one space.  '
-                      'If this is a member-initializer list in a constructor, '
-                      'the colon should be on the line after the definition header.')
 
     if (cleansed_line.count(';') > 1
         # for loops are allowed two ;'s (and may run over two lines).
@@ -2612,6 +2603,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_check(clean_lines, line_number, error)
     check_for_comparisons_to_zero(clean_lines, line_number, error)
     check_for_null(clean_lines, line_number, file_state, error)
+    check_indentation_amount(clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
@@ -3634,7 +3626,6 @@ class CppChecker(object):
         'whitespace/end_of_line',
         'whitespace/ending_newline',
         'whitespace/indent',
-        'whitespace/labels',
         'whitespace/line_length',
         'whitespace/newline',
         'whitespace/operators',

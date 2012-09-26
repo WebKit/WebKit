@@ -96,7 +96,6 @@ _BASE_FILTER_RULES = [
     '-runtime/rtti',
     '-whitespace/blank_line',
     '-whitespace/end_of_line',
-    '-whitespace/labels',
     # List Python pep8 categories last.
     #
     # Because much of WebKit's Python code base does not abide by the
