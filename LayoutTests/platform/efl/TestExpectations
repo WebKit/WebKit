@@ -1099,9 +1099,6 @@ webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 # Requires CSS_COMPOSITING to be turned on
 webkit.org/b/94024 css3/compositing [ Skip ]
 
-# Fails also on GTK
-webkit.org/b/94080 fast/overflow/line-clamp-and-columns.html [ ImageOnlyFailure ]
-
 # Alt text should be displayed if src attribute is not set.
 webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ ImageOnlyFailure ]
 webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ ImageOnlyFailure ]
