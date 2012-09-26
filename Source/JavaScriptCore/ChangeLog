@@ -1,3 +1,9 @@
+2012-09-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Speculative Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-09-26  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject::ensureArrayStorage() ignores the possibility that extensions have been prevented
