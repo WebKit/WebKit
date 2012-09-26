@@ -1,3 +1,18 @@
+2012-09-25  Genevieve Mak  <gmak@rim.com>
+
+        Fat Fingers doesn't work on non-scrollable pages.
+        PR #209609
+        https://bugs.webkit.org/show_bug.cgi?id=97607
+
+        Reviewed by Antonio Gomes.
+
+        Only bypass Fat Fingers and use the actual touch point if its specifically
+        requested and the page has a mouse move listener or if using the Touch Event
+        Mode meta-tag.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-09-25  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Make COMPUTED_GOTO part of the HAVE section
