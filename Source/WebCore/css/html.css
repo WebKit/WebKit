@@ -476,7 +476,7 @@ datalist {
 }
 #endif
 
-#if defined(ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS) && ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+#if defined(ENABLE_INPUT_MULTIPLE_FIELDS_UI) && ENABLE_INPUT_MULTIPLE_FIELDS_UI
 input[type="time"] {
     font-family: monospace;
 }

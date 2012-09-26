@@ -835,7 +835,7 @@ platform/mac/plugins/root-object-premature-delete-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=92352
 css3/flexbox/flex-rounding.html
 
-# ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
+# ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
 fast/forms/time-multiple-fields
 
 # <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion

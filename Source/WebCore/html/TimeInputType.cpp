@@ -41,7 +41,7 @@
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_TYPE_TIME)
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldsState.h"
 #include "ElementShadow.h"
 #include "FormController.h"
@@ -118,7 +118,7 @@ bool TimeInputType::isTimeField() const
     return true;
 }
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 
 TimeInputType::DateTimeEditControlOwnerImpl::DateTimeEditControlOwnerImpl(TimeInputType& timeInputType)
     : m_timeInputType(timeInputType)

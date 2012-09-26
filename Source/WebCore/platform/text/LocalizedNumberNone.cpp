@@ -47,7 +47,7 @@ String convertFromLocalizedNumber(const String& localizedNumberString)
     return localizedNumberString;
 }
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 
 UChar localizedDecimalSeparator()
 {

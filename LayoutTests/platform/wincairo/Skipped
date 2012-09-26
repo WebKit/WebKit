@@ -2513,7 +2513,7 @@ plugins/nested-plugin-objects.html
 #Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
 fast/css/word-space-extra.html
 
-# ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
+# ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
 fast/forms/time-multiple-fields
 
 # Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286

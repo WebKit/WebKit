@@ -80,7 +80,7 @@ TEST(LocalizedNumberICUTest, Reversible)
     testNumbers("zh_TW");
 }
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 
 static String testDecimalSeparator(const AtomicString& locale)
 {

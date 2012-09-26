@@ -35,7 +35,7 @@ public:
     static PassOwnPtr<Localizer> create(const AtomicString&);
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String localizedDecimalSeparator();
 
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
@@ -61,7 +61,7 @@ protected:
         DecimalSymbolsSize
     };
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String m_localizedTimeFormatText;
     String m_localizedShortTimeFormatText;
     Vector<String> m_timeAMPMLabels;

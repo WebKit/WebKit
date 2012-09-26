@@ -238,7 +238,7 @@ unsigned LocaleMac::firstDayOfWeek()
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 NSDateFormatter* LocaleMac::createTimeFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), NSDateFormatterNoStyle, NSDateFormatterMediumStyle);

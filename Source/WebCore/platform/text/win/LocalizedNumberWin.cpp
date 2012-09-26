@@ -40,7 +40,7 @@ String convertFromLocalizedNumber(const String& localizedNumberString)
     return LocaleWin::currentLocale()->convertFromLocalizedNumber(localizedNumberString);
 }
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String localizedDecimalSeparator()
 {
     return LocaleWin::currentLocale()->localizedDecimalSeparator();

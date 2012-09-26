@@ -202,7 +202,7 @@ String AXMenuListActionVerb()
     return String();
 }
     
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String AXAMPMFieldText()
 {
     return query(WebLocalizedString::AXAMPMFieldText);

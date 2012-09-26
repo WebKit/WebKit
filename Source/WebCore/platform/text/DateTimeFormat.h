@@ -26,7 +26,7 @@
 #ifndef DateTimeFormat_h
 #define DateTimeFormat_h
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

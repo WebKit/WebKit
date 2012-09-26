@@ -26,7 +26,7 @@
 #ifndef DateTimeEditElement_h
 #define DateTimeEditElement_h
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldElement.h"
 #include "SpinButtonElement.h"
 #include "StepRange.h"

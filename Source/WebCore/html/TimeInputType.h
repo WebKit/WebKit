@@ -35,7 +35,7 @@
 
 #if ENABLE(INPUT_TYPE_TIME)
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeEditElement.h"
 #endif
 
@@ -45,7 +45,7 @@ class TimeInputType : public BaseDateAndTimeInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual ~TimeInputType();
 #endif
 
@@ -59,7 +59,7 @@ private:
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isTimeField() const OVERRIDE;
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     class DateTimeEditControlOwnerImpl : public DateTimeEditElement::EditControlOwner {
         WTF_MAKE_NONCOPYABLE(DateTimeEditControlOwnerImpl);
 

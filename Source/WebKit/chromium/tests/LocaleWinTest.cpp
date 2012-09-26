@@ -122,7 +122,7 @@ protected:
     }
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String timeFormat(LCID lcid)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
@@ -324,7 +324,7 @@ TEST_F(LocaleWinTest, weekDayShortLabels)
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 TEST_F(LocaleWinTest, timeFormat)
 {
     EXPECT_STREQ("h:mm:ss a", timeFormat(EnglishUS).utf8().data());

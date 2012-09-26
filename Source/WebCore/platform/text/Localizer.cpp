@@ -184,7 +184,7 @@ String Localizer::convertFromLocalizedNumber(const String& localized)
     return builder.toString();
 }
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String Localizer::localizedDecimalSeparator()
 {
     initializeLocalizerData();

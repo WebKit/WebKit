@@ -32,7 +32,7 @@
 #include "LocaleWin.h"
 
 #include "DateComponents.h"
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFormat.h"
 #endif
 #include "Language.h"
@@ -667,7 +667,7 @@ const Vector<String>& LocaleWin::weekDayShortLabels()
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 static DateTimeFormat::FieldType mapCharacterToDateTimeFieldType(UChar ch)
 {
     switch (ch) {

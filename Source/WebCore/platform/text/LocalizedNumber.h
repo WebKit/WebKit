@@ -48,7 +48,7 @@ String convertToLocalizedNumber(const String&);
 // responsible to check the format of the resultant string.
 String convertFromLocalizedNumber(const String&);
 
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 // Returns localized decimal separator, e.g. "." for English, "," for French.
 String localizedDecimalSeparator();
 #endif
