@@ -545,6 +545,7 @@ webkit.org/b/93812 [ Release ] svg/custom/use-instanceRoot-as-event-target.xhtml
 webkit.org/b/95430 fast/layers/scroll-no-visible-content-but-visible-descendant.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/msubsup-base-changed.xhtml [ ImageOnlyFailure Pass ]
 
 webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure Pass ]
 
@@ -1354,6 +1355,8 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ 
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
+
+webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
