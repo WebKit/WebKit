@@ -202,8 +202,11 @@ static inline void shift(ExecState* exec, JSObject* thisObj, unsigned header, un
     ASSERT(header <= length);
     ASSERT(currentCount <= (length - header));
 
-    if (!header && isJSArray(thisObj) && asArray(thisObj)->shiftCount(exec, count))
-        return;
+    if (!header && isJSArray(thisObj)) {
+        JSArray* array = asArray(thisObj);
+        if (array->length() == length && asArray(thisObj)->shiftCount(exec, count))
+            return;
+    }
 
     for (unsigned k = header; k < length - currentCount; ++k) {
         unsigned from = k + currentCount;
@@ -242,8 +245,11 @@ static inline void unshift(ExecState* exec, JSObject* thisObj, unsigned header, 
         return;
     }
 
-    if (!header && isJSArray(thisObj) && asArray(thisObj)->unshiftCount(exec, count))
-        return;
+    if (!header && isJSArray(thisObj)) {
+        JSArray* array = asArray(thisObj);
+        if (array->length() == length && asArray(thisObj)->unshiftCount(exec, count))
+            return;
+    }
 
     for (unsigned k = length - currentCount; k > header; --k) {
         unsigned from = k + currentCount - 1;

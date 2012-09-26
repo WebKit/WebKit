@@ -1,5 +1,21 @@
 2012-09-25  Filip Pizlo  <fpizlo@apple.com>
 
+        We shouldn't use the optimized versions of shift/unshift if the user is doing crazy things to the array
+        https://bugs.webkit.org/show_bug.cgi?id=97603
+        <rdar://problem/12370864>
+
+        Reviewed by Gavin Barraclough.
+
+        You changed the length behind our backs? No optimizations for you then!
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCount):
+
+2012-09-25  Filip Pizlo  <fpizlo@apple.com>
+
         JSC bindings appear to sometimes ignore the possibility of arrays being in sparse mode
         https://bugs.webkit.org/show_bug.cgi?id=95610
 
