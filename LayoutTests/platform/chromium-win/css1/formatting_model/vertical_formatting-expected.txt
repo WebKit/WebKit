@@ -94,7 +94,7 @@ layer at (0,0) size 785x2578
           text run at (385,0) width 381: "There should be one centimeter between this paragraph and the"
           text run at (385,20) width 374: "(non-floating) one above it, since the float should not effect the"
           text run at (385,40) width 114: "paragraph spacing."
-      RenderBlock {P} at (0,1302) size 769x79
+      RenderBlock {P} at (0,1302) size 769x78
         RenderText {#text} at (0,0) size 766x39
           text run at (0,0) width 531: "There should be two centimeters of padding between this paragraph and the one below. "
           text run at (531,0) width 235: "Padding does not collapse, and there is"
@@ -161,7 +161,7 @@ layer at (0,0) size 785x2578
                   text run at (374,0) width 359: "There should be one centimeter between this paragraph and"
                   text run at (374,20) width 337: "the (non-floating) one above it, since the float should not"
                   text run at (374,40) width 173: "effect the paragraph spacing."
-              RenderBlock {P} at (4,939) size 747x79
+              RenderBlock {P} at (4,939) size 747x78
                 RenderText {#text} at (0,0) size 719x39
                   text run at (0,0) width 531: "There should be two centimeters of padding between this paragraph and the one below. "
                   text run at (531,0) width 188: "Padding does not collapse, and"

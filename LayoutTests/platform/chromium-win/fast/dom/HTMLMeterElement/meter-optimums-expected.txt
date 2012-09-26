@@ -97,7 +97,7 @@ layer at (0,0) size 785x603
             RenderMeter {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
-      RenderBlock {H2} at (0,432) size 769x28
+      RenderBlock {H2} at (0,431) size 769x28
         RenderText {#text} at (0,0) size 141x26
           text run at (0,0) width 141: "optimum=750"
       RenderBlock {UL} at (0,478) size 769x101

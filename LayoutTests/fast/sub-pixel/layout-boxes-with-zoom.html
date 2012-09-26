@@ -37,7 +37,9 @@
         
         var lastElementBottom = testElement.lastChild.getBoundingClientRect().bottom;
         var containerBottom = testElement.getBoundingClientRect().bottom;
-        if (Math.abs(lastElementBottom - containerBottom) < 0.01)
+        
+        var tolerance = Math.ceil(1 / (zoom / 100));
+        if (Math.abs(lastElementBottom - containerBottom) <= tolerance)
             log('PASS: With zoom of ' + zoom + '% bottom edge of last child lines up with bottom edge of container.');
         else
             log('FAIL: With zoom of ' + zoom + '% bottom edge of last child at ' + lastElementBottom + ', container at ' + containerBottom + '.');
@@ -62,6 +64,8 @@
     test(300);
     test(400);
     test(500);
+    test(750);
+    test(1000);
     test(90);
     test(80);
     test(75);
@@ -69,5 +73,7 @@
     test(50);
     test(33);
     test(25);
+    test(10);
+    test(5);
 </script>
 </html>

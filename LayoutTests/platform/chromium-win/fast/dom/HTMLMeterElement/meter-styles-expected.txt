@@ -121,7 +121,7 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (2,2) size 61x12 [bgcolor=#008000] [border: (2px solid #77CC77)]
             RenderText {#text} at (80,0) size 224x19
               text run at (80,0) width 224: " should have solid bar and value part."
-      RenderBlock {H2} at (3,399) size 778x21
+      RenderBlock {H2} at (3,399) size 778x20
         RenderText {#text} at (0,0) size 151x19
           text run at (0,0) width 151: "Providing appearances"
       RenderBlock {DIV} at (0,422) size 784x44 [bgcolor=#EEEEEE]
@@ -143,7 +143,7 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (3,468) size 778x21
         RenderText {#text} at (0,0) size 152x19
           text run at (0,0) width 152: "Providing bar paddings"
-      RenderBlock {DIV} at (0,492) size 784x20 [bgcolor=#EEEEEE]
+      RenderBlock {DIV} at (0,491) size 784x21 [bgcolor=#EEEEEE]
         RenderBlock {METER} at (0,2) size 80x17
           RenderMeter {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16

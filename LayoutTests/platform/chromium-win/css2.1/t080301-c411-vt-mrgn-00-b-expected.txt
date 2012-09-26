@@ -47,7 +47,7 @@ layer at (0,0) size 785x896
               RenderBlock {P} at (3,656) size 80x21 [bgcolor=#00FFFF]
                 RenderText {#text} at (40,0) size 6x19
                   text run at (40,0) width 6: "-"
-              RenderBlock {P} at (3,714) size 80x59 [bgcolor=#FFA500]
+              RenderBlock {P} at (3,714) size 80x58 [bgcolor=#FFA500]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
               RenderBlock {P} at (3,772) size 80x58 [bgcolor=#FFFF00]
@@ -100,8 +100,8 @@ layer at (0,0) size 785x896
               RenderBlock {DIV} at (3,714) size 80x21 [bgcolor=#FFA500]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"
-              RenderBlock {DIV} at (3,734) size 80x39 [bgcolor=#FFA500]
-              RenderBlock {DIV} at (3,772) size 80x38 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (3,734) size 80x38 [bgcolor=#FFA500]
+              RenderBlock {DIV} at (3,771) size 80x39 [bgcolor=#FFFF00]
               RenderBlock {DIV} at (3,809) size 80x21 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19
                   text run at (0,0) width 6: "-"

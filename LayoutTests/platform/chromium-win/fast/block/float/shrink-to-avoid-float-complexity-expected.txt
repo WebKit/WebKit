@@ -226,7 +226,7 @@ layer at (208,1102) size 369x180
     RenderBR {BR} at (235,140) size 0x19
     RenderText {#text} at (0,160) size 310x19
       text run at (0,160) width 310: "\x{2013} has a 100px left margin and a 100px right margin;"
-layer at (8,1447) size 769x200
+layer at (8,1446) size 769x200
   RenderBlock {DIV} at (0,1426) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x59
@@ -238,7 +238,7 @@ layer at (8,1447) size 769x200
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 119: "a floated right and it"
         text run at (36,76) width 87: "has no margin."
-layer at (208,1447) size 369x180
+layer at (208,1446) size 369x180
   RenderBlock {DIV} at (200,0) size 369x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"

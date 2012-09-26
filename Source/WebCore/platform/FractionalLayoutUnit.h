@@ -59,7 +59,7 @@ while (0)
 #endif
 
 #if ENABLE(SUBPIXEL_LAYOUT)
-static const int kFixedPointDenominator = 60;
+static const int kFixedPointDenominator = 64;
 #else
 static const int kFixedPointDenominator = 1;
 #endif

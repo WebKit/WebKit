@@ -95,10 +95,10 @@ After step 1
 After step 2
 
 (GraphicsLayer
-  (bounds 785.00 2058.00)
+  (bounds 785.00 2057.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 2058.00)
+      (bounds 785.00 2057.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)

@@ -95,7 +95,7 @@ layer at (8,446) size 750x320
       text run at (0,600) width 25: "elit. "
       text run at (25,600) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
       text run at (0,620) width 143: "Nulla varius enim ac mi."
-layer at (8,876) size 750x414
+layer at (8,876) size 750x413
   RenderBlock {DIV} at (0,859) size 750x415 [bgcolor=#EEEEEE]
     RenderBlock (anonymous multi-column span) at (0,0) size 750x94
       RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
@@ -103,7 +103,7 @@ layer at (8,876) size 750x414
           text run at (0,0) width 666: "This is a spanning element at the beginning of the columns block. "
           text run at (666,0) width 17: "It"
           text run at (0,27) width 619: "should collapse its margins with the h2 in the previous block."
-layer at (8,970) size 750x320
+layer at (8,969) size 750x320
   RenderBlock (anonymous multi-column) at (0,93) size 750x321
     RenderText {#text} at (0,0) size 367x639
       text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -141,7 +141,7 @@ layer at (8,970) size 750x320
       text run at (0,600) width 25: "elit. "
       text run at (25,600) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
       text run at (0,620) width 143: "Nulla varius enim ac mi."
-layer at (8,1306) size 750x607
+layer at (8,1305) size 750x608
   RenderBlock {DIV} at (0,1289) size 750x609 [bgcolor=#EEEEEE]
     RenderBlock (anonymous multi-column span) at (0,220) size 750x168
       RenderBlock {H2} at (0,19) size 750x55 [bgcolor=#CCCCCC]
@@ -154,7 +154,7 @@ layer at (8,1306) size 750x607
           text run at (0,0) width 635: "This is a spanning element in the middle of the columns block. "
           text run at (635,0) width 90: "It should"
           text run at (0,27) width 566: "collapse its margins with the spanning element above it."
-layer at (8,1306) size 750x220
+layer at (8,1305) size 750x220
   RenderBlock (anonymous multi-column) at (0,0) size 750x220
     RenderText {#text} at (0,0) size 367x419
       text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

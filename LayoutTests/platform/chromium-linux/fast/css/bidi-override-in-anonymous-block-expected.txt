@@ -130,8 +130,8 @@ layer at (0,0) size 785x1301
             RenderRubyBase (anonymous) at (0,0) size 22x20
               RenderText {#text} at (0,0) size 22x19
                 text run at (0,0) width 22 RTL override: "abc"
-        RenderText {#text} at (149,13) size 4x19
-          text run at (149,13) width 4 RTL: " "
+        RenderText {#text} at (148,13) size 5x19
+          text run at (148,13) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
           RenderRubyRun (anonymous) at (125,13) size 23x20
             RenderRubyBase (anonymous) at (0,0) size 22x20
@@ -147,7 +147,7 @@ layer at (0,0) size 785x1301
         RenderText {#text} at (102,13) size 5x19
           text run at (102,13) width 5 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
-          RenderRubyRun (anonymous) at (79,13) size 22x20
+          RenderRubyRun (anonymous) at (78,13) size 23x20
             RenderRubyBase (anonymous) at (0,0) size 22x20
               RenderInline {RB} at (0,0) size 22x19
                 RenderText {#text} at (0,0) size 22x19

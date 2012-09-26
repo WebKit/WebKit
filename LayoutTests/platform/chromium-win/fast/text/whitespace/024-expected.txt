@@ -103,7 +103,7 @@ layer at (0,0) size 785x1239
                   text run at (0,20) width 93: "nested element."
       RenderBlock (anonymous) at (0,683) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {H2} at (0,723) size 769x28
+      RenderBlock {H2} at (0,722) size 769x28
         RenderText {#text} at (0,0) size 108x26
           text run at (0,0) width 108: "Example 3"
       RenderTable {TABLE} at (0,769) size 769x166

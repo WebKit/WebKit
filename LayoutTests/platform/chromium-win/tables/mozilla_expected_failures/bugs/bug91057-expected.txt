@@ -66,7 +66,7 @@ layer at (0,0) size 785x1834
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,471) size 765x30 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,470) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 303x26
           text run at (1,1) width 303: "Test 2 - \"margin-right: 50px\""
       RenderTable {TABLE} at (1,519) size 164x53 [border: (1px solid #000000)]

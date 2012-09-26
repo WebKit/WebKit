@@ -1,6 +1,6 @@
-layer at (0,0) size 785x1435
+layer at (0,0) size 785x1434
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1435
+layer at (0,0) size 785x1434
   RenderBlock {HTML} at (0,0) size 785x1435
     RenderBody {BODY} at (8,16) size 769x1403
 layer at (8,16) size 760x441
@@ -107,7 +107,7 @@ layer at (13,478) size 750x352
 layer at (13,897) size 750x8
   RenderBlock (anonymous multi-column) at (5,423) size 750x9
     RenderBlock {SPAN} at (0,8) size 367x0 [color=#FFFFFF] [bgcolor=#000000]
-layer at (8,926) size 760x493
+layer at (8,926) size 760x492
   RenderBlock {DIV} at (0,909) size 760x494 [border: (5px solid #800000)]
     RenderBlock (anonymous multi-column span) at (5,177) size 750x67 [color=#FFFFFF]
       RenderBlock {H2} at (0,19) size 750x28 [color=#000000] [bgcolor=#EEEEEE]
@@ -133,7 +133,7 @@ layer at (13,931) size 750x172
         RenderText {#text} at (0,0) size 337x39
           text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
           text run at (0,20) width 143: "Nulla varius enim ac mi."
-layer at (13,1170) size 750x244
+layer at (13,1169) size 750x244
   RenderBlock (anonymous multi-column) at (5,243) size 750x245
     RenderBlock {SPAN} at (0,16) size 367x220 [color=#FFFFFF] [bgcolor=#000000]
       RenderBlock {P} at (0,0) size 367x220

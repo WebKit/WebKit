@@ -90,7 +90,7 @@ layer at (0,0) size 785x989
               RenderTableCell {SPAN} at (417,40) size 139x20 [bgcolor=#00FFFF] [r=2 c=3 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 139x19
                   text run at (0,0) width 139: "Table 2, Row 3, Cell 4"
-      RenderBlock {H2} at (0,348) size 769x28
+      RenderBlock {H2} at (0,347) size 769x28
         RenderText {#text} at (0,0) size 137x26
           text run at (0,0) width 137: "Rules 3 and 4"
       RenderBlock {P} at (0,394) size 769x21
