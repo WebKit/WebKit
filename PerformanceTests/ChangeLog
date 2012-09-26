@@ -1,3 +1,20 @@
+2012-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use runPerSecond in PerformanceTests/Bindings/typed-array* and event-target-wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=97625
+
+        Reviewed by Eric Seidel.
+
+        Use PerfTestRunner.runPerSecond instead of PerfTestRunner.run. Also reduce the fixed number of
+        elements and iterations in these tests by a factor of 10 since runPerSecond can dynamically
+        adjust the number of function calls.
+
+        * Bindings/event-target-wrapper.html:
+        * Bindings/typed-array-construct-from-array.html:
+        * Bindings/typed-array-construct-from-same-type.html:
+        * Bindings/typed-array-construct-from-typed.html:
+        * Bindings/typed-array-set-from-typed.html:
+
 2012-09-25  Antti Koivisto  <antti@apple.com>
 
         Optimize stylesheet insertions

@@ -5,19 +5,18 @@
 <script>
 var link = document.getElementsByTagName('a')[0];
 var evt = null;
-var kIteratonsPerTest = 1000000;
+var kIteratonsPerTest = 100000;
 
 link.addEventListener('click', function(event) {
     link.textContent = '';
     window.evt = event;
     event.preventDefault();
 
-    PerfTestRunner.run(function () {
+    PerfTestRunner.runPerSecond({run: function () {
         var e = window.evt;
-        for (var x = 0; x < kIteratonsPerTest; x++) {
+        for (var x = 0; x < kIteratonsPerTest; x++)
             e.target;
-        }
-    });
+    }});
 
     return false;
 }, false);

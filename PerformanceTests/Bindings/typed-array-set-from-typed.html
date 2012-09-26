@@ -3,16 +3,15 @@
 <script src="../resources/runner.js"></script>
 <script>
 
-var length = 10000000;
+var length = 1000000;
 var source = new Uint8Array(length);
-for (var i = 0; i < length; i++) {
+for (var i = 0; i < length; i++)
     source[i] = i;
-}
 var target = new Float64Array(length);
 
-PerfTestRunner.run(function() {
+PerfTestRunner.runPerSecond({run: function() {
     target.set(source);
-});
+}});
 </script>
 </body>
 
