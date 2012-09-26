@@ -126,8 +126,6 @@ SuggestionPicker.prototype._measureMaxContentWidth = function() {
     // left aligns all the content including label.
     this._containerElement.classList.add("measuring-width");
     var maxContentWidth = 0;
-    if (typeof this._config.inputWidth === "number")
-        maxContentWidth = this._config.inputWidth;
     var contentElements = this._containerElement.getElementsByClassName("content");
     for (var i=0; i < contentElements.length; ++i) {
         maxContentWidth = Math.max(maxContentWidth, contentElements[i].offsetWidth);
@@ -139,6 +137,8 @@ SuggestionPicker.prototype._measureMaxContentWidth = function() {
 SuggestionPicker.prototype._fixWindowSize = function() {
     var ListBorder = 2;
     var desiredWindowWidth = this._measureMaxContentWidth() + ListBorder;
+    if (typeof this._config.inputWidth === "number")
+        desiredWindowWidth = Math.max(this._config.inputWidth, desiredWindowWidth);
     var totalHeight = ListBorder;
     var maxHeight = 0;
     var entryCount = 0;
