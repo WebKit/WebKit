@@ -24,15 +24,15 @@
 
 #include "TextureMapperGL.h"
 // Qt headers must be included before glx headers.
-#include <GL/glext.h>
-#include <GL/glx.h>
 #include <QCoreApplication>
 #include <QOpenGLContext>
 #include <QVector>
 #include <QWindow>
+#include <qpa/qplatformwindow.h>
+#include <GL/glext.h>
+#include <GL/glx.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
-#include <qpa/qplatformwindow.h>
 
 namespace WebCore {
 
