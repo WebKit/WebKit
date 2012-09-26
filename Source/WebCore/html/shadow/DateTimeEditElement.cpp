@@ -374,6 +374,8 @@ void DateTimeEditElement::readOnlyStateChanged()
 
 void DateTimeEditElement::resetFields()
 {
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
+        m_fields[fieldIndex]->removeEventHandler();
     m_fields.shrink(0);
 }
 
