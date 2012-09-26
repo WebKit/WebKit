@@ -249,11 +249,11 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
     if (frameView->frame()->document()->inPageCache()) {
         // If this frame view's document is being put into the page cache, we don't want to update our
         // main frame scroll position. Just let the FrameView think that we did.
-        updateMainFrameScrollPosition(scrollPosition);
+        updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
         return true;
     }
 
-    m_scrollingTreeState->setRequestedScrollPosition(scrollPosition);
+    m_scrollingTreeState->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
     scheduleTreeStateCommit();
     return true;
 #else
@@ -278,7 +278,7 @@ bool ScrollingCoordinator::handleWheelEvent(FrameView*, const PlatformWheelEvent
     return true;
 }
 
-void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
+void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll)
 {
     ASSERT(isMainThread());
 
@@ -289,9 +289,14 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     if (!frameView)
         return;
 
+    bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
+    frameView->setInProgrammaticScroll(programmaticScroll);
+
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
+
+    frameView->setInProgrammaticScroll(oldProgrammaticScroll);
 }
 
 void ScrollingCoordinator::updateMainFrameScrollLayerPosition()

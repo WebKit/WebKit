@@ -107,10 +107,12 @@ public:
     void setScrollLayer(const GraphicsLayer*);
 
     const IntPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
-    void setRequestedScrollPosition(const IntPoint&);
+    void setRequestedScrollPosition(const IntPoint&, bool representsProgrammaticScroll);
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
+    
+    bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
     // Copies the current tree state and clears the changed properties mask in the original.
     PassOwnPtr<ScrollingTreeState> commit();
@@ -134,6 +136,7 @@ private:
 
     bool m_hasEnabledHorizontalScrollbar;
     bool m_hasEnabledVerticalScrollbar;
+    bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;

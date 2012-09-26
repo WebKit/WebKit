@@ -120,6 +120,8 @@ private:
     bool m_mainFramePinnedToTheRight;
 
     bool m_scrollingPerformanceLoggingEnabled;
+    
+    bool m_isHandlingProgrammaticScroll;
 
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_debugInfoLayer;

@@ -106,7 +106,7 @@ public:
     bool handleWheelEvent(FrameView*, const PlatformWheelEvent&);
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
-    void updateMainFrameScrollPosition(const IntPoint&);
+    void updateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll);
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes and the scroll layer position needs to be updated as well.
     void updateMainFrameScrollPositionAndScrollLayerPosition();
