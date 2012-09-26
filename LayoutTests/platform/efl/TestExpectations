@@ -721,9 +721,6 @@ webkit.org/b/95302 fast/events/constructors/speech-recognition-event-constructor
 webkit.org/b/73544 fast/notifications [ Skip ]
 webkit.org/b/73544 http/tests/notifications [ Skip ]
 
-# This tests fails by one on 32 bits machines due to rounding issues.
-Bug(EFL) fast/css/percentage-non-integer.html [ Failure Pass ]
-
 # Test is timeouting, passes in all other platforms.
 Bug(EFL) fast/css/device-aspect-ratio.html
 
