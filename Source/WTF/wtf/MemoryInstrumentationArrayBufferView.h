@@ -28,30 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebCoreMemoryInstrumentation.h"
+#ifndef MemoryInstrumentationArrayBufferView_h
+#define MemoryInstrumentationArrayBufferView_h
 
-namespace WebCore {
+#include <wtf/ArrayBufferView.h>
+#include <wtf/MemoryInstrumentation.h>
 
-MemoryObjectType WebCoreMemoryTypes::Page = "Page";
-MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
-MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
-MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
+namespace WTF {
 
-MemoryObjectType WebCoreMemoryTypes::MemoryCache = "MemoryCache";
-MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";
-MemoryObjectType WebCoreMemoryTypes::CachedResource = "MemoryCache.Resource";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceRaw = "MemoryCache.RawResource";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "MemoryCache.CSS";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "MemoryCache.Font";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "MemoryCache.Image";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "MemoryCache.Script";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "MemoryCache.SVG";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
+inline void reportMemoryUsage(const ArrayBufferView* const& arrayBufferView, MemoryObjectInfo* memoryObjectInfo)
+{
+    MemoryClassInfo info(memoryObjectInfo, arrayBufferView);
+    info.addMember(arrayBufferView->buffer().get());
+}
 
-MemoryObjectType WebCoreMemoryTypes::ExternalResources = "JSExternalResources";
-MemoryObjectType WebCoreMemoryTypes::ExternalStrings = "JSExternalResources.Strings";
-MemoryObjectType WebCoreMemoryTypes::ExternalArrays = "JSExternalResources.Arrays";
+inline void reportMemoryUsage(const ArrayBuffer* const& arrayBuffer, MemoryObjectInfo* memoryObjectInfo)
+{
+    MemoryClassInfo info(memoryObjectInfo, arrayBuffer);
+    info.addRawBuffer(arrayBuffer->data(), arrayBuffer->byteLength());
+}
 
-} // namespace WebCore
+}
+
+#endif // !defined(MemoryInstrumentationArrayBufferView_h)

@@ -1,3 +1,17 @@
+2012-09-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: replace manual JS external resources counting with MemoryInstrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=97662
+
+        Reviewed by Yury Semikhatsky.
+
+        Old schema used sizeInBytes method on StringImpl. This method works incorrect for substrings.
+        Also we'd like to know exact pointers to strings and buffers for verification purposes.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-09-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extract HashSet instrumentation from core NMI code and put it into MemoryInstrumentationHashSet.h

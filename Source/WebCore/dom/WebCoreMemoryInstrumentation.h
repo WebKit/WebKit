@@ -56,6 +56,10 @@ public:
     static MemoryObjectType CachedResourceSVG;
     static MemoryObjectType CachedResourceShader;
     static MemoryObjectType CachedResourceXSLT;
+
+    static MemoryObjectType ExternalResources;
+    static MemoryObjectType ExternalStrings;
+    static MemoryObjectType ExternalArrays;
 };
 
 } // namespace WebCore

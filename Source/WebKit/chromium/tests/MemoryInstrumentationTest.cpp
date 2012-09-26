@@ -36,7 +36,9 @@
 
 #include <gtest/gtest.h>
 
+#include <wtf/ArrayBuffer.h>
 #include <wtf/HashSet.h>
+#include <wtf/MemoryInstrumentationArrayBufferView.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/RefCounted.h>
@@ -455,6 +457,18 @@ TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
     impl.addRootObject(root);
     EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), impl.reportedSizeForAllTypes());
     EXPECT_EQ(count + 2, (size_t)visitedObjects.size());
+}
+
+TEST(MemoryInstrumentationTest, arrayBuffer)
+{
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+
+    typedef InstrumentedTemplate<RefPtr<ArrayBuffer> > ValueType;
+    ValueType value(ArrayBuffer::create(1000, sizeof(int)));
+    impl.addRootObject(value);
+    EXPECT_EQ(sizeof(int) * 1000 + sizeof(ArrayBuffer), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(2, visitedObjects.size());
 }
 
 } // namespace

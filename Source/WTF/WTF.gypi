@@ -50,6 +50,7 @@
             'wtf/MainThread.h',
             'wtf/MathExtras.h',
             'wtf/MemoryInstrumentation.h',
+            'wtf/MemoryInstrumentationArrayBufferView.h',
             'wtf/MemoryInstrumentationHashSet.h',
             'wtf/MemoryInstrumentationHashTable.h',
             'wtf/MemoryInstrumentationVector.h',
