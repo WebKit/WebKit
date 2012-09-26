@@ -747,6 +747,8 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
 
 void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
 {
+    if (!m_isAcceptingTouchEvents)
+        return;
     WebTouchEventBuilder webEvent(this, *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;

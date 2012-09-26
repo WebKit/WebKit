@@ -1,3 +1,15 @@
+2012-09-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Do not dispatch touch-events to plugins unless they explicitly request for touch-events.
+        https://bugs.webkit.org/show_bug.cgi?id=97685
+
+        Reviewed by Adam Barth.
+
+        Plugins need to call setIsAcceptingTouchEvents if they want to receive touch-events. So
+        avoid dispatching touch-events to plugins unless they have explicitly requested for them.
+
+        * src/WebPluginContainerImpl.cpp:
+
 2012-09-26  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium][Win] Remove ensureFontLoaded from PlatformSupport
