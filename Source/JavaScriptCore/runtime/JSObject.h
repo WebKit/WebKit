@@ -534,17 +534,10 @@ namespace JSC {
         // already.
         ArrayStorage* ensureArrayStorage(JSGlobalData& globalData)
         {
-            switch (structure()->indexingType()) {
-            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            if (LIKELY(hasArrayStorage(structure()->indexingType())))
                 return m_butterfly->arrayStorage();
-                
-            case ALL_BLANK_INDEXING_TYPES:
-                return createInitialArrayStorage(globalData);
-                
-            default:
-                ASSERT_NOT_REACHED();
-                return 0;
-            }
+            
+            return ensureArrayStorageSlow(globalData);
         }
         
         static size_t offsetOfInlineStorage();
@@ -657,6 +650,8 @@ namespace JSC {
         unsigned getNewVectorLength(unsigned desiredLength);
 
         JS_EXPORT_PRIVATE bool getOwnPropertySlotSlow(ExecState*, PropertyName, PropertySlot&);
+        
+        ArrayStorage* ensureArrayStorageSlow(JSGlobalData&);
         
     protected:
         Butterfly* m_butterfly;

@@ -490,6 +490,20 @@ ArrayStorage* JSObject::createInitialArrayStorage(JSGlobalData& globalData)
     return createArrayStorage(globalData, 0, BASE_VECTOR_LEN);
 }
 
+ArrayStorage* JSObject::ensureArrayStorageSlow(JSGlobalData& globalData)
+{
+    switch (structure()->indexingType()) {
+    case ALL_BLANK_INDEXING_TYPES:
+        if (UNLIKELY(indexingShouldBeSparse()))
+            return ensureArrayStorageExistsAndEnterDictionaryIndexingMode(globalData);
+        return createInitialArrayStorage(globalData);
+        
+    default:
+        CRASH();
+        return 0;
+    }
+}
+
 ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(JSGlobalData& globalData)
 {
     switch (structure()->indexingType()) {

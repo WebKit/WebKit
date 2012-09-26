@@ -79,6 +79,8 @@ fast/js/dfg-arguments-mixed-alias
 fast/js/dfg-arguments-osr-exit
 fast/js/dfg-arguments-out-of-bounds
 fast/js/dfg-arguments-unexpected-escape
+fast/js/dfg-arrayify-when-late-prevent-extensions
+fast/js/dfg-arrayify-when-prevent-extensions
 fast/js/dfg-array-length-dead
 fast/js/dfg-array-pop-side-effects
 fast/js/dfg-array-push-bad-time

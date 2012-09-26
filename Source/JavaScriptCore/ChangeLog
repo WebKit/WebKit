@@ -1,3 +1,17 @@
+2012-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        JSObject::ensureArrayStorage() ignores the possibility that extensions have been prevented
+        https://bugs.webkit.org/show_bug.cgi?id=97719
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureArrayStorage):
+        (JSObject):
+
 2012-09-26  Gavin Barraclough  <barraclough@apple.com>
 
         Generalize JSGlobalThis as JSProxy
