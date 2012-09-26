@@ -38,10 +38,13 @@ namespace WTR {
 
 using namespace WTF;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static String testPathFromURL(WKURLRef url)
 {
     RetainPtr<CFURLRef> cfURL(AdoptCF, WKURLCopyCFURL(kCFAllocatorDefault, url));
-    
+    if (!cfURL)
+        return String();
+
     RetainPtr<CFStringRef> schemeCFString(AdoptCF, CFURLCopyScheme(cfURL.get()));
     RetainPtr<CFStringRef> pathCFString(AdoptCF, CFURLCopyPath(cfURL.get()));
 
@@ -67,9 +70,11 @@ static String testPathFromURL(WKURLRef url)
 
     return String();
 }
+#endif
 
 void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
@@ -83,6 +88,7 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
         RetainPtr<CFStringRef> cfString(AdoptCF, builder.toString().createCFString());
         WKSetCrashReportApplicationSpecificInformation(cfString.get());
     }
+#endif
 }
 
 } // namespace WTR
