@@ -218,6 +218,9 @@ void ResourceHandle::setDefersLoading(bool value)
 
 bool ResourceHandle::start(NetworkingContext* context)
 {
+    if (!context)
+        return false;
+
     d->start();
     return true;
 }
