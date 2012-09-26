@@ -969,7 +969,7 @@ crbug.com/24197 fast/css/disabled-author-styles.html
 webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.html
 
 # Marking as expected failing until the test can be updated and all platforms rebaselined.
-fast/block/float/overhanging-tall-block.html [ Failure ]
+webkit.org/b/96319 fast/block/float/overhanging-tall-block.html [ Failure ]
 
 # -----------------------------------------------------------------
 # Inspector tests
