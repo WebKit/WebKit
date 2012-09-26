@@ -2192,7 +2192,7 @@ static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSeri
         g_simple_async_result_take_error(result.get(), error);
     else if (wkSerializedScriptValue) {
         GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
-        data->scriptResult = webkitJavascriptResultCreate(webView.get(), wkSerializedScriptValue);
+        data->scriptResult = webkitJavascriptResultCreate(webView.get(), toImpl(wkSerializedScriptValue));
     } else {
         g_set_error_literal(&error, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, _("An exception was raised in JavaScript"));
         g_simple_async_result_take_error(result.get(), error);

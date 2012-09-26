@@ -1,3 +1,21 @@
+2012-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitJavascriptResult
+        https://bugs.webkit.org/show_bug.cgi?id=96780
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+        (_WebKitJavascriptResult::_WebKitJavascriptResult):
+        (webkitJavascriptResultCreate):
+        * UIProcess/API/gtk/WebKitJavascriptResultPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback):
+
 2012-09-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] Policy client: dumping from decidePolicyForResponse callback
