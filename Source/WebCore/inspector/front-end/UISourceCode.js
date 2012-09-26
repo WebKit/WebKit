@@ -194,26 +194,42 @@ WebInspector.UISourceCode.prototype = {
     revertToOriginal: function()
     {
         /**
+         * @this {WebInspector.UISourceCode}
          * @param {?string} content
          * @param {boolean} contentEncoded
          * @param {string} mimeType
          */
-      function callback(content, contentEncoded, mimeType)
+        function callback(content, contentEncoded, mimeType)
         {
-            this._setContent();
+            if (typeof content === "undefined")
+                return;
+
+            this._setContent(/** @type {string} */ content);
         }
 
         this.requestOriginalContent(callback.bind(this));
     },
 
+    /**
+     * @param {function(WebInspector.UISourceCode)} callback
+     */
     revertAndClearHistory: function(callback)
     {
-        function revert(content)
+        /**
+         * @this {WebInspector.UISourceCode}
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function revert(content, contentEncoded, mimeType)
         {
-            this._setContent(content);
+            if (typeof content === "undefined")
+                return;
+
+            this._setContent(/** @type {string} */ content);
             this._clearRevisionHistory();
             this.history = [];
-            callback();
+            callback(this);
         }
 
         this.requestOriginalContent(revert.bind(this));

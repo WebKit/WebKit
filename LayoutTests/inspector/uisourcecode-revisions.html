@@ -1,0 +1,195 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+ setTimeout(InspectorTest.completeTest.bind(InspectorTest), 3000);
+    WebInspector.showPanel("scripts");
+
+    function createMockContentProvider()
+    {
+        var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "<script content>", "text/javascript");
+        return contentProvider;
+    }
+
+    function dumpUISourceCodeWithRevisions(uiSourceCode)
+    {
+        var content = uiSourceCode._content;
+        var revisionsString = "";
+        for (var i = 0; i < uiSourceCode.history.length; ++i) {
+            var revision = uiSourceCode.history[i];
+            if (i !== 0)
+                revisionsString += ", ";
+            revisionsString += "'" + revision.content + "'";
+        }
+        InspectorTest.addResult("UISourceCode content: " + content);
+        InspectorTest.addResult("    revisions: " + revisionsString);
+    }
+
+    InspectorTest.runTestSuite([
+        function testAddRevisionsRevertToOriginal(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url", createMockContentProvider());
+            uiSourceCode.setWorkingCopy("content1");
+            uiSourceCode.setWorkingCopy("content2");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("First revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.setWorkingCopy("content3");
+            uiSourceCode.setWorkingCopy("content4");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("Second revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.revertToOriginal();
+            InspectorTest.addResult("Reverted to original.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            next();
+        },
+
+        function testAddRevisionsRevertAndClearHistory(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url2", createMockContentProvider());
+
+            uiSourceCode.setWorkingCopy("content1");
+            uiSourceCode.setWorkingCopy("content2");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("First revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.setWorkingCopy("content3");
+            uiSourceCode.setWorkingCopy("content4");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("Second revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.revertAndClearHistory(revertedAndClearedHistory);
+
+            function revertedAndClearedHistory()
+            {
+                InspectorTest.addResult("Reverted and cleared history.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                next();
+            }
+        },
+
+        function testAddRevisionsRevertToPrevious(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url3", createMockContentProvider());
+
+            uiSourceCode.setWorkingCopy("content1");
+            uiSourceCode.setWorkingCopy("content2");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("First revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.setWorkingCopy("content3");
+            uiSourceCode.setWorkingCopy("content4");
+            uiSourceCode.commitWorkingCopy(function() { });
+
+            InspectorTest.addResult("Second revision added.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            uiSourceCode.history[0].revertToThis();
+            InspectorTest.addResult("Reverted to previous revision.");
+            dumpUISourceCodeWithRevisions(uiSourceCode);
+            next();
+        },
+
+        function testRequestContentAddRevisionsRevertToOriginal(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url4", createMockContentProvider());
+            uiSourceCode.requestContent(contentReceived);
+
+            function contentReceived()
+            {
+                InspectorTest.addResult("Content requested.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content1");
+                uiSourceCode.setWorkingCopy("content2");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("First revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content3");
+                uiSourceCode.setWorkingCopy("content4");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("Second revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.revertToOriginal();
+                InspectorTest.addResult("Reverted to original.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                next();
+            }
+        },
+
+        function testRequestContentAddRevisionsRevertAndClearHistory(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url5", createMockContentProvider());
+            uiSourceCode.requestContent(contentReceived);
+
+            function contentReceived()
+            {
+                InspectorTest.addResult("Content requested.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content1");
+                uiSourceCode.setWorkingCopy("content2");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("First revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content3");
+                uiSourceCode.setWorkingCopy("content4");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("Second revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.revertAndClearHistory(revertedAndClearedHistory);
+
+                function revertedAndClearedHistory()
+                {
+                    InspectorTest.addResult("Reverted and cleared history.");
+                    dumpUISourceCodeWithRevisions(uiSourceCode);
+                    next();
+                }
+            }
+        },
+
+        function testRequestContentAddRevisionsRevertToPrevious(next)
+        {
+            var uiSourceCode = new WebInspector.UISourceCode("url6", createMockContentProvider());
+            uiSourceCode.requestContent(contentReceived);
+
+            function contentReceived()
+            {
+                InspectorTest.addResult("Content requested.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content1");
+                uiSourceCode.setWorkingCopy("content2");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("First revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.setWorkingCopy("content3");
+                uiSourceCode.setWorkingCopy("content4");
+                uiSourceCode.commitWorkingCopy(function() { });
+
+                InspectorTest.addResult("Second revision added.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                uiSourceCode.history[0].revertToThis();
+                InspectorTest.addResult("Reverted to previous revision.");
+                dumpUISourceCodeWithRevisions(uiSourceCode);
+                next();
+            }
+        },
+    ]);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests revision support in UISourceCode.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=97669">Bug 97669</a>
+</body>
+</html>
