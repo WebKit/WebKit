@@ -1,3 +1,15 @@
+2012-09-26  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium][Win] Remove ensureFontLoaded from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97696
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::ensureFontLoaded):
+
 2012-09-26  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Fix find-in-page corner case for detached frames
