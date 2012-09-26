@@ -104,7 +104,7 @@ layer at (0,0) size 785x2631
               RenderText {#text} at (0,0) size 766x75
                 text run at (0,0) width 766: "This text should be white on black, bold, twice the"
                 text run at (0,38) width 528: "size of normal text, and sans serif."
-      RenderBlock {H2} at (0,1336) size 769x28
+      RenderBlock {H2} at (0,1335) size 769x28
         RenderText {#text} at (0,0) size 382x26
           text run at (0,0) width 382: "3. Implicit CSS Tables (table explicit)"
       RenderBlock {H3} at (0,1382) size 769x24
@@ -128,7 +128,7 @@ layer at (0,0) size 785x2631
               RenderText {#text} at (0,0) size 766x75
                 text run at (0,0) width 766: "This text should be white on black, bold, twice the"
                 text run at (0,38) width 528: "size of normal text, and sans serif."
-      RenderBlock {H2} at (0,1657) size 769x27
+      RenderBlock {H2} at (0,1656) size 769x28
         RenderText {#text} at (0,0) size 371x26
           text run at (0,0) width 371: "4. Implicit CSS Tables (row explicit)"
       RenderBlock {H3} at (0,1703) size 769x24
@@ -145,7 +145,7 @@ layer at (0,0) size 785x2631
       RenderBlock {H3} at (0,1840) size 769x24
         RenderText {#text} at (0,0) size 250x22
           text run at (0,0) width 250: "4.2 Styles set directly on ROW"
-      RenderTable at (0,1882) size 769x77
+      RenderTable at (0,1882) size 769x76
         RenderTableSection (anonymous) at (0,0) size 769x76
           RenderTableRow {DIV} at (0,0) size 769x76 [color=#FFFFFF] [bgcolor=#000000]
             RenderTableCell (anonymous) at (0,0) size 769x76 [r=0 c=0 rs=1 cs=1]
@@ -169,7 +169,7 @@ layer at (0,0) size 785x2631
       RenderBlock {H3} at (0,2161) size 769x24
         RenderText {#text} at (0,0) size 253x22
           text run at (0,0) width 253: "5.2 Styles set directly on CELL"
-      RenderTable at (0,2203) size 769x77
+      RenderTable at (0,2202) size 769x77
         RenderTableSection (anonymous) at (0,0) size 769x76
           RenderTableRow (anonymous) at (0,0) size 769x76
             RenderTableCell {DIV} at (0,0) size 769x76 [color=#FFFFFF] [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]

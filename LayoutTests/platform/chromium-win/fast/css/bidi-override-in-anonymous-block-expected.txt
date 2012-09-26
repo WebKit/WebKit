@@ -113,7 +113,7 @@ layer at (0,0) size 785x1301
           text run at (0,0) width 27: "ruby"
       RenderBlock {DIV} at (0,922) size 769x34 [border: (1px solid #000000)]
         RenderRuby (inline) {RUBY} at (0,0) size 23x19
-          RenderRubyRun (anonymous) at (182,13) size 23x20
+          RenderRubyRun (anonymous) at (183,13) size 23x20
             RenderRubyText {RT} at (0,-12) size 22x12
               RenderText {#text} at (5,0) size 12x12
                 text run at (5,0) width 12: "def"

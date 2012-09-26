@@ -180,7 +180,7 @@ layer at (0,0) size 785x675
         RenderText {#text} at (369,25) size 4x19
           text run at (369,25) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H2} at (0,536) size 769x28
+      RenderBlock {H2} at (0,535) size 769x28
         RenderText {#text} at (0,0) size 195x26
           text run at (0,0) width 195: "Pop-up Menu Sizes"
       RenderBlock {DIV} at (0,582) size 769x29

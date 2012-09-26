@@ -39,7 +39,7 @@ layer at (0,0) size 800x198
                               RenderSVGRect {rect} at (90,37) size 11x17 [fill={[type=SOLID] [color=#00FF00]}] [x=350.00] [y=196.00] [width=50.00] [height=80.00]
                             RenderSVGText {text} at (10,298) size 270x52 contains 1 chunk(s)
                               RenderSVGInlineText {#text} at (0,0) size 270x52
-                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 269.61: "$Revision: 1.7 $"
+                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 269.59: "$Revision: 1.7 $"
                             RenderSVGRect {rect} at (23,0) size 93x69 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {td} at (245,92) size 243x82 [r=2 c=1 rs=1 cs=1]

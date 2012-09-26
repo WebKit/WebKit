@@ -12,8 +12,8 @@ layer at (0,0) size 800x378
                   RenderTableRow {tr} at (0,1) size 692x65
                     RenderTableCell {td} at (1,1) size 690x66 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {h1} at (5,19) size 681x27
-                        RenderText {#text} at (101,0) size 478x25
-                          text run at (101,0) width 478: "Both sides should have identical size after zooming"
+                        RenderText {#text} at (102,0) size 476x25
+                          text run at (102,0) width 476: "Both sides should have identical size after zooming"
                   RenderTableRow {tr} at (0,67) size 692x24
                     RenderTableCell {td} at (1,67) size 345x24 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (147,5) size 51x14

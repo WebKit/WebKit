@@ -6,7 +6,7 @@ layer at (0,0) size 800x451
       RenderBlock {DIV} at (0,0) size 784x86
         RenderBlock {DETAILS} at (0,0) size 784x86
           RenderBlock {SUMMARY} at (0,0) size 784x86
-            RenderDetailsMarker {DIV} at (0,-1) size 112x81 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
+            RenderDetailsMarker {DIV} at (0,-1) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
             RenderText {#text} at (121,58) size 92x27
               text run at (121,58) width 92: "Summary"
       RenderBlock {DIV} at (0,86) size 128x171

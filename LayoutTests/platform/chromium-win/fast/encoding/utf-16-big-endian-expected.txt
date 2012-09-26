@@ -2,7 +2,7 @@ layer at (0,0) size 792x1160
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1160
   RenderBlock {HTML} at (0,0) size 785x1161
-    RenderBody {BODY} at (8,8) size 769x1139 [bgcolor=#EEEEEE]
+    RenderBody {BODY} at (8,8) size 769x1140 [bgcolor=#EEEEEE]
       RenderBlock (anonymous) at (0,0) size 769x22
         RenderInline {SPAN} at (0,0) size 190x16
           RenderText {#text} at (0,0) size 0x0
@@ -405,7 +405,7 @@ layer at (0,0) size 785x1160
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1071) size 769x3
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1080) size 769x21
+      RenderBlock (anonymous) at (0,1080) size 769x22
         RenderInline {SPAN} at (0,0) size 277x16
           RenderInline {SPAN} at (0,0) size 277x16
             RenderText {#text} at (0,0) size 0x0
@@ -418,7 +418,7 @@ layer at (0,0) size 785x1160
               RenderBR {BR} at (277,15) size 0x0
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1107) size 769x32
+      RenderBlock (anonymous) at (0,1107) size 769x33
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,15) size 769x17
           RenderText {#text} at (0,0) size 203x16

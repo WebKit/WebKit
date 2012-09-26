@@ -24,10 +24,10 @@ layer at (0,0) size 800x331
                 text run at (0,0) width 64: "No viewBox"
             RenderTableCell {TH} at (66,34) size 118x0 [bgcolor=#DDDD99] [r=1 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (185,16) size 140x37 [r=1 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,16) size 140x37 [r=1 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -39,10 +39,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (45,0) size 28x14
                 text run at (45,0) width 28: "none"
             RenderTableCell {TD} at (185,54) size 140x37 [r=2 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,54) size 140x37 [r=2 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -56,10 +56,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (44,0) size 30x14
                 text run at (44,0) width 30: "meet"
             RenderTableCell {TD} at (185,92) size 140x37 [r=3 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,92) size 140x37 [r=3 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -73,10 +73,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (46,0) size 26x14
                 text run at (46,0) width 26: "slice"
             RenderTableCell {TD} at (185,130) size 140x37 [r=4 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,130) size 140x37 [r=4 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -91,10 +91,10 @@ layer at (0,0) size 800x331
                 text run at (9,0) width 46: "viewBox"
             RenderTableCell {TH} at (66,186) size 118x0 [bgcolor=#DDDD99] [r=5 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (185,168) size 140x37 [r=5 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,168) size 140x37 [r=5 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -108,10 +108,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (45,0) size 28x14
                 text run at (45,0) width 28: "none"
             RenderTableCell {TD} at (185,206) size 140x37 [r=6 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,206) size 140x37 [r=6 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -125,10 +125,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (44,0) size 30x14
                 text run at (44,0) width 30: "meet"
             RenderTableCell {TD} at (185,244) size 140x37 [r=7 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,244) size 140x37 [r=7 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
@@ -142,10 +142,10 @@ layer at (0,0) size 800x331
               RenderText {#text} at (46,0) size 26x14
                 text run at (46,0) width 26: "slice"
             RenderTableCell {TD} at (185,282) size 140x37 [r=8 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (0,-1) size 139x36 [border: (1px dashed #800000)]
+              RenderImage {IMG} at (0,-1) size 139x35 [border: (1px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (326,282) size 140x37 [r=8 c=3 rs=1 cs=1]
-              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x36 [border: (1px dashed #008000)]
+              RenderEmbeddedObject {OBJECT} at (0,-1) size 139x35 [border: (1px dashed #008000)]
                 layer at (0,0) size 133x29
                   RenderView at (0,0) size 133x29
                 layer at (0,0) size 133x29
