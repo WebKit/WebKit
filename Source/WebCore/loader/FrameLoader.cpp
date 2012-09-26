@@ -2332,7 +2332,7 @@ void FrameLoader::closeAndRemoveChild(Frame* child)
 
     child->setView(0);
     if (child->ownerElement() && child->page())
-        child->page()->decrementFrameCount();
+        child->page()->decrementSubframeCount();
     child->willDetachPage();
     child->detachFromPage();
 

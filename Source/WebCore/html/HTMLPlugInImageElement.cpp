@@ -83,7 +83,7 @@ bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 {
     ASSERT(document());
     ASSERT(document()->frame());
-    if (document()->frame()->page()->frameCount() >= Page::maxNumberOfFrames)
+    if (document()->frame()->page()->subframeCount() >= Page::maxNumberOfFrames)
         return false;
 
     KURL completeURL = document()->completeURL(url);

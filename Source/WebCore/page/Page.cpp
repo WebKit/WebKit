@@ -134,7 +134,7 @@ Page::Page(PageClients& pageClients)
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
     , m_validationMessageClient(pageClients.validationMessageClient)
-    , m_frameCount(0)
+    , m_subframeCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
@@ -1081,15 +1081,15 @@ void Page::privateBrowsingStateChanged()
 }
 
 #if !ASSERT_DISABLED
-void Page::checkFrameCountConsistency() const
+void Page::checkSubframeCountConsistency() const
 {
-    ASSERT(m_frameCount >= 0);
+    ASSERT(m_subframeCount >= 0);
 
-    int frameCount = 0;
+    int subframeCount = 0;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        ++frameCount;
+        ++subframeCount;
 
-    ASSERT(m_frameCount + 1 == frameCount);
+    ASSERT(m_subframeCount + 1 == subframeCount);
 }
 #endif
 

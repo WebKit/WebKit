@@ -67,7 +67,7 @@ bool HTMLFrameElementBase::isURLAllowed() const
     }
 
     if (Frame* parentFrame = document()->frame()) {
-        if (parentFrame->page()->frameCount() >= Page::maxNumberOfFrames)
+        if (parentFrame->page()->subframeCount() >= Page::maxNumberOfFrames)
             return false;
     }
 

@@ -191,7 +191,7 @@ CachedFrame::CachedFrame(Frame* frame)
         frame->tree()->removeChild(m_childFrames[i]->view()->frame());
 
     if (!m_isMainFrame)
-        frame->page()->decrementFrameCount();
+        frame->page()->decrementSubframeCount();
 
     frame->loader()->client()->didSaveToPageCache();
 
@@ -210,7 +210,7 @@ void CachedFrame::open()
     m_view->frame()->loader()->open(*this);
 
     if (!m_isMainFrame)
-        m_view->frame()->page()->incrementFrameCount();
+        m_view->frame()->page()->incrementSubframeCount();
 }
 
 void CachedFrame::clear()
