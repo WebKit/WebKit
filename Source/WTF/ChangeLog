@@ -1,3 +1,20 @@
+2012-09-26  Michael Saboff  <msaboff@apple.com>
+
+        Update ComplexTextController for 8 bit TextRun changes
+        https://bugs.webkit.org/show_bug.cgi?id=97378
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new create method to make a 16 bit string from 8 bit source data.  This is used in 
+        ComplexTextController when we have LChar* + length text data, but we really want 16 bit
+        data for the complex text rendering code.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::make16BitFrom8BitSource):
+        (WTF):
+        * wtf/text/WTFString.h:
+        (String):
+
 2012-09-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: replace manual JS external resources counting with MemoryInstrumentation

@@ -778,6 +778,19 @@ String String::make8BitFrom16BitSource(const UChar* source, size_t length)
     return result;
 }
 
+String String::make16BitFrom8BitSource(const LChar* source, size_t length)
+{
+    if (!length)
+        return String();
+    
+    UChar* destination;
+    String result = String::createUninitialized(length, destination);
+    
+    StringImpl::copyChars(destination, source, length);
+    
+    return result;
+}
+
 String String::fromUTF8(const LChar* stringStart, size_t length)
 {
     if (length > numeric_limits<unsigned>::max())

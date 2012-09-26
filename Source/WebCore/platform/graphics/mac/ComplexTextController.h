@@ -31,6 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 typedef unsigned short CGGlyph;
@@ -143,6 +144,7 @@ private:
     bool m_mayUseNaturalWritingDirection;
     bool m_forTextEmphasis;
 
+    Vector<String> m_stringsFor8BitRuns;
     Vector<UChar, 256> m_smallCapsBuffer;
 
     // Retain lines rather than their runs for better performance.
