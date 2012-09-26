@@ -48,7 +48,6 @@
 #include <public/WebRTCICECandidate.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
-#include <public/WebRTCStatsRequest.h>
 #include <public/WebRTCVoidRequest.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -155,14 +154,6 @@ void RTCPeerConnectionHandlerChromium::removeStream(PassRefPtr<MediaStreamDescri
         return;
 
     m_webHandler->removeStream(mediaStream);
-}
-
-void RTCPeerConnectionHandlerChromium::getStats(PassRefPtr<RTCStatsRequest> request)
-{
-    if (!m_webHandler)
-        return;
-
-    m_webHandler->getStats(request);
 }
 
 void RTCPeerConnectionHandlerChromium::stop()

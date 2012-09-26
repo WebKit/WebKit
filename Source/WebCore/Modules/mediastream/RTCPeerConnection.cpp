@@ -48,8 +48,6 @@
 #include "RTCSessionDescriptionCallback.h"
 #include "RTCSessionDescriptionDescriptor.h"
 #include "RTCSessionDescriptionRequestImpl.h"
-#include "RTCStatsCallback.h"
-#include "RTCStatsRequestImpl.h"
 #include "RTCVoidRequestImpl.h"
 #include "ScriptExecutionContext.h"
 #include "VoidCallback.h"
@@ -379,13 +377,6 @@ MediaStreamList* RTCPeerConnection::localStreams() const
 MediaStreamList* RTCPeerConnection::remoteStreams() const
 {
     return m_remoteStreams.get();
-}
-
-void RTCPeerConnection::getStats(PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<MediaStreamTrack> selector)
-{
-    RefPtr<RTCStatsRequestImpl> statsRequest = RTCStatsRequestImpl::create(scriptExecutionContext(), successCallback);
-    // FIXME: Add passing selector as part of the statsRequest.
-    m_peerHandler->getStats(statsRequest.release());
 }
 
 void RTCPeerConnection::close(ExceptionCode& ec)

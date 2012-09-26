@@ -39,7 +39,6 @@ class WebRTCICECandidate;
 class WebRTCPeerConnectionHandlerClient;
 class WebRTCSessionDescription;
 class WebRTCSessionDescriptionRequest;
-class WebRTCStatsRequest;
 class WebRTCVoidRequest;
 
 class WebRTCPeerConnectionHandler {
@@ -58,8 +57,6 @@ public:
     virtual bool addICECandidate(const WebRTCICECandidate&) = 0;
     virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;
     virtual void removeStream(const WebMediaStreamDescriptor&) = 0;
-    // FIXME: Remove default implementation when clients have changed.
-    virtual void getStats(const WebRTCStatsRequest&) { }
     virtual void stop() = 0;
 };
 

@@ -64,7 +64,6 @@ public:
     virtual bool addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
     virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
-    virtual void getStats(PassRefPtr<RTCStatsRequest>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
