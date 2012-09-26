@@ -1,3 +1,38 @@
+2012-09-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests: cleanup options and results generation code
+        https://bugs.webkit.org/show_bug.cgi?id=97611
+
+        Reviewed by Dirk Pranke.
+
+        Previously, --test-results-server triggered old JSOn format where the outermost structure was a dictionary
+        instead of an array, and also implicitly triggered --no-show-results, caused the old outputs not to merge,
+        and prevented the generation of results page. Also, it was not obvious that --source-json-path is an option
+        used only on buildbot slaves.
+
+        This patch will:
+        - Remove the old format since perf-o-matic supports new format now.
+        - Add --reset-results option so that we can explicitly clear existing outputs.
+        - Add --slave-config-json-path option to replace --source-json-path option.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Added --reset-results and --slave-config-json-path options.
+        (PerfTestsRunner._generate_and_show_results): Refactored. Also removed the code to strip "values" from
+        results since perf-o-matic can parse and store these values now.
+        (PerfTestsRunner._merge_outputs_if_needed): Renamed from _merge_outputs_if_needed.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_with_json_output): Test a harmless behavioral change to generate resuls page even when
+        --test-results-server is present.
+        (test_run_with_description):
+        (test_run_generates_json_by_default):
+        (test_run_merges_output_by_default): Added.
+        (test_run_respects_reset_results): Added.
+        (test_run_with_slave_config_json):
+        (test_run_with_bad_slave_config_json): Use --slave-config-json-path instead of --source-json-path to make
+        sure this optioon works as well.
+        (test_run_with_multiple_repositories):
+        (test_run_with_upload_json):
+
 2012-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         Fix SnowLeopard build by adding #ifdefs.

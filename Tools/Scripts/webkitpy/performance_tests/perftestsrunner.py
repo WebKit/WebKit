@@ -100,8 +100,13 @@ class PerfTestsRunner(object):
                 help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path",
                 help="Path to generate a JSON file at; may contain previous results if it already exists."),
-            optparse.make_option("--source-json-path",  # FIXME: Rename it to signify the fact it's a slave configuration.
+            optparse.make_option("--reset-results", action="store_true",
+                help="Clears the content in the generated JSON file before adding the results."),
+            optparse.make_option("--slave-config-json-path",
                 help="Only used on bots. Path to a slave configuration file."),
+            optparse.make_option("--source-json-path", dest="slave_config_json_path",
+                # FIXME: Remove this option once build.webkit.org is updated to use --slave-config-json-path.
+                help="Deprecated. Overrides --slave-config-json-path."),
             optparse.make_option("--description",
                 help="Add a description to the output JSON file if one is generated"),
             optparse.make_option("--no-show-results", action="store_false", default=True, dest="show_results",
@@ -176,33 +181,31 @@ class PerfTestsRunner(object):
 
     def _generate_and_show_results(self):
         options = self._options
+        if options.test_results_server:
+            # Remove this code once build.webkit.org started using --no-show-results and --reset-results
+            options.reset_results = True
+            options.show_results = False
+
         output_json_path = self._output_json_path()
         output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
-        if options.source_json_path:
-            output = self._merge_slave_config_json(options.source_json_path, output)
+        if options.slave_config_json_path:
+            output = self._merge_slave_config_json(options.slave_config_json_path, output)
             if not output:
                 return self.EXIT_CODE_BAD_SOURCE_JSON
 
-        test_results_server = options.test_results_server
-        results_page_path = None
-        if not test_results_server:
-            output = self._merge_outputs(output_json_path, output)
-            if not output:
-                return self.EXIT_CODE_BAD_MERGE
-            results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
-        else:
-            # FIXME: Remove this code once webkit-perf.appspot.com supported "values".
-            for result in output['results'].values():
-                if isinstance(result, dict) and 'values' in result:
-                    del result['values']
+        output = self._merge_outputs_if_needed(output_json_path, output)
+        if not output:
+            return self.EXIT_CODE_BAD_MERGE
 
+        results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
         self._generate_output_files(output_json_path, results_page_path, output)
 
-        if test_results_server:
-            if not self._upload_json(test_results_server, output_json_path):
+        if options.test_results_server:
+            if not self._upload_json(options.test_results_server, output_json_path):
                 return self.EXIT_CODE_FAILED_UPLOADING
-        elif options.show_results:
+
+        if options.show_results:
             self._port.show_results_html_file(results_page_path)
 
     def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
@@ -233,8 +236,8 @@ class PerfTestsRunner(object):
             _log.error("Failed to merge slave configuration JSON file %s: %s" % (slave_config_json_path, error))
         return None
 
-    def _merge_outputs(self, output_json_path, output):
-        if not self._host.filesystem.isfile(output_json_path):
+    def _merge_outputs_if_needed(self, output_json_path, output):
+        if self._options.reset_results or not self._host.filesystem.isfile(output_json_path):
             return [output]
         try:
             existing_outputs = json.loads(self._host.filesystem.read_text_file(output_json_path))
