@@ -57,7 +57,7 @@ window.onload = function()
     shouldBe("window.showModalDialog.call(targetWindow);", "undefined");
 
     // Throws an EvalError and logs to the error console
-    shouldBe("window.eval.call(targetWindow, '1+2');", '"EvalError: The \\"this\\" value passed to eval must be the global object from which eval originated"');
+    shouldBe("window.eval.call(targetWindow, '1+2');", '3');
 
     // - Tests for the Location object -
     // undefined value indicates failure

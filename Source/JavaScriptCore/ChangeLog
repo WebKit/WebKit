@@ -1,3 +1,20 @@
+2012-09-25  Gavin Barraclough  <barraclough@apple.com>
+
+        REGRESSION (r129456): http/tests/security/xss-eval.html is failing on JSC platforms
+        https://bugs.webkit.org/show_bug.cgi?id=97529
+
+        Reviewed by Filip Pizlo.
+
+        A recent patch changed JSC's EvalError behaviour; bring this more into line with other browsers.
+
+        JSC currently throws an EvalError if you try to call eval with a this object that doesn't
+        match the given eval function. This does not match other browsers, which generally just
+        ignore the this value that was passed, and eval the string in the eval function's environment.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+            - Remove EvalError, ignore passed this value.
+
 2012-09-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ArrayPush, ArrayPop don't handle clobbering or having a bad time correctly
