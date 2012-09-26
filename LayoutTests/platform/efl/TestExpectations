@@ -265,9 +265,7 @@ webkit.org/b/82340 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/59801 fast/workers/storage/use-same-database-in-page-and-workers.html [ Failure Pass ]
-webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 webkit.org/b/85180 media/audio-delete-while-step-button-clicked.html [ Failure Pass ]
-webkit.org/b/86072 media/sources-fallback-codecs.html [ Failure Pass ]
 webkit.org/b/86073 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure Pass ]
 webkit.org/b/86073 ietestcenter/css3/flexbox/flexbox-layout-003.htm [ ImageOnlyFailure Pass ]
 webkit.org/b/86074 media/svg-as-image-with-media-blocked.html [ Crash Pass ]
@@ -306,19 +304,6 @@ webkit.org/b/87633 http/tests/appcache/abort-cache-ondownloading-resource-404.ht
 # Tests that sometimes fail on the bot (for GTK and Chromium ports as well).
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure Pass ]
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure Pass ]
-
-# Several media tests are flaky on the bots
-Bug(EFL) media/controls-styling.html [ Failure Pass ]
-Bug(EFL) media/video-display-toggle.html [ Failure Pass ]
-Bug(EFL) media/controls-after-reload.html [ Failure Pass ]
-Bug(EFL) media/controls-without-preload.html [ Failure Pass ]
-Bug(EFL) media/video-controls-rendering.html [ Failure Pass ]
-Bug(EFL) media/video-zoom-controls.html [ Failure Pass ]
-Bug(EFL) media/video-empty-source.html [ Failure Pass ]
-Bug(EFL) media/controls-strict.html [ Failure Pass ]
-Bug(EFL) media/media-volume-slider-rendered-normal.html [ Failure Pass ]
-Bug(EFL) media/media-document-audio-repaint.html [ Failure Pass ]
-Bug(EFL) media/media-controls-clone.html [ Failure Pass ]
 
 webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass ]
 webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Failure Pass Timeout ]

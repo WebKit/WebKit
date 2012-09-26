@@ -20,14 +20,14 @@ layer at (57,235) size 240x30
             text run at (17,0) width 44: "00:00 /"
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 90x30
-          RenderBlock {DIV} at (0,9) size 78x12
-          RenderBlock {DIV} at (78,9) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (3,0) size 84x30
+          RenderBlock {DIV} at (0,9) size 72x12
+          RenderBlock {DIV} at (72,9) size 12x12
     RenderButton {INPUT} at (120,0) size 30x30
     RenderButton {INPUT} at (150,0) size 30x30
     RenderButton {INPUT} at (180,0) size 30x30
     RenderBlock {DIV} at (210,0) size 30x30
-layer at (87,244) size 12x12
+layer at (90,244) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (267,235) size 30x30
   RenderButton zI: 2 {INPUT} at (0,0) size 30x30
@@ -45,9 +45,9 @@ layer at (57,460) size 240x30
             text run at (17,0) width 44: "00:00 /"
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 90x30
-          RenderBlock {DIV} at (0,9) size 78x12
-          RenderBlock {DIV} at (78,9) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (3,0) size 84x30
+          RenderBlock {DIV} at (0,9) size 72x12
+          RenderBlock {DIV} at (72,9) size 12x12
     RenderButton {INPUT} at (120,0) size 30x30
     RenderButton {INPUT} at (150,0) size 30x30
     RenderButton {INPUT} at (180,0) size 30x30
