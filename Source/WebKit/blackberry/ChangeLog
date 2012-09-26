@@ -1,3 +1,18 @@
+2012-09-26  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Update padding in ensureFocusTextElementVisible to be DPI independent.
+        https://bugs.webkit.org/show_bug.cgi?id=97684
+
+        Reviewed by Rob Buis.
+
+        Update padding in ensureFocusTextElementVisible to be DPI
+        independent and relative to the current zoom level.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-09-25  Genevieve Mak  <gmak@rim.com>
 
         Fat Fingers doesn't work on non-scrollable pages.
