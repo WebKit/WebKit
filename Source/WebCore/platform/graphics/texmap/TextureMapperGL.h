@@ -174,8 +174,6 @@ private:
     friend class TextureMapperGL;
 };
 
-typedef uint64_t ImageUID;
-ImageUID uidForImage(Image*);
 BitmapTextureGL* toBitmapTextureGL(BitmapTexture*);
 
 }
