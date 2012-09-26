@@ -1,3 +1,16 @@
+2012-09-26  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Fix find-in-page corner case for detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=97688
+
+        Reviewed by Adam Barth.
+
+        Adds a check to prevent crashes when running find-in-page requests
+        on detached frames.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::scopeStringMatches):
+
 2012-09-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: replace manual JS external resources counting with MemoryInstrumentation

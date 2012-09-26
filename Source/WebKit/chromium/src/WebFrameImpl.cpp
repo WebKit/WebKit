@@ -1731,7 +1731,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         m_scopingComplete = false;
 
         // Clear highlighting for this frame.
-        if (frame() && frame()->editor()->markedTextMatchesAreHighlighted())
+        if (frame() && frame()->page() && frame()->editor()->markedTextMatchesAreHighlighted())
             frame()->page()->unmarkAllTextMatches();
 
         // Clear the tickmarks and results cache.
