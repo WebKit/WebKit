@@ -110,7 +110,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {
@@ -772,7 +772,7 @@ WebInspector.Revision.prototype = {
     },
 
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {

@@ -104,7 +104,7 @@ WebInspector.FileContentView.FileContentProvider = function(file, metadata)
 
 WebInspector.FileContentView.FileContentProvider.prototype = {
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {

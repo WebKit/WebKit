@@ -35,7 +35,7 @@ WebInspector.ContentProvider = function() { }
 
 WebInspector.ContentProvider.prototype = {
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function() { },
 

@@ -211,7 +211,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {

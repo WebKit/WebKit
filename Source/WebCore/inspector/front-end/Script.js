@@ -50,7 +50,7 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
 
 WebInspector.Script.prototype = {
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {

@@ -676,7 +676,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {

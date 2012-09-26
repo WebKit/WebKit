@@ -73,11 +73,11 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
     },
 
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {
-        return null;
+        return "";
     },
 
     /**
@@ -184,6 +184,7 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspect
 
 /**
  * @constructor
+ * @param {string} sourceURL
  * @implements {WebInspector.ContentProvider}
  */
 WebInspector.CompilerSourceMappingContentProvider = function(sourceURL)
@@ -193,7 +194,7 @@ WebInspector.CompilerSourceMappingContentProvider = function(sourceURL)
 
 WebInspector.CompilerSourceMappingContentProvider.prototype = {
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {
@@ -253,11 +254,11 @@ WebInspector.StaticContentProvider = function(contentType, content, mimeType)
 
 WebInspector.StaticContentProvider.prototype = {
     /**
-     * @return {?string}
+     * @return {string}
      */
     contentURL: function()
     {
-        return null;
+        return "";
     },
 
     /**
