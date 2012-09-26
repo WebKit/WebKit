@@ -1,3 +1,20 @@
+2012-09-26  Gavin Barraclough  <barraclough@apple.com>
+
+        String.localeCompare should normalize input
+        https://bugs.webkit.org/show_bug.cgi?id=97639
+
+        Reviewed by Filip Pizlo.
+
+        From the spec: "It is strongly recommended that this function treat Strings that are
+        canonically equivalent according to the Unicode standard as identical (in other words,
+        compare the Strings as if they had both been converted to Normalised Form C or D first).
+        It is also recommended that this function not honour Unicode compatibility equivalences
+        or decompositions."
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::createCollator):
+            - Enable normalization.
+
 2012-09-25  Cosmin Truta  <ctruta@rim.com>
 
         [BlackBerry] Enable LLInt
