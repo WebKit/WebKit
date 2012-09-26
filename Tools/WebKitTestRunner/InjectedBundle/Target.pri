@@ -59,6 +59,7 @@ CONFIG += plugin rpath
 have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 INCLUDEPATH += \
+    $$PWD \
     $$PWD/.. \
     $$PWD/Bindings \
     $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js \

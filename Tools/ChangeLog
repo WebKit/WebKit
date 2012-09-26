@@ -1,3 +1,14 @@
+2012-09-26  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WTR] Build fix for MSVC. 
+        https://bugs.webkit.org/show_bug.cgi?id=97667
+
+        Reviewed by Csaba Osztrogonác.
+
+        WTR misses InjectedBundle headers. Adding $$PWD to Target.pri is required for MSVC. Clean build is necessary on Windows.
+
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+
 2012-09-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] [DRT] eventSender.keyDown() doesn't support Ctrl key modifier
