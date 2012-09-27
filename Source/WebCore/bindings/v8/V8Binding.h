@@ -224,7 +224,7 @@ namespace WebCore {
     template <class T>
     Vector<T> toNativeArguments(const v8::Arguments& args, size_t startIndex)
     {
-        ASSERT(startIndex <= args.Length());
+        ASSERT(startIndex <= static_cast<size_t>(args.Length()));
         Vector<T> result;
         typedef NativeValueTraits<T> TraitsType;
         size_t length = args.Length();
