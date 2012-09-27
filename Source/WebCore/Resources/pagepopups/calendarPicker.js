@@ -341,7 +341,8 @@ CalendarPicker.prototype.cleanup = function() {
 };
 
 CalendarPicker.prototype._layout = function() {
-    this._element.style.direction = global.params.isRTL ? "rtl" : "ltr";
+    if (this._config.isCalendarRTL)
+        this._element.classList.add("rtl");
     this.yearMonthController.attachTo(this._element);
     this.daysTable.attachTo(this._element);
     this._layoutButtons();

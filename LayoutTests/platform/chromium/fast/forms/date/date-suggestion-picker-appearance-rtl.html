@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<body dir="rtl" style="padding: 0 50px;">
+<input type=date id=date list=suggestions style="width: 100px;">
+<datalist id=suggestions>
+    <option label="Today">2012-01-01</option>
+    <option label="Tomorrow">2012-01-02</option>
+    <option>2012-01-03</option>
+    <option>2012-01-04</option>
+    <option>2012-01-05</option>
+    <option>2012-01-06</option>
+    <option>2012-01-07</option>
+    <option>2012-01-08</option>
+    <option>2012-01-09</option>
+    <option>2012-01-10</option>
+    <option>2012-01-11</option>
+    <option>2012-01-12</option>
+    <option>2012-01-13</option>
+    <option>2012-01-14</option>
+    <option>2012-01-15</option>
+    <option>2012-01-16</option>
+    <option>2012-01-17</option>
+    <option>2012-01-18</option>
+    <option>2012-01-19</option>
+    <option>2012-01-20</option>
+</datalist>
+<script>
+testRunner.dumpAsText(true);
+testRunner.waitUntilDone();
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+
+document.getElementById('date').focus();
+if (window.eventSender)
+    eventSender.keyDown('downArrow');
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.onresize = function() {
+    testRunner.notifyDone();
+}
+</script>
+</body>

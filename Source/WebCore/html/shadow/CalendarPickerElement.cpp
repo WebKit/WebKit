@@ -142,6 +142,7 @@ void CalendarPickerElement::openPopup()
         parameters.step = step.toDouble();
     parameters.anchorRectInRootView = document()->view()->contentsToRootView(hostInput()->pixelSnappedBoundingBox());
     parameters.currentValue = input->value();
+    parameters.isAnchorElementRTL = input->computedStyle()->direction() == RTL;
     if (HTMLDataListElement* dataList = input->dataList()) {
         RefPtr<HTMLCollection> options = dataList->options();
         for (unsigned i = 0; HTMLOptionElement* option = toHTMLOptionElement(options->item(i)); ++i) {

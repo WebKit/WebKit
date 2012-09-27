@@ -47,6 +47,7 @@ struct DateTimeChooserParameters {
     double maximum;
     double step;
     bool required;
+    bool isAnchorElementRTL;
 };
 
 // For pickers like color pickers and date pickers.

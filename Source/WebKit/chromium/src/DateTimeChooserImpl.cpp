@@ -107,7 +107,8 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("monthLabels", WebCore::monthLabels(), writer);
     addProperty("dayLabels", WebCore::weekDayShortLabels(), writer);
     Direction dir = direction(WebCore::monthLabels()[0][0]);
-    addProperty("isRTL", dir == RightToLeft || dir == RightToLeftArabic, writer);
+    addProperty("isCalendarRTL", dir == RightToLeft || dir == RightToLeftArabic, writer);
+    addProperty("isRTL", m_parameters.isAnchorElementRTL, writer);
     if (m_parameters.suggestionValues.size()) {
         addProperty("inputWidth", static_cast<unsigned>(m_parameters.anchorRectInRootView.width()), writer);
         addProperty("suggestionValues", m_parameters.suggestionValues, writer);

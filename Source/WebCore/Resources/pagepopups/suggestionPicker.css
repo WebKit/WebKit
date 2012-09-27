@@ -25,11 +25,14 @@
 }
 
 .suggestion-list-entry .label {
-    padding-left: 20px;
     text-align: right;
     color: #737373;
     float: right;
-    margin-right: 4px;
+    padding: 0 20px 0 4px;
+}
+
+.rtl .suggestion-list-entry .label {
+    float: left;
 }
 
 .measuring-width .suggestion-list-entry .label {
