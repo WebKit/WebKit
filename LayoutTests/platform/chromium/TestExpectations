@@ -3507,6 +3507,7 @@ webkit.org/b/89167 media/track/track-cue-rendering-snap-to-lines-not-set.html [ 
 webkit.org/b/95588 [ Mac ] fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/97811 fast/dom/shadow/base-in-shadow-tree.html [ Pass Timeout ]
+webkit.org/b/97811 fast/dom/shadow/drop-event-for-input-in-shadow.html [ Pass Failure ]
 
 webkit.org/b/97558 [ Linux Win7 ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
 
@@ -3558,6 +3559,13 @@ webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-chan
 webkit.org/b/96725 [ Linux Mac Win ] http/tests/media/media-source/video-media-source-state-changes.html [ Failure Pass ]
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/77550 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
+
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur-off-axis.html [ Pass ImageOnlyFailure ]
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur-outsets.html [ Pass ImageOnlyFailure ]
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur.html [ Pass ImageOnlyFailure ]
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-alpha.html [ Pass ImageOnlyFailure ]
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-no-alpha.html [ Pass ImageOnlyFailure ]
+webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-reflection.html [ Pass ImageOnlyFailure ]
 
 # Started failing on r128793
 webkit.org/b/96953 [ Win ] http/tests/inspector/network/network-xhr-replay.html [ Timeout ]
