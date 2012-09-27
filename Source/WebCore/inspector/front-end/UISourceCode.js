@@ -201,10 +201,10 @@ WebInspector.UISourceCode.prototype = {
          */
         function callback(content, contentEncoded, mimeType)
         {
-            if (typeof content === "undefined")
+            if (typeof content !== "string")
                 return;
 
-            this._setContent(/** @type {string} */ content);
+            this._setContent(content);
         }
 
         this.requestOriginalContent(callback.bind(this));
@@ -223,10 +223,10 @@ WebInspector.UISourceCode.prototype = {
          */
         function revert(content, contentEncoded, mimeType)
         {
-            if (typeof content === "undefined")
+            if (typeof content !== "string")
                 return;
 
-            this._setContent(/** @type {string} */ content);
+            this._setContent(content);
             this._clearRevisionHistory();
             this.history = [];
             callback(this);
