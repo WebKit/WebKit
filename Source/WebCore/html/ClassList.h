@@ -65,7 +65,7 @@ private:
 
     const SpaceSplitString& classNames() const;
 
-    virtual AtomicString value() const OVERRIDE { return m_element->fastGetAttribute(classAttr); }
+    virtual AtomicString value() const OVERRIDE { return m_element->getAttribute(classAttr); }
     virtual void setValue(const AtomicString& value) OVERRIDE { m_element->setAttribute(classAttr, value); }
 
     Element* m_element;
