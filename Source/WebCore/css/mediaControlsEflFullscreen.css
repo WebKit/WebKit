@@ -111,10 +111,6 @@ video:-webkit-full-screen::-webkit-media-controls-seek-forward-button {
     display: none;
 }
 
-video:-webkit-full-screen::-webkit-media-controls-fullscreen-button {
-    display: none;
-}
-
 video:-webkit-full-screen::-webkit-media-controls-rewind-button {
     display: none;
 }

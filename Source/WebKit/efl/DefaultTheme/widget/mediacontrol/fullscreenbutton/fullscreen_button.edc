@@ -22,7 +22,8 @@
       name: "webkit/widget/mediacontrol/fullscreen_button";
 
       images {
-         image: "widget/mediacontrol/fullscreenbutton/fullscreenbutton.png" COMP;
+         image: "widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png" COMP;
+         image: "widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png" COMP;
       }
 
       parts {
@@ -32,17 +33,26 @@
             description { state: "default" 0.0;
                min: 25 25;
             }
-            description { state: "fullscreen" 0.0;
+            description { state: "fullscreen_enter" 0.0;
                inherit: "default" 0.0;
-               image.normal: "widget/mediacontrol/fullscreenbutton/fullscreenbutton.png";
+               image.normal: "widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png";
+            }
+            description { state: "fullscreen_exit" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png";
             }
          }
       }
 
       programs {
          program {
-             signal: "fullscreen";
-             action: STATE_SET "fullscreen" 0.0;
+             signal: "fullscreen_enter";
+             action: STATE_SET "fullscreen_enter" 0.0;
+             target: "fullscreen_button";
+         }
+         program {
+             signal: "fullscreen_exit";
+             action: STATE_SET "fullscreen_exit" 0.0;
              target: "fullscreen_button";
          }
       }

@@ -1063,7 +1063,9 @@ bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElemen
     else if (mediaElementType == MediaSeekBackButton)
         edje_object_signal_emit(entry->edje(), "seekbackward", "");
     else if (mediaElementType == MediaEnterFullscreenButton)
-        edje_object_signal_emit(entry->edje(), "fullscreen", "");
+        edje_object_signal_emit(entry->edje(), "fullscreen_enter", "");
+    else if (mediaElementType == MediaExitFullscreenButton)
+        edje_object_signal_emit(entry->edje(), "fullscreen_exit", "");
 #if ENABLE(VIDEO_TRACK)
     else if (mediaElementType == MediaShowClosedCaptionsButton)
         edje_object_signal_emit(entry->edje(), "show_captions", "");
@@ -1103,10 +1105,11 @@ bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const Pain
     Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
     if (!mediaNode)
         mediaNode = object->node();
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag)))
+    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return false;
 
-    if (!emitMediaButtonSignal(FullScreenButton, MediaEnterFullscreenButton, rect))
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    if (!emitMediaButtonSignal(FullScreenButton, mediaElement->isFullscreen() ? MediaExitFullscreenButton : MediaEnterFullscreenButton, rect))
         return false;
 
     return paintThemePart(object, FullScreenButton, info, rect);
