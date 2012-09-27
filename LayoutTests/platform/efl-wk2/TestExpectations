@@ -121,8 +121,6 @@ Bug(EFL) fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Im
 Bug(EFL) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/change-iframe-src.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
-Bug(EFL) jquery/data.html [ Failure Pass ]
-Bug(EFL) jquery/offset.html [ Failure Pass ]
 Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html [ Crash Failure Pass ]
 Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html [ Crash Failure Pass ]
 Bug(EFL) sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Crash Failure Pass ]
