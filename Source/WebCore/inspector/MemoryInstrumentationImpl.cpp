@@ -37,24 +37,7 @@
 
 namespace WebCore {
 
-MemoryInstrumentationImpl::MemoryInstrumentationImpl(VisitedObjects& visitedObjects, const VisitedObjects* allocatedObjects)
-    : m_visitedObjects(visitedObjects)
-    , m_allocatedObjects(allocatedObjects)
-    , m_totalCountedObjects(0)
-    , m_totalObjectsNotInAllocatedSet(0)
-{
-}
-
-void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()
-{
-    while (!m_deferredInstrumentedPointers.isEmpty()) {
-        OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
-        m_deferredInstrumentedPointers.removeLast();
-        pointer->process(this);
-    }
-}
-
-void MemoryInstrumentationImpl::countObjectSize(MemoryObjectType objectType, size_t size)
+void MemoryInstrumentationClientImpl::countObjectSize(MemoryObjectType objectType, size_t size)
 {
     ASSERT(objectType);
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
@@ -63,17 +46,12 @@ void MemoryInstrumentationImpl::countObjectSize(MemoryObjectType objectType, siz
     ++m_totalCountedObjects;
 }
 
-void MemoryInstrumentationImpl::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
-{
-    m_deferredInstrumentedPointers.append(pointer);
-}
-
-bool MemoryInstrumentationImpl::visited(const void* object)
+bool MemoryInstrumentationClientImpl::visited(const void* object)
 {
     return !m_visitedObjects.add(object).isNewEntry;
 }
 
-void MemoryInstrumentationImpl::checkCountedObject(const void* object)
+void MemoryInstrumentationClientImpl::checkCountedObject(const void* object)
 {
     if (!checkInstrumentedObjects())
         return;
@@ -86,9 +64,23 @@ void MemoryInstrumentationImpl::checkCountedObject(const void* object)
     }
 }
 
+void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()
+{
+    while (!m_deferredInstrumentedPointers.isEmpty()) {
+        OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
+        m_deferredInstrumentedPointers.removeLast();
+        pointer->process(this);
+    }
+}
+
+void MemoryInstrumentationImpl::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
+{
+    m_deferredInstrumentedPointers.append(pointer);
+}
+
 size_t MemoryInstrumentationImpl::selfSize() const
 {
-    return calculateContainerSize(m_visitedObjects) + calculateContainerSize(m_deferredInstrumentedPointers);
+    return calculateContainerSize(m_deferredInstrumentedPointers);
 }
 
 } // namespace WebCore

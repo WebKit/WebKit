@@ -1,3 +1,24 @@
+2012-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: move visited and countObjectSize methods implementation into separate class.
+        https://bugs.webkit.org/show_bug.cgi?id=97461
+
+        Reviewed by Yury Semikhatsky.
+
+        These methods and the data collected by them need to be used in the instrumentation code for other components.
+        As example when we are visiting bitmaps we need to visit platform specific objects.
+        These objects will be instrumented with help of component's own instrumentation code
+        but we have to keep the single set of visited objects and the map of counters.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentationClient):
+        (WTF::MemoryInstrumentationClient::~MemoryInstrumentationClient):
+        (WTF):
+        (WTF::MemoryInstrumentation::MemoryInstrumentation):
+        (MemoryInstrumentation):
+        (WTF::MemoryInstrumentation::countObjectSize):
+        (WTF::MemoryInstrumentation::visited):
+
 2012-09-27  Csaba Osztrogonác  <ossy@webkit.org>, Tor Arne Vestbø  <vestbo@webkit.org>
 
         [Qt] Enable the LLInt on Linux

@@ -1,3 +1,25 @@
+2012-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: move visited and countObjectSize methods implementation into separate class.
+        https://bugs.webkit.org/show_bug.cgi?id=97461
+
+        Reviewed by Yury Semikhatsky.
+
+        These methods and the data collected by them need to be used in the instrumentation code for other components.
+        As example when we are visiting bitmaps we need to visit platform specific objects.
+        These objects will be instrumented with help of component's own instrumentation code
+        but we have to keep the single set of visited objects and the map of counters.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (InstrumentationTestHelper):
+        (WebCore::InstrumentationTestHelper::InstrumentationTestHelper):
+        (WebCore::InstrumentationTestHelper::addRootObject):
+        (WebCore::InstrumentationTestHelper::reportedSizeForAllTypes):
+        (WebCore::InstrumentationTestHelper::visitedObjects):
+        (WebCore::InstrumentationTestHelper::totalSize):
+        (WebCore):
+        (WebCore::TEST):
+
 2012-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unify event handling of middle mouse button.

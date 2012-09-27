@@ -83,8 +83,17 @@ private:
 
 template<typename T> void reportMemoryUsage(const T* const&, MemoryObjectInfo*);
 
+class MemoryInstrumentationClient {
+public:
+    virtual ~MemoryInstrumentationClient() { }
+    virtual void countObjectSize(MemoryObjectType, size_t) = 0;
+    virtual bool visited(const void*) = 0;
+    virtual void checkCountedObject(const void*) = 0;
+};
+
 class MemoryInstrumentation {
 public:
+    explicit MemoryInstrumentation(MemoryInstrumentationClient* client) : m_client(client) { }
     virtual ~MemoryInstrumentation() { }
 
     template <typename T> void addRootObject(const T& t)
@@ -103,11 +112,12 @@ protected:
     };
 
 private:
-    virtual void countObjectSize(MemoryObjectType, size_t) = 0;
+    void countObjectSize(MemoryObjectType objectType, size_t size) { m_client->countObjectSize(objectType, size); }
+    bool visited(const void* pointer) { return m_client->visited(pointer); }
+    void checkCountedObject(const void* pointer) { return m_client->checkCountedObject(pointer); }
+
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
-    virtual bool visited(const void*) = 0;
     virtual void processDeferredInstrumentedPointers() = 0;
-    virtual void checkCountedObject(const void*) = 0;
 
     friend class MemoryClassInfo;
     template<typename T> friend void reportMemoryUsage(const T* const&, MemoryObjectInfo*);
@@ -177,6 +187,8 @@ private:
     template<typename T> void addObjectImpl(const T* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const RefPtr<T>* const&, MemoryObjectType, MemoryOwningType);
+
+    MemoryInstrumentationClient* m_client;
 };
 
 class MemoryClassInfo {

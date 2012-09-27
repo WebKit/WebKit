@@ -44,11 +44,14 @@ namespace WebCore {
 
 typedef HashSet<const void*> VisitedObjects;
 
-class MemoryInstrumentationImpl : public WTF::MemoryInstrumentation {
+class MemoryInstrumentationClientImpl : public WTF::MemoryInstrumentationClient {
 public:
-    MemoryInstrumentationImpl(VisitedObjects&, const VisitedObjects* allocatedObjects = 0);
+    explicit MemoryInstrumentationClientImpl(VisitedObjects* allocatedObjects)
+        : m_allocatedObjects(allocatedObjects)
+        , m_totalCountedObjects(0)
+        , m_totalObjectsNotInAllocatedSet(0)
+    { }
 
-    size_t selfSize() const;
     size_t totalSize(MemoryObjectType objectType) const
     {
         TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
@@ -63,24 +66,44 @@ public:
         return size;
     }
 
+    size_t selfSize() const
+    {
+        return m_visitedObjects.capacity() * sizeof(VisitedObjects::ValueType) +
+            m_totalSizes.capacity() * sizeof(TypeToSizeMap::ValueType);
+    }
+
     bool checkInstrumentedObjects() const { return m_allocatedObjects; }
+    size_t visitedObjects() const { return m_visitedObjects.size(); }
     size_t totalCountedObjects() const { return m_totalCountedObjects; }
     size_t totalObjectsNotInAllocatedSet() const { return m_totalObjectsNotInAllocatedSet; }
 
-private:
     virtual void countObjectSize(MemoryObjectType, size_t) OVERRIDE;
-    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
-    virtual void processDeferredInstrumentedPointers() OVERRIDE;
     virtual void checkCountedObject(const void*) OVERRIDE;
 
+private:
     typedef HashMap<MemoryObjectType, size_t> TypeToSizeMap;
     TypeToSizeMap m_totalSizes;
-    VisitedObjects& m_visitedObjects;
-    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
+    VisitedObjects m_visitedObjects;
     const VisitedObjects* m_allocatedObjects;
     size_t m_totalCountedObjects;
     size_t m_totalObjectsNotInAllocatedSet;
+};
+
+class MemoryInstrumentationImpl : public WTF::MemoryInstrumentation {
+public:
+    explicit MemoryInstrumentationImpl(WTF::MemoryInstrumentationClient* client)
+        : MemoryInstrumentation(client)
+    {
+    }
+
+    size_t selfSize() const;
+
+private:
+    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
+    virtual void processDeferredInstrumentedPointers() OVERRIDE;
+
+    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
 };
 
 } // namespace WebCore

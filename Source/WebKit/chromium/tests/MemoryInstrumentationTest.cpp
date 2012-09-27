@@ -53,6 +53,21 @@ using namespace WebCore;
 
 namespace {
 
+class InstrumentationTestHelper {
+public:
+    InstrumentationTestHelper() : m_client(0), m_instrumentation(&m_client) { }
+
+    template<typename T>
+    void addRootObject(const T& t) { m_instrumentation.addRootObject(t); }
+    size_t reportedSizeForAllTypes() const { return m_client.reportedSizeForAllTypes(); }
+    int visitedObjects() const { return m_client.visitedObjects(); }
+    size_t totalSize(MemoryObjectType objectType) const { return m_client.totalSize(objectType); }
+
+private:
+    MemoryInstrumentationClientImpl m_client;
+    MemoryInstrumentationImpl m_instrumentation;
+};
+
 class NotInstrumented {
 public:
     NotInstrumented(const char* = 0) { }
@@ -74,52 +89,47 @@ public:
 
 TEST(MemoryInstrumentationTest, sizeOf)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     Instrumented instrumented;
-    impl.addRootObject(instrumented);
-    EXPECT_EQ(sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(instrumented);
+    EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, nullCheck)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     Instrumented* instrumented = 0;
-    impl.addRootObject(instrumented);
-    EXPECT_EQ(0u, impl.reportedSizeForAllTypes());
-    EXPECT_EQ(0, visitedObjects.size());
+    helper.addRootObject(instrumented);
+    EXPECT_EQ(0u, helper.reportedSizeForAllTypes());
+    EXPECT_EQ(0, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, ptrVsRef)
 {
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
         Instrumented instrumented;
-        impl.addRootObject(&instrumented);
-        EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
+        helper.addRootObject(&instrumented);
+        EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(2, helper.visitedObjects());
     }
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
         Instrumented instrumented;
-        impl.addRootObject(instrumented);
-        EXPECT_EQ(sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(1, visitedObjects.size());
+        helper.addRootObject(instrumented);
+        EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
     }
 }
 
 TEST(MemoryInstrumentationTest, ownPtr)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     OwnPtr<Instrumented> instrumented(adoptPtr(new Instrumented));
-    impl.addRootObject(instrumented);
-    EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(instrumented);
+    EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 class InstrumentedRefPtr : public RefCounted<InstrumentedRefPtr> {
@@ -138,23 +148,21 @@ public:
 
 TEST(MemoryInstrumentationTest, dataRef)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     DataRef<InstrumentedRefPtr> instrumentedRefPtr;
     instrumentedRefPtr.init();
-    impl.addRootObject(instrumentedRefPtr);
-    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(instrumentedRefPtr);
+    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, refPtr)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     RefPtr<InstrumentedRefPtr> instrumentedRefPtr(adoptRef(new InstrumentedRefPtr));
-    impl.addRootObject(instrumentedRefPtr);
-    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(instrumentedRefPtr);
+    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 class InstrumentedWithOwnPtr : public Instrumented {
@@ -172,12 +180,11 @@ public:
 
 TEST(MemoryInstrumentationTest, ownPtrNotInstrumented)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedWithOwnPtr instrumentedWithOwnPtr;
-    impl.addRootObject(instrumentedWithOwnPtr);
-    EXPECT_EQ(2 * sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(instrumentedWithOwnPtr);
+    EXPECT_EQ(2 * sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 class InstrumentedUndefined {
@@ -205,13 +212,12 @@ public:
 
 TEST(MemoryInstrumentationTest, ownerTypePropagation)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
-    impl.addRootObject(instrumentedDOM);
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), impl.totalSize(WebCoreMemoryTypes::DOM));
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(instrumentedDOM);
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.totalSize(WebCoreMemoryTypes::DOM));
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 class NonVirtualInstrumented {
@@ -227,12 +233,11 @@ public:
 
 TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     NonVirtualInstrumented nonVirtualInstrumented;
-    impl.addRootObject(&nonVirtualInstrumented);
-    EXPECT_EQ(sizeof(NonVirtualInstrumented) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(&nonVirtualInstrumented);
+    EXPECT_EQ(sizeof(NonVirtualInstrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 template<typename T>
@@ -253,32 +258,29 @@ public:
 TEST(MemoryInstrumentationTest, visitStrings)
 {
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
         InstrumentedOwner<String> stringInstrumentedOwner("String");
         stringInstrumentedOwner.m_value.characters(); // Force 16bit shadow creation.
-        impl.addRootObject(stringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 2, impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 2, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(2, helper.visitedObjects());
     }
 
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
         InstrumentedOwner<AtomicString> atomicStringInstrumentedOwner("AtomicString");
         atomicStringInstrumentedOwner.m_value.string().characters(); // Force 16bit shadow creation.
-        impl.addRootObject(atomicStringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 2, impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
+        helper.addRootObject(atomicStringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 2, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(2, helper.visitedObjects());
     }
 
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
         InstrumentedOwner<CString> cStringInstrumentedOwner("CString");
-        impl.addRootObject(cStringInstrumentedOwner);
-        EXPECT_EQ(sizeof(WTF::CStringBuffer) + cStringInstrumentedOwner.m_value.length(), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(1, visitedObjects.size());
+        helper.addRootObject(cStringInstrumentedOwner);
+        EXPECT_EQ(sizeof(WTF::CStringBuffer) + cStringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
     }
 }
 
@@ -298,13 +300,12 @@ public:
 
 TEST(MemoryInstrumentationTest, refPtrPtr)
 {
+    InstrumentationTestHelper helper;
     RefPtr<StringImpl> refPtr;
     TwoPointersToRefPtr root(refPtr);
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
-    impl.addRootObject(root);
-    EXPECT_EQ(sizeof(RefPtr<StringImpl>), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(RefPtr<StringImpl>), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 class TwoPointersToOwnPtr {
@@ -323,13 +324,12 @@ public:
 
 TEST(MemoryInstrumentationTest, ownPtrPtr)
 {
+    InstrumentationTestHelper helper;
     OwnPtr<NotInstrumented> ownPtr;
     TwoPointersToOwnPtr root(ownPtr);
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
-    impl.addRootObject(root);
-    EXPECT_EQ(sizeof(OwnPtr<NotInstrumented>), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(OwnPtr<NotInstrumented>), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 template<typename T>
@@ -351,86 +351,78 @@ public:
 TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
 {
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
 
         OwnPtr<InstrumentedTemplate<String> > value = adoptPtr(new InstrumentedTemplate<String>(""));
         InstrumentedOwner<InstrumentedTemplate<String>* > root(value.get());
-        impl.addRootObject(root);
-        EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), impl.reportedSizeForAllTypes());
+        helper.addRootObject(root);
+        EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), helper.reportedSizeForAllTypes());
         // FIXME: it is failing on Chromium Canary bots but works fine locally.
-        // EXPECT_EQ(2, visitedObjects.size());
+        // EXPECT_EQ(2, helper.visitedObjects());
     }
     {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
+        InstrumentationTestHelper helper;
 
         OwnPtr<InstrumentedTemplate<NotInstrumented> > value = adoptPtr(new InstrumentedTemplate<NotInstrumented>(""));
         InstrumentedOwner<InstrumentedTemplate<NotInstrumented>* > root(value.get());
-        impl.addRootObject(root);
-        EXPECT_EQ(sizeof(InstrumentedTemplate<NotInstrumented>), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(1, visitedObjects.size());
+        helper.addRootObject(root);
+        EXPECT_EQ(sizeof(InstrumentedTemplate<NotInstrumented>), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
     }
 }
 
 TEST(MemoryInstrumentationTest, vectorZeroInlineCapacity)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedOwner<Vector<int> > vectorOwner(16);
-    impl.addRootObject(vectorOwner);
-    EXPECT_EQ(16 * sizeof(int), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(vectorOwner);
+    EXPECT_EQ(16 * sizeof(int), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacity)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedOwner<Vector<int, 4> > vectorOwner;
-    impl.addRootObject(vectorOwner);
-    EXPECT_EQ(static_cast<size_t>(0), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(0, visitedObjects.size());
+    helper.addRootObject(vectorOwner);
+    EXPECT_EQ(static_cast<size_t>(0), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(0, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacityResized)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedOwner<Vector<int, 4> > vectorOwner;
     vectorOwner.m_value.reserveCapacity(8);
-    impl.addRootObject(vectorOwner);
-    EXPECT_EQ(8 * sizeof(int), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(vectorOwner);
+    EXPECT_EQ(8 * sizeof(int), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacity)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedOwner<OwnPtr<Vector<int, 4> > > vectorOwner;
     vectorOwner.m_value = adoptPtr(new Vector<int, 4>());
-    impl.addRootObject(vectorOwner);
-    EXPECT_EQ(sizeof(Vector<int, 4>), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(1, visitedObjects.size());
+    helper.addRootObject(vectorOwner);
+    EXPECT_EQ(sizeof(Vector<int, 4>), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacityResized)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
     InstrumentedOwner<OwnPtr<Vector<int, 4> > > vectorOwner;
     vectorOwner.m_value = adoptPtr(new Vector<int, 4>());
     vectorOwner.m_value->reserveCapacity(8);
-    impl.addRootObject(vectorOwner);
-    EXPECT_EQ(8 * sizeof(int) + sizeof(Vector<int, 4>), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(vectorOwner);
+    EXPECT_EQ(8 * sizeof(int) + sizeof(Vector<int, 4>), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorWithInstrumentedType)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
 
     typedef Vector<String> StringVector;
     OwnPtr<StringVector> value = adoptPtr(new StringVector());
@@ -438,15 +430,14 @@ TEST(MemoryInstrumentationTest, vectorWithInstrumentedType)
     for (size_t i = 0; i < count; ++i)
         value->append("string");
     InstrumentedOwner<StringVector* > root(value.get());
-    impl.addRootObject(root);
-    EXPECT_EQ(sizeof(StringVector) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(count + 2, (size_t)visitedObjects.size());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(StringVector) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 2, (size_t)helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
 
     typedef HashSet<String> ValueType;
     OwnPtr<ValueType> value = adoptPtr(new ValueType());
@@ -454,21 +445,20 @@ TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
     for (size_t i = 0; i < count; ++i)
         value->add(String::number(i));
     InstrumentedOwner<ValueType* > root(value.get());
-    impl.addRootObject(root);
-    EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(count + 2, (size_t)visitedObjects.size());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 2, (size_t)helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, arrayBuffer)
 {
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
+    InstrumentationTestHelper helper;
 
     typedef InstrumentedTemplate<RefPtr<ArrayBuffer> > ValueType;
     ValueType value(ArrayBuffer::create(1000, sizeof(int)));
-    impl.addRootObject(value);
-    EXPECT_EQ(sizeof(int) * 1000 + sizeof(ArrayBuffer), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    helper.addRootObject(value);
+    EXPECT_EQ(sizeof(int) * 1000 + sizeof(ArrayBuffer), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2, helper.visitedObjects());
 }
 
 } // namespace
