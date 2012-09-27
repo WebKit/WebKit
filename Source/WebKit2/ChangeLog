@@ -1,3 +1,16 @@
+2012-09-27  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=97823
+        Need to bump the WKBundlePageLoaderClient version after the addition of didLayout
+
+        Reviewed by Brady Eidson.
+
+        Bump the version.
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2012-09-27  Helder Correia  <helder.correia@nokia.com>
 
         [Cairo] Unnecessary creation of ShareableBitmap's for directly composited images
