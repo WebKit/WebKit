@@ -148,7 +148,7 @@ void DocumentEventQueue::pendingEventTimerFired()
     RefPtr<DocumentEventQueue> protector(this);
 
     while (!m_queuedEvents.isEmpty()) {
-        ListHashSet<RefPtr<Event> >::iterator iter = m_queuedEvents.begin();
+        ListHashSet<RefPtr<Event>, 16>::iterator iter = m_queuedEvents.begin();
         RefPtr<Event> event = *iter;
         m_queuedEvents.remove(iter);
         if (!event)

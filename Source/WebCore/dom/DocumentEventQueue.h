@@ -68,7 +68,7 @@ private:
     void dispatchEvent(PassRefPtr<Event>);
 
     OwnPtr<DocumentEventQueueTimer> m_pendingEventTimer;
-    ListHashSet<RefPtr<Event> > m_queuedEvents;
+    ListHashSet<RefPtr<Event>, 16> m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
     bool m_isClosed;
 
