@@ -152,7 +152,9 @@ public:
     tst_qrawwebview()
         : m_resourceDir(QString::fromLatin1(TESTS_SOURCE_DIR "/html/resources"))
         , m_baseUrl(QUrl::fromLocalFile(TESTS_SOURCE_DIR "/html").toString())
-    { }
+    {
+        addQtWebProcessToPath();
+    }
 
 private Q_SLOTS:
     void paint() { run(&tst_qrawwebview::doPaint, m_resourceDir + "/qwkview_paint.png"); }

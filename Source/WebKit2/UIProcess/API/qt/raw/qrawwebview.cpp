@@ -319,6 +319,7 @@ void QRawWebView::setActive(bool active)
 {
     d->m_active = active;
     d->m_webPageProxy->viewStateDidChange(WebKit::WebPageProxy::ViewWindowIsActive);
+    layerTreeRenderer()->setActive(active);
 }
 
 QSize QRawWebView::size() const
@@ -352,17 +353,20 @@ WKPageRef QRawWebView::pageRef()
     return toAPI(d->m_webPageProxy.get());
 }
 
-void QRawWebView::paint(const QMatrix4x4& transform, float opacity, unsigned paintFlags)
+WebKit::LayerTreeRenderer* QRawWebView::layerTreeRenderer() const
 {
     WebKit::DrawingAreaProxy* drawingArea = d->m_webPageProxy->drawingArea();
     if (!drawingArea)
-        return;
+        return 0;
+    WebKit::LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = drawingArea->layerTreeCoordinatorProxy();
+    if (!layerTreeCoordinatorProxy)
+        return 0;
+    return layerTreeCoordinatorProxy->layerTreeRenderer();
+}
 
-    WebKit::LayerTreeCoordinatorProxy* coordinatorProxy = drawingArea->layerTreeCoordinatorProxy();
-    if (!coordinatorProxy)
-        return;
-
-    WebKit::LayerTreeRenderer* renderer = coordinatorProxy->layerTreeRenderer();
+void QRawWebView::paint(const QMatrix4x4& transform, float opacity, unsigned paintFlags)
+{
+    WebKit::LayerTreeRenderer* renderer = layerTreeRenderer();
     if (!renderer)
         return;
 

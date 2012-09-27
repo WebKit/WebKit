@@ -1,3 +1,28 @@
+2012-09-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] REGRESSION(r128980): It broke all QRawWebView API test
+        https://bugs.webkit.org/show_bug.cgi?id=97561
+
+        Reviewed by Noam Rosenthal.
+
+        Make sure we always send the very first RenderNextFrame message.
+        Before r128980 it was working accidentally because in the common
+        case the web process sent a DeleteCompositingLayer message at some
+        point before the forced repaint would time out and we was sending
+        the first RenderNextFrame when reacting to that.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::setActive): Set the LayerTreeRenderer to active
+        as well. In the QQuickWebView case it is handled by the QtWebPageSGNode.
+        (QRawWebView::layerTreeRenderer): Added a convenience getter
+        for the LayerTreeRenderer.
+        (QRawWebView::paint):
+        * UIProcess/API/qt/raw/qrawwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+        (tst_qrawwebview::tst_qrawwebview): Added a call to addQtWebProcessToPath
+        to make my and the follower users of this test easier.
+
 2012-09-27  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Process touch events using mouse and multi events of Evas.
