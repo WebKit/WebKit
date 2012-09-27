@@ -208,30 +208,31 @@ my $nextAttributeOld_1 = '^(attribute|inherit|readonly)$';
 my $nextPrimitiveType_1 = '^(int|long|short|unsigned)$';
 my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
 my $nextSetGetRaises2_1 = '^(;|getraises|setraises)$';
-my $nextArgumentList_1 = '^(\(|ByteString|DOMString|Date|\[|any|boolean|byte|double|float|in|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
+my $nextArgumentList_1 = '^(\(|::|ByteString|DOMString|Date|\[|any|boolean|byte|double|float|in|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
 my $nextNonAnyType_1 = '^(boolean|byte|double|float|int|long|octet|short|unrestricted|unsigned)$';
-my $nextInterfaceMemberOld_1 = '^(\(|ByteString|DOMString|Date|any|attribute|boolean|byte|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
+my $nextInterfaceMemberOld_1 = '^(\(|::|ByteString|DOMString|Date|any|attribute|boolean|byte|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
 my $nextOptionalIteratorInterfaceOrObject_1 = '^(;|=)$';
 my $nextAttributeOrOperationOrIterator_1 = '^(static|stringifier)$';
-my $nextAttributeOrOperationOrIterator_2 = '^(\(|ByteString|DOMString|Date|any|boolean|byte|creator|deleter|double|float|getter|int|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
+my $nextAttributeOrOperationOrIterator_2 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|creator|deleter|double|float|getter|int|legacycaller|long|object|octet|sequence|setter|short|unrestricted|unsigned|void)$';
 my $nextUnrestrictedFloatType_1 = '^(double|float)$';
-my $nextExtendedAttributeRest3_1 = '^(,|\])$';
-my $nextExceptionField_1 = '^(\(|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
-my $nextType_1 = '^(ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
+my $nextExtendedAttributeRest3_1 = '^(\,|::|\])$';
+my $nextExceptionField_1 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
+my $nextType_1 = '^(::|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
 my $nextSpecials_1 = '^(creator|deleter|getter|legacycaller|setter)$';
-my $nextDefinitions_1 = '^(callback|dictionary|enum|exception|interface|partial|typedef)$';
-my $nextExceptionMembers_1 = '^(\(|ByteString|DOMString|Date|\[|any|boolean|byte|const|double|float|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
+my $nextDefinitions_1 = '^(::|callback|dictionary|enum|exception|interface|partial|typedef)$';
+my $nextExceptionMembers_1 = '^(\(|::|ByteString|DOMString|Date|\[|any|boolean|byte|const|double|float|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
 my $nextAttributeRest_1 = '^(attribute|readonly)$';
-my $nextSingleType_1 = '^(ByteString|DOMString|Date|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
+my $nextInterfaceMembers_1 = '^(\(|::|ByteString|DOMString|Date|any|attribute|boolean|byte|const|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
+my $nextSingleType_1 = '^(::|ByteString|DOMString|Date|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
 my $nextGet_1 = '^(;|getraises|getter|setraises|setter)$';
 my $nextArgumentName_1 = '^(attribute|callback|const|creator|deleter|dictionary|enum|exception|getter|implements|inherit|interface|legacycaller|partial|serializer|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
 my $nextDefinition_1 = '^(callback|interface)$';
-my $nextAttributeOrOperationRest_1 = '^(\(|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned|void)$';
+my $nextAttributeOrOperationRest_1 = '^(\(|::|ByteString|DOMString|Date|any|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned|void)$';
 my $nextUnsignedIntegerType_1 = '^(int|long|short)$';
-my $nextInterfaceMembers_1 = '^(\(|ByteString|DOMString|Date|any|attribute|boolean|byte|const|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
 my $nextDefaultValue_1 = '^(-|Infinity|NaN|false|null|true)$';
+
 
 sub parseDefinitions
 {
@@ -280,7 +281,7 @@ sub parseDefinition
     if ($next->value() eq "typedef") {
         return $self->parseTypedef($extendedAttributeList);
     }
-    if ($next->type() == IdentifierToken) {
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
         return $self->parseImplementsStatement($extendedAttributeList);
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -571,9 +572,8 @@ sub parseInheritance
     my $next = $self->nextToken();
     if ($next->value() eq ":") {
         $self->assertTokenValue($self->getToken(), ":", __LINE__);
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        push(@parent, $token->value());
+        my $scopedName = $self->parseScopedName();
+        push(@parent, $scopedName);
         # Multiple inheritance?
         push(@parent, @{$self->parseIdentifiers()});
     }
@@ -664,9 +664,9 @@ sub parseImplementsStatement
 
     my $next = $self->nextToken();
     if ($next->type() == IdentifierToken) {
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        $self->parseScopedName();
         $self->assertTokenValue($self->getToken(), "implements", __LINE__);
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        $self->parseScopedName();
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         return;
     }
@@ -1368,9 +1368,9 @@ sub parseExtendedAttribute
 {
     my $self = shift;
     my $next = $self->nextToken();
-    if ($next->type() == IdentifierToken) {
-        my $token = $self->getToken();
-        return $self->parseExtendedAttributeRest($token->value());
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
+        my $scopedName = $self->parseScopedName();
+        return $self->parseExtendedAttributeRest($scopedName);
     }
     # backward compatibility. Spec doesn' allow "[]". But WebKit requires.
     if ($next->value() eq ']') {
@@ -1383,9 +1383,9 @@ sub parseExtendedAttribute2
 {
     my $self = shift;
     my $next = $self->nextToken();
-    if ($next->type() == IdentifierToken) {
-        my $token = $self->getToken();
-        return $self->parseExtendedAttributeRest($token->value());
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
+        my $scopedName = $self->parseScopedName();
+        return $self->parseExtendedAttributeRest($scopedName);
     }
     return {};
 }
@@ -1421,9 +1421,9 @@ sub parseExtendedAttributeRest2
 {
     my $self = shift;
     my $next = $self->nextToken();
-    if ($next->type() == IdentifierToken) {
-        my $token = $self->getToken();
-        return $self->parseExtendedAttributeRest3($token->value());
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
+        my $scopedName = $self->parseScopedName();
+        return $self->parseExtendedAttributeRest3($scopedName);
     }
     if ($next->type() == IntegerToken) {
         my $token = $self->getToken();
@@ -1440,15 +1440,13 @@ sub parseExtendedAttributeRest3
     my $next = $self->nextToken();
     if ($next->value() eq "&") {
         $self->assertTokenValue($self->getToken(), "&", __LINE__);
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        return $name . "&" . $token->value();
+        my $rightValue = $self->parseScopedName();
+        return $name . "&" . $rightValue;
     }
     if ($next->value() eq "|") {
         $self->assertTokenValue($self->getToken(), "|", __LINE__);
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        return $name . "|" . $token->value();
+        my $rightValue = $self->parseScopedName();
+        return $name . "|" . $rightValue;
     }
     if ($next->value() eq "(") {
         my $attr = {};
@@ -1460,21 +1458,21 @@ sub parseExtendedAttributeRest3
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExtendedAttributeRest3_1/) {
         my @names = ();
         push(@names, $name);
-        push(@names, @{$self->parseIdentifierList()});
+        push(@names, @{$self->parseScopedNameListNoComma()});
         return join(' ', @names);
     }
     $self->assertUnexpectedToken($next->value());
 }
 
-sub parseIdentifierList
+sub parseScopedNameListNoComma
 {
     my $self = shift;
     my @names = ();
 
     while (1) {
         my $next = $self->nextToken();
-        if ($next->type() == IdentifierToken) {
-            push(@names, $self->getToken()->value());
+        if ($next->type() == IdentifierToken || $next->value() eq "::") {
+            push(@names, $self->parseScopedName());
         } else {
             last;
         }
@@ -1658,9 +1656,9 @@ sub parseNonAnyType
         $self->assertTokenValue($self->getToken(), "Date", __LINE__);
         return "Date" . $self->parseTypeSuffix();
     }
-    if ($next->type() == IdentifierToken) {
-        my $token = $self->getToken();
-        return $token->value() . $self->parseTypeSuffix();
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
+        my $name = $self->parseScopedName();
+        return $name . $self->parseTypeSuffix();
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1967,10 +1965,7 @@ sub parseExceptionList
     if ($next->value() eq "(") {
         my @exceptions = ();
         $self->assertTokenValue($self->getToken(), "(", __LINE__);
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        push(@exceptions, $token->value());
-        push(@exceptions, @{$self->parseIdentifiers()});
+        push(@exceptions, @{$self->parseScopedNameList()});
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
         return \@exceptions;
     }
@@ -2013,7 +2008,7 @@ sub parseDefinitionOld
     if ($next->value() eq "module") {
         return $self->parseModule();
     }
-    if ($next->type() == IdentifierToken) {
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
         return $self->parseImplementsStatement({});
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -2271,6 +2266,93 @@ sub parseOptionalSemicolon
     if ($next->value() eq ";") {
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
     }
+}
+
+sub parseScopedName
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+    if ($next->value() eq "::") {
+        return $self->parseAbsoluteScopedName();
+    }
+    if ($next->type() == IdentifierToken) {
+        return $self->parseRelativeScopedName();
+    }
+    $self->assertUnexpectedToken($next->value());
+}
+
+sub parseAbsoluteScopedName
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+    if ($next->value() eq "::") {
+        $self->assertTokenValue($self->getToken(), "::");
+        my $token = $self->getToken();
+        $self->assertTokenType($token, IdentifierToken);
+        return "::" . $token->value() . $self->parseScopedNameParts();
+    }
+    $self->assertUnexpectedToken($next->value());
+}
+
+sub parseRelativeScopedName
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+    if ($next->type() == IdentifierToken) {
+        my $token = $self->getToken();
+        return $token->value() . $self->parseScopedNameParts();
+    }
+    $self->assertUnexpectedToken($next->value());
+}
+
+sub parseScopedNameParts
+{
+    my $self = shift;
+    my @names = ();
+
+    while (1) {
+        my $next = $self->nextToken();
+        if ($next->value() eq "::") {
+            $self->assertTokenValue($self->getToken(), "::");
+            push(@names, "::");
+            my $token = $self->getToken();
+            $self->assertTokenType($token, IdentifierToken);
+            push(@names, $token->value());
+        } else {
+            last;
+        }
+    }
+    return join("", @names);
+}
+
+sub parseScopedNameList
+{
+    my $self = shift;
+    my $next = $self->nextToken();
+    if ($next->type() == IdentifierToken || $next->value() eq "::") {
+        my @names = ();
+        push(@names, $self->parseScopedName());
+        push(@names, @{$self->parseScopedNames()});
+        return \@names;
+    }
+    $self->assertUnexpectedToken($next->value(), __LINE__);
+}
+
+sub parseScopedNames
+{
+    my $self = shift;
+    my @names = ();
+
+    while (1) {
+        my $next = $self->nextToken();
+        if ($next->value() eq ",") {
+            $self->assertTokenValue($self->getToken(), ",");
+            push(@names, $self->parseScopedName());
+        } else {
+            last;
+        }
+    }
+    return \@names;
 }
 
 sub applyMemberList
