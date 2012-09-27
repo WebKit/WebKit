@@ -39,6 +39,7 @@ class WebIconDatabaseClient : public APIClient<WKIconDatabaseClient, kWKIconData
 public:
     void didChangeIconForPageURL(WebIconDatabase*, WebURL*);
     void didRemoveAllIcons(WebIconDatabase*);
+    void iconDataReadyForPageURL(WebIconDatabase*, WebURL*);
 };
 
 } // namespace WebKit

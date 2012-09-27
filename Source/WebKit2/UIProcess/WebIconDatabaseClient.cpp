@@ -47,4 +47,12 @@ void WebIconDatabaseClient::didRemoveAllIcons(WebIconDatabase* iconDatabase)
     m_client.didRemoveAllIcons(toAPI(iconDatabase),  m_client.clientInfo);
 }
 
+void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase* iconDatabase, WebURL* url)
+{
+    if (!m_client.iconDataReadyForPageURL)
+        return;
+
+    m_client.iconDataReadyForPageURL(toAPI(iconDatabase), toAPI(url), m_client.clientInfo);
+}
+
 } // namespace WebKit

@@ -35,12 +35,14 @@ extern "C" {
 // IconDatabase Client.
 typedef void (*WKIconDatabaseDidChangeIconForPageURLCallback)(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 typedef void (*WKIconDatabaseDidRemoveAllIconsCallback)(WKIconDatabaseRef iconDatabase, const void* clientInfo);
+typedef void (*WKIconDatabaseIconDataReadyForPageURLCallback)(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 
 struct WKIconDatabaseClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKIconDatabaseDidChangeIconForPageURLCallback                       didChangeIconForPageURL;
     WKIconDatabaseDidRemoveAllIconsCallback                             didRemoveAllIcons;
+    WKIconDatabaseIconDataReadyForPageURLCallback                       iconDataReadyForPageURL;
 };
 typedef struct WKIconDatabaseClient WKIconDatabaseClient;
 

@@ -180,6 +180,11 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
     m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID));
 }
 
+void WebIconDatabase::didReceiveIconForPageURL(const String& pageURL)
+{
+    notifyIconDataReadyForPageURL(pageURL);
+}
+
 Image* WebIconDatabase::imageForPageURL(const String& pageURL, const WebCore::IntSize& iconSize)
 {
     if (!m_webContext || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
@@ -237,7 +242,7 @@ void WebIconDatabase::didImportIconURLForPageURL(const String& pageURL)
 
 void WebIconDatabase::didImportIconDataForPageURL(const String& pageURL)
 {
-    didChangeIconForPageURL(pageURL);
+    notifyIconDataReadyForPageURL(pageURL);
 }
 
 void WebIconDatabase::didChangeIconForPageURL(const String& pageURL)
@@ -286,6 +291,12 @@ void WebIconDatabase::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 void WebIconDatabase::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* decoder, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     didReceiveSyncWebIconDatabaseMessage(connection, messageID, decoder, reply);
+}
+
+void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
+{
+    m_iconDatabaseClient.iconDataReadyForPageURL(this, WebURL::create(pageURL).get());
+    didChangeIconForPageURL(pageURL);
 }
 
 } // namespace WebKit

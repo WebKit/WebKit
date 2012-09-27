@@ -1,3 +1,44 @@
+2012-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2] IconDatabase: Add a way to notify when icon data is available
+        https://bugs.webkit.org/show_bug.cgi?id=63945
+
+        Reviewed by Anders Carlsson.
+
+        Provide new API to notify the API layer when icon data is
+        available, and use it from the implementation layer when needed,
+        that is, either when the data has been loaded from the network or
+        imported from disk.
+
+        Added new callback to WKIconDatabaseClient API.
+
+        * UIProcess/API/C/WKIconDatabase.h: Added new callback.
+        * UIProcess/WebIconDatabaseClient.cpp:
+        (WebKit::WebIconDatabaseClient::iconDataReadyForPageURL):
+        Implementation of the new callback at this level in the UI
+        process, by using its implementation in the API layer if present.
+        * UIProcess/WebIconDatabaseClient.h:
+        (WebIconDatabaseClient): Added new callback.
+
+        Implemented WebFrameLoaderClient::dispatchDidReceiveIcon, so we
+        get notified in the UI process when loading a new icon.
+
+        * UIProcess/WebIconDatabase.messages.in: Added new message to
+        notify the UI process: DidReceiveIconForPageURL.
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::notifyIconDataReadyForPageURL): New
+        private helper function to notify the API layer both that new icon
+        data is ready and that the icon has changed.
+        (WebKit::WebIconDatabase::didReceiveIconForPageURL):
+        Implementation of the new message added, by calling
+        notifyIconDataReadyForPageURL() to notify the API layer.
+        (WebKit::WebIconDatabase::didImportIconDataForPageURL): Call
+        notifyIconDataReadyForPageURL() from here as well.
+        * UIProcess/WebIconDatabase.h: Added new prototypes.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveIcon): Send a
+        message to the UI process telling a new icon has been received.
+
 2012-09-26  Sam Weinig  <sam@webkit.org>
 
         Fix XPCServices symlink to not be to an absolute path
