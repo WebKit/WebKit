@@ -133,21 +133,43 @@ WebInspector.BreakpointManager.prototype = {
     },
 
     /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {Array.<Object>}
+     * @param {function(WebInspector.BreakpointManager.Breakpoint, WebInspector.UILocation)} filter
+     * @return {Array.<{breakpoint: WebInspector.BreakpointManager.Breakpoint, uiLocation: WebInspector.UILocation}>}
      */
-    breakpointLocationsForUISourceCode: function(uiSourceCode)
+    _filteredBreakpointLocations: function(filter)
     {
         var result = [];
         for (var i = 0; i < this._breakpoints.length; ++i) {
             var breakpoint = this._breakpoints[i];
             for (var stringifiedLocation in breakpoint._uiLocations) {
                 var uiLocation = breakpoint._uiLocations[stringifiedLocation];
-                if (uiLocation.uiSourceCode === uiSourceCode)
+                if (filter(breakpoint, uiLocation))
                     result.push({breakpoint: breakpoint, uiLocation: uiLocation});
             }
         }
         return result;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {Array.<{breakpoint: WebInspector.BreakpointManager.Breakpoint, uiLocation: WebInspector.UILocation}>}
+     */
+    breakpointLocationsForUISourceCode: function(uiSourceCode)
+    {
+        function filter(breakpoint, uiLocation)
+        {
+            return uiLocation.uiSourceCode === uiSourceCode;   
+        }
+        
+        return this._filteredBreakpointLocations(filter);
+    },
+
+    /**
+     * @return {Array.<{breakpoint: WebInspector.BreakpointManager.Breakpoint, uiLocation: WebInspector.UILocation}>}
+     */
+    allBreakpointLocations: function()
+    {
+        return this._filteredBreakpointLocations(function(breakpoint, uiLocation) { return true; });
     },
 
     /**
