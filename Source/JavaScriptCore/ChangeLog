@@ -1,3 +1,15 @@
+2012-09-27  Csaba Osztrogonác  <ossy@webkit.org>, Tor Arne Vestbø  <vestbo@webkit.org>
+
+        [Qt] Enable the LLInt on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=95749
+
+        Reviewed by Simon Hausmann.
+
+        * DerivedSources.pri:
+        * JavaScriptCore.pro:
+        * LLIntOffsetsExtractor.pro: Added.
+        * Target.pri:
+
 2012-09-27  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Fix build with static JavaScriptCore library

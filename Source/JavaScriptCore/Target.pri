@@ -156,6 +156,13 @@ SOURCES += \
     jit/JITStubs.cpp \
     jit/JumpReplacementWatchpoint.cpp \
     jit/ThunkGenerators.cpp \
+    llint/LLIntCLoop.cpp \
+    llint/LLIntData.cpp \
+    llint/LLIntEntrypoints.cpp \
+    llint/LLIntExceptions.cpp \
+    llint/LLIntSlowPaths.cpp \
+    llint/LLIntThunks.cpp \
+    llint/LowLevelInterpreter.cpp \
     parser/Lexer.cpp \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \

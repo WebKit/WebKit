@@ -33,6 +33,9 @@ KEYWORDLUT_FILES += \
 JIT_STUB_FILES += \
     jit/JITStubs.cpp
 
+LLINT_FILES = \
+    llint/LowLevelInterpreter.asm
+
 # GENERATOR 1-A: LUT creator
 lut.output = ${QMAKE_FILE_BASE}.lut.h
 lut.input = LUT_FILES
@@ -80,3 +83,12 @@ klgen.script = $$PWD/KeywordLookupGenerator.py
 klgen.input = KEYWORDLUT_FILES
 klgen.commands = python $$klgen.script ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 GENERATORS += klgen
+
+linux-*:!equals(QT_ARCH, "arm") {
+    #GENERATOR: LLInt
+    llint.output = LLIntAssembly.h
+    llint.script = $$PWD/offlineasm/asm.rb
+    llint.input = LLINT_FILES
+    llint.commands = ruby $$llint.script ${QMAKE_FILE_NAME} LLIntOffsetsExtractor ${QMAKE_FILE_OUT}
+    GENERATORS += llint
+}

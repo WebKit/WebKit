@@ -1,3 +1,12 @@
+2012-09-27  Csaba Osztrogonác  <ossy@webkit.org>, Tor Arne Vestbø  <vestbo@webkit.org>
+
+        [Qt] Enable the LLInt on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=95749
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/Platform.h:
+
 2012-09-26  Cosmin Truta  <ctruta@rim.com>
 
         [BlackBerry] Allow denormal floats in ARM VFP
