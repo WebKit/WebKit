@@ -70,7 +70,7 @@ enum {
 @property(readonly, retain) DOMTestObj *readOnlyTestObjAttr;
 @property short shortAttr;
 @property unsigned short unsignedShortAttr;
-@property long long Attr;
+@property int longAttr;
 @property long long longLongAttr;
 @property unsigned long long unsignedLongLongAttr;
 @property(copy) NSString *stringAttr;
@@ -117,18 +117,18 @@ enum {
 @property int replaceableAttribute;
 
 - (void)voidMethod;
-- (void)voidMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
-- (long long)Method;
-- (long long)MethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (int)longMethod;
+- (int)longMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)objMethod;
-- (DOMTestObj *)objMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (DOMTestObj *)objMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)serializedValue:(NSString *)serializedArg;
 - (void)idbKey:(DOMIDBKey *)key;
 - (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo;
 - (void)methodWithException;
 - (void)customMethod;
-- (void)customMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)customMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)withScriptStateVoid;
@@ -165,10 +165,10 @@ enum {
 - (void)overloadedMethod1:(NSString *)type;
 #endif
 - (DOMSVGDocument *)getSVGDocument;
-- (void)convert1:(DOMa *);
-- (void)convert2:(DOMb *);
-- (void)convert4:(DOMd *);
-- (void)convert5:(DOMe *);
+- (void)convert1:(DOMa *)value;
+- (void)convert2:(DOMb *)value;
+- (void)convert4:(DOMd *)value;
+- (void)convert5:(DOMe *)value;
 - (DOMSVGPoint *)mutablePointFunction;
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;

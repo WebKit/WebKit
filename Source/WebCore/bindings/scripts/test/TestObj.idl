@@ -51,7 +51,6 @@ module test {
         attribute DOMString                stringAttr;
         attribute [V8MeasureAs=TestFeature] TestObj testObjAttr;
 
-        JS, V8
         // WK_ucfirst, WK_lcfirst exceptional cases.
         attribute TestObj                  XMLObjAttr;
         attribute boolean                  create;
@@ -226,10 +225,10 @@ module test {
         [CheckSecurityForNode] SVGDocument getSVGDocument()
             raises(DOMException);
 
-        void convert1(in [TreatReturnedNullStringAs=Null] a);
-        void convert2(in [TreatReturnedNullStringAs=Undefined] b);
-        void convert4(in [TreatNullAs=NullString] d);
-        void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e);
+        void convert1(in [TreatReturnedNullStringAs=Null] a value);
+        void convert2(in [TreatReturnedNullStringAs=Undefined] b value);
+        void convert4(in [TreatNullAs=NullString] d value);
+        void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e value);
 
         attribute SVGPoint mutablePoint;
         attribute [Immutable] SVGPoint immutablePoint;
