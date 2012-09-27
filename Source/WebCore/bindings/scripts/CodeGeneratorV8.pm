@@ -1608,7 +1608,7 @@ sub GenerateCallWith
         AddToImplIncludes("ScriptArguments.h");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
-        push(@$outputArray, $indent . "RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());\n");
+        push(@$outputArray, $indent . "RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());\n");
         push(@$outputArray, $indent . "if (!callStack)\n");
         push(@$outputArray, $indent . "    return v8Undefined();\n");
         push(@callWithArgs, "callStack");

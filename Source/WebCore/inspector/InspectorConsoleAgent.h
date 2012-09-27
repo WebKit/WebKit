@@ -61,6 +61,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void clearMessages(ErrorString*);
+    bool enabled() { return m_enabled; }
     void reset();
 
     virtual void setFrontend(InspectorFrontend*);
@@ -100,6 +101,9 @@ protected:
     int m_expiredConsoleMessageCount;
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;
+    bool m_enabled;
+private:
+    static int s_enabledAgentCount;
 };
 
 } // namespace WebCore

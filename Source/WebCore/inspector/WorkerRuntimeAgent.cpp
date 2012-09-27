@@ -49,11 +49,6 @@ WorkerRuntimeAgent::~WorkerRuntimeAgent()
 {
 }
 
-void WorkerRuntimeAgent::setReportExecutionContextCreation(ErrorString* error, bool)
-{
-    *error = "Isolated contexts are not supported for workers.";
-}
-
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)
 {
     if (executionContextId) {

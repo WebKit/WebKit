@@ -695,7 +695,7 @@ static v8::Handle<v8::Value> withScriptArgumentsAndCallStackAttributeAttrGetter(
 {
     INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStackAttribute._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());
     if (!callStack)
         return v8Undefined();
     return toV8(imp->withScriptArgumentsAndCallStackAttribute(callStack), info.Holder(), info.GetIsolate());
@@ -706,7 +706,7 @@ static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::Str
     INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStackAttribute._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());
     if (!callStack)
         return v8Undefined();
     imp->setWithScriptArgumentsAndCallStackAttribute(callStack, WTF::getPtr(v));
@@ -1336,7 +1336,7 @@ static v8::Handle<v8::Value> withScriptArgumentsAndCallStackCallback(const v8::A
     INC_STATS("DOM.TestObj.withScriptArgumentsAndCallStack");
     TestObj* imp = V8TestObj::toNative(args.Holder());
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 0));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());
     if (!callStack)
         return v8Undefined();
     imp->withScriptArgumentsAndCallStack(scriptArguments, callStack);
