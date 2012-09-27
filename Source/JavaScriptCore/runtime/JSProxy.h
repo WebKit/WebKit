@@ -41,9 +41,9 @@ public:
         return proxy;
     }
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, 0, prototype, TypeInfo(ProxyType, StructureFlags), &s_info);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ProxyType, StructureFlags), &s_info);
     }
 
     static JS_EXPORTDATA const ClassInfo s_info;

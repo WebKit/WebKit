@@ -177,7 +177,7 @@ public:
     {
         GlobalObject* object = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
         object->finishCreation(globalData, arguments);
-        object->setGlobalThis(globalData, JSProxy::create(globalData, JSProxy::createStructure(globalData, object), object));
+        object->setGlobalThis(globalData, JSProxy::create(globalData, JSProxy::createStructure(globalData, object, object->prototype()), object));
         return object;
     }
 

@@ -1,5 +1,20 @@
 2012-09-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Proxy the global this in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=97734
+
+        Reviewed by Filip Pizlo.
+
+        Eeep – fix a bug - was leaving the global this proxy's structure's globalObject as 0,
+        and setting the proxy's prototype as the global object, rather than its prototype.
+
+        * jsc.cpp:
+        (GlobalObject::create):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::createStructure):
+
+2012-09-26  Gavin Barraclough  <barraclough@apple.com>
+
         Speculative Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
