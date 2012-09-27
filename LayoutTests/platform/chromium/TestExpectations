@@ -3174,7 +3174,7 @@ webkit.org/b/88900 [ Mac ] http/tests/misc/embed-image-load-outlives-gc-without-
 webkit.org/b/88939 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Failure Pass ]
 
 webkit.org/b/97558 [ Linux Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/97558 [ Linux Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
+webkit.org/b/97558 [ Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
 
 # The test has its own notion of timeouts that manifest timeouts as FAIL.
 webkit.org/b/88833 [ Debug ] media/video-played-collapse.html [ Failure Pass ]
@@ -3582,6 +3582,10 @@ webkit.org/b/97672 fast/js/string-localeCompare.html [ Failure ]
 # Failing after r129588
 webkit.org/b/97672 fast/js/dfg-array-push-bad-time.html [ Failure ]
 webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
+
+# Failing, again, after r129712
+webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
+
 
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]

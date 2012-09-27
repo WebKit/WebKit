@@ -85,6 +85,6 @@ PASS: window.moveTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeBy.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.resizeTo.call(targetWindow, 0, 0); should be 'undefined' and is.
 PASS: window.showModalDialog.call(targetWindow); should be 'undefined' and is.
-*** FAIL: window.eval.call(targetWindow, '1+2'); should be 'EvalError: The "this" value passed to eval must be the global object from which eval originated' but instead is 3. ***
+PASS: window.eval.call(targetWindow, '1+2'); should be '3' and is.
 PASS: window.location.toString.call(targetWindow.location) should be 'undefined' and is.
 
