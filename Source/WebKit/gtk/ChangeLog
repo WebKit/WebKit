@@ -1,3 +1,10 @@
+2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix after 129707.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_forward_context_menu_event):
+
 2012-09-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use XDamage to simplify RedirectedXCompositeWindow

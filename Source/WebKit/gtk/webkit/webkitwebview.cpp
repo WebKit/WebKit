@@ -351,7 +351,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
         return FALSE;
 
     mainFrame->view()->setCursor(pointerCursor());
-    if (page->frameCount()) {
+    if (page->subframeCount()) {
         MouseEventWithHitTestResults mev = prepareMouseEventForFrame(mainFrame, event);
         Frame* targetFrame = EventHandler::subframeForHitTestResult(mev);
         if (!targetFrame)
