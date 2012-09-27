@@ -46,10 +46,10 @@ protected:
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     virtual String serialize(const Decimal&) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
 
 private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     virtual DateComponents::Type dateType() const = 0;
     virtual double valueAsDate() const OVERRIDE;
     virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;

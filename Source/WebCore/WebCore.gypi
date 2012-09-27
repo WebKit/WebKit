@@ -4004,6 +4004,8 @@
             'html/BaseClickableWithKeyInputType.h',
             'html/BaseDateAndTimeInputType.cpp',
             'html/BaseDateAndTimeInputType.h',
+            'html/BaseMultipleFieldsDateAndTimeInputType.cpp',
+            'html/BaseMultipleFieldsDateAndTimeInputType.h',
             'html/BaseTextInputType.cpp',
             'html/BaseTextInputType.h',
             'html/ButtonInputType.cpp',

@@ -31,23 +31,24 @@
 #ifndef TimeInputType_h
 #define TimeInputType_h
 
-#include "BaseDateAndTimeInputType.h"
-
 #if ENABLE(INPUT_TYPE_TIME)
-
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-#include "DateTimeEditElement.h"
+#include "BaseMultipleFieldsDateAndTimeInputType.h"
+#else
+#include "BaseDateAndTimeInputType.h"
 #endif
 
 namespace WebCore {
 
-class TimeInputType : public BaseDateAndTimeInputType {
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+typedef BaseMultipleFieldsDateAndTimeInputType BaseTimeInputType;
+#else
+typedef BaseDateAndTimeInputType BaseTimeInputType;
+#endif
+
+class TimeInputType : public BaseTimeInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    virtual ~TimeInputType();
-#endif
 
 private:
     TimeInputType(HTMLInputElement*);
@@ -60,50 +61,9 @@ private:
     virtual bool isTimeField() const OVERRIDE;
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    class DateTimeEditControlOwnerImpl : public DateTimeEditElement::EditControlOwner {
-        WTF_MAKE_NONCOPYABLE(DateTimeEditControlOwnerImpl);
-
-    public:
-        DateTimeEditControlOwnerImpl(TimeInputType&);
-        virtual ~DateTimeEditControlOwnerImpl();
-
-    private:
-        virtual void didBlurFromControl() OVERRIDE FINAL;
-        virtual void didFocusOnControl() OVERRIDE FINAL;
-        virtual void editControlValueChanged() OVERRIDE FINAL;
-        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
-        virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
-        virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
-
-        TimeInputType& m_timeInputType;
-    };
-
-    friend class DateTimeEditControlOwnerImpl;
-
-    // InputType functions
-    virtual void blur() OVERRIDE FINAL;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
-    virtual void createShadowSubtree() OVERRIDE FINAL;
-    virtual void destroyShadowSubtree() OVERRIDE FINAL;
-    virtual void disabledAttributeChanged() OVERRIDE FINAL;
-    virtual void focus(bool restorePreviousSelection) OVERRIDE FINAL;
-    virtual void forwardEvent(Event*) OVERRIDE FINAL;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
-    virtual bool hasCustomFocusLogic() const OVERRIDE FINAL;
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE FINAL;
-    virtual bool isMouseFocusable() const OVERRIDE FINAL;
-    virtual bool isTextField() const OVERRIDE FINAL;
-    virtual void minOrMaxAttributeChanged() OVERRIDE FINAL;
-    virtual void readonlyAttributeChanged() OVERRIDE FINAL;
-    virtual void restoreFormControlState(const FormControlState&) OVERRIDE FINAL;
-    virtual FormControlState saveFormControlState() const OVERRIDE FINAL;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE FINAL;
-    virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
-    virtual void stepAttributeChanged() OVERRIDE FINAL;
-    virtual void updateInnerTextValue() OVERRIDE FINAL;
-
-    DateTimeEditElement* m_dateTimeEditElement;
-    DateTimeEditControlOwnerImpl m_dateTimeEditControlOwnerImpl;
+    // BaseMultipleFieldsDateAndTimeInputType functions
+    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE FINAL;
 #endif
 };
 

@@ -28,43 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TimeInputType_h
-#define TimeInputType_h
+#ifndef BaseMultipleFieldsDateAndTimeInputType_h
+#define BaseMultipleFieldsDateAndTimeInputType_h
 
 #include "BaseDateAndTimeInputType.h"
 
-#if ENABLE(INPUT_TYPE_TIME)
-
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeEditElement.h"
-#endif
 
 namespace WebCore {
 
-class TimeInputType : public BaseDateAndTimeInputType {
-public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    virtual ~TimeInputType();
-#endif
+class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType {
+protected:
+    BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
+    virtual ~BaseMultipleFieldsDateAndTimeInputType();
+    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
 
 private:
-    TimeInputType(HTMLInputElement*);
-    virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual DateComponents::Type dateType() const OVERRIDE;
-    virtual Decimal defaultValueForStepUp() const OVERRIDE;
-    virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
-    virtual bool isTimeField() const OVERRIDE;
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    // FIXME: DateTimeEditControlOwnerImpl should be removed by moving
+    // DateTimeEditElement::EditControlOwner into base class list of
+    // BaseMultipleFieldsDateAndTimeInputType.
     class DateTimeEditControlOwnerImpl : public DateTimeEditElement::EditControlOwner {
         WTF_MAKE_NONCOPYABLE(DateTimeEditControlOwnerImpl);
 
     public:
-        DateTimeEditControlOwnerImpl(TimeInputType&);
+        DateTimeEditControlOwnerImpl(BaseMultipleFieldsDateAndTimeInputType&);
         virtual ~DateTimeEditControlOwnerImpl();
 
     private:
@@ -75,7 +64,7 @@ private:
         virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
         virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
 
-        TimeInputType& m_timeInputType;
+        BaseMultipleFieldsDateAndTimeInputType& m_dateAndTimeInputType;
     };
 
     friend class DateTimeEditControlOwnerImpl;
@@ -104,7 +93,6 @@ private:
 
     DateTimeEditElement* m_dateTimeEditElement;
     DateTimeEditControlOwnerImpl m_dateTimeEditControlOwnerImpl;
-#endif
 };
 
 } // namespace WebCore
