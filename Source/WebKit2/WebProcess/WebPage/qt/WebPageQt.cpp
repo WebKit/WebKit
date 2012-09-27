@@ -440,21 +440,4 @@ void WebPage::hidePopupMenu()
     m_activePopupMenu = 0;
 }
 
-bool WebPage::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
-{
-#ifndef QT_NO_CLIPBOARD
-    if (platformMouseEvent.button() != WebCore::MiddleButton)
-        return false;
-
-    if (qApp->clipboard()->supportsSelection()) {
-        WebCore::Frame* focusFrame = m_page->focusController()->focusedOrMainFrame();
-        if (focusFrame) {
-            focusFrame->editor()->command(AtomicString("PasteGlobalSelection")).execute();
-            return true;
-        }
-    }
-#endif
-    return false;
-}
-
 } // namespace WebKit

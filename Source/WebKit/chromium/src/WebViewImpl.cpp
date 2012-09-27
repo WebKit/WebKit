@@ -92,7 +92,6 @@
 #include "PageGroupLoadDeferrer.h"
 #include "PagePopupClient.h"
 #include "PageWidgetDelegate.h"
-#include "Pasteboard.h"
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -622,39 +621,6 @@ void WebViewImpl::mouseContextMenu(const WebMouseEvent& event)
 
 void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
 {
-#if OS(UNIX) && !OS(DARWIN)
-    // If the event was a middle click, attempt to copy text into the focused
-    // frame. We execute this before we let the page have a go at the event
-    // because the page may change what is focused during in its event handler.
-    //
-    // This code is in the mouse up handler. There is some debate about putting
-    // this here, as opposed to the mouse down handler.
-    //   xterm: pastes on up.
-    //   GTK: pastes on down.
-    //   Firefox: pastes on up.
-    //   Midori: couldn't paste at all with 0.1.2
-    //
-    // There is something of a webcompat angle to this well, as highlighted by
-    // crbug.com/14608. Pages can clear text boxes 'onclick' and, if we paste on
-    // down then the text is pasted just before the onclick handler runs and
-    // clears the text box. So it's important this happens after the
-    // handleMouseReleaseEvent() earlier in this function
-    if (event.button == WebMouseEvent::ButtonMiddle) {
-        Frame* focused = focusedWebCoreFrame();
-        FrameView* view = m_page->mainFrame()->view();
-        IntPoint clickPoint(m_lastMouseDownPoint.x, m_lastMouseDownPoint.y);
-        IntPoint contentPoint = view->windowToContents(clickPoint);
-        HitTestResult hitTestResult = focused->eventHandler()->hitTestResultAtPoint(contentPoint, false, false, ShouldHitTestScrollbars);
-        // We don't want to send a paste when middle clicking a scroll bar or a
-        // link (which will navigate later in the code).  The main scrollbars
-        // have to be handled separately.
-        if (!hitTestResult.scrollbar() && !hitTestResult.isLiveLink() && focused && !view->scrollbarAtPoint(clickPoint)) {
-            Editor* editor = focused->editor();
-            editor->command(AtomicString("PasteGlobalSelection")).execute();
-        }
-    }
-#endif
-
     PageWidgetEventHandler::handleMouseUp(mainFrame, event);
 
 #if OS(WINDOWS)

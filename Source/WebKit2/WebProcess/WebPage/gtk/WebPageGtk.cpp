@@ -162,29 +162,4 @@ void WebPage::setAcceleratedCompositingWindowId(int64_t nativeWindowHandle)
 }
 #endif
 
-bool WebPage::handleMousePressedEvent(const PlatformMouseEvent& platformMouseEvent)
-{
-    bool returnValue = false;
-    if (platformMouseEvent.button() != WebCore::MiddleButton)
-        return returnValue;
-
-#if PLATFORM(X11)
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame)
-        return returnValue;
-
-    PasteboardHelper* pasteboardHelper = PasteboardHelper::defaultPasteboardHelper();
-    bool wasUsingPrimary = pasteboardHelper->usePrimarySelectionClipboard();
-    pasteboardHelper->setUsePrimarySelectionClipboard(true);
-
-    Editor* editor = frame->editor();
-    returnValue = editor->canPaste() || editor->canDHTMLPaste();
-    editor->paste();
-
-    pasteboardHelper->setUsePrimarySelectionClipboard(wasUsingPrimary);
-#endif
-
-    return returnValue;
-}
-
 } // namespace WebKit

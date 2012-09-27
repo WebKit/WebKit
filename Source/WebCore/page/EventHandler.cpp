@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
+ * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,7 @@
 #include "DragController.h"
 #include "DragState.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -559,7 +561,13 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     } else
         newSelection = VisibleSelection(visiblePos);
     
-    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, granularity);
+    bool handled = updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, granularity);
+
+    if (event.event().button() == MiddleButton) {
+        // Ignore handled, since we want to paste to where the caret was placed anyway.
+        handled = handlePasteGlobalSelection(event.event()) || handled;
+    }
+    return handled;
 }
 
 static inline bool canMouseDownStartSelect(Node* node)
@@ -903,6 +911,11 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     m_frame->selection()->notifyRendererOfSelectionChange(UserTriggered);
 
     m_frame->selection()->selectFrameElementInParentIfFullySelected();
+
+    if (event.event().button() == MiddleButton) {
+        // Ignore handled, since we want to paste to where the caret was placed anyway.
+        handled = handlePasteGlobalSelection(event.event()) || handled;
+    }
 
     return handled;
 }
@@ -1895,6 +1908,41 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     return swallowMouseUpEvent || swallowClickEvent || swallowMouseReleaseEvent;
 }
+
+bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& mouseEvent)
+{
+    // If the event was a middle click, attempt to copy global selection in after
+    // the newly set caret position.
+    //
+    // This code is called from either the mouse up or mouse down handling. There
+    // is some debate about when the global selection is pasted:
+    //   xterm: pastes on up.
+    //   GTK: pastes on down.
+    //   Qt: pastes on up.
+    //   Firefox: pastes on up.
+    //   Chromium: pastes on up.
+    //
+    // There is something of a webcompat angle to this well, as highlighted by
+    // crbug.com/14608. Pages can clear text boxes 'onclick' and, if we paste on
+    // down then the text is pasted just before the onclick handler runs and
+    // clears the text box. So it's important this happens after the event
+    // handlers have been fired.
+#if PLATFORM(GTK)
+    if (mouseEvent.type() != PlatformEvent::MousePressed)
+        return false;
+#else
+    if (mouseEvent.type() != PlatformEvent::MouseReleased)
+        return false;
+#endif
+
+    Frame* focusFrame = m_frame->page()->focusController()->focusedOrMainFrame();
+    // Do not paste here if the focus was moved somewhere else.
+    if (m_frame == focusFrame && m_frame->editor()->client()->supportsGlobalSelection())
+        return m_frame->editor()->command(AtomicString("PasteGlobalSelection")).execute();
+
+    return false;
+}
+
 
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)

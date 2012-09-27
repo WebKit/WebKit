@@ -457,14 +457,9 @@ public:
 
 #elif PLATFORM(GTK)
     void updateAccessibilityTree();
-    bool handleMousePressedEvent(const WebCore::PlatformMouseEvent&);
 #if USE(TEXTURE_MAPPER_GL)
     void setAcceleratedCompositingWindowId(int64_t nativeWindowHandle);
 #endif
-#endif
-
-#if PLATFORM(QT)
-    bool handleMouseReleaseEvent(const WebCore::PlatformMouseEvent&);
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);

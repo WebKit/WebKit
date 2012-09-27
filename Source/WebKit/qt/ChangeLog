@@ -1,3 +1,17 @@
+2012-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unify event handling of middle mouse button.
+        https://bugs.webkit.org/show_bug.cgi?id=97690
+
+        Reviewed by Tony Chang.
+
+        Remove port specific handling of middle mouse button press.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseReleaseEvent):
+        * Api/qwebpage_p.h:
+        (QWebPagePrivate):
+
 2012-09-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Remove Qt Quick 1 support

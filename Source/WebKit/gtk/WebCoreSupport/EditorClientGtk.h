@@ -134,6 +134,8 @@ class EditorClient : public WebCore::EditorClient {
 
         virtual bool shouldShowUnicodeMenu();
 
+        virtual bool supportsGlobalSelection() OVERRIDE;
+
     private:
 #if ENABLE(SPELLCHECK)
         TextCheckerClientGtk m_textCheckerClient;

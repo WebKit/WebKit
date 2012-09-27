@@ -746,21 +746,6 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     priv->imFilter.notifyMouseButtonPress();
     gboolean result = frame->eventHandler()->handleMousePressEvent(platformEvent);
 
-#if PLATFORM(X11)
-    /* Copy selection to the X11 selection clipboard */
-    if (event->button == 2) {
-        PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-        bool wasUsingPrimary = helper->usePrimarySelectionClipboard();
-        helper->setUsePrimarySelectionClipboard(true);
-
-        Editor* editor = webView->priv->corePage->focusController()->focusedOrMainFrame()->editor();
-        result = result || editor->canPaste() || editor->canDHTMLPaste();
-        editor->paste();
-
-        helper->setUsePrimarySelectionClipboard(wasUsingPrimary);
-    }
-#endif
-
     return result;
 }
 

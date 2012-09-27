@@ -1364,21 +1364,11 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
             if (isContextClick(platformMouseEvent))
                 handled = handleContextMenuEvent(platformMouseEvent, page);
 #endif
-#if PLATFORM(GTK)
-            bool gtkMouseButtonPressHandled = page->handleMousePressedEvent(platformMouseEvent);
-            handled = handled || gtkMouseButtonPressHandled;
-#endif
+            return handled;
+        }
+        case PlatformEvent::MouseReleased:
+            return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
 
-            return handled;
-        }
-        case PlatformEvent::MouseReleased: {
-            bool handled = frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
-#if PLATFORM(QT)
-            if (!handled)
-                handled = page->handleMouseReleaseEvent(platformMouseEvent);
-#endif
-            return handled;
-        }
         case PlatformEvent::MouseMoved:
             if (onlyUpdateScrollbars)
                 return frame->eventHandler()->passMouseMovedEventToScrollbars(platformMouseEvent);
