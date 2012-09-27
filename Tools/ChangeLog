@@ -1,3 +1,16 @@
+2012-09-27  Florin Malita  <fmalita@chromium.org>
+
+        [Perftest] PerfTestRunner exception when using nested git checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=97796
+
+        Reviewed by Ryosuke Niwa.
+
+        In order to support separate Chromium vs. WebKit git trees, PerfTestsRunner needs to
+        instantiate per-repository SCM objects when collecting revision information.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_results_dict):
+
 2012-09-27  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [Mac][DRT] Add support to allow non-array modifier arguments in keyDown()
