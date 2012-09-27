@@ -332,6 +332,7 @@ EXPORTS
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGarbageCollectionTimerEnabled@Heap@JSC@@QAEX_N@Z
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
+    ?setGlobalThis@JSGlobalObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSObject@2@@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOption@Options@JSC@@SA_NPBD@Z
