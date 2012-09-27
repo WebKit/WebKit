@@ -3161,6 +3161,8 @@ void WebViewImpl::sendResizeEventAndRepaint()
             m_client->didInvalidateRect(damagedRect);
         }
     }
+    if (m_pageOverlays)
+        m_pageOverlays->update();
 }
 
 void WebViewImpl::configureAutoResizeMode()
