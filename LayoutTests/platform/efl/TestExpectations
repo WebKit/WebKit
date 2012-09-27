@@ -819,7 +819,7 @@ webkit.org/b/68591 http/tests/security/mixedContent/filesystem-url-in-iframe.htm
 webkit.org/b/68591 http/tests/inspector/filesystem
 
 # The EFL port has no support for the Geolocation
-webkit.org/b/82140 fast/dom/Geolocation [ Failure ]
+webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
 webkit.org/b/82140 fast/dom/Window/window-properties-geolocation.html [ Failure ]
 webkit.org/b/82140 inspector/geolocation-error.html [ Failure ]
 webkit.org/b/82140 inspector/geolocation-success.html [ Failure ]
