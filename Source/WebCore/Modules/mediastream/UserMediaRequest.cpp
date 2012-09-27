@@ -37,7 +37,9 @@
 
 #include "Dictionary.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "LocalMediaStream.h"
+#include "MediaConstraintsImpl.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamDescriptor.h"
 #include "SpaceSplitString.h"
@@ -45,29 +47,72 @@
 
 namespace WebCore {
 
-PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+static PassRefPtr<MediaConstraintsImpl> parseOptions(const Dictionary& options, const String& mediaType, ExceptionCode& ec)
 {
-    RefPtr<UserMediaRequest> request = adoptRef(new UserMediaRequest(context, controller, options, successCallback, errorCallback));
-    if (!request->audio() && !request->video())
-        return 0;
+    RefPtr<MediaConstraintsImpl> constraints;
 
-    return request.release();
+    Dictionary constraintsDictionary;
+    bool ok = options.get(mediaType, constraintsDictionary);
+    if (ok && !constraintsDictionary.isUndefinedOrNull())
+        constraints = MediaConstraintsImpl::create(constraintsDictionary, ec);
+    else {
+        bool mediaRequested = false;
+        options.get(mediaType, mediaRequested);
+        if (mediaRequested)
+            constraints = MediaConstraintsImpl::create();
+    }
+
+    return constraints.release();
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
+{
+    RefPtr<MediaConstraintsImpl> audio = parseOptions(options, ASCIILiteral("audio"), ec);
+    if (ec)
+        return 0;
+
+    RefPtr<MediaConstraintsImpl> video = parseOptions(options, ASCIILiteral("video"), ec);
+    if (ec)
+        return 0;
+
+    if (!audio && !video)
+        return 0;
+
+    return adoptRef(new UserMediaRequest(context, controller, audio.release(), video.release(), successCallback, errorCallback));
+}
+
+UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, PassRefPtr<MediaConstraintsImpl> audio, PassRefPtr<MediaConstraintsImpl> video, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
     : ContextDestructionObserver(context)
-    , m_audio(false)
-    , m_video(false)
+    , m_audio(audio)
+    , m_video(video)
     , m_controller(controller)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
 {
-    options.get("audio", m_audio);
-    options.get("video", m_video);
 }
 
 UserMediaRequest::~UserMediaRequest()
 {
+}
+
+bool UserMediaRequest::audio() const
+{
+    return m_audio;
+}
+
+bool UserMediaRequest::video() const
+{
+    return m_video;
+}
+
+MediaConstraints* UserMediaRequest::audioConstraints() const
+{
+    return m_audio.get();
+}
+
+MediaConstraints* UserMediaRequest::videoConstraints() const
+{
+    return m_video.get();
 }
 
 Document* UserMediaRequest::ownerDocument()

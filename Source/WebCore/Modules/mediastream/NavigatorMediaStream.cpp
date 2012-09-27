@@ -57,7 +57,7 @@ void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const Dictio
         return;
     }
 
-    RefPtr<UserMediaRequest> request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, successCallback, errorCallback);
+    RefPtr<UserMediaRequest> request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, successCallback, errorCallback, ec);
     if (!request) {
         ec = NOT_SUPPORTED_ERR;
         return;

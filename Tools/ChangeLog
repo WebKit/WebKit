@@ -1,3 +1,22 @@
+2012-09-27  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update getUserMedia to match the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=97540
+
+        Reviewed by Adam Barth.
+
+        http://dev.w3.org/2011/webrtc/editor/getusermedia.html#navigatorusermedia
+        Navigator.getUserMedia is changed so that the audio and video members can either
+        be a bool or a constraints object.
+
+        * public/WebUserMediaRequest.h:
+        (WebKit):
+        (WebUserMediaRequest):
+        * src/WebUserMediaRequest.cpp:
+        (WebKit::WebUserMediaRequest::audioConstraints):
+        (WebKit):
+        (WebKit::WebUserMediaRequest::videoConstraints):
+
 2012-09-26  Laszlo Gombos  <l.gombos@samsung.com>
 
         Unreviewed. Update my e-mail address.

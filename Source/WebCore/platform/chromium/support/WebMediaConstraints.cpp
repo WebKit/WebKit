@@ -45,6 +45,11 @@ WebMediaConstraints::WebMediaConstraints(const PassRefPtr<MediaConstraints>& con
 {
 }
 
+WebMediaConstraints::WebMediaConstraints(MediaConstraints* constraints)
+    : m_private(constraints)
+{
+}
+
 void WebMediaConstraints::assign(const WebMediaConstraints& other)
 {
     m_private = other.m_private;
@@ -53,11 +58,6 @@ void WebMediaConstraints::assign(const WebMediaConstraints& other)
 void WebMediaConstraints::reset()
 {
     m_private.reset();
-}
-
-bool WebMediaConstraints::isNull() const
-{
-    return m_private.isNull();
 }
 
 void WebMediaConstraints::getMandatoryConstraintNames(WebVector<WebString>& names) const

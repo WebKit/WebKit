@@ -1,3 +1,13 @@
+2012-09-27  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update getUserMedia to match the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=97540
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebMediaConstraints.h:
+        (WebMediaConstraints):
+
 2012-09-26  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Adding localization texts for multiple fields date/time input UI

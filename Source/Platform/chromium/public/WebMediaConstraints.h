@@ -58,7 +58,7 @@ public:
     WEBKIT_EXPORT void assign(const WebMediaConstraints&);
 
     WEBKIT_EXPORT void reset();
-    bool isNull() const;
+    bool isNull() const { return m_private.isNull(); }
 
     WEBKIT_EXPORT void getMandatoryConstraintNames(WebVector<WebString>& names) const;
     WEBKIT_EXPORT void getOptionalConstraintNames(WebVector<WebString>& names) const;
@@ -68,6 +68,7 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaConstraints(const WTF::PassRefPtr<WebCore::MediaConstraints>&);
+    WebMediaConstraints(WebCore::MediaConstraints*);
 #endif
 
 private:

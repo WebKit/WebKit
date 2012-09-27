@@ -8,6 +8,8 @@
             'chromium/DumpRenderTree.cpp',
             'chromium/DRTTestRunner.cpp',
             'chromium/DRTTestRunner.h',
+            'chromium/MockConstraints.cpp',
+            'chromium/MockConstraints.h',
             'chromium/MockGrammarCheck.cpp',
             'chromium/MockGrammarCheck.h',
             'chromium/MockSpellCheck.cpp',
