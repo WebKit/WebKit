@@ -3506,7 +3506,7 @@ webkit.org/b/89167 media/track/track-cue-rendering-snap-to-lines-not-set.html [ 
 
 webkit.org/b/95588 [ Mac ] fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/97558 [ Win Linux ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/97558 [ Linux Win7 ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
 
 webkit.org/b/95070 [ Win Release ] inspector/styles/media-queries.html [ Failure Pass ]
 
