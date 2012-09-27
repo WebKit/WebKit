@@ -1950,6 +1950,9 @@
       'dependencies': [
         'webcore_prerequisites',
       ],
+      'defines': [
+        'WEBKIT_IMPLEMENTATION=1',
+      ],
       'sources': [
         '<@(webcore_privateheader_files)',
         '<@(webcore_files)',

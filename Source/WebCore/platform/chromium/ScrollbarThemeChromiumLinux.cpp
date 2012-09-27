@@ -31,9 +31,12 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumLinux.h"
 
-#include "PlatformSupport.h"
+#include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
+#include <public/Platform.h>
+#include <public/WebRect.h>
+#include <public/linux/WebThemeEngine.h>
 
 namespace WebCore {
 
@@ -46,78 +49,70 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 int ScrollbarThemeChromiumLinux::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     // Horiz and Vert scrollbars are the same thickness.
-    IntSize scrollbarSize = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarVerticalTrack);
+    IntSize scrollbarSize = WebKit::Platform::current()->themeEngine()->getSize(WebKit::WebThemeEngine::PartScrollbarVerticalTrack);
     return scrollbarSize.width();
 }
 
 void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
-    PlatformSupport::ThemePaintState state = scrollbar->hoveredPart() == partType ? PlatformSupport::StateHover : PlatformSupport::StateNormal;
+    WebKit::WebThemeEngine::State state = scrollbar->hoveredPart() == partType ? WebKit::WebThemeEngine::StateHover : WebKit::WebThemeEngine::StateNormal;
     IntRect alignRect = trackRect(scrollbar, false);
-    PlatformSupport::ThemePaintExtraParams extraParams;
+    WebKit::WebThemeEngine::ExtraParams extraParams;
+    WebKit::WebCanvas* canvas = gc->platformContext()->canvas();
     extraParams.scrollbarTrack.trackX = alignRect.x();
     extraParams.scrollbarTrack.trackY = alignRect.y();
     extraParams.scrollbarTrack.trackWidth = alignRect.width();
     extraParams.scrollbarTrack.trackHeight = alignRect.height();
-    PlatformSupport::paintThemePart(
-        gc,
-        scrollbar->orientation() == HorizontalScrollbar ? PlatformSupport::PartScrollbarHorizontalTrack : PlatformSupport::PartScrollbarVerticalTrack,
-        state,
-        rect,
-        &extraParams);
+    WebKit::Platform::current()->themeEngine()->paint(canvas, scrollbar->orientation() == HorizontalScrollbar ? WebKit::WebThemeEngine::PartScrollbarHorizontalTrack : WebKit::WebThemeEngine::PartScrollbarVerticalTrack, state, WebKit::WebRect(rect), &extraParams);
 }
 
 void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    PlatformSupport::ThemePart paintPart;
-    PlatformSupport::ThemePaintState state = PlatformSupport::StateNormal;
+    WebKit::WebThemeEngine::Part paintPart;
+    WebKit::WebThemeEngine::State state = WebKit::WebThemeEngine::StateNormal;
+    WebKit::WebCanvas* canvas = gc->platformContext()->canvas();
     bool checkMin = false;
     bool checkMax = false;
     if (scrollbar->orientation() == HorizontalScrollbar) {
         if (part == BackButtonStartPart) {
-            paintPart = PlatformSupport::PartScrollbarLeftArrow;
+            paintPart = WebKit::WebThemeEngine::PartScrollbarLeftArrow;
             checkMin = true;
         } else {
-            paintPart = PlatformSupport::PartScrollbarRightArrow;
+            paintPart = WebKit::WebThemeEngine::PartScrollbarRightArrow;
             checkMax = true;
         }
     } else {
         if (part == BackButtonStartPart) {
-            paintPart = PlatformSupport::PartScrollbarUpArrow;
+            paintPart = WebKit::WebThemeEngine::PartScrollbarUpArrow;
             checkMin = true;
         } else {
-            paintPart = PlatformSupport::PartScrollbarDownArrow;
+            paintPart = WebKit::WebThemeEngine::PartScrollbarDownArrow;
             checkMax = true;
         }
     }
     if ((checkMin && (scrollbar->currentPos() <= 0))
         || (checkMax && scrollbar->currentPos() == scrollbar->maximum())) {
-        state = PlatformSupport::StateDisabled;
+        state = WebKit::WebThemeEngine::StateDisabled;
     } else {
         if (part == scrollbar->pressedPart())
-            state = PlatformSupport::StatePressed;
+            state = WebKit::WebThemeEngine::StatePressed;
         else if (part == scrollbar->hoveredPart())
-            state = PlatformSupport::StateHover;
+            state = WebKit::WebThemeEngine::StateHover;
     }
-    PlatformSupport::paintThemePart(gc, paintPart, state, rect, 0);
+    WebKit::Platform::current()->themeEngine()->paint(canvas, paintPart, state, WebKit::WebRect(rect), 0);
 }
 
 void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
-    PlatformSupport::ThemePaintState state;
-
+    WebKit::WebThemeEngine::State state;
+    WebKit::WebCanvas* canvas = gc->platformContext()->canvas();
     if (scrollbar->pressedPart() == ThumbPart)
-        state = PlatformSupport::StatePressed;
+        state = WebKit::WebThemeEngine::StatePressed;
     else if (scrollbar->hoveredPart() == ThumbPart)
-        state = PlatformSupport::StateHover;
+        state = WebKit::WebThemeEngine::StateHover;
     else
-        state = PlatformSupport::StateNormal;
-    PlatformSupport::paintThemePart(
-        gc,
-        scrollbar->orientation() == HorizontalScrollbar ? PlatformSupport::PartScrollbarHorizontalThumb : PlatformSupport::PartScrollbarVerticalThumb,
-        state,
-        rect,
-        0);
+        state = WebKit::WebThemeEngine::StateNormal;
+    WebKit::Platform::current()->themeEngine()->paint(canvas, scrollbar->orientation() == HorizontalScrollbar ? WebKit::WebThemeEngine::PartScrollbarHorizontalThumb : WebKit::WebThemeEngine::PartScrollbarVerticalThumb, state, WebKit::WebRect(rect), 0);
 }
 
 bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
@@ -128,23 +123,23 @@ bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(ScrollbarThemeClient*, con
 IntSize ScrollbarThemeChromiumLinux::buttonSize(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
-        IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarUpArrow);
+        IntSize size = WebKit::Platform::current()->themeEngine()->getSize(WebKit::WebThemeEngine::PartScrollbarUpArrow);
         return IntSize(size.width(), scrollbar->height() < 2 * size.height() ? scrollbar->height() / 2 : size.height());
     }
 
     // HorizontalScrollbar
-    IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarLeftArrow);
+    IntSize size = WebKit::Platform::current()->themeEngine()->getSize(WebKit::WebThemeEngine::PartScrollbarLeftArrow);
     return IntSize(scrollbar->width() < 2 * size.width() ? scrollbar->width() / 2 : size.width(), size.height());
 }
 
 int ScrollbarThemeChromiumLinux::minimumThumbLength(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
-        IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarVerticalThumb);
+        IntSize size = WebKit::Platform::current()->themeEngine()->getSize(WebKit::WebThemeEngine::PartScrollbarVerticalThumb);
         return size.height();
     }
 
-    IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarHorizontalThumb);
+    IntSize size = WebKit::Platform::current()->themeEngine()->getSize(WebKit::WebThemeEngine::PartScrollbarHorizontalThumb);
     return size.width();
 }
 

@@ -1,3 +1,19 @@
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move UNIX-specific theme functions out of PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=96516
+
+        Reviewed by Adam Barth.
+
+        Call WebThemeEngine functions and use WebThemeEngine enums
+        directly from the new Platform/ directly; remove all
+        intermediate functions and enums and conversion functions from
+        PlatformSupport.
+        Part of a refactoring series; see tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-09-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Page overlays are not updated when WebView is resized
