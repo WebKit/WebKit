@@ -1,3 +1,17 @@
+2012-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2] IconDatabase: Add a way to notify when icon data is available
+        https://bugs.webkit.org/show_bug.cgi?id=63945
+
+        Rubber stamped by Anders Carlsson.
+
+        Update version of WKIconDatabaseClient and API traits.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKIconDatabase.h:
+
 2012-09-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] REGRESSION(r128980): It broke all QRawWebView API test

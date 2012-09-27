@@ -40,13 +40,17 @@ typedef void (*WKIconDatabaseIconDataReadyForPageURLCallback)(WKIconDatabaseRef 
 struct WKIconDatabaseClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0
     WKIconDatabaseDidChangeIconForPageURLCallback                       didChangeIconForPageURL;
     WKIconDatabaseDidRemoveAllIconsCallback                             didRemoveAllIcons;
+
+    // Version 1
     WKIconDatabaseIconDataReadyForPageURLCallback                       iconDataReadyForPageURL;
 };
 typedef struct WKIconDatabaseClient WKIconDatabaseClient;
 
-enum { kWKIconDatabaseClientCurrentVersion = 0 };
+enum { kWKIconDatabaseClientCurrentVersion = 1 };
 
 WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
 

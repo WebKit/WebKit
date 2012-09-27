@@ -86,4 +86,9 @@ const size_t APIClientTraits<WKContextInjectedBundleClient>::interfaceSizesByVer
     sizeof(WKContextInjectedBundleClient)
 };
 
+const size_t APIClientTraits<WKIconDatabaseClient>::interfaceSizesByVersion[] = {
+    offsetof(WKIconDatabaseClient, iconDataReadyForPageURL),
+    sizeof(WKIconDatabaseClient)
+};
+
 } // namespace WebKit
