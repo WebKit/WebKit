@@ -37,13 +37,8 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptState.h"
 #include "StorageArea.h"
-
-#if USE(JSC)
-namespace JSC {
-class ExecState;
-}
-#endif
 
 namespace WebCore {
 
@@ -81,12 +76,6 @@ class ThreadableLoaderClient;
 class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
-
-#if USE(JSC)
-typedef JSC::ExecState ScriptState;
-#else
-class ScriptState;
-#endif
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
