@@ -228,207 +228,33 @@ namespace WTF {
         >::Type Type;
     };
 
-#if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
-
+#if COMPILER(CLANG) || GCC_VERSION_AT_LEAST(4, 6, 0) || (defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER))
+    // VC8 (VS2005) and later has __has_trivial_constructor and __has_trivial_destructor,
+    // but the implementation returns false for built-in types. We add the extra IsPod condition to 
+    // work around this.
+    template <typename T> struct HasTrivialConstructor {
+        static const bool value = __has_trivial_constructor(T) || IsPod<RemoveConstVolatile<T> >::value;
+    };
+    template <typename T> struct HasTrivialDestructor {
+        static const bool value = __has_trivial_destructor(T) || IsPod<RemoveConstVolatile<T> >::value;
+    };
+#elif (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
     // GCC's libstdc++ 20070724 and later supports C++ TR1 type_traits in the std namespace.
     // VC10 (VS2010) and later support C++ TR1 type_traits in the std::tr1 namespace.
     template<typename T> struct HasTrivialConstructor : public std::tr1::has_trivial_constructor<T> { };
     template<typename T> struct HasTrivialDestructor : public std::tr1::has_trivial_destructor<T> { };
-
 #else
-
-    // This compiler doesn't provide type traits, so we provide basic HasTrivialConstructor
-    // and HasTrivialDestructor definitions. The definitions here include most built-in
-    // scalar types but do not include POD structs and classes. For the intended purposes of
-    // type_traits this results correct but potentially less efficient code.
-    template <typename T, T v>
-    struct IntegralConstant {
-        static const T value = v;
-        typedef T value_type;
-        typedef IntegralConstant<T, v> type;
+    // For compilers that don't support detection of trivial constructors and destructors in classes, 
+    // we use a template that returns true for any POD type that IsPod can detect (see IsPod caveats above), 
+    // but false for all other types (which includes all classes). This will give false negatives, which can hurt 
+    // performance, but avoids false positives, which would result in incorrect behavior.
+    template <typename T> struct HasTrivialConstructor {
+        static const bool value = IsPod<RemoveConstVolatile<T> >::value;
     };
-
-    typedef IntegralConstant<bool, true>  true_type;
-    typedef IntegralConstant<bool, false> false_type;
-
-#if COMPILER(CLANG) || (defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER))
-    // VC8 (VS2005) and later have built-in compiler support for HasTrivialConstructor / HasTrivialDestructor,
-    // but for some unexplained reason it doesn't work on built-in types.
-    template <typename T> struct HasTrivialConstructor : public IntegralConstant<bool, __has_trivial_constructor(T)>{ };
-    template <typename T> struct HasTrivialDestructor : public IntegralConstant<bool, __has_trivial_destructor(T)>{ };
-#else
-    template <typename T> struct HasTrivialConstructor : public false_type{ };
-    template <typename T> struct HasTrivialDestructor : public false_type{ };
+    template <typename T> struct HasTrivialDestructor {
+        static const bool value = IsPod<RemoveConstVolatile<T> >::value;
+    };
 #endif
-
-    template <typename T> struct HasTrivialConstructor<T*> : public true_type{ };
-    template <typename T> struct HasTrivialDestructor<T*> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<float> : public true_type{ };
-    template <> struct HasTrivialConstructor<const float> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile float> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile float> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<double> : public true_type{ };
-    template <> struct HasTrivialConstructor<const double> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile double> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile double> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<long double> : public true_type{ };
-    template <> struct HasTrivialConstructor<const long double> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile long double> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile long double> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<unsigned char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const unsigned char> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile unsigned char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile unsigned char> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<unsigned short> : public true_type{ };
-    template <> struct HasTrivialConstructor<const unsigned short> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile unsigned short> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile unsigned short> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<unsigned int> : public true_type{ };
-    template <> struct HasTrivialConstructor<const unsigned int> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile unsigned int> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile unsigned int> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<unsigned long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const unsigned long> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile unsigned long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile unsigned long> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<unsigned long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const unsigned long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile unsigned long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile unsigned long long> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<signed char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const signed char> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile signed char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile signed char> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<signed short> : public true_type{ };
-    template <> struct HasTrivialConstructor<const signed short> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile signed short> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile signed short> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<signed int> : public true_type{ };
-    template <> struct HasTrivialConstructor<const signed int> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile signed int> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile signed int> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<signed long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const signed long> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile signed long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile signed long> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<signed long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const signed long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile signed long long> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile signed long long> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<bool> : public true_type{ };
-    template <> struct HasTrivialConstructor<const bool> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile bool> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile bool> : public true_type{ };
-
-    template <> struct HasTrivialConstructor<char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const char> : public true_type{ };
-    template <> struct HasTrivialConstructor<volatile char> : public true_type{ };
-    template <> struct HasTrivialConstructor<const volatile char> : public true_type{ };
-
-    #if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
-        template <> struct HasTrivialConstructor<wchar_t> : public true_type{ };
-        template <> struct HasTrivialConstructor<const wchar_t> : public true_type{ };
-        template <> struct HasTrivialConstructor<volatile wchar_t> : public true_type{ };
-        template <> struct HasTrivialConstructor<const volatile wchar_t> : public true_type{ };
-    #endif
-
-    template <> struct HasTrivialDestructor<float> : public true_type{ };
-    template <> struct HasTrivialDestructor<const float> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile float> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile float> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<double> : public true_type{ };
-    template <> struct HasTrivialDestructor<const double> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile double> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile double> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<long double> : public true_type{ };
-    template <> struct HasTrivialDestructor<const long double> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile long double> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile long double> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<unsigned char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const unsigned char> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile unsigned char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile unsigned char> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<unsigned short> : public true_type{ };
-    template <> struct HasTrivialDestructor<const unsigned short> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile unsigned short> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile unsigned short> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<unsigned int> : public true_type{ };
-    template <> struct HasTrivialDestructor<const unsigned int> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile unsigned int> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile unsigned int> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<unsigned long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const unsigned long> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile unsigned long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile unsigned long> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<unsigned long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const unsigned long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile unsigned long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile unsigned long long> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<signed char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const signed char> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile signed char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile signed char> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<signed short> : public true_type{ };
-    template <> struct HasTrivialDestructor<const signed short> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile signed short> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile signed short> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<signed int> : public true_type{ };
-    template <> struct HasTrivialDestructor<const signed int> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile signed int> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile signed int> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<signed long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const signed long> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile signed long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile signed long> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<signed long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const signed long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile signed long long> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile signed long long> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<bool> : public true_type{ };
-    template <> struct HasTrivialDestructor<const bool> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile bool> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile bool> : public true_type{ };
-
-    template <> struct HasTrivialDestructor<char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const char> : public true_type{ };
-    template <> struct HasTrivialDestructor<volatile char> : public true_type{ };
-    template <> struct HasTrivialDestructor<const volatile char> : public true_type{ };
-
-    #if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
-        template <> struct HasTrivialDestructor<wchar_t> : public true_type{ };
-        template <> struct HasTrivialDestructor<const wchar_t> : public true_type{ };
-        template <> struct HasTrivialDestructor<volatile wchar_t> : public true_type{ };
-        template <> struct HasTrivialDestructor<const volatile wchar_t> : public true_type{ };
-    #endif
-
-#endif  // __GLIBCXX__, etc.
 
 } // namespace WTF
 
