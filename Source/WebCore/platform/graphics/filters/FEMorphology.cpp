@@ -173,14 +173,17 @@ void FEMorphology::platformApply(PaintingData* paintingData)
         ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
         int numOfThreads = parallelJobs.numberOfJobs();
         if (numOfThreads > 1) {
-            const int deltaY = 1 + paintingData->height / numOfThreads;
+            // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since
+            // jobSize * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int jobSize = paintingData->height / numOfThreads;
+            const int jobsWithExtra = paintingData->height % numOfThreads;
             int currentY = 0;
             for (int job = numOfThreads - 1; job >= 0; --job) {
                 PlatformApplyParameters& param = parallelJobs.parameter(job);
                 param.filter = this;
                 param.startY = currentY;
-                currentY += deltaY;
-                param.endY = job ? currentY : paintingData->height;
+                currentY += job < jobsWithExtra ? jobSize + 1 : jobSize;
+                param.endY = currentY;
                 param.paintingData = paintingData;
             }
             parallelJobs.execute();

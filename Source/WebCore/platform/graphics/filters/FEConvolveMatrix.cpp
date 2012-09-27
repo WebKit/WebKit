@@ -444,9 +444,13 @@ void FEConvolveMatrix::platformApplySoftware()
         if (optimalThreadNumber > 1) {
             WTF::ParallelJobs<InteriorPixelParameters> parallelJobs(&WebCore::FEConvolveMatrix::setInteriorPixelsWorker, optimalThreadNumber);
             const int numOfThreads = parallelJobs.numberOfJobs();
-            const int heightPerThread = clipBottom / numOfThreads;
-            int startY = 0;
 
+            // Split the job into "heightPerThread" jobs but there a few jobs that need to be slightly larger since
+            // heightPerThread * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int heightPerThread = clipBottom / numOfThreads;
+            const int jobsWithExtra = clipBottom % numOfThreads;
+
+            int startY = 0;
             for (int job = 0; job < numOfThreads; ++job) {
                 InteriorPixelParameters& param = parallelJobs.parameter(job);
                 param.filter = this;
@@ -454,11 +458,8 @@ void FEConvolveMatrix::platformApplySoftware()
                 param.clipRight = clipRight;
                 param.clipBottom = clipBottom;
                 param.yStart = startY;
-                if (job < numOfThreads - 1) {
-                    startY += heightPerThread;
-                    param.yEnd = startY - 1;
-                } else
-                    param.yEnd = clipBottom;
+                startY += job < jobsWithExtra ? heightPerThread + 1 : heightPerThread;
+                param.yEnd = startY;
             }
 
             parallelJobs.execute();

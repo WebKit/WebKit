@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<!-- Test for WK97500 - this test passes if it does not crash. -->
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        setTimeout(function() {
+            document.write("PASS - This test passes if it did not crash.");
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
+        }, 1);
+    }
+</script>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+    <defs>
+        <filter id="erode1" filterUnits="objectBoundingBox" x="0" y="0" width="1000" height="1000">
+            <feMorphology operator="erode" radius="1" width="2000" height="100000"/>
+        </filter>
+        <g id="morphologySource">
+            <rect x="0" y="0" width="2000" height="100000"/>
+        </g>
+    </defs>
+    <use xlink:href="#morphologySource" x="350" y="100" filter="url(#erode1)"/>
+</svg>
+</html>
