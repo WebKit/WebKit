@@ -49,7 +49,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#if CPU(X86_64)
+#if COMPILER(GCC) && CPU(X86_64)
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
     asm( \
@@ -64,7 +64,7 @@
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
 
-#elif CPU(X86)
+#elif COMPILER(GCC) && CPU(X86)
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, offset) \
     asm( \
@@ -1425,11 +1425,9 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 
 #endif // ENABLE(DFG_JIT)
 
-#if COMPILER(GCC)
-
 namespace JSC {
 
-#if CPU(X86_64)
+#if COMPILER(GCC) && CPU(X86_64)
 asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
@@ -1438,7 +1436,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov %r13, %rdi\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
-#elif CPU(X86)
+#elif COMPILER(GCC) && CPU(X86)
 asm (
 ".text" "\n" \
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
@@ -1448,7 +1446,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov %edi, 4(%esp)\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
-#elif CPU(ARM_THUMB2)
+#elif COMPILER(GCC) && CPU(ARM_THUMB2)
 asm (
 ".text" "\n"
 ".align 2" "\n"
@@ -1461,7 +1459,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov r0, r5" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
-#elif CPU(ARM_TRADITIONAL)
+#elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
 asm (
 ".text" "\n"
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
@@ -1482,7 +1480,5 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
 }
 
 } // namespace JSC
-
-#endif // COMPILER(GCC)
 
 #endif // ENABLE(JIT)

@@ -1,3 +1,16 @@
+2012-09-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix usage of COMPILER() macros
+        https://bugs.webkit.org/show_bug.cgi?id=97642
+
+        Reviewed by Geoffrey Garen.
+
+        Add COMPILER(GCC) around compiler specific code and remove it from generic code.
+        This allows us to implement the DFG code for other compilers to in a next step.
+
+        * dfg/DFGOperations.cpp:
+        * jit/HostCallReturnValue.h:
+
 2012-09-27  Andreas Kling  <kling@webkit.org>
 
         3.20MB below FunctionParameters::create() on Membuster3.
