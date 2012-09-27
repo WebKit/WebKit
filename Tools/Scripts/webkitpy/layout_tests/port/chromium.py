@@ -332,6 +332,9 @@ class ChromiumPort(Port):
         'win_layout_rel',
     ])
 
+    def warn_if_bug_missing_in_test_expectations(self):
+        return True
+
     def expectations_files(self):
         paths = [self.path_to_test_expectations_file()]
         skia_expectations_path = self.path_from_chromium_base('skia', 'skia_test_expectations.txt')

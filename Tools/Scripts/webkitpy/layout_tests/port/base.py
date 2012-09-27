@@ -997,6 +997,9 @@ class Port(object):
         # some ports have Skipped files which are returned as part of test_expectations().
         return self._filesystem.exists(self.path_to_test_expectations_file())
 
+    def warn_if_bug_missing_in_test_expectations(self):
+        return False
+
     def expectations_dict(self):
         """Returns an OrderedDict of name -> expectations strings.
         The names are expected to be (but not required to be) paths in the filesystem.

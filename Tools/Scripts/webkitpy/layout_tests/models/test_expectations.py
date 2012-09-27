@@ -155,7 +155,7 @@ class TestExpectationParser(object):
             else:
                 parsed_specifiers.add(modifier)
 
-        if not expectation_line.parsed_bug_modifiers and not has_wontfix and not has_bugid:
+        if not expectation_line.parsed_bug_modifiers and not has_wontfix and not has_bugid and self._port.warn_if_bug_missing_in_test_expectations():
             expectation_line.warnings.append(self.MISSING_BUG_WARNING)
 
         if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in modifiers:

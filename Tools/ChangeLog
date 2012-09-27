@@ -1,3 +1,31 @@
+2012-09-27  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: make warning about missing BUG identifiers per-port configurable
+        https://bugs.webkit.org/show_bug.cgi?id=97751
+
+        Reviewed by Ojan Vafai.
+
+        Prior to this change linting TestExpectations files (checking their style)
+        would raise warnings if lines were missing a BUG modifier, even
+        though such a modifier is actually optional in the syntax. As we
+        migrate the entries over from the Skipped files, these warnings
+        will generate a lot of noise, and it's not yet clear that we
+        actually want to require the modifiers on all ports.
+
+        So, this change makes this per-port configurable so that they
+        will generate warnings in the Chromium TestExpectations and not
+        anywhere else.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_modifiers):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (MiscTests.test_parse_warning):
+        (SemanticTests.test_missing_bugid):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.warn_if_bug_missing_in_test_expectations):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.warn_if_bug_missing_in_test_expectations):
+
 2012-09-27  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Push more fonts for layout tests to match chromium-linux
