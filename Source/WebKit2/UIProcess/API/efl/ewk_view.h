@@ -708,6 +708,28 @@ EAPI Eina_Bool ewk_view_color_picker_color_set(Evas_Object *o, int r, int g, int
  */
 EAPI Eina_Bool ewk_view_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type type, const Eina_List *points, const Evas_Modifier *modifiers);
 
+/**
+ * Sets whether the ewk_view supports the touch events or not.
+ *
+ * The ewk_view will support the touch events if @c EINA_TRUE or not support the
+ * touch events otherwise. The default value is @c EINA_FALSE.
+ *
+ * @param o view object to enable/disable the touch events
+ * @param enabled a state to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_touch_events_enabled_set(Evas_Object *o, Eina_Bool enabled);
+
+/**
+ * Queries if the ewk_view supports the touch events.
+ *
+ * @param o view object to query if the touch events are enabled
+ *
+ * @return @c EINA_TRUE if the touch events are enabled or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif

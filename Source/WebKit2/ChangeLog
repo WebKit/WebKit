@@ -1,3 +1,40 @@
+2012-09-27  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Process touch events using mouse and multi events of Evas.
+        https://bugs.webkit.org/show_bug.cgi?id=96906
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide default behavior for processing touch events in the ewk_view if
+        application wants to use it.
+        We can to process touch events using mouse and multi events because the
+        Evas creates mouse events for first touch and multi events for second and
+        third touch. It can be modified when Evas starts to support event type
+        for touch events.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_ewk_view_feed_touch_event_using_touch_point_list_of_evas):
+        (_ewk_view_on_touch_down):
+        (_ewk_view_on_touch_up):
+        (_ewk_view_on_touch_move):
+        (ewk_view_touch_events_enabled_set):
+        (ewk_view_touch_events_enabled_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::mouseDown):
+        (EWK2UnitTest):
+        (EWK2UnitTest::EWK2UnitTestBase::mouseUp):
+        (EWK2UnitTest::EWK2UnitTestBase::mouseMove):
+        (EWK2UnitTest::EWK2UnitTestBase::multiDown):
+        (EWK2UnitTest::EWK2UnitTestBase::multiUp):
+        (EWK2UnitTest::EWK2UnitTestBase::multiMove):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-09-27  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add callback functions for WKPageFindClient

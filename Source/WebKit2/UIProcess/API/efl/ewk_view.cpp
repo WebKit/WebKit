@@ -101,6 +101,9 @@ struct _Ewk_View_Private_Data {
     bool areMouseEventsEnabled;
     WKColorPickerResultListenerRef colorPickerResultListener;
     Ewk_Context* context;
+#if ENABLE(TOUCH_EVENTS)
+    bool areTouchEventsEnabled;
+#endif
 
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
@@ -121,6 +124,9 @@ struct _Ewk_View_Private_Data {
         , areMouseEventsEnabled(false)
         , colorPickerResultListener(0)
         , context(0)
+#if ENABLE(TOUCH_EVENTS)
+        , areTouchEventsEnabled(false)
+#endif
         , popupMenuProxy(0)
         , popupMenuItems(0)
 #ifdef HAVE_ECORE_X
@@ -355,6 +361,47 @@ static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo
     EINA_SAFETY_ON_NULL_RETURN(smartData->api->key_up);
     smartData->api->key_up(smartData, upEvent);
 }
+
+#if ENABLE(TOUCH_EVENTS)
+static inline void _ewk_view_feed_touch_event_using_touch_point_list_of_evas(Evas_Object* ewkView, Ewk_Touch_Event_Type type)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+
+    unsigned count = evas_touch_point_list_count(smartData->base.evas);
+    if (!count)
+        return;
+
+    Eina_List* points = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        Ewk_Touch_Point* point = new Ewk_Touch_Point;
+        point->id = evas_touch_point_list_nth_id_get(smartData->base.evas, i);
+        evas_touch_point_list_nth_xy_get(smartData->base.evas, i, &point->x, &point->y);
+        point->state = evas_touch_point_list_nth_state_get(smartData->base.evas, i);
+        points = eina_list_append(points, point);
+    }
+
+    ewk_view_feed_touch_event(ewkView, type, points, evas_key_modifier_get(smartData->base.evas));
+
+    void* data;
+    EINA_LIST_FREE(points, data)
+        delete data;
+}
+
+static void _ewk_view_on_touch_down(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+{
+    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_START);
+}
+
+static void _ewk_view_on_touch_up(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+{
+    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_END);
+}
+
+static void _ewk_view_on_touch_move(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+{
+    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_MOVE);
+}
+#endif
 
 static Evas_Smart_Class g_parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
@@ -1774,6 +1821,56 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
     priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, &position, ecore_time_get()));
 
     return true;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_touch_events_enabled_set(Evas_Object* ewkView, Eina_Bool enabled)
+{
+#if ENABLE(TOUCH_EVENTS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    enabled = !!enabled;
+    if (priv->areTouchEventsEnabled == enabled)
+        return true;
+
+    priv->areTouchEventsEnabled = enabled;
+    if (enabled) {
+        // FIXME: We have to connect touch callbacks with mouse and multi events
+        // because the Evas creates mouse events for first touch and multi events
+        // for second and third touches. Below codes should be fixed when the Evas
+        // supports the touch events.
+        // See https://bugs.webkit.org/show_bug.cgi?id=97785 for details.
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_touch_down, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_touch_up, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_touch_move, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_DOWN, _ewk_view_on_touch_down, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_UP, _ewk_view_on_touch_up, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_MOVE, _ewk_view_on_touch_move, smartData);
+    } else {
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_touch_down);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_touch_up);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_touch_move);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_DOWN, _ewk_view_on_touch_down);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_UP, _ewk_view_on_touch_up);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_MOVE, _ewk_view_on_touch_move);
+    }
+
+    return true;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object* ewkView)
+{
+#if ENABLE(TOUCH_EVENTS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    return priv->areTouchEventsEnabled;
 #else
     return false;
 #endif

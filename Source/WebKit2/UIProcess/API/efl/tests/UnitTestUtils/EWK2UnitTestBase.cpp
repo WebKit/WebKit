@@ -239,4 +239,38 @@ void EWK2UnitTestBase::mouseClick(int x, int y)
     evas_event_feed_mouse_up(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
 }
 
+void EWK2UnitTestBase::mouseDown(int x, int y)
+{
+    Evas* evas = evas_object_evas_get(m_webView);
+    evas_event_feed_mouse_move(evas, x, y, 0, 0);
+    evas_event_feed_mouse_down(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+}
+
+void EWK2UnitTestBase::mouseUp(int x, int y)
+{
+    Evas* evas = evas_object_evas_get(m_webView);
+    evas_event_feed_mouse_move(evas, x, y, 0, 0);
+    evas_event_feed_mouse_up(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+}
+
+void EWK2UnitTestBase::mouseMove(int x, int y)
+{
+    evas_event_feed_mouse_move(evas_object_evas_get(m_webView), x, y, 0, 0);
+}
+
+void EWK2UnitTestBase::multiDown(int id, int x, int y)
+{
+    evas_event_feed_multi_down(evas_object_evas_get(m_webView), id, x, y, 0, 0, 0, 0, 0, 0, 0, EVAS_BUTTON_NONE, 0, 0);
+}
+
+void EWK2UnitTestBase::multiUp(int id, int x, int y)
+{
+    evas_event_feed_multi_up(evas_object_evas_get(m_webView), id, x, y, 0, 0, 0, 0, 0, 0, 0, EVAS_BUTTON_NONE, 0, 0);
+}
+
+void EWK2UnitTestBase::multiMove(int id, int x, int y)
+{
+    evas_event_feed_multi_move(evas_object_evas_get(m_webView), id, x, y, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
 } // namespace EWK2UnitTest

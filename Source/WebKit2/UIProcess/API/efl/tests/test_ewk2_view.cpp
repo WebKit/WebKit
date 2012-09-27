@@ -824,3 +824,45 @@ TEST_F(EWK2UnitTestBase, ewk_view_text_find)
 
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_touch_events_enabled)
+{
+    ASSERT_FALSE(ewk_view_touch_events_enabled_get(webView()));
+
+    ASSERT_TRUE(ewk_view_touch_events_enabled_set(webView(), true));
+    ASSERT_TRUE(ewk_view_touch_events_enabled_get(webView()));
+
+    ASSERT_TRUE(ewk_view_touch_events_enabled_set(webView(), 2));
+    ASSERT_TRUE(ewk_view_touch_events_enabled_get(webView()));
+
+    const char* touchHTML =
+        "<!doctype html><body><div style=\"width:100px; height:100px;\" "
+        "ontouchstart=\"document.title='touchstarted' + event.touches.length;\" "
+        "ontouchmove=\"document.title='touchmoved' + event.touches.length;\" "
+        "ontouchend=\"document.title='touchended' + event.touches.length;\">"
+        "</div></body>";
+
+    ewk_view_html_string_load(webView(), touchHTML, "file:///", 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    mouseDown(10, 10);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchstarted1"));
+
+    multiDown(1, 30, 30);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchstarted2"));
+
+    multiMove(1, 40, 40);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchmoved2"));
+
+    multiUp(1, 40, 40);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchended1"));
+
+    mouseMove(20, 20);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchmoved1"));
+
+    mouseUp(20, 20);
+    ASSERT_TRUE(waitUntilTitleChangedTo("touchended0"));
+
+    ASSERT_TRUE(ewk_view_touch_events_enabled_set(webView(), false));
+    ASSERT_FALSE(ewk_view_touch_events_enabled_get(webView()));
+}
