@@ -2789,3 +2789,7 @@ fast/regions/overflow-size-change-with-stacking-context.html
 # [Qt] New test introduced in r129346 inspector-protocol/css-getSupportedCSSProperties.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=97451
 inspector-protocol/css-getSupportedCSSProperties.html
+
+# [Qt] fast/profiler/apply.html fails with LLInt on 32 bit
+# https://bugs.webkit.org/show_bug.cgi?id=97791
+fast/profiler/apply.html
