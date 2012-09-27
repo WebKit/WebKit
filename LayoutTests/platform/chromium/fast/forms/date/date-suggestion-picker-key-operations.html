@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=date id=date value="2012-12-24" list=suggestions>
+<datalist id=suggestions>
+    <option label="Today">2012-01-01</option>
+    <option label="Tomorrow">2012-01-02</option>
+    <option>2012-01-03</option>
+    <option>2012-01-04</option>
+    <option>2012-01-05</option>
+    <option>2012-01-06</option>
+    <option>2012-01-07</option>
+    <option>2012-01-08</option>
+    <option>2012-01-09</option>
+    <option>2012-01-10</option>
+    <option>2012-01-11</option>
+    <option>2012-01-12</option>
+    <option>2012-01-13</option>
+    <option>2012-01-14</option>
+    <option>2012-01-15</option>
+    <option>2012-01-16</option>
+    <option>2012-01-17</option>
+    <option>2012-01-18</option>
+    <option>2012-01-19</option>
+    <option>2012-01-20</option>
+    <option label="-">2012-01-21</option>
+    <option>2012-01-22</option>
+    <option>2012-01-23</option>
+    <option>2012-01-24</option>
+    <option>2012-01-25</option>
+    <option>2012-01-26</option>
+    <option>2012-01-27</option>
+    <option>2012-01-28</option>
+    <option>2012-01-29</option>
+    <option>2012-01-30</option>
+    <option>2012-01-31</option>
+    <option>2012-02-01</option>
+    <option>2012-02-02</option>
+    <option>2012-02-03</option>
+    <option>2012-02-04</option>
+    <option>2012-02-05</option>
+    <option>2012-02-06</option>
+    <option>2012-02-07</option>
+    <option>2012-02-08</option>
+    <option>2012-02-09</option>
+    <option label="-">2012-02-10</option>
+    <option>2012-02-11</option>
+    <option>2012-02-12</option>
+    <option>2012-02-13</option>
+    <option>2012-02-14</option>
+    <option>2012-02-15</option>
+    <option>2012-02-16</option>
+    <option>2012-02-17</option>
+    <option>2012-02-18</option>
+    <option>2012-02-19</option>
+    <option>2012-02-20</option>
+    <option>2012-02-21</option>
+    <option>2012-02-22</option>
+    <option>2012-02-23</option>
+    <option>2012-02-24</option>
+    <option>2012-02-25</option>
+    <option>2012-02-26</option>
+    <option>2012-02-27</option>
+    <option>2012-02-28</option>
+    <option>2012-02-29</option>
+    <option>2012-03-01</option>
+    <option>2012-03-02</option>
+    <option>2012-03-03</option>
+    <option>2012-03-04</option>
+    <option>2012-03-05</option>
+    <option>2012-03-06</option>
+    <option>2012-03-07</option>
+    <option>2012-03-08</option>
+    <option>2012-01-00</option> <!--invalid-->
+    <option>foo</option> <!--invalid-->
+</datalist>
+<script>
+description("Tests that key bindings work as expected.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+    console.log(document.getElementById('mock-page-popup'));
+sendKey(document.getElementById('date'), 'Down');
+
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.addEventListener("resize", test1, false);
+
+var timeoutTimer = setTimeout(function() {
+    testFailed("Test timed out.");
+    finishJSTest();
+}, 5000);
+
+function test1() {
+    debug('Check that page popup exists.');
+    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+    pickerWindow.focus();
+
+    pickerWindow.removeEventListener("resize", test1, false);
+
+    debug('Check that up/down arrow keys work.');
+    shouldBeNull('highlightedEntry()');
+    eventSender.keyDown('downArrow');
+    shouldBe('highlightedEntry()', '"2012-01-01"');
+    eventSender.keyDown('downArrow');
+    shouldBe('highlightedEntry()', '"2012-01-02"');
+    eventSender.keyDown('upArrow');
+    shouldBe('highlightedEntry()', '"2012-01-01"');
+
+    debug('Check that up arrow key at top of list does nothing.');
+    eventSender.keyDown('upArrow');
+    shouldBe('highlightedEntry()', '"2012-01-01"');
+    eventSender.keyDown('downArrow');
+    shouldBe('highlightedEntry()', '"2012-01-02"');
+
+    debug('Check that page up/down arrow keys work.');
+    eventSender.keyDown('pageDown');
+    shouldBe('highlightedEntry()', '"2012-02-09"');
+    eventSender.keyDown('pageDown');
+    shouldBe('highlightedEntry()', '"2012-02-29"');
+    eventSender.keyDown('pageUp');
+    shouldBe('highlightedEntry()', '"2012-01-21"');
+    eventSender.keyDown('pageDown');
+    shouldBe('highlightedEntry()', '"2012-02-29"');
+    eventSender.keyDown('pageDown');
+    shouldBe('highlightedEntry()', '"@openCalendarPicker"');
+
+    debug('Check that down arrow key at bottom of list does nothing.');
+    eventSender.keyDown('downArrow');
+    shouldBe('highlightedEntry()', '"@openCalendarPicker"');
+    
+    debug('Check that enter key sets the highlighted value.');
+    eventSender.keyDown('upArrow');
+    shouldBe('highlightedEntry()', '"2012-03-08"');
+    eventSender.keyDown("\n");
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"2012-03-08"');
+
+    debug('Reopen popup.');
+    sendKey(document.getElementById('date'), 'Down');
+    pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+    pickerWindow.addEventListener("resize", test2, false);
+}
+
+function test2() {
+    pickerWindow.removeEventListener("resize", test2, false);
+
+    pickerWindow.focus();
+
+    debug('Check that escape key closes the popup.');
+    eventSender.keyDown('\x1B');
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"2012-03-08"');
+
+    debug('Reopen popup.');
+    sendKey(document.getElementById('date'), 'Down');
+    pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+    pickerWindow.addEventListener("resize", test3, false);
+}
+
+function test3() {
+    pickerWindow.removeEventListener("resize", test3, false);
+    pickerWindow.addEventListener("resize", test4, false);
+
+    pickerWindow.focus();
+
+    eventSender.keyDown('pageDown');
+    eventSender.keyDown('pageDown');
+    eventSender.keyDown('pageDown');
+    shouldBe('highlightedEntry()', '"@openCalendarPicker"');
+
+    debug('Open calendar picker.');
+    eventSender.keyDown('\n');
+}
+
+function test4() {
+    pickerWindow.removeEventListener("resize", test4, false);
+
+    debug('Confirm calendar picker did open.');
+    shouldBeTrue('pickerWindow.document.getElementById("main").classList.contains("calendar-picker")');
+
+    clearTimeout(timeoutTimer);
+    finishJSTest();
+}
+
+function highlightedEntry() {
+    var activeElement = pickerWindow.document.activeElement;
+    if (!activeElement)
+        return null;
+    var value = activeElement.dataset.value;
+    if (typeof value === "string")
+        return value;
+    var action = activeElement.dataset.action;
+    if (typeof action === "string")
+        return "@" + action;
+    return null;
+}
+
+function sendKey(input, keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    input.dispatchEvent(event);
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

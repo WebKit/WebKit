@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=date id=date value="2012-12-24" list=suggestions>
+<datalist id=suggestions>
+    <option label="Today">2012-01-01</option>
+    <option label="Tomorrow">2012-01-02</option>
+    <option>2012-01-03</option>
+    <option>2012-01-04</option>
+    <option>2012-01-05</option>
+    <option>2012-01-06</option>
+    <option>2012-01-07</option>
+    <option>2012-01-08</option>
+    <option>2012-01-09</option>
+    <option>2012-01-10</option>
+    <option>2012-01-11</option>
+    <option>2012-01-12</option>
+    <option>2012-01-13</option>
+    <option>2012-01-14</option>
+    <option>2012-01-15</option>
+    <option>2012-01-16</option>
+    <option>2012-01-17</option>
+    <option>2012-01-18</option>
+    <option>2012-01-19</option>
+    <option>2012-01-20</option>
+    <option label="-">2012-01-21</option>
+    <option>2012-01-22</option>
+    <option>2012-01-23</option>
+    <option>2012-01-24</option>
+    <option>2012-01-25</option>
+    <option>2012-01-26</option>
+    <option>2012-01-27</option>
+    <option>2012-01-28</option>
+    <option>2012-01-29</option>
+    <option>2012-01-30</option>
+    <option>2012-01-31</option>
+    <option>2012-02-01</option>
+    <option>2012-02-02</option>
+    <option>2012-02-03</option>
+    <option>2012-02-04</option>
+    <option>2012-02-05</option>
+    <option>2012-02-06</option>
+    <option>2012-02-07</option>
+    <option>2012-02-08</option>
+    <option>2012-02-09</option>
+    <option label="-">2012-02-10</option>
+    <option>2012-02-11</option>
+    <option>2012-02-12</option>
+    <option>2012-02-13</option>
+    <option>2012-02-14</option>
+    <option>2012-02-15</option>
+    <option>2012-02-16</option>
+    <option>2012-02-17</option>
+    <option>2012-02-18</option>
+    <option>2012-02-19</option>
+    <option>2012-02-20</option>
+    <option>2012-02-21</option>
+    <option>2012-02-22</option>
+    <option>2012-02-23</option>
+    <option>2012-02-24</option>
+    <option>2012-02-25</option>
+    <option>2012-02-26</option>
+    <option>2012-02-27</option>
+    <option>2012-02-28</option>
+    <option>2012-02-29</option>
+    <option>2012-03-01</option>
+    <option>2012-03-02</option>
+    <option>2012-03-03</option>
+    <option>2012-03-04</option>
+    <option>2012-03-05</option>
+    <option>2012-03-06</option>
+    <option>2012-03-07</option>
+    <option>2012-03-08</option>
+    <option>2012-01-00</option> <!--invalid-->
+    <option>foo</option> <!--invalid-->
+</datalist>
+<script>
+description("Tests that key bindings work as expected.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+var calendarPickerElement = window.internals.oldestShadowRoot(document.getElementById('date')).firstChild.lastChild;
+sendMousedown(calendarPickerElement);
+
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.addEventListener("resize", function() {
+    debug('Check that page popup exists.');
+    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+
+    debug('Check that hovering over an entry highlights it.');
+    hoverOverElement(pickerWindow.document.querySelector(".suggestion-list-entry:nth-child(2)"));
+    shouldBe('highlightedEntry()', '"2012-01-02"');
+
+    debug('Check that moving the mouse outside the popup de-highlights entries.');
+    hoverOverElement(document.getElementById('description'));
+    shouldBeNull('highlightedEntry()');
+
+    debug('Check that mouse click closes the popup and sets the value.');
+    clickElement(pickerWindow.document.querySelector(".suggestion-list-entry:nth-child(3)"));
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"2012-01-03"');
+
+    finishJSTest();
+}, false);
+
+function highlightedEntry() {
+    var activeElement = pickerWindow.document.activeElement;
+    if (!activeElement)
+        return null;
+    var value = activeElement.dataset.value;
+    if (typeof value === "string")
+        return value;
+    var action = activeElement.dataset.action;
+    if (typeof action === "string")
+        return "@" + action;
+    return null;
+}
+
+function cumulativeOffset(element) {
+    var x = 0;
+    var y = 0;
+    var parentFrame = element.ownerDocument.defaultView.frameElement;
+    if (parentFrame) {
+        var parentFrameOffset = cumulativeOffset(parentFrame);
+        x = parentFrameOffset[0];
+        y = parentFrameOffset[1];
+    }
+    if (element.parentNode) {
+        do {
+            x += element.offsetLeft || 0;
+            y += element.offsetTop  || 0;
+            element = element.offsetParent;
+        } while (element);
+    }
+    return [x, y];
+}
+
+function hoverOverElement(element) {
+    var offset = cumulativeOffset(element);
+    var centerX = offset[0] + element.offsetWidth / 2;
+    var centerY = offset[1] + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function clickElement(element) {
+    hoverOverElement(element);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function sendMousedown(element) {
+    var event = document.createEvent('MouseEvent');
+    event.initEvent('click', true, true);
+    element.dispatchEvent(event);
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

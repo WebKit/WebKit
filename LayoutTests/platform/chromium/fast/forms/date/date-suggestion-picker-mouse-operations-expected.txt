@@ -1,0 +1,20 @@
+Tests that key bindings work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+Check that page popup exists.
+PASS pickerWindow.pagePopupController.toString() is "[object PagePopupController]"
+Check that hovering over an entry highlights it.
+PASS highlightedEntry() is "2012-01-02"
+Check that moving the mouse outside the popup de-highlights entries.
+PASS highlightedEntry() is null
+Check that mouse click closes the popup and sets the value.
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("date").value is "2012-01-03"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

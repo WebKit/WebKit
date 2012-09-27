@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<body style="background-color: #eeffff;">
+<input type=date id=date value="10000-12-31" list="suggestions" style="width: 100px;">
+<datalist id=suggestions>
+    <option label="Today">2012-01-01</option>
+    <option label="Tomorrow">2012-01-02</option>
+    <option>2012-01-03</option>
+    <option>2012-01-04</option>
+    <option>2012-01-05</option>
+    <option>2012-01-06</option>
+    <option>2012-01-07</option>
+    <option>2012-01-08</option>
+    <option>2012-01-09</option>
+    <option>2012-01-10</option>
+    <option>2012-01-11</option>
+    <option>2012-01-12</option>
+    <option>2012-01-13</option>
+    <option>2012-01-14</option>
+    <option>2012-01-15</option>
+    <option>2012-01-16</option>
+    <option>2012-01-17</option>
+    <option>2012-01-18</option>
+    <option>2012-01-19</option>
+    <option>2012-01-20</option>
+    <option>2012-01-21</option>
+    <option>2012-01-22</option>
+    <option>2012-01-23</option>
+    <option>2012-01-24</option>
+    <option>2012-01-25</option>
+    <option>2012-01-26</option>
+    <option>2012-01-27</option>
+    <option>2012-01-28</option>
+    <option>2012-01-29</option>
+    <option>2012-01-30</option>
+    <option>2012-01-31</option>
+    <option>2012-02-01</option>
+    <option>2012-02-02</option>
+    <option>2012-02-03</option>
+    <option>2012-02-04</option>
+    <option>2012-02-05</option>
+    <option>2012-02-06</option>
+    <option>2012-02-07</option>
+    <option>2012-02-08</option>
+    <option>2012-02-09</option>
+    <option>2012-02-10</option>
+</datalist>
+<script>
+function sendKey(input, keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    input.dispatchEvent(event);
+}
+
+function finishTest() {
+    pickerWindow.removeEventListener('resize', finishTest);
+    pickerWindow.focus();
+    eventSender.keyDown('pageDown');
+    setTimeout(function() {testRunner.notifyDone();}, 0);
+}
+
+testRunner.dumpAsText(true);
+testRunner.waitUntilDone();
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+
+var dateInput = document.getElementById('date');
+dateInput.offsetTop;
+sendKey(dateInput, 'Down');
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.addEventListener('resize', finishTest, false);
+</script>
+</body>
