@@ -1,3 +1,10 @@
+2012-09-27  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Fix build with static JavaScriptCore library
+
+        * shell/CMakeLists.txt: Define STATICALLY_LINKED_WITH_JavaScriptCore if
+                                JavaScriptCore_LIBRARY_TYPE is set to STATIC.
+
 2012-09-26  Gavin Barraclough  <barraclough@apple.com>
 
         Proxy the global this in JSC
