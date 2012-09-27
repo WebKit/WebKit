@@ -230,6 +230,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[(NSURL *)executableURL.get() path]];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];
+
+     if (![self isNativeLibraryData:data])
+         return NO;
+
 #endif
 
     if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources])
