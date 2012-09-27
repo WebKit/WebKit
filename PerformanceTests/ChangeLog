@@ -1,5 +1,17 @@
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        PerformanceTests/CSS/StyleSheetInsert.html has a time-dependent non-Gaussian distribution
+        https://bugs.webkit.org/show_bug.cgi?id=97741
+
+        Reviewed by Antti Koivisto.
+
+        Reset the content in the iframe in each run so that the runtime from each run follows a normal distribution.
+        We can cleanup this code once my patch to replace the argument list of run by an object is landed.
+
+        * CSS/StyleSheetInsert.html:
+
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed. Minor appearance tweaks after r129813.
 
         * resources/results-template.html:

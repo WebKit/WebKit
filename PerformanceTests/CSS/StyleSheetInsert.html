@@ -7,19 +7,28 @@
 <iframe></iframe>
 </body>
 <script>
-var frame = document.getElementsByTagName("iframe")[0];
-var testDoc = frame.contentDocument;
-var docText = "";
-docText += "<body><style>.foo {color:red}</style>";
-docText += "<div class='bar'>Foo</div>";
-for (var i = 0; i < 10000; ++i)
-    docText += "<div class='foo'>Foo</div>";
-testDoc.body.innerHTML = docText;
+
+function setup() {
+    var frame = document.getElementsByTagName("iframe")[0];
+    var testDoc = frame.contentDocument;
+    var docText = "";
+    docText += "<body><style>.foo {color:red}</style>";
+    docText += "<div class='bar'>Foo</div>";
+    for (var i = 0; i < 10000; ++i)
+        docText += "<div class='foo'>Foo</div>";
+    testDoc.body.innerHTML = docText;
+    return testDoc;
+}
 
 PerfTestRunner.run(function() {
-    var styleElem = testDoc.createElement("style");
-    styleElem.innerText = ".bar {color:green}";
-    testDoc.body.insertBefore(styleElem, testDoc.body.firstChild);
-}, 50, 10);
+    var testDoc = setup();
+    var start = PerfTestRunner.now();
+    for (var i = 0; i < 50; i++) {
+        var styleElem = testDoc.createElement("style");
+        styleElem.innerText = ".bar {color:green}";
+        testDoc.body.insertBefore(styleElem, testDoc.body.firstChild);
+    }
+    return PerfTestRunner.now() - start;
+}, 1);
 </script>
 </html>
