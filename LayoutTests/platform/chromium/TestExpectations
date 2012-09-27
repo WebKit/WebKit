@@ -3509,7 +3509,7 @@ webkit.org/b/95588 [ Mac ] fast/dom/shadow/shadowdom-for-textarea-complex-shadow
 webkit.org/b/97811 fast/dom/shadow/base-in-shadow-tree.html [ Pass Timeout ]
 webkit.org/b/97811 fast/dom/shadow/drop-event-for-input-in-shadow.html [ Pass Failure ]
 
-webkit.org/b/97558 [ Linux Win7 ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/97558 [ Mac Debug ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/95070 [ Win Release ] inspector/styles/media-queries.html [ Failure Pass ]
 
