@@ -78,39 +78,4 @@ struct( domConstant => {
     extendedAttributes => '$', # Extended attributes
 });
 
-# Helpers
-our $idlId = '[a-zA-Z0-9]';        # Generic identifier
-our $idlIdNs = '[a-zA-Z0-9:]';      # Generic identifier including namespace
-our $idlIdNsList = '[a-zA-Z0-9:,\ ]';  # List of Generic identifiers including namespace
-
-our $idlType = '[a-zA-Z0-9_]';      # Generic type/"value string" identifier
-# Match a string value, a hexadecimal number, or an integral number.
-# Note: some of the characters that are allowed in the string value may not be allowed by
-# interfaceSelector.
-our $constValue = '("[^"\r\n]*")|(0[xX][a-fA-F0-9]+)|(-?[0-9]*)';
-our $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
-
-# Magic IDL parsing regular expressions
-my $supportedTypes = "((?:(?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))(?:\\[\\]|<(?:$idlIdNsList*)>)?)";
-my $supportedTypeSuffix = "(\\?)?";
-
-# Special IDL notations. This regular expression extracts the string between the first [ and its corresponding ].
-our $extendedAttributeSyntax = qr/\[[^\[\]]*(?:(??{$IDLStructure::extendedAttributeSyntax})[^\[\]]*)*\]/x; # Used for extended attributes
-
-# Regular expression based IDL 'syntactical tokenizer' used in the IDLParser
-our $moduleSelector = 'module\s*(' . $idlId . '*)\s*{';
-our $moduleNSSelector = 'module\s*(' . $idlId . '*)\s*\[ns\s*(' . $idlIdNs . '*)\s*(' . $idlIdNs . '*)\]\s*;';
-our $constantSelector = '(' . $extendedAttributeSyntax . ' )?const\s+' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $constValue . ')';
-our $raisesSelector = 'raises\s*\((' . $idlIdNsList . '*)\s*\)';
-our $getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
-our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
-
-our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
-
-our $interfaceSelector = '(interface|exception)\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]<>&\|?]*)';
-our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)(static\s+)?' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]<>?]*)';
-our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . $supportedTypeSuffix . '\s*(' . $idlIdNs . '*)';
-
-our $interfaceAttributeSelector = '\s*(static\s+)?(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
-
 1;
