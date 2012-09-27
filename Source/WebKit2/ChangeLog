@@ -1,3 +1,48 @@
+2012-09-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Injected bundle API implementation should use toWTFString()
+        https://bugs.webkit.org/show_bug.cgi?id=97766
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Injected bundle API implementation should call toWTFString() rather than convert
+        WKStringRef and WKURLRef to their impls and then call string() method directly.
+        The rational for that are both safety (toWTFString checks the given pointer) and
+        code readability.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostMessage):
+        (WKBundlePostSynchronousMessage):
+        (WKBundleOverrideBoolPreferenceForTestRunner):
+        (WKBundleAddOriginAccessWhitelistEntry):
+        (WKBundleRemoveOriginAccessWhitelistEntry):
+        (WKBundleClearApplicationCacheForOrigin):
+        (WKBundleGetAppCacheUsageForOrigin):
+        (WKBundleSetApplicationCacheOriginQuota):
+        (WKBundleResetApplicationCacheOriginQuota):
+        (WKBundlePageNumberForElementById):
+        (WKBundleSetUserStyleSheetLocation):
+        (WKBundleSetWebNotificationPermission):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFramePauseAnimationOnElementWithId):
+        (WKBundleFramePauseTransitionOnElementWithId):
+        (WKBundleFrameAllowsFollowingLink):
+        (WKBundleFrameCopySuggestedFilenameForResourceWithURL):
+        (WKBundleFrameCopyMIMETypeForResourceWithURL):
+        (WKBundleFrameSetTextDirection):
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorEvaluateScriptForTest):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp:
+        (WKBundleIntentCreate):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageExecuteEditingCommand):
+        (WKBundlePageIsEditingCommandEnabled):
+        (WKBundlePageHasLocalDataForURL):
+        (WKBundlePageFindString):
+        (WKBundlePageSetComposition):
+        (WKBundlePageConfirmCompositionWithText):
+        (WKBundlePageCanShowMIMEType):
+
 2012-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2] IconDatabase: Add a way to notify when icon data is available

@@ -64,7 +64,7 @@ WKBundleIntentRef WKBundleIntentCreate(WKDictionaryRef dictionaryRef)
     MessagePortArray dummyPorts;
     ExceptionCode ec;
 
-    RefPtr<Intent> coreIntent = Intent::create(toImpl(action)->string(), toImpl(type)->string(), data ? static_cast<SerializedScriptValue*>(toImpl(data)->internalRepresentation()) : 0, dummyPorts, ec);
+    RefPtr<Intent> coreIntent = Intent::create(toWTFString(action), toWTFString(type), data ? static_cast<SerializedScriptValue*>(toImpl(data)->internalRepresentation()) : 0, dummyPorts, ec);
 
     return toAPI(InjectedBundleIntent::create(coreIntent.get()).leakRef());
 #else

@@ -46,13 +46,13 @@ void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
 
 void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
-    toImpl(bundleRef)->postMessage(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
+    toImpl(bundleRef)->postMessage(toWTFString(messageNameRef), toImpl(messageBodyRef));
 }
 
 void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
 {
     RefPtr<APIObject> returnData;
-    toImpl(bundleRef)->postSynchronousMessage(toImpl(messageNameRef)->string(), toImpl(messageBodyRef), returnData);
+    toImpl(bundleRef)->postSynchronousMessage(toWTFString(messageNameRef), toImpl(messageBodyRef), returnData);
     if (returnDataRef)
         *returnDataRef = toAPI(returnData.release().leakRef());
 }
@@ -134,7 +134,7 @@ void WKBundleRemoveAllUserContent(WKBundleRef bundleRef, WKBundlePageGroupRef pa
 
 void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef preference, bool enabled)
 {
-    toImpl(bundleRef)->overrideBoolPreferenceForTestRunner(toImpl(pageGroupRef), toImpl(preference)->string(), enabled);
+    toImpl(bundleRef)->overrideBoolPreferenceForTestRunner(toImpl(pageGroupRef), toWTFString(preference), enabled);
 }
 
 void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
@@ -194,12 +194,12 @@ void WKBundleSetSpatialNavigationEnabled(WKBundleRef bundleRef, WKBundlePageGrou
 
 void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundleRef, WKStringRef sourceOrigin, WKStringRef destinationProtocol, WKStringRef destinationHost, bool allowDestinationSubdomains)
 {
-    toImpl(bundleRef)->addOriginAccessWhitelistEntry(toImpl(sourceOrigin)->string(), toImpl(destinationProtocol)->string(), toImpl(destinationHost)->string(), allowDestinationSubdomains);
+    toImpl(bundleRef)->addOriginAccessWhitelistEntry(toWTFString(sourceOrigin), toWTFString(destinationProtocol), toWTFString(destinationHost), allowDestinationSubdomains);
 }
 
 void WKBundleRemoveOriginAccessWhitelistEntry(WKBundleRef bundleRef, WKStringRef sourceOrigin, WKStringRef destinationProtocol, WKStringRef destinationHost, bool allowDestinationSubdomains)
 {
-    toImpl(bundleRef)->removeOriginAccessWhitelistEntry(toImpl(sourceOrigin)->string(), toImpl(destinationProtocol)->string(), toImpl(destinationHost)->string(), allowDestinationSubdomains);
+    toImpl(bundleRef)->removeOriginAccessWhitelistEntry(toWTFString(sourceOrigin), toWTFString(destinationProtocol), toWTFString(destinationHost), allowDestinationSubdomains);
 }
 
 void WKBundleResetOriginAccessWhitelists(WKBundleRef bundleRef)
@@ -229,7 +229,7 @@ void WKBundleClearApplicationCache(WKBundleRef bundleRef)
 
 void WKBundleClearApplicationCacheForOrigin(WKBundleRef bundleRef, WKStringRef origin)
 {
-    toImpl(bundleRef)->clearApplicationCacheForOrigin(toImpl(origin)->string());
+    toImpl(bundleRef)->clearApplicationCacheForOrigin(toWTFString(origin));
 }
 
 void WKBundleSetAppCacheMaximumSize(WKBundleRef bundleRef, uint64_t size)
@@ -239,17 +239,17 @@ void WKBundleSetAppCacheMaximumSize(WKBundleRef bundleRef, uint64_t size)
 
 uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundleRef, WKStringRef origin)
 {
-    return toImpl(bundleRef)->appCacheUsageForOrigin(toImpl(origin)->string());
+    return toImpl(bundleRef)->appCacheUsageForOrigin(toWTFString(origin));
 }
 
 void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin, uint64_t bytes)
 {
-    toImpl(bundleRef)->setApplicationCacheOriginQuota(toImpl(origin)->string(), bytes);
+    toImpl(bundleRef)->setApplicationCacheOriginQuota(toWTFString(origin), bytes);
 }
 
 void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin)
 {
-    toImpl(bundleRef)->resetApplicationCacheOriginQuota(toImpl(origin)->string());
+    toImpl(bundleRef)->resetApplicationCacheOriginQuota(toWTFString(origin));
 }
 
 WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
@@ -270,7 +270,7 @@ int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, doub
 
 int WKBundlePageNumberForElementById(WKBundleRef bundleRef, WKBundleFrameRef frameRef, WKStringRef idRef, double pageWidthInPixels, double pageHeightInPixels)
 {
-    return toImpl(bundleRef)->pageNumberForElementById(toImpl(frameRef), toImpl(idRef)->string(), pageWidthInPixels, pageHeightInPixels);
+    return toImpl(bundleRef)->pageNumberForElementById(toImpl(frameRef), toWTFString(idRef), pageWidthInPixels, pageHeightInPixels);
 }
 
 WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundleRef, WKBundleFrameRef frameRef, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
@@ -301,12 +301,12 @@ size_t WKBundleGetWorkerThreadCount(WKBundleRef)
 
 void WKBundleSetUserStyleSheetLocation(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef location)
 {
-    toImpl(bundleRef)->setUserStyleSheetLocation(toImpl(pageGroupRef), toImpl(location)->string());
+    toImpl(bundleRef)->setUserStyleSheetLocation(toImpl(pageGroupRef), toWTFString(location));
 }
 
 void WKBundleSetWebNotificationPermission(WKBundleRef bundleRef, WKBundlePageRef pageRef, WKStringRef originStringRef, bool allowed)
 {
-    toImpl(bundleRef)->setWebNotificationPermission(toImpl(pageRef), toImpl(originStringRef)->string(), allowed);
+    toImpl(bundleRef)->setWebNotificationPermission(toImpl(pageRef), toWTFString(originStringRef), allowed);
 }
 
 void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundleRef, WKBundlePageRef pageRef)
