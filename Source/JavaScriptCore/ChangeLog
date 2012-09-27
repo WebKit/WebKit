@@ -1,5 +1,11 @@
 2012-09-26  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, 32-bit build fix.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
+2012-09-26  Filip Pizlo  <fpizlo@apple.com>
+
         jneq_ptr shouldn't have a pointer
         https://bugs.webkit.org/show_bug.cgi?id=97739
 

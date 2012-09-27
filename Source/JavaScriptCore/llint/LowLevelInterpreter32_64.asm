@@ -1485,7 +1485,7 @@ _llint_op_jneq_ptr:
     traceExecution()
     loadi 4[PC], t0
     loadi 8[PC], t1
-    loadp CodeBLock[cfr], t2
+    loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_globalObject[t2], t2
     bineq TagOffset[cfr, t0, 8], CellTag, .opJneqPtrBranch
     loadp JSGlobalObject::m_specialPointers[t2, t1, 8], t1
