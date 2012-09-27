@@ -787,3 +787,40 @@ TEST_F(EWK2UnitTestBase, ewk_view_feed_touch_event)
 
     eina_list_free(points);
 }
+
+static void onTextFound(void* userData, Evas_Object*, void* eventInfo)
+{
+    int* result = static_cast<int*>(userData);
+    unsigned* matchCount = static_cast<unsigned*>(eventInfo);
+
+    *result = *matchCount;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_text_find)
+{
+    const char textFindHTML[] =
+        "<!DOCTYPE html>"
+        "<html>"
+        "<body>"
+        "apple apple apple banana banana coconut"
+        "</body>"
+        "</html>";
+    ewk_view_html_string_load(webView(), textFindHTML, 0, 0);
+    waitUntilLoadFinished();
+
+    int matchCount = -1;
+    evas_object_smart_callback_add(webView(), "text,found", onTextFound, &matchCount);
+
+    ewk_view_text_find(webView(), "apple", EWK_FIND_OPTIONS_SHOW_OVERLAY, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(3, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_find(webView(), "mango", EWK_FIND_OPTIONS_SHOW_OVERLAY, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(0, matchCount);
+
+    evas_object_smart_callback_del(webView(), "text,found", onTextFound);
+}

@@ -34,9 +34,19 @@ static inline Evas_Object* toEwkView(const void* clientInfo)
     return static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
 }
 
-static void didFindString(WKPageRef, WKStringRef /*string*/, unsigned matchCount, const void* clientInfo)
+static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
-    ewk_view_text_found(toEwkView(clientInfo), static_cast<unsigned int>(matchCount));
+    ewk_view_text_found(toEwkView(clientInfo), matchCount);
+}
+
+static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
+{
+    ewk_view_text_found(toEwkView(clientInfo), 0);
+}
+
+static void didCountStringMatches(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
+{
+    ewk_view_text_found(toEwkView(clientInfo), matchCount);
 }
 
 void ewk_view_find_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
@@ -46,5 +56,7 @@ void ewk_view_find_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     findClient.version = kWKPageFindClientCurrentVersion;
     findClient.clientInfo = ewkView;
     findClient.didFindString = didFindString;
+    findClient.didFailToFindString = didFailToFindString;
+    findClient.didCountStringMatches = didCountStringMatches;
     WKPageSetPageFindClient(pageRef, &findClient);
 }

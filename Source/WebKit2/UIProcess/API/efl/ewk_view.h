@@ -622,7 +622,7 @@ EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const cha
 *
 * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
 */
-EAPI Eina_Bool ewk_view_text_find(Evas_Object *o, const char *text, Ewk_Find_Options options, unsigned int max_match_count);
+EAPI Eina_Bool ewk_view_text_find(Evas_Object *o, const char *text, Ewk_Find_Options options, unsigned max_match_count);
 
 /**
 * Clears the highlight of searched text.
