@@ -180,10 +180,6 @@ IF (WTF_USE_TEXTURE_MAPPER)
   LIST(APPEND WebCore_SOURCES
     platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
   )
-ELSE ()
-  LIST(APPEND WebCore_SOURCES
-    platform/graphics/efl/GraphicsLayerEfl.cpp
-  )
 ENDIF ()
 
 LIST(APPEND WebCore_LIBRARIES
