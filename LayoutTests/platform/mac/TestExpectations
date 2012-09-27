@@ -2,6 +2,969 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+# <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
+fast/events/mouseout-on-window.html
+
+# <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
+fast/events/attempt-scroll-with-no-scrollbars.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=21916 Pixel test doesn't repaint entire view so result is corrupted by previous test
+tables/mozilla_expected_failures/bugs/bug178855.xml
+
+# https://bugs.webkit.org/show_bug.cgi?id=21913 Repaint pixel test failure
+fast/repaint/body-background-image.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81697 Skip file:// based notifications tests
+fast/notifications
+
+# Skipped while Eric Carlson works on a fix.
+# https://bugs.webkit.org/show_bug.cgi?id=28221
+media/audio-delete-while-step-button-clicked.html
+
+# Crashes due to debug assert until we fix issues with style elements in SVG
+# https://bugs.webkit.org/show_bug.cgi?id=77764
+svg/custom/use-referencing-style-crash.svg
+
+# This test requires media controls has a volume slider.
+media/video-volume-slider.html
+
+# This port doesn't support detecting slow unload handlers.
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
+
+# Accessibility tests without results
+accessibility/document-attributes.html
+accessibility/aria-menubar-menuitems.html
+
+# Accessibility tests with missing AccessibilityController functionality.
+accessibility/selection-states.html
+
+# Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
+accessibility/aria-checkbox-sends-notification.html
+accessibility/menu-list-sends-change-notification.html
+accessibility/multiselect-list-reports-active-option.html
+
+# Need to add functionality to DumpRenderTree to handle error pages
+fast/history/back-forward-reset-after-error-handling.html
+
+# Need to implement this in plugins code in WebKit
+plugins/reloadplugins-and-pages.html
+
+# This test requires ogg codecs
+media/media-can-play-ogg.html
+
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+
+# These tests require touch support
+fast/events/touch
+
+# No button tracked
+fast/events/mouseover-button.html
+
+# Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
+platform/mac/accessibility/change-notification-on-scroll.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=34287
+http/tests/media/video-cookie.html
+
+# Accept header is handled by the browser
+http/tests/misc/image-checks-for-accept.html
+
+# The animation causes the result of this test to depend on the speed of executing it, and that will cause it to be flaky
+fast/dom/HTMLProgressElement/progress-element.html
+
+# eventSender needs to propagate the event to the calling window, not the main frame always.
+http/tests/plugins/plugin-document-has-focus.html
+
+# Requires testRunner.setMediaType() and implementation
+fast/media/print-restores-previous-mediatype.html
+
+# Requires testRunner.setViewModeMediaFeature()
+fast/media/view-mode-media-feature.html
+fast/media/media-query-list-02.html
+fast/media/media-query-list-03.html
+fast/media/media-query-list-04.html
+fast/media/media-query-list-05.html
+fast/media/media-query-list-06.html
+fast/media/media-query-list-07.html
+
+# Needs layoutTestController.enableAutoResizeMode()
+fast/autoresize
+
+# Uses layoutTestController.titleTextDirection, which is Chromium-only
+fast/dom/title-directionality-removeChild.html
+
+# Test is flaky and thus not useful until fixed.
+# https://bugs.webkit.org/show_bug.cgi?id=36642
+fast/replaced/border-radius-clip.html
+
+# Need to add functionality to DumpRenderTree to handle scrollbar policy changes
+fast/overflow/scrollbar-restored-and-then-locked.html
+
+# Mac port doesn't put text/html on the pasteboard for app compatibility: https://bugs.webkit.org/show_bug.cgi?id=19893
+editing/pasteboard/onpaste-text-html-types.html
+editing/pasteboard/onpaste-text-html.html
+fast/events/ondrop-text-html.html
+
+# EventSendingController does not send events on areas outside the WebView.
+scrollbars/scrollbar-click-does-not-blur-content.html
+
+# Below canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
+# (2d.composite.operation.clear) is failing because we support the "clear" composite op
+# without our vendor prefix since it was around in canvas before the spec was written.
+canvas/philip/tests/2d.composite.operation.clear.html
+# (2d.composite.*) Most, if not all, of these are failing due to the webkit canvas
+# drawing model being different than the spec's current model. There is a current
+# effort out to change the spec to the webkit canvas model.
+canvas/philip/tests/2d.composite.operation.darker.html
+
+# This canvas test is skipped because it is out of date with respect to
+# the current spec, and the fix for https://bugs.webkit.org/show_bug.cgi?id=65709
+# which complies with the current spec, makes this test fail by no longer throwing
+# exceptions that were previously expected
+canvas/philip/tests/2d.drawImage.outsidesource.html
+
+# IndexedDB is not yet enabled.
+storage/indexeddb
+http/tests/inspector/indexeddb
+
+# This port doesn't support DeviceMotion or DeviceOrientation.
+fast/dom/DeviceMotion
+fast/dom/DeviceOrientation
+fast/dom/Window/window-properties-device-orientation.html
+
+# Link prefetch is disabled by default
+fast/dom/HTMLLinkElement/link-and-subresource-test.html
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
+fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/HTMLLinkElement/prefetch-beforeload.html
+fast/dom/HTMLLinkElement/prefetch-onerror.html
+fast/dom/HTMLLinkElement/prefetch-onload.html
+fast/dom/HTMLLinkElement/prefetch-too-many-clients.html
+fast/dom/HTMLLinkElement/subresource.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/misc/prefetch-purpose.html
+
+# Link prerender is disabled.
+fast/dom/HTMLLinkElement/prerender-insert-after-stop.html
+fast/dom/HTMLLinkElement/prerender-remove-after-stop.html
+
+# Filenames aren't filtered out from edit drags yet, see https://bugs.webkit.org/show_bug.cgi?id=38826
+editing/pasteboard/file-drag-to-editable.html
+
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61827
+fast/events/drag-image-filename.html
+
+# Hits an assert in FrameLoader.cpp. https://bugs.webkit.org/show_bug.cgi?id=31387
+http/tests/multipart/policy-ignore-crash.php
+
+# Datalist is not yet enabled.
+fast/forms/datalist
+
+# Color input is not yet enabled.
+fast/forms/color
+
+# ENABLE_INPUT_TYPE_* are not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=29359
+fast/forms/date
+fast/css/pseudo-in-range.html
+fast/css/pseudo-out-of-range.html
+fast/css/pseudo-in-range-invalid-value.html
+fast/forms/datetime
+fast/forms/datetimelocal
+fast/forms/month
+fast/forms/time
+fast/forms/week
+
+# ENABLE_GAMEPAD not enabled.
+gamepad/
+
+# Speech input is not yet enabled.
+fast/speech
+
+# Speech JavaScript API is not yet enabled.
+fast/events/constructors/speech-recognition-event-constructor.html
+
+# Media Stream API is not yet enabled.
+fast/mediastream
+
+# Needs to be fixed at image decoder layer for Safari.
+fast/images/large-size-image-crash.html
+
+# Directory upload is not enabled.
+fast/forms/file/input-file-directory-upload.html
+
+# Requires ENABLE(FILE_SYSTEM)
+fast/forms/file/input-file-entries.html
+
+# Web Timing is not enabled.
+# https://bugs.webkit.org/show_bug.cgi?id=42434
+fast/dom/Window/window-properties-performance.html
+fast/dom/navigation-type-back-forward.html
+fast/dom/navigation-type-navigate.html
+fast/dom/navigation-type-reload.html
+fast/dom/webtiming.html
+fast/dom/webtiming-document-open.html
+fast/dom/webtiming-navigate-within-document.html
+http/tests/misc/webtiming-origins.html
+http/tests/misc/webtiming-one-redirect.php
+http/tests/misc/webtiming-slow-load.php
+http/tests/misc/webtiming-ssl.php
+http/tests/misc/webtiming-two-redirects.php
+http/tests/w3c/webperf
+fast/performance/
+
+# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85558
+http/tests/security/contentSecurityPolicy/1.1
+
+# Still working out flakiness issues with the perf tests.
+# https://bugs.webkit.org/show_bug.cgi?id=44199
+perf/
+
+# This test appears to be flakey on all platforms, especially
+# Mac-Leopard after r63862.  Skipping for now.
+# https://bugs.webkit.org/show_bug.cgi?id=42821
+animations/play-state.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=71120
+inspector/debugger/selected-call-frame-after-formatting-source.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=43332
+inspector/debugger/dom-breakpoints.html
+inspector/debugger/event-listener-breakpoints.html
+inspector/debugger/step-through-event-listeners.html
+inspector/debugger/xhr-breakpoints.html
+
+# JSC doesn't support heap profiling
+# https://bugs.webkit.org/show_bug.cgi?id=50485
+inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
+inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html
+inspector/profiler/heap-snapshot-comparison-show-all.html
+inspector/profiler/heap-snapshot-loader.html
+inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
+inspector/profiler/heap-snapshot-summary-retainers.html
+inspector/profiler/heap-snapshot-summary-show-ranges.html
+inspector/profiler/heap-snapshot-summary-sorting-fields.html
+inspector/profiler/heap-snapshot-summary-sorting.html
+inspector/profiler/heap-snapshot-summary-sorting-instances.html
+
+# Skipping newly added tests while I'm finding out what is wrong.
+# https://bugs.webkit.org/show_bug.cgi?id=59706
+http/tests/inspector/resource-tree/resource-tree-document-url.html
+http/tests/inspector/resource-tree/resource-tree-frame-add.html
+http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-reload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=40300
+inspector/debugger/live-edit.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=89652
+inspector/debugger/debugger-compile-and-run.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=53003
+http/tests/inspector/compiler-source-mapping-debug.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=96942
+http/tests/inspector/network/network-xhr-replay.html
+
+# Safari doesn't allow to customize outermost scrollbars.
+# https://bugs.webkit.org/show_bug.cgi?id=43960
+scrollbars/custom-scrollbar-with-incomplete-style.html
+
+# Crash due to r66850.
+# https://bugs.webkit.org/show_bug.cgi?id=45575
+fast/files/workers
+
+# viewport meta tag support
+fast/viewport
+
+# needs enhanced eventSender.contextMenu() return value
+# see also https://bugs.webkit.org/show_bug.cgi?id=45021
+media/context-menu-actions.html
+
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html
+
+# FileSystem API is not supported.
+fast/filesystem
+http/tests/filesystem
+http/tests/inspector/filesystem
+http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
+http/tests/security/filesystem-iframe-from-remote.html
+http/tests/security/mixedContent/filesystem-url-in-iframe.html
+http/tests/websocket/tests/hybi/send-file-blob.html
+http/tests/websocket/tests/hybi/send-file-blob-fail.html
+fast/mutation/filesystem-callback-delivery.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=46223
+# The WebKit plugin implementation does not support iframe shims.
+plugins/iframe-shims.html
+
+# This new test runs differently on the buildbot than it doesn on user
+# machines.  I'll ask jnd to fix it once he's back from vacation.
+plugins/plugin-initiate-popup-window.html
+
+# Requires WebP support.
+fast/canvas/canvas-toDataURL-webp.html
+fast/images/webp-image-decoding.html
+http/tests/images/webp-partial-load.html
+http/tests/images/webp-progressive-load.html
+
+# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation http://webkit.org/b/48929
+plugins/evaluate-js-after-removing-plugin-element.html
+
+# Very flaky: https://bugs.webkit.org/show_bug.cgi?id=49182
+animations/stop-animation-on-suspend.html
+
+# DRT does not support toggling caret browsing on / off
+editing/selection/caret-mode-paragraph-keys-navigation.html
+
+# This port doesn't support v8 i18n extension.
+fast/js/i18n-bindings-locale.html
+
+# Non-premultiplied-alpha currently broken on mac.
+# https://bugs.webkit.org/show_bug.cgi?id=55509
+compositing/webgl/webgl-nonpremultiplied-blend.html
+
+# DataTransferItems is not yet implemented.
+editing/pasteboard/data-transfer-items.html
+editing/pasteboard/data-transfer-items-image-png.html
+editing/pasteboard/data-transfer-items-drag-drop-file.html
+editing/pasteboard/data-transfer-items-drag-drop-entry.html
+editing/pasteboard/data-transfer-items-drag-drop-string.html
+fast/events/clipboard-dataTransferItemList.html
+fast/events/drag-dataTransferItemList.html
+fast/events/drag-dataTransferItemList-file-handling.html
+
+# Replacement text for misspelling is not given from NSSpellChecker.
+# https://bugs.webkit.org/show_bug.cgi?id=77934
+editing/spelling/spelling-marker-description.html
+
+# Custom MIME type support in DataTransfer is not yet implemented.
+editing/pasteboard/clipboard-customData.html
+fast/events/drag-customData.html
+
+# Need to implement WebGeolocationRequest::cancelPermissionRequest on mac.
+# https://bugs.webkit.org/show_bug.cgi?id=55944
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=56685
+webarchive/test-link-rel-icon.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=56691
+http/tests/inspector/network/network-size-chunked.html
+http/tests/inspector/network/network-size-sync.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=64097
+http/tests/inspector/network/network-disable-cache-memory.html
+http/tests/inspector/network/network-disable-cache-xhrs.html
+
+# Quota API is not supported.
+storage/storageinfo-missing-arguments.html
+storage/storageinfo-no-callbacks.html
+storage/storageinfo-query-usage.html
+storage/storageinfo-request-quota.html
+
+# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
+fast/dom/HTMLAnchorElement/anchor-nodownload.html
+fast/dom/HTMLAnchorElement/anchor-download.html
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+fast/dom/HTMLAnchorElement/anchor-download-unset.html
+
+# Expose title direction in WebKit API
+# https://bugs.webkit.org/show_bug.cgi?id=58845
+fast/dom/title-directionality.html
+
+# Timing out for unknown reasons.  Passes on Chromium, QT and GTK+.
+# https://bugs.webkit.org/show_bug.cgi?id=58924
+plugins/mouse-click-iframe-to-plugin.html
+
+# Animation API is disabled by default
+animations/animation-api-1.html
+
+# HTTP 204 (No Content) should be ignored
+# https://bugs.webkit.org/show_bug.cgi?id=60206
+http/tests/navigation/response204.html
+
+# This platform does not support the Page Visibility API.
+fast/events/page-visibility-iframe-delete-test.html
+fast/events/page-visibility-iframe-move-test.html
+fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-transition-test.html
+
+# console long eval test is timeout 60616
+inspector/console/console-long-eval-crash.html
+
+# Fails after r87328:
+# https://bugs.webkit.org/show_bug.cgi?id=61487
+http/tests/media/video-cross-site.html
+
+# REGRESSION (r89305-r89312): webarchive/loading/mainresource-null-mimetype-crash.html failing on Leopard/SnowLeopard release
+# https://bugs.webkit.org/show_bug.cgi?id=63169
+webarchive/loading/mainresource-null-mimetype-crash.html
+
+# <style scoped> is not yet enabled. http://webkit.org/b/49142
+fast/css/style-scoped
+# CSS Regions tests for region styling and scoped styles
+fast/regions/style-scoped-in-flow-override-container-style.html
+fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html
+fast/regions/style-scoped-in-flow-override-region-styling.html
+fast/regions/style-scoped-in-flow.html
+
+# ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow
+editing/shadow
+
+# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=63282 layerTreeAsText doesn't work for iframes
+compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
+compositing/rtl/rtl-iframe-absolute-overflow.html
+compositing/rtl/rtl-iframe-absolute.html
+compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
+compositing/rtl/rtl-iframe-fixed-overflow.html
+compositing/rtl/rtl-iframe-fixed.html
+compositing/rtl/rtl-iframe-relative.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82554
+compositing/rtl/rtl-fixed-overflow-scrolled.html
+
+# For now, Web Audio tests are disabled
+# https://bugs.webkit.org/show_bug.cgi?id=86914
+webaudio/
+
+# Microdata DOM API is not yet enabled.
+fast/dom/MicroData
+
+# https://bugs.webkit.org/show_bug.cgi?id=97132
+media/track/track-cue-rendering-horizontal.html
+media/track/track-cue-rendering-snap-to-lines-not-set.html
+media/track/track-cue-rendering-vertical.html
+media/track/track-webvtt-tc028-unsupported-markup.html
+
+# Tests for MediaSource API. Feature is not yet functional.
+# https://bugs.webkit.org/show_bug.cgi?id=64731
+http/tests/media/media-source/
+
+# Encrypted Media Extensions are not enabled.
+media/encrypted-media/
+fast/events/constructors/media-key-event-constructor.html
+
+# Font feature settings is not implemented.
+css3/font-feature-settings-rendering.html
+
+# This test verifies that a mismatch reftest will fail as intended if both results are same.
+fast/harness/sample-fail-mismatch-reftest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=67716
+media/media-controls-invalid-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=68278
+http/tests/history/back-with-fragment-change.php
+
+# Skip because this platform does not support a paging mouse wheel event
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-x-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
+fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=70989
+fast/canvas/webgl/attrib-location-length-limits.html
+fast/canvas/webgl/uniform-location-length-limits.html
+
+# Web Intents is not yet enabled.
+webintents/
+
+# Pointer Lock is not implemented.
+pointer-lock/
+http/tests/pointer-lock/
+
+# https://bugs.webkit.org/show_bug.cgi?id=82763
+fast/forms/textarea-placeholder-set-attribute.html
+fast/forms/placeholder-set-attribute.html
+fast/forms/search-placeholder-value-changed.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=72435
+fast/dom/Window/window-postmessage-arrays.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73148
+fast/canvas/webgl/webgl-texture-binding-preserved.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73974
+fast/canvas/webgl/canvas-2d-webgl-texture.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=74384
+# Skipped as this is not a expected behaviour on mac.
+fast/forms/select/menulist-onchange-fired-with-key-up-down.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73304
+# Tiemout. Needs ChromeClient::hasOpenedPopup() impelementation?
+fast/forms/select/menulist-popup-crash.html
+
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=75184
+media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
+media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_2.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_3.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
+
+# Fails because MutationObservers are not notified at end-of-task
+# https://bugs.webkit.org/show_bug.cgi?id=78290
+fast/mutation/end-of-task-delivery.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=72010
+# Needs PageClients::vibrationClient() implementation.
+fast/dom/navigator-vibration.html
+
+# Touch adjustment not enabled
+# https://bugs.webkit.org/show_bug.cgi?id=78801
+touchadjustment
+
+# canvas/philip/tests/2d.line.cap.round.html fails on Mac Lion WK1
+# https://bugs.webkit.org/show_bug.cgi?id=81289
+# <rdar://problem/11059777>
+canvas/philip/tests/2d.line.cap.round.html
+canvas/philip/tests/2d.shadow.canvas.transparent.2.html
+canvas/philip/tests/2d.shadow.image.transparent.2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=62698
+# Needs BatteryClient implementation.
+batterystatus/
+
+#Network Information is not supported yet. http://webkit.org/b/73528
+networkinformation
+
+# Proximity Events is not supported.
+fast/dom/Proximity
+fast/events/constructors/device-proximity-event-constructor.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81410
+scrollbars/scrollbar-middleclick-nopaste.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81599
+# These canvas tests are flaky (fail on bots, not locally, or vice versa)
+fast/canvas/canvas-createPattern-fillRect-shadow.html
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+fast/canvas/canvas-fillRect-gradient-shadow.html
+fast/canvas/set-colors.html
+canvas/philip/tests/2d.path.arc.scale.1.html
+
+# Media tests that time out unexpectedly
+# https://bugs.webkit.org/show_bug.cgi?id=81604
+media/audio-garbage-collect.html
+
+# parser test that times out waiting for notifyDone
+# http://bugs.webkit.org/show_bug.cgi?id=81618
+fast/workers/storage/use-same-database-in-page-and-workers.html
+
+# Not possible to set UA string for media requests with all Mac media engines.
+http/tests/media/video-useragent.html
+
+# Has failed since its introduction in r105826. Skipped everywhere but chromium.
+fast/events/dropzone-005.html
+
+# Spelling tests that are flakey. https://bugs.webkit.org/show_bug.cgi?id=82555
+editing/spelling/spellcheck-async-mutation.html
+platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html
+platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
+platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
+platform/mac/editing/spelling/editing-word-with-marker-1.html
+platform/mac/editing/spelling/delete-into-autocorrected-word.html
+platform/mac/editing/spelling/click-autocorrected-word.html
+platform/mac/editing/spelling/autocorrection-contraction.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82665
+http/tests/webarchive/test-css-url-encoding-shift-jis.html
+http/tests/webarchive/test-css-url-encoding-utf-8.html
+http/tests/webarchive/test-css-url-encoding.html
+webarchive/test-css-url-resources-in-stylesheets.html
+webarchive/test-css-url-resources-inline-styles.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82668
+plugins/mouse-events.html
+plugins/mouse-move-over-plugin-in-frame.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82671
+http/tests/inspector/console-cross-origin-iframe-logging.html
+http/tests/inspector/inspect-element.html
+http/tests/inspector/resource-har-conversion.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82672
+http/tests/xmlhttprequest/range-test.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82747
+fast/events/scroll-div-with-prevent-default-in-subframe.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82762
+fast/animation/request-animation-frame-during-modal.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82805
+fast/canvas/webgl/framebuffer-object-attachment.html
+fast/canvas/webgl/object-deletion-behaviour.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82817
+storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
+storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82923
+# https://bugs.webkit.org/show_bug.cgi?id=82886
+inspector/styles/override-screen-size.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82932
+inspector/profiler/cpu-profiler-profiling.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82943
+inspector/debugger/copy-stack-trace.html
+inspector/debugger/callstack-placards-discarded.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82972
+plugins/keyboard-events.html
+plugins/layout-in-beforeload-listener-affects-plugin-loading.html
+plugins/mouse-events-fixedpos.html
+plugins/multiple-plugins.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82976
+media/W3C/video/networkState/networkState_during_progress.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82978
+inspector/styles/svg-style.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=82979
+fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
+canvas/philip/tests/2d.text.draw.align.center.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82980
+http/tests/navigation/back-twice-without-commit.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82981
+http/tests/misc/favicon-loads-with-icon-loading-override.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=82982
+fast/dom/jsDevicePixelRatio.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=83618
+fast/dom/inline-event-attributes-release.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=84102
+fast/profiler/stop-profiling-after-setTimeout.html
+fast/profiler/dead-time.html
+
+# The Mac port does not support the legacy WebKitBlobBuilder class.
+fast/files/blob-builder-crash.html
+
+# [Mac] inspector/debugger/linkifier.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=85319
+inspector/debugger/linkifier.html
+
+# Fail until SUBPIXEL_LAYOUT is enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85532
+fast/sub-pixel/block-with-margin-overflow.html
+fast/sub-pixel/client-rect-has-subpixel-precision.html
+fast/sub-pixel/client-width-height-snapping.html
+fast/sub-pixel/file-upload-control-at-fractional-offset.html
+fast/sub-pixel/float-containing-block-with-margin.html
+fast/sub-pixel/float-with-right-margin-zoom.html
+fast/sub-pixel/float-wrap-with-subpixel-top.html
+fast/sub-pixel/inline-block-should-not-wrap.html
+fast/sub-pixel/inline-block-with-margin.html
+fast/sub-pixel/inline-block-with-padding.html
+fast/sub-pixel/large-sizes.html
+fast/sub-pixel/layout-boxes-with-zoom.html
+fast/sub-pixel/position-right-aligns-with-container.html
+fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
+fast/sub-pixel/size-of-box-with-zoom.html
+fast/sub-pixel/table-rows-no-gaps.html
+fast/sub-pixel/sub-pixel-accumulates-to-layers.html
+fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
+fast/sub-pixel/snap-negative-location.html
+
+# No CORS support for media elements is implemented yet.
+http/tests/security/video-cross-origin-readback.html
+
+# media/audio-repaint.html sometimes fails on Lion Debug (Tests)
+# https://bugs.webkit.org/show_bug.cgi?id=84357
+media/audio-repaint.html
+
+# Requires ENABLE(MEDIA_CAPTURE)
+fast/forms/file/file-input-capture.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=85522
+http/tests/security/sandboxed-iframe-modify-self.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=85523
+fullscreen/full-screen-iframe-legacy.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=85525
+media/video-played-reset.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=85969
+http/tests/loading/post-in-iframe-with-back-navigation.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86000
+http/tests/security/referrer-policy-redirect-link.html
+
+# Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
+inspector/extensions/extensions-eval-content-script.html
+inspector/extensions/extensions-audits-content-script.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86480
+plugins/npruntime/delete-plugin-within-setProperty.html
+plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
+plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=87347
+fast/frames/flattening/iframe-tiny.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=87541
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+
+# Times out without keyboard interaction
+# https://bugs.webkit.org/show_bug.cgi?id=87748
+fast/forms/select/optgroup-clicking.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=88672
+svg/filters/color-space-conversion.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=89528
+svg/filters/container-with-filters.svg
+svg/filters/feSpecularLight-premultiplied.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=89680
+fast/canvas/canvas-imageSmoothingEnabled-repaint.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=89845
+fast/forms/input-set-composition-scroll.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90649
+fast/canvas/webgl/tex-image-with-format-and-type.html
+fast/canvas/webgl/tex-sub-image-2d.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90706
+inspector/timeline/timeline-frames.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90707
+inspector/timeline/timeline-receive-response-event.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90708
+fullscreen/exit-full-screen-iframe.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90709
+http/tests/inspector/console-cd-completions.html
+http/tests/inspector/console-cd.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90711
+fast/canvas/webgl/gl-vertexattribpointer.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90722
+inspector/profiler/heap-snapshot-comparison-show-next.html
+inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html
+inspector/profiler/heap-snapshot-comparison-sorting.html
+inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90723
+inspector/debugger/set-breakpoint.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90724
+compositing/iframes/iframe-size-from-zero.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90725
+media/media-blocked-by-beforeload.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90742
+sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A7.2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90833
+fast/js/global-constructors.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=91505
+platform/mac/plugins/root-object-premature-delete-crash.html
+
+# This test depends on subpixel layout.
+# https://bugs.webkit.org/show_bug.cgi?id=92352
+css3/flexbox/flex-rounding.html
+
+# ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
+fast/forms/time-multiple-fields
+
+# <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion
+fast/events/show-modal-dialog-onblur-onfocus.html
+platform/mac/fast/forms/listbox-scrollbar-hit-test.html
+
+# <rdar://problem/11224894> Several Japanese vertical text tests failing on Mountain Lion
+fast/dynamic/text-combine.html
+fast/repaint/japanese-rl-selection-clear.html
+fast/repaint/japanese-rl-selection-repaint-in-regions.html
+fast/repaint/japanese-rl-selection-repaint.html
+fast/repaint/repaint-across-writing-mode-boundary.html
+fast/ruby/base-shorter-than-text.html
+fast/text/emphasis-vertical.html
+fast/text/international/text-spliced-font.html
+fast/writing-mode/Kusa-Makura-background-canvas.html
+fast/writing-mode/border-vertical-lr.html
+fast/writing-mode/fallback-orientation.html
+fast/writing-mode/japanese-lr-selection.html
+fast/writing-mode/japanese-lr-text.html
+fast/writing-mode/japanese-rl-selection.html
+fast/writing-mode/japanese-rl-text.html
+
+# <rdar://problem/11076314> A few media and http/tests/media tests time out on Mountain Lion
+http/tests/media/video-play-stall-seek.html
+http/tests/media/video-play-stall.html
+media/media-fullscreen-not-in-document.html
+
+# <rdar://problem/11358748> http/tests/multipart/multipart-wait-before-boundary.html fails on ML as of r115745
+http/tests/multipart/multipart-wait-before-boundary.html
+
+# <rdar://problem/11059031> Many, many Java tests fail on Mountain Lion
+java/
+
+# <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
+storage/websql/quota-tracking.html
+
+# <rdar://problem/11229810> SVG square caps on zero-length paths draw incorrectly on Mountain Lion
+svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
+svg/custom/zero-path-square-cap-rendering.svg
+svg/stroke/zero-length-arc-linecaps-rendering.svg
+svg/stroke/zero-length-path-linecap-rendering.svg
+svg/stroke/zero-length-subpaths-linecap-rendering.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=95009
+compositing/overflow/overflow-auto-with-touch.html
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
+compositing/overflow/textarea-scroll-touch.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95027
+fast/block/float/016.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=93878
+# Due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crashes:
+editing/pasteboard/paste-TIFF.html
+platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=93878 (yes, same bug as the previous)
+# Due to WebCore::JSEventListener::jsFunction(WebCore::ScriptExecutionContext*) crashes:
+
+# https://bugs.webkit.org/show_bug.cgi?id=94458
+# Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
+http/tests/security/MessagePort/event-listener-context.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=93812
+# REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey
+# ASSERTION FAILED: m_wrapper || !m_jsFunction
+svg/custom/use-instanceRoot-as-event-target.xhtml
+
+# Assorted failures that need investigation
+
+# --- Canvas ---
+canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
+canvas/philip/tests/2d.line.miter.lineedge.html
+canvas/philip/tests/2d.strokeRect.zero.4.html
+
+# --- Compositing ----
+css3/filters/composited-during-transition-layertree.html
+
+# --- Text ---
+fast/forms/text-control-intrinsic-widths.html
+platform/mac/fast/text/combining-character-sequence-fallback.html
+svg/batik/text/textOnPath.svg
+svg/batik/text/verticalTextOnPath.svg
+
+# --- Editing ---
+# Pasting replaces the three periods with an ellipsis on Lion and Mountain Lion
+editing/pasteboard/5478250.html
+
+# Sometimes fail <rdar://problem/9356912>
+platform/mac/editing/spelling/autocorrection-delete.html
+platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
+platform/mac/editing/spelling/autocorrection-removing-underline.html
+platform/mac/editing/spelling/autocorrection-simple.html
+platform/mac/editing/spelling/delete-autocorrected-word-1.html
+platform/mac/editing/spelling/delete-autocorrected-word-2.html
+
+# Mac does not have global selections.
+editing/pasteboard/paste-global-selection.html
+
+# --- WebGL ---
+# Currently failing WebGL tests <rdar://problem/9355460>
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+
+# Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
+fast/events/mousedown-in-subframe-scrollbar.html
+
+# http://webkit.org/b/96828
+fast/canvas/webgl/oes-vertex-array-object.html
+
+# --- WebKit1 only ---
+http/tests/misc/willCacheResponse-delegate-callback.html
+http/tests/multipart/load-last-non-html-frame.php
+http/tests/xmlhttprequest/basic-auth-nopassword.html
+platform/mac/accessibility/selection-value-changes-for-aria-textbox.html
+
+# --- WebKit2 only ---
+compositing/video/video-background-color.html
+media/video-does-not-loop.html
+media/video-size-intrinsic-scale.html
+
+# -- Flaky tests (WebKit 1 only) ---
+platform/mac/accessibility/search-with-frames.html
+
+# -- Flaky tests (WebKit 2 only) ---
+http/tests/websocket/tests/hybi/httponly-cookie.pl
+
+# --- Media ---
+media/controls-styling.html
+media/media-document-audio-repaint.html
+media/video-zoom-controls.html
+
+# --- Miscellaneous ---
+platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
+
+# --- Plugins ---
+# WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
+plugins/document-open.html
+plugins/geturlnotify-during-document-teardown.html
+plugins/nested-plugin-objects.html
+plugins/netscape-destroy-plugin-script-objects.html
+plugins/open-and-close-window-with-plugin.html
+
+# WebKit1 OOP plug-ins: No support for getting the form value.
+plugins/form-value.html
+
+# WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
+plugins/npruntime/invoke-failure.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=93589
+# Very flaky, often failing on retry, too.
+svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
+
+# Unknown failures.
+http/tests/multipart/invalid-image-data-standalone.html
 webkit.org/b/76478 compositing/iframes/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
 webkit.org/b/76489 compositing/webgl/webgl-reflection.html [ ImageOnlyFailure ]
 

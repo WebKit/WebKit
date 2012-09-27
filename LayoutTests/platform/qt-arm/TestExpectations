@@ -1,3 +1,220 @@
+#
+# TESTS MIGRATED FROM THE OLD SKIPPED FILE
+#
+
+# Failing tests
+canvas/philip/tests/2d.path.stroke.skew.html
+fast/css/hover-update.html
+fast/workers/storage/interrupt-database.html
+http/tests/cache/subresource-expiration-1.html
+http/tests/cache/subresource-expiration-2.html
+http/tests/history/back-to-post.php
+http/tests/inspector/resource-tree/resource-tree-document-url.html
+http/tests/inspector/resource-tree/resource-tree-frame-add.html
+http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
+http/tests/inspector/resource-tree/resource-tree-reload.html
+http/tests/navigation/forward-and-cancel.html
+http/tests/security/cross-frame-access-put.html
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html
+http/tests/websocket/tests/hixie76/close-before-open.html
+http/tests/websocket/tests/hixie76/close-unref-websocket.html
+http/tests/websocket/tests/hixie76/simple-stress.html
+http/tests/websocket/tests/hixie76/websocket-event-target.html
+jquery/manipulation.html
+platform/qt/plugins/qt-qwidget-plugin.html
+plugins/application-plugin-plugins-disabled.html
+plugins/keyboard-events.html
+plugins/plugin-initiate-popup-window.html
+svg/text/text-align-04-b.svg
+svg/text/text-hkern.svg
+svg/text/textPathBoundsBug.svg
+svg/text/text-text-03-b.svg
+svg/W3C-SVG-1.1/animate-elem-25-t.svg
+svg/W3C-SVG-1.1/animate-elem-27-t.svg
+svg/W3C-SVG-1.1/masking-path-03-b.svg
+svg/W3C-SVG-1.1/painting-stroke-02-t.svg
+svg/W3C-SVG-1.1/paths-data-02-t.svg
+svg/W3C-SVG-1.1/pservers-grad-11-b.svg
+svg/W3C-SVG-1.1/render-elems-03-t.svg
+svg/W3C-SVG-1.1/shapes-rect-01-t.svg
+svg/W3C-SVG-1.1/text-path-01-b.svg
+svg/W3C-SVG-1.1/text-text-03-b.svg
+
+# Crashed test after r87691-r87693
+http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
+
+# Flakey crashed tests
+fast/workers/wrapper-map-gc.html
+
+# Flakey tests
+svg/animations/animate-mpath-insert.html
+svg/dom/SVGScriptElement/script-load-and-error-events.svg
+
+# Flakey timed out tests
+
+# [Qt][ARM] http/tests/cache/subresource-multiple-instances.html is flaky (timeout)
+# https://bugs.webkit.org/show_bug.cgi?id=66652
+http/tests/cache/subresource-multiple-instances.html
+
+# [Qt][ARM] http/tests/inspector/resource-tree/resource-tree-errors-reload.html is flaky (timeout) 
+# https://bugs.webkit.org/show_bug.cgi?id=66653
+http/tests/inspector/resource-tree/resource-tree-errors-reload.html
+
+fast/js/nested-object-gc.html
+# https://bugs.webkit.org/show_bug.cgi?id=64452
+http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html
+
+# [Qt][ARM]REGRESSION(r91752): It made audio related tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=65369
+fast/canvas/canvas-drawImage-incomplete.html
+fast/dom/URL-attribute-reflection.html
+fast/dom/Window/custom-constructors.html
+fast/dom/beforeload/video-before-load.html
+fast/dom/boolean-attribute-reflection.html
+fast/dom/constructed-objects-prototypes.html
+fast/dom/constructors-cached-navigate.html
+fast/dom/constructors-cached.html
+fast/dom/dom-constructors.html
+fast/forms/form-associated-element-crash3.html
+fast/js/custom-constructors.html
+fast/js/global-constructors.html
+fast/js/instanceof-XMLHttpRequest.html
+fast/replaced/outline-replaced-elements.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-src-from-remote.html
+
+# Qt results were added by r91986, but these tests fail on Qt-ARM platform
+svg/batik/filters/filterRegions.svg
+svg/batik/text/longTextOnPath.svg
+svg/carto.net/scrollbar.svg
+
+# [Qt][ARM] http/tests/loading/empty-urls.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=67638
+http/tests/loading/empty-urls.html
+
+# [Qt][ARM]fast/dom/call-a-constructor-as-a-function.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=67639
+fast/dom/call-a-constructor-as-a-function.html
+
+# [Qt][ARMv5] Two timeline tests of inspector fail
+# https://bugs.webkit.org/show_bug.cgi?id=68151
+inspector/timeline/timeline-animation-frame.html
+inspector/timeline/timeline-enum-stability.html
+
+# [Qt] [ARMv5] fast/events/media-element-focus-tab.html fast/spatial-navigation/snav-media-elements.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=68341
+fast/events/media-element-focus-tab.html
+fast/spatial-navigation/snav-media-elements.html
+
+# [Qt][ARMv5] inspector/elements/edit-dom-actions.html and ~/elements-delete-inline-style.html times out
+# https://bugs.webkit.org/show_bug.cgi?id=69925
+inspector/elements/edit-dom-actions.html
+inspector/elements/elements-delete-inline-style.html
+
+# Almost all websocket test fail on ARM, skip until fix
+http/tests/websocket
+
+# Almost all compositing test fail on ARM, skip until fix
+compositing
+
+# new failing tests
+fast/events/click-count.html
+fast/events/dont-loose-last-event.html
+fast/forms/basic-selects.html
+http/tests/appcache/auth.html
+http/tests/inspector/extensions-ignore-cache.html
+http/tests/inspector/inspect-element.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+svg/wicd/rightsizing-grid.xhtml
+
+# fail because of missing video support
+http/tests/misc/empty-urls.html
+
+# fails because of missing WebGL support
+fast/events/constructors/webgl-context-event-constructor.html
+
+# Timed out Sputnik tests on ARM
+sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
+
+# New failing tests
+animations/stop-animation-on-suspend.html
+editing/selection/regional-indicators.html
+fast/dom/Window/window-property-descriptors.html
+fast/encoding/GBK/EUC-CN.html
+fast/encoding/GBK/chinese.html
+fast/encoding/GBK/cn-gb.html
+fast/encoding/GBK/csgb2312.html
+fast/encoding/GBK/csgb231280.html
+fast/encoding/GBK/gb2312.html
+fast/encoding/GBK/gb_2312-80.html
+fast/encoding/GBK/gbk.html
+fast/encoding/GBK/iso-ir-58.html
+fast/encoding/GBK/x-euc-cn.html
+fast/encoding/GBK/x-gbk.html
+fast/encoding/char-decoding-mac.html
+fast/encoding/char-decoding.html
+fast/encoding/char-encoding-mac.html
+fast/encoding/char-encoding.html
+fast/encoding/hebrew/8859-8-e.html
+fast/encoding/hebrew/8859-8-i.html
+fast/encoding/hebrew/csISO88598I.html
+fast/encoding/hebrew/logical.html
+fast/events/media-focus-in-standalone-media-document.html
+fast/events/touch/send-oncancel-event.html
+fast/forms/label/labelable-elements.html
+fast/text/find-kana.html
+fast/text/find-russian.html
+fast/text/find-soft-hyphen.html
+fast/text/soft-hyphen-5.html
+http/tests/inspector/network/network-initiator-from-console.html
+http/tests/inspector/network/network-sidebar-width.html
+http/tests/inspector/resource-har-pages.html
+inspector/debugger/source-frame.html
+inspector/debugger/watch-expressions-panel-switch.html
+inspector/network-status-non-http.html
+sputnik/Unicode/Unicode_500/S7.6_A3.1.html
+sputnik/Unicode/Unicode_500/S7.6_A3.2.html
+sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
+sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
+sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A2.3.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
+svg/W3C-SVG-1.1/text-align-04-b.svg
+svg/batik/text/textOnPath3.svg
+tables/mozilla/bugs/bug2123.html
+tables/mozilla/bugs/bug2509.html
+tables/mozilla/bugs/bug34176.html
+tables/mozilla/bugs/bug44505.html
+tables/mozilla_expected_failures/bugs/bug59252.html
+tables/mozilla_expected_failures/bugs/bug7243.html
+
+# missing element.canPlayType()
+fast/events/media-focus-in-standalone-media-document.html
+
+fast/events/touch/send-oncancel-event.html
+
+# Timed out Sputnik tests on ARM
+sputnik/Unicode/Unicode_218/S7.6_A3.1.html
+sputnik/Unicode/Unicode_218/S7.6_A3.2.html
+
+#
+# END OF TESTS MIGRATED FROM THE OLD SKIPPED FILE
+#
+
 # slow tests
 Bug(_qt_slow) fast/workers/worker-multi-startup.html [ Pass Slow ]
 Bug(_qt_slow) fast/workers/wrapper-map-gc.html [ Pass Slow ]

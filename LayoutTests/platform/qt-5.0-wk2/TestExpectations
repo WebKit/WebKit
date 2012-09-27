@@ -1,43 +1,534 @@
-webkit.org/b/91615 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/backface-visibility/backface-visibility-simple.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/layer-due-to-layer-children.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/iframes/scroll-fixed-transformed-element.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/images/direct-pdf-image.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/layer-creation/fixed-position-under-transform.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/overflow/image-load-overflow-scrollbars.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/overflow/scrollbars-with-clipped-owner.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/reflections/nested-reflection-mask-change.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/reflections/nested-reflection-transformed.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/reflections/nested-reflection-transformed2.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/repaint/newly-composited-repaint-rect.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-absolute-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-absolute.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-fixed-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-fixed.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-iframe-absolute-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-iframe-fixed-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/rtl/rtl-overflow-invalidation.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/transitions/scale-transition-no-start.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/transitions/singular-scale-transition.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
-webkit.org/b/91615 compositing/flat-with-transformed-child.html [ ImageOnlyFailure ]
+# Copied from mac-wk2/Skipped and removed Mac specific tests.
+#
+# Copyright (C) 2010 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 
+
+# WebKitTestRunner needs an implementation of eventSender
+# <https://bugs.webkit.org/show_bug.cgi?id=42194>
+editing/pasteboard/copy-standalone-image-crash.html
+editing/selection/5354455-1.html
+editing/selection/button-right-click.html
+editing/selection/click-in-padding-with-multiple-line-boxes.html
+editing/selection/context-menu-on-text.html
+editing/selection/doubleclick-whitespace-crash.html
+editing/selection/doubleclick-whitespace-img-crash.html
+editing/selection/doubleclick-whitespace.html
+editing/selection/empty-cell-right-click.html
+editing/selection/move-begin-end.html
+editing/selection/select-out-of-editable.html
+fast/dom/vertical-scrollbar-in-rtl.html
+fast/dynamic/layer-hit-test-crash.html
+fast/encoding/mailto-always-utf-8.html
+fast/events/context-no-deselect.html
+fast/events/context-onmousedown-event.html
+fast/events/contextmenu-scrolled-page-with-frame.html
+fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+fast/events/fire-mousedown-while-pressing-mouse-button.html
+fast/events/open-window-from-another-frame.html
+fast/events/platform-wheelevent-in-scrolling-div.html
+fast/events/popup-when-select-change.html
+fast/events/remove-child-onscroll.html
+fast/events/right-click-focus.html
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+fast/events/selectstart-prevent-selection-on-right-click.html
+fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
+fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
+fast/forms/focus-change-on-keypress.html
+fast/forms/interactive-validation-attach-assertion.html
+fast/forms/legend-access-key.html
+fast/loader/policy-delegate-action-hit-test-zoomed.html
+# eventSender.gestureTap
+fast/events/touch/gesture/gesture-click.html
+
+svg/custom/use-events-crash.svg
+
+# eventSender.mouseScrollBy() is unimplemented
+scrollbars/scroll-rtl-or-bt-layer.html
+
+# [WK2] [Qt] Support drag in mouse events for WebKit2 EventSender
+# <https://bugs.webkit.org/show_bug.cgi?id=69946>
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+
+# WebKit2 needs layoutTestController.overridePreference
+# <https://bugs.webkit.org/show_bug.cgi?id=42197>
+# Get accelerated compositing working with webkit2
+# <https://bugs.webkit.org/show_bug.cgi?id=41084>
+fast/history/back-forward-reset-after-error-handling.html
+
+# WebKitTestRunner needs to support evaluateInWebInspector
+# <https://bugs.webkit.org/show_bug.cgi?id=42319>
+# Need Web Inspector in WebKit2
+# <https://bugs.webkit.org/show_bug.cgi?id=42318>
+http/tests/inspector-enabled
+http/tests/inspector
+inspector
+
+# Missing layoutTestController.setMockDeviceOrientation() implementation
+fast/dom/DeviceOrientation/add-listener-from-callback.html
+fast/dom/DeviceOrientation/basic-operation.html
+fast/dom/DeviceOrientation/event-after-navigation.html
+fast/dom/DeviceOrientation/multiple-frames.html
+fast/dom/DeviceOrientation/no-synchronous-events.html
+fast/dom/DeviceOrientation/null-values.html
+fast/dom/DeviceOrientation/updates.html
+
+# Flakey on both Snow Leopard and Windows 7
+# https://bugs.webkit.org/show_bug.cgi?id=58337
+fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
+
+########################################
+
+# NOT YET TRACKED BY BUG REPORTS
+
+# WebKit2 needs keygen support
+fast/html/keygen.html
+fast/invalid/residual-style.html
+
+# WebKit2 needs to support authentication
+http/tests/appcache/auth.html
+http/tests/xmlhttprequest/logout.html
+
+# Unexplained plugin failures
+plugins/embed-prefers-plugins-for-images.html
+plugins/npp-set-window-called-during-destruction.html
+plugins/reloadplugins-and-pages.html
+plugins/mouse-click-iframe-to-plugin.html
+
+# Unexplained failures
+fast/table/giantCellspacing.html
+media/video-zoom-controls.html
+
+########################################
+
+########################################
+# Skipped because of Qt 4.7.0          #
+# remove after we have rebaselined     #
+########################################
+css2.1/t1202-counter-09-b.html
+css2.1/t1202-counter-15-b.html
+css2.1/t1202-counters-09-b.html
+css2.1/t1202-counters-15-b.html
+fast/forms/textarea-appearance-wrap.html
+fast/js/regexp-range-bound-ffff.html
+fast/js/switch-behaviour.html
+fast/text/format-control.html
+fast/url/anchor.html
+http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
+
+# layoutTestController.ignoreLegacyWebNotificationPermissionRequests is unimplemented
+fast/notifications
+
+# layoutTestController.setScrollbarPolicy is unimplemented
+fast/overflow/scrollbar-restored-and-then-locked.html
+
+# FAIL: Timed out waiting for notifyDone to be called
+media/video-source-moved.html
+
+# These tests always fail (with and without --singly). It needs investigation.
+editing/selection/caret-mode-paragraph-keys-navigation.html
+fast/block/positioning/vertical-rl/fixed-positioning.html
+fast/css/bidi-override-in-anonymous-block.html
+fast/dom/navigation-type-back-forward.html
+fast/dom/navigation-type-navigate.html
+fast/dom/navigation-type-reload.html
+fast/dom/scroll-reveal-left-overflow.html
+fast/dom/scroll-reveal-top-overflow.html
+fast/media/media-query-list-02.html
+fast/media/media-query-list-03.html
+fast/media/media-query-list-04.html
+fast/media/media-query-list-05.html
+fast/media/media-query-list-06.html
+fast/media/media-query-list-07.html
+fast/media/print-restores-previous-mediatype.html
+fast/media/view-mode-media-feature.html
+platform/qt/fast/history/back-to-unreachable-url-then-forward.html
+platform/qt/fast/spatial-navigation/snav-ensure-scrolls-with-scrollbars-disabled-by-webkit.html
+platform/qt/view/fixed-layout-size.html
+
+
+# Qt specific results committed in r89901, but fail on Qt-WK2 platform
+http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
+
+
+# [Qt][WK2] fast/inline/absolute-positioned-inline-in-centred-block.html is flaky
+# https://bugs.webkit.org/show_bug.cgi?id=67607
+fast/inline/absolute-positioned-inline-in-centred-block.html
+
+# Missing layoutTestController.setUserStyleSheetEnabled() implementation
+platform/qt/fast/loader/user-stylesheet-qrc-path.html
+
+# Skip failing tests
+fast/events/blur-focus-window-should-blur-focus-element.html
+plugins/iframe-plugin-bgcolor.html
+plugins/netscape-plugin-setwindow-size-2.html
+
+# HiDPI tests require test infrastructure enhancements
+fast/hidpi
+
+# [Qt][WK2] One test failed after r97360
+# https://bugs.webkit.org/show_bug.cgi?id=70245
+http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
+
+# [Qt][WK2] fast/events/drag-selects-image.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=70907
+fast/events/drag-selects-image.html
+
+# [Qt][WK2] Metric mismatches (fast/text/justify-padding-distribution.html and svg/as-object/svg-embedded-in-html-in-iframe.html)
+# https://bugs.webkit.org/show_bug.cgi?id=70915
+svg/as-object/svg-embedded-in-html-in-iframe.html
+
+# [Qt][WK2] fast/transforms/scrollIntoView-transformed.html is flaky
+# https://bugs.webkit.org/show_bug.cgi?id=70935
+fast/transforms/scrollIntoView-transformed.html
+
+# [Qt][WK2] css3/unicode-bidi-isolate-aharon-failing.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=74505
+css3/unicode-bidi-isolate-aharon-failing.html
+
+# [Qt][WK2] fast/dom/rtl-scroll-to-leftmost-and-resize.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=74504
+fast/dom/rtl-scroll-to-leftmost-and-resize.html
+
+# [Qt][WK2] fast/forms/range/slider-mouse-events.html and fast/forms/range/slider-onchange-event.html fail after r124625
+# https://bugs.webkit.org/show_bug.cgi?id=93231
+fast/forms/range/slider-mouse-events.html
+fast/forms/range/slider-onchange-event.html
+
+# flakey svg tests
+svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
+svg/custom/getscreenctm-in-scrollable-div-area.xhtml
+
+# Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
+editing/selection/click-in-margins-inside-editable-div.html
+fast/block/basic/020.html
+fast/history/visited-link-background-color.html
+fast/layers/layer-visibility-sublayer.html
+fast/layers/layer-visibility.html
+fast/repaint/invisible-objects.html
+fast/repaint/layer-hide-when-needs-layout.html
+fast/replaced/no-focus-ring-embed.html
+fast/replaced/no-focus-ring-object.html
+fast/text/whitespace/028.html
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html
+
+# It made the following test(s) timeout
+editing/selection/drag-in-iframe.html
+
+# [Qt][WK2] 2 editing tests introduced in r103073 fails
+# https://bugs.webkit.org/show_bug.cgi?id=74937
+editing/input/caret-at-the-edge-of-contenteditable.html
+editing/input/reveal-caret-of-multiline-contenteditable.html
+
+# [Qt][WK2]http/tests/xmlhttprequest/workers/abort-exception-assert.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=75540
+http/tests/xmlhttprequest/workers/abort-exception-assert.html
+
+# [Qt][WK2]fast/loader/submit-form-while-parsing-2.html fails intermittently
+# https://bugs.webkit.org/show_bug.cgi?id=75950
+fast/loader/submit-form-while-parsing-2.html
+
+# [Qt][WK2] css3/filters/should-not-have-compositing-layer.html is failing since added in 104622
+# https://bugs.webkit.org/show_bug.cgi?id=76061
+css3/filters/should-not-have-compositing-layer.html
+
+# Unskipped on Qt5, but still fail on qt-wk2 platform
+editing/input/emacs-ctrl-o.html
+fast/block/float/float-in-float-hit-testing.html
+fast/dynamic/012.html
+
+# [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=76986
+scrollbars/scroll-rtl-or-bt-layer.html
+
+# There are some bugs with reflections.
+compositing/reflections/animation-inside-reflection.html
+compositing/reflections/backface-hidden-reflection.html
+compositing/reflections/deeply-nested-reflections.html
+compositing/reflections/nested-reflection-anchor-point.html
+compositing/reflections/nested-reflection-animated.html
+compositing/reflections/nested-reflection.html
+compositing/reflections/nested-reflection-on-overflow.html
+compositing/reflections/nested-reflection-opacity.html
+compositing/reflections/nested-reflection-size-change.html
+compositing/reflections/nested-reflection-transition.html
+compositing/reflections/load-video-in-reflection.html
+compositing/reflections/transform-inside-reflection.html
+
+# Flaky tests.
+compositing/geometry/limit-layer-bounds-fixed-positioned.html
+compositing/geometry/video-opacity-overlay.html
+compositing/rtl/rtl-absolute-overflow-scrolled.html
+compositing/visibility/layer-visible-content.html
+
+# Some of them crashes once other tests are skipped.
+compositing/overflow/clip-descendents.html
+compositing/visibility/visibility-image-layers-dynamic.html
+compositing/visibility/visibility-simple-webgl-layer.html
+
+# The following tests doesnt match expected text files.
+compositing/geometry/fixed-position-composited-switch.html
+compositing/geometry/layer-due-to-layer-children-deep-switch.html
+compositing/geometry/layer-due-to-layer-children-switch.html
+compositing/geometry/limit-layer-bounds-clipping-ancestor.html
+compositing/geometry/limit-layer-bounds-opacity-transition.html
+compositing/geometry/limit-layer-bounds-overflow-root.html
+compositing/geometry/limit-layer-bounds-positioned-transition.html
+compositing/geometry/limit-layer-bounds-positioned.html
+compositing/geometry/limit-layer-bounds-transformed-overflow.html
+compositing/geometry/limit-layer-bounds-transformed.html
+compositing/layer-creation/overflow-scroll-overlap.html
+compositing/layer-creation/scroll-partial-update.html
+compositing/layer-creation/spanOverlapsCanvas.html
+compositing/tiling/crash-reparent-tiled-layer.html
+
+# The following tests doesnt match both expected image and text.
+compositing/geometry/ancestor-overflow-change.html
+compositing/geometry/tall-page-composited.html
+
+# We still don't accelerate plugin and video in WK2.
+compositing/plugins
+compositing/video
+compositing/layers-inside-overflow-scroll.html
+
+# [Qt][WK2] New compositing/backface-visibility/backface-visibility-webgl.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89645
+compositing/backface-visibility/backface-visibility-webgl.html
+
+# [Qt][WK2] New compositing test are failing since added in r126663.
+# https://bugs.webkit.org/show_bug.cgi?id=95076
+compositing/overflow/overflow-auto-with-touch-no-overflow.html
+compositing/overflow/overflow-auto-with-touch.html
+compositing/overflow/overflow-hidden-with-touch.html
+compositing/overflow/overflow-overlay-with-touch-no-overflow.html
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/overflow-scroll-with-touch-no-overflow.html
+compositing/overflow/overflow-visible-with-touch.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
+compositing/overflow/textarea-scroll-touch.html
+
+# [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
+# https://bugs.webkit.org/show_bug.cgi?id=92543
+fullscreen/video-controls-timeline.html
+fullscreen/full-screen-iframe-legacy.html
+
+# [Qt][WK2] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml crashes
+# https://bugs.webkit.org/show_bug.cgi?id=80209
+http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
+
+# [Qt][WK2] Failing http/tests/plugins tests after reenabled plugins
+# https://bugs.webkit.org/show_bug.cgi?id=82895
+http/tests/plugins/create-v8-script-objects.html
+http/tests/plugins/cross-frame-object-access.html
+http/tests/plugins/get-url.html
+http/tests/plugins/geturlnotify-from-npp-destroystream.html
+http/tests/plugins/interrupted-get-url.html
+http/tests/plugins/local-geturl-from-remote.html
+http/tests/plugins/npapi-response-headers.html
+http/tests/plugins/post-url-file.html
+http/tests/plugins/third-party-cookie-accept-policy.html
+
+# [Qt][WK2] All plugin tests fail on buildbot
+# https://bugs.webkit.org/show_bug.cgi?id=83024
+plugins
+
+# [Qt][WK2] fast/frames/iframe-window-focus.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=83575
+fast/frames/iframe-window-focus.html
+
+# Missing layoutTestController.numberOfPendingGeolocationPermissionRequests() implementation
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+
+# [Qt] New failing and flakey tests with newer Qt 5
+# https://bugs.webkit.org/show_bug.cgi?id=86452
+fast/ruby/ruby-inline-style-not-updated.html
+fast/table/table-row-before-child-style-update.html
+fast/table/table-row-style-not-updated-with-before-content.html
+fast/table/table-row-style-not-updated.html
+fast/table/table-style-not-updated.html
+
+# [Qt][WK2] fast/forms/ValidityState-valueMissing-002.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=87395
+fast/forms/ValidityState-valueMissing-002.html
+
+# [Qt][WK2] REGRESSION(r118761): It made 2 tests crash
+# https://bugs.webkit.org/show_bug.cgi?id=87750
+fast/backgrounds/multiple-backgrounds-computed-style.html
+fast/css/getComputedStyle/computed-style-cross-fade.html
+
+# [Qt][WK2] REGRESSION(r119127): It made 2 fast/multicol tests crash
+# https://bugs.webkit.org/show_bug.cgi?id=88064
+fast/multicol/pagination-v-horizontal-bt.html
+fast/multicol/pagination-h-vertical-lr.html
+fast/multicol/pagination-h-vertical-rl.html
+fast/multicol/pagination-v-horizontal-tb.html
+
+# REGRESSION(r118618): fast/dom/beforeload/image-object-before-load* fail
+# https://bugs.webkit.org/show_bug.cgi?id=87631
+fast/dom/beforeload/image-object-before-load-innerHTML.html
+fast/dom/beforeload/image-object-before-load.html
+
+# [Qt][WK2] New http/tests/cache/xhr-vary-header.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89278
+http/tests/cache/xhr-vary-header.html
+
+# [Qt][WK2] editing/pasteboard/copy-in-password-field.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89473
+editing/pasteboard/copy-in-password-field.html
+editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
+
+# WebKitTestRunner needs to allow self-signed certificates for localhost.
+http/tests/ssl
+
+# [Qt][WK2] REGRESSION(r122326): It made fast/repaint/background-scaling.html crash
+# https://bugs.webkit.org/show_bug.cgi?id=90985
+fast/repaint/background-scaling.html
+
+# [Qt] Tests still fail after the update to new fonts 
+# https://bugs.webkit.org/show_bug.cgi?id=91610
+fast/css/font-face-default-font.html
+fast/css/input-search-padding.html
+fast/css/line-height.html
+fast/css/resize-corner-tracking.html
+fast/css/text-overflow-input.html
+fast/css/word-space-extra.html
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
+fast/dom/isindex-001.html
+fast/dom/object-plugin-hides-properties.html
+fast/forms/validation-message-user-modify.html
+fast/frames/take-focus-from-iframe.html
+fast/html/details-no-summary4.html
+fast/html/details-open-javascript.html
+fast/html/details-open2.html
+fast/html/details-open4.html
+fast/lists/dynamic-marker-crash.html
+fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
+fast/repaint/search-field-cancel.html
+fast/repaint/subtree-root-skipped.html
+fast/replaced/replaced-breaking-mixture.html
+fast/replaced/replaced-breaking.html
+fast/replaced/width100percent-searchfield.html
+fast/replaced/width100percent-textfield.html
+fast/transforms/transformed-focused-text-input.html
+editing/selection/14971.html
+
+# Size of select is different when running DRT/WTR
+fast/replaced/three-selects-break.html
+
+# [Qt] Images scale differently in WK1 and WK2
+# https://bugs.webkit.org/show_bug.cgi?id=92015
+css2.1/t090501-c414-flt-02-d-g.html
+css2.1/t090501-c414-flt-03-b-g.html
+css2.1/t090501-c414-flt-ln-01-d-g.html
+css2.1/t100304-c43-rpl-bbx-00-d-g.html
+css2.1/t100304-c43-rpl-bbx-01-d-g.html
+fast/block/positioning/replaced-inside-fixed-top-bottom.html
+svg/carto.net/scrollbar.svg
+svg/carto.net/selectionlist.svg
+tables/mozilla_expected_failures/bugs/bug85016.html
+
+# [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=92490
+fast/animation/request-animation-frame-iframe.html
+fast/animation/request-animation-frame-timestamps-advance.html
+fast/animation/request-animation-frame-timestamps.html
+fast/animation/request-animation-frame-within-callback.html
+fast/animation/request-animation-frame.html
+
+# [Qt][WK2] REGRESSION(r125045): It made fast/events/media-focus-in-standalone-media-document.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=93658
+fast/events/media-focus-in-standalone-media-document.html
+
+# New http/tests/securitycontentSecurityPolicy/object-src-url-blocked.html introduced in r124371 fails on EFL, GTK, Qt
+# https://bugs.webkit.org/show_bug.cgi?id=92963
+http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
+
+# REGRESSION(r127091): It made layout tests extremely slow
+# https://bugs.webkit.org/show_bug.cgi?id=83038
+http/tests/appcache
+
+# Qt plugins are not supported on WK2
+platform/qt/plugins/qt-qwidget-plugin.html
+
+# [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=95935
+http/tests/security/cross-origin-plugin-allowed.html
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html
+http/tests/security/cross-origin-plugin.html
+
+# ENABLE(OVERFLOW_SCROLLING) is disabled (not enabled)
+compositing/overflow/overflow-auto-with-touch-toggle.html
+
+# [Qt][WK2] REGRESSION(r128169): It made fast/events/dispatch-message-string-data.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=96396
+fast/events/dispatch-message-string-data.html
+
+# [Qt][WK2] fast/spatial-navigation/snav-media-elements.html timeouts
+# https://bugs.webkit.org/show_bug.cgi?id=96397
+fast/spatial-navigation/snav-media-elements.html
+
+# [Qt][WK2] REGRESSION(r128270): It made fast/events/popup-blocking-timers.html flakey
+# https://bugs.webkit.org/show_bug.cgi?id=96480
+fast/events/popup-blocking-timers.html
+
+# [Qt][WK2] New fast/forms/number/number-spinbutton-click-in-iframe.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=96634
+fast/forms/number/number-spinbutton-click-in-iframe.html
+
+# [Qt][WK2] New http/tests/security/storage-blocking* tests fails
+# https://bugs.webkit.org/show_bug.cgi?id=96859
+http/tests/security/storage-blocking-loosened-plugin.html
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html
+http/tests/security/storage-blocking-strengthened-plugin.html
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html
+
+# Unskipped by r129252 (wk2/Skipped list), but still fail on Qt WK2
+fast/dom/Geolocation/callback-exception.html
+fast/dom/Geolocation/callback-to-deleted-context.html
+fast/dom/Geolocation/callback-to-remote-context.html
+fast/dom/Geolocation/callback-to-remote-context2.html
+fast/dom/Geolocation/multiple-requests.html
+fast/dom/Geolocation/position-string.html
+fast/dom/Geolocation/reentrant-success.html
+fast/dom/Geolocation/success-clear-watch.html
+fast/dom/Geolocation/success.html
+fast/dom/Geolocation/timeout.html
+fast/dom/Geolocation/timestamp.html
+
+# Unskipped by r129486 (wk2/Skipped list), but still fail on Qt WK2
+fast/dom/Geolocation/delayed-permission-allowed-for-multiple-requests.html
+fast/dom/Geolocation/delayed-permission-allowed.html
+fast/dom/Geolocation/error-clear-watch.html
+fast/dom/Geolocation/error.html
+fast/dom/Geolocation/maximum-age.html
+fast/dom/Geolocation/reentrant-error.html
+fast/dom/Geolocation/watch.html
+
+# [Qt][WK2] fast/events/popup-blocked-from-fake-user-gesture.html times out
+# https://bugs.webkit.org/show_bug.cgi?id=97598
+fast/events/popup-blocked-from-fake-user-gesture.html
