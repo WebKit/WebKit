@@ -1,0 +1,38 @@
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
+Test that setVersion is not blocked if handle closed in versionchange handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "setversion-not-blocked.html"
+ver = 1
+blockedEventFired = false
+indexedDB.open(dbname)
+
+h1OpenOnSuccess():
+h1 = event.target.result
+indexedDB.open(dbname)
+
+h1OpenOnSuccess():
+h2 = event.target.result
+h1.setVersion(String(ver++))
+
+h2OnVersionChange():
+old = 1
+new = "1"
+h2.close()
+
+h1SetVersionOnBlocked():
+blockedEventFired = true
+
+h1SetVersionOnSuccess():
+
+transactionOnComplete():
+FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130
+FAIL blockedEventFired should be false. Was true.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

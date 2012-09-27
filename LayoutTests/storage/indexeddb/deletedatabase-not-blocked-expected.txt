@@ -1,0 +1,30 @@
+Test that deleteDatabase is not blocked when connections close in on versionchange callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "deletedatabase-not-blocked.html"
+blockedEventFired = false
+indexedDB.open(dbname)
+
+openOnSuccess():
+h = event.target.result
+indexedDB.deleteDatabase(dbname)
+
+onVersionChange():
+old = 1
+new = ""
+h.close()
+
+deleteDatabaseOnBlocked():
+blockedEventFired = true
+
+deleteDatabaseOnSuccess():
+FIXME: blocked event should not fire since connection closed. http://webkit.org/b/71130
+FAIL blockedEventFired should be false. Was true.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
