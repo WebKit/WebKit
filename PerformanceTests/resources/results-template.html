@@ -247,7 +247,8 @@ var mainPlotOptions = {
     lines: { show: false },
     points: { show: true },
     grid: {
-        borderWidth: 2,
+        borderWidth: 1,
+        borderColor: '#ccc',
         backgroundColor: '#fff',
         hoverable: true,
         autoHighlight: false,
@@ -259,7 +260,7 @@ var timePlotOptions = {
     xaxis: { show: false },
     lines: { show: true },
     grid: { borderWidth: 1, borderColor: '#ccc' },
-    colors: ['#06f']
+    colors: [ plotColor ]
 };
 
 function createPlot(container, test) {

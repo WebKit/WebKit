@@ -1,5 +1,11 @@
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed. Minor appearance tweaks after r129813.
+
+        * resources/results-template.html:
+
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Results page should warn about time-dependent distributions
         https://bugs.webkit.org/show_bug.cgi?id=97818
 
