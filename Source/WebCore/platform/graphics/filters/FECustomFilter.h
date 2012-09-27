@@ -50,7 +50,6 @@ class CustomFilterCompiledProgram;
 class CustomFilterGlobalContext;
 class CustomFilterMesh;
 class CustomFilterNumberParameter;
-class CustomFilterProgram;
 class CustomFilterTransformParameter;
 class CustomFilterValidatedProgram;
 class DrawingBuffer;
@@ -128,7 +127,6 @@ private:
     Platform3DObject m_multisampleRenderBuffer;
     Platform3DObject m_multisampleDepthBuffer;
 
-    RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;
 
     unsigned m_meshRows;
