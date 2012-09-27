@@ -1,3 +1,18 @@
+2012-09-26  Cosmin Truta  <ctruta@rim.com>
+
+        [BlackBerry] Allow denormal floats in ARM VFP
+        https://bugs.webkit.org/show_bug.cgi?id=97008
+
+        Reviewed by Filip Pizlo.
+        Reviewed internally by Yong Li.
+
+        Cleared the Flush-to-Zero flag in the ARM FPSCR register on QNX.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::enableIEEE754Denormal): Added.
+        (WTF::initializeThreading):
+        (WTF::initializeCurrentThreadInternal):
+
 2012-09-26  Michael Saboff  <msaboff@apple.com>
 
         Update ComplexTextController for 8 bit TextRun changes
