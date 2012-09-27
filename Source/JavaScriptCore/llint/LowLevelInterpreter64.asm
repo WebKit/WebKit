@@ -1328,7 +1328,10 @@ _llint_op_jneq_null:
 _llint_op_jneq_ptr:
     traceExecution()
     loadis 8[PB, PC, 8], t0
-    loadp 16[PB, PC, 8], t1
+    loadi 16[PB, PC, 8], t1
+    loadp CodeBlock[cfr], t2
+    loadp CodeBlock::m_globalObject[t2], t2
+    loadp JSGlobalObject::m_specialPointers[t2, t1, 8], t1
     bpneq t1, [cfr, t0, 8], .opJneqPtrTarget
     dispatch(4)
 

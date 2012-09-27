@@ -64,6 +64,7 @@ SOURCES += \
     bytecode/PutByIdStatus.cpp \
     bytecode/ResolveGlobalStatus.cpp \
     bytecode/SamplingTool.cpp \
+    bytecode/SpecialPointer.cpp \
     bytecode/SpeculatedType.cpp \
     bytecode/StructureStubClearingWatchpoint.cpp \
     bytecode/StructureStubInfo.cpp \

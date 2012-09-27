@@ -133,6 +133,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ResolveGlobalStatus.h \
 	Source/JavaScriptCore/bytecode/SamplingTool.cpp \
 	Source/JavaScriptCore/bytecode/SamplingTool.h \
+	Source/JavaScriptCore/bytecode/SpecialPointer.cpp \
+	Source/JavaScriptCore/bytecode/SpecialPointer.h \
 	Source/JavaScriptCore/bytecode/StructureSet.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.h \

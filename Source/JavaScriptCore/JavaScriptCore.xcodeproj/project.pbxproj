@@ -127,6 +127,8 @@
 		0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680CF14BBB3D100BFE272 /* LLIntData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4680D414BBD24900BFE272 /* HostCallReturnValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */; };
 		0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */; };
+		0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F55F0F114D1063600AC7649 /* AbstractPC.cpp */; };
 		0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55F0F214D1063600AC7649 /* AbstractPC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56A1D115000F31002992B1 /* ExecutionCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -898,6 +900,8 @@
 		0F4680CF14BBB3D100BFE272 /* LLIntData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntData.h; path = llint/LLIntData.h; sourceTree = "<group>"; };
 		0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HostCallReturnValue.cpp; sourceTree = "<group>"; };
 		0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostCallReturnValue.h; sourceTree = "<group>"; };
+		0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialPointer.cpp; sourceTree = "<group>"; };
+		0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecialPointer.h; sourceTree = "<group>"; };
 		0F55F0F114D1063600AC7649 /* AbstractPC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPC.cpp; sourceTree = "<group>"; };
 		0F55F0F214D1063600AC7649 /* AbstractPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPC.h; sourceTree = "<group>"; };
 		0F56A1D115000F31002992B1 /* ExecutionCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionCounter.h; sourceTree = "<group>"; };
@@ -2472,56 +2476,58 @@
 			children = (
 				0F63945115D07051006A597C /* ArrayProfile.cpp */,
 				0F63945215D07051006A597C /* ArrayProfile.h */,
-				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
-				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
-				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
-				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
-				0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */,
-				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
 				0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */,
-				0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */,
-				0F2BDC2B151FDE8B00CD8910 /* Operands.h */,
-				0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */,
-				0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */,
-				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
-				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
-				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
-				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
-				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
-				0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */,
-				0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */,
-				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
-				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
-				0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */,
-				0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */,
-				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
-				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
-				0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */,
-				0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */,
-				0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */,
 				0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */,
 				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
-				FEB63AA2159B9DA3008932A6 /* Comment.h */,
-				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
-				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
-				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,
-				0F0B83A514BCF50400885B4F /* CodeType.h */,
+				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
+				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
+				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,
+				0F0B83A514BCF50400885B4F /* CodeType.h */,
+				FEB63AA2159B9DA3008932A6 /* Comment.h */,
 				0F426A4A1460CD6B00131F8F /* DataFormat.h */,
 				0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */,
 				0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */,
 				969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */,
+				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
+				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
+				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
+				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
+				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
+				0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */,
+				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,
 				969A07930ED1D3AE00F1F681 /* Instruction.h */,
 				BCFD8C900EEB2EE700283848 /* JumpTable.cpp */,
 				BCFD8C910EEB2EE700283848 /* JumpTable.h */,
+				0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */,
+				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
+				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
+				0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */,
+				0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */,
+				0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */,
+				0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */,
+				0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */,
+				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
+				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
 				969A07940ED1D3AE00F1F681 /* Opcode.cpp */,
 				969A07950ED1D3AE00F1F681 /* Opcode.h */,
-				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
-				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
+				0F2BDC2B151FDE8B00CD8910 /* Operands.h */,
+				0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */,
+				0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */,
+				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
+				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
+				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
+				0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */,
+				0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */,
 				1429D8830ED21C3D00B89619 /* SamplingTool.cpp */,
 				1429D8840ED21C3D00B89619 /* SamplingTool.h */,
+				0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */,
+				0F5541B01613C1FB00CE3E25 /* SpecialPointer.h */,
+				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
+				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
+				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
 				0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */,
 				0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */,
 				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
@@ -2950,6 +2956,7 @@
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
+				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3554,6 +3561,7 @@
 				FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */,
 				C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */,
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
+				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

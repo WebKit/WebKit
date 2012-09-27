@@ -318,6 +318,9 @@ void JSGlobalObject::reset(JSValue prototype)
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+    
+    m_specialPointers[Special::CallFunction] = m_callFunction.get();
+    m_specialPointers[Special::ApplyFunction] = m_applyFunction.get();
 
     if (m_experimentsEnabled) {
         NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(exec->globalData(), this, m_objectPrototype.get()));

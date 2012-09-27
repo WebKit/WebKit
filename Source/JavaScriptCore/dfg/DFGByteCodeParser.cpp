@@ -2775,8 +2775,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Statically speculate for now. It makes sense to let speculate-only jneq_ptr
             // support simmer for a while before making it more general, since it's
             // already gnarly enough as it is.
+            ASSERT(pointerIsFunction(currentInstruction[2].u.specialPointer));
             addToGraph(
-                CheckFunction, OpInfo(currentInstruction[2].u.jsCell.get()),
+                CheckFunction,
+                OpInfo(actualPointerFor(m_inlineStackTop->m_codeBlock, currentInstruction[2].u.specialPointer)),
                 get(currentInstruction[1].u.operand));
             addToGraph(Jump, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr)));
             LAST_OPCODE(op_jneq_ptr);

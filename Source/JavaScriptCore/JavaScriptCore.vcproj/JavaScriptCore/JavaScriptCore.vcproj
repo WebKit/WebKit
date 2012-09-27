@@ -1698,6 +1698,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\SpecialPointer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\SpecialPointer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\SpeculatedType.cpp"
 				>
 			</File>

@@ -27,6 +27,7 @@
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
+#include "SpecialPointer.h"
 #include "StringPrototype.h"
 #include "StructureChain.h"
 #include "Watchpoint.h"
@@ -145,6 +146,8 @@ namespace JSC {
         WriteBarrier<Structure> m_regExpStructure;
         WriteBarrier<Structure> m_stringObjectStructure;
         WriteBarrier<Structure> m_internalFunctionStructure;
+        
+        void* m_specialPointers[Special::TableSize]; // Special pointers used by the LLInt and JIT.
 
         Debugger* m_debugger;
 
@@ -280,6 +283,12 @@ namespace JSC {
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
         Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+
+        void* actualPointerFor(Special::Pointer pointer)
+        {
+            ASSERT(pointer < Special::TableSize);
+            return m_specialPointers[pointer];
+        }
 
         WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }
         WatchpointSet* havingABadTimeWatchpoint() { return m_havingABadTimeWatchpoint.get(); }

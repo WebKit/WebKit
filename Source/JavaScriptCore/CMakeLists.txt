@@ -57,6 +57,7 @@ SET(JavaScriptCore_SOURCES
     bytecode/PutByIdStatus.cpp
     bytecode/ResolveGlobalStatus.cpp
     bytecode/SamplingTool.cpp
+    bytecode/SpecialPointer.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
     bytecode/Watchpoint.cpp

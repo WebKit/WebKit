@@ -975,12 +975,12 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
 void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
 {
     unsigned src = currentInstruction[1].u.operand;
-    JSCell* ptr = currentInstruction[2].u.jsCell.get();
+    Special::Pointer ptr = currentInstruction[2].u.specialPointer;
     unsigned target = currentInstruction[3].u.operand;
 
     emitLoad(src, regT1, regT0);
     addJump(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)), target);
-    addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(ptr)), target);
+    addJump(branchPtr(NotEqual, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr))), target);
 }
 
 void JIT::emit_op_eq(Instruction* currentInstruction)
