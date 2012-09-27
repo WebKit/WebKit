@@ -1,3 +1,15 @@
+2012-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Remove the clang pragmas to disable warnings in Noncopyable.h
+        https://bugs.webkit.org/show_bug.cgi?id=97826
+
+        Reviewed by Beth Dakin.
+
+        Warnings about C++11 extensions are already disabled project-wide now so there's no need
+        to keep these pragmas.
+
+        * wtf/Noncopyable.h:
+
 2012-09-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Clean up HasTrivialConstructor/Destructor

@@ -25,13 +25,9 @@
 
 #if COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS)
     #define WTF_MAKE_NONCOPYABLE(ClassName) \
-        CLANG_PRAGMA("clang diagnostic push") \
-        CLANG_PRAGMA("clang diagnostic ignored \"-Wunknown-pragmas\"") \
-        CLANG_PRAGMA("clang diagnostic ignored \"-Wc++0x-extensions\"") \
         private: \
             ClassName(const ClassName&) = delete; \
-            ClassName& operator=(const ClassName&) = delete; \
-        CLANG_PRAGMA("clang diagnostic pop")
+            ClassName& operator=(const ClassName&) = delete;
 #else
     #define WTF_MAKE_NONCOPYABLE(ClassName) \
         private: \
