@@ -38,36 +38,19 @@
 
 namespace WebCore {
 
-class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType {
+class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, protected DateTimeEditElement::EditControlOwner {
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();
-    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
 
 private:
-    // FIXME: DateTimeEditControlOwnerImpl should be removed by moving
-    // DateTimeEditElement::EditControlOwner into base class list of
-    // BaseMultipleFieldsDateAndTimeInputType.
-    class DateTimeEditControlOwnerImpl : public DateTimeEditElement::EditControlOwner {
-        WTF_MAKE_NONCOPYABLE(DateTimeEditControlOwnerImpl);
-
-    public:
-        DateTimeEditControlOwnerImpl(BaseMultipleFieldsDateAndTimeInputType&);
-        virtual ~DateTimeEditControlOwnerImpl();
-
-    private:
-        virtual void didBlurFromControl() OVERRIDE FINAL;
-        virtual void didFocusOnControl() OVERRIDE FINAL;
-        virtual void editControlValueChanged() OVERRIDE FINAL;
-        virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
-        virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
-        virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
-
-        BaseMultipleFieldsDateAndTimeInputType& m_dateAndTimeInputType;
-    };
-
-    friend class DateTimeEditControlOwnerImpl;
+    // DateTimeEditElement::EditControlOwner functions
+    virtual void didBlurFromControl() OVERRIDE FINAL;
+    virtual void didFocusOnControl() OVERRIDE FINAL;
+    virtual void editControlValueChanged() OVERRIDE FINAL;
+    virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
+    virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
 
     // InputType functions
     virtual void blur() OVERRIDE FINAL;
@@ -92,7 +75,6 @@ private:
     virtual void updateInnerTextValue() OVERRIDE FINAL;
 
     DateTimeEditElement* m_dateTimeEditElement;
-    DateTimeEditControlOwnerImpl m_dateTimeEditControlOwnerImpl;
 };
 
 } // namespace WebCore

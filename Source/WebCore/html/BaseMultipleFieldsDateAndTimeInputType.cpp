@@ -43,46 +43,32 @@
 
 namespace WebCore {
 
-BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::DateTimeEditControlOwnerImpl(BaseMultipleFieldsDateAndTimeInputType& dateAndTimeInputType)
-    : m_dateAndTimeInputType(dateAndTimeInputType)
-{
-}
-
-BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::~DateTimeEditControlOwnerImpl()
-{
-}
-
-void BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::didBlurFromControl()
+void BaseMultipleFieldsDateAndTimeInputType::didBlurFromControl()
 {
     // We don't need to call blur(). This function is called when control
     // lost focus.
 
     // Remove focus ring by CSS "focus" pseudo class.
-    m_dateAndTimeInputType.element()->setFocus(false);
+    element()->setFocus(false);
 }
 
-void BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::didFocusOnControl()
+void BaseMultipleFieldsDateAndTimeInputType::didFocusOnControl()
 {
     // We don't need to call focus(). This function is called when control
     // got focus.
 
     // Add focus ring by CSS "focus" pseudo class.
-    m_dateAndTimeInputType.element()->setFocus(true);
+    element()->setFocus(true);
 }
 
-void BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
+void BaseMultipleFieldsDateAndTimeInputType::editControlValueChanged()
 {
-    RefPtr<HTMLInputElement> input(m_dateAndTimeInputType.element());
-    input->setValueInternal(m_dateAndTimeInputType.m_dateTimeEditElement->value(), DispatchNoEvent);
+    RefPtr<HTMLInputElement> input(element());
+    input->setValueInternal(m_dateTimeEditElement->value(), DispatchNoEvent);
     input->setNeedsStyleRecalc();
     input->dispatchFormControlInputEvent();
     input->dispatchFormControlChangeEvent();
     input->notifyFormStateChanged();
-}
-
-String BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
-{
-    return m_dateAndTimeInputType.formatDateTimeFieldsState(dateTimeFieldsState);
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::hasCustomFocusLogic() const
@@ -90,20 +76,19 @@ bool BaseMultipleFieldsDateAndTimeInputType::hasCustomFocusLogic() const
     return false;
 }
 
-bool BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerDisabled() const
+bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerDisabled() const
 {
-    return m_dateAndTimeInputType.element()->readOnly();
+    return element()->readOnly();
 }
 
-bool BaseMultipleFieldsDateAndTimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerReadOnly() const
+bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerReadOnly() const
 {
-    return m_dateAndTimeInputType.element()->disabled();
+    return element()->disabled();
 }
 
 BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement* element)
     : BaseDateAndTimeInputType(element)
     , m_dateTimeEditElement(0)
-    , m_dateTimeEditControlOwnerImpl(*this)
 {
 }
 
@@ -128,7 +113,7 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
 {
     ASSERT(element()->shadow());
 
-    RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), m_dateTimeEditControlOwnerImpl));
+    RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), *this));
     m_dateTimeEditElement = dateTimeEditElement.get();
     element()->userAgentShadowRoot()->appendChild(m_dateTimeEditElement);
     updateInnerTextValue();
