@@ -468,7 +468,12 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
         if (!context.isSubSelector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             nextContext.visitedMatchType = VisitedMatchDisabled;
+
+        nextContext.pseudoStyle = NOPSEUDO;
     }
+
+    PseudoId nonSubSelectorPseudo(NOPSEUDO);
+    PseudoId& currentDynamicPseudo = relation == CSSSelector::SubSelector ? dynamicPseudo : nonSubSelectorPseudo;
 
     switch (relation) {
     case CSSSelector::Descendant:
@@ -477,7 +482,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->parentElement()) {
-            SelectorMatch match = checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+            SelectorMatch match = checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
             if (nextContext.element == nextContext.scope)
@@ -492,7 +497,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::DirectAdjacent:
         if (m_mode == ResolvingStyle && context.element->parentElement()) {
@@ -506,7 +511,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::IndirectAdjacent:
         if (m_mode == ResolvingStyle && context.element->parentElement()) {
@@ -519,7 +524,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
-            SelectorMatch match = checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+            SelectorMatch match = checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
         };
@@ -533,7 +538,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
              && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
         nextContext.isSubSelector = true;
-        return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::ShadowDescendant:
         {
@@ -547,7 +552,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
             nextContext.isSubSelector = false;
             nextContext.elementStyle = 0;
             nextContext.elementParentStyle = 0;
-            return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
+            return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
         }
     }
 
