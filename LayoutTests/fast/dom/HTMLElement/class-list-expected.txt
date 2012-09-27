@@ -31,10 +31,8 @@ PASS element.classList.contains('') threw expected DOMException with code 12
 PASS element.classList.contains('x y') threw expected DOMException with code 5
 PASS element.classList.add('') threw expected DOMException with code 12
 PASS element.classList.add('x y') threw expected DOMException with code 5
-PASS element.classList.add() threw exception TypeError: Not enough arguments.
 PASS element.classList.remove('') threw expected DOMException with code 12
 PASS element.classList.remove('x y') threw expected DOMException with code 5
-PASS element.classList.remove() threw exception TypeError: Not enough arguments.
 PASS element.classList.toggle('') threw expected DOMException with code 12
 PASS element.classList.toggle('x y') threw expected DOMException with code 5
 PASS element.classList.toggle() threw exception TypeError: Not enough arguments.
@@ -74,6 +72,26 @@ PASS element.classList.constructor is DOMTokenList
 PASS element.classList === element.classList is true
 PASS document.body.classList.contains("FAIL") is true
 PASS document.body.className is ""
+Variadic calls
+PASS element.className is "a b"
+PASS element.className is "a b c"
+PASS element.className is "a b c null d undefined 0 false"
+PASS element.className is "a b a"
+PASS element.classList.add('a', 'b', '') threw expected DOMException with code 12
+PASS element.className is ""
+PASS element.classList.add('a', 'b', 'c d') threw expected DOMException with code 5
+PASS element.className is ""
+PASS element.classList.add() did not throw exception.
+PASS observer.takeRecords().length is 1
+PASS element.className is "b d  "
+PASS element.className is "d  "
+PASS element.className is "a b c"
+PASS element.classList.remove('a', 'b', '') threw expected DOMException with code 12
+PASS element.className is "a b"
+PASS element.classList.remove('a', 'b', 'c d') threw expected DOMException with code 5
+PASS element.className is "a b"
+PASS element.classList.remove() did not throw exception.
+PASS observer.takeRecords().length is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

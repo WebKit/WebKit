@@ -38,6 +38,8 @@
 #include "webkit/WebKitDOMDocumentPrivate.h"
 #include "webkit/WebKitDOMIDBKey.h"
 #include "webkit/WebKitDOMIDBKeyPrivate.h"
+#include "webkit/WebKitDOMNode.h"
+#include "webkit/WebKitDOMNodePrivate.h"
 #include "webkit/WebKitDOMSVGPoint.h"
 #include "webkit/WebKitDOMSVGPointPrivate.h"
 #include "webkit/WebKitDOMSerializedScriptValue.h"
@@ -1452,6 +1454,49 @@ webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gf
     }
     WebKitDOMbool* result = WebKit::kit(gobjectResult.get());
     return result;
+}
+
+void
+webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj* self, const gchar* head, const gchar* tail)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    g_return_if_fail(head);
+    g_return_if_fail(tail);
+    WTF::String convertedHead = WTF::String::fromUTF8(head);
+    WTF::String convertedTail = WTF::String::fromUTF8(tail);
+    item->variadicStringMethod(convertedHead, convertedTail);
+}
+
+void
+webkit_dom_test_obj_variadic_double_method(WebKitDOMTestObj* self, gdouble head, gdouble tail)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    item->variadicDoubleMethod(head, tail);
+}
+
+void
+webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMNode* head, WebKitDOMNode* tail)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    g_return_if_fail(head);
+    g_return_if_fail(tail);
+    WebCore::Node* convertedHead = 0;
+    if (head) {
+        convertedHead = WebKit::core(head);
+        g_return_if_fail(convertedHead);
+    }
+    WebCore::Node* convertedTail = 0;
+    if (tail) {
+        convertedTail = WebKit::core(tail);
+        g_return_if_fail(convertedTail);
+    }
+    item->variadicNodeMethod(convertedHead, convertedTail);
 }
 
 glong

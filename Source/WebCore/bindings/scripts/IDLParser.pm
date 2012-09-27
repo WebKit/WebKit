@@ -1246,7 +1246,7 @@ sub parseOptionalOrRequiredArgument
         # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
         $type =~ s/\?//g;
         $paramDataNode->type($type);
-        $self->parseEllipsis();
+        $paramDataNode->isVariadic($self->parseEllipsis());
         $paramDataNode->name($self->parseArgumentName());
         return $paramDataNode;
     }

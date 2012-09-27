@@ -353,7 +353,7 @@ enum ParameterDefaultPolicy {
 
     template<>
     struct NativeValueTraits<String> {
-        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, String& indexedValue)
+        static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, String& indexedValue)
         {
             indexedValue = jsValue.toString(exec)->value(exec);
             return true;
@@ -362,7 +362,7 @@ enum ParameterDefaultPolicy {
 
     template<>
     struct NativeValueTraits<unsigned long> {
-        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned long& indexedValue)
+        static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned long& indexedValue)
         {
             if (!jsValue.isNumber())
                 return false;
@@ -377,7 +377,7 @@ enum ParameterDefaultPolicy {
 
     template<>
     struct NativeValueTraits<float> {
-        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, float& indexedValue)
+        static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, float& indexedValue)
         {
             indexedValue = jsValue.toFloat(exec);
             return !exec->hadException();
@@ -400,7 +400,25 @@ enum ParameterDefaultPolicy {
 
         for (unsigned i = 0; i < length; ++i) {
             T indexValue;
-            if (!TraitsType::arrayNativeValue(exec, object->get(exec, i), indexValue))
+            if (!TraitsType::nativeValue(exec, object->get(exec, i), indexValue))
+                return Vector<T>();
+            result.append(indexValue);
+        }
+        return result;
+    }
+
+    template <class T>
+    Vector<T> toNativeArguments(JSC::ExecState* exec, size_t startIndex = 0)
+    {
+        size_t length = exec->argumentCount();
+        ASSERT(startIndex <= length);
+
+        Vector<T> result;
+        typedef NativeValueTraits<T> TraitsType;
+
+        for (size_t i = startIndex; i < length; ++i) {
+            T indexValue;
+            if (!TraitsType::nativeValue(exec, exec->argument(i), indexValue))
                 return Vector<T>();
             result.append(indexValue);
         }

@@ -1405,15 +1405,22 @@ sub GenerateFunctionParametersCheck
 
     my @orExpression = ();
     my $numParameters = 0;
+    my $hasVariadic = 0;
     my $numMandatoryParams = @{$function->parameters};
     foreach my $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"}) {
             push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
             $numMandatoryParams--;
         }
+        if ($parameter->isVariadic) {
+            $hasVariadic = 1;
+            last;
+        }
         $numParameters++;
     }
-    push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+    if (!$hasVariadic) {
+        push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+    }
     return ($numMandatoryParams, join(" || ", @orExpression));
 }
 
@@ -1624,12 +1631,12 @@ sub GenerateArgumentsCountCheck
     my $dataNode = shift;
 
     my $numMandatoryParams = 0;
-    my $optionalSeen = 0;
+    my $allowNonOptional = 1;
     foreach my $param (@{$function->parameters}) {
-        if ($param->extendedAttributes->{"Optional"}) {
-            $optionalSeen = 1;
+        if ($param->extendedAttributes->{"Optional"} or $param->isVariadic) {
+            $allowNonOptional = 0;
         } else {
-            die "An argument must not be declared to be optional unless all subsequent arguments to the operation are also optional." if $optionalSeen;
+            die "An argument must not be declared to be optional unless all subsequent arguments to the operation are also optional." if !$allowNonOptional;
             $numMandatoryParams++;
         }
     }
@@ -1760,6 +1767,23 @@ sub GenerateParametersCheck
             $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
             $parameterCheckString .= "        goto fail;\n";
             $parameterCheckString .= "    }\n";
+        } elsif ($parameter->isVariadic) {
+            my $nativeElementType = GetNativeType($parameter->type);
+            if ($nativeElementType =~ />$/) {
+                $nativeElementType .= " ";
+            }
+
+            my $argType = GetTypeFromSignature($parameter);
+            if (IsWrapperType($argType)) {
+                $parameterCheckString .= "    Vector<$nativeElementType> $parameterName;\n";
+                $parameterCheckString .= "    for (int i = $paramIndex; i < args.Length(); ++i) {\n";
+                $parameterCheckString .= "        if (!V8${argType}::HasInstance(args[i]))\n";
+                $parameterCheckString .= "            return throwTypeError(0, args.GetIsolate());\n";
+                $parameterCheckString .= "        $parameterName.append(V8${argType}::toNative(v8::Handle<v8::Object>::Cast(args[i])));\n";
+                $parameterCheckString .= "    }\n";
+            } else {
+                $parameterCheckString .= "    EXCEPTION_BLOCK(Vector<$nativeElementType>, $parameterName, toNativeArguments<$nativeElementType>(args, $paramIndex));\n";
+            }
         } elsif ($nativeType =~ /^V8Parameter/) {
             my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
             $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";

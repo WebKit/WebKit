@@ -67,7 +67,8 @@ struct( domSignature => {
     name => '$',      # Variable name
     type => '$',      # Variable type
     extendedAttributes => '$', # Extended attributes
-    isNullable => '$' # Is variable type Nullable (T?)
+    isNullable => '$', # Is variable type Nullable (T?)
+    isVariadic => '$' # Is variable variadic (long... numbers)
 });
 
 # Used to represent string constants

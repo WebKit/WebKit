@@ -31,8 +31,8 @@ module core {
         readonly attribute unsigned long length;
         [TreatReturnedNullStringAs=Null] DOMString item(in unsigned long index);
         boolean contains(in DOMString token) raises(DOMException);
-        void add(in DOMString token) raises(DOMException);
-        void remove(in DOMString token) raises(DOMException);
+        void add(in DOMString... tokens) raises(DOMException);
+        void remove(in DOMString... tokens) raises(DOMException);
         boolean toggle(in DOMString token) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

@@ -154,9 +154,6 @@ shouldThrowDOMException(function() {
 }, DOMException.INVALID_CHARACTER_ERR);
 
 createElement('');
-shouldThrow("element.classList.add()");
-
-createElement('');
 shouldThrowDOMException(function() {
     element.classList.remove('');
 }, DOMException.SYNTAX_ERR);
@@ -166,8 +163,7 @@ shouldThrowDOMException(function() {
     element.classList.remove('x y');
 }, DOMException.INVALID_CHARACTER_ERR);
 
-createElement('');
-shouldThrow("element.classList.remove()");
+
 
 createElement('');
 shouldThrowDOMException(function() {
@@ -265,3 +261,72 @@ document.body.classList.add('FAIL');
 shouldBeTrue('document.body.classList.contains("FAIL")');
 document.body.classList.remove('FAIL');
 shouldBeEqualToString('document.body.className', '');
+
+// Variadic
+
+debug('Variadic calls');
+
+createElement('');
+element.classList.add('a', 'b');
+shouldBeEqualToString('element.className', 'a b');
+
+element.classList.add('a', 'b', 'c');
+shouldBeEqualToString('element.className', 'a b c');
+
+element.classList.add(null, {toString: function() { return 'd' }}, undefined, 0, false);
+shouldBeEqualToString('element.className', 'a b c null d undefined 0 false');
+
+createElement('');
+element.classList.add('a', 'b', 'a');
+shouldBeEqualToString('element.className', 'a b a');
+
+createElement('');
+shouldThrowDOMException(function() {
+    element.classList.add('a', 'b', '');
+}, DOMException.SYNTAX_ERR);
+shouldBeEqualToString('element.className', '');
+
+shouldThrowDOMException(function() {
+    element.classList.add('a', 'b', 'c d');
+}, DOMException.INVALID_CHARACTER_ERR);
+shouldBeEqualToString('element.className', '');
+
+createElement('');
+shouldNotThrow('element.classList.add()');
+
+createElement('');
+var observer = new WebKitMutationObserver(function() {});
+observer.observe(element, {attributes: true});
+element.classList.add('a', 'c');
+shouldBe('observer.takeRecords().length', '1');
+
+
+createElement('a b c d  ');
+element.classList.remove('a', 'c');
+shouldBeEqualToString('element.className', 'b d  ');
+
+element.classList.remove('b', 'b');
+shouldBeEqualToString('element.className', 'd  ');
+
+createElement('a b c null d undefined 0 false');
+element.classList.remove(null, {toString: function() { return 'd' }}, undefined, 0, false);
+shouldBeEqualToString('element.className', 'a b c');
+
+createElement('a b');
+shouldThrowDOMException(function() {
+    element.classList.remove('a', 'b', '');
+}, DOMException.SYNTAX_ERR);
+shouldBeEqualToString('element.className', 'a b');
+
+shouldThrowDOMException(function() {
+    element.classList.remove('a', 'b', 'c d');
+}, DOMException.INVALID_CHARACTER_ERR);
+shouldBeEqualToString('element.className', 'a b');
+
+shouldNotThrow('element.classList.remove()');
+
+createElement('a b c');
+observer = new WebKitMutationObserver(function() {});
+observer.observe(element, {attributes: true});
+element.classList.remove('a', 'c');
+shouldBe('observer.takeRecords().length', '1');

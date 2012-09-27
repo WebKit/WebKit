@@ -486,6 +486,42 @@ WEBKIT_API WebKitDOMbool*
 webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error);
 
 /**
+ * webkit_dom_test_obj_variadic_string_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #gchar
+ * @tail: A #gchar
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj* self, const gchar* head, const gchar* tail);
+
+/**
+ * webkit_dom_test_obj_variadic_double_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #gdouble
+ * @tail: A #gdouble
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_double_method(WebKitDOMTestObj* self, gdouble head, gdouble tail);
+
+/**
+ * webkit_dom_test_obj_variadic_node_method:
+ * @self: A #WebKitDOMTestObj
+ * @head: A #WebKitDOMNode
+ * @tail: A #WebKitDOMNode
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMNode* head, WebKitDOMNode* tail);
+
+/**
  * webkit_dom_test_obj_get_read_only_long_attr:
  * @self: A #WebKitDOMTestObj
  *

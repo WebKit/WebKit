@@ -25,21 +25,17 @@
 #include "config.h"
 #include "ClassList.h"
 
-#include "Element.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "SpaceSplitString.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 ClassList::ClassList(Element* element)
     : m_element(element)
 {
     if (m_element->document()->inQuirksMode())
-        m_classNamesForQuirksMode.set(m_element->getAttribute(classAttr), false);
+        m_classNamesForQuirksMode.set(value(), false);
 }
 
 void ClassList::ref()
@@ -64,69 +60,9 @@ const AtomicString ClassList::item(unsigned index) const
     return classNames()[index];
 }
 
-bool ClassList::contains(const AtomicString& token, ExceptionCode& ec) const
-{
-    if (!validateToken(token, ec))
-        return false;
-    return containsInternal(token);
-}
-
 bool ClassList::containsInternal(const AtomicString& token) const
 {
     return m_element->hasClass() && classNames().contains(token);
-}
-
-void ClassList::add(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return;
-    addInternal(token);
-}
-
-void ClassList::addInternal(const AtomicString& token)
-{
-    const AtomicString& oldClassName(m_element->getAttribute(classAttr));
-    if (oldClassName.isEmpty())
-        m_element->setAttribute(classAttr, token);
-    else if (!containsInternal(token)) {
-        const AtomicString& newClassName(addToken(oldClassName, token));
-        m_element->setAttribute(classAttr, newClassName);
-    }
-}
-
-void ClassList::remove(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return;
-    removeInternal(token);
-}
-
-void ClassList::removeInternal(const AtomicString& token)
-{
-    // Check using contains first since it uses AtomicString comparisons instead
-    // of character by character testing.
-    if (!containsInternal(token))
-        return;
-    const AtomicString& newClassName(removeToken(m_element->getAttribute(classAttr), token));
-    m_element->setAttribute(classAttr, newClassName);
-}
-
-bool ClassList::toggle(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return false;
-
-    if (containsInternal(token)) {
-        removeInternal(token);
-        return false;
-    }
-    addInternal(token);
-    return true;
-}
-
-String ClassList::toString() const
-{
-    return m_element->getAttribute(classAttr);
 }
 
 void ClassList::reset(const String& newClassName)

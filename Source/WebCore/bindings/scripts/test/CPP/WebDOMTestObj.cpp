@@ -26,12 +26,14 @@
 #include "HTMLNames.h"
 #include "IDBKey.h"
 #include "KURL.h"
+#include "Node.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
 #include "WebDOMIDBKey.h"
+#include "WebDOMNode.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebDOMa.h"
@@ -963,6 +965,30 @@ WebDOMbool WebDOMTestObj::strictFunction(const WebDOMString& str, float a, int b
     WebDOMbool result = toWebKit(WTF::getPtr(impl()->strictFunction(str, a, b, ec)));
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
     return result;
+}
+
+void WebDOMTestObj::variadicStringMethod(const WebDOMString& head, const WebDOMString& tail)
+{
+    if (!impl())
+        return;
+
+    impl()->variadicStringMethod(head, tail);
+}
+
+void WebDOMTestObj::variadicDoubleMethod(double head, double tail)
+{
+    if (!impl())
+        return;
+
+    impl()->variadicDoubleMethod(head, tail);
+}
+
+void WebDOMTestObj::variadicNodeMethod(const WebDOMNode& head, const WebDOMNode& tail)
+{
+    if (!impl())
+        return;
+
+    impl()->variadicNodeMethod(toWebCore(head), toWebCore(tail));
 }
 
 WebCore::TestObj* toWebCore(const WebDOMTestObj& wrapper)

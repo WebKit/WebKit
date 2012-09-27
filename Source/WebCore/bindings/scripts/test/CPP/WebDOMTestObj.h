@@ -34,6 +34,7 @@ class WebDOMDictionary;
 class WebDOMDocument;
 class WebDOMEventListener;
 class WebDOMIDBKey;
+class WebDOMNode;
 class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestObj;
@@ -190,6 +191,9 @@ public:
     WebDOMSVGPoint immutablePointFunction();
     void banana();
     WebDOMbool strictFunction(const WebDOMString& str, float a, int b);
+    void variadicStringMethod(const WebDOMString& head, const WebDOMString& tail);
+    void variadicDoubleMethod(double head, double tail);
+    void variadicNodeMethod(const WebDOMNode& head, const WebDOMNode& tail);
 
     WebCore::TestObj* impl() const;
 

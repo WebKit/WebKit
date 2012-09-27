@@ -45,6 +45,7 @@
 #include "V8DOMWrapper.h"
 #include "V8Document.h"
 #include "V8Float32Array.h"
+#include "V8Node.h"
 #include "V8SVGDocument.h"
 #include "V8SVGPoint.h"
 #include "V8ScriptProfile.h"
@@ -1890,6 +1891,47 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> variadicStringMethodCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.variadicStringMethod");
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, head, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    EXCEPTION_BLOCK(Vector<String>, tail, toNativeArguments<String>(args, 1));
+    imp->variadicStringMethod(head, tail);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> variadicDoubleMethodCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.variadicDoubleMethod");
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(double, head, static_cast<double>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)->NumberValue()));
+    EXCEPTION_BLOCK(Vector<double>, tail, toNativeArguments<double>(args, 1));
+    imp->variadicDoubleMethod(head, tail);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> variadicNodeMethodCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.variadicNodeMethod");
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(Node*, head, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    Vector<RefPtr<Node> > tail;
+    for (int i = 1; i < args.Length(); ++i) {
+        if (!V8Node::HasInstance(args[i]))
+            return throwTypeError(0, args.GetIsolate());
+        tail.append(V8Node::toNative(v8::Handle<v8::Object>::Cast(args[i])));
+    }
+    imp->variadicNodeMethod(head, tail);
+    return v8Undefined();
+}
+
 } // namespace TestObjV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
@@ -2071,6 +2113,8 @@ static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
     {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionCallback},
     {"orange", TestObjV8Internal::orangeCallback},
     {"strictFunction", TestObjV8Internal::strictFunctionCallback},
+    {"variadicStringMethod", TestObjV8Internal::variadicStringMethodCallback},
+    {"variadicDoubleMethod", TestObjV8Internal::variadicDoubleMethodCallback},
 };
 
 static const V8DOMConfiguration::BatchedConstant V8TestObjConsts[] = {
@@ -2222,6 +2266,12 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> convert5Argv[convert5Argc] = { V8e::GetRawTemplate() };
     v8::Handle<v8::Signature> convert5Signature = v8::Signature::New(desc, convert5Argc, convert5Argv);
     proto->Set(v8::String::NewSymbol("convert5"), v8::FunctionTemplate::New(TestObjV8Internal::convert5Callback, v8Undefined(), convert5Signature));
+
+    // Custom Signature 'variadicNodeMethod'
+    const int variadicNodeMethodArgc = 2;
+    v8::Handle<v8::FunctionTemplate> variadicNodeMethodArgv[variadicNodeMethodArgc] = { V8Node::GetRawTemplate(), V8Node::GetRawTemplate() };
+    v8::Handle<v8::Signature> variadicNodeMethodSignature = v8::Signature::New(desc, variadicNodeMethodArgc, variadicNodeMethodArgv);
+    proto->Set(v8::String::NewSymbol("variadicNodeMethod"), v8::FunctionTemplate::New(TestObjV8Internal::variadicNodeMethodCallback, v8Undefined(), variadicNodeMethodSignature));
     V8DOMConfiguration::batchConfigureConstants(desc, proto, V8TestObjConsts, WTF_ARRAY_LENGTH(V8TestObjConsts));
 
     // Custom toString template

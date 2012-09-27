@@ -49,23 +49,138 @@ bool DOMTokenList::validateToken(const AtomicString& token, ExceptionCode& ec)
     return true;
 }
 
+bool DOMTokenList::validateTokens(const Vector<String>& tokens, ExceptionCode& ec)
+{
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (!validateToken(tokens[i], ec))
+            return false;
+    }
+
+    return true;
+}
+
+bool DOMTokenList::contains(const AtomicString& token, ExceptionCode& ec) const
+{
+    if (!validateToken(token, ec))
+        return false;
+    return containsInternal(token);
+}
+
+void DOMTokenList::add(const AtomicString& token, ExceptionCode& ec)
+{
+    Vector<String> tokens;
+    tokens.append(token.string());
+    add(tokens, ec);
+}
+
+void DOMTokenList::add(const Vector<String>& tokens, ExceptionCode& ec)
+{
+    Vector<String> filteredTokens;
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (!validateToken(tokens[i], ec))
+            return;
+        if (!containsInternal(tokens[i]))
+            filteredTokens.append(tokens[i]);
+    }
+
+    if (filteredTokens.isEmpty())
+        return;
+
+    setValue(addTokens(value(), filteredTokens));
+}
+
+void DOMTokenList::remove(const AtomicString& token, ExceptionCode& ec)
+{
+    Vector<String> tokens;
+    tokens.append(token.string());
+    remove(tokens, ec);
+}
+
+void DOMTokenList::remove(const Vector<String>& tokens, ExceptionCode& ec)
+{
+    if (!validateTokens(tokens, ec))
+        return;
+
+    // Check using containsInternal first since it is a lot faster than going
+    // through the string character by character.
+    bool found = false;
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (containsInternal(tokens[i])) {
+            found = true;
+            break;
+        }
+    }
+
+    if (found)
+        setValue(removeTokens(value(), tokens));
+}
+
+bool DOMTokenList::toggle(const AtomicString& token, ExceptionCode& ec)
+{
+    if (!validateToken(token, ec))
+        return false;
+
+    if (containsInternal(token)) {
+        removeInternal(token);
+        return false;
+    }
+    addInternal(token);
+    return true;
+}
+
+void DOMTokenList::addInternal(const AtomicString& token)
+{
+    if (!containsInternal(token))
+        setValue(addToken(value(), token));
+}
+
+void DOMTokenList::removeInternal(const AtomicString& token)
+{
+    // Check using contains first since it uses AtomicString comparisons instead
+    // of character by character testing.
+    if (!containsInternal(token))
+        return;
+    setValue(removeToken(value(), token));
+}
+
 String DOMTokenList::addToken(const AtomicString& input, const AtomicString& token)
 {
-    if (input.isEmpty())
-        return token;
+    Vector<String> tokens;
+    tokens.append(token.string());
+    return addTokens(input, tokens);
+}
+
+String DOMTokenList::addTokens(const AtomicString& input, const Vector<String>& tokens)
+{
+    bool needsSpace = false;
 
     StringBuilder builder;
-    builder.append(input);
-    if (!isHTMLSpace(input[input.length() - 1]))
-        builder.append(' ');
+    if (!input.isEmpty()) {
+        builder.append(input);
+        needsSpace = !isHTMLSpace(input[input.length() - 1]);
+    }
 
-    builder.append(token);
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        if (needsSpace)
+            builder.append(' ');
+        builder.append(tokens[i]);
+        needsSpace = true;
+    }
+
     return builder.toString();
 }
 
 String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& token)
 {
+    Vector<String> tokens;
+    tokens.append(token.string());
+    return removeTokens(input, tokens);
+}
+
+String DOMTokenList::removeTokens(const AtomicString& input, const Vector<String>& tokens)
+{
     // Algorithm defined at http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#remove-a-token-from-a-string
+    // New spec is at http://dom.spec.whatwg.org/#remove-a-token-from-a-string
 
     unsigned inputLength = input.length();
     StringBuilder output; // 3
@@ -85,7 +200,7 @@ String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& 
             s.append(input[position++]);
 
         // Step 8
-        if (s.toStringPreserveCapacity() == token) {
+        if (tokens.contains(s.toStringPreserveCapacity())) {
             // Step 8.1
             while (position < inputLength && isHTMLSpace(input[position]))
                 ++position;

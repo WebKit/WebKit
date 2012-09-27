@@ -58,6 +58,7 @@
 #import "IDBKey.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
+#import "Node.h"
 #import "ObjCEventListener.h"
 #import "SVGDocument.h"
 #import "SVGStaticPropertyTearOff.h"
@@ -1044,6 +1045,24 @@
     DOMbool *result = kit(WTF::getPtr(IMPL->strictFunction(str, a, b, ec)));
     WebCore::raiseOnDOMError(ec);
     return result;
+}
+
+- (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->variadicStringMethod(head, tail);
+}
+
+- (void)variadicDoubleMethod:(double)head tail:(double)tail
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->variadicDoubleMethod(head, tail);
+}
+
+- (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->variadicNodeMethod(core(head), core(tail));
 }
 
 @end

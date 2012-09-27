@@ -262,5 +262,9 @@ module test {
         [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
 
         attribute [Replaceable] long replaceableAttribute;
+
+        void variadicStringMethod(in DOMString head, in DOMString... tail);
+        void variadicDoubleMethod(in double head, in double... tail);
+        void variadicNodeMethod(in Node head, in Node... tail);
     };
 }

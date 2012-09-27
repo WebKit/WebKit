@@ -1308,6 +1308,7 @@ sub GenerateFunctionParametersCheck
     my @orExpression = ();
     my $numParameters = 0;
     my @neededArguments = ();
+    my $hasVariadic = 0;
     my $numMandatoryParams = @{$function->parameters};
 
     foreach my $parameter (@{$function->parameters}) {
@@ -1317,11 +1318,17 @@ sub GenerateFunctionParametersCheck
             push(@neededArguments, @usedArguments);
             $numMandatoryParams--;
         }
+        if ($parameter->isVariadic) {
+            $hasVariadic = 1;
+            last;
+        }
         $numParameters++;
     }
-    my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
-    push(@orExpression, $expression);
-    push(@neededArguments, @usedArguments);
+    if (!$hasVariadic) {
+        my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
+        push(@orExpression, $expression);
+        push(@neededArguments, @usedArguments);
+    }
     return ($numMandatoryParams, join(" || ", @orExpression), @neededArguments);
 }
 
@@ -2604,7 +2611,7 @@ sub GenerateArgumentsCountCheck
 
     my $numMandatoryParams = @{$function->parameters};
     foreach my $param (reverse(@{$function->parameters})) {
-        if ($param->extendedAttributes->{"Optional"}) {
+        if ($param->extendedAttributes->{"Optional"} or $param->isVariadic) {
             $numMandatoryParams--;
         } else {
             last;
@@ -2707,13 +2714,38 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
             }
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
-                my $nativeValue = "${name}NativeValue";
-                push(@$outputArray, "    $argType $name = 0;\n");
-                push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
+            my $nativeValue = "${name}NativeValue";
+            push(@$outputArray, "    $argType $name = 0;\n");
+            push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
+            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
+            push(@$outputArray, "    if (!isnan($nativeValue))\n");
+            push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
+        } elsif ($parameter->isVariadic) {
+            my $nativeElementType;
+            if ($argType eq "DOMString") {
+                $nativeElementType = "String";
+            } else {
+                $nativeElementType = GetNativeType($argType);
+                if ($nativeElementType =~ />$/) {
+                    $nativeElementType .= " ";
+                }
+            }
+
+            if (!IsNativeType($argType)) {
+                push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
+                push(@$outputArray, "    for (unsigned i = $argsIndex; i < exec->argumentCount(); ++i) {\n");
+                push(@$outputArray, "        if (!exec->argument(i).inherits(&JS${argType}::s_info))\n");
+                push(@$outputArray, "            return throwVMTypeError(exec);\n");
+                push(@$outputArray, "        $name.append(to$argType(exec->argument(i)));\n");
+                push(@$outputArray, "    }\n")
+            } else {
+                push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(exec, $argsIndex);\n");
+                # Check if the type conversion succeeded.
                 push(@$outputArray, "    if (exec->hadException())\n");
-                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
-                push(@$outputArray, "    if (!isnan($nativeValue))\n");
-                push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+            }
+
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError

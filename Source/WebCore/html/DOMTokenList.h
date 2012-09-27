@@ -45,18 +45,32 @@ public:
 
     virtual unsigned length() const = 0;
     virtual const AtomicString item(unsigned index) const = 0;
-    virtual bool contains(const AtomicString&, ExceptionCode&) const = 0;
-    virtual void add(const AtomicString&, ExceptionCode&) = 0;
-    virtual void remove(const AtomicString&, ExceptionCode&) = 0;
-    virtual bool toggle(const AtomicString&, ExceptionCode&) = 0;
-    virtual String toString() const = 0;
+
+    bool contains(const AtomicString&, ExceptionCode&) const;
+    virtual void add(const Vector<String>&, ExceptionCode&);
+    void add(const AtomicString&, ExceptionCode&);
+    virtual void remove(const Vector<String>&, ExceptionCode&);
+    void remove(const AtomicString&, ExceptionCode&);
+    bool toggle(const AtomicString&, ExceptionCode&);
+
+    AtomicString toString() const { return value(); }
 
     virtual Element* element() { return 0; }
 
 protected:
+    virtual AtomicString value() const = 0;
+    virtual void setValue(const AtomicString&) = 0;
+
+    virtual void addInternal(const AtomicString&);
+    virtual bool containsInternal(const AtomicString&) const = 0;
+    virtual void removeInternal(const AtomicString&);
+
     static bool validateToken(const AtomicString&, ExceptionCode&);
+    static bool validateTokens(const Vector<String>&, ExceptionCode&);
     static String addToken(const AtomicString&, const AtomicString&);
+    static String addTokens(const AtomicString&, const Vector<String>&);
     static String removeToken(const AtomicString&, const AtomicString&);
+    static String removeTokens(const AtomicString&, const Vector<String>&);
 };
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 @class DOMDictionary;
 @class DOMDocument;
 @class DOMIDBKey;
+@class DOMNode;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
 @class DOMTestObj;
@@ -173,6 +174,9 @@ enum {
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)orange;
 - (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b;
+- (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail;
+- (void)variadicDoubleMethod:(double)head tail:(double)tail;
+- (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 @end
 
 #endif
