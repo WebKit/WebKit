@@ -735,10 +735,6 @@ http/tests/inspector/network/network-size-sync.html
 # https://bugs.webkit.org/show_bug.cgi?id=65911
 http/tests/inspector/resource-main-cookies.php
 
-# [Qt] REGRESSION(r105310): Two inspector tests fails
-# https://bugs.webkit.org/show_bug.cgi?id=76566
-http/tests/inspector/console-cross-origin-iframe-logging.html
-
 # [Qt]http/tests/workers/terminate-during-sync-operation.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=75614
 http/tests/workers/terminate-during-sync-operation.html
