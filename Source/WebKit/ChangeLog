@@ -1,3 +1,16 @@
+2012-09-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][CMAKE] Default theme files are outdated in PlatformEfl.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=97769
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update Default theme files in PlatformEfl.cmake so that
+        changes to those files are properly picked up by CMake
+        when building incrementally.
+
+        * PlatformEfl.cmake:
+
 2012-09-24  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add cookie database API

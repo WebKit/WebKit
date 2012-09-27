@@ -164,70 +164,94 @@ ADD_CUSTOM_COMMAND(
   COMMAND ${EDJE_CC_EXECUTABLE} -v -id ${WEBKIT_DIR}/efl/DefaultTheme ${WebKit_THEME_DEFINITION} ${WEBKIT_DIR}/efl/DefaultTheme/default.edc ${WebKit_THEME}
   DEPENDS
     ${WEBKIT_DIR}/efl/DefaultTheme/default.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_normal.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_press.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/check.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_focus_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_hover_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_normal_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_normal.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_press_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_press.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/icon.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/entry.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_focused.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_hovered.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_normal.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_normal.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_press.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/fullscreenbutton/fullscreen_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/mutebutton/mute_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/mutebutton/mutebutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/mutebutton/unmutebutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/playpausebutton/pausebutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/playpausebutton/playbutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/playpausebutton/playpause_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackwardbutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforward_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforwardbutton.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption_disabled.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/closedcaption.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/mediacontrol/togglecaptionsbutton/toggle_captions_button.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/bt_base.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/progressbar.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/shelf_inset.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on_focus.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/radio.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_v.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_v.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/cancel_normal_button2.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/cancel_normal_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/search_cancel.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/decoration/decoration_normal_button.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/decoration/search_decoration.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_focused.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_hovered.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_normal.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/search_field.edc
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_fill_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_fill_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_fill_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_h.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_h.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_press_h.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_press_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_v.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_focus_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_press.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/icon.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_normal.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_normal_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_hover_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_press_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/decoration/search_decoration.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/decoration/decoration_normal_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_hovered.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/search_field.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_normal.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/field/field_focused.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/cancel_normal_button.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/cancel_normal_button2.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/search/cancel/search_cancel.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/check.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_off.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/check/img_check_on.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/radio.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_off.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/radio/img_radio_on_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_normal.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_press.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/img_button_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/button/button.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/entry.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_normal.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_focused.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/entry/img_hovered.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_h.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_v.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_v.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_h.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/scrollbar/scrollbar.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_normal.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_press.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_hover.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_focus.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/progressbar.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/shelf_inset.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/bt_base.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_bg.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_down_default.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_down_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_down_pressed.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/spinner.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_up_default.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_up_hover.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/spinner/sp_up_pressed.png
   VERBATIM
 )
 
