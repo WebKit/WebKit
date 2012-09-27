@@ -1,3 +1,18 @@
+2012-09-27  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [Mac][DRT] Add support to allow non-array modifier arguments in keyDown()
+        https://bugs.webkit.org/show_bug.cgi?id=97805
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for handling a string as modifier argument to keyDown().
+        This support has already been added to other ports, so implementing
+        this on Mac too, to be consistent with the other ports.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (modifierFlags):
+        (buildModifierFlags):
+
 2012-09-27  Dirk Pranke  <dpranke@chromium.org>
 
         efl wk2 bots weren't looking at platform/wk2/TestExpectations

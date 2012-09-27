@@ -299,21 +299,31 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         clickCount++;
 }
 
+static int modifierFlags(const NSString* modifierName)
+{
+    int flags = 0;
+    if ([modifierName isEqual:@"ctrlKey"])
+        flags |= NSControlKeyMask;
+    else if ([modifierName isEqual:@"shiftKey"] || [modifierName isEqual:@"rangeSelectionKey"])
+        flags |= NSShiftKeyMask;
+    else if ([modifierName isEqual:@"altKey"])
+        flags |= NSAlternateKeyMask;
+    else if ([modifierName isEqual:@"metaKey"] || [modifierName isEqual:@"addSelectionKey"])
+        flags |= NSCommandKeyMask;
+
+    return flags;
+}
+
 static int buildModifierFlags(const WebScriptObject* modifiers)
 {
     int flags = 0;
-    if (![modifiers isKindOfClass:[WebScriptObject class]])
+    if ([modifiers isKindOfClass:[NSString class]])
+        return modifierFlags((NSString*)modifiers);
+    else if (![modifiers isKindOfClass:[WebScriptObject class]])
         return flags;
     for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
         NSString* modifierName = (NSString*)[modifiers webScriptValueAtIndex:i];
-        if ([modifierName isEqual:@"ctrlKey"])
-            flags |= NSControlKeyMask;
-        else if ([modifierName isEqual:@"shiftKey"] || [modifierName isEqual:@"rangeSelectionKey"])
-            flags |= NSShiftKeyMask;
-        else if ([modifierName isEqual:@"altKey"])
-            flags |= NSAlternateKeyMask;
-        else if ([modifierName isEqual:@"metaKey"] || [modifierName isEqual:@"addSelectionKey"])
-            flags |= NSCommandKeyMask;
+        flags |= modifierFlags(modifierName);
     }
     return flags;
 }
