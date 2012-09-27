@@ -542,6 +542,20 @@ private:
 
 }
 
+static void addMemoryInstrumentationDebugData(TypeBuilder::Array<InspectorMemoryBlock>* children, const MemoryInstrumentationImpl& memoryInstrumentation)
+{
+    if (memoryInstrumentation.checkInstrumentedObjects()) {
+        RefPtr<InspectorMemoryBlock> totalInstrumented = InspectorMemoryBlock::create().setName("InstrumentedObjectsCount");
+        totalInstrumented->setSize(memoryInstrumentation.totalCountedObjects());
+
+        RefPtr<InspectorMemoryBlock> incorrectlyInstrumented = InspectorMemoryBlock::create().setName("InstrumentedButNotAllocatedObjectsCount");
+        incorrectlyInstrumented->setSize(memoryInstrumentation.totalObjectsNotInAllocatedSet());
+
+        children->addItem(totalInstrumented);
+        children->addItem(incorrectlyInstrumented);
+    }
+}
+
 static void collectDomTreeInfo(Page* page, InspectorClient* inspectorClient, VisitedObjects& visitedObjects, TypeBuilder::Array<InspectorMemoryBlock>* children, InspectorDataCounter* inspectorData)
 {
     HashSet<const void*> allocatedObjects;
@@ -570,6 +584,7 @@ static void collectDomTreeInfo(Page* page, InspectorClient* inspectorClient, Vis
     domTreesIterator.visitMemoryCache();
 
     domTreesIterator.dumpStatistics(children, inspectorData);
+    addMemoryInstrumentationDebugData(children, memoryInstrumentation);
 }
 
 static void addPlatformComponentsInfo(PassRefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children)

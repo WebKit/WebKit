@@ -63,6 +63,10 @@ public:
         return size;
     }
 
+    bool checkInstrumentedObjects() const { return m_allocatedObjects; }
+    size_t totalCountedObjects() const { return m_totalCountedObjects; }
+    size_t totalObjectsNotInAllocatedSet() const { return m_totalObjectsNotInAllocatedSet; }
+
 private:
     virtual void countObjectSize(MemoryObjectType, size_t) OVERRIDE;
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
@@ -76,6 +80,7 @@ private:
     Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
     const VisitedObjects* m_allocatedObjects;
     size_t m_totalCountedObjects;
+    size_t m_totalObjectsNotInAllocatedSet;
 };
 
 } // namespace WebCore

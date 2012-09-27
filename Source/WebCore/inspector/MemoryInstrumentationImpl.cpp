@@ -37,11 +37,11 @@
 
 namespace WebCore {
 
-MemoryInstrumentationImpl::MemoryInstrumentationImpl(VisitedObjects& visitedObjects, const VisitedObjects* allocatedObjects
-    )
+MemoryInstrumentationImpl::MemoryInstrumentationImpl(VisitedObjects& visitedObjects, const VisitedObjects* allocatedObjects)
     : m_visitedObjects(visitedObjects)
     , m_allocatedObjects(allocatedObjects)
     , m_totalCountedObjects(0)
+    , m_totalObjectsNotInAllocatedSet(0)
 {
 }
 
@@ -75,11 +75,14 @@ bool MemoryInstrumentationImpl::visited(const void* object)
 
 void MemoryInstrumentationImpl::checkCountedObject(const void* object)
 {
-    if (!m_allocatedObjects)
+    if (!checkInstrumentedObjects())
         return;
     if (!m_allocatedObjects->contains(object)) {
-        printf("Found unknwown object referenced byPointer: %p\n", object);
+        ++m_totalObjectsNotInAllocatedSet;
+#if 0
+        printf("Found unknown object referenced by pointer: %p\n", object);
         WTFReportBacktrace();
+#endif
     }
 }
 
