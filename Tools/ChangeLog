@@ -1,3 +1,17 @@
+2012-09-27  Julie Parent  <jparent@chromium.org>
+
+        Add webkit_unit_tests to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=97814
+
+        Reviewed by Dirk Pranke.
+
+        webkit_unit_tests run on the same bots as test_shell_tests.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (currentBuilderGroupCategory):
+
 2012-09-27  Florin Malita  <fmalita@chromium.org>
 
         [Perftest] PerfTestRunner exception when using nested git checkouts

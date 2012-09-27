@@ -281,6 +281,7 @@ function loadBuildersList(groupName, testType) {
         break;
    
     case 'test_shell_tests':
+    case 'webkit_unit_tests':
         switch(groupName) {
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
