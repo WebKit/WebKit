@@ -90,12 +90,12 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     }
 
     WebMediaConstraints constraints = request.audioConstraints();
-    if (!constraints.isNull() && !MockConstraints::verify(constraints)) {
+    if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
         postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
         return;
     }
     constraints = request.videoConstraints();
-    if (!constraints.isNull() && !MockConstraints::verify(constraints)) {
+    if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
         postTask(new UserMediaRequestTask(this, request, WebMediaStreamDescriptor()));
         return;
     }

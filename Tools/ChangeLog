@@ -1,5 +1,23 @@
 2012-09-27  Tommy Widenflycht  <tommyw@google.com>
 
+        MediaStream API: Rename MockConstraints::verify to verifyConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=97779
+
+        Reviewed by Csaba Osztrogonác.
+
+        The Mac OS X sdk has a macro called verify :/
+
+        * DumpRenderTree/chromium/MockConstraints.cpp:
+        (MockConstraints::verifyConstraints):
+        * DumpRenderTree/chromium/MockConstraints.h:
+        (MockConstraints):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::initialize):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (WebUserMediaClientMock::requestUserMedia):
+
+2012-09-27  Tommy Widenflycht  <tommyw@google.com>
+
         MediaStream API: Update getUserMedia to match the latest specification
         https://bugs.webkit.org/show_bug.cgi?id=97540
 

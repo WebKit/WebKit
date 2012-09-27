@@ -49,7 +49,7 @@ static bool isValid(const WebString& constraint)
     return isSupported(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
 }
 
-bool verify(const WebMediaConstraints& constraints)
+bool verifyConstraints(const WebMediaConstraints& constraints)
 {
     WebVector<WebString> mandatoryConstraintNames;
     constraints.getMandatoryConstraintNames(mandatoryConstraintNames);

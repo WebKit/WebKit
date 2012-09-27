@@ -39,7 +39,7 @@ class WebMediaConstraints;
 
 namespace MockConstraints {
 
-bool verify(const WebKit::WebMediaConstraints&);
+bool verifyConstraints(const WebKit::WebMediaConstraints&);
 
 } // namespace MockConstraints
 
