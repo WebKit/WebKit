@@ -91,8 +91,13 @@ static unsigned urlHostHash(const KURL& url)
 {
     unsigned hostStart = url.hostStart();
     unsigned hostEnd = url.hostEnd();
+
+    const String& urlString = url.string();
+
+    if (urlString.is8Bit())
+        return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(urlString.characters8() + hostStart, hostEnd - hostStart));
     
-    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(url.string().characters() + hostStart, hostEnd - hostStart));
+    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(urlString.characters16() + hostStart, hostEnd - hostStart));
 }
 
 ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manifestURL)
@@ -840,9 +845,9 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     HTTPHeaderMap::const_iterator end = resource->response().httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = resource->response().httpHeaderFields().begin(); it!= end; ++it) {
         stringBuilder.append(it->first);
-        stringBuilder.append((UChar)':');
+        stringBuilder.append(':');
         stringBuilder.append(it->second);
-        stringBuilder.append((UChar)'\n');
+        stringBuilder.append('\n');
     }
     
     String headers = stringBuilder.toString();
@@ -1052,7 +1057,8 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     return storeNewestCache(group, 0, ignoredFailureReason);
 }
 
-static inline void parseHeader(const UChar* header, size_t headerLength, ResourceResponse& response)
+template <typename CharacterType>
+static inline void parseHeader(const CharacterType* header, size_t headerLength, ResourceResponse& response)
 {
     size_t pos = find(header, headerLength, ':');
     ASSERT(pos != notFound);
@@ -1070,13 +1076,20 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
     while ((endPos = headers.find('\n', startPos)) != notFound) {
         ASSERT(startPos != endPos);
 
-        parseHeader(headers.characters() + startPos, endPos - startPos, response);
+        if (headers.is8Bit())
+            parseHeader(headers.characters8() + startPos, endPos - startPos, response);
+        else
+            parseHeader(headers.characters16() + startPos, endPos - startPos, response);
         
         startPos = endPos + 1;
     }
     
-    if (startPos != headers.length())
-        parseHeader(headers.characters(), headers.length(), response);
+    if (startPos != headers.length()) {
+        if (headers.is8Bit())
+            parseHeader(headers.characters8(), headers.length(), response);
+        else
+            parseHeader(headers.characters16(), headers.length(), response);
+    }
 }
     
 PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
