@@ -404,7 +404,7 @@ public:
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const
     {
-        return style()->wrapShapeInside() && ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock(this) ? ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(this) : 0;
+        return style()->shapeInside() && ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock(this) ? ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(this) : 0;
     }
 #endif
 

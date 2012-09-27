@@ -45,8 +45,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , lineClamp(RenderStyle::initialLineClamp())
     , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
-    , m_wrapShapeInside(RenderStyle::initialWrapShapeInside())
-    , m_wrapShapeOutside(RenderStyle::initialWrapShapeOutside())
+    , m_shapeInside(RenderStyle::initialShapeInside())
+    , m_shapeOutside(RenderStyle::initialShapeOutside())
     , m_wrapMargin(RenderStyle::initialWrapMargin())
     , m_wrapPadding(RenderStyle::initialWrapPadding())
     , m_clipPath(RenderStyle::initialClipPath())
@@ -116,8 +116,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_mask(o.m_mask)
     , m_maskBoxImage(o.m_maskBoxImage)
     , m_pageSize(o.m_pageSize)
-    , m_wrapShapeInside(o.m_wrapShapeInside)
-    , m_wrapShapeOutside(o.m_wrapShapeOutside)
+    , m_shapeInside(o.m_shapeInside)
+    , m_shapeOutside(o.m_shapeOutside)
     , m_wrapMargin(o.m_wrapMargin)
     , m_wrapPadding(o.m_wrapPadding)
     , m_clipPath(o.m_clipPath)
@@ -198,8 +198,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_mask == o.m_mask
         && m_maskBoxImage == o.m_maskBoxImage
         && m_pageSize == o.m_pageSize
-        && m_wrapShapeInside == o.m_wrapShapeInside
-        && m_wrapShapeOutside == o.m_wrapShapeOutside
+        && m_shapeInside == o.m_shapeInside
+        && m_shapeOutside == o.m_shapeOutside
         && m_wrapMargin == o.m_wrapMargin
         && m_wrapPadding == o.m_wrapPadding
         && m_clipPath == o.m_clipPath
@@ -325,8 +325,8 @@ void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObject
     info.addMember(m_boxReflect);
     info.addMember(m_animations);
     info.addMember(m_transitions);
-    info.addMember(m_wrapShapeInside);
-    info.addMember(m_wrapShapeOutside);
+    info.addMember(m_shapeInside);
+    info.addMember(m_shapeOutside);
     info.addMember(m_clipPath);
     info.addMember(m_flowThread);
     info.addMember(m_regionThread);

@@ -458,7 +458,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 #endif
 
 #if ENABLE(CSS_EXCLUSIONS)
-        if (rareNonInheritedData->m_wrapShapeInside != other->rareNonInheritedData->m_wrapShapeInside)
+        if (rareNonInheritedData->m_shapeInside != other->rareNonInheritedData->m_shapeInside)
             return StyleDifferenceLayout;
 #endif
     }
@@ -679,7 +679,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         // the parent container. For sure, I will have to revisit this code, but for now I've added this in order 
         // to avoid having diff() == StyleDifferenceEqual where wrap-shapes actually differ.
         // Tracking bug: https://bugs.webkit.org/show_bug.cgi?id=62991
-        if (rareNonInheritedData->m_wrapShapeOutside != other->rareNonInheritedData->m_wrapShapeOutside)
+        if (rareNonInheritedData->m_shapeOutside != other->rareNonInheritedData->m_shapeOutside)
             return StyleDifferenceRepaint;
 
         if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)

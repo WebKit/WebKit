@@ -1709,7 +1709,7 @@ public:
 
 #if ENABLE(CSS_EXCLUSIONS)
 template <BasicShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<BasicShape>), BasicShape* (*initialFunction)()>
-class ApplyPropertyWrapShape {
+class ApplyPropertyExclusionShape {
 public:
     static void setValue(RenderStyle* style, PassRefPtr<BasicShape> value) { (style->*setterFunction)(value); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
@@ -1719,8 +1719,8 @@ public:
             if (primitiveValue->getIdent() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
             else if (primitiveValue->isShape()) {
-                RefPtr<BasicShape> wrapShape = basicShapeForValue(styleResolver, primitiveValue->getShapeValue());
-                setValue(styleResolver->style(), wrapShape.release());
+                RefPtr<BasicShape> shape = basicShapeForValue(styleResolver, primitiveValue->getShapeValue());
+                setValue(styleResolver->style(), shape.release());
             }
         }
     }
@@ -2060,8 +2060,8 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitWrapMargin, ApplyPropertyLength<&RenderStyle::wrapMargin, &RenderStyle::setWrapMargin, &RenderStyle::initialWrapMargin>::createHandler());
     setPropertyHandler(CSSPropertyWebkitWrapPadding, ApplyPropertyLength<&RenderStyle::wrapPadding, &RenderStyle::setWrapPadding, &RenderStyle::initialWrapPadding>::createHandler());
     setPropertyHandler(CSSPropertyWebkitWrapThrough, ApplyPropertyDefault<WrapThrough, &RenderStyle::wrapThrough, WrapThrough, &RenderStyle::setWrapThrough, WrapThrough, &RenderStyle::initialWrapThrough>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitShapeInside, ApplyPropertyWrapShape<&RenderStyle::wrapShapeInside, &RenderStyle::setWrapShapeInside, &RenderStyle::initialWrapShapeInside>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyWrapShape<&RenderStyle::wrapShapeOutside, &RenderStyle::setWrapShapeOutside, &RenderStyle::initialWrapShapeOutside>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitShapeInside, ApplyPropertyExclusionShape<&RenderStyle::shapeInside, &RenderStyle::setShapeInside, &RenderStyle::initialShapeInside>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyExclusionShape<&RenderStyle::shapeOutside, &RenderStyle::setShapeOutside, &RenderStyle::initialShapeOutside>::createHandler());
 #endif
     setPropertyHandler(CSSPropertyWhiteSpace, ApplyPropertyDefault<EWhiteSpace, &RenderStyle::whiteSpace, EWhiteSpace, &RenderStyle::setWhiteSpace, EWhiteSpace, &RenderStyle::initialWhiteSpace>::createHandler());
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyDefault<short, &RenderStyle::widows, short, &RenderStyle::setWidows, short, &RenderStyle::initialWidows>::createHandler());

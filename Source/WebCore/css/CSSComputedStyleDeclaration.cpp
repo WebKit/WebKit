@@ -2443,13 +2443,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitWrapPadding:
             return cssValuePool().createValue(style->wrapPadding());
         case CSSPropertyWebkitShapeInside:
-            if (!style->wrapShapeInside())
+            if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            return valueForBasicShape(style->wrapShapeInside());
+            return valueForBasicShape(style->shapeInside());
         case CSSPropertyWebkitShapeOutside:
-            if (!style->wrapShapeOutside())
+            if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            return valueForBasicShape(style->wrapShapeOutside());
+            return valueForBasicShape(style->shapeOutside());
         case CSSPropertyWebkitWrapThrough:
             return cssValuePool().createValue(style->wrapThrough());
 #endif

@@ -330,7 +330,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 #if ENABLE(CSS_EXCLUSIONS)
     // FIXME: Bug 89993: Style changes should affect the ExclusionShapeInsideInfos for other render blocks that
     // share the same ExclusionShapeInsideInfo
-    updateExclusionShapeInsideInfoAfterStyleChange(style()->wrapShapeInside(), oldStyle ? oldStyle->wrapShapeInside() : 0);
+    updateExclusionShapeInsideInfoAfterStyleChange(style()->shapeInside(), oldStyle ? oldStyle->shapeInside() : 0);
 #endif
 
     if (!isAnonymousBlock()) {
@@ -1380,13 +1380,13 @@ void RenderBlock::layout()
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
-void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const BasicShape* wrapShape, const BasicShape* oldWrapShape)
+void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const BasicShape* shapeInside, const BasicShape* oldShapeInside)
 {
     // FIXME: A future optimization would do a deep comparison for equality.
-    if (wrapShape == oldWrapShape)
+    if (shapeInside == oldShapeInside)
         return;
 
-    if (wrapShape) {
+    if (shapeInside) {
         ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ExclusionShapeInsideInfo::ensureExclusionShapeInsideInfoForRenderBlock(this);
         exclusionShapeInsideInfo->dirtyShapeSize();
     } else

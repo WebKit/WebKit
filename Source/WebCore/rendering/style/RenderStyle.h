@@ -1445,22 +1445,22 @@ public:
     void setKerning(SVGLength k) { accessSVGStyle()->setKerning(k); }
 #endif
 
-    void setWrapShapeInside(PassRefPtr<BasicShape> shape)
+    void setShapeInside(PassRefPtr<BasicShape> shape)
     {
-        if (rareNonInheritedData->m_wrapShapeInside != shape)
-            rareNonInheritedData.access()->m_wrapShapeInside = shape;
+        if (rareNonInheritedData->m_shapeInside != shape)
+            rareNonInheritedData.access()->m_shapeInside = shape;
     }
-    BasicShape* wrapShapeInside() const { return rareNonInheritedData->m_wrapShapeInside.get(); }
+    BasicShape* shapeInside() const { return rareNonInheritedData->m_shapeInside.get(); }
 
-    void setWrapShapeOutside(PassRefPtr<BasicShape> shape)
+    void setShapeOutside(PassRefPtr<BasicShape> shape)
     {
-        if (rareNonInheritedData->m_wrapShapeOutside != shape)
-            rareNonInheritedData.access()->m_wrapShapeOutside = shape;
+        if (rareNonInheritedData->m_shapeOutside != shape)
+            rareNonInheritedData.access()->m_shapeOutside = shape;
     }
-    BasicShape* wrapShapeOutside() const { return rareNonInheritedData->m_wrapShapeOutside.get(); }
+    BasicShape* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
-    static BasicShape* initialWrapShapeInside() { return 0; }
-    static BasicShape* initialWrapShapeOutside() { return 0; }
+    static BasicShape* initialShapeInside() { return 0; }
+    static BasicShape* initialShapeOutside() { return 0; }
 
     void setClipPath(PassRefPtr<ClipPathOperation> operation)
     {

@@ -65,20 +65,20 @@ ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::ensureExclusionShapeInsideIn
 
 ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(const RenderBlock* block)
 {
-    ASSERT(block->style()->wrapShapeInside());
+    ASSERT(block->style()->shapeInside());
     return exclusionShapeInsideInfoMap().get(block);
 }
 
 bool ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock(const RenderBlock* block)
 {
     // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
-    BasicShape* shape = block->style()->wrapShapeInside();
+    BasicShape* shape = block->style()->shapeInside();
     return (shape && shape->type() == BasicShape::BASIC_SHAPE_RECTANGLE);
 }
 
 void ExclusionShapeInsideInfo::removeExclusionShapeInsideInfoForRenderBlock(const RenderBlock* block)
 {
-    if (!block->style() || !block->style()->wrapShapeInside())
+    if (!block->style() || !block->style()->shapeInside())
         return;
     exclusionShapeInsideInfoMap().remove(block);
 }
@@ -93,7 +93,7 @@ void ExclusionShapeInsideInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutU
     m_logicalHeight = logicalHeight;
 
     // FIXME: Bug 89993: The wrap shape may come from the parent object
-    BasicShape* shape = m_block->style()->wrapShapeInside();
+    BasicShape* shape = m_block->style()->shapeInside();
     ASSERT(shape);
 
     m_shape = ExclusionShape::createExclusionShape(shape, logicalWidth, logicalHeight, m_block->style()->writingMode());
