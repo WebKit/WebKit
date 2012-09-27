@@ -1,3 +1,9 @@
+2012-09-27  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Enable JIT by default
+
+        * Source/cmake/OptionsWinCE.cmake:
+
 2012-09-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use XDamage to simplify RedirectedXCompositeWindow
