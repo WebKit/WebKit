@@ -51,28 +51,22 @@ static bool isValid(const WebString& constraint)
 
 bool verifyConstraints(const WebMediaConstraints& constraints)
 {
-    WebVector<WebString> mandatoryConstraintNames;
-    constraints.getMandatoryConstraintNames(mandatoryConstraintNames);
-    if (mandatoryConstraintNames.size()) {
-        for (size_t i = 0; i < mandatoryConstraintNames.size(); ++i) {
-            if (!isSupported(mandatoryConstraintNames[i]))
-                return false;
-            WebString value;
-            constraints.getMandatoryConstraintValue(mandatoryConstraintNames[i], value);
-            if (value != "1")
+    WebVector<WebMediaConstraint> mandatoryConstraints;
+    constraints.getMandatoryConstraints(mandatoryConstraints);
+    if (mandatoryConstraints.size()) {
+        for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
+            const WebMediaConstraint& curr = mandatoryConstraints[i];
+            if (!isSupported(curr.m_name) || curr.m_value != "1")
                 return false;
         }
     }
 
-    WebVector<WebString> optionalConstraintNames;
-    constraints.getOptionalConstraintNames(optionalConstraintNames);
-    if (optionalConstraintNames.size()) {
-        for (size_t i = 0; i < optionalConstraintNames.size(); ++i) {
-            if (!isValid(optionalConstraintNames[i]))
-                return false;
-            WebString value;
-            constraints.getOptionalConstraintValue(optionalConstraintNames[i], value);
-            if (value != "0")
+    WebVector<WebMediaConstraint> optionalConstraints;
+    constraints.getOptionalConstraints(optionalConstraints);
+    if (optionalConstraints.size()) {
+        for (size_t i = 0; i < optionalConstraints.size(); ++i) {
+            const WebMediaConstraint& curr = optionalConstraints[i];
+            if (!isValid(curr.m_name) || curr.m_value != "0")
                 return false;
         }
     }

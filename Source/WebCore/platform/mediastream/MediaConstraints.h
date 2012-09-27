@@ -38,12 +38,23 @@
 
 namespace WebCore {
 
+struct MediaConstraint {
+    MediaConstraint(String name, String value)
+        : m_name(name)
+        , m_value(value)
+    {
+    }
+
+    String m_name;
+    String m_value;
+};
+
 class MediaConstraints : public RefCounted<MediaConstraints> {
 public:
     virtual ~MediaConstraints() { }
 
-    virtual void getMandatoryConstraintNames(Vector<String>& names) const = 0;
-    virtual void getOptionalConstraintNames(Vector<String>& names) const = 0;
+    virtual void getMandatoryConstraints(Vector<MediaConstraint>&) const = 0;
+    virtual void getOptionalConstraints(Vector<MediaConstraint>&) const = 0;
 
     virtual bool getMandatoryConstraintValue(const String& name, String& value) const = 0;
     virtual bool getOptionalConstraintValue(const String& name, String& value) const = 0;

@@ -1,5 +1,21 @@
 2012-09-27  Tommy Widenflycht  <tommyw@google.com>
 
+        MediaStream API: Enhance MediaConstraints to make it easier to get the constraint data
+        https://bugs.webkit.org/show_bug.cgi?id=97559
+
+        Reviewed by Adam Barth.
+
+        Refactored to mimic the new MediaConstraints api.
+
+        * chromium/public/WebMediaConstraints.h:
+        (WebCore):
+        (WebKit::WebMediaConstraint::WebMediaConstraint):
+        (WebMediaConstraint):
+        (WebKit):
+        (WebMediaConstraints):
+
+2012-09-27  Tommy Widenflycht  <tommyw@google.com>
+
         MediaStream API: Update getUserMedia to match the latest specification
         https://bugs.webkit.org/show_bug.cgi?id=97540
 

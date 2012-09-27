@@ -38,10 +38,30 @@
 #include "WebVector.h"
 
 namespace WebCore {
+struct MediaConstraint;
 class MediaConstraints;
 }
 
 namespace WebKit {
+
+struct WebMediaConstraint {
+    WebMediaConstraint()
+    {
+    }
+
+    WebMediaConstraint(WebString name, WebString value)
+        : m_name(name)
+        , m_value(value)
+    {
+    }
+
+#if WEBKIT_IMPLEMENTATION
+    WebMediaConstraint(const WebCore::MediaConstraint&);
+#endif
+
+    WebString m_name;
+    WebString m_value;
+};
 
 class WebMediaConstraints {
 public:
@@ -60,8 +80,8 @@ public:
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
-    WEBKIT_EXPORT void getMandatoryConstraintNames(WebVector<WebString>& names) const;
-    WEBKIT_EXPORT void getOptionalConstraintNames(WebVector<WebString>& names) const;
+    WEBKIT_EXPORT void getMandatoryConstraints(WebVector<WebMediaConstraint>&) const;
+    WEBKIT_EXPORT void getOptionalConstraints(WebVector<WebMediaConstraint>&) const;
 
     WEBKIT_EXPORT bool getMandatoryConstraintValue(const WebString& name, WebString& value) const;
     WEBKIT_EXPORT bool getOptionalConstraintValue(const WebString& name, WebString& value) const;

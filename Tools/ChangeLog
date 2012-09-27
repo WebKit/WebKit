@@ -1,5 +1,17 @@
 2012-09-27  Tommy Widenflycht  <tommyw@google.com>
 
+        MediaStream API: Enhance MediaConstraints to make it easier to get the constraint data
+        https://bugs.webkit.org/show_bug.cgi?id=97559
+
+        Reviewed by Adam Barth.
+
+        Refactoring for the new WebMediaConstraints api.
+
+        * DumpRenderTree/chromium/MockConstraints.cpp:
+        (MockConstraints::verify):
+
+2012-09-27  Tommy Widenflycht  <tommyw@google.com>
+
         MediaStream API: Rename MockConstraints::verify to verifyConstraints
         https://bugs.webkit.org/show_bug.cgi?id=97779
 
