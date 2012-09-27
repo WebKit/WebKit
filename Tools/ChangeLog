@@ -1,3 +1,31 @@
+2012-09-26  Dirk Pranke  <dpranke@chromium.org>
+
+        The style bot spams about skia_test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=97699
+
+        Reviewed by Adam Barth.
+
+        Remove the warning about a missing skia_test_expectations.txt
+        file for now. There are some situations where it would be
+        helpful to get this warning as it might indicate that the user
+        is going to get results different than what they're expecting,
+        but at the moment it looks difficult if not impossible to get
+        those warnings and not also get warnings that we don't care
+        about, so the noise is outweighing the value of the signal.
+
+        This at least will stop the false negatives we're getting on the
+        style bots. If it turns out people do need the warning we can
+        add it back in in some other more conditional way.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.expectations_files):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_expectations):
+        (_assert_command):
+
 2012-09-26  David Michael Barr  <davidbarr@chromium.org>
 
         Unreviewed. Upgrade myself from contributor to committer.

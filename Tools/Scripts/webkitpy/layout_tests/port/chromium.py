@@ -335,10 +335,10 @@ class ChromiumPort(Port):
     def expectations_files(self):
         paths = [self.path_to_test_expectations_file()]
         skia_expectations_path = self.path_from_chromium_base('skia', 'skia_test_expectations.txt')
+        # FIXME: we should probably warn if this file is missing in some situations.
+        # See the discussion in webkit.org/b/97699.
         if self._filesystem.exists(skia_expectations_path):
             paths.append(skia_expectations_path)
-        else:
-            _log.warning("Using the chromium port without having the downstream skia_test_expectations.txt file checked out. Expectations related things might be wonky.")
 
         builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
         if builder_name == 'DUMMY_BUILDER_NAME' or '(deps)' in builder_name or builder_name in self.try_builder_names:

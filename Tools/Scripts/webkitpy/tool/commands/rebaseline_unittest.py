@@ -63,8 +63,6 @@ class TestRebaseline(unittest.TestCase):
         command.bind_to_tool(tool)
 
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
-        # FIXME: work around the chromium skia expectations file to avoid getting a bunch of confusing warnings.
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         for path in lion_port.expectations_files():
             tool.filesystem.write_text_file(path, '')
         tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
@@ -91,7 +89,6 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         command.bind_to_tool(tool)
 
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
 
@@ -110,7 +107,6 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         command.bind_to_tool(tool)
 
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
         tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
@@ -228,9 +224,7 @@ MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'user-scri
         tool = MockTool()
         command.bind_to_tool(tool)
 
-        # FIXME: work around the chromium skia expectations file to avoid getting a bunch of confusing warnings.
         lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
         for port_name in tool.port_factory.all_port_names():
             port = tool.port_factory.get(port_name)
             for path in port.expectations_files():
@@ -321,7 +315,6 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         command.bind_to_tool(tool)
 
         port = tool.port_factory.get('chromium-mac-lion')
-        tool.filesystem.write_text_file(port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
 
         for port_name in tool.port_factory.all_port_names():
             port = tool.port_factory.get(port_name)
