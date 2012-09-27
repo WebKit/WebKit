@@ -1,3 +1,28 @@
+2012-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Stop using dispatch_get_current_queue
+        https://bugs.webkit.org/show_bug.cgi?id=97806
+        <rdar://problem/12379094>
+
+        Reviewed by Mark Rowe.
+
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueueAndFunction::WorkQueueAndFunction):
+        (WorkQueueAndFunction):
+        (WorkQueue::executeFunction):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        Keep track of the associated work queue so we can get it in WorkQueue::executeFunction.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::setUpTerminationNotificationHandler):
+        We don't care about which queue the termination notification is delivered on since we only want to call
+        waitpid on the child pid so we can just use a global queue.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]):
+        Use dispatch_get_main_queue here.
+
 2012-09-27  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2] IconDatabase: Add a way to notify when icon data is available

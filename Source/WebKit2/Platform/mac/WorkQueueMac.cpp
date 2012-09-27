@@ -30,30 +30,39 @@
 #include <mach/mach_port.h>
 #include <wtf/PassOwnPtr.h>
 
+struct WorkQueueAndFunction {
+    WorkQueueAndFunction(WorkQueue* workQueue, const Function<void()>& function)
+        : workQueue(workQueue)
+        , function(function)
+    {
+    }
+
+    WorkQueue* workQueue;
+    Function<void()> function;
+};
+
 void WorkQueue::executeFunction(void* context)
 {
-    WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
-    OwnPtr<Function<void()> > function = adoptPtr(static_cast<Function<void()>*>(context));
+    OwnPtr<WorkQueueAndFunction> workQueueAndFunction = adoptPtr(static_cast<WorkQueueAndFunction*>(context));
     
     {
-        MutexLocker locker(queue->m_isValidMutex);
-        if (!queue->m_isValid)
+        MutexLocker locker(workQueueAndFunction->workQueue->m_isValidMutex);
+        if (!workQueueAndFunction->workQueue->m_isValid)
             return;
     }
 
-    (*function)();
+    (workQueueAndFunction->function)();
 }
 
 void WorkQueue::dispatch(const Function<void()>& function)
 {
-    dispatch_async_f(m_dispatchQueue, new Function<void()>(function), executeFunction);
+    dispatch_async_f(m_dispatchQueue, new WorkQueueAndFunction(this, function), executeFunction);
 }
 
 void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
-
-    dispatch_after_f(delayTime, m_dispatchQueue, new Function<void()>(function), executeFunction);
+    dispatch_after_f(delayTime, m_dispatchQueue, new WorkQueueAndFunction(this, function), executeFunction);
 }
 
 class WorkQueue::EventSource {

@@ -96,7 +96,7 @@ static const CGFloat windowContentBorderThickness = 55;
     // depend on this for enforcing the height constraints, so a small delay isn't terrible. Most
     // of the time the views will already have the correct frames because of autoresizing masks.
 
-    dispatch_after(DISPATCH_TIME_NOW, dispatch_get_current_queue(), ^{
+    dispatch_after(DISPATCH_TIME_NOW, dispatch_get_main_queue(), ^{
         if (!_inspectorProxy)
             return;
         static_cast<WebInspectorProxy*>(_inspectorProxy)->inspectedViewFrameDidChange();

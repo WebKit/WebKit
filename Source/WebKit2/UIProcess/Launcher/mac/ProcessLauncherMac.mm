@@ -82,7 +82,7 @@ struct UUIDHolder : public RefCounted<UUIDHolder> {
 static void setUpTerminationNotificationHandler(pid_t pid)
 {
 #if HAVE(DISPATCH_H)
-    dispatch_source_t processDiedSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_PROC, pid, DISPATCH_PROC_EXIT, dispatch_get_current_queue());
+    dispatch_source_t processDiedSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_PROC, pid, DISPATCH_PROC_EXIT, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     dispatch_source_set_event_handler(processDiedSource, ^{
         int status;
         waitpid(dispatch_source_get_handle(processDiedSource), &status, 0);
