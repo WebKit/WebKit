@@ -491,10 +491,6 @@ platform/mac/accessibility/search-predicate.html
 # https://bugs.webkit.org/show_bug.cgi?id=59192
 http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
 
-# [WK2] failures in http/tests/security/contentSecurityPolicy
-# https://bugs.webkit.org/show_bug.cgi?id=71896
-http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
-
 # WebKitTestRunner needs an implementation of allowRoundingHacks
 # http://webkit.org/b/63477
 platform/mac/fast/text/rounding-hacks.html
