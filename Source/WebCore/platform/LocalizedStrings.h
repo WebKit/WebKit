@@ -176,6 +176,31 @@ namespace WebCore {
     String AXSecondFieldText();
     String AXWeekOfYearFieldText();
     String AXYearFieldText();
+
+    // placeholderForDayOfMonthField() returns localized placeholder text, e.g.
+    // "dd", for date field used in multiple fields "date", "datetime", and
+    // "datetime-local" input UI instead "--".
+    String placeholderForDayOfMonthField();
+
+    // placeholderForfMonthField() returns localized placeholder text, e.g.
+    // "mm", for month field used in multiple fields "date", "datetime", and
+    // "datetime-local" input UI instead "--".
+    String placeholderForMonthField();
+
+    // placeholderForYearField() returns localized placeholder text, e.g.
+    // "yyyy", for year field used in multiple fields "date", "datetime", and
+    // "datetime-local" input UI instead "----".
+    String placeholderForYearField();
+
+    // monthFormatInLDML() returns month and year format in LDML, Unicode
+    // technical standard 35, Locale Data Markup Language, e.g. "MM-yyyyy"
+    // for "month" input type.
+    String monthFormatInLDML();
+
+    // monthFormatInLDML() returns week and year format in LDML, Unicode
+    // technical standard 35, Locale Data Markup Language, e.g. "WW-yyyyy"
+    // for "week" input type.
+    String weekFormatInLDML();
 #endif
 
     String missingPluginText();

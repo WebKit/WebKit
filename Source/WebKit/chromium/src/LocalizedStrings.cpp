@@ -252,6 +252,32 @@ String AXYearFieldText()
 {
     return query(WebLocalizedString::AXYearFieldText);
 }
+
+String placeholderForDayOfMonthField()
+{
+    return query(WebLocalizedString::PlaceholderForDayOfMonthField);
+}
+
+String placeholderForMonthField()
+{
+    return query(WebLocalizedString::PlaceholderForMonthField);
+}
+
+String placeholderForYearField()
+{
+    return query(WebLocalizedString::PlaceholderForYearField);
+}
+
+String monthFormatInLDML()
+{
+    return query(WebLocalizedString::MonthFormatInLDML);
+}
+
+String weekFormatInLDML()
+{
+    return query(WebLocalizedString::WeekFormatInLDML);
+}
+
 #endif
 
 String missingPluginText()

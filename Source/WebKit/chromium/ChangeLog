@@ -1,3 +1,23 @@
+2012-09-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Adding localization texts for multiple fields date/time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=97633
+
+        Reviewed by Kent Tamura.
+
+        This patch adds functions for getting localized strings used in
+        multiple fields date/time input UI inside ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+
+        These functions will be used by DateInputType, DateTimeInputType,
+        DateTimeLocalInputType, MonthInputTypee, and WeekInputType.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::placeholderForDayOfMonthField): Added.
+        (WebCore::placeholderForMonthField): Added.
+        (WebCore::placeholderForYearField): Added.
+        (WebCore::monthFormatInLDML): Added.
+        (WebCore::weekFormatInLDML): Added.
+
 2012-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129673.

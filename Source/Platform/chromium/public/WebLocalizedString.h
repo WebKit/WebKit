@@ -69,9 +69,13 @@ struct WebLocalizedString {
         KeygenMenuHighGradeKeySize,
         KeygenMenuMediumGradeKeySize,
         MissingPluginText,
+        MonthFormatInLDML,
         MultipleFileUploadText,
         OtherColorLabel,
         OtherDateLabel,
+        PlaceholderForDayOfMonthField,
+        PlaceholderForMonthField,
+        PlaceholderForYearField,
         ResetButtonDefaultLabel,
         SearchableIndexIntroduction,
         SearchMenuClearRecentSearchesText,
@@ -93,6 +97,7 @@ struct WebLocalizedString {
         ValidationValueMissingForMultipleFile,
         ValidationValueMissingForRadio,
         ValidationValueMissingForSelect,
+        WeekFormatInLDML,
     };
 };
 
