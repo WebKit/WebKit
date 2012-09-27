@@ -653,7 +653,7 @@ public:
 
 #if ENABLE(MUTATION_OBSERVERS)
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
-    MutationObserverRegistration* registerMutationObserver(PassRefPtr<MutationObserver>);
+    MutationObserverRegistration* registerMutationObserver(MutationObserver*);
     void unregisterMutationObserver(MutationObserverRegistration*);
     void registerTransientMutationObserver(MutationObserverRegistration*);
     void unregisterTransientMutationObserver(MutationObserverRegistration*);
@@ -797,7 +797,6 @@ private:
 #if ENABLE(MUTATION_OBSERVERS)
     Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
-    void collectMatchingObserversForMutation(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, MutationObserver::MutationType, const QualifiedName* attributeName);
 #endif
 
     mutable uint32_t m_nodeFlags;

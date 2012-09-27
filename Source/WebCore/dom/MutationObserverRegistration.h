@@ -44,28 +44,24 @@ class QualifiedName;
 
 class MutationObserverRegistration {
 public:
-
     static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<MutationObserver>, Node*);
-
     ~MutationObserverRegistration();
 
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
-    void observedSubtreeNodeWillDetach(PassRefPtr<Node>);
+    void observedSubtreeNodeWillDetach(Node*);
     void clearTransientRegistrations();
-    bool hasTransientRegistrations() { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
+    bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
     void unregister();
 
-    bool shouldReceiveMutationFrom(Node*, MutationObserver::MutationType, const QualifiedName* attributeName);
-    bool inline isSubtree() const { return m_options & MutationObserver::Subtree; }
+    bool shouldReceiveMutationFrom(Node*, MutationObserver::MutationType, const QualifiedName* attributeName) const;
+    bool isSubtree() const { return m_options & MutationObserver::Subtree; }
 
-    MutationObserver* observer() { return m_observer.get(); }
+    MutationObserver* observer() const { return m_observer.get(); }
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
 private:
     MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*);
-
-    const HashSet<AtomicString>& caseInsensitiveAttributeFilter();
 
     RefPtr<MutationObserver> m_observer;
     Node* m_registrationNode;

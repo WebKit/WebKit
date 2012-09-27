@@ -66,7 +66,7 @@ void MutationObserverRegistration::resetObservation(MutationObserverOptions opti
     m_attributeFilter = attributeFilter;
 }
 
-void MutationObserverRegistration::observedSubtreeNodeWillDetach(PassRefPtr<Node> node)
+void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node* node)
 {
     if (!isSubtree())
         return;
@@ -105,7 +105,7 @@ void MutationObserverRegistration::unregister()
     // The above line will cause this object to be deleted, so don't do any more in this function.
 }
 
-bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, MutationObserver::MutationType type, const QualifiedName* attributeName)
+bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, MutationObserver::MutationType type, const QualifiedName* attributeName) const
 {
     ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
     if (!(m_options & type))
