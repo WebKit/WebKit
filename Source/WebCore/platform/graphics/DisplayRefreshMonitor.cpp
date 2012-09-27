@@ -76,6 +76,10 @@ void DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(void*
 
 void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient* client)
 {
+    DisplayRefreshMonitorClientSet::iterator it = m_clients.find(client);
+    if (it != m_clients.end())
+        return;
+
     m_clients.add(client);
 }
 
@@ -136,7 +140,7 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForClient(Disp
         m_monitors.add(client->m_displayID, monitor.release());
         return result;
     }
-
+    it->second.get()->addClient(client);
     return it->second.get();
 }
 

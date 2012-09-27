@@ -4,13 +4,10 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<span id="e"></span>
-<span id="f"></span>
 <script>
-    var e = document.getElementById("e");
     window.webkitRequestAnimationFrame(function() {
         parent.callbackInvoked = true;
-    }, e);
+    });
 
     parent.doDisplay();
     
