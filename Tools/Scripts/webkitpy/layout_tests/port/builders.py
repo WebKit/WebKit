@@ -92,6 +92,8 @@ _ports_without_builders = [
     "qt-mac",
     "qt-win",
     "qt-wk2",
+    # FIXME: Move to _extact_matches.
+    "chromium-android",
 ]
 
 

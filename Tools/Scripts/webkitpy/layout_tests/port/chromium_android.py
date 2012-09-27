@@ -77,45 +77,51 @@ TEST_PATH_PREFIX = '/all-tests'
 FORWARD_PORTS = '8000 8080 8443 8880 9323'
 
 MS_TRUETYPE_FONTS_DIR = '/usr/share/fonts/truetype/msttcorefonts/'
+MS_TRUETYPE_FONTS_PACKAGE = 'ttf-mscorefonts-installer'
 
 # Timeout in seconds to wait for start/stop of DumpRenderTree.
 DRT_START_STOP_TIMEOUT_SECS = 10
 
-# List of fonts that layout tests expect, copied from DumpRenderTree/gtk/TestShellX11.cpp.
+# List of fonts that layout tests expect, copied from DumpRenderTree/chromium/TestShellX11.cpp.
 HOST_FONT_FILES = [
-    [MS_TRUETYPE_FONTS_DIR, 'Arial.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Arial_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Arial_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Arial_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Comic_Sans_MS.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Comic_Sans_MS_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Courier_New.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Courier_New_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Courier_New_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Courier_New_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Georgia.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Georgia_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Georgia_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Georgia_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Impact.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Trebuchet_MS.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Trebuchet_MS_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Trebuchet_MS_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Trebuchet_MS_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Times_New_Roman.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Times_New_Roman_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Times_New_Roman_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Times_New_Roman_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Verdana.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold_Italic.ttf'],
-    [MS_TRUETYPE_FONTS_DIR, 'Verdana_Italic.ttf'],
+    [[MS_TRUETYPE_FONTS_DIR], 'Arial.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Arial_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Arial_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Arial_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Comic_Sans_MS.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Comic_Sans_MS_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Courier_New.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Courier_New_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Courier_New_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Courier_New_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Georgia.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Georgia_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Georgia_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Georgia_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Impact.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Trebuchet_MS.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Trebuchet_MS_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Trebuchet_MS_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Trebuchet_MS_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Times_New_Roman.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Times_New_Roman_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Times_New_Roman_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Times_New_Roman_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Verdana.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Verdana_Bold.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Verdana_Bold_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
+    [[MS_TRUETYPE_FONTS_DIR], 'Verdana_Italic.ttf', MS_TRUETYPE_FONTS_PACKAGE],
     # The Microsoft font EULA
-    ['/usr/share/doc/ttf-mscorefonts-installer/', 'READ_ME!.gz'],
-    ['/usr/share/fonts/truetype/ttf-dejavu/', 'DejaVuSans.ttf'],
+    [['/usr/share/doc/ttf-mscorefonts-installer/'], 'READ_ME!.gz', MS_TRUETYPE_FONTS_PACKAGE],
+    # Other fonts: Arabic, CJK, Indic, Thai, etc.
+    [['/usr/share/fonts/truetype/ttf-dejavu/'], 'DejaVuSans.ttf', 'ttf-dejavu'],
+    [['/usr/share/fonts/truetype/kochi/'], 'kochi-mincho.ttf', 'ttf-kochi-mincho'],
+    [['/usr/share/fonts/truetype/ttf-indic-fonts-core/'], 'lohit_hi.ttf', 'ttf-indic-fonts-core'],
+    [['/usr/share/fonts/truetype/ttf-indic-fonts-core/'], 'lohit_ta.ttf', 'ttf-indic-fonts-core'],
+    [['/usr/share/fonts/truetype/ttf-indic-fonts-core/'], 'MuktiNarrow.ttf', 'ttf-indic-fonts-core'],
+    [['/usr/share/fonts/truetype/thai/', '/usr/share/fonts/truetype/tlwg/'], 'Garuda.ttf', 'fonts-tlwg-garuda'],
+    [['/usr/share/fonts/truetype/ttf-indic-fonts-core/', '/usr/share/fonts/truetype/ttf-punjabi-fonts/'], 'lohit_pa.ttf', 'ttf-indic-fonts-core'],
 ]
-# Should increase this version after changing HOST_FONT_FILES.
-FONT_FILES_VERSION = 2
 
 DEVICE_FONTS_DIR = DEVICE_DRT_DIR + 'fonts/'
 
@@ -198,7 +204,8 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def check_build(self, needs_http):
         result = super(ChromiumAndroidPort, self).check_build(needs_http)
-        result = self.check_wdiff() and result
+        result = self._check_file_exists(self._path_to_md5sum(), 'md5sum utility') and result
+        result = self._check_file_exists(self._path_to_forwarder(), 'forwarder utility') and result
         if not result:
             _log.error('For complete Android build requirements, please see:')
             _log.error('')
@@ -207,11 +214,15 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return result
 
     def check_sys_deps(self, needs_http):
-        for (font_dir, font_file) in HOST_FONT_FILES:
-            font_path = font_dir + font_file
-            if not self._check_file_exists(font_path, 'font file'):
-                _log.error('You are missing %s. Try installing msttcorefonts. '
-                           'See build instructions.' % font_path)
+        for (font_dirs, font_file, package) in HOST_FONT_FILES:
+            exists = False
+            for font_dir in font_dirs:
+                font_path = font_dir + font_file
+                if self._check_file_exists(font_path, '', logging=False):
+                    exists = True
+                    break
+            if not exists:
+                _log.error('You are missing %s under %s. Try installing %s. See build instructions.' % (font_file, font_dirs, package))
                 return False
         return True
 
@@ -270,6 +281,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def _path_to_forwarder(self):
         return self._build_path('forwarder')
+
+    def _path_to_md5sum(self):
+        return self._build_path(MD5SUM_DEVICE_FILE_NAME)
 
     def _path_to_image_diff(self):
         return self._host_port._path_to_image_diff()
@@ -330,12 +344,10 @@ class ChromiumAndroidDriver(driver.Driver):
         super(ChromiumAndroidDriver, self).__del__()
 
     def _setup_md5sum_and_push_data_if_needed(self):
-        self._md5sum_path = self._port._build_path_with_configuration(self._port.get_option('configuration'), MD5SUM_DEVICE_FILE_NAME)
-        assert os.path.exists(self._md5sum_path)
-
+        self._md5sum_path = self._port._path_to_md5sum()
         if not self._file_exists_on_device(MD5SUM_DEVICE_PATH):
             if not self._push_to_device(self._md5sum_path, MD5SUM_DEVICE_PATH):
-                _log.error('Could not push md5sum to device')
+                raise AssertionError('Could not push md5sum to device')
 
         self._push_executable()
         self._push_fonts()
@@ -401,30 +413,19 @@ class ChromiumAndroidDriver(driver.Driver):
             self._abort('Failed to install %s onto device: %s' % (drt_host_path, install_result))
 
     def _push_fonts(self):
-        if not self._check_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION):
-            self._log_debug('Pushing fonts')
-            path_to_ahem_font = self._port._build_path('AHEM____.TTF')
-            self._push_to_device(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
-            for (host_dir, font_file) in HOST_FONT_FILES:
-                self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
-            self._link_device_file('/system/fonts/DroidSansFallback.ttf', DEVICE_FONTS_DIR + 'DroidSansFallback.ttf')
-            self._update_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION)
+        self._log_debug('Pushing fonts')
+        path_to_ahem_font = self._port._build_path('AHEM____.TTF')
+        self._push_file_if_needed(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
+        for (host_dirs, font_file, package) in HOST_FONT_FILES:
+            for host_dir in host_dirs:
+                host_font_path = host_dir + font_file
+                if self._port._check_file_exists(host_font_path, '', logging=False):
+                    self._push_file_if_needed(host_font_path, DEVICE_FONTS_DIR + font_file)
 
     def _push_test_resources(self):
         self._log_debug('Pushing test resources')
         for resource in TEST_RESOURCES_TO_PUSH:
             self._push_file_if_needed(self._port.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
-
-    def _check_version(self, dir, version):
-        assert(dir.endswith('/'))
-        try:
-            device_version = int(self._run_adb_command(['shell', 'cat %sVERSION || echo 0' % dir]))
-            return device_version == version
-        except:
-            return False
-
-    def _update_version(self, dir, version):
-        self._run_adb_command(['shell', 'echo %d > %sVERSION' % (version, dir)])
 
     def _run_adb_command(self, cmd, ignore_error=False):
         self._log_debug('Run adb command: ' + str(cmd))

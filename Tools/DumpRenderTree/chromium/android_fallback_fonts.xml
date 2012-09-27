@@ -7,7 +7,32 @@
     </family>
     <family>
         <fileset>
-            <file>DroidSansFallback.ttf</file>
+            <file>kochi-mincho.ttf</file>
+        </fileset>
+    </family>
+    <family>
+        <fileset>
+            <file>lohit_hi.ttf</file>
+        </fileset>
+    </family>
+    <family>
+        <fileset>
+            <file>lohit_ta.ttf</file>
+        </fileset>
+    </family>
+    <family>
+        <fileset>
+            <file>MuktiNarrow.ttf</file>
+        </fileset>
+    </family>
+    <family>
+        <fileset>
+            <file>Garuda.ttf</file>
+        </fileset>
+    </family>
+    <family>
+        <fileset>
+            <file>lohit_pa.ttf</file>
         </fileset>
     </family>
 </familyset>

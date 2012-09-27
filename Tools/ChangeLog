@@ -1,3 +1,20 @@
+2012-09-27  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Push more fonts for layout tests to match chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=97746
+
+        Reviewed by Dirk Pranke.
+
+        * DumpRenderTree/chromium/android_fallback_fonts.xml: Added the new fonts into fallback list. Removed the Android system fallback font DroidSansFallback.ttf.
+        * Scripts/webkitpy/layout_tests/port/builders.py: Add chromium-android to pass style check.
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.check_build): Added check for md5sum and forwarder utilities to give better error message when they are missing.
+        (ChromiumAndroidPort.check_sys_deps): Allow host font files to come from one of multiple directories.
+        (ChromiumAndroidPort._path_to_md5sum):
+        (ChromiumAndroidDriver._setup_md5sum_and_push_data_if_needed):
+        (ChromiumAndroidDriver._push_fonts):
+        (ChromiumAndroidDriver._push_test_resources):
+
 2012-09-27  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Enhance MediaConstraints to make it easier to get the constraint data
