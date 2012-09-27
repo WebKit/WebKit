@@ -98,12 +98,14 @@ class EflPort(Port, PulseAudioSanitizer):
         search_paths = []
         if self.get_option('webkit_test_runner'):
             search_paths.append(self.port_name + '-wk2')
+            search_paths.append('wk2')
         else:
             search_paths.append(self.port_name + '-wk1')
         search_paths.append(self.port_name)
         return search_paths
 
     def expectations_files(self):
+        # FIXME: We should be able to use the default algorithm here.
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
 
     def show_results_html_file(self, results_filename):

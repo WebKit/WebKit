@@ -1,5 +1,19 @@
 2012-09-27  Dirk Pranke  <dpranke@chromium.org>
 
+        efl wk2 bots weren't looking at platform/wk2/TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=97815
+
+        Unreviewed, build fix.
+
+        Should clean up this logic later so that we're just using the
+        implementation in base ...
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._search_paths):
+        (EflPort.expectations_files):
+
+2012-09-27  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: make warning about missing BUG identifiers per-port configurable
         https://bugs.webkit.org/show_bug.cgi?id=97751
 
