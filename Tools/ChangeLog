@@ -1,5 +1,28 @@
 2012-09-26  Dirk Pranke  <dpranke@chromium.org>
 
+        modify old-run-webkit-tests to support TestExpectations files a little
+        https://bugs.webkit.org/show_bug.cgi?id=97276
+
+        Reviewed by Daniel Bates.
+
+        This patch adds minimal support to old-run-webkit-tests so that
+        it can read a TestExpectations file and skip the tests listed
+        there. It will skip *all* tests, regardless of the expectation
+        (even if the test is listed as [ Pass ]), and it will only look
+        at the TestExpectations file if there isn't a Skipped file next
+        to it.
+        
+        This will allow us to switch to using just using
+        TestExpectations files without making old-run-webkit-tests
+        totally useless.
+
+        * Scripts/old-run-webkit-tests:
+        (readSkippedFiles):
+        (processSkippedFileEntry): Added.
+        (startsWith): Added.
+
+2012-09-26  Dirk Pranke  <dpranke@chromium.org>
+
         The style bot spams about skia_test_expectations.txt
         https://bugs.webkit.org/show_bug.cgi?id=97699
 

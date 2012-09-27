@@ -106,6 +106,7 @@ sub openWebSocketServerIfNeeded();
 sub pathcmp($$);
 sub printFailureMessageForTest($$);
 sub processIgnoreTests($$);
+sub processSkippedFileEntry($$$);
 sub readChecksumFromPng($);
 sub readFromDumpToolWithTimer(**);
 sub readSkippedFiles($);
@@ -115,6 +116,7 @@ sub setFileHandleNonBlocking(*$);
 sub setUpWindowsCrashLogSaving();
 sub slowestcmp($$);
 sub splitpath($);
+sub startsWith($$);
 sub stopRunningTestsEarlyIfNeeded();
 sub stripExtension($);
 sub stripMetrics($$);
@@ -2504,6 +2506,8 @@ sub readSkippedFiles($)
     }
 
     foreach my $level (@skippedFileDirectories) {
+        # If a Skipped file exists in the directory, use that and ignore the TestExpectations file,
+        # but if it doesn't, treat every entry in the TestExpectations file as if it should be Skipped.
         if (open SKIPPED, "<", "$level/Skipped") {
             if ($verbose) {
                 my ($dir, $name) = splitpath($level);
@@ -2516,36 +2520,94 @@ sub readSkippedFiles($)
                 $skipped =~ s/^[ \n\r]+//;
                 $skipped =~ s/[ \n\r]+$//;
                 if ($skipped && $skipped !~ /^#/) {
-                    if ($skippedOnly) {
-                        if (!fileShouldBeIgnored($skipped)) {
-                            if (!$constraintPath) {
-                                # Always add $skipped since no constraint path was specified on the command line.
-                                push(@ARGV, $skipped);
-                            } elsif ($skipped =~ /^($constraintPath)/ || ("LayoutTests/".$skipped) =~ /^($constraintPath)/ ) {
-                                # Add $skipped only if it matches the current path constraint, e.g.,
-                                # "--skipped=only dir1" with "dir1/file1.html" on the skipped list or
-                                # "--skipped=only LayoutTests/dir1" with "dir1/file1.html" on the skipped list
-                                push(@ARGV, $skipped);
-                            } elsif ($constraintPath =~ /^("LayoutTests\/".$skipped)/ || $constraintPath =~ /^($skipped)/) {
-                                # Add current path constraint if it is more specific than the skip list entry,
-                                # e.g., "--skipped=only dir1/dir2/dir3" with "dir1" on the skipped list or
-                                # e.g., "--skipped=only LayoutTests/dir1/dir2/dir3" with "dir1" on the skipped list.
-                                push(@ARGV, $constraintPath);
-                            }
-                        } elsif ($verbose) {
-                            print "    $skipped\n";
-                        }
-                    } else {
-                        if ($verbose) {
-                            print "    $skipped\n";
-                        }
-                        processIgnoreTests($skipped, "Skipped");
-                    }
+                    processSkippedFileEntry($skipped, "Skipped", $constraintPath);
                 }
             }
             close SKIPPED;
+        } elsif (open EXPECTATIONS, "<", "$level/TestExpectations") {
+            if ($verbose) {
+                my ($dir, $name) = splitpath($level);
+                print "Skipping tests from $name:\n";
+            }
+            LINE: while (<EXPECTATIONS>) {
+                my $line = $_;
+                chomp $line;
+                $line =~ s/^[ \n\r]+//;
+                $line =~ s/[ \n\r]+$//;
+                $line =~ s/#.*$//;
+
+                # This logic roughly mirrors the logic in test_expectations.py _tokenize_line() but we
+                # don't bother to look at any of the modifiers or expectations and just skip everything.
+
+                my $state = "start";
+                my $skipped = "";
+                TOKEN: foreach my $token (split(/\s+/, $line)) {
+                    if (startsWith($token, "BUG") || startsWith($token, "//")) {
+                        # Ignore any lines with the old-style syntax.
+                        next LINE;
+                    }
+                    if (startsWith($token, "webkit.org/b/") || startsWith($token, "Bug(")) {
+                        # Skip over bug identifiers; note that we don't bother looking for
+                        # Chromium or V8 URLs since ORWT doesn't work with Chromium.
+                        next TOKEN;
+                    } elsif ($token eq "[") {
+                        if ($state eq 'start') {
+                            $state = 'configuration';
+                        }
+                    } elsif ($token eq "]") {
+                        if ($state eq 'configuration') {
+                            $state = 'name';
+                        }
+                    } elsif (($state eq "name") || ($state eq "start")) {
+                        $skipped = $token;
+                        # Skip over the rest of the line.
+                        last TOKEN;
+                    }
+                }
+                if ($skipped) {
+                    processSkippedFileEntry($skipped, "TestExpectations", $constraintPath);
+                }
+            }
+            close EXPECTATIONS;
         }
     }
+}
+
+sub processSkippedFileEntry($$$)
+{
+    my ($skipped, $listname, $constraintPath) = @_;
+
+    if ($skippedOnly) {
+        if (!fileShouldBeIgnored($skipped)) {
+            if (!$constraintPath) {
+                # Always add $skipped since no constraint path was specified on the command line.
+                push(@ARGV, $skipped);
+            } elsif ($skipped =~ /^($constraintPath)/ || ("LayoutTests/".$skipped) =~ /^($constraintPath)/ ) {
+                # Add $skipped only if it matches the current path constraint, e.g.,
+                # "--skipped=only dir1" with "dir1/file1.html" on the skipped list or
+                # "--skipped=only LayoutTests/dir1" with "dir1/file1.html" on the skipped list
+                push(@ARGV, $skipped);
+            } elsif ($constraintPath =~ /^("LayoutTests\/".$skipped)/ || $constraintPath =~ /^($skipped)/) {
+                # Add current path constraint if it is more specific than the skip list entry,
+                # e.g., "--skipped=only dir1/dir2/dir3" with "dir1" on the skipped list or
+                # e.g., "--skipped=only LayoutTests/dir1/dir2/dir3" with "dir1" on the skipped list.
+                push(@ARGV, $constraintPath);
+            }
+        } elsif ($verbose) {
+            print "    $skipped\n";
+        }
+    } else {
+        if ($verbose) {
+            print "    $skipped\n";
+        }
+        processIgnoreTests($skipped, $listname);
+    }
+}
+
+sub startsWith($$)
+{
+    my ($string, $substring) = @_;
+    return index($string, $substring) == 0;
 }
 
 sub readChecksumFromPng($)
