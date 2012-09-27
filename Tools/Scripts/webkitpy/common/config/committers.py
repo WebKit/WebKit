@@ -498,7 +498,7 @@ reviewers_list = [
     Reviewer("Kevin McCullough", "kmccullough@apple.com", "maculloch"),
     Reviewer("Kevin Ollivier", ["kevino@theolliviers.com", "kevino@webkit.org"], "kollivier"),
     Reviewer("Lars Knoll", ["lars@trolltech.com", "lars@kde.org", "lars.knoll@nokia.com"], "lars"),
-    Reviewer("Laszlo Gombos", "laszlo.1.gombos@nokia.com", "lgombos"),
+    Reviewer("Laszlo Gombos", ["laszlo.gombos@webkit.org", "l.gombos@samsung.com", "laszlo.1.gombos@nokia.com"], "lgombos"),
     Reviewer("Levi Weintraub", ["leviw@chromium.org", "leviw@google.com", "lweintraub@apple.com"], "leviw"),
     Reviewer("Luiz Agostini", ["luiz@webkit.org", "luiz.agostini@openbossa.org"], "lca"),
     Reviewer("Maciej Stachowiak", "mjs@apple.com", "othermaciej"),

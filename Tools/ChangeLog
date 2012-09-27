@@ -1,3 +1,9 @@
+2012-09-26  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Unreviewed. Update my e-mail address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-26  Dirk Pranke  <dpranke@chromium.org>
 
         modify old-run-webkit-tests to support TestExpectations files a little
