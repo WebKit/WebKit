@@ -1,3 +1,28 @@
+2012-09-27  Helder Correia  <helder.correia@nokia.com>
+
+        [Cairo] Unnecessary creation of ShareableBitmap's for directly composited images
+        https://bugs.webkit.org/show_bug.cgi?id=97745
+
+        Reviewed by Martin Robinson.
+
+        In LayerTreeCoordinator::adoptImageBackingStore(), there is a
+        PLATFORM(QT) code path to check for identical images, but nothing is
+        done for Cairo, which results in the occurrence of avoidable resource
+        allocations.
+
+        The issue happens in e.g. http://www.webkit.org/blog-files/leaves/,
+        where there are many leaves flying around while they're produced out of
+        only four bitmaps.
+
+        This patch uses pointers to cairo_surface_t's as the key to the hashmap
+        that caches bitmaps. This can be safely done since we own the references.
+        We artificially increment the surface references in adoptImageBackingStore()
+        and decrement them in releaseImageBackingStore().
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::adoptImageBackingStore):
+        (WebKit::LayerTreeCoordinator::releaseImageBackingStore):
+
 2012-09-27  Anders Carlsson  <andersca@apple.com>
 
         Stop using dispatch_get_current_queue

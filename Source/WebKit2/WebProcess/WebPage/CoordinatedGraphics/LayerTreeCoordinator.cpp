@@ -454,6 +454,14 @@ int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
         return InvalidWebLayerID;
 
     key = nativeImage->cacheKey();
+#elif USE(CAIRO)
+    NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return InvalidWebLayerID;
+    // This can be safely done since we own the reference.
+    // A corresponding cairo_surface_destroy() is ensured in releaseImageBackingStore().
+    cairo_surface_t* cairoSurface = cairo_surface_reference(nativeImage->surface());
+    key = reinterpret_cast<int64_t>(cairoSurface);
 #endif
 
     HashMap<int64_t, int>::iterator it = m_directlyCompositedImageRefCounts.find(key);
@@ -490,6 +498,11 @@ void LayerTreeCoordinator::releaseImageBackingStore(int64_t key)
         return;
 
     m_directlyCompositedImageRefCounts.remove(it);
+#if USE(CAIRO)
+    // Complement the referencing in adoptImageBackingStore().
+    cairo_surface_t* cairoSurface = reinterpret_cast<cairo_surface_t*>(key);
+    cairo_surface_destroy(cairoSurface);
+#endif
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::DestroyDirectlyCompositedImage(key));
 }
 
