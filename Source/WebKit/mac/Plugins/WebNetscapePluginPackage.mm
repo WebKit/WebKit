@@ -57,9 +57,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #define MIMEDescriptionStringNumber             127
 #define MIMEListStringStringNumber              128
 
-#define RealPlayerAppIndentifier                @"com.RealNetworks.RealOne Player"
-#define RealPlayerPluginFilename                "RealPlayer Plugin"
-
 @interface WebNetscapePluginPackage (Internal)
 - (void)_unloadWithShutdown:(BOOL)shutdown;
 @end
@@ -107,29 +104,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (ResFileRefNum)openResourceFile
 {
-#ifdef SUPPORT_CFM
-    if (!isBundle) {
-        FSRef fref;
-        OSErr err = FSPathMakeRef((const UInt8 *)[(NSString *)path fileSystemRepresentation], &fref, NULL);
-        if (err != noErr)
-            return -1;
-        
-        return FSOpenResFile(&fref, fsRdPerm);
-    }
-#endif
-
     return CFBundleOpenBundleResourceMap(cfBundle.get());
 }
 
 - (void)closeResourceFile:(ResFileRefNum)resRef
 {
-#ifdef SUPPORT_CFM
-    if (!isBundle) {
-        CloseResFile(resRef);
-        return;
-    }
-#endif
-
     CFBundleCloseBundleResourceMap(cfBundle.get(), resRef);
 }
 
@@ -227,60 +206,31 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     OSType type = 0;
 
-    if (cfBundle) {
-        // Bundle
-        CFBundleGetPackageInfo(cfBundle.get(), &type, NULL);
-#ifdef SUPPORT_CFM
-        isBundle = YES;
-#endif
-    } else {
-#ifdef SUPPORT_CFM
-        // Single-file plug-in with resource fork
-        NSString *destinationPath = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:path error:0];
-        type = [[[NSFileManager defaultManager] attributesOfItemAtPath:destinationPath error:0] fileHFSTypeCode];
-        isBundle = NO;
-        isCFM = YES;
-#else
+    if (!cfBundle)
         return NO;
-#endif
-    }
+
+    CFBundleGetPackageInfo(cfBundle.get(), &type, NULL);
     
     if (type != FOUR_CHAR_CODE('BRPL'))
         return NO;
 
-    // Check if the executable is Mach-O or CFM.
-    if (cfBundle) {
-        RetainPtr<CFURLRef> executableURL(AdoptCF, CFBundleCopyExecutableURL(cfBundle.get()));
-        if (!executableURL)
-            return NO;
-        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[(NSURL *)executableURL.get() path]];
-        NSData *data = [executableFile readDataOfLength:512];
-        [executableFile closeFile];
-        // Check the length of the data before calling memcmp. We think this fixes 3782543.
-        if (data == nil || [data length] < 8)
-            return NO;
-        BOOL hasCFMHeader = memcmp([data bytes], "Joy!peff", 8) == 0;
-#ifdef SUPPORT_CFM
-        isCFM = hasCFMHeader;
-#else
-        if (hasCFMHeader)
-            return NO;
-#endif
-
 #if USE(PLUGIN_HOST_PROCESS)
-        RetainPtr<CFArrayRef> archs(AdoptCF, CFBundleCopyExecutableArchitectures(cfBundle.get()));
-        
-        if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
-            pluginHostArchitecture = CPU_TYPE_X86_64;
-        else if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
-            pluginHostArchitecture = CPU_TYPE_X86;
-        else
-            return NO;
+    RetainPtr<CFArrayRef> archs(AdoptCF, CFBundleCopyExecutableArchitectures(cfBundle.get()));
+
+    if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
+        pluginHostArchitecture = CPU_TYPE_X86_64;
+    else if ([(NSArray *)archs.get() containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
+        pluginHostArchitecture = CPU_TYPE_X86;
+    else
+        return NO;
 #else
-        if (![self isNativeLibraryData:data])
-            return NO;
+    RetainPtr<CFURLRef> executableURL(AdoptCF, CFBundleCopyExecutableURL(cfBundle.get()));
+    if (!executableURL)
+        return NO;
+    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[(NSURL *)executableURL.get() path]];
+    NSData *data = [executableFile readDataOfLength:512];
+    [executableFile closeFile];
 #endif
-    }
 
     if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources])
         return NO;
@@ -304,15 +254,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return self;
 }
 
-- (WebExecutableType)executableType
-{
-#ifdef SUPPORT_CFM
-    if (isCFM)
-        return WebCFMExecutableType;
-#endif
-    return WebMachOExecutableType;
-}
-
 #if USE(PLUGIN_HOST_PROCESS)
 - (cpu_type_t)pluginHostArchitecture
 {
@@ -325,34 +266,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 }
 
 #endif
-
-- (void)launchRealPlayer
-{
-    CFURLRef appURL = NULL;
-    OSStatus error = LSFindApplicationForInfo(kLSUnknownCreator, (CFStringRef)RealPlayerAppIndentifier, NULL, NULL, &appURL);
-    if (!error) {
-        LSLaunchURLSpec URLSpec;
-        bzero(&URLSpec, sizeof(URLSpec));
-        URLSpec.launchFlags = kLSLaunchDefaults | kLSLaunchDontSwitch;
-        URLSpec.appURL = appURL;
-        LSOpenFromURLSpec(&URLSpec, NULL);
-        CFRelease(appURL);
-    }
-}
-
-- (void)_applyDjVuWorkaround
-{
-    if (!cfBundle)
-        return;
-    
-    if ([self bundleIdentifier] == "com.lizardtech.NPDjVu") {
-        // The DjVu plug-in will crash copying the vtable if it's too big so we cap it to 
-        // what the plug-in expects here. 
-        // size + version + 40 function pointers.
-        browserFuncs.size = 2 + 2 + sizeof(void *) * 40;
-    }
-        
-}
 
 - (void)unload
 {
@@ -379,70 +292,20 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isLoaded)
         return YES;
     
-#ifdef SUPPORT_CFM
-    if (isBundle) {
-#endif
-        if (!CFBundleLoadExecutable(cfBundle.get()))
-            return NO;
+    if (!CFBundleLoadExecutable(cfBundle.get()))
+        return NO;
 #if !LOG_DISABLED
-        currentTime = CFAbsoluteTimeGetCurrent();
-        duration = currentTime - start;
+    currentTime = CFAbsoluteTimeGetCurrent();
+    duration = currentTime - start;
 #endif
-        LOG(Plugins, "%f CFBundleLoadExecutable took %f seconds", currentTime, duration);
-        isLoaded = YES;
-        
-#ifdef SUPPORT_CFM
-        if (isCFM) {
-            pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("main") );
-            if (!pluginMainFunc)
-                return NO;
-        } else {
-#endif
-            NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Initialize"));
-            NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_GetEntryPoints"));
-            NP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Shutdown"));
-            if (!NP_Initialize || !NP_GetEntryPoints || !NP_Shutdown)
-                return NO;
-#ifdef SUPPORT_CFM
-        }
-    } else {
-        // single CFM file
-        FSSpec spec;
-        FSRef fref;
-        OSErr err;
-        
-        err = FSPathMakeRef((UInt8 *)[(NSString *)path fileSystemRepresentation], &fref, NULL);
-        if (err != noErr) {
-            LOG_ERROR("FSPathMakeRef failed. Error=%d", err);
-            return NO;
-        }
-        err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
-        if (err != noErr) {
-            LOG_ERROR("FSGetCatalogInfo failed. Error=%d", err);
-            return NO;
-        }
-        err = WebGetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
-        if (err != noErr) {
-            LOG_ERROR("WebGetDiskFragment failed. Error=%d", err);
-            return NO;
-        }
-#if !LOG_DISABLED
-        currentTime = CFAbsoluteTimeGetCurrent();
-        duration = currentTime - start;
-#endif
-        LOG(Plugins, "%f WebGetDiskFragment took %f seconds", currentTime, duration);
-        isLoaded = YES;
-        
-        pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
-        if (!pluginMainFunc) {
-            return NO;
-        }
+    LOG(Plugins, "%f CFBundleLoadExecutable took %f seconds", currentTime, duration);
+    isLoaded = YES;
 
-        // NOTE: pluginMainFunc is freed after it is called. Be sure not to return before that.
-        
-        isCFM = YES;
-    }
-#endif /* SUPPORT_CFM */
+    NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Initialize"));
+    NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_GetEntryPoints"));
+    NP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle.get(), CFSTR("NP_Shutdown"));
+    if (!NP_Initialize || !NP_GetEntryPoints || !NP_Shutdown)
+        return NO;
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -457,210 +320,88 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #pragma clang diagnostic pop
 #endif
 
-    // swap function tables
-#ifdef SUPPORT_CFM
-    if (isCFM) {
-        browserFuncs.version = NP_VERSION_MINOR;
-        browserFuncs.size = sizeof(NPNetscapeFuncs);
-        browserFuncs.geturl = (NPN_GetURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURL);
-        browserFuncs.posturl = (NPN_PostURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PostURL);
-        browserFuncs.requestread = (NPN_RequestReadProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RequestRead);
-        browserFuncs.newstream = (NPN_NewStreamProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_NewStream);
-        browserFuncs.write = (NPN_WriteProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Write);
-        browserFuncs.destroystream = (NPN_DestroyStreamProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_DestroyStream);
-        browserFuncs.status = (NPN_StatusProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Status);
-        browserFuncs.uagent = (NPN_UserAgentProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UserAgent);
-        browserFuncs.memalloc = (NPN_MemAllocProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemAlloc);
-        browserFuncs.memfree = (NPN_MemFreeProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemFree);
-        browserFuncs.memflush = (NPN_MemFlushProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemFlush);
-        browserFuncs.reloadplugins = (NPN_ReloadPluginsProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReloadPlugins);
-        browserFuncs.geturlnotify = (NPN_GetURLNotifyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURLNotify);
-        browserFuncs.posturlnotify = (NPN_PostURLNotifyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PostURLNotify);
-        browserFuncs.getvalue = (NPN_GetValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetValue);
-        browserFuncs.setvalue = (NPN_SetValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetValue);
-        browserFuncs.invalidaterect = (NPN_InvalidateRectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_InvalidateRect);
-        browserFuncs.invalidateregion = (NPN_InvalidateRegionProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_InvalidateRegion);
-        browserFuncs.forceredraw = (NPN_ForceRedrawProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ForceRedraw);
-        browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
-        browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
-        browserFuncs.pushpopupsenabledstate = (NPN_PushPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PushPopupsEnabledState);
-        browserFuncs.poppopupsenabledstate = (NPN_PopPopupsEnabledStateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopPopupsEnabledState);
-        browserFuncs.pluginthreadasynccall = (NPN_PluginThreadAsyncCallProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PluginThreadAsyncCall);
-        browserFuncs.getvalueforurl = (NPN_GetValueForURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetValueForURL);
-        browserFuncs.setvalueforurl = (NPN_SetValueForURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetValueForURL);
-        browserFuncs.getauthenticationinfo = (NPN_GetAuthenticationInfoProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetAuthenticationInfo);
-        browserFuncs.scheduletimer = (NPN_ScheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ScheduleTimer);
-        browserFuncs.unscheduletimer = (NPN_UnscheduleTimerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UnscheduleTimer);
-        browserFuncs.popupcontextmenu = (NPN_PopUpContextMenuProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PopUpContextMenu);
-        browserFuncs.convertpoint = (NPN_ConvertPointProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ConvertPoint);
-        
-        browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseVariantValue);
-        browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifier);
-        browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetStringIdentifiers);
-        browserFuncs.getintidentifier = (NPN_GetIntIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetIntIdentifier);
-        browserFuncs.identifierisstring = (NPN_IdentifierIsStringProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_IdentifierIsString);
-        browserFuncs.utf8fromidentifier = (NPN_UTF8FromIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_UTF8FromIdentifier);
-        browserFuncs.intfromidentifier = (NPN_IntFromIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_IntFromIdentifier);
-        browserFuncs.createobject = (NPN_CreateObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_CreateObject);
-        browserFuncs.retainobject = (NPN_RetainObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RetainObject);
-        browserFuncs.releaseobject = (NPN_ReleaseObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_ReleaseObject);
-        browserFuncs.hasmethod = (NPN_HasMethodProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_HasProperty);
-        browserFuncs.invoke = (NPN_InvokeProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Invoke);
-        browserFuncs.invokeDefault = (NPN_InvokeDefaultProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_InvokeDefault);
-        browserFuncs.evaluate = (NPN_EvaluateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Evaluate);
-        browserFuncs.hasproperty = (NPN_HasPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_HasProperty);
-        browserFuncs.getproperty = (NPN_GetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_GetProperty);
-        browserFuncs.setproperty = (NPN_SetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetProperty);
-        browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RemoveProperty);
-        browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetException);
-        browserFuncs.enumerate = (NPN_EnumerateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Enumerate);
-        browserFuncs.construct = (NPN_ConstructProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Construct);
-        
-        [self _applyDjVuWorkaround];
-        
-#if !LOG_DISABLED
-        CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
-#endif
-        LOG(Plugins, "%f main timing started", mainStart);
-        NPP_ShutdownProcPtr shutdownFunction;
-        npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &shutdownFunction);
-        NP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
-        if (!isBundle)
-            // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
-            free(reinterpret_cast<void*>(pluginMainFunc));
-        
-        // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
-        // Launch the RealPlayer application to refresh the file.
-        if (npErr != NPERR_NO_ERROR) {
-            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && equalIgnoringCase(pluginInfo.file, RealPlayerPluginFilename))
-                [self launchRealPlayer];
-            return NO;
-        }
-#if !LOG_DISABLED
-        currentTime = CFAbsoluteTimeGetCurrent();
-        duration = currentTime - mainStart;
-#endif
-        LOG(Plugins, "%f main took %f seconds", currentTime, duration);
-        
-        pluginSize = pluginFuncs.size;
-        pluginVersion = pluginFuncs.version;
-        LOG(Plugins, "pluginMainFunc: %d, size=%d, version=%d", npErr, pluginSize, pluginVersion);
-        
-        pluginFuncs.newp = (NPP_NewProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newp);
-        pluginFuncs.destroy = (NPP_DestroyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroy);
-        pluginFuncs.setwindow = (NPP_SetWindowProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setwindow);
-        pluginFuncs.newstream = (NPP_NewStreamProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newstream);
-        pluginFuncs.destroystream = (NPP_DestroyStreamProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroystream);
-        pluginFuncs.asfile = (NPP_StreamAsFileProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.asfile);
-        pluginFuncs.writeready = (NPP_WriteReadyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.writeready);
-        pluginFuncs.write = (NPP_WriteProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.write);
-        pluginFuncs.print = (NPP_PrintProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.print);
-        pluginFuncs.event = (NPP_HandleEventProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.event);
-        pluginFuncs.urlnotify = (NPP_URLNotifyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.urlnotify);
-        pluginFuncs.getvalue = (NPP_GetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.getvalue);
-        pluginFuncs.setvalue = (NPP_SetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setvalue);
+    browserFuncs.version = NP_VERSION_MINOR;
+    browserFuncs.size = sizeof(NPNetscapeFuncs);
+    browserFuncs.geturl = NPN_GetURL;
+    browserFuncs.posturl = NPN_PostURL;
+    browserFuncs.requestread = NPN_RequestRead;
+    browserFuncs.newstream = NPN_NewStream;
+    browserFuncs.write = NPN_Write;
+    browserFuncs.destroystream = NPN_DestroyStream;
+    browserFuncs.status = NPN_Status;
+    browserFuncs.uagent = NPN_UserAgent;
+    browserFuncs.memalloc = NPN_MemAlloc;
+    browserFuncs.memfree = NPN_MemFree;
+    browserFuncs.memflush = NPN_MemFlush;
+    browserFuncs.reloadplugins = NPN_ReloadPlugins;
+    browserFuncs.geturlnotify = NPN_GetURLNotify;
+    browserFuncs.posturlnotify = NPN_PostURLNotify;
+    browserFuncs.getvalue = NPN_GetValue;
+    browserFuncs.setvalue = NPN_SetValue;
+    browserFuncs.invalidaterect = NPN_InvalidateRect;
+    browserFuncs.invalidateregion = NPN_InvalidateRegion;
+    browserFuncs.forceredraw = NPN_ForceRedraw;
+    browserFuncs.getJavaEnv = NPN_GetJavaEnv;
+    browserFuncs.getJavaPeer = NPN_GetJavaPeer;
+    browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
+    browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
+    browserFuncs.pluginthreadasynccall = NPN_PluginThreadAsyncCall;
+    browserFuncs.getvalueforurl = NPN_GetValueForURL;
+    browserFuncs.setvalueforurl = NPN_SetValueForURL;
+    browserFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
+    browserFuncs.scheduletimer = NPN_ScheduleTimer;
+    browserFuncs.unscheduletimer = NPN_UnscheduleTimer;
+    browserFuncs.popupcontextmenu = NPN_PopUpContextMenu;
+    browserFuncs.convertpoint = NPN_ConvertPoint;
 
-        // LiveConnect support
-        pluginFuncs.javaClass = (JRIGlobalRef)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
-        if (pluginFuncs.javaClass) {
-            LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
-        } else {
-            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
-        }
-
-    } else {
-
-#endif
-
-        // no function pointer conversion necessary for Mach-O
-        browserFuncs.version = NP_VERSION_MINOR;
-        browserFuncs.size = sizeof(NPNetscapeFuncs);
-        browserFuncs.geturl = NPN_GetURL;
-        browserFuncs.posturl = NPN_PostURL;
-        browserFuncs.requestread = NPN_RequestRead;
-        browserFuncs.newstream = NPN_NewStream;
-        browserFuncs.write = NPN_Write;
-        browserFuncs.destroystream = NPN_DestroyStream;
-        browserFuncs.status = NPN_Status;
-        browserFuncs.uagent = NPN_UserAgent;
-        browserFuncs.memalloc = NPN_MemAlloc;
-        browserFuncs.memfree = NPN_MemFree;
-        browserFuncs.memflush = NPN_MemFlush;
-        browserFuncs.reloadplugins = NPN_ReloadPlugins;
-        browserFuncs.geturlnotify = NPN_GetURLNotify;
-        browserFuncs.posturlnotify = NPN_PostURLNotify;
-        browserFuncs.getvalue = NPN_GetValue;
-        browserFuncs.setvalue = NPN_SetValue;
-        browserFuncs.invalidaterect = NPN_InvalidateRect;
-        browserFuncs.invalidateregion = NPN_InvalidateRegion;
-        browserFuncs.forceredraw = NPN_ForceRedraw;
-        browserFuncs.getJavaEnv = NPN_GetJavaEnv;
-        browserFuncs.getJavaPeer = NPN_GetJavaPeer;
-        browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
-        browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
-        browserFuncs.pluginthreadasynccall = NPN_PluginThreadAsyncCall;
-        browserFuncs.getvalueforurl = NPN_GetValueForURL;
-        browserFuncs.setvalueforurl = NPN_SetValueForURL;
-        browserFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
-        browserFuncs.scheduletimer = NPN_ScheduleTimer;
-        browserFuncs.unscheduletimer = NPN_UnscheduleTimer;
-        browserFuncs.popupcontextmenu = NPN_PopUpContextMenu;
-        browserFuncs.convertpoint = NPN_ConvertPoint;
-
-        browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
-        browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
-        browserFuncs.getstringidentifiers = _NPN_GetStringIdentifiers;
-        browserFuncs.getintidentifier = _NPN_GetIntIdentifier;
-        browserFuncs.identifierisstring = _NPN_IdentifierIsString;
-        browserFuncs.utf8fromidentifier = _NPN_UTF8FromIdentifier;
-        browserFuncs.intfromidentifier = _NPN_IntFromIdentifier;
-        browserFuncs.createobject = _NPN_CreateObject;
-        browserFuncs.retainobject = _NPN_RetainObject;
-        browserFuncs.releaseobject = _NPN_ReleaseObject;
-        browserFuncs.hasmethod = _NPN_HasMethod;
-        browserFuncs.invoke = _NPN_Invoke;
-        browserFuncs.invokeDefault = _NPN_InvokeDefault;
-        browserFuncs.evaluate = _NPN_Evaluate;
-        browserFuncs.hasproperty = _NPN_HasProperty;
-        browserFuncs.getproperty = _NPN_GetProperty;
-        browserFuncs.setproperty = _NPN_SetProperty;
-        browserFuncs.removeproperty = _NPN_RemoveProperty;
-        browserFuncs.setexception = _NPN_SetException;
-        browserFuncs.enumerate = _NPN_Enumerate;
-        browserFuncs.construct = _NPN_Construct;
-        
-        [self _applyDjVuWorkaround];
+    browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
+    browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
+    browserFuncs.getstringidentifiers = _NPN_GetStringIdentifiers;
+    browserFuncs.getintidentifier = _NPN_GetIntIdentifier;
+    browserFuncs.identifierisstring = _NPN_IdentifierIsString;
+    browserFuncs.utf8fromidentifier = _NPN_UTF8FromIdentifier;
+    browserFuncs.intfromidentifier = _NPN_IntFromIdentifier;
+    browserFuncs.createobject = _NPN_CreateObject;
+    browserFuncs.retainobject = _NPN_RetainObject;
+    browserFuncs.releaseobject = _NPN_ReleaseObject;
+    browserFuncs.hasmethod = _NPN_HasMethod;
+    browserFuncs.invoke = _NPN_Invoke;
+    browserFuncs.invokeDefault = _NPN_InvokeDefault;
+    browserFuncs.evaluate = _NPN_Evaluate;
+    browserFuncs.hasproperty = _NPN_HasProperty;
+    browserFuncs.getproperty = _NPN_GetProperty;
+    browserFuncs.setproperty = _NPN_SetProperty;
+    browserFuncs.removeproperty = _NPN_RemoveProperty;
+    browserFuncs.setexception = _NPN_SetException;
+    browserFuncs.enumerate = _NPN_Enumerate;
+    browserFuncs.construct = _NPN_Construct;
 
 #if !LOG_DISABLED
-        CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();
+    CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();
 #endif
-        LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
-        npErr = NP_Initialize(&browserFuncs);
-        if (npErr != NPERR_NO_ERROR)
-            return NO;
+    LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
+    npErr = NP_Initialize(&browserFuncs);
+    if (npErr != NPERR_NO_ERROR)
+        return NO;
 #if !LOG_DISABLED
-        currentTime = CFAbsoluteTimeGetCurrent();
-        duration = currentTime - initializeStart;
+    currentTime = CFAbsoluteTimeGetCurrent();
+    duration = currentTime - initializeStart;
 #endif
-        LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
+    LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
 
-        pluginFuncs.size = sizeof(NPPluginFuncs);
-        
-        npErr = NP_GetEntryPoints(&pluginFuncs);
-        if (npErr != NPERR_NO_ERROR)
-            return NO;
-        
-        pluginSize = pluginFuncs.size;
-        pluginVersion = pluginFuncs.version;
-        
-        if (pluginFuncs.javaClass)
-            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
-        else
-            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
+    pluginFuncs.size = sizeof(NPPluginFuncs);
 
-#ifdef SUPPORT_CFM
-    }
-#endif
+    npErr = NP_GetEntryPoints(&pluginFuncs);
+    if (npErr != NPERR_NO_ERROR)
+        return NO;
+
+    pluginSize = pluginFuncs.size;
+    pluginVersion = pluginFuncs.version;
+
+    if (pluginFuncs.javaClass)
+        LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
+    else
+        LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
 
 #if !LOG_DISABLED
     currentTime = CFAbsoluteTimeGetCurrent();
@@ -741,44 +482,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @end
 
-#ifdef SUPPORT_CFM
-
-// function pointer converters
-
-FunctionPointer functionPointerForTVector(TransitionVector tvp)
-{
-    const uint32_t temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
-    uint32_t *newGlue = NULL;
-
-    if (tvp != NULL) {
-        newGlue = (uint32_t *)malloc(sizeof(temp));
-        if (newGlue != NULL) {
-            unsigned i;
-            for (i = 0; i < 6; i++) newGlue[i] = temp[i];
-            newGlue[0] |= ((uintptr_t)tvp >> 16);
-            newGlue[1] |= ((uintptr_t)tvp & 0xFFFF);
-            MakeDataExecutable(newGlue, sizeof(temp));
-        }
-    }
-    
-    return (FunctionPointer)newGlue;
-}
-
-TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
-{
-    FunctionPointer *newGlue = NULL;
-    if (fp != NULL) {
-        newGlue = (FunctionPointer *)malloc(2 * sizeof(FunctionPointer));
-        if (newGlue != NULL) {
-            newGlue[0] = fp;
-            newGlue[1] = NULL;
-        }
-    }
-    return (TransitionVector)newGlue;
-}
-
-#endif
-
 @implementation WebNetscapePluginPackage (Internal)
 
 - (void)_unloadWithShutdown:(BOOL)shutdown
@@ -799,11 +502,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
 
     if (resourceRef != -1)
         [self closeResourceFile:resourceRef];
-
-#ifdef SUPPORT_CFM
-    if (!isBundle)
-        WebCloseConnection(&connID);
-#endif
 
     LOG(Plugins, "Plugin Unloaded");
     isLoaded = NO;

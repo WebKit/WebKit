@@ -1,3 +1,26 @@
+2012-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Remove support for CFM plug-ins in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=97822
+
+        Reviewed by Mark Rowe.
+
+        I'm pretty sure that CFM style plug-ins haven't been used for the last ten years or so,
+        so it's safe to remove them (especially since they're PPC only).
+
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        (-[WebNetscapePluginPackage _tryLoad]):
+        (-[WebNetscapePluginPackage _unloadWithShutdown:]):
+        * Plugins/WebPluginDatabase.mm:
+        (PluginPackageCandidates::PluginPackageCandidates):
+        (PluginPackageCandidates::update):
+        (PluginPackageCandidates::bestCandidate):
+        (PluginPackageCandidates):
+
 2012-09-26  Anders Carlsson  <andersca@apple.com>
 
         Stop using kCFURLHFSPathStyle

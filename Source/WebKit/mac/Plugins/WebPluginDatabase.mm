@@ -91,10 +91,7 @@ static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPa
 struct PluginPackageCandidates {
     PluginPackageCandidates()
         : webPlugin(nil)
-        , machoPlugin(nil)
-#ifdef SUPPORT_CFM
-        , CFMPlugin(nil)
-#endif
+        , netscapePlugin(nil)
     {
     }
     
@@ -107,17 +104,8 @@ struct PluginPackageCandidates {
             
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
-            WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
-#ifdef SUPPORT_CFM
-            if (executableType == WebCFMExecutableType) {
-                checkCandidate(&CFMPlugin, &plugin);
-                return;
-            }
-#endif // SUPPORT_CFM
-            if (executableType == WebMachOExecutableType) {
-                checkCandidate(&machoPlugin, &plugin);
-                return;
-            }
+            checkCandidate(&netscapePlugin, &plugin);
+            return;
         }
 #endif
         ASSERT_NOT_REACHED();
@@ -130,30 +118,19 @@ struct PluginPackageCandidates {
         if (webPlugin && ![webPlugin isQuickTimePlugIn])
             return webPlugin;
     
-        if (machoPlugin && ![machoPlugin isQuickTimePlugIn])
-            return machoPlugin;
-        
-#ifdef SUPPORT_CFM
-        if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn])
-            return CFMPlugin;
-#endif // SUPPORT_CFM
+        if (netscapePlugin && ![netscapePlugin isQuickTimePlugIn])
+            return netscapePlugin;
         
         if (webPlugin)
             return webPlugin;
-        if (machoPlugin)
-            return machoPlugin;
-#ifdef SUPPORT_CFM
-        if (CFMPlugin)
-            return CFMPlugin;
-#endif
+        if (netscapePlugin)
+            return netscapePlugin;
+
         return nil;
     }
     
     WebBasePluginPackage *webPlugin;
-    WebBasePluginPackage *machoPlugin;
-#ifdef SUPPORT_CFM
-    WebBasePluginPackage *CFMPlugin;
-#endif
+    WebBasePluginPackage *netscapePlugin;
 };
 
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType
