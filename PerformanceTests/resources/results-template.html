@@ -17,6 +17,17 @@ section {
     position: relative;
 }
 
+.time-plots {
+    padding-left: 25px;
+}
+
+.time-plots > div {
+    display: inline-block;
+    width: 90px;
+    height: 40px;
+    margin-right: 10px;
+}
+
 section h1 {
     text-align: center;
     font-size: 1em;
@@ -243,15 +254,25 @@ var mainPlotOptions = {
     }
 };
 
+var timePlotOptions = {
+    yaxis: { show: false },
+    xaxis: { show: false },
+    lines: { show: true },
+    grid: { borderWidth: 1, borderColor: '#ccc' },
+    colors: ['#06f']
+};
+
 function createPlot(container, test) {
-    var section = $('<section><div class="plot"></div>'
+    var section = $('<section><div class="plot"></div><div class="time-plots"></div>'
         + '<span class="tooltip"></span></section>');
-    section.children('.plot').css({'width': 100 * test.results().length + 'px', 'height': '300px'});
+    section.children('.plot').css({'width': (100 * test.results().length + 25) + 'px', 'height': '300px'});
     $(container).append(section);
 
     var plotContainer = section.children('.plot');
     var minIsZero = true;
     attachPlot(test, plotContainer, minIsZero);
+
+    attachTimePlots(test, section.children('.time-plots'));
 
     var tooltip = section.children('.tooltip');
     plotContainer.bind('plothover', function (event, position, item) {
@@ -274,6 +295,24 @@ function createPlot(container, test) {
     });
 
     return section;
+}
+
+function attachTimePlots(test, container) {
+    var results = test.results();
+    var attachedPlot = false;
+    for (var i = 0; i < results.length; i++) {
+        container.append('<div></div>');
+        var values = results[i].values();
+        if (!values)
+            continue;
+        attachedPlot = true;
+
+        $.plot(container.children().last(), [values.map(function (value, index) { return [index, value]; })],
+            $.extend(true, {}, timePlotOptions, {yaxis: {min: Math.min.apply(Math, values) * 0.9, max: Math.max.apply(Math, values) * 1.1},
+                xaxis: {min: -0.5, max: values.length - 0.5}}));
+    }
+    if (!attachedPlot)
+        container.children().remove();
 }
 
 function attachPlot(test, plotContainer, minIsZero) {
@@ -335,6 +374,44 @@ function createTable(tests, runs, shouldIgnoreMemory, referenceIndex) {
     $('#container').tablesorter({widgets: ['zebra']});
 }
 
+function linearRegression(points) {
+    // Implement http://www.easycalculation.com/statistics/learn-correlation.php.
+    // x = magnitude
+    // y = iterations
+    var sumX = 0;
+    var sumY = 0;
+    var sumXSquared = 0;
+    var sumYSquared = 0;
+    var sumXTimesY = 0;
+
+    for (var i = 0; i < points.length; i++) {
+        var x = i;
+        var y = points[i];
+        sumX += x;
+        sumY += y;
+        sumXSquared += x * x;
+        sumYSquared += y * y;
+        sumXTimesY += x * y;
+    }
+
+    var r = (points.length * sumXTimesY - sumX * sumY) /
+        Math.sqrt((points.length * sumXSquared - sumX * sumX) *
+                  (points.length * sumYSquared - sumY * sumY));
+
+    if (isNaN(r) || r == Math.Infinity)
+        r = 0;
+
+    var slope = (points.length * sumXTimesY - sumX * sumY) / (points.length * sumXSquared - sumX * sumX);
+    var intercept = sumY / points.length - slope * sumX / points.length;
+    return {slope: slope, intercept: intercept, rSquared: r * r};
+}
+
+var warningSign = '<svg viewBox="0 0 100 100" style="width: 18px; height: 18px; vertical-align: bottom;" version="1.1">'
+    + '<polygon fill="red" points="50,10 90,80 10,80 50,10" stroke="red" stroke-width="10" stroke-linejoin="round" />'
+    + '<polygon fill="white" points="47,30 48,29, 50, 28.7, 52,29 53,30 50,60" stroke="white" stroke-width="10" stroke-linejoin="round" />'
+    + '<circle cx="50" cy="73" r="6" fill="white" />'
+    + '</svg>';
+
 function createTableRow(test, referenceResult) {
     var tableRow = $('<tr><td class="test">' + test.name() + '</td><td class="unit">' + test.unit() + '</td></tr>');
 
@@ -354,13 +431,25 @@ function createTableRow(test, referenceResult) {
             secondCell = '</td><td class="' + className + '">' + comparison;
         }
 
+        var values = result.values();
+        var warning = '';
+        var regressionAnalysis = '';
+        if (values && values.length > 3) {
+            regressionResult = linearRegression(values);
+            regressionAnalysis = 'slope=' + toFixedWidthPrecision(regressionResult.slope)
+                + ', R^2=' + toFixedWidthPrecision(regressionResult.rSquared);
+            if (regressionResult.rSquared > 0.6 && Math.abs(regressionResult.slope) > 0.01) {
+                warning = ' <span class="regression-warning" title="Detected a time dependency with ' + regressionAnalysis + '">' + warningSign + ' </span>';
+            }
+        }
+
         var statistics = '&sigma;=' + toFixedWidthPrecision(result.stdev()) + ', min=' + toFixedWidthPrecision(result.min())
-            + ', max=' + toFixedWidthPrecision(result.max());
+            + ', max=' + toFixedWidthPrecision(result.max()) + '\n' + regressionAnalysis;
 
         // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
         return '<td class="result" title="' + statistics + '">' + toFixedWidthPrecision(result.mean()) + hiddenValue
             + '</td><td class="stdev" title="' + statistics + '">&plusmn; '
-            + formatPercentage(result.stdevRatio()) + secondCell + '</td>';
+            + formatPercentage(result.stdevRatio()) + warning + secondCell + '</td>';
     }).reduce(function (markup, cell) { return markup + cell; }, ''));
 
     $('#container').children('tbody').last().append(tableRow);

@@ -1,3 +1,19 @@
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Results page should warn about time-dependent distributions
+        https://bugs.webkit.org/show_bug.cgi?id=97818
+
+        Reviewed by Ojan Vafai.
+
+        Add a simple linear regression analysis on results page to detect time-dependent distributions.
+        We add a warning sign (inline SVG) when the regression gave us a slope of at least 0.01 and a R^2 of at least 0.6.
+        Also added time-series graphs per run under the bar graphs so that humans can manually inspect them.
+
+        A nice follow up would be to add some normality test (e.g. Shapiro-Wilk) to detect bi-modal distributions
+        but we probably need to restructure the code to run it asynchronously since normality tests are slow.
+
+        * resources/results-template.html:
+
 2012-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use runPerSecond in PerformanceTests/Bindings/typed-array* and event-target-wrapper
