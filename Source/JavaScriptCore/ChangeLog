@@ -1,3 +1,16 @@
+2012-09-27  Andreas Kling  <kling@webkit.org>
+
+        3.20MB below FunctionParameters::create() on Membuster3.
+        <http://webkit.org/b/97730>
+
+        Reviewed by Anders Carlsson.
+
+        Figure out the exact space needed for parameter identifiers and use reserveInitialCapacity().
+        Reduces memory consumption on Membuster3 by ~1.60 MB.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::FunctionParameters):
+
 2012-09-27  Csaba Osztrogonác  <ossy@webkit.org>, Tor Arne Vestbø  <vestbo@webkit.org>
 
         [Qt] Enable the LLInt on Linux

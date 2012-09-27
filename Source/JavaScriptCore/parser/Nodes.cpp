@@ -153,8 +153,14 @@ PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, const JSTokenLoc
 
 FunctionParameters::FunctionParameters(ParameterNode* firstParameter)
 {
+    unsigned parameterCount = 0;
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
-        append(parameter->ident());
+        ++parameterCount;
+
+    reserveInitialCapacity(parameterCount);
+
+    for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
+        uncheckedAppend(parameter->ident());
 }
 
 inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)
