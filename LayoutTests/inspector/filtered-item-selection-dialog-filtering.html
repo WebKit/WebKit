@@ -32,7 +32,7 @@ function test()
     checkQuery("Spaces in the input", "d.v ", ["div .visible", "div . visible "]);
     checkQuery("Duplicate symbols in query", "aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
     checkQuery("Star in query", "*aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
-    checkQuery("Question in query", "?aab", ["abab", "abaa", "caab", "baac", "fooaab"]);
+    checkQuery("Question in query", "a?b", ["abab", "abaa", "caab", "aqb", "fooaab"]);
     checkQuery("Dangerous input escaping", "^[]{}()\\.$*+?|", ["^[]{}()\\.$*+?|", "0123456789abcdef"]);
     checkQuery("Camel case matching", "fBaB", ["fooBarBaz", "FooBarBaz", "Foo_Bar_Baz", "foo_bar_baz", "foobarbaz", "foobarBaz", "afooBarBaz", "aFooBarBaz", "a fooBarBaz", "fooBorBaz", "fooBorCaz"]);
     checkQuery("Underscore matching", "fO_ba_b", ["foOBarBaz", "FoOBarBaz", "FoO_Bar_Baz", "foO_bar_baz", "foObarbaz", "foObarBaz", "afoOBarBaz", "aFoOBarBaz", "a foOBarBaz", "foOBorBaz", "foOBorCaz"]);

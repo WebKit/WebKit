@@ -202,7 +202,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             regExpString = regExpString.replace(/(?!^)(\\\.|[_:-])/g, "[^._:-]*$1");
         else
             regExpString = regExpString.replace(/(?!^)(\\\.|[A-Z_:-])/g, "[^.A-Z_:-]*$1");
-        regExpString = "^" + "[^a-zA-Z0-9]*" + regExpString;
+        regExpString = regExpString;
         return new RegExp(regExpString, (ignoreCase ? "i" : "") + (isGlobal ? "g" : ""));
     },
 
