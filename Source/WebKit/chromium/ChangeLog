@@ -1,5 +1,18 @@
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium][Mac] Move Mac-specific theme functions out of PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97817
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948. We're calling WebThemeEngine directly now instead of proxying through PlatformSupport.
+
+        * src/AssertMatchingEnums.cpp:
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Move UNIX-specific theme functions out of PlatformSupport
         https://bugs.webkit.org/show_bug.cgi?id=96516
 

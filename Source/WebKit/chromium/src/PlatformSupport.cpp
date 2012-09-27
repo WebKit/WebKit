@@ -324,29 +324,6 @@ void PlatformSupport::paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
 }
 
-#elif OS(DARWIN)
-
-void PlatformSupport::paintScrollbarThumb(
-    GraphicsContext* gc, ThemePaintState state, ThemePaintSize size, const IntRect& rect, const ThemePaintScrollbarInfo& scrollbarInfo)
-{
-    WebThemeEngine::ScrollbarInfo webThemeScrollbarInfo;
-
-    webThemeScrollbarInfo.orientation = static_cast<WebThemeEngine::ScrollbarOrientation>(scrollbarInfo.orientation);
-    webThemeScrollbarInfo.parent = static_cast<WebThemeEngine::ScrollbarParent>(scrollbarInfo.parent);
-    webThemeScrollbarInfo.maxValue = scrollbarInfo.maxValue;
-    webThemeScrollbarInfo.currentValue = scrollbarInfo.currentValue;
-    webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
-    webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
-
-    WebKit::WebCanvas* webCanvas = gc->platformContext()->canvas();
-    WebKit::Platform::current()->themeEngine()->paintScrollbarThumb(
-        webCanvas,
-        static_cast<WebThemeEngine::State>(state),
-        static_cast<WebThemeEngine::Size>(size),
-        rect,
-        webThemeScrollbarInfo);
-}
-
 #endif
 
 // These are temporary methods that the WebKit layer can use to call to the

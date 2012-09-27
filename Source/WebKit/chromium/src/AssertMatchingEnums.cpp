@@ -124,11 +124,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
-#if OS(DARWIN)
-#include "PlatformSupport.h"
-#include <public/mac/WebThemeEngine.h>
-#endif
-
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
     COMPILE_ASSERT(int(WebKit::webkit_name) == int(WebCore::webcore_name), mismatching_enums)
 
@@ -546,22 +541,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaTypePersistent, StorageInfo::PERSIST
 
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
-#endif
-
-#if OS(DARWIN)
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, PlatformSupport::StateDisabled);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateInactive, PlatformSupport::StateInactive);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateActive, PlatformSupport::StateActive);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StatePressed, PlatformSupport::StatePressed);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeRegular, PlatformSupport::SizeRegular);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeSmall, PlatformSupport::SizeSmall);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationHorizontal, PlatformSupport::ScrollbarOrientationHorizontal);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationVertical, PlatformSupport::ScrollbarOrientationVertical);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentScrollView, PlatformSupport::ScrollbarParentScrollView);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, PlatformSupport::ScrollbarParentRenderLayer);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateVisible, PageVisibilityStateVisible);
