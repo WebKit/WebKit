@@ -1005,34 +1005,40 @@ WebInspector.HeapSnapshotLoadFromFileDelegate = function(snapshotHeader)
 }
 
 WebInspector.HeapSnapshotLoadFromFileDelegate.prototype = {
-    onTransferStarted: function(source)
+    onTransferStarted: function()
     {
     },
 
-    onChunkTransferred: function(source)
+    /**
+     * @param {WebInspector.ChunkedReader} reader
+     */
+    onChunkTransferred: function(reader)
     {
         this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString(
-            "Loading\u2026 %d%", (source.loadedSize() * 100 / source.fileSize()).toFixed(2));
+            "Loading\u2026 %d%", (reader.loadedSize() * 100 / reader.fileSize()).toFixed(2));
     },
 
-    onTransferFinished: function(source)
+    onTransferFinished: function()
     {
         this._snapshotHeader.finishHeapSnapshot(true);
     },
 
-    onError: function (source, e)
+    /**
+     * @param {WebInspector.ChunkedReader} reader
+     */
+    onError: function (reader, e)
     {
         switch(e.target.error.code) {
         case e.target.error.NOT_FOUND_ERR:
-            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' not found.", source.fileName());
+            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' not found.", reader.fileName());
         break;
         case e.target.error.NOT_READABLE_ERR:
-            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' is not readable", source.fileName());
+            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' is not readable", reader.fileName());
         break;
         case e.target.error.ABORT_ERR:
             break;
         default:
-            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' error %d", source.fileName(), e.target.error.code);
+            this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' error %d", reader.fileName(), e.target.error.code);
         }
     }
 }
