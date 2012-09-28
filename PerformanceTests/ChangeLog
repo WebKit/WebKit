@@ -1,5 +1,36 @@
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove unused features and reduce code duplications in PerfTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=97852
+
+        Reviewed by Kentaro Hara.
+
+        Made the following refactoring changes:
+        - Remove PerfTestRunner.info since it's never used.
+        - Moved the js heap/malloc related functions up to where they belong.
+        - Moved the initialization of _callsPerIteration, _test, and -description into _start,
+          and stopped initializing _runFunction and _doneFunction since both test times now
+          use _test object.
+        - Made _measureTimeOnce and _measureRunsPerSecondOnce return the measured value
+          instead of calling ignoreWarmUpAndLog and _runLoop to share the code; they're now
+          called in _measureRunsPerSecondOnce.
+
+        * resources/runner.js:
+        (PerfTestRunner.storeHeapResults): Moved.
+        (PerfTestRunner.getUsedMallocHeap): Moved.
+        (PerfTestRunner.getUsedJSHeap): Moved.
+        (PerfTestRunner.getAndPrintMemoryStatistics): Moved.
+        (PerfTestRunner._scheduleNextMeasurementOrNotifyDone): Renamed from _runLoop. Calls
+        ignoreWarmUpAndLog and schedules the next call.
+        (PerfTestRunner._measureTimeOnce): Renamed from _runner.
+        (PerfTestRunner._start): Renamed from initAndStartLoop.
+        (PerfTestRunner.measureTime):
+        (PerfTestRunner.runPerSecond):
+        (PerfTestRunner._measureRunsPerSecondOnce): Renamed from _measureRunsPerSecondOnce.
+        (PerfTestRunner._perSecondRunnerIterator):
+
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         PerfTestRunner.run should take an object
         https://bugs.webkit.org/show_bug.cgi?id=97743
 
