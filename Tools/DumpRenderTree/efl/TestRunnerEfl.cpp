@@ -109,7 +109,7 @@ void TestRunner::display()
 
 void TestRunner::keepWebHistory()
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks(true);
 }
 
 JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)

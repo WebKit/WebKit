@@ -1,5 +1,18 @@
 2012-09-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL][DRT] EFL's layoutTestController.keepWebHistory should enable visited links tracking
+        https://bugs.webkit.org/show_bug.cgi?id=97901
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EFL's DRT testRunner.keepWebHistory should enable visited links tracking in order
+        to be consistent with WTR implementation and also several tests rely on that (fast/history).
+
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::keepWebHistory):
+
+2012-09-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [EFL][DRT] EFL DRT should disable visited links tracking by default
         https://bugs.webkit.org/show_bug.cgi?id=97881
 
