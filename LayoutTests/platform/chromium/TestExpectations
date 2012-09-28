@@ -3652,7 +3652,7 @@ webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
 
-# Numerous Mac and Win failures in software compositing.
+# Numerous failures in software compositing.
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/overflow/clip-content-under-overflow-controls.html [ ImageOnlyFailure ]
@@ -3678,25 +3678,25 @@ crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/empty
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/remove-reflection.html [ Pass ]
 
 # Canvas2d not yet supported by software compositor.
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Crash ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Crash ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-platform/chromium/virtual/softwarecompositing-descendant.html [ Crash ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Crash ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Crash ImageOnlyFailure ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Crash ImageOnlyFailure ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-platform/chromium/virtual/softwarecompositing-descendant.html [ Crash ImageOnlyFailure ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Crash ImageOnlyFailure ]
 
 # Video not yet supported by software compositor.
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/video-page-visibility.html [ Crash ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ Crash ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/video-page-visibility.html [ Crash ImageOnlyFailure ]
+crbug.com/150016 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ Crash ImageOnlyFailure ]
 
 # WebGL not yet supported by software compositor.
-crbug.com/151713 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-webgl.html [ Crash ]
-crbug.com/151713 platform/chromium/virtual/softwarecompositing/webgl [ Crash ]
-crbug.com/151713 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-webgl-layer.html [ Crash ]
+crbug.com/151713 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-webgl.html [ Crash ImageOnlyFailure ]
+crbug.com/151713 platform/chromium/virtual/softwarecompositing/webgl [ Crash ImageOnlyFailure ]
+crbug.com/151713 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-webgl-layer.html [ Crash ImageOnlyFailure ]
 
 # No antialiasing on rotation in software compositor.
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/direct-image-platform/chromium/virtual/softwarecompositing.html [ ImageOnlyFailure ]
