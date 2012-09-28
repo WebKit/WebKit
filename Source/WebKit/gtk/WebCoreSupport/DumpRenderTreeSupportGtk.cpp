@@ -691,6 +691,13 @@ void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool
     core(webView)->settings()->setCSSRegionsEnabled(enabled);
 }
 
+void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView, bool enabled)
+{
+#if ENABLE(CSS_SHADERS)
+    core(webView)->settings()->setCSSCustomFilterEnabled(enabled);
+#endif
+}
+
 void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)

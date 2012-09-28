@@ -1,3 +1,21 @@
+2012-09-28  Huang Dongsung  <luxtella@company100.net>
+
+        [GTK] Enable CSS Shaders layout LayoutTests on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=97821
+
+        Reviewed by Martin Robinson.
+
+        This feature is disabled via Settings by default, but for testing,
+        we enable it using layoutTestController.overridePreferences. Add the
+        necessary plumbing for DRT.
+
+        WTR already works because support was added for Apple Mac earlier.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Feature is off by default.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::overridePreference): Add handling of WebKitCSSCustomFilterEnabled.
+
 2012-09-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Make NRWT use wk2/TestExpectations file
