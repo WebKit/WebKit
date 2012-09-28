@@ -1,3 +1,14 @@
+2012-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Switch monthLabels, weekDayShortLabels, and firstDayOfWeek to Localizer
+        https://bugs.webkit.org/show_bug.cgi?id=97874
+
+        Reviewed by Kentaro Hara.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument):
+        Use Localizer for the browser locale.
+
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Update WebVector.h references

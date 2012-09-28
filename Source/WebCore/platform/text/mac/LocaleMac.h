@@ -55,9 +55,9 @@ public:
 
 #if ENABLE(CALENDAR_PICKER)
     String dateFormatText();
-    const Vector<String>& monthLabels();
-    const Vector<String>& weekDayShortLabels();
-    unsigned firstDayOfWeek();
+    virtual const Vector<String>& monthLabels() OVERRIDE;
+    virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
+    virtual unsigned firstDayOfWeek() OVERRIDE;
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)

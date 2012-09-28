@@ -665,6 +665,11 @@ const Vector<String>& LocaleWin::weekDayShortLabels()
     ensureWeekDayShortLabels();
     return m_weekDayShortLabels;
 }
+
+unsigned LocaleWin::firstDayOfWeek()
+{
+    return m_firstDayOfWeek;
+}
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)

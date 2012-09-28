@@ -75,21 +75,6 @@ String localizedDateFormatText()
 {
     return LocaleMac::currentLocale()->dateFormatText();
 }
-
-const Vector<String>& monthLabels()
-{
-    return LocaleMac::currentLocale()->monthLabels();
-}
-
-const Vector<String>& weekDayShortLabels()
-{
-    return LocaleMac::currentLocale()->weekDayShortLabels();
-}
-
-unsigned firstDayOfWeek()
-{
-    return LocaleMac::currentLocale()->firstDayOfWeek();
-}
 #endif
 
 }
