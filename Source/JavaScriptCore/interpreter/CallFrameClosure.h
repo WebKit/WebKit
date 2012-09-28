@@ -52,7 +52,11 @@ struct CallFrameClosure {
     void resetCallFrame()
     {
         newCallFrame->setScope(scope);
-        for (int i = argumentCountIncludingThis; i < parameterCountIncludingThis; ++i)
+        // setArgument() takes an arg index that starts from 0 for the first
+        // argument after the 'this' value. Since both argumentCountIncludingThis
+        // and parameterCountIncludingThis includes the 'this' value, we need to
+        // subtract 1 from them to make i a valid argument index for setArgument().
+        for (int i = argumentCountIncludingThis-1; i < parameterCountIncludingThis-1; ++i)
             newCallFrame->setArgument(i, jsUndefined());
     }
 };
