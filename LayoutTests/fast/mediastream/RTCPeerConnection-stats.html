@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the RTCPeerConnection stats interface.");
+
+var pc = null;
+
+function statsHandler(status)
+{
+    testPassed("statsHandler was called");
+    shouldBeNonNull('status');
+    result = status.result();
+    shouldBe('result.length', '0');
+    finishJSTest();
+}
+
+shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
+shouldNotThrow('pc.getStats(statsHandler)');
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

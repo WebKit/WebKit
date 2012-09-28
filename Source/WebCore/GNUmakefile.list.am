@@ -639,6 +639,14 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRTCSessionDescription.h \
 	DerivedSources/WebCore/JSRTCSessionDescriptionCallback.cpp \
 	DerivedSources/WebCore/JSRTCSessionDescriptionCallback.h \
+	DerivedSources/WebCore/JSRTCStatsCallback.cpp \
+	DerivedSources/WebCore/JSRTCStatsCallback.h \
+	DerivedSources/WebCore/JSRTCStatsElement.cpp \
+	DerivedSources/WebCore/JSRTCStatsElement.h \
+	DerivedSources/WebCore/JSRTCStatsReport.cpp \
+	DerivedSources/WebCore/JSRTCStatsReport.h \
+	DerivedSources/WebCore/JSRTCStatsResponse.cpp \
+	DerivedSources/WebCore/JSRTCStatsResponse.h \
 	DerivedSources/WebCore/JSScreen.cpp \
 	DerivedSources/WebCore/JSScreen.h \
 	DerivedSources/WebCore/JSScriptProfile.cpp \
@@ -1236,6 +1244,10 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescriptionCallback.idl \
+	$(WebCore)/Modules/mediastream/RTCStatsCallback.idl \
+	$(WebCore)/Modules/mediastream/RTCStatsElement.idl \
+	$(WebCore)/Modules/mediastream/RTCStatsReport.idl \
+	$(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
 	$(WebCore)/Modules/navigatorcontentutils/NavigatorContentUtils.idl \
 	$(WebCore)/Modules/notifications/Notification.idl \

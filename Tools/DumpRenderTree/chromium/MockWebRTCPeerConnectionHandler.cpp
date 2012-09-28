@@ -38,6 +38,7 @@
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
+#include <public/WebRTCStatsRequest.h>
 #include <public/WebRTCVoidRequest.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
@@ -78,6 +79,23 @@ public:
 
 private:
     WebRTCSessionDescriptionRequest m_request;
+};
+
+class RTCStatsRequestSucceededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+public:
+    RTCStatsRequestSucceededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCStatsRequest& request)
+        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        , m_request(request)
+    {
+    }
+
+    virtual void runIfValid() OVERRIDE
+    {
+        m_request.requestSucceeded();
+    }
+
+private:
+    WebKit::WebRTCStatsRequest m_request;
 };
 
 class RTCVoidRequestTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
@@ -187,6 +205,12 @@ void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescripto
     m_client->didRemoveRemoteStream(stream);
     m_client->negotiationNeeded();
 }
+
+void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request)
+{
+    postTask(new RTCStatsRequestSucceededTask(this, request));
+}
+
 
 void MockWebRTCPeerConnectionHandler::stop()
 {

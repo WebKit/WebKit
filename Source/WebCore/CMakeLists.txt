@@ -228,6 +228,10 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/RTCPeerConnection.idl
     Modules/mediastream/RTCSessionDescription.idl
     Modules/mediastream/RTCSessionDescriptionCallback.idl
+    Modules/mediastream/RTCStatsCallback.idl
+    Modules/mediastream/RTCStatsElement.idl
+    Modules/mediastream/RTCStatsReport.idl
+    Modules/mediastream/RTCStatsResponse.idl
     Modules/mediastream/SessionDescription.idl
 
     Modules/navigatorcontentutils/NavigatorContentUtils.idl
@@ -861,6 +865,10 @@ SET(WebCore_SOURCES
     Modules/mediastream/RTCPeerConnection.cpp
     Modules/mediastream/RTCSessionDescription.cpp
     Modules/mediastream/RTCSessionDescriptionRequestImpl.cpp
+    Modules/mediastream/RTCStatsElement.cpp
+    Modules/mediastream/RTCStatsReport.cpp
+    Modules/mediastream/RTCStatsRequestImpl.cpp
+    Modules/mediastream/RTCStatsResponse.cpp
     Modules/mediastream/RTCVoidRequestImpl.cpp
     Modules/mediastream/SessionDescription.cpp
     Modules/mediastream/UserMediaController.cpp

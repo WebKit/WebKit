@@ -37,6 +37,7 @@
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
+#include <public/WebRTCStatsRequest.h>
 
 namespace WebKit {
 class WebRTCPeerConnectionHandlerClient;
@@ -58,6 +59,7 @@ public:
     virtual bool addICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void getStats(const WebKit::WebRTCStatsRequest&) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // Task related methods
