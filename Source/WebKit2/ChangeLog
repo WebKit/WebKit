@@ -1,3 +1,17 @@
+2012-09-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] NetworkInfo provider is not initialized in Ewk_Context
+        https://bugs.webkit.org/show_bug.cgi?id=97865
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Initialize NetworkInfo provider for EFL port in Ewk_Context
+        with the other providers.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+
 2012-09-28  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
