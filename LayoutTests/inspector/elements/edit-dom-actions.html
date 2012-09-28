@@ -155,6 +155,28 @@ function test()
                     InspectorTest.runAfterPendingDispatches(InspectorTest.expandElementsTree.bind(InspectorTest, done));
                 }
             }
+        },
+
+        function testEditInvisibleCharsAsHTML(next)
+        {
+            domActionTestForNodeId("testEditInvisibleCharsAsHTML", "node-with-invisible-chars", testBody, next);
+
+            function testBody(node, done)
+            {
+                var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+                treeElement._editAsHTML();
+                InspectorTest.runAfterPendingDispatches(step2);
+
+                function step2()
+                {
+                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
+                    treeElement._htmlEditElement.textContent = treeElement._htmlEditElement.textContent.replace(/&/g, '#');
+                    var event = InspectorTest.createKeyEvent("Enter");
+                    event.isMetaOrCtrlForTest = true;
+                    treeElement._htmlEditElement.dispatchEvent(event);
+                    InspectorTest.runAfterPendingDispatches(InspectorTest.expandElementsTree.bind(InspectorTest, done));
+                }
+            }
         }
     ]);
 
@@ -252,6 +274,10 @@ Tests that user can mutate DOM by means of elements panel.
 
     <div id="testEditAsHTML">
         <div id="node-to-edit-as-html"><span id="span">Text</span></div>
+    </div>
+
+    <div id="testEditInvisibleCharsAsHTML">
+        <div id="node-with-invisible-chars">A&nbsp;B&ensp;C&emsp;D&thinsp;E&zwnj;F&zwj;G&rlm;H&lrm;I</div>
     </div>
 
     <div id="testEditCommentAsHTML">

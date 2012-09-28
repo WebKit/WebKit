@@ -3,6 +3,7 @@ Tests that user can mutate DOM by means of elements panel.
  
 Edited Text
 Span contents
+A#nbsp;B#ensp;C#emsp;D#thinsp;E#zwnj;F#zwj;G#rlm;H#lrm;I
 Element
 
 Running: testSetUp
@@ -100,5 +101,16 @@ Running: testEditAsHTML
     - <span foo="bar">
           <span id="inner-span">Span contents</span>
       </span>
+  </div>
+
+Running: testEditInvisibleCharsAsHTML
+==== before ====
+- <div id="testEditInvisibleCharsAsHTML">
+      <div id="node-with-invisible-chars">A&nbsp;B&ensp;C&emsp;D&thinsp;E&zwnj;F&zwj;G&rlm;H&lrm;I</div>
+  </div>
+<div id="node-with-invisible-chars">A&nbsp;B&ensp;C&emsp;D&thinsp;E&zwnj;F&zwj;G&rlm;H&lrm;I</div>
+==== after ====
+- <div id="testEditInvisibleCharsAsHTML">
+      <div id="node-with-invisible-chars">A#nbsp;B#ensp;C#emsp;D#thinsp;E#zwnj;F#zwj;G#rlm;H#lrm;I</div>
   </div>
 

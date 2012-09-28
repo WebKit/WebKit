@@ -1387,6 +1387,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 event.consume(true);
         }
 
+        initialValue = this._convertWhitespaceToEntities(initialValue);
+
         this._htmlEditElement = document.createElement("div");
         this._htmlEditElement.className = "source-code elements-tree-editor";
         this._htmlEditElement.textContent = initialValue;
