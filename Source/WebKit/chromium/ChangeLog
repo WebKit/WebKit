@@ -1,3 +1,19 @@
+2012-09-27  Nasko Oskov  <nasko@chromium.org>
+
+        Remove unused methods from Chromium WebKit API.
+        https://bugs.webkit.org/show_bug.cgi?id=95254
+
+        Reviewed by Adam Barth.
+
+        Removing methods, which are no longer in use.
+
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::willCheckAndDispatchMessageEvent):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium][Mac] Move Mac-specific theme functions out of PlatformSupport

@@ -598,11 +598,6 @@ WebFrame* WebFrame::fromFrameOwnerElement(const WebElement& element)
         PassRefPtr<Element>(element).get());
 }
 
-WebString WebFrameImpl::name() const
-{
-    return m_frame->tree()->uniqueName();
-}
-
 WebString WebFrameImpl::uniqueName() const
 {
     return m_frame->tree()->uniqueName();

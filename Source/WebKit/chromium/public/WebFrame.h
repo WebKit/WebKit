@@ -132,14 +132,7 @@ public:
 
     // Basic properties ---------------------------------------------------
 
-    // The name of this frame.
-    virtual WebString name() const = 0;
-
     // The unique name of this frame.
-    //
-    // This is temporarily identical to the above name() function. Once this
-    // change makes it over to the Chromium tree, I will change all callers to
-    // use this function and will subsequently move assignedName() to name().
     virtual WebString uniqueName() const = 0;
 
     // The name of this frame. If no name is given, empty string is returned.

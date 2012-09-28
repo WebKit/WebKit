@@ -1,3 +1,27 @@
+2012-09-27  Nasko Oskov  <nasko@chromium.org>
+
+        Move DumpRenderTree to use newer version of the name method of
+        WebFrame and the willCheckAndDispatchMessageEvent method of WebFrameClient
+        https://bugs.webkit.org/show_bug.cgi?id=95254
+
+        Reviewed by Adam Barth.
+
+        The WebFrame name() method is removed and replaced by better named
+        uniqueName() method, so DRT needs to be updated to use this new version.
+        Also the willCheckAndDispatchMessageEvent in WebFrameClient gained
+        one more parameter, which had to be added in DRT.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (dumpFramesAsText):
+        (dumpFramesAsPrintedText):
+        (dumpFrameScrollPosition):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::unableToImplementPolicyWithError):
+        (WebViewHost::willCheckAndDispatchMessageEvent):
+        (WebViewHost::printFrameDescription):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-09-27  Julie Parent  <jparent@chromium.org>
 
         Add webkit_unit_tests to the flakiness dashboard

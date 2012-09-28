@@ -404,18 +404,10 @@ public:
     // gives the embedder a chance to handle it instead of WebKit. Returns true
     // if the embedder handled it.
     virtual bool willCheckAndDispatchMessageEvent(
-        WebFrame* source,
-        WebSecurityOrigin target,
-        WebDOMMessageEvent) { return false; }
-
-    virtual bool willCheckAndDispatchMessageEvent(
         WebFrame* sourceFrame,
         WebFrame* targetFrame,
         WebSecurityOrigin target,
-        WebDOMMessageEvent event)
-    {
-        return willCheckAndDispatchMessageEvent(sourceFrame, target, event);
-    }
+        WebDOMMessageEvent event) { return false; }
 
     // Asks the embedder if a specific user agent should be used for the given
     // URL. Non-empty strings indicate an override should be used. Otherwise,
