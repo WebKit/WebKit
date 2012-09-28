@@ -76,7 +76,7 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
         this._renumber();
     }
 
-    if (payload.shadowRoots && WebInspector.experimentsSettings.showShadowDOM.isEnabled()) {
+    if (payload.shadowRoots && WebInspector.settings.showShadowDOM.get()) {
         for (var i = 0; i < payload.shadowRoots.length; ++i) {
             var root = payload.shadowRoots[i];
             var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);

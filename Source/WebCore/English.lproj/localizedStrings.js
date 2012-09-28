@@ -389,6 +389,7 @@ localizedStrings["Show console."] = "Show console.";
 localizedStrings["Show counts and sizes as percentages."] = "Show counts and sizes as percentages.";
 localizedStrings["Show function definition"] = "Show function definition";
 localizedStrings["Show inherited"] = "Show inherited";
+localizedStrings["Show Shadow DOM"] = "Show Shadow DOM";
 localizedStrings["Show the records that are shorter than %s"] = "Show the records that are shorter than %s";
 localizedStrings["Show times as percentages."] = "Show times as percentages.";
 localizedStrings["Show total and self times as percentages."] = "Show total and self times as percentages.";
