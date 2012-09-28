@@ -70,8 +70,6 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     // padding and fallback if we find that we are wrong.
     createGlyphArrays((m_normalizedBufferLength + 2) * 2);
 
-    m_item.log_clusters = new unsigned short[m_normalizedBufferLength];
-
     m_item.face = 0;
     m_item.font = allocHarfbuzzFont();
 
@@ -90,7 +88,6 @@ ComplexTextController::~ComplexTextController()
 {
     fastFree(m_item.font);
     deleteGlyphArrays();
-    delete[] m_item.log_clusters;
 }
 
 void ComplexTextController::reset(int offset)
@@ -299,6 +296,7 @@ void ComplexTextController::deleteGlyphArrays()
     delete[] m_item.attributes;
     delete[] m_item.advances;
     delete[] m_item.offsets;
+    delete[] m_item.log_clusters;
     delete[] m_glyphs16;
     delete[] m_positions;
 }
@@ -309,6 +307,7 @@ void ComplexTextController::createGlyphArrays(int size)
     m_item.attributes = new HB_GlyphAttributes[size];
     m_item.advances = new HB_Fixed[size];
     m_item.offsets = new HB_FixedPoint[size];
+    m_item.log_clusters = new unsigned short[size];
 
     m_glyphs16 = new uint16_t[size];
     m_positions = new SkPoint[size];
