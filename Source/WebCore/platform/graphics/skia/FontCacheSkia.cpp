@@ -30,20 +30,16 @@
 
 #include "config.h"
 #include "FontCache.h"
-
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontFamily.h"
 #include "FontPlatformData.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
-
 #include "SkPaint.h"
 #include "SkTypeface.h"
 #include "SkUtils.h"
-
 #include <unicode/locid.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/AtomicString.h>
