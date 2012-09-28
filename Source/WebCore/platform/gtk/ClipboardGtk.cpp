@@ -74,6 +74,8 @@ ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGt
 
 ClipboardGtk::~ClipboardGtk()
 {
+    if (m_dragImage)
+        m_dragImage->removeClient(this);
 }
 
 static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawType)

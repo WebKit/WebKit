@@ -226,6 +226,8 @@ ClipboardChromium::ClipboardChromium(ClipboardType clipboardType,
 
 ClipboardChromium::~ClipboardChromium()
 {
+    if (m_dragImage)
+        m_dragImage->removeClient(this);
 }
 
 PassRefPtr<ClipboardChromium> ClipboardChromium::create(ClipboardType clipboardType,

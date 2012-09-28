@@ -65,6 +65,8 @@ ClipboardMac::ClipboardMac(ClipboardType clipboardType, const String& pasteboard
 
 ClipboardMac::~ClipboardMac()
 {
+    if (m_dragImage)
+        m_dragImage->removeClient(this);
 }
 
 bool ClipboardMac::hasData()

@@ -1,3 +1,14 @@
+2012-09-28  Alpha Lam  <hclam@chromium.org>
+
+        REGRESSION(r122215) - CachedImage::likelyToBeUsedSoon crashes on accessing a deleted CachedImageClient
+        https://bugs.webkit.org/show_bug.cgi?id=97749
+
+        Reviewed by James Robinson.
+
+        Added a manual test to demonstrate drag image and crashing.
+
+        * ManualTests/drag-image-no-crash.html: Added.
+
 2012-09-27  Keishi Hattori  <keishi@webkit.org>
 
         SuggestionPicker should support rtl

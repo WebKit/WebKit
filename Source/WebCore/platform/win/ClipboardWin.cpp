@@ -355,6 +355,8 @@ ClipboardWin::ClipboardWin(ClipboardType clipboardType, const DragDataMap& dataM
 
 ClipboardWin::~ClipboardWin()
 {
+    if (m_dragImage)
+        m_dragImage->removeClient(this);
 }
 
 static bool writeURL(WCDataObject *data, const KURL& url, String title, bool withPlainText, bool withHTML)
