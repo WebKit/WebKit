@@ -1,3 +1,20 @@
+2012-09-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] QRawWebView tests are broke after r129545
+        https://bugs.webkit.org/show_bug.cgi?id=97907
+
+        Reviewed by Noam Rosenthal.
+
+        The issue here is that we set up the page loader client before initializing the page
+        so the message we send in WebPageProxy::initializeLoaderClient will be lost since the
+        page does not exists at the web process side yet. The trivial fix would be to reorder
+        initialization. In this patch I also moved to the new model of observing layout changes
+        via WKPageDidLayoutCallback since the old one will be deprecated at some time.
+
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+        (WebView::WebView):
+        (WebView::didLayout):
+
 2012-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r129863.
