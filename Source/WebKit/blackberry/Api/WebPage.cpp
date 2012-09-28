@@ -3473,6 +3473,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
+    m_page->setDeviceScaleFactor(result.devicePixelRatio);
 
     setUserScalable(m_webSettings->isUserScalable() && result.userScalable);
     if (result.initialScale > 0)
@@ -6114,6 +6115,8 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
         Platform::userInterfaceThreadMessageClient()->dispatchMessage(
             createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
     }
+
+    m_page->setDeviceScaleFactor(webSettings->devicePixelRatio());
 }
 
 WebString WebPage::textHasAttribute(const WebString& query) const
