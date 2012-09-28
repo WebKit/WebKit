@@ -876,6 +876,7 @@
 /* JIT is not implemented for Windows 64-bit */
 #if !defined(ENABLE_JIT) && OS(WINDOWS) && CPU(X86_64)
 #define ENABLE_JIT 0
+#define ENABLE_YARR_JIT 0
 #endif
 
 #if !defined(ENABLE_JIT) && CPU(SH4) && PLATFORM(QT)

@@ -1,3 +1,16 @@
+2012-09-28  Kai Koehne  <kai.koehne@digia.com>
+
+        Disable YARR_JIT for Windows 64 bit
+        https://bugs.webkit.org/show_bug.cgi?id=97772
+
+        Reviewed by Simon Hausmann.
+
+        Using YARR_JIT requires ASSEMBLER, which in turn enables the
+        executable fixed allocator, which is mmap based (not available on
+        Windows).
+
+        * wtf/Platform.h:
+
 2012-09-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: make HashSet memory instrumentation non-intrusive
