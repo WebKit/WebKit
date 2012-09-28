@@ -1352,9 +1352,6 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
-webkit.org/b/97870 fast/harness/perftests/runs-per-second-iterations.html [ Failure ]
-webkit.org/b/97870 fast/harness/perftests/runs-per-second-log.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
