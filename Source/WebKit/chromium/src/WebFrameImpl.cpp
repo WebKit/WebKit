@@ -72,15 +72,19 @@
 #include "WebFrameImpl.h"
 
 #include "AssociatedURLLoader.h"
+#include "AsyncFileSystem.h"
+#include "AsyncFileSystemChromium.h"
 #include "BackForwardController.h"
 #include "Chrome.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Console.h"
+#include "DOMFileSystem.h"
 #include "DOMUtilitiesPrivate.h"
 #include "DOMWindow.h"
 #include "DOMWindowIntents.h"
 #include "DeliveredIntent.h"
 #include "DeliveredIntentClientImpl.h"
+#include "DirectoryEntry.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentMarker.h"
@@ -88,6 +92,7 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventListenerWrapper.h"
+#include "FileEntry.h"
 #include "FileSystemType.h"
 #include "FindInPageCoordinates.h"
 #include "FocusController.h"
@@ -144,6 +149,10 @@
 #include "TextAffinity.h"
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
+#include "V8DOMFileSystem.h"
+#include "V8DirectoryEntry.h"
+#include "V8FileEntry.h"
+#include "V8GCController.h"
 #include "WebAnimationControllerImpl.h"
 #include "WebConsoleMessage.h"
 #include "WebDOMEvent.h"
@@ -181,22 +190,10 @@
 #include "platform/WebURLError.h"
 #include <algorithm>
 #include <public/Platform.h>
+#include <public/WebFileSystem.h>
 #include <public/WebVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
-
-#if USE(V8)
-#include "AsyncFileSystem.h"
-#include "AsyncFileSystemChromium.h"
-#include "DirectoryEntry.h"
-#include "DOMFileSystem.h"
-#include "FileEntry.h"
-#include "V8DirectoryEntry.h"
-#include "V8DOMFileSystem.h"
-#include "V8FileEntry.h"
-#include "V8GCController.h"
-#include <public/WebFileSystem.h>
-#endif
 
 using namespace WebCore;
 
@@ -212,11 +209,12 @@ static const char* const webFrameActiveCount = "WebFrameActiveCount";
 // the text of each frame in turn to the |output| up to |maxChars| length.
 //
 // The |frame| must be non-null.
-static void frameContentAsPlainText(size_t maxChars, Frame* frame,
-                                    Vector<UChar>* output)
+//
+// FIXME: We should use StringBuilder rather than Vector<UChar>.
+static void frameContentAsPlainText(size_t maxChars, Frame* frame, Vector<UChar>* output)
 {
-    Document* doc = frame->document();
-    if (!doc)
+    Document* document = frame->document();
+    if (!document)
         return;
 
     if (!frame->view())
@@ -228,9 +226,9 @@ static void frameContentAsPlainText(size_t maxChars, Frame* frame,
         frame->view()->layout();
 
     // Select the document body.
-    RefPtr<Range> range(doc->createRange());
+    RefPtr<Range> range(document->createRange());
     ExceptionCode exception = 0;
-    range->selectNodeContents(doc->body(), exception);
+    range->selectNodeContents(document->body(), exception);
 
     if (!exception) {
         // The text iterator will walk nodes giving us text. This is similar to
@@ -362,34 +360,33 @@ public:
         return m_printedPageWidth / pageRect.width();
     }
 
-    // Spools the printed page, a subrect of m_frame. Skip the scale step.
+    // Spools the printed page, a subrect of frame(). Skip the scale step.
     // NativeTheme doesn't play well with scaling. Scaling is done browser side
     // instead. Returns the scale to be applied.
     // On Linux, we don't have the problem with NativeTheme, hence we let WebKit
     // do the scaling and ignore the return value.
-    virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
+    virtual float spoolPage(GraphicsContext& context, int pageNumber)
     {
         IntRect pageRect = m_pageRects[pageNumber];
         float scale = m_printedPageWidth / pageRect.width();
 
-        ctx.save();
+        context.save();
 #if OS(UNIX) && !OS(DARWIN)
-        ctx.scale(WebCore::FloatSize(scale, scale));
+        context.scale(WebCore::FloatSize(scale, scale));
 #endif
-        ctx.translate(static_cast<float>(-pageRect.x()),
-                      static_cast<float>(-pageRect.y()));
-        ctx.clip(pageRect);
-        m_frame->view()->paintContents(&ctx, pageRect);
-        ctx.restore();
+        context.translate(static_cast<float>(-pageRect.x()), static_cast<float>(-pageRect.y()));
+        context.clip(pageRect);
+        frame()->view()->paintContents(&context, pageRect);
+        context.restore();
         return scale;
     }
 
     void spoolAllPagesWithBoundaries(GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
     {
-        if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+        if (!frame()->document() || !frame()->view() || !frame()->document()->renderer())
             return;
 
-        m_frame->document()->updateLayout();
+        frame()->document()->updateLayout();
 
         float pageHeight;
         computePageRects(FloatRect(FloatPoint(0, 0), pageSizeInPixels), 0, 0, 1, pageHeight);
@@ -411,8 +408,7 @@ public:
                 graphicsContext.save();
                 graphicsContext.setStrokeColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
                 graphicsContext.setFillColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
-                graphicsContext.drawLine(IntPoint(0, currentHeight),
-                                         IntPoint(pageWidth, currentHeight));
+                graphicsContext.drawLine(IntPoint(0, currentHeight), IntPoint(pageWidth, currentHeight));
                 graphicsContext.restore();
             }
 
@@ -492,12 +488,12 @@ public:
         return m_pageCount;
     }
 
-    // Spools the printed page, a subrect of m_frame.  Skip the scale step.
+    // Spools the printed page, a subrect of frame(). Skip the scale step.
     // NativeTheme doesn't play well with scaling. Scaling is done browser side
-    // instead.  Returns the scale to be applied.
-    virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
+    // instead. Returns the scale to be applied.
+    virtual float spoolPage(GraphicsContext& context, int pageNumber)
     {
-        m_plugin->printPage(pageNumber, &ctx);
+        m_plugin->printPage(pageNumber, &context);
         return 1.0;
     }
 
@@ -527,11 +523,7 @@ WebFrameImpl::FindMatch::FindMatch(PassRefPtr<Range> range, int ordinal)
 
 class WebFrameImpl::DeferredScopeStringMatches {
 public:
-    DeferredScopeStringMatches(WebFrameImpl* webFrame,
-                               int identifier,
-                               const WebString& searchText,
-                               const WebFindOptions& options,
-                               bool reset)
+    DeferredScopeStringMatches(WebFrameImpl* webFrame, int identifier, const WebString& searchText, const WebFindOptions& options, bool reset)
         : m_timer(this, &DeferredScopeStringMatches::doTimeout)
         , m_webFrame(webFrame)
         , m_identifier(identifier)
@@ -545,8 +537,7 @@ public:
 private:
     void doTimeout(Timer<DeferredScopeStringMatches>*)
     {
-        m_webFrame->callScopeStringMatches(
-            this, m_identifier, m_searchText, m_options, m_reset);
+        m_webFrame->callScopeStringMatches(this, m_identifier, m_searchText, m_options, m_reset);
     }
 
     Timer<DeferredScopeStringMatches> m_timer;
@@ -589,23 +580,22 @@ WebFrame* WebFrame::frameForContext(v8::Handle<v8::Context> context)
 
 WebFrame* WebFrame::fromFrameOwnerElement(const WebElement& element)
 {
-    return WebFrameImpl::fromFrameOwnerElement(
-        PassRefPtr<Element>(element).get());
+    return WebFrameImpl::fromFrameOwnerElement(PassRefPtr<Element>(element).get());
 }
 
 WebString WebFrameImpl::uniqueName() const
 {
-    return m_frame->tree()->uniqueName();
+    return frame()->tree()->uniqueName();
 }
 
 WebString WebFrameImpl::assignedName() const
 {
-    return m_frame->tree()->name();
+    return frame()->tree()->name();
 }
 
 void WebFrameImpl::setName(const WebString& name)
 {
-    m_frame->tree()->setName(name);
+    frame()->tree()->setName(name);
 }
 
 long long WebFrameImpl::identifier() const
@@ -615,39 +605,35 @@ long long WebFrameImpl::identifier() const
 
 WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 {
-    FrameLoader* frameLoader = m_frame->loader();
     // The URL to the icon may be in the header. As such, only
     // ask the loader for the icon if it's finished loading.
-    if (frameLoader->state() == FrameStateComplete)
-        return frameLoader->icon()->urlsForTypes(iconTypes);
+    if (frame()->loader()->state() == FrameStateComplete)
+        return frame()->loader()->icon()->urlsForTypes(iconTypes);
     return WebVector<WebIconURL>();
 }
 
 WebSize WebFrameImpl::scrollOffset() const
 {
     FrameView* view = frameView();
-    if (view)
-        return view->scrollOffset();
-
-    return WebSize();
+    if (!view)
+        return WebSize();
+    return view->scrollOffset();
 }
 
 WebSize WebFrameImpl::minimumScrollOffset() const
 {
     FrameView* view = frameView();
-    if (view)
-        return view->minimumScrollPosition() - IntPoint();
-
-    return WebSize();
+    if (!view)
+        return WebSize();
+    return view->minimumScrollPosition() - IntPoint();
 }
 
 WebSize WebFrameImpl::maximumScrollOffset() const
 {
     FrameView* view = frameView();
-    if (view)
-        return view->maximumScrollPosition() - IntPoint();
-
-    return WebSize();
+    if (!view)
+        return WebSize();
+    return view->maximumScrollPosition() - IntPoint();
 }
 
 void WebFrameImpl::setScrollOffset(const WebSize& offset)
@@ -663,18 +649,17 @@ WebSize WebFrameImpl::contentsSize() const
 
 int WebFrameImpl::contentsPreferredWidth() const
 {
-    if (m_frame->document() && m_frame->document()->renderView()) {
+    if (frame()->document() && frame()->document()->renderView()) {
         FontCachePurgePreventer fontCachePurgePreventer;
-
-        return m_frame->document()->renderView()->minPreferredLogicalWidth();
+        return frame()->document()->renderView()->minPreferredLogicalWidth();
     }
     return 0;
 }
 
 int WebFrameImpl::documentElementScrollHeight() const
 {
-    if (m_frame->document() && m_frame->document()->documentElement())
-        return m_frame->document()->documentElement()->scrollHeight();
+    if (frame()->document() && frame()->document()->documentElement())
+        return frame()->document()->documentElement()->scrollHeight();
     return 0;
 }
 
@@ -685,12 +670,12 @@ bool WebFrameImpl::hasVisibleContent() const
 
 bool WebFrameImpl::hasHorizontalScrollbar() const
 {
-    return m_frame && m_frame->view() && m_frame->view()->horizontalScrollbar();
+    return frame() && frame()->view() && frame()->view()->horizontalScrollbar();
 }
 
 bool WebFrameImpl::hasVerticalScrollbar() const
 {
-    return m_frame && m_frame->view() && m_frame->view()->verticalScrollbar();
+    return frame() && frame()->view() && frame()->view()->verticalScrollbar();
 }
 
 WebView* WebFrameImpl::view() const
@@ -700,66 +685,76 @@ WebView* WebFrameImpl::view() const
 
 WebFrame* WebFrameImpl::opener() const
 {
-    Frame* opener = 0;
-    if (m_frame)
-        opener = m_frame->loader()->opener();
-    return fromFrame(opener);
+    if (!frame())
+        return 0;
+    return fromFrame(frame()->loader()->opener());
 }
 
-void WebFrameImpl::setOpener(const WebFrame* frame)
+void WebFrameImpl::setOpener(const WebFrame* webFrame)
 {
-    m_frame->loader()->setOpener(frame ?
-        static_cast<const WebFrameImpl*>(frame)->m_frame : 0);
+    frame()->loader()->setOpener(webFrame ? static_cast<const WebFrameImpl*>(webFrame)->frame() : 0);
 }
 
 WebFrame* WebFrameImpl::parent() const
 {
-    Frame* parent = 0;
-    if (m_frame)
-        parent = m_frame->tree()->parent();
-    return fromFrame(parent);
+    if (!frame())
+        return 0;
+    return fromFrame(frame()->tree()->parent());
 }
 
 WebFrame* WebFrameImpl::top() const
 {
-    if (m_frame)
-        return fromFrame(m_frame->tree()->top());
-
-    return 0;
+    if (!frame())
+        return 0;
+    return fromFrame(frame()->tree()->top());
 }
 
 WebFrame* WebFrameImpl::firstChild() const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->firstChild());
 }
 
 WebFrame* WebFrameImpl::lastChild() const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->lastChild());
 }
 
 WebFrame* WebFrameImpl::nextSibling() const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->nextSibling());
 }
 
 WebFrame* WebFrameImpl::previousSibling() const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->previousSibling());
 }
 
 WebFrame* WebFrameImpl::traverseNext(bool wrap) const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->traverseNextWithWrap(wrap));
 }
 
 WebFrame* WebFrameImpl::traversePrevious(bool wrap) const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->traversePreviousWithWrap(wrap));
 }
 
 WebFrame* WebFrameImpl::findChildByName(const WebString& name) const
 {
+    if (!frame())
+        return 0;
     return fromFrame(frame()->tree()->child(name));
 }
 
@@ -768,33 +763,25 @@ WebFrame* WebFrameImpl::findChildByExpression(const WebString& xpath) const
     if (xpath.isEmpty())
         return 0;
 
-    Document* document = m_frame->document();
+    Document* document = frame()->document();
 
     ExceptionCode ec = 0;
-    PassRefPtr<XPathResult> xpathResult =
-        document->evaluate(xpath,
-        document,
-        0, // namespace
-        XPathResult::ORDERED_NODE_ITERATOR_TYPE,
-        0, // XPathResult object
-        ec);
+    RefPtr<XPathResult> xpathResult = document->evaluate(xpath, document, 0, XPathResult::ORDERED_NODE_ITERATOR_TYPE, 0, ec);
     if (!xpathResult)
         return 0;
 
     Node* node = xpathResult->iterateNext(ec);
-
     if (!node || !node->isFrameOwnerElement())
         return 0;
-    HTMLFrameOwnerElement* frameElement =
-        static_cast<HTMLFrameOwnerElement*>(node);
+    HTMLFrameOwnerElement* frameElement = static_cast<HTMLFrameOwnerElement*>(node);
     return fromFrame(frameElement->contentFrame());
 }
 
 WebDocument WebFrameImpl::document() const
 {
-    if (!m_frame || !m_frame->document())
+    if (!frame() || !frame()->document())
         return WebDocument();
-    return WebDocument(m_frame->document());
+    return WebDocument(frame()->document());
 }
 
 WebAnimationController* WebFrameImpl::animationController()
@@ -804,59 +791,49 @@ WebAnimationController* WebFrameImpl::animationController()
 
 WebPerformance WebFrameImpl::performance() const
 {
-    if (!m_frame)
+    if (!frame())
         return WebPerformance();
-
-    return WebPerformance(m_frame->document()->domWindow()->performance());
+    return WebPerformance(frame()->document()->domWindow()->performance());
 }
 
 NPObject* WebFrameImpl::windowObject() const
 {
-    if (!m_frame)
+    if (!frame())
         return 0;
-
-    return m_frame->script()->windowScriptNPObject();
+    return frame()->script()->windowScriptNPObject();
 }
 
 void WebFrameImpl::bindToWindowObject(const WebString& name, NPObject* object)
 {
-    ASSERT(m_frame);
-    if (!m_frame || !m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame() || !frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
-
-    String key = name;
-#if USE(V8)
-    m_frame->script()->bindToWindowObject(m_frame, key, object);
-#else
-    notImplemented();
-#endif
+    frame()->script()->bindToWindowObject(frame(), String(name), object);
 }
 
 void WebFrameImpl::executeScript(const WebScriptSource& source)
 {
+    ASSERT(frame());
     TextPosition position(OrdinalNumber::fromOneBasedInt(source.startLine), OrdinalNumber::first());
-    m_frame->script()->executeScript(
-        ScriptSourceCode(source.code, source.url, position));
+    frame()->script()->executeScript(ScriptSourceCode(source.code, source.url, position));
 }
 
-void WebFrameImpl::executeScriptInIsolatedWorld(
-    int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
-    int extensionGroup)
+void WebFrameImpl::executeScriptInIsolatedWorld(int worldID, const WebScriptSource* sourcesIn, unsigned numSources, int extensionGroup)
 {
-    Vector<ScriptSourceCode> sources;
+    ASSERT(frame());
 
+    Vector<ScriptSourceCode> sources;
     for (unsigned i = 0; i < numSources; ++i) {
         TextPosition position(OrdinalNumber::fromOneBasedInt(sourcesIn[i].startLine), OrdinalNumber::first());
-        sources.append(ScriptSourceCode(
-            sourcesIn[i].code, sourcesIn[i].url, position));
+        sources.append(ScriptSourceCode(sourcesIn[i].code, sourcesIn[i].url, position));
     }
 
-    m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
+    frame()->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
 }
 
 void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldID, const WebSecurityOrigin& securityOrigin)
 {
-    m_frame->script()->setIsolatedWorldSecurityOrigin(worldID, securityOrigin.get());
+    ASSERT(frame());
+    frame()->script()->setIsolatedWorldSecurityOrigin(worldID, securityOrigin.get());
 }
 
 void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
@@ -887,27 +864,23 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
 
 void WebFrameImpl::collectGarbage()
 {
-    if (!m_frame)
+    if (!frame())
         return;
-    if (!m_frame->settings()->isScriptEnabled())
+    if (!frame()->settings()->isScriptEnabled())
         return;
-    // FIXME: Move this to the ScriptController and make it JS neutral.
-#if USE(V8)
     V8GCController::collectGarbage();
-#else
-    notImplemented();
-#endif
 }
 
 bool WebFrameImpl::checkIfRunInsecureContent(const WebURL& url) const
 {
-    FrameLoader* frameLoader = m_frame->loader();
-    return frameLoader->checkIfRunInsecureContent(m_frame->document()->securityOrigin(), url);
+    ASSERT(frame());
+    return frame()->loader()->checkIfRunInsecureContent(frame()->document()->securityOrigin(), url);
 }
 
-#if USE(V8)
 v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptSource& source)
 {
+    ASSERT(frame());
+
     // FIXME: This fake user gesture is required to make a bunch of pyauto
     // tests pass. If this isn't needed in non-test situations, we should
     // consider removing this code and changing the tests.
@@ -915,13 +888,13 @@ v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptS
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     TextPosition position(OrdinalNumber::fromOneBasedInt(source.startLine), OrdinalNumber::first());
-    return m_frame->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
+    return frame()->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
 }
 
-void WebFrameImpl::executeScriptInIsolatedWorld(
-    int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
-    int extensionGroup, WebVector<v8::Local<v8::Value> >* results)
+void WebFrameImpl::executeScriptInIsolatedWorld(int worldID, const WebScriptSource* sourcesIn, unsigned numSources, int extensionGroup, WebVector<v8::Local<v8::Value> >* results)
 {
+    ASSERT(frame());
+
     Vector<ScriptSourceCode> sources;
 
     for (unsigned i = 0; i < numSources; ++i) {
@@ -931,76 +904,69 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
 
     if (results) {
         Vector<ScriptValue> scriptResults;
-        m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, &scriptResults);
+        frame()->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, &scriptResults);
         WebVector<v8::Local<v8::Value> > v8Results(scriptResults.size());
         for (unsigned i = 0; i < scriptResults.size(); i++)
             v8Results[i] = v8::Local<v8::Value>::New(scriptResults[i].v8Value());
         results->swap(v8Results);
     } else
-        m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
+        frame()->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
 }
 
-// Call the function with the given receiver and arguments, bypassing canExecuteScripts.
-v8::Handle<v8::Value> WebFrameImpl::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function,
-                                                                     v8::Handle<v8::Object> receiver,
-                                                                     int argc,
-                                                                     v8::Handle<v8::Value> argv[])
+v8::Handle<v8::Value> WebFrameImpl::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> argv[])
 {
-    return m_frame->script()->callFunctionEvenIfScriptDisabled(function, receiver, argc, argv).v8Value();
+    ASSERT(frame());
+    return frame()->script()->callFunctionEvenIfScriptDisabled(function, receiver, argc, argv).v8Value();
 }
 
-// Returns the V8 context for this frame, or an empty handle if there is none.
 v8::Local<v8::Context> WebFrameImpl::mainWorldScriptContext() const
 {
-    if (!m_frame)
+    if (!frame())
         return v8::Local<v8::Context>();
-
-    return ScriptController::mainWorldContext(m_frame);
+    return ScriptController::mainWorldContext(frame());
 }
 
-v8::Handle<v8::Value> WebFrameImpl::createFileSystem(WebFileSystem::Type type,
-                                                     const WebString& name,
-                                                     const WebString& path)
+v8::Handle<v8::Value> WebFrameImpl::createFileSystem(WebFileSystem::Type type, const WebString& name, const WebString& path)
 {
+    ASSERT(frame());
     return toV8(DOMFileSystem::create(frame()->document(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, path.utf8().data()), AsyncFileSystemChromium::create()));
 }
 
-v8::Handle<v8::Value> WebFrameImpl::createSerializableFileSystem(WebFileSystem::Type type,
-                                                                 const WebString& name,
-                                                                 const WebString& path)
+v8::Handle<v8::Value> WebFrameImpl::createSerializableFileSystem(WebFileSystem::Type type, const WebString& name, const WebString& path)
 {
-    RefPtr<DOMFileSystem> fs = DOMFileSystem::create(frame()->document(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, path.utf8().data()), AsyncFileSystemChromium::create());
-    fs->makeClonable();
-    return toV8(fs.release());
+    ASSERT(frame());
+    RefPtr<DOMFileSystem> fileSystem = DOMFileSystem::create(frame()->document(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, path.utf8().data()), AsyncFileSystemChromium::create());
+    fileSystem->makeClonable();
+    return toV8(fileSystem.release());
 }
 
-v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type,
-                                                    const WebString& fileSystemName,
-                                                    const WebString& fileSystemPath,
-                                                    const WebString& filePath,
-                                                    bool isDirectory)
+v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type, const WebString& fileSystemName, const WebString& fileSystemPath, const WebString& filePath, bool isDirectory)
 {
+    ASSERT(frame());
+
     RefPtr<DOMFileSystemBase> fileSystem = DOMFileSystem::create(frame()->document(), fileSystemName, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, fileSystemPath.utf8().data()), AsyncFileSystemChromium::create());
     if (isDirectory)
         return toV8(DirectoryEntry::create(fileSystem, filePath));
     return toV8(FileEntry::create(fileSystem, filePath));
 }
-#endif
 
 void WebFrameImpl::reload(bool ignoreCache)
 {
-    m_frame->loader()->history()->saveDocumentAndScrollState();
-    m_frame->loader()->reload(ignoreCache);
+    ASSERT(frame());
+    frame()->loader()->history()->saveDocumentAndScrollState();
+    frame()->loader()->reload(ignoreCache);
 }
 
 void WebFrameImpl::reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache)
 {
-    m_frame->loader()->history()->saveDocumentAndScrollState();
-    m_frame->loader()->reloadWithOverrideURL(overrideUrl, ignoreCache);
+    ASSERT(frame());
+    frame()->loader()->history()->saveDocumentAndScrollState();
+    frame()->loader()->reloadWithOverrideURL(overrideUrl, ignoreCache);
 }
 
 void WebFrameImpl::loadRequest(const WebURLRequest& request)
 {
+    ASSERT(frame());
     ASSERT(!request.isNull());
     const ResourceRequest& resourceRequest = request.toResourceRequest();
 
@@ -1009,29 +975,25 @@ void WebFrameImpl::loadRequest(const WebURLRequest& request)
         return;
     }
 
-    m_frame->loader()->load(resourceRequest, false);
+    frame()->loader()->load(resourceRequest, false);
 }
 
 void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
 {
+    ASSERT(frame());
     RefPtr<HistoryItem> historyItem = PassRefPtr<HistoryItem>(item);
     ASSERT(historyItem);
 
-    m_frame->loader()->prepareForHistoryNavigation();
-    RefPtr<HistoryItem> currentItem = m_frame->loader()->history()->currentItem();
+    frame()->loader()->prepareForHistoryNavigation();
+    RefPtr<HistoryItem> currentItem = frame()->loader()->history()->currentItem();
     m_inSameDocumentHistoryLoad = currentItem && currentItem->shouldDoSameDocumentNavigationTo(historyItem.get());
-    m_frame->page()->goToItem(historyItem.get(),
-                              FrameLoadTypeIndexedBackForward);
+    frame()->page()->goToItem(historyItem.get(), FrameLoadTypeIndexedBackForward);
     m_inSameDocumentHistoryLoad = false;
 }
 
-void WebFrameImpl::loadData(const WebData& data,
-                            const WebString& mimeType,
-                            const WebString& textEncoding,
-                            const WebURL& baseURL,
-                            const WebURL& unreachableURL,
-                            bool replace)
+void WebFrameImpl::loadData(const WebData& data, const WebString& mimeType, const WebString& textEncoding, const WebURL& baseURL, const WebURL& unreachableURL, bool replace)
 {
+    ASSERT(frame());
     SubstituteData substData(data, mimeType, textEncoding, unreachableURL);
     ASSERT(substData.isValid());
 
@@ -1043,78 +1005,74 @@ void WebFrameImpl::loadData(const WebData& data,
     // instead of the currently loaded URL.
     ResourceRequest request;
     if (replace && !unreachableURL.isEmpty())
-        request = m_frame->loader()->originalRequest();
+        request = frame()->loader()->originalRequest();
     request.setURL(baseURL);
 
-    m_frame->loader()->load(request, substData, false);
+    frame()->loader()->load(request, substData, false);
     if (replace) {
         // Do this to force WebKit to treat the load as replacing the currently
         // loaded page.
-        m_frame->loader()->setReplacing();
+        frame()->loader()->setReplacing();
     }
 }
 
-void WebFrameImpl::loadHTMLString(const WebData& data,
-                                  const WebURL& baseURL,
-                                  const WebURL& unreachableURL,
-                                  bool replace)
+void WebFrameImpl::loadHTMLString(const WebData& data, const WebURL& baseURL, const WebURL& unreachableURL, bool replace)
 {
-    loadData(data,
-             WebString::fromUTF8("text/html"),
-             WebString::fromUTF8("UTF-8"),
-             baseURL,
-             unreachableURL,
-             replace);
+    ASSERT(frame());
+    loadData(data, WebString::fromUTF8("text/html"), WebString::fromUTF8("UTF-8"), baseURL, unreachableURL, replace);
 }
 
 bool WebFrameImpl::isLoading() const
 {
-    if (!m_frame)
+    if (!frame())
         return false;
-    return m_frame->loader()->isLoading();
+    return frame()->loader()->isLoading();
 }
 
 void WebFrameImpl::stopLoading()
 {
-    if (!m_frame)
-      return;
-
+    if (!frame())
+        return;
     // FIXME: Figure out what we should really do here.  It seems like a bug
     // that FrameLoader::stopLoading doesn't call stopAllLoaders.
-    m_frame->loader()->stopAllLoaders();
-    m_frame->loader()->stopLoading(UnloadEventPolicyNone);
+    frame()->loader()->stopAllLoaders();
+    frame()->loader()->stopLoading(UnloadEventPolicyNone);
 }
 
 WebDataSource* WebFrameImpl::provisionalDataSource() const
 {
-    FrameLoader* frameLoader = m_frame->loader();
+    ASSERT(frame());
 
     // We regard the policy document loader as still provisional.
-    DocumentLoader* docLoader = frameLoader->provisionalDocumentLoader();
-    if (!docLoader)
-        docLoader = frameLoader->policyDocumentLoader();
+    DocumentLoader* documentLoader = frame()->loader()->provisionalDocumentLoader();
+    if (!documentLoader)
+        documentLoader = frame()->loader()->policyDocumentLoader();
 
-    return DataSourceForDocLoader(docLoader);
+    return DataSourceForDocLoader(documentLoader);
 }
 
 WebDataSource* WebFrameImpl::dataSource() const
 {
-    return DataSourceForDocLoader(m_frame->loader()->documentLoader());
+    ASSERT(frame());
+    return DataSourceForDocLoader(frame()->loader()->documentLoader());
 }
 
 WebHistoryItem WebFrameImpl::previousHistoryItem() const
 {
+    ASSERT(frame());
     // We use the previous item here because documentState (filled-out forms)
     // only get saved to history when it becomes the previous item.  The caller
     // is expected to query the history item after a navigation occurs, after
     // the desired history item has become the previous entry.
-    return WebHistoryItem(m_frame->loader()->history()->previousItem());
+    return WebHistoryItem(frame()->loader()->history()->previousItem());
 }
 
 WebHistoryItem WebFrameImpl::currentHistoryItem() const
 {
+    ASSERT(frame());
+
     // We're shutting down.
-    if (!m_frame->loader()->activeDocumentLoader())
+    if (!frame()->loader()->activeDocumentLoader())
         return WebHistoryItem();
 
     // If we are still loading, then we don't want to clobber the current
@@ -1122,35 +1080,30 @@ WebHistoryItem WebFrameImpl::currentHistoryItem() const
     // document state.  However, it is OK for new navigations.
     // FIXME: Can we make this a plain old getter, instead of worrying about
     // clobbering here?
-    if (!m_inSameDocumentHistoryLoad && (m_frame->loader()->loadType() == FrameLoadTypeStandard
-        || !m_frame->loader()->activeDocumentLoader()->isLoadingInAPISense()))
-        m_frame->loader()->history()->saveDocumentAndScrollState();
+    if (!m_inSameDocumentHistoryLoad && (frame()->loader()->loadType() == FrameLoadTypeStandard
+        || !frame()->loader()->activeDocumentLoader()->isLoadingInAPISense()))
+        frame()->loader()->history()->saveDocumentAndScrollState();
 
-    return WebHistoryItem(m_frame->page()->backForward()->currentItem());
+    return WebHistoryItem(frame()->page()->backForward()->currentItem());
 }
 
 void WebFrameImpl::enableViewSourceMode(bool enable)
 {
-    if (m_frame)
-        m_frame->setInViewSourceMode(enable);
+    if (frame())
+        frame()->setInViewSourceMode(enable);
 }
 
 bool WebFrameImpl::isViewSourceModeEnabled() const
 {
-    if (m_frame)
-        return m_frame->inViewSourceMode();
-
-    return false;
+    if (!frame())
+        return false;
+    return frame()->inViewSourceMode();
 }
 
 void WebFrameImpl::setReferrerForRequest(WebURLRequest& request, const WebURL& referrerURL)
 {
-    String referrer;
-    if (referrerURL.isEmpty())
-        referrer = m_frame->loader()->outgoingReferrer();
-    else
-        referrer = referrerURL.spec().utf16();
-    referrer = SecurityPolicy::generateReferrerHeader(m_frame->document()->referrerPolicy(), request.url(), referrer);
+    String referrer = referrerURL.isEmpty() ? frame()->loader()->outgoingReferrer() : String(referrerURL.spec().utf16());
+    referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), request.url(), referrer);
     if (referrer.isEmpty())
         return;
     request.setHTTPHeaderField(WebString::fromUTF8("Referer"), referrer);
@@ -1159,8 +1112,7 @@ void WebFrameImpl::setReferrerForRequest(WebURLRequest& request, const WebURL& r
 void WebFrameImpl::dispatchWillSendRequest(WebURLRequest& request)
 {
     ResourceResponse response;
-    m_frame->loader()->client()->dispatchWillSendRequest(
-        0, 0, request.toMutableResourceRequest(), response);
+    frame()->loader()->client()->dispatchWillSendRequest(0, 0, request.toMutableResourceRequest(), response);
 }
 
 WebURLLoader* WebFrameImpl::createAssociatedURLLoader(const WebURLLoaderOptions& options)
@@ -1170,7 +1122,7 @@ WebURLLoader* WebFrameImpl::createAssociatedURLLoader(const WebURLLoaderOptions&
 
 void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 {
-    m_frame->loader()->documentLoader()->commitData(data, length);
+    frame()->loader()->documentLoader()->commitData(data, length);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const
@@ -1202,21 +1154,16 @@ void WebFrameImpl::replaceSelection(const WebString& text)
 
 void WebFrameImpl::insertText(const WebString& text)
 {
-    Editor* editor = frame()->editor();
-
-    if (editor->hasComposition())
-        editor->confirmComposition(text);
+    if (frame()->editor()->hasComposition())
+        frame()->editor()->confirmComposition(text);
     else
-        editor->insertText(text, 0);
+        frame()->editor()->insertText(text, 0);
 }
 
-void WebFrameImpl::setMarkedText(
-    const WebString& text, unsigned location, unsigned length)
+void WebFrameImpl::setMarkedText(const WebString& text, unsigned location, unsigned length)
 {
-    Editor* editor = frame()->editor();
-
     Vector<CompositionUnderline> decorations;
-    editor->setComposition(text, decorations, location, length);
+    frame()->editor()->setComposition(text, decorations, location, length);
 }
 
 void WebFrameImpl::unmarkText()
@@ -1245,7 +1192,6 @@ bool WebFrameImpl::firstRectForCharacterRange(unsigned location, unsigned length
     IntRect intRect = frame()->editor()->firstRectForRange(range.get());
     rect = WebRect(intRect);
     rect = frame()->view()->contentsToWindow(rect);
-
     return true;
 }
 
@@ -1293,38 +1239,29 @@ bool WebFrameImpl::executeCommand(const WebString& name, const WebNode& node)
         }
     }
 
-    bool rv = true;
+    bool result = true;
 
     // Specially handling commands that Editor::execCommand does not directly
     // support.
     if (command == "DeleteToEndOfParagraph") {
-        Editor* editor = frame()->editor();
-        if (!editor->deleteWithDirection(DirectionForward,
-                                         ParagraphBoundary,
-                                         true,
-                                         false)) {
-            editor->deleteWithDirection(DirectionForward,
-                                        CharacterGranularity,
-                                        true,
-                                        false);
-        }
+        if (!frame()->editor()->deleteWithDirection(DirectionForward, ParagraphBoundary, true, false))
+            frame()->editor()->deleteWithDirection(DirectionForward, CharacterGranularity, true, false);
     } else if (command == "Indent")
         frame()->editor()->indent();
     else if (command == "Outdent")
         frame()->editor()->outdent();
     else if (command == "DeleteBackward")
-        rv = frame()->editor()->command(AtomicString("BackwardDelete")).execute();
+        result = frame()->editor()->command(AtomicString("BackwardDelete")).execute();
     else if (command == "DeleteForward")
-        rv = frame()->editor()->command(AtomicString("ForwardDelete")).execute();
+        result = frame()->editor()->command(AtomicString("ForwardDelete")).execute();
     else if (command == "AdvanceToNextMisspelling") {
-        // False must be passed here, or the currently selected word will never be
-        // skipped.
+        // Wee need to pass false here or else the currently selected word will never be skipped.
         frame()->editor()->advanceToNextMisspelling(false);
     } else if (command == "ToggleSpellPanel")
         frame()->editor()->showSpellingGuessPanel();
     else
-        rv = frame()->editor()->command(command).execute();
-    return rv;
+        result = frame()->editor()->command(command).execute();
+    return result;
 }
 
 bool WebFrameImpl::executeCommand(const WebString& name, const WebString& value)
@@ -1332,8 +1269,7 @@ bool WebFrameImpl::executeCommand(const WebString& name, const WebString& value)
     ASSERT(frame());
     String webName = name;
 
-    // moveToBeginningOfDocument and moveToEndfDocument are only handled by WebKit
-    // for editable nodes.
+    // moveToBeginningOfDocument and moveToEndfDocument are only handled by WebKit for editable nodes.
     if (!frame()->editor()->canEdit() && webName == "moveToBeginningOfDocument")
         return viewImpl()->propagateScroll(ScrollUp, ScrollByDocument);
 
@@ -1361,13 +1297,11 @@ bool WebFrameImpl::isContinuousSpellCheckingEnabled() const
     return frame()->editor()->isContinuousSpellCheckingEnabled();
 }
 
-void WebFrameImpl::requestTextChecking(const WebElement& webElem)
+void WebFrameImpl::requestTextChecking(const WebElement& webElement)
 {
-    if (webElem.isNull())
+    if (webElement.isNull())
         return;
-
-    RefPtr<Range> rangeToCheck = rangeOfContents(const_cast<Element*>(webElem.constUnwrap<Element>()));
-
+    RefPtr<Range> rangeToCheck = rangeOfContents(const_cast<Element*>(webElement.constUnwrap<Element>()));
     frame()->editor()->spellChecker()->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling | TextCheckingTypeGrammar, TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
 }
 
@@ -1435,9 +1369,9 @@ WebString WebFrameImpl::selectionAsMarkup() const
     return createMarkup(range.get(), 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
 }
 
-void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition pos)
+void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition position)
 {
-    VisibleSelection selection(pos);
+    VisibleSelection selection(position);
     selection.expandUsingGranularity(WordGranularity);
 
     if (frame->selection()->shouldChangeSelection(selection)) {
@@ -1458,42 +1392,33 @@ bool WebFrameImpl::selectWordAroundCaret()
 
 void WebFrameImpl::selectRange(const WebPoint& base, const WebPoint& extent)
 {
-    VisiblePosition basePos = visiblePositionForWindowPoint(base);
-    VisiblePosition extentPos = visiblePositionForWindowPoint(extent);
-    VisibleSelection newSelection = VisibleSelection(basePos, extentPos);
+    VisiblePosition basePosition = visiblePositionForWindowPoint(base);
+    VisiblePosition extentPosition = visiblePositionForWindowPoint(extent);
+    VisibleSelection newSelection = VisibleSelection(basePosition, extentPosition);
     if (frame()->selection()->shouldChangeSelection(newSelection))
         frame()->selection()->setSelection(newSelection, CharacterGranularity);
 }
 
 void WebFrameImpl::selectRange(const WebRange& webRange)
 {
-    RefPtr<Range> range = static_cast<PassRefPtr<Range> >(webRange);
-    if (range)
+    if (RefPtr<Range> range = static_cast<PassRefPtr<Range> >(webRange))
         frame()->selection()->setSelectedRange(range.get(), WebCore::VP_DEFAULT_AFFINITY, false);
 }
 
 VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)
 {
-    HitTestRequest::HitTestRequestType hitType = HitTestRequest::Move;
-    hitType |= HitTestRequest::ReadOnly;
-    hitType |= HitTestRequest::Active;
-    hitType |= HitTestRequest::IgnoreClipping;
-    HitTestRequest request(hitType);
-    FrameView* view = frame()->view();
-    HitTestResult result(view->windowToContents(IntPoint(point.x, point.y)));
+    HitTestRequest request = HitTestRequest::Move | HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping;
+    HitTestResult result(frame()->view()->windowToContents(IntPoint(point)));
 
     frame()->document()->renderView()->layer()->hitTest(request, result);
 
     Node* node = result.targetNode();
     if (!node)
         return VisiblePosition();
-
     return node->renderer()->positionForPoint(result.localPoint());
 }
 
-int WebFrameImpl::printBegin(const WebPrintParams& printParams,
-                             const WebNode& constrainToNode,
-                             bool* useBrowserOverlays)
+int WebFrameImpl::printBegin(const WebPrintParams& printParams, const WebNode& constrainToNode, bool* useBrowserOverlays)
 {
     ASSERT(!frame()->document()->isFrameSet());
     WebPluginContainerImpl* pluginContainer = 0;
@@ -1511,8 +1436,7 @@ int WebFrameImpl::printBegin(const WebPrintParams& printParams,
     else
         m_printContext = adoptPtr(new ChromePrintContext(frame()));
 
-    FloatRect rect(0, 0, static_cast<float>(printParams.printContentArea.width),
-                         static_cast<float>(printParams.printContentArea.height));
+    FloatRect rect(0, 0, static_cast<float>(printParams.printContentArea.width), static_cast<float>(printParams.printContentArea.height));
     m_printContext->begin(rect.width(), rect.height());
     float pageHeight;
     // We ignore the overlays calculation for now since they are generated in the
@@ -1526,29 +1450,19 @@ int WebFrameImpl::printBegin(const WebPrintParams& printParams,
 
 float WebFrameImpl::getPrintPageShrink(int page)
 {
-    // Ensure correct state.
-    if (!m_printContext || page < 0) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
+    ASSERT(m_printContext && page >= 0);
     return m_printContext->getPageShrink(page);
 }
 
 float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 {
 #if ENABLE(PRINTING)
-    // Ensure correct state.
-    if (!m_printContext || page < 0 || !frame() || !frame()->document()) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
+    ASSERT(m_printContext && page >= 0 && frame() && frame()->document());
 
     GraphicsContextBuilder builder(canvas);
-    GraphicsContext& gc = builder.context();
-    gc.platformContext()->setPrinting(true);
-
-    return m_printContext->spoolPage(gc, page);
+    GraphicsContext& graphicsContext = builder.context();
+    graphicsContext.platformContext()->setPrinting(true);
+    return m_printContext->spoolPage(graphicsContext, page);
 #else
     return 0;
 #endif
@@ -1557,18 +1471,13 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 void WebFrameImpl::printEnd()
 {
     ASSERT(m_printContext);
-    if (m_printContext)
-        m_printContext->end();
+    m_printContext->end();
     m_printContext.clear();
 }
 
 bool WebFrameImpl::isPrintScalingDisabledForPlugin(const WebNode& node)
 {
-    WebPluginContainerImpl* pluginContainer = 0;
-    if (node.isNull())
-        pluginContainer = pluginContainerFromFrame(frame());
-    else
-        pluginContainer = pluginContainerFromNode(node);
+    WebPluginContainerImpl* pluginContainer =  node.isNull() ? pluginContainerFromFrame(frame()) : pluginContainerFromNode(node);
 
     if (!pluginContainer || !pluginContainer->supportsPaginatedPrint())
         return false;
@@ -1586,34 +1495,20 @@ bool WebFrameImpl::isPageBoxVisible(int pageIndex)
     return frame()->document()->isPageBoxVisible(pageIndex);
 }
 
-void WebFrameImpl::pageSizeAndMarginsInPixels(int pageIndex,
-                                              WebSize& pageSize,
-                                              int& marginTop,
-                                              int& marginRight,
-                                              int& marginBottom,
-                                              int& marginLeft)
+void WebFrameImpl::pageSizeAndMarginsInPixels(int pageIndex, WebSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
-    IntSize size(pageSize.width, pageSize.height);
-    frame()->document()->pageSizeAndMarginsInPixels(pageIndex,
-                                                    size,
-                                                    marginTop,
-                                                    marginRight,
-                                                    marginBottom,
-                                                    marginLeft);
+    IntSize size = pageSize;
+    frame()->document()->pageSizeAndMarginsInPixels(pageIndex, size, marginTop, marginRight, marginBottom, marginLeft);
     pageSize = size;
 }
 
 WebString WebFrameImpl::pageProperty(const WebString& propertyName, int pageIndex)
 {
     ASSERT(m_printContext);
-    return m_printContext->pageProperty(m_frame, propertyName.utf8().data(), pageIndex);
+    return m_printContext->pageProperty(frame(), propertyName.utf8().data(), pageIndex);
 }
 
-bool WebFrameImpl::find(int identifier,
-                        const WebString& searchText,
-                        const WebFindOptions& options,
-                        bool wrapWithinFrame,
-                        WebRect* selectionRect)
+bool WebFrameImpl::find(int identifier, const WebString& searchText, const WebFindOptions& options, bool wrapWithinFrame, WebRect* selectionRect)
 {
     if (!frame() || !frame()->page())
         return false;
@@ -1711,10 +1606,7 @@ void WebFrameImpl::stopFinding(bool clearSelection)
     invalidateArea(InvalidateAll);
 }
 
-void WebFrameImpl::scopeStringMatches(int identifier,
-                                      const WebString& searchText,
-                                      const WebFindOptions& options,
-                                      bool reset)
+void WebFrameImpl::scopeStringMatches(int identifier, const WebString& searchText, const WebFindOptions& options, bool reset)
 {
     if (reset) {
         // This is a brand new search, so we need to reset everything.
@@ -1743,11 +1635,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             viewImpl()->mainFrameImpl()->m_framesScopingCount++;
 
         // Now, defer scoping until later to allow find operation to finish quickly.
-        scopeStringMatchesSoon(
-            identifier,
-            searchText,
-            options,
-            false); // false=we just reset, so don't do it again.
+        scopeStringMatchesSoon(identifier, searchText, options, false); // false means just reset, so don't do it again.
         return;
     }
 
@@ -1946,9 +1834,7 @@ void WebFrameImpl::increaseMatchCount(int count, int identifier)
         client()->reportFindInPageMatchCount(identifier, m_totalMatchCount, !m_framesScopingCount);
 }
 
-void WebFrameImpl::reportFindInPageSelection(const WebRect& selectionRect,
-                                             int activeMatchOrdinal,
-                                             int identifier)
+void WebFrameImpl::reportFindInPageSelection(const WebRect& selectionRect, int activeMatchOrdinal, int identifier)
 {
     // Update the UI with the latest selection rect.
     if (client())
@@ -1967,21 +1853,21 @@ void WebFrameImpl::resetMatchCount()
 void WebFrameImpl::sendOrientationChangeEvent(int orientation)
 {
 #if ENABLE(ORIENTATION_EVENTS)
-    if (m_frame)
-        m_frame->sendOrientationChangeEvent(orientation);
+    if (frame())
+        frame()->sendOrientationChangeEvent(orientation);
 #endif
 }
 
 void WebFrameImpl::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
-    DOMWindow* window = m_frame->document()->domWindow();
+    DOMWindow* window = frame()->document()->domWindow();
     EventListenerWrapper* listenerWrapper = listener->createEventListenerWrapper(eventType, useCapture, window);
     window->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
 }
 
 void WebFrameImpl::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
-    DOMWindow* window = m_frame->document()->domWindow();
+    DOMWindow* window = frame()->document()->domWindow();
     EventListenerWrapper* listenerWrapper = listener->getEventListenerWrapper(eventType, useCapture, window);
     window->removeEventListener(eventType, listenerWrapper, useCapture);
 }
@@ -1989,14 +1875,13 @@ void WebFrameImpl::removeEventListener(const WebString& eventType, WebDOMEventLi
 bool WebFrameImpl::dispatchEvent(const WebDOMEvent& event)
 {
     ASSERT(!event.isNull());
-    return m_frame->document()->domWindow()->dispatchEvent(event);
+    return frame()->document()->domWindow()->dispatchEvent(event);
 }
 
 void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& intendedTargetOrigin, const WebDOMEvent& event)
 {
     ASSERT(!event.isNull());
-    // Pass an empty call stack, since we don't have the one from the other process.
-    m_frame->document()->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
+    frame()->document()->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
 }
 
 int WebFrameImpl::findMatchMarkersVersion() const
@@ -2018,8 +1903,7 @@ bool WebFrameImpl::isActiveMatchFrameValid() const
 {
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
     WebFrameImpl* activeMatchFrame = mainFrameImpl->activeMatchFrame();
-    return activeMatchFrame && activeMatchFrame->m_activeMatch
-        && activeMatchFrame->frame()->tree()->isDescendantOf(mainFrameImpl->frame());
+    return activeMatchFrame && activeMatchFrame->m_activeMatch && activeMatchFrame->frame()->tree()->isDescendantOf(mainFrameImpl->frame());
 }
 
 void WebFrameImpl::updateFindMatchRects()
@@ -2203,44 +2087,41 @@ void WebFrameImpl::deliverIntent(const WebIntent& intent, WebMessagePortChannelA
             (*channels)[i] = MessagePortChannel::create(platformChannel);
         }
     }
-    OwnPtr<MessagePortArray> portArray = WebCore::MessagePort::entanglePorts(*(m_frame->document()), channels.release());
+    OwnPtr<MessagePortArray> portArray = WebCore::MessagePort::entanglePorts(*(frame()->document()), channels.release());
 
-    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_frame, client.release(), intent.action(), intent.type(), intentData, portArray.release(), webcoreIntent->extras());
+    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(frame(), client.release(), intent.action(), intent.type(), intentData, portArray.release(), webcoreIntent->extras());
 
-    DOMWindowIntents::from(m_frame->document()->domWindow())->deliver(deliveredIntent.release());
+    DOMWindowIntents::from(frame()->document()->domWindow())->deliver(deliveredIntent.release());
 #endif
 }
 
 WebString WebFrameImpl::contentAsText(size_t maxChars) const
 {
-    if (!m_frame)
+    if (!frame())
         return WebString();
-
     Vector<UChar> text;
-    frameContentAsPlainText(maxChars, m_frame, &text);
+    frameContentAsPlainText(maxChars, frame(), &text);
     return String::adopt(text);
 }
 
 WebString WebFrameImpl::contentAsMarkup() const
 {
-    return createFullMarkup(m_frame->document());
+    if (!frame())
+        return WebString();
+    return createFullMarkup(frame()->document());
 }
 
 WebString WebFrameImpl::renderTreeAsText(RenderAsTextControls toShow) const
 {
     RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal;
 
-    if (toShow & RenderAsTextDebug) {
-        behavior |= RenderAsTextShowCompositedLayers
-            | RenderAsTextShowAddresses
-            | RenderAsTextShowIDAndClass
-            | RenderAsTextShowLayerNesting;
-    }
+    if (toShow & RenderAsTextDebug)
+        behavior |= RenderAsTextShowCompositedLayers | RenderAsTextShowAddresses | RenderAsTextShowIDAndClass | RenderAsTextShowLayerNesting;
 
     if (toShow & RenderAsTextPrinting)
         behavior |= RenderAsTextPrintingMode;
 
-    return externalRepresentation(m_frame, behavior);
+    return externalRepresentation(frame(), behavior);
 }
 
 WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) const
@@ -2250,36 +2131,32 @@ WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) cons
 
 void WebFrameImpl::printPagesWithBoundaries(WebCanvas* canvas, const WebSize& pageSizeInPixels)
 {
-    ASSERT(m_printContext.get());
+    ASSERT(m_printContext);
 
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& graphicsContext = builder.context();
     graphicsContext.platformContext()->setPrinting(true);
 
-    m_printContext->spoolAllPagesWithBoundaries(graphicsContext,
-        FloatSize(pageSizeInPixels.width, pageSizeInPixels.height));
+    m_printContext->spoolAllPagesWithBoundaries(graphicsContext, FloatSize(pageSizeInPixels.width, pageSizeInPixels.height));
 }
 
 WebRect WebFrameImpl::selectionBoundsRect() const
 {
-    if (hasSelection())
-        return IntRect(frame()->selection()->bounds(false));
-
-    return WebRect();
+    return hasSelection() ? WebRect(IntRect(frame()->selection()->bounds(false))) : WebRect();
 }
 
 bool WebFrameImpl::selectionStartHasSpellingMarkerFor(int from, int length) const
 {
-    if (!m_frame)
+    if (!frame())
         return false;
-    return m_frame->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+    return frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
 
 WebString WebFrameImpl::layerTreeAsText(bool showDebugInfo) const
 {
-    if (!m_frame)
+    if (!frame())
         return WebString();
-    return WebString(m_frame->layerTreeAsText(showDebugInfo));
+    return WebString(frame()->layerTreeAsText(showDebugInfo));
 }
 
 // WebFrameImpl public ---------------------------------------------------------
@@ -2332,8 +2209,8 @@ void WebFrameImpl::setWebCoreFrame(WebCore::Frame* frame)
 
 void WebFrameImpl::initializeAsMainFrame(WebCore::Page* page)
 {
-    RefPtr<Frame> frame = Frame::create(page, 0, &m_frameLoaderClient);
-    setWebCoreFrame(frame.get());
+    RefPtr<Frame> mainFrame = Frame::create(page, 0, &m_frameLoaderClient);
+    setWebCoreFrame(mainFrame.get());
 
     // Add reference on behalf of FrameLoader.  See comments in
     // WebFrameLoaderClient::frameLoaderDestroyed for more info.
@@ -2341,11 +2218,10 @@ void WebFrameImpl::initializeAsMainFrame(WebCore::Page* page)
 
     // We must call init() after m_frame is assigned because it is referenced
     // during init().
-    m_frame->init();
+    frame()->init();
 }
 
-PassRefPtr<Frame> WebFrameImpl::createChildFrame(
-    const FrameLoadRequest& request, HTMLFrameOwnerElement* ownerElement)
+PassRefPtr<Frame> WebFrameImpl::createChildFrame(const FrameLoadRequest& request, HTMLFrameOwnerElement* ownerElement)
 {
     RefPtr<WebFrameImpl> webframe(adoptRef(new WebFrameImpl(m_client)));
 
@@ -2354,13 +2230,12 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     // of this file for more info.
     webframe->ref();
 
-    RefPtr<Frame> childFrame = Frame::create(
-        m_frame->page(), ownerElement, &webframe->m_frameLoaderClient);
+    RefPtr<Frame> childFrame = Frame::create(frame()->page(), ownerElement, &webframe->m_frameLoaderClient);
     webframe->setWebCoreFrame(childFrame.get());
 
     childFrame->tree()->setName(request.frameName());
 
-    m_frame->tree()->appendChild(childFrame);
+    frame()->tree()->appendChild(childFrame);
 
     // Frame::init() can trigger onload event in the parent frame,
     // which may detach this frame and trigger a null-pointer access
@@ -2375,10 +2250,7 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     if (!childFrame->tree()->parent())
         return 0;
 
-    m_frame->loader()->loadURLIntoChildFrame(
-        request.resourceRequest().url(),
-        request.resourceRequest().httpReferrer(),
-        childFrame.get());
+    frame()->loader()->loadURLIntoChildFrame(request.resourceRequest().url(), request.resourceRequest().httpReferrer(), childFrame.get());
 
     // A synchronous navigation (about:blank) would have already processed
     // onload, so it is possible for the frame to have already been destroyed by
@@ -2403,13 +2275,13 @@ void WebFrameImpl::didChangeContentsSize(const IntSize& size)
 
 void WebFrameImpl::createFrameView()
 {
-    ASSERT(m_frame); // If m_frame doesn't exist, we probably didn't init properly.
+    ASSERT(frame()); // If frame() doesn't exist, we probably didn't init properly.
 
     WebViewImpl* webView = viewImpl();
-    bool isMainFrame = webView->mainFrameImpl()->frame() == m_frame;
-    m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
+    bool isMainFrame = webView->mainFrameImpl()->frame() == frame();
+    frame()->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
     if (webView->shouldAutoResize() && isMainFrame)
-        m_frame->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
+        frame()->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
 
     if (isMainFrame && webView->devToolsAgentPrivate())
         webView->devToolsAgentPrivate()->mainFrameViewCreated(this);
@@ -2419,29 +2291,23 @@ WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)
 {
     if (!frame)
         return 0;
-
     return static_cast<FrameLoaderClientImpl*>(frame->loader()->client())->webFrame();
 }
 
 WebFrameImpl* WebFrameImpl::fromFrameOwnerElement(Element* element)
 {
-    if (!element
-        || !element->isFrameOwnerElement()
-        || (!element->hasTagName(HTMLNames::iframeTag)
-            && !element->hasTagName(HTMLNames::frameTag)))
+    // FIXME: Why do we check specifically for <iframe> and <frame> here? Why can't we get the WebFrameImpl from an <object> element, for example.
+    if (!element || !element->isFrameOwnerElement() || (!element->hasTagName(HTMLNames::iframeTag) && !element->hasTagName(HTMLNames::frameTag)))
         return 0;
-
-    HTMLFrameOwnerElement* frameElement =
-        static_cast<HTMLFrameOwnerElement*>(element);
+    HTMLFrameOwnerElement* frameElement = static_cast<HTMLFrameOwnerElement*>(element);
     return fromFrame(frameElement->contentFrame());
 }
 
 WebViewImpl* WebFrameImpl::viewImpl() const
 {
-    if (!m_frame)
+    if (!frame())
         return 0;
-
-    return WebViewImpl::fromPage(m_frame->page());
+    return WebViewImpl::fromPage(frame()->page());
 }
 
 WebDataSourceImpl* WebFrameImpl::dataSourceImpl() const
@@ -2527,10 +2393,8 @@ void WebFrameImpl::didFail(const ResourceError& error, bool wasProvisional)
 
 void WebFrameImpl::setCanHaveScrollbars(bool canHaveScrollbars)
 {
-    m_frame->view()->setCanHaveScrollbars(canHaveScrollbars);
+    frame()->view()->setCanHaveScrollbars(canHaveScrollbars);
 }
-
-// WebFrameImpl private --------------------------------------------------------
 
 void WebFrameImpl::closing()
 {
@@ -2572,7 +2436,6 @@ void WebFrameImpl::setMarkerActive(Range* range, bool active)
     WebCore::ExceptionCode ec;
     if (!range || range->collapsed(ec))
         return;
-
     frame()->document()->markers()->setMarkersActive(range, active);
 }
 
@@ -2582,9 +2445,7 @@ int WebFrameImpl::ordinalOfFirstMatchForFrame(WebFrameImpl* frame) const
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
     // Iterate from the main frame up to (but not including) |frame| and
     // add up the number of matches found so far.
-    for (WebFrameImpl* it = mainFrameImpl;
-         it != frame;
-         it = static_cast<WebFrameImpl*>(it->traverseNext(true))) {
+    for (WebFrameImpl* it = mainFrameImpl; it != frame; it = static_cast<WebFrameImpl*>(it->traverseNext(true))) {
         if (it->m_lastMatchCount > 0)
             ordinal += it->m_lastMatchCount;
     }
@@ -2616,19 +2477,14 @@ bool WebFrameImpl::shouldScopeMatches(const String& searchText)
     return true;
 }
 
-void WebFrameImpl::scopeStringMatchesSoon(int identifier, const WebString& searchText,
-                                          const WebFindOptions& options, bool reset)
+void WebFrameImpl::scopeStringMatchesSoon(int identifier, const WebString& searchText, const WebFindOptions& options, bool reset)
 {
-    m_deferredScopingWork.append(new DeferredScopeStringMatches(
-        this, identifier, searchText, options, reset));
+    m_deferredScopingWork.append(new DeferredScopeStringMatches(this, identifier, searchText, options, reset));
 }
 
-void WebFrameImpl::callScopeStringMatches(DeferredScopeStringMatches* caller,
-                                          int identifier, const WebString& searchText,
-                                          const WebFindOptions& options, bool reset)
+void WebFrameImpl::callScopeStringMatches(DeferredScopeStringMatches* caller, int identifier, const WebString& searchText, const WebFindOptions& options, bool reset)
 {
     m_deferredScopingWork.remove(m_deferredScopingWork.find(caller));
-
     scopeStringMatches(identifier, searchText, options, reset);
 
     // This needs to happen last since searchText is passed by reference.
@@ -2637,21 +2493,22 @@ void WebFrameImpl::callScopeStringMatches(DeferredScopeStringMatches* caller,
 
 void WebFrameImpl::invalidateIfNecessary()
 {
-    if (m_lastMatchCount > m_nextInvalidateAfter) {
-        // FIXME: (http://b/1088165) Optimize the drawing of the tickmarks and
-        // remove this. This calculation sets a milestone for when next to
-        // invalidate the scrollbar and the content area. We do this so that we
-        // don't spend too much time drawing the scrollbar over and over again.
-        // Basically, up until the first 500 matches there is no throttle.
-        // After the first 500 matches, we set set the milestone further and
-        // further out (750, 1125, 1688, 2K, 3K).
-        static const int startSlowingDownAfter = 500;
-        static const int slowdown = 750;
-        int i = (m_lastMatchCount / startSlowingDownAfter);
-        m_nextInvalidateAfter += i * slowdown;
+    if (m_lastMatchCount <= m_nextInvalidateAfter)
+        return;
 
-        invalidateArea(InvalidateScrollbar);
-    }
+    // FIXME: (http://b/1088165) Optimize the drawing of the tickmarks and
+    // remove this. This calculation sets a milestone for when next to
+    // invalidate the scrollbar and the content area. We do this so that we
+    // don't spend too much time drawing the scrollbar over and over again.
+    // Basically, up until the first 500 matches there is no throttle.
+    // After the first 500 matches, we set set the milestone further and
+    // further out (750, 1125, 1688, 2K, 3K).
+    static const int startSlowingDownAfter = 500;
+    static const int slowdown = 750;
+
+    int i = m_lastMatchCount / startSlowingDownAfter;
+    m_nextInvalidateAfter += i * slowdown;
+    invalidateArea(InvalidateScrollbar);
 }
 
 void WebFrameImpl::loadJavaScriptURL(const KURL& url)
@@ -2664,24 +2521,24 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
     // location change.  We also allow a JS URL to be loaded even if scripts on
     // the page are otherwise disabled.
 
-    if (!m_frame->document() || !m_frame->page())
+    if (!frame()->document() || !frame()->page())
         return;
 
-    RefPtr<Document> ownerDocument(m_frame->document());
+    RefPtr<Document> ownerDocument(frame()->document());
 
     // Protect privileged pages against bookmarklets and other javascript manipulations.
-    if (SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(m_frame->document()->url().protocol()))
+    if (SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(frame()->document()->url().protocol()))
         return;
 
     String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
-    ScriptValue result = m_frame->script()->executeScript(script, true);
+    ScriptValue result = frame()->script()->executeScript(script, true);
 
     String scriptResult;
     if (!result.getString(scriptResult))
         return;
 
-    if (!m_frame->navigationScheduler()->locationChangePending())
-        m_frame->document()->loader()->writer()->replaceDocument(scriptResult, ownerDocument.get());
+    if (!frame()->navigationScheduler()->locationChangePending())
+        frame()->document()->loader()->writer()->replaceDocument(scriptResult, ownerDocument.get());
 }
 
 void WebFrameImpl::willDetachPage()
