@@ -3240,6 +3240,11 @@ void WebPagePrivate::setVisible(bool visible)
 {
     m_visible = visible;
 
+    if (visible && m_page->scriptedAnimationsSuspended())
+        m_page->resumeScriptedAnimations();
+    if (!visible && !m_page->scriptedAnimationsSuspended())
+        m_page->suspendScriptedAnimations();
+
 #if ENABLE(PAGE_VISIBILITY_API)
     setPageVisibilityState();
 #endif
