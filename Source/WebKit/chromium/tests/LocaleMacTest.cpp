@@ -65,13 +65,13 @@ protected:
     String formatDate(const String& localeString, int year, int month, int day)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
-        return locale->formatDate(dateComponents(year, month, day));
+        return locale->formatDateTime(dateComponents(year, month, day));
     }
 
     double parseDate(const String& localeString, const String& dateString)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
-        return locale->parseDate(dateString);
+        return locale->parseDateTime(dateString, DateComponents::Date);
     }
 
 #if ENABLE(CALENDAR_PICKER)

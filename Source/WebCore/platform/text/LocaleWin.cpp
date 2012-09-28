@@ -354,8 +354,10 @@ int LocaleWin::parseNumberOrMonth(const String& input, unsigned& index)
     return -1;
 }
 
-double LocaleWin::parseDate(const String& input)
+double LocaleWin::parseDateTime(const String& input, DateComponents::Type type)
 {
+    if (type != DateComponents::Date)
+        return std::numeric_limits<double>::quiet_NaN();
     ensureShortDateTokens();
     return parseDate(m_shortDateTokens, m_baseYear, input);
 }
@@ -478,8 +480,10 @@ void LocaleWin::appendFourDigitsNumber(int value, StringBuilder& buffer)
     buffer.append(convertToLocalizedNumber(numberBuffer.toString()));
 }
 
-String LocaleWin::formatDate(const DateComponents& dateComponents)
+String LocaleWin::formatDateTime(const DateComponents& dateComponents)
 {
+    if (dateComponents.type() != DateComponents::Date)
+        return String();
     ensureShortDateTokens();
     return formatDate(m_shortDateTokens, m_baseYear, dateComponents.fullYear(), dateComponents.month(), dateComponents.monthDay());
 }

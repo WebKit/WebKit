@@ -51,10 +51,10 @@ public:
     virtual ~LocaleICU();
 
     // For LocalizedDate
-    double parseLocalizedDate(const String&);
-    String formatLocalizedDate(const DateComponents&);
+    virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
+    virtual String formatDateTime(const DateComponents&) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
-    String localizedDateFormatText();
+    virtual String dateFormatText() OVERRIDE;
 
     virtual const Vector<String>& monthLabels() OVERRIDE;
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;

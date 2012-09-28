@@ -40,34 +40,12 @@ namespace WebCore {
 
 double parseLocalizedDate(const String& input, DateComponents::Type type)
 {
-    switch (type) {
-    case DateComponents::Date:
-        return LocaleMac::currentLocale()->parseDate(input);
-    case DateComponents::DateTime:
-    case DateComponents::DateTimeLocal:
-    case DateComponents::Month:
-    case DateComponents::Time:
-    case DateComponents::Week:
-    case DateComponents::Invalid:
-        break;
-    }
-    return numeric_limits<double>::quiet_NaN();
+    return LocaleMac::currentLocale()->parseDateTime(input, type);
 }
 
 String formatLocalizedDate(const DateComponents& dateComponents)
 {
-    switch (dateComponents.type()) {
-    case DateComponents::Date:
-        return LocaleMac::currentLocale()->formatDate(dateComponents);
-    case DateComponents::DateTime:
-    case DateComponents::DateTimeLocal:
-    case DateComponents::Month:
-    case DateComponents::Time:
-    case DateComponents::Week:
-    case DateComponents::Invalid:
-        break;
-    }
-    return String();
+    return LocaleMac::currentLocale()->formatDateTime(dateComponents);
 }
 
 #if ENABLE(CALENDAR_PICKER)

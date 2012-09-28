@@ -164,8 +164,10 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
     return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
 }
 
-double LocaleICU::parseLocalizedDate(const String& input)
+double LocaleICU::parseDateTime(const String& input, DateComponents::Type type)
 {
+    if (type != DateComponents::Date)
+        return std::numeric_limits<double>::quiet_NaN();
     if (!initializeShortDateFormat())
         return numeric_limits<double>::quiet_NaN();
     if (input.length() > static_cast<unsigned>(numeric_limits<int32_t>::max()))
@@ -180,8 +182,10 @@ double LocaleICU::parseLocalizedDate(const String& input)
     return date;
 }
 
-String LocaleICU::formatLocalizedDate(const DateComponents& dateComponents)
+String LocaleICU::formatDateTime(const DateComponents& dateComponents)
 {
+    if (dateComponents.type() != DateComponents::Date)
+        return String();
     if (!initializeShortDateFormat())
         return String();
     double input = dateComponents.millisecondsSinceEpoch();
@@ -281,7 +285,7 @@ void LocaleICU::initializeLocalizedDateFormatText()
     m_localizedDateFormatText = localizeFormat(getDateFormatPattern(m_shortDateFormat));
 }
 
-String LocaleICU::localizedDateFormatText()
+String LocaleICU::dateFormatText()
 {
     initializeLocalizedDateFormatText();
     return m_localizedDateFormatText;

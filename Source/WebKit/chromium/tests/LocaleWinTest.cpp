@@ -87,13 +87,13 @@ protected:
     String formatDate(LCID lcid, int year, int month, int day)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->formatDate(dateComponents(year, month, day));
+        return locale->formatDateTime(dateComponents(year, month, day));
     }
 
     double parseDate(LCID lcid, const String& dateString)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->parseDate(dateString);
+        return locale->parseDateTime(dateString, DateComponents::Date);
     }
 
 #if ENABLE(CALENDAR_PICKER)

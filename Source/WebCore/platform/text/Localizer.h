@@ -26,6 +26,7 @@
 #ifndef Localizer_h
 #define Localizer_h
 
+#include "DateComponents.h"
 #include "Language.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -83,7 +84,12 @@ public:
 
     // The first day of a week. 0 is Sunday, and 6 is Saturday.
     virtual unsigned firstDayOfWeek() = 0;
+
+    virtual String dateFormatText() = 0;
 #endif
+
+    virtual double parseDateTime(const String&, DateComponents::Type) = 0;
+    virtual String formatDateTime(const DateComponents&) = 0;
 
     virtual ~Localizer();
 
