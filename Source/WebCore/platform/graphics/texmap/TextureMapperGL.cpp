@@ -733,7 +733,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(const BitmapTexture& con
 
     RefPtr<BitmapTexture> source = this;
     RefPtr<BitmapTexture> target = m_textureMapper->acquireTextureFromPool(m_textureSize);
-    for (int i = 0; i < filters.size(); ++i) {
+    for (size_t i = 0; i < filters.size(); ++i) {
         const FilterOperation* filter = filters.at(i);
         ASSERT(filter);
 
