@@ -76510,7 +76510,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\ProgressBar.js"
+					RelativePath="..\inspector\front-end\Progress.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ProgressIndicator.js"
 					>
 				</File>
 				<File

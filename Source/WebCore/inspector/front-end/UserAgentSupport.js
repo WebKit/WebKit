@@ -362,3 +362,8 @@ WebInspector.UserAgentSupport.prototype = {
     }
 }
 
+
+/**
+ * @type {WebInspector.UserAgentSupport} 
+ */
+WebInspector.userAgentSupport;
