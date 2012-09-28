@@ -38,18 +38,18 @@
 class BatteryProvider : public RefCounted<BatteryProvider>, public WebCore::BatteryProviderEflClient {
 public:
     virtual ~BatteryProvider();
-    static PassRefPtr<BatteryProvider> create(WKBatteryManagerRef);
+    static PassRefPtr<BatteryProvider> create(WKContextRef);
 
     void startUpdating();
     void stopUpdating();
 
 private:
-    BatteryProvider(WKBatteryManagerRef);
+    BatteryProvider(WKContextRef);
 
     // BatteryProviderEflClient interface.
     virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);
 
-    WKRetainPtr<WKBatteryManagerRef> m_wkBatteryManager;
+    WKRetainPtr<WKContextRef> m_wkContext;
     WebCore::BatteryProviderEfl m_provider;
 };
 

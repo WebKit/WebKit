@@ -1,3 +1,48 @@
+2012-09-28  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] {Vibration,Battery,NetworkInfo}Provider should contain WKContextRef instead of proxy.
+        https://bugs.webkit.org/show_bug.cgi?id=97839
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        VibrationProvider has WKRetainPtr<WKVibrationRef> m_wkVibrationRef
+        which has reference for object WebVibrationProxy.
+        The WebVibrationProxy instance is a member of WebContext who has it
+        as RefPtr<WebVibrationProxy>.
+
+        A member of one class is shared with another class, but there is no
+        relation between the two classes.
+
+        This can become a problem when WebContext is deleted before the
+        VibrationProvider, WebVibrationProxy will be alive without WebContext,
+        because VibrationProvider also has the reference for WebVibrationProxy.
+
+        This is a problem because WebVibrationProxy should be a member of
+        WebContext.
+
+        To prevent this, I changed the VibrationProvider to have
+        WKRetainPtr<WKContextRef> instead of WKRetainPtr<WKVibrationRef>.
+        Same for BatteryProvider and NetworkInfoProvider.
+
+        * UIProcess/API/efl/BatteryProvider.cpp:
+        (BatteryProvider::create):
+        (BatteryProvider::BatteryProvider):
+        (BatteryProvider::didChangeBatteryStatus):
+        * UIProcess/API/efl/BatteryProvider.h:
+        (BatteryProvider):
+        * UIProcess/API/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::create):
+        (NetworkInfoProvider::NetworkInfoProvider):
+        * UIProcess/API/efl/NetworkInfoProvider.h:
+        (NetworkInfoProvider):
+        * UIProcess/API/efl/VibrationProvider.cpp:
+        (VibrationProvider::create):
+        (VibrationProvider::VibrationProvider):
+        * UIProcess/API/efl/VibrationProvider.h:
+        (VibrationProvider):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::_Ewk_Context):
+
 2012-09-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement new Favicons API

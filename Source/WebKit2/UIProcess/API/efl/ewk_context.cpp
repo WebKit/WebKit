@@ -86,18 +86,15 @@ struct _Ewk_Context {
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
     {
 #if ENABLE(BATTERY_STATUS)
-        WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(contextRef.get());
-        batteryProvider = BatteryProvider::create(wkBatteryManager);
+        batteryProvider = BatteryProvider::create(context.get());
 #endif
 
 #if ENABLE(NETWORK_INFO)
-        WKNetworkInfoManagerRef wkNetworkInfoManagerRef = WKContextGetNetworkInfoManager(contextRef.get());
-        networkInfoProvider = NetworkInfoProvider::create(wkNetworkInfoManagerRef);
+        networkInfoProvider = NetworkInfoProvider::create(context.get());
 #endif
 
 #if ENABLE(VIBRATION)
-        WKVibrationRef wkVibrationRef = WKContextGetVibration(contextRef.get());
-        vibrationProvider = VibrationProvider::create(wkVibrationRef);
+        vibrationProvider = VibrationProvider::create(context.get());
 #endif
 
 #if ENABLE(MEMORY_SAMPLER)
