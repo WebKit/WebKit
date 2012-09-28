@@ -87,7 +87,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
         return v8::Null(args.GetIsolate());
     else if (result->is2d()) {
         v8::Handle<v8::Value> v8Result = toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder(), args.GetIsolate());
-        if (InspectorInstrumentation::canvasAgentEnabled(imp->document())) {
+        if (InspectorInstrumentation::hasFrontends()) {
             ScriptState* scriptState = ScriptState::forContext(v8::Context::GetCurrent());
             ScriptObject context(scriptState, v8::Handle<v8::Object>::Cast(v8Result));
             ScriptObject wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(imp->document(), context);
@@ -105,7 +105,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
         perIsolateData->setShouldCollectGarbageSoon();
 
         v8::Handle<v8::Value> v8Result = toV8(static_cast<WebGLRenderingContext*>(result), args.Holder(), args.GetIsolate());
-        if (InspectorInstrumentation::canvasAgentEnabled(imp->document())) {
+        if (InspectorInstrumentation::hasFrontends()) {
             ScriptState* scriptState = ScriptState::forContext(v8::Context::GetCurrent());
             ScriptObject glContext(scriptState, v8::Handle<v8::Object>::Cast(v8Result));
             ScriptObject wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(imp->document(), glContext);

@@ -252,17 +252,11 @@ public:
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
     static bool hasFrontends() { return s_frontendCounter; }
-    static bool canvasAgentEnabled(ScriptExecutionContext*);
-    static bool consoleAgentEnabled(ScriptExecutionContext*);
-    static bool runtimeAgentEnabled(Frame*);
-    static bool timelineAgentEnabled(ScriptExecutionContext*);
+    static bool hasFrontendForScriptContext(ScriptExecutionContext*);
     static bool collectingHTMLParseErrors(Page*);
 #else
     static bool hasFrontends() { return false; }
-    static bool canvasAgentEnabled(ScriptExecutionContext*) { return false; }
-    static bool consoleAgentEnabled(ScriptExecutionContext*) { return false; }
-    static bool runtimeAgentEnabled(Frame*) { return false; }
-    static bool timelineAgentEnabled(ScriptExecutionContext*) { return false; }
+    static bool hasFrontendForScriptContext(ScriptExecutionContext*) { return false; }
     static bool collectingHTMLParseErrors(Page*) { return false; }
 #endif
 

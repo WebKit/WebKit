@@ -2595,7 +2595,7 @@ sub GenerateCallWith
         push(@callWithArgs, "scriptArguments");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
-        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec));\n");
+        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));\n");
         $implIncludes{"ScriptCallStack.h"} = 1;
         $implIncludes{"ScriptCallStackFactory.h"} = 1;
         push(@callWithArgs, "callStack");

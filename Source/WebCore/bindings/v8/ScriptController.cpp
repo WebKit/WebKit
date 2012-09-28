@@ -221,7 +221,7 @@ v8::Local<v8::Value> ScriptController::callFunctionWithInstrumentation(ScriptExe
         return handleMaxRecursionDepthExceeded();
 
     InspectorInstrumentationCookie cookie;
-    if (InspectorInstrumentation::timelineAgentEnabled(context)) {
+    if (InspectorInstrumentation::hasFrontends() && context) {
         String resourceName;
         int lineNumber;
         resourceInfo(function, resourceName, lineNumber);

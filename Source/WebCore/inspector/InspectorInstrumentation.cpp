@@ -46,7 +46,6 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "WorkerInspectorController.h"
@@ -1135,34 +1134,23 @@ bool InspectorInstrumentation::collectingHTMLParseErrors(InstrumentingAgents* in
     return false;
 }
 
-bool InspectorInstrumentation::canvasAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
+bool InspectorInstrumentation::hasFrontendForScriptContext(ScriptExecutionContext* scriptExecutionContext)
 {
-    if (!scriptExecutionContext || !hasFrontends())
+    if (!scriptExecutionContext)
         return false;
-    return instrumentingAgentsForContext(scriptExecutionContext)->inspectorCanvasAgent();
-}
 
-bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
-{
-    if (!scriptExecutionContext || !hasFrontends())
-        return false;
-    InspectorConsoleAgent* consoleAgent = instrumentingAgentsForContext(scriptExecutionContext)->inspectorConsoleAgent();
-    return consoleAgent && consoleAgent->enabled();
-}
+#if ENABLE(WORKERS)
+    if (scriptExecutionContext->isWorkerContext()) {
+        WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
+        WorkerInspectorController* workerInspectorController = workerContext->workerInspectorController();
+        return workerInspectorController && workerInspectorController->hasFrontend();
+    }
+#endif
 
-bool InspectorInstrumentation::runtimeAgentEnabled(Frame* frame)
-{
-    if (!frame || !hasFrontends())
-        return false;
-    InspectorRuntimeAgent* runtimeAgent = instrumentingAgentsForFrame(frame)->inspectorRuntimeAgent();
-    return runtimeAgent && runtimeAgent->enabled();
-}
-
-bool InspectorInstrumentation::timelineAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
-{
-    if (!scriptExecutionContext || !hasFrontends())
-        return false;
-    return instrumentingAgentsForContext(scriptExecutionContext)->inspectorTimelineAgent();
+    ASSERT(scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(scriptExecutionContext);
+    Page* page = document->page();
+    return page && page->inspectorController()->hasFrontend();
 }
 
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents* instrumentingAgents, bool isDOMEvent, const String& eventName, bool synchronous)

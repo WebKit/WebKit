@@ -42,7 +42,6 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
-#include "ScriptController.h"
 #include "ScriptObject.h"
 #include "ScriptProfiler.h"
 #include <wtf/CurrentTime.h>
@@ -61,15 +60,12 @@ static const char monitoringXHR[] = "monitoringXHR";
 static const char consoleMessagesEnabled[] = "consoleMessagesEnabled";
 }
 
-int InspectorConsoleAgent::s_enabledAgentCount = 0;
-
 InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorConsoleAgent>("Console", instrumentingAgents, state)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_previousMessage(0)
     , m_expiredConsoleMessageCount(0)
-    , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorConsoleAgent(this);
 }
@@ -84,13 +80,6 @@ InspectorConsoleAgent::~InspectorConsoleAgent()
 
 void InspectorConsoleAgent::enable(ErrorString*)
 {
-    if (m_enabled)
-        return;
-    m_enabled = true;
-    if (!s_enabledAgentCount)
-        ScriptController::setCaptureCallStackForUncaughtExceptions(true);
-    ++s_enabledAgentCount;
-
     m_state->setBoolean(ConsoleAgentState::consoleMessagesEnabled, true);
 
     if (m_expiredConsoleMessageCount) {
@@ -105,11 +94,6 @@ void InspectorConsoleAgent::enable(ErrorString*)
 
 void InspectorConsoleAgent::disable(ErrorString*)
 {
-    if (!m_enabled)
-        return;
-    m_enabled = false;
-    if (!(--s_enabledAgentCount))
-        ScriptController::setCaptureCallStackForUncaughtExceptions(false);
     m_state->setBoolean(ConsoleAgentState::consoleMessagesEnabled, false);
 }
 
@@ -119,7 +103,7 @@ void InspectorConsoleAgent::clearMessages(ErrorString*)
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_injectedScriptManager->releaseObjectGroup("console");
-    if (m_frontend && m_enabled)
+    if (m_frontend && m_state->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
         m_frontend->messagesCleared();
 }
 
@@ -148,8 +132,7 @@ void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
 void InspectorConsoleAgent::clearFrontend()
 {
     m_frontend = 0;
-    String errorString;
-    disable(&errorString);
+    m_state->setBoolean(ConsoleAgentState::consoleMessagesEnabled, false);
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
@@ -296,12 +279,12 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_frontend && m_enabled)
+        if (m_frontend && m_state->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
             m_previousMessage->updateRepeatCountInConsole(m_frontend);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
-        if (m_frontend && m_enabled)
+        if (m_frontend && m_state->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
             m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager, true);
     }
 

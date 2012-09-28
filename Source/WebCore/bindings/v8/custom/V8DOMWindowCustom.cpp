@@ -128,7 +128,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
 
         id = DOMTimer::install(scriptContext, action.release(), timeout, singleShot);
     } else {
-        RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());
+        RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
         if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval(callStack.release()))
             return v8Integer(0, args.GetIsolate());
         ASSERT(imp->frame());

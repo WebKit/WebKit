@@ -58,7 +58,7 @@ public:
 
     static inline InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType callType, const JSC::CallData& callData)
     {
-        if (!InspectorInstrumentation::timelineAgentEnabled(context))
+        if (!InspectorInstrumentation::hasFrontends())
             return InspectorInstrumentationCookie();
         String resourceName;
         int lineNumber = 1;

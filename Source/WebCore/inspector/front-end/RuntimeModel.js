@@ -95,7 +95,7 @@ WebInspector.RuntimeModel.prototype = {
     _didLoadCachedResources: function()
     {
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeDispatcher(this));
-        RuntimeAgent.enable();
+        RuntimeAgent.setReportExecutionContextCreation(true);
     },
 
     _executionContextCreated: function(context)

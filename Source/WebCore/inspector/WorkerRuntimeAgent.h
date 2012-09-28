@@ -47,6 +47,7 @@ public:
         return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, state, injectedScriptManager, context));
     }
     virtual ~WorkerRuntimeAgent();
+    virtual void setReportExecutionContextCreation(ErrorString*, bool);
 
 private:
     WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);

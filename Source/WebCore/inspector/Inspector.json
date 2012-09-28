@@ -589,15 +589,14 @@
                 "description": "Tells inspected instance(worker or page) that it can run in case it was started paused."
             },
             {
-                "name": "enable",
+                "name": "setReportExecutionContextCreation",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Reporting enabled state." }
+                ],
                 "hidden": true,
-                "description": "Enables reporting of execution contexts creation by means of <code>executionContextCreated</code> event. When the reporting gets enabled the event will be sent immediately for each existing execution context."
-            },
-            {
-                "name": "disable",
-                "hidden": true,
-                "description": "Disables reporting of execution contexts creation."
+                "description": "Enables reporting about creation of execution contexts by means of <code>executionContextCreated</code> event. When the reporting gets enabled the event will be sent immediately for each existing execution context."
             }
+
         ],
         "events": [
             {

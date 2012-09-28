@@ -104,12 +104,12 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
     return ScriptCallStack::create(frames);
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec)
+PassRefPtr<ScriptCallStack> createScriptCallStackForInspector(JSC::ExecState* exec)
 {
     size_t maxStackSize = 1;
     if (InspectorInstrumentation::hasFrontends()) {
         ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-        if (InspectorInstrumentation::consoleAgentEnabled(scriptExecutionContext))
+        if (InspectorInstrumentation::hasFrontendForScriptContext(scriptExecutionContext))
             maxStackSize = ScriptCallStack::maxCallStackSizeToCapture;
     }
     return createScriptCallStack(exec, maxStackSize);

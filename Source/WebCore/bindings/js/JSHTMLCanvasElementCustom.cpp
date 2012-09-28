@@ -78,7 +78,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     if (!context)
         return jsNull();
     JSValue jsValue = toJS(exec, globalObject(), WTF::getPtr(context));
-    if (InspectorInstrumentation::canvasAgentEnabled(canvas->document())) {
+    if (InspectorInstrumentation::hasFrontends()) {
         ScriptObject contextObject(exec, jsValue.getObject());
         ScriptObject wrapped;
         if (context->is2d())

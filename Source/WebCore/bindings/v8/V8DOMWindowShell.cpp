@@ -611,7 +611,7 @@ void V8DOMWindowShell::setIsolatedWorldSecurityOrigin(PassRefPtr<SecurityOrigin>
 {
     ASSERT(!m_world->isMainWorld());
     // FIXME: Should this be here?
-    if (!m_isolatedWorldShellSecurityOrigin && !context().IsEmpty() && InspectorInstrumentation::runtimeAgentEnabled(m_frame)) {
+    if (!m_isolatedWorldShellSecurityOrigin && !context().IsEmpty() && InspectorInstrumentation::hasFrontends()) {
         v8::HandleScope handleScope;
         ScriptState* scriptState = ScriptState::forContext(v8::Local<v8::Context>::New(context()));
         InspectorInstrumentation::didCreateIsolatedContext(m_frame, scriptState, securityOrigin.get());

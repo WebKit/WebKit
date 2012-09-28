@@ -67,7 +67,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
     v8::Handle<v8::Context> v8Context = proxy->context();
     if (function->IsString()) {
         if (ContentSecurityPolicy* policy = workerContext->contentSecurityPolicy()) {
-            RefPtr<ScriptCallStack> callStack = createScriptCallStackForConsole();
+            RefPtr<ScriptCallStack> callStack = createScriptCallStackForInspector();
             if (!policy->allowEval(callStack.release()))
                 return v8Integer(0, args.GetIsolate());
         }

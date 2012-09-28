@@ -55,8 +55,7 @@ public:
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void restore();
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
+    virtual void setReportExecutionContextCreation(ErrorString*, bool);
 
     void didClearWindowObject(Frame*);
     void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
@@ -67,7 +66,6 @@ private:
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
-    void reportExecutionContextCreation();
     void notifyContextCreated(const String& frameId, ScriptState*, SecurityOrigin*, bool isPageContext);
 
     Page* m_inspectedPage;

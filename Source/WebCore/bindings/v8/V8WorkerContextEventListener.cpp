@@ -95,7 +95,7 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(ScriptEx
         return v8::Local<v8::Value>();
 
     InspectorInstrumentationCookie cookie;
-    if (InspectorInstrumentation::timelineAgentEnabled(context)) {
+    if (InspectorInstrumentation::hasFrontends()) {
         String resourceName("undefined");
         int lineNumber = 1;
         v8::ScriptOrigin origin = handlerFunction->GetScriptOrigin();
