@@ -5862,7 +5862,7 @@
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
 		CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; settings = {COMPILER_FLAGS = "-Wno-undef"; }; };
+		CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; settings = {COMPILER_FLAGS = "-Wno-undef -Wno-deprecated-declarations"; }; };
 		CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */; };
 		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6111,7 +6111,7 @@
 		E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613B40CD6344E00FADA75 /* VoidCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */; };
 		E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */; };
+		E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */; };
 		E44613EB0CD681B400FADA75 /* ProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E010CBF8EAA00AF2ECE /* ProgressEvent.cpp */; };
 		E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E020CBF8EAA00AF2ECE /* ProgressEvent.h */; };
