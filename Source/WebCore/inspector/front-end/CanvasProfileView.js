@@ -110,17 +110,22 @@ WebInspector.CanvasProfileView.prototype = {
                 traceLogItem.stepNo = i;
                 traceLogItem.appendChild(document.createTextNode("(" + (i+1) + ") "));
 
+                var sourceText = call.functionName || "context." + call.property;
                 if (call.sourceURL) {
                     // FIXME(62725): stack trace line/column numbers are one-based.
                     var lineNumber = Math.max(0, call.lineNumber - 1) || 0;
                     var columnNumber = Math.max(0, call.columnNumber - 1) || 0;
                     var linkElement = this._linkifier.linkifyLocation(call.sourceURL, lineNumber, columnNumber);
-                    linkElement.textContent = call.functionName;
+                    linkElement.textContent = sourceText;
                     traceLogItem.appendChild(linkElement);
                 } else
-                    traceLogItem.appendChild(document.createTextNode(call.functionName));
+                    traceLogItem.appendChild(document.createTextNode(sourceText));
 
-                traceLogItem.appendChild(document.createTextNode("(" + call.arguments.join(", ") + ")"));
+                if (call.arguments)
+                    traceLogItem.appendChild(document.createTextNode("(" + call.arguments.join(", ") + ")"));
+                else
+                    traceLogItem.appendChild(document.createTextNode(" = " + call.value));
+
                 if (typeof call.result !== "undefined")
                     traceLogItem.appendChild(document.createTextNode(" => " + call.result));
                 this._traceLogElement.appendChild(traceLogItem);

@@ -288,6 +288,9 @@ function Call(thisObject, functionName, args, result, stackTrace)
     this._args = Array.prototype.slice.call(args, 0);
     this._result = result;
     this._stackTrace = stackTrace || null;
+
+    if (!this._functionName)
+        console.assert(this._args.length === 2 && typeof this._args[0] === "string");
 }
 
 Call.prototype = {
@@ -307,6 +310,14 @@ Call.prototype = {
         return this._functionName;
     },
 
+    /**
+     * @return {boolean}
+     */
+    isPropertySetter: function()
+    {
+        return !this._functionName;
+    },
+    
     /**
      * @return {Array}
      */
@@ -382,18 +393,24 @@ Call.prototype = {
     replay: function(replayableCall, cache)
     {
         var replayObject = ReplayableResource.replay(replayableCall.resource(), cache);
-        var replayFunction = replayObject[replayableCall.functionName()];
-        console.assert(typeof replayFunction === "function", "Expected a function to replay");
         var replayArgs = replayableCall.args().map(function(obj) {
             return ReplayableResource.replay(obj, cache);
         });
-        var replayResult = replayFunction.apply(replayObject, replayArgs);
-        if (replayableCall.result() instanceof ReplayableResource) {
-            var resource = replayableCall.result().replay(cache);
-            if (!resource.wrappedObject())
-                resource.setWrappedObject(replayResult);
-        }
+        var replayResult = undefined;
 
+        if (replayableCall.isPropertySetter())
+            replayObject[replayArgs[0]] = replayArgs[1];
+        else {
+            var replayFunction = replayObject[replayableCall.functionName()];
+            console.assert(typeof replayFunction === "function", "Expected a function to replay");
+            replayResult = replayFunction.apply(replayObject, replayArgs);
+            if (replayableCall.result() instanceof ReplayableResource) {
+                var resource = replayableCall.result().replay(cache);
+                if (!resource.wrappedObject())
+                    resource.setWrappedObject(replayResult);
+            }
+        }
+    
         this._thisObject = replayObject;
         this._functionName = replayableCall.functionName();
         this._args = replayArgs;
@@ -436,6 +453,14 @@ ReplayableCall.prototype = {
     functionName: function()
     {
         return this._functionName;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPropertySetter: function()
+    {
+        return !this._functionName;
     },
 
     /**
@@ -699,12 +724,7 @@ Resource.prototype = {
                     {
                         return wrappedObject[property];
                     },
-                    set: function(value)
-                    {
-                        // FIXME: Log the setter calls.
-                        console.error("FIXME: Setting an attribute %s was not logged.", property);
-                        wrappedObject[property] = value;
-                    },
+                    set: self._wrapPropertySetter(self, wrappedObject, property),
                     enumerable: true
                 });
             }
@@ -769,6 +789,30 @@ Resource.prototype = {
             var call = new Call(resource, functionName, arguments, result, stackTrace);
             manager.captureCall(call);
             return result;
+        };
+    },
+
+    /**
+     * @param {Resource} resource
+     * @param {Object} originalObject
+     * @param {string} propertyName
+     * @return {Function}
+     */
+    _wrapPropertySetter: function(resource, originalObject, propertyName)
+    {
+        return function(value)
+        {
+            var manager = resource.manager();
+            if (!manager || !manager.capturing()) {
+                originalObject[propertyName] = value;
+                return;
+            }
+            var args = [propertyName, value];
+            manager.captureArguments(resource, args);
+            originalObject[propertyName] = value;
+            var stackTrace = StackTrace.create(1, arguments.callee);
+            var call = new Call(resource, "", args, undefined, stackTrace);
+            manager.captureCall(call);
         };
     },
 
@@ -2270,14 +2314,20 @@ InjectedScript.prototype = {
             var stackTrace = call.stackTrace();
             var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
             var traceLogItem = {
-                functionName: call.functionName(),
-                arguments: args,
                 sourceURL: callFrame.sourceURL,
                 lineNumber: callFrame.lineNumber,
                 columnNumber: callFrame.columnNumber
             };
-            if (call.result())
-                traceLogItem.result = call.result() + "";
+            if (call.functionName()) {
+                traceLogItem.functionName = call.functionName();
+                traceLogItem.arguments = args;
+            } else {
+                traceLogItem.property = args[0];
+                traceLogItem.value = args[1];
+            }
+            var callResult = call.result();
+            if (callResult !== undefined && callResult !== null)
+                traceLogItem.result = callResult + "";
             result.calls.push(traceLogItem);
         }
         return result;

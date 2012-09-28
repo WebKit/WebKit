@@ -3101,8 +3101,10 @@
                 "id": "Call",
                 "type": "object",
                 "properties": [
-                    { "name": "functionName", "type": "string" },
-                    { "name": "arguments", "type": "array", "items": { "type": "string" } },
+                    { "name": "functionName", "type": "string", "optional": true },
+                    { "name": "arguments", "type": "array", "items": { "type": "string" }, "optional": true },
+                    { "name": "property", "type": "string", "optional": true },
+                    { "name": "value", "type": "string", "optional": true },
                     { "name": "result", "type": "string", "optional": true },
                     { "name": "sourceURL", "type": "string", "optional": true },
                     { "name": "lineNumber", "type": "integer", "optional": true },
