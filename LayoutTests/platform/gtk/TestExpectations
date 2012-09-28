@@ -41,6 +41,7 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
@@ -365,6 +366,7 @@ webkit.org/b/85532 fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats.h
 webkit.org/b/85532 fast/sub-pixel/column-clipping.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/float-containing-block-with-margin.html [ Pass ]
+webkit.org/b/85532 fast/sub-pixel/float-precision.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/float-with-margin-in-container.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/float-with-right-margin-zoom.html [ Pass ]
 webkit.org/b/85532 fast/sub-pixel/float-wrap-with-subpixel-top.html [ Pass ]
@@ -842,9 +844,6 @@ Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failu
 
 # Requires willPerformClientRedirectToURL
 webkit.org/b/58526 http/tests/loading/onload-vs-immediate-refresh.pl [ Failure ]
-
-# New failure after http://trac.webkit.org/changeset/53758
-Bug(GTK) scrollbars/scrollbar-middleclick-nopaste.html [ Failure ]
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
@@ -1329,8 +1328,6 @@ webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
 
 webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
 
-webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Failure ]
-
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-async.html [ Failure ]
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-paste.html [ Pass ]
 webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
@@ -1344,7 +1341,6 @@ webkit.org/b/90775 fast/dom/shadow/focus-navigation.html [ Failure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html [ ImageOnlyFailure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-without-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/97469 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
 
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
@@ -1356,10 +1352,8 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
-webkit.org/b/97529 http/tests/security/xss-eval.html [ Failure ]
-
-# Needs rebaseline.
-webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]
+webkit.org/b/97870 fast/harness/perftests/runs-per-second-iterations.html [ Failure ]
+webkit.org/b/97870 fast/harness/perftests/runs-per-second-log.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
