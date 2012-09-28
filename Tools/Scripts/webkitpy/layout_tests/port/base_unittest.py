@@ -437,11 +437,15 @@ class PortTest(unittest.TestCase):
 
         tests = port.tests(['passes'])
         self.assertTrue('passes/text.html' in tests)
+        self.assertTrue('passes/passes/test-virtual-passes.html' in tests)
         self.assertFalse('virtual/passes/text.html' in tests)
 
         tests = port.tests(['virtual/passes'])
         self.assertFalse('passes/text.html' in tests)
-        self.assertTrue('virtual/passes/text.html' in tests)
+        self.assertTrue('virtual/passes/test-virtual-passes.html' in tests)
+        self.assertTrue('virtual/passes/passes/test-virtual-passes.html' in tests)
+        self.assertFalse('virtual/passes/test-virtual-virtual/passes.html' in tests)
+        self.assertFalse('virtual/passes/virtual/passes/test-virtual-passes.html' in tests)
 
     def test_build_path(self):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))

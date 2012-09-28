@@ -239,6 +239,11 @@ layer at (0,0) size 800x34
         actual_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
         expected_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum-png')
 
+    # For testing that virtual test suites don't expand names containing themselves
+    # See webkit.org/b/97925 and base_unittest.PortTest.test_tests().
+    tests.add('passes/test-virtual-passes.html')
+    tests.add('passes/passes/test-virtual-passes.html')
+
     return tests
 
 

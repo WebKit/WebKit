@@ -310,7 +310,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_child_processes_min(self):
         if self.should_test_processes:
             _, _, regular_output, _ = logging_run(
-                ['--debug-rwt-logging', '--child-processes', '2', 'passes'],
+                ['--debug-rwt-logging', '--child-processes', '2', '-i', 'passes/passes', 'passes'],
                 tests_included=True, shared_port=False)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
 
@@ -775,7 +775,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # These next tests test that we run the tests in ascending alphabetical
         # order per directory. HTTP tests are sharded separately from other tests,
         # so we have to test both.
-        tests_run = get_tests_run(['passes'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['-i', 'passes/passes', 'passes'], tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, sorted(tests_run))
 
         tests_run = get_tests_run(['http/tests/passes'], tests_included=True, flatten_batches=True)

@@ -2482,7 +2482,7 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 
 # Accelerated compositing is disabled for elements in a RenderFlowThread
 webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
-webkit.org/b/84900 platform/chromium/virtual/softwarecompositing/regions/webkit-flow-renderer-layer-platform/chromium/virtual/softwarecompositing.html [ Skip ]
+webkit.org/b/84900 platform/chromium/virtual/softwarecompositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
 
 webkit.org/b/92131 inspector/styles/region-style-crash.html
 
@@ -3683,7 +3683,7 @@ crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/remov
 # Canvas2d not yet supported by software compositor.
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Crash ImageOnlyFailure ]
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Crash ImageOnlyFailure ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-platform/chromium/virtual/softwarecompositing-descendant.html [ Crash ImageOnlyFailure ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ Crash ImageOnlyFailure ]
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Crash ImageOnlyFailure ]
 
 # Video not yet supported by software compositor.
@@ -3702,7 +3702,7 @@ crbug.com/151713 platform/chromium/virtual/softwarecompositing/webgl [ Crash Ima
 crbug.com/151713 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-webgl-layer.html [ Crash ImageOnlyFailure ]
 
 # No antialiasing on rotation in software compositor.
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/direct-image-platform/chromium/virtual/softwarecompositing.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/direct-image-compositing.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]

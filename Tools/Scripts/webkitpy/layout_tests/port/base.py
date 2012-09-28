@@ -1278,7 +1278,7 @@ class Port(object):
             base_tests = self._real_tests([suite.base])
             suite.tests = {}
             for test in base_tests:
-                suite.tests[test.replace(suite.base, suite.name)] = test
+                suite.tests[test.replace(suite.base, suite.name, 1)] = test
         return suites
 
     def _virtual_tests(self, paths, suites):
@@ -1295,7 +1295,7 @@ class Port(object):
     def lookup_virtual_test_base(self, test_name):
         for suite in self.populated_virtual_test_suites():
             if test_name.startswith(suite.name):
-                return test_name.replace(suite.name, suite.base)
+                return test_name.replace(suite.name, suite.base, 1)
         return None
 
     def lookup_virtual_test_args(self, test_name):
