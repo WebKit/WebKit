@@ -3659,6 +3659,9 @@ crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/overf
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/repaint/newly-composited-on-scroll.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/scrollbar-painting.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure Crash Pass ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
+
 
 # Render surfaces do not draw anything in the software compositor.
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
