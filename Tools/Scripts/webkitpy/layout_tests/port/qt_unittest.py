@@ -71,14 +71,6 @@ class QtPortTest(port_testcase.PortTestCase):
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
-    def _assert_skipped_path(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
-        host = MockSystemHost(os_name=os_name)
-        host.executive = MockExecutive2(self._qt_version(qt_version))
-        port_name = 'qt-' + os_name
-        port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
-                              options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
-        self.assertEquals(port._skipped_file_search_paths(), search_paths)
-
     def _assert_expectations_files(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
@@ -100,19 +92,13 @@ class QtPortTest(port_testcase.PortTestCase):
         for case in self.search_paths_cases:
             self._assert_search_path(**case)
 
-    def test_skipped_file_search_path(self):
-        caselist = self.search_paths_cases[:]
-        for case in caselist:
-            if case['use_webkit2'] and case['qt_version'] == '5.0':
-                case['search_paths'].append("wk2")
-            self._assert_skipped_path(**case)
-
     def test_expectations_files(self):
         for case in self.search_paths_cases:
             expectations_case = deepcopy(case)
-            expectations_case['search_paths'] = []
-            for path in reversed(case['search_paths']):
-                expectations_case['search_paths'].append('/mock-checkout/LayoutTests/platform/%s/TestExpectations' % (path))
+            if expectations_case['use_webkit2']:
+                expectations_case['search_paths'].append("wk2")
+            expectations_case['search_paths'].reverse()
+            expectations_case['search_paths'] = map(lambda path: '/mock-checkout/LayoutTests/platform/%s/TestExpectations' % (path), expectations_case['search_paths'])
             self._assert_expectations_files(**expectations_case)
 
     def test_show_results_html_file(self):
