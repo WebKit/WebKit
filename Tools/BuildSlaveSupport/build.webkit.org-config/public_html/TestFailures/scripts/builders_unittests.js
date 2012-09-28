@@ -1009,7 +1009,6 @@ test("buildersFailing", 3, function() {
                     "webkit_gpu_tests"
                 ],
                 "Webkit Mac10.6": [
-                    "compile",
                     "webkit_gpu_tests"
                 ]
             });

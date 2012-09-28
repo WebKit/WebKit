@@ -1,3 +1,15 @@
+2012-09-28  Ojan Vafai  <ojan@chromium.org>
+
+        Garden-o-matic sometimes things buildbot warnings are failures
+        https://bugs.webkit.org/show_bug.cgi?id=97926
+
+        Reviewed by Tony Chang.
+
+        It turns out the JSON clearly tells us if it's a failure.
+        We want to skip all warnings even if they don't have "warning" in the text.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+
 2012-09-28  Harald Tveit Alvestrand  <harald@alvestrand.no>
 
         Implement the GetStats interface on PeerConnection
