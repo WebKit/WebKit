@@ -31,8 +31,6 @@
 #include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Edje.h>
 #include <Efreet.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
@@ -62,19 +60,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     if (!ecore_init()) {
         // Could not init ecore.
-        eina_shutdown();
-        return 1;
-    }
-
-    if (!ecore_evas_init()) {
-        ecore_shutdown();
-        eina_shutdown();
-        return 1;
-    }
-
-    if (!edje_init()) {
-        ecore_evas_shutdown();
-        ecore_shutdown();
         eina_shutdown();
         return 1;
     }
@@ -119,11 +104,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     soup_cache_flush(soupCache);
     soup_cache_dump(soupCache);
     g_object_unref(soupCache);
-
-    edje_shutdown();
-    ecore_evas_shutdown();
-    ecore_shutdown();
-    eina_shutdown();
 
     return 0;
 

@@ -45,7 +45,7 @@ EWK2UnitTestBase::EWK2UnitTestBase()
 
 void EWK2UnitTestBase::SetUp()
 {
-    ASSERT_GT(ecore_evas_init(), 0);
+    ewk_init();
 
     unsigned int width = environment->defaultWidth();
     unsigned int height = environment->defaultHeight();
@@ -71,7 +71,7 @@ void EWK2UnitTestBase::TearDown()
 {
     evas_object_del(m_webView);
     ecore_evas_free(m_ecoreEvas);
-    ecore_evas_shutdown();
+    ewk_shutdown();
 }
 
 void EWK2UnitTestBase::loadUrlSync(const char* url)

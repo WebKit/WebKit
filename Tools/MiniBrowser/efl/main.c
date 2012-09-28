@@ -200,7 +200,7 @@ on_error(void *user_data, Evas_Object *webview, void *event_info)
 static int
 quit(Eina_Bool success, const char *msg)
 {
-    ecore_evas_shutdown();
+    ewk_shutdown();
 
     if (msg)
         fputs(msg, (success) ? stdout : stderr);
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_NONE
     };
 
-    if (!ecore_evas_init())
+    if (!ewk_init())
         return EXIT_FAILURE;
 
     ecore_app_args_set(argc, (const char **) argv);

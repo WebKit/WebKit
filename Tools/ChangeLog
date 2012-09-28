@@ -1,3 +1,20 @@
+2012-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, rolling out r129863.
+        http://trac.webkit.org/changeset/129863
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Broken debug WK2 layout test
+
+        * MiniBrowser/efl/main.c:
+        (quit):
+        (main):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::initEcoreEvas):
+        (WTR::PlatformWebView::~PlatformWebView):
+        * WebKitTestRunner/efl/main.cpp:
+        (main):
+
 2012-09-28  Kai Koehne  <kai.koehne@digia.com>
 
         [Qt] Use qInstallMessageHandler()

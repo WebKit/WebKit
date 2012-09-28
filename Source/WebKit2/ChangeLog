@@ -1,3 +1,27 @@
+2012-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, rolling out r129863.
+        http://trac.webkit.org/changeset/129863
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Broken debug WK2 layout test
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::_Ewk_Context):
+        (_Ewk_Context::~_Ewk_Context):
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+        (ewk_shutdown):
+        * UIProcess/API/efl/ewk_main.h: Added.
+        * UIProcess/API/efl/ewk_main_private.h: Removed.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        (EWK2UnitTest::EWK2UnitTestBase::TearDown):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+
 2012-09-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] exceededDatabaseQuota event is not handled
