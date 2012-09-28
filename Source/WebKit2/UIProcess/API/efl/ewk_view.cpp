@@ -1254,6 +1254,22 @@ void ewk_view_full_screen_exit(Evas_Object* ewkView)
 }
 #endif
 
+#if ENABLE(SQL_DATABASE)
+/**
+ * @internal
+ * Calls exceeded_database_quota callback or falls back to default behavior returns default database quota.
+ */
+unsigned long long ewk_view_database_quota_exceeded(Evas_Object* ewkView, const char* databaseName, const char* displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+
+    static const unsigned long long defaultQuota = 5 * 1024 * 1204; // 5 MB
+    if (smartData->api->exceeded_database_quota)
+        return smartData->api->exceeded_database_quota(smartData, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+
+    return defaultQuota;
+}
+#endif
 
 /**
  * @internal

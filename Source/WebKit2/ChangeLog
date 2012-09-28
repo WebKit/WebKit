@@ -1,3 +1,24 @@
+2012-09-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] exceededDatabaseQuota event is not handled
+        https://bugs.webkit.org/show_bug.cgi?id=97882
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Handle exceededDatabaseQuota callback from WKPageUIClient so
+        that we let the browser a chance to decide what to do when
+        the database quota is reached. If the browser does not handle
+        this, then we return a realistic default quota (5MB as
+        recommended by the spec).
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_database_quota_exceeded):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_ui_client.cpp:
+        (exceededDatabaseQuota):
+        (ewk_view_ui_client_attach):
+
 2012-09-28  Kai Koehne  <kai.koehne@digia.com>
 
         [Qt] Use qInstallMessageHandler() 

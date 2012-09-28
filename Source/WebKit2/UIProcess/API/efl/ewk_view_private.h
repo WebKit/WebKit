@@ -114,4 +114,8 @@ void ewk_view_color_picker_request(Evas_Object* ewkView, int r, int g, int b, in
 void ewk_view_color_picker_dismiss(Evas_Object* ewkView);
 #endif
 
+#if ENABLE(SQL_DATABASE)
+unsigned long long ewk_view_database_quota_exceeded(Evas_Object* ewkView, const char* databaseName, const char* displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
+#endif
+
 #endif // ewk_view_private_h
