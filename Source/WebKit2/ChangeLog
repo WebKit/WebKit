@@ -1,3 +1,20 @@
+2012-09-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12398537> WebKit2 lacks API for disabling document.cookie like -[WebView _setCookieEnabled:]
+        https://bugs.webkit.org/show_bug.cgi?id=97939
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit): Defined CookieEnabled key with a default value of true.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCookieEnabled): Added this setter.
+        (WKPreferencesGetCookieEnabled): Added this getter.
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Added a call to Settings::setCookieEnabled to push the
+        preference into Settings.
+
 2012-09-28  Sam Weinig  <sam@webkit.org>
 
         Fix pluralization of Info.plist key.

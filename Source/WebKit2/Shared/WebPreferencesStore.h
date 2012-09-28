@@ -135,6 +135,7 @@ namespace WebKit {
     macro(StorageBlockingPolicy, storageBlockingPolicy, UInt32, uint32_t, 0) \
     macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED) \
     macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED) \
+    macro(CookieEnabled, cookieEnabled, Bool, bool, true) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

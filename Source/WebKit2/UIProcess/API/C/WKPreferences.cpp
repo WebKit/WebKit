@@ -298,6 +298,16 @@ bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->screenFontSubstitutionEnabled();
 }
 
+void WKPreferencesSetCookieEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setCookieEnabled(enabled);
+}
+
+bool WKPreferencesGetCookieEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->cookieEnabled();
+}
+
 void WKPreferencesSetEditableLinkBehavior(WKPreferencesRef preferencesRef, WKEditableLinkBehavior wkBehavior)
 {
     toImpl(preferencesRef)->setEditableLinkBehavior(toEditableLinkBehavior(wkBehavior));
