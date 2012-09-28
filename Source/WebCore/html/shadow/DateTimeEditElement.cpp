@@ -64,9 +64,11 @@ private:
     virtual void visitLiteral(const String&) OVERRIDE FINAL;
 
     DateTimeEditElement& m_editElement;
-    const DateComponents& m_dateValue;
-    const StepRange& m_stepRange;
+    const DateComponents m_dateValue;
+    const StepRange m_stepRange;
     Localizer& m_localizer;
+    const String m_placeholderForMonth;
+    const String m_placeholderForYear;
 };
 
 DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& dateValue)
@@ -74,6 +76,8 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const Date
     , m_dateValue(dateValue)
     , m_stepRange(layoutParameters.stepRange)
     , m_localizer(layoutParameters.localizer)
+    , m_placeholderForMonth(layoutParameters.placeholderForMonth)
+    , m_placeholderForYear(layoutParameters.placeholderForYear)
 {
 }
 
@@ -119,6 +123,11 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
         return;
     }
 
+    case DateTimeFormat::FieldTypeMonth:
+        // We always use "MM", two digits month, even if "M", "MMM", "MMMM", or "MMMMM".
+        m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_placeholderForMonth));
+        return;
+
     case DateTimeFormat::FieldTypePeriod:
         m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, m_localizer.timeAMPMLabels()));
         return;
@@ -143,6 +152,10 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
             field->setReadOnly();
         return;
     }
+
+    case DateTimeFormat::FieldTypeYear:
+        m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement, m_placeholderForYear));
+        return;
 
     default:
         return;

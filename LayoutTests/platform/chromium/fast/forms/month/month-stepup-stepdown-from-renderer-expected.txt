@@ -1,0 +1,29 @@
+Check stepping-up and -down for month input fields from renderer. No cases of empty initial values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+FAIL stepUp("2010-02", null, null) should be 2010-03. Was 2010-02.
+FAIL stepDown("2010-02", null, null) should be 2010-01. Was 2010-02.
+FAIL stepUp("2010-02", null, null, 10) should be 2010-12. Was 2010-02.
+FAIL stepDown("2010-02", null, null, 11) should be 2009-03. Was 2010-02.
+FAIL stepUp("1970-01", "4", null, 2) should be 1970-09. Was 1970-01.
+FAIL stepDown("1970-01", "4", null, 3) should be 1969-01. Was 1970-01.
+Step=any
+FAIL stepUp("2010-02", "any", null) should be 2010-03. Was 2010-02.
+FAIL stepDown("2010-02", "any", null) should be 2010-01. Was 2010-02.
+Overflow/underflow
+FAIL stepUp("2010-02", "3.40282346e+38", null) should be 275760-09. Was 2010-02.
+FAIL stepDown("2010-02", "3.40282346e+38", null) should be 1970-01. Was 2010-02.
+PASS stepUp("2010-02", "1", "2010-02") is "2010-02"
+PASS stepDown("2010-02", "1", "2010-02") is "2010-02"
+stepDown()/stepUp() for stepMismatch values
+FAIL stepDown("2010-02", "3", "2009-10") should be 2010-01. Was 2010-02.
+FAIL stepUp("1970-02", "4", "") should be 1970-05. Was 1970-02.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

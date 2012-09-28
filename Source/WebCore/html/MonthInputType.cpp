@@ -42,6 +42,13 @@
 
 #if ENABLE(INPUT_TYPE_MONTH)
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#include "DateTimeFieldsState.h"
+#include "LocalizedStrings.h"
+#include "Localizer.h"
+#include <wtf/text/WTFString.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -137,6 +144,22 @@ bool MonthInputType::isMonthField() const
     return true;
 }
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
+{
+    if (!dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear())
+        return emptyString();
+    return String::format("%04u-%02u", dateTimeFieldsState.year(), dateTimeFieldsState.month());
+}
+
+void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
+{
+    layoutParameters.dateTimeFormat = monthFormatInLDML();
+    layoutParameters.fallbackDateTimeFormat = "MM/yyyy";
+    layoutParameters.placeholderForMonth = "--";
+    layoutParameters.placeholderForYear = "----";
+}
+#endif
 } // namespace WebCore
 
 #endif
