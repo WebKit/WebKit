@@ -138,32 +138,9 @@ void ScriptController::disconnectPlatformScriptObjects()
 
 #if ENABLE(JAVA_BRIDGE)
 
-static pthread_t mainThread;
-
-static void updateStyleIfNeededForBindings(JSC::ExecState*, JSC::JSObject* rootObject)
-{
-    if (pthread_self() != mainThread)
-        return;
-
-    if (!rootObject)
-        return;
-
-    JSDOMWindow* window = JSC::jsCast<JSDOMWindow*>(rootObject);
-    if (!window)
-        return;
-
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return;
-
-    frame->document()->updateStyleIfNeeded();
-}
-
 void ScriptController::initJavaJSBindings()
 {
-    mainThread = pthread_self();
     JSC::Bindings::JavaJSObject::initializeJNIThreading();
-    JSC::Bindings::Instance::setDidExecuteFunction(updateStyleIfNeededForBindings);
 }
 
 #endif

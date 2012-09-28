@@ -69,14 +69,9 @@ public:
     virtual ~Class() { }
 };
 
-typedef void (*KJSDidExecuteFunctionPtr)(ExecState*, JSObject* rootObject);
-
 class Instance : public RefCounted<Instance> {
 public:
     Instance(PassRefPtr<RootObject>);
-
-    static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
-    static KJSDidExecuteFunctionPtr didExecuteFunction();
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
