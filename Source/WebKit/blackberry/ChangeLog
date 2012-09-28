@@ -1,3 +1,22 @@
+2012-09-28  Genevieve Mak  <gmak@rim.com>
+
+        [BLACKBERRY] Add isVisible method to WebTapHighlight
+        https://bugs.webkit.org/show_bug.cgi?id=97915
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally By Andrew Lo
+        The isVisible() method lets us avoid dispatching to the webkit thread
+        if the tap highlight isn't visible.
+        Always clear tap highlight on Touch up when converting Touch Events
+        to Mouse Events.
+
+        * Api/WebTapHighlight.h:
+        * WebKitSupport/DefaultTapHighlight.h:
+        (BlackBerry::WebKit::DefaultTapHighlight::isVisible):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-09-28  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Should suspend page's scripted animations when WebPage is invisible

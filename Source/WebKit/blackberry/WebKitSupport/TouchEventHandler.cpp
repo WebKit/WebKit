@@ -256,6 +256,8 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
             if (m_webPage->m_inputHandler->isInputMode())
                 m_webPage->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
 
+            m_webPage->m_tapHighlight->hide();
+
             IntPoint adjustedPoint;
             // always use the true touch point if using the meta-tag, otherwise only use it if we sent mouse moves
             // to the page and its requested.

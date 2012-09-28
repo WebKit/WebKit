@@ -50,6 +50,7 @@ public:
     virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll);
     virtual void hide();
 
+    virtual bool isVisible() const { return m_visible; }
     virtual bool shouldHideAfterScroll() const { return m_shouldHideAfterScroll; }
 
     // GraphicsLayerClient
