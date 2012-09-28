@@ -970,7 +970,7 @@ class TestExpectations(object):
                          expectation.name in except_these_tests and
                          'rebaseline' in expectation.parsed_modifiers))
 
-        return self.list_to_string(filter(without_rebaseline_modifier, self._expectations))
+        return self.list_to_string(filter(without_rebaseline_modifier, self._expectations), reconstitute_only_these=[])
 
     def _add_expectations(self, expectation_list):
         for expectation_line in expectation_list:

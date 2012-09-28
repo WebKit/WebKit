@@ -513,6 +513,18 @@ class RebaseliningTest(Base):
                           'Bug(z) failures/expected/crash.html [ Crash ]\n',
                           'Bug(x0) failures/expected/image.html [ Crash ]\n')
 
+        # Ensure that we don't modify unrelated lines, even if we could rewrite them.
+        # i.e., the second line doesn't get rewritten to "Bug(y) failures/expected/skip.html"
+        self.assertRemove('Bug(x) failures/expected/text.html [ Failure Rebaseline ]\n'
+                          'Bug(Y) failures/expected/image.html [ Skip   ]\n'
+                          'Bug(z) failures/expected/crash.html\n',
+                          '',
+                          ['failures/expected/text.html'],
+                          'Bug(Y) failures/expected/image.html [ Skip   ]\n'
+                          'Bug(z) failures/expected/crash.html\n',
+                          '')
+
+
 
     def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())
