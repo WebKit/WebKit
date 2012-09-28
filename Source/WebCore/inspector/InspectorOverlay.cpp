@@ -205,7 +205,7 @@ InspectorOverlay::~InspectorOverlay()
 
 void InspectorOverlay::paint(GraphicsContext& context)
 {
-    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightRect && m_size.isEmpty())
+    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightRect)
         return;
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame()->view();
@@ -235,12 +235,6 @@ void InspectorOverlay::getHighlight(Highlight* highlight) const
         buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, highlight);
     else
         buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, highlight);
-}
-
-void InspectorOverlay::resize(const IntSize& size)
-{
-    m_size = size;
-    update();
 }
 
 void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
@@ -277,7 +271,7 @@ Node* InspectorOverlay::highlightedNode() const
 
 void InspectorOverlay::update()
 {
-    if (!m_highlightNode && !m_highlightRect && m_pausedInDebuggerMessage.isNull() && m_size.isEmpty()) {
+    if (!m_highlightNode && !m_highlightRect && m_pausedInDebuggerMessage.isNull()) {
         m_client->hideHighlight();
         return;
     }
@@ -287,16 +281,12 @@ void InspectorOverlay::update()
         return;
 
     FrameView* overlayView = overlayPage()->mainFrame()->view();
-    IntSize viewportSize = enclosingIntRect(view->visibleContentRect()).size();
-    IntSize frameViewFullSize = enclosingIntRect(view->visibleContentRect(true)).size();
-    IntSize size = m_size.isEmpty() ? frameViewFullSize : m_size;
-    overlayView->resize(size);
+    IntRect visibleRect = enclosingIntRect(view->visibleContentRect());
+    overlayView->resize(visibleRect.width(), visibleRect.height());
 
     // Clear canvas and paint things.
-    reset(viewportSize, m_size.isEmpty() ? IntSize() : frameViewFullSize);
+    reset();
 
-    // Include scrollbars to avoid masking them by the gutter.
-    drawGutter();
     drawNodeHighlight();
     drawRectHighlight();
     drawPausedInDebuggerMessage();
@@ -310,7 +300,7 @@ void InspectorOverlay::update()
     m_client->highlight();
 }
 
-static PassRefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
+static RefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
     object->setNumber("x", point.x());
@@ -318,7 +308,7 @@ static PassRefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
     return object.release();
 }
 
-static PassRefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
+static RefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
 {
     RefPtr<InspectorArray> array = InspectorArray::create();
     array->pushObject(buildObjectForPoint(quad.p1()));
@@ -328,7 +318,7 @@ static PassRefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
     return array.release();
 }
 
-static PassRefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, const Highlight& highlight)
+static RefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, const Highlight& highlight)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
     RefPtr<InspectorArray> array = InspectorArray::create();
@@ -351,19 +341,6 @@ static PassRefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, 
     }
 
     return object.release();
-}
-
-static PassRefPtr<InspectorObject> buildObjectForSize(const IntSize& size)
-{
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    result->setNumber("width", size.width());
-    result->setNumber("height", size.height());
-    return result.release();
-}
-
-void InspectorOverlay::drawGutter()
-{
-    evaluateInOverlay("drawGutter", "");
 }
 
 void InspectorOverlay::drawNodeHighlight()
@@ -474,13 +451,9 @@ Page* InspectorOverlay::overlayPage()
     return m_overlayPage.get();
 }
 
-void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameViewFullSize)
+void InspectorOverlay::reset()
 {
-    RefPtr<InspectorObject> resetData = InspectorObject::create();
-    resetData->setNumber("deviceScaleFactor", m_page->deviceScaleFactor());
-    resetData->setObject("viewportSize", buildObjectForSize(viewportSize));
-    resetData->setObject("frameViewFullSize", buildObjectForSize(frameViewFullSize));
-    evaluateInOverlay("reset", resetData.release());
+    evaluateInOverlay("reset", String::number(m_page->deviceScaleFactor()));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)

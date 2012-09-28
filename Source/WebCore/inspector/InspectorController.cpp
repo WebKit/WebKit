@@ -289,11 +289,6 @@ void InspectorController::setProcessId(long processId)
     IdentifiersFactory::setProcessId(processId);
 }
 
-void InspectorController::webViewResized(const IntSize& size)
-{
-    m_overlay->resize(size);
-}
-
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
     m_inspectorAgent->evaluateForTestInFrontend(callId, script);

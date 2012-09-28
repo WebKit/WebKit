@@ -100,7 +100,6 @@ public:
     void paint(GraphicsContext&);
     void drawOutline(GraphicsContext*, const LayoutRect&, const Color&);
     void getHighlight(Highlight*) const;
-    void resize(const IntSize&);
 
     void setPausedInDebuggerMessage(const String*);
 
@@ -113,12 +112,11 @@ public:
 private:
     InspectorOverlay(Page*, InspectorClient*);
 
-    void drawGutter();
     void drawNodeHighlight();
     void drawRectHighlight();
     void drawPausedInDebuggerMessage();
     Page* overlayPage();
-    void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
+    void reset();
     void evaluateInOverlay(const String& method, const String& argument);
     void evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument);
 
@@ -130,7 +128,6 @@ private:
     OwnPtr<IntRect> m_highlightRect;
     OwnPtr<Page> m_overlayPage;
     HighlightConfig m_rectHighlightConfig;
-    IntSize m_size;
 };
 
 } // namespace WebCore

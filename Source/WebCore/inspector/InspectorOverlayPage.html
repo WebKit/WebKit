@@ -89,24 +89,6 @@ body.platform-linux {
 #node-id {
     color: rgb(26, 26, 166);
 }
-
-#right-gutter {
-    display: none;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    position: absolute;
-    background-color: darkgray;
-}
-
-#bottom-gutter {
-    display: none;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-    background-color: darkgray;
-}
 </style>
 <script>
 const lightGridColor = "rgba(0,0,0,0.2)";
@@ -284,41 +266,14 @@ function quadEquals(quad1, quad2)
         quad1[3].x === quad2[3].x && quad1[3].y === quad2[3].y;
 }
 
-function drawGutter()
+function reset(deviceScaleFactor)
 {
-    var frameWidth = frameViewFullSize.width;
-    var frameHeight = frameViewFullSize.height;
-
-    if (!frameWidth || document.body.offsetWidth <= frameWidth)
-        rightGutter.style.removeProperty("display");
-    else {
-        rightGutter.style.display = "block";
-        rightGutter.style.left = frameWidth + "px";
-    }
-
-    if (!frameHeight || document.body.offsetHeight <= frameHeight)
-        bottomGutter.style.removeProperty("display");
-    else {
-        bottomGutter.style.display = "block";
-        bottomGutter.style.top = frameHeight + "px";
-    }
-}
-
-function reset(resetData)
-{
-    var deviceScaleFactor = resetData.deviceScaleFactor;
-    var viewportSize = resetData.viewportSize;
-    window.frameViewFullSize = resetData.frameViewFullSize;
-
     window.canvas = document.getElementById("canvas");
     window.context = canvas.getContext("2d");
-    window.rightGutter = document.getElementById("right-gutter");
-    window.bottomGutter = document.getElementById("bottom-gutter");
-
-    canvas.width = deviceScaleFactor * viewportSize.width;
-    canvas.height = deviceScaleFactor * viewportSize.height;
-    canvas.style.width = viewportSize.width + "px";
-    canvas.style.height = viewportSize.height + "px";
+    canvas.width = deviceScaleFactor * document.body.offsetWidth;
+    canvas.height = deviceScaleFactor * document.body.offsetHeight;
+    canvas.style.width = document.body.offsetWidth + "px";
+    canvas.style.height = document.body.offsetHeight + "px";
     context.scale(deviceScaleFactor, deviceScaleFactor);
 
     document.getElementById("paused-in-debugger").style.visibility = "hidden";
@@ -562,7 +517,5 @@ function log(text)
   <span id="tag-name"></span><span id="node-id"></span><span id="class-name"></span>
   <span id="node-width"></span><span class="px">px</span><span class="px"> &#xD7; </span><span id="node-height"></span><span class="px">px</span>
 </div>
-<div id="right-gutter"></div>
-<div id="bottom-gutter"></div>
 <div id="log"></div>
 </html>

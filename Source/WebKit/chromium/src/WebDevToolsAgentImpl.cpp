@@ -72,6 +72,8 @@ using namespace WebCore;
 using namespace std;
 
 namespace OverlayZOrders {
+static const int viewportGutter = 97;
+
 // Use 99 as a big z-order number so that highlight is above other overlays.
 static const int highlight = 99;
 }
@@ -181,18 +183,20 @@ private:
     OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
 };
 
-class DeviceMetricsSupport {
+class DeviceMetricsSupport : public WebPageOverlay {
 public:
     DeviceMetricsSupport(WebViewImpl* webView)
         : m_webView(webView)
         , m_fitWindow(false)
         , m_originalZoomFactor(0)
     {
+        m_webView->addPageOverlay(this, OverlayZOrders::viewportGutter);
     }
 
     ~DeviceMetricsSupport()
     {
         restore();
+        m_webView->removePageOverlay(this);
     }
 
     void setDeviceMetrics(int width, int height, float textZoomFactor, bool fitWindow)
@@ -281,7 +285,7 @@ private:
         view->setHorizontalScrollbarLock(false);
         view->setVerticalScrollbarLock(false);
         view->setScrollbarModes(ScrollbarAuto, ScrollbarAuto, false, false);
-        view->setFrameRect(IntRect(IntPoint(), IntSize(m_webView->size())));
+        view->resize(IntSize(m_webView->size()));
         m_webView->sendResizeEventAndRepaint();
     }
 
@@ -337,6 +341,19 @@ private:
         doc->updateLayout();
     }
 
+    virtual void paintPageOverlay(WebCanvas* canvas)
+    {
+        FrameView* frameView = this->frameView();
+        if (!frameView)
+            return;
+
+        GraphicsContextBuilder builder(canvas);
+        GraphicsContext& gc = builder.context();
+        gc.clipOut(IntRect(IntPoint(), frameView->size()));
+        gc.setFillColor(Color::darkGray, ColorSpaceDeviceRGB);
+        gc.drawRect(IntRect(IntPoint(), m_webView->size()));
+    }
+
     WebCore::FrameView* frameView()
     {
         return m_webView->mainFrameImpl() ? m_webView->mainFrameImpl()->frameView() : 0;
@@ -372,7 +389,6 @@ void WebDevToolsAgentImpl::attach()
 
     ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
     inspectorController()->connectFrontend(this);
-    inspectorController()->webViewResized(m_webViewImpl->size());
     m_attached = true;
 }
 
@@ -421,12 +437,10 @@ bool WebDevToolsAgentImpl::metricsOverridden()
     return !!m_metricsSupport;
 }
 
-void WebDevToolsAgentImpl::webViewResized(const WebSize& size)
+void WebDevToolsAgentImpl::webViewResized()
 {
     if (m_metricsSupport)
         m_metricsSupport->webViewResized();
-    if (InspectorController* ic = inspectorController())
-        ic->webViewResized(IntSize(size.width, size.height));
 }
 
 void WebDevToolsAgentImpl::overrideDeviceMetrics(int width, int height, float fontScaleFactor, bool fitWindow)
@@ -434,19 +448,12 @@ void WebDevToolsAgentImpl::overrideDeviceMetrics(int width, int height, float fo
     if (!width && !height) {
         if (m_metricsSupport)
             m_metricsSupport.clear();
-        if (InspectorController* ic = inspectorController())
-            ic->webViewResized(IntSize());
         return;
     }
 
     if (!m_metricsSupport)
         m_metricsSupport = adoptPtr(new DeviceMetricsSupport(m_webViewImpl));
-
     m_metricsSupport->setDeviceMetrics(width, height, fontScaleFactor, fitWindow);
-    if (InspectorController* ic = inspectorController()) {
-        WebSize size = m_webViewImpl->size();
-        ic->webViewResized(IntSize(size.width, size.height));
-    }
 }
 
 void WebDevToolsAgentImpl::autoZoomPageToFitWidth()
