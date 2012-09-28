@@ -1,3 +1,16 @@
+2012-09-28  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Hard to tap on x to clear a text field
+        https://bugs.webkit.org/show_bug.cgi?id=97923
+
+        Reviewed by Antonio Gomes.
+
+        Allow the shadow element for 'X' to be clickable and do not prefer
+        shadow content-editable div's over the 'X'.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2012-09-28  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Extend composited  in-region scrolling to iframes/frames

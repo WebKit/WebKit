@@ -93,7 +93,8 @@ bool FatFingers::isElementClickable(Element* element) const
         ExceptionCode ec = 0;
         return element->webkitMatchesSelector("a[href],*:link,*:visited,*[role=button],button,input,select,label[for],area[href],textarea,embed,object", ec)
             || element->isMediaControlElement()
-            || element->isContentEditable();
+            || (element->isContentEditable() && !element->isInShadowTree())
+            || element->shadowPseudoId() == "-webkit-search-cancel-button";
     }
     case MadeClickableByTheWebpage:
 
