@@ -28,7 +28,6 @@
 
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformSupport.h"
 #include "Scrollbar.h"
 #include "TransformationMatrix.h"
 
