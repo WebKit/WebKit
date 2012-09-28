@@ -84,7 +84,6 @@ crbug.com/24182 [ Android Debug ] fast/css/css-selector-deeply-nested.html [ Pas
 crbug.com/24182 storage/indexeddb/database-closepending-flag.html [ Pass Slow ]
 crbug.com/24182 storage/indexeddb/factory-basics-workers.html [ Pass Slow ]
 crbug.com/24182 storage/indexeddb/factory-basics.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/factory-deletedatabase-interactions.html [ Pass Slow ]
 crbug.com/24182 storage/indexeddb/intversion-and-setversion.html [ Pass Slow ]
 crbug.com/24182 storage/indexeddb/key-generator.html [ Pass Slow ]
 crbug.com/24182 storage/indexeddb/metadata.html [ Pass Slow ]
