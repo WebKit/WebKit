@@ -3641,6 +3641,8 @@ webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
 # Failing, again, after r129712
 webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
 
+# Flaky from some time before r128376
+webkit.org/b/97900 [ Win Debug ] media/audio-repaint.html [ ImageOnlyFailure Pass ]
 
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
