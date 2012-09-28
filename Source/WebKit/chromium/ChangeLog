@@ -1,3 +1,28 @@
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove screen-related functions from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97474
+
+        Reviewed by Adam Barth.
+
+        Screen-related functions like screenHorizontalDPI that
+        used to be on PlatformSupport are now accessed through a new
+        PlatformPageClient attached to Widget in WebCore-land, which is
+        implemented by ChromeClientImpl in WebKit-land, which proxies
+        calls to WebWidgetClient, which is actually implemented in
+        Chromium-land.
+
+        * public/WebScreenInfo.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::screenInfo):
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (WebKit):
+        (WebKit::ChromeClientImpl::platformPageClient):
+        (ChromeClientImpl):
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-09-27  Nasko Oskov  <nasko@chromium.org>
 
         Remove unused methods from Chromium WebKit API.
