@@ -79,6 +79,7 @@ NetworkInfoProvider::NetworkInfoProvider(WKNetworkInfoManagerRef wkManager)
 
 NetworkInfoProvider::~NetworkInfoProvider()
 {
+    WKNetworkInfoManagerSetProvider(m_wkNetworkInfoManager.get(), 0);
 }
 
 double NetworkInfoProvider::bandwidth() const

@@ -53,6 +53,7 @@ static void stopUpdatingCallback(WKBatteryManagerRef, const void* clientInfo)
 BatteryProvider::~BatteryProvider()
 {
     m_provider.stopUpdating();
+    WKBatteryManagerSetProvider(m_wkBatteryManager.get(), 0);
 }
 
 PassRefPtr<BatteryProvider> BatteryProvider::create(WKBatteryManagerRef wkBatteryManager)

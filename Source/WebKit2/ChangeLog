@@ -1,3 +1,23 @@
+2012-09-28  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Clear provider on destructor of {Vibration,Battery,NetworkInfo}Provider.
+        https://bugs.webkit.org/show_bug.cgi?id=97528
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Constructor of {Vibration,Battery,NetworkInfo}Provider set provider
+        but the destructor of the classes doesn't clear provider.
+        This can make a problem about accessing dangling pointer.
+
+        For preventing this problem, clear provider on destructor.
+
+        * UIProcess/API/efl/BatteryProvider.cpp:
+        (BatteryProvider::~BatteryProvider):
+        * UIProcess/API/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::~NetworkInfoProvider):
+        * UIProcess/API/efl/VibrationProvider.cpp:
+        (VibrationProvider::~VibrationProvider):
+
 2012-09-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] NetworkInfo provider is not initialized in Ewk_Context

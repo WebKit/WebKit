@@ -86,6 +86,7 @@ VibrationProvider::VibrationProvider(WKVibrationRef wkVibrationRef)
 
 VibrationProvider::~VibrationProvider()
 {
+    WKVibrationSetProvider(m_wkVibrationRef.get(), 0);
 }
 
 void VibrationProvider::vibrate(uint64_t vibrationTime)
