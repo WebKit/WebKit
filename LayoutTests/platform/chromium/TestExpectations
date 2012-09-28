@@ -3717,5 +3717,5 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/clipping
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 
 # New test, needs baselining.
-webkit.org/b/97013 fast/canvas/canvas-render-layer.html [ Failure ]
-webkit.org/b/97013 platform/chromium/virtual/gpu/fast/canvas/canvas-render-layer.html [ Failure ]
+webkit.org/b/97013 fast/canvas/canvas-render-layer.html [ Missing ]
+webkit.org/b/97013 platform/chromium/virtual/gpu/fast/canvas/canvas-render-layer.html [ Missing ]
