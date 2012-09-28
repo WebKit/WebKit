@@ -131,8 +131,7 @@ void IDBTransactionBackendImpl::abort()
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {
-        OwnPtr<ScriptExecutionContext::Task> task(m_abortTaskQueue.first().release());
-        m_abortTaskQueue.removeFirst();
+        OwnPtr<ScriptExecutionContext::Task> task(m_abortTaskQueue.takeFirst());
         task->performTask(0);
     }
 
@@ -255,15 +254,15 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
         m_state = Running;
     }
 
-    // Just process a single event here, in case the event itself
-    // changes which queue should be processed next.
-    TaskQueue& taskQueue = m_pendingPreemptiveEvents ? m_preemptiveTaskQueue : m_taskQueue;
-    if (!taskQueue.isEmpty() && m_state != Finished) {
+    TaskQueue* taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
+    while (!taskQueue->isEmpty() && m_state != Finished) {
         ASSERT(m_state == Running);
-        OwnPtr<ScriptExecutionContext::Task> task(taskQueue.first().release());
-        taskQueue.removeFirst();
+        OwnPtr<ScriptExecutionContext::Task> task(taskQueue->takeFirst());
         m_pendingEvents++;
         task->performTask(0);
+
+        // Event itself may change which queue should be processed next.
+        taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
     }
 }
 
