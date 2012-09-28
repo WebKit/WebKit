@@ -31,6 +31,8 @@
 namespace WebCore {
 
 class Localizer {
+    WTF_MAKE_NONCOPYABLE(Localizer);
+
 public:
     static PassOwnPtr<Localizer> create(const AtomicString&);
     String convertToLocalizedNumber(const String&);
