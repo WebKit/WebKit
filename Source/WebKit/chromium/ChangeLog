@@ -1,5 +1,16 @@
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Clean up includes in SocketStreamHandle
+        https://bugs.webkit.org/show_bug.cgi?id=97843
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/SocketStreamHandle.cpp:
+
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Clean up includes in AudioDestinationChromium
         https://bugs.webkit.org/show_bug.cgi?id=97845
 

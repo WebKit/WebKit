@@ -38,9 +38,8 @@
 #include "NotImplemented.h"
 #include "SocketStreamHandleClient.h"
 #include "platform/WebData.h"
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "platform/WebSocketStreamHandle.h"
+#include <public/Platform.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
