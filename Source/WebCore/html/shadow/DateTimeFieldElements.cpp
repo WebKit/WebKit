@@ -70,7 +70,7 @@ void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
 // ----------------------------
 
 DateTimeHourFieldElement::DateTimeHourFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
-    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum)
+    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum, "--")
     , m_alignment(maximum + maximum % 2)
 {
     ASSERT((!minimum && (maximum == 11 || maximum == 23)) || (minimum == 1 && (maximum == 12 || maximum == 24)));
@@ -175,7 +175,7 @@ int DateTimeHourFieldElement::valueAsInteger() const
 // ----------------------------
 
 DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999, "---")
 {
 }
 
@@ -216,7 +216,7 @@ void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTi
 // ----------------------------
 
 DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--")
 {
 }
 
@@ -257,7 +257,7 @@ void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
 // ----------------------------
 
 DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldOwner& fieldOwner)
-    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59, "--")
 {
 }
 

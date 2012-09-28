@@ -35,22 +35,6 @@ namespace WebCore {
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-static size_t displaySizeOfNumber(int value)
-{
-    ASSERT(value >= 0);
-
-    if (!value)
-        return 1;
-
-    int numberOfDigits = 0;
-    while (value) {
-        value /= 10;
-        ++numberOfDigits;
-    }
-
-    return numberOfDigits;
-}
-
 DateTimeNumericFieldElement::Range::Range(int minimum, int maximum)
     : maximum(maximum)
     , minimum(minimum)
@@ -63,9 +47,10 @@ int DateTimeNumericFieldElement::Range::clampValue(int value) const
     return std::min(std::max(value, minimum), maximum);
 }
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
+    , m_placeholder(placeholder)
     , m_range(minimum, maximum)
     , m_value(0)
     , m_hasValue(false)
@@ -186,13 +171,7 @@ int DateTimeNumericFieldElement::valueAsInteger() const
 
 String DateTimeNumericFieldElement::visibleValue() const
 {
-    if (m_hasValue)
-        return value();
-
-    StringBuilder builder;
-    for (int numberOfDashs = std::max(displaySizeOfNumber(m_range.maximum), displaySizeOfNumber(m_range.minimum)); numberOfDashs; --numberOfDashs)
-        builder.append('-');
-    return builder.toString();
+    return m_hasValue ? value() : m_placeholder;
 }
 
 } // namespace WebCore

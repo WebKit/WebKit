@@ -50,7 +50,7 @@ protected:
         int minimum;
     };
 
-    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum);
+    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder);
 
     int clampValue(int value) const { return m_range.clampValue(value); }
     const Range& range() const { return m_range; }
@@ -75,6 +75,7 @@ private:
     Localizer& localizer() const;
 
     DOMTimeStamp m_lastDigitCharTime;
+    const String m_placeholder;
     const Range m_range;
     int m_value;
     bool m_hasValue;
