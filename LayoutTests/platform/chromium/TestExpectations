@@ -3649,6 +3649,14 @@ webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
 
+# Numerous Mac and Win failures in software compositing.
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/overflow/clip-content-under-overflow-controls.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/repaint/newly-composited-on-scroll.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/scrollbar-painting.html [ ImageOnlyFailure ]
+
 # Render surfaces do not draw anything in the software compositor.
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
