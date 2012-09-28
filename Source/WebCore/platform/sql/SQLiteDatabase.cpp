@@ -45,6 +45,7 @@ const int SQLResultRow = SQLITE_ROW;
 const int SQLResultSchema = SQLITE_SCHEMA;
 const int SQLResultFull = SQLITE_FULL;
 const int SQLResultInterrupt = SQLITE_INTERRUPT;
+const int SQLResultConstraint = SQLITE_CONSTRAINT;
 
 static const char notOpenErrorMessage[] = "database is not open";
 

@@ -141,6 +141,10 @@ bool SQLStatement::execute(Database* db)
         // Return the Quota error - the delegate will be asked for more space and this statement might be re-run
         setFailureDueToQuota(db);
         return false;
+    } else if (result == SQLResultConstraint) {
+        db->reportExecuteStatementResult(6, SQLError::CONSTRAINT_ERR, result);
+        m_error = SQLError::create(SQLError::CONSTRAINT_ERR, "could not execute statement due to a constaint failure", result, database->lastErrorMsg());
+        return false;
     } else {
         db->reportExecuteStatementResult(5, SQLError::DATABASE_ERR, result);
         m_error = SQLError::create(SQLError::DATABASE_ERR, "could not execute statement", result, database->lastErrorMsg());

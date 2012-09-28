@@ -7,5 +7,6 @@ PASS: expected and got error code SYNTAX_ERR
 PASS: expected and got error code SYNTAX_ERR
 PASS: expected and got error code UNKNOWN_ERR
 PASS: expected and got error code QUOTA_ERR
+PASS: expected and got error code CONSTRAINT_ERR
 PASS: expected and got error code VERSION_ERR
 

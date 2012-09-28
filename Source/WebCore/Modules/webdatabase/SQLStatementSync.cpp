@@ -118,6 +118,10 @@ PassRefPtr<SQLResultSet> SQLStatementSync::execute(DatabaseSync* db, ExceptionCo
         ec = SQLException::QUOTA_ERR;
         db->setLastErrorMessage("there was not enough remaining storage space");
         return 0;
+    } else if (result == SQLResultConstraint) {
+        ec = SQLException::CONSTRAINT_ERR;
+        db->setLastErrorMessage("statement failed due to a constraint failure");
+        return 0;
     } else {
         ec = SQLException::DATABASE_ERR;
         db->setLastErrorMessage("could not execute statement", result, database->lastErrorMsg());

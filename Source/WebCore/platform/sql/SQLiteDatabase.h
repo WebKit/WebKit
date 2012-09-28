@@ -50,6 +50,7 @@ extern const int SQLResultRow;
 extern const int SQLResultSchema;
 extern const int SQLResultFull;
 extern const int SQLResultInterrupt;
+extern const int SQLResultConstraint;
 
 class SQLiteDatabase {
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);

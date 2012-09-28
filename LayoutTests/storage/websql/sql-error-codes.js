@@ -4,7 +4,7 @@ function finishTest()
         testRunner.notifyDone();
 }
 
-var TOTAL_TESTS = 7;
+var TOTAL_TESTS = 8;
 var testsRun = 0;
 function transactionErrorCallback(error, expectedErrorCodeName)
 {
@@ -79,6 +79,16 @@ function testQuotaExceeded(db)
                     }, "QUOTA_ERR");
 }
 
+function testConstraintFailure(db)
+{
+    testTransaction(db,
+                    function(tx) {
+                        tx.executeSql("CREATE TABLE IF NOT EXISTS ConstraintTest (Foo INTEGER PRIMARY KEY)");
+                        tx.executeSql("INSERT INTO ConstraintTest VALUES (1)");
+                        tx.executeSql("INSERT INTO ConstraintTest VALUES (1)");
+                    }, "CONSTRAINT_ERR");
+}
+
 function testVersionMismatch(db)
 {
     // Use another DB handle to change the version. However, in order to make sure that the DB version is not
@@ -110,5 +120,6 @@ function runTest()
     testIncorrectNumberOfBindParameters(db);
     testBindParameterOfWrongType(db);
     testQuotaExceeded(db);
+    testConstraintFailure(db);
     testVersionMismatch(db);
 }
