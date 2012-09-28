@@ -2346,9 +2346,6 @@ webkit.org/b/60094 [ Debug ] fast/encoding/parser-tests-100.html [ Pass Timeout 
 webkit.org/b/60094 [ Debug ] fast/encoding/parser-tests-110.html [ Pass Timeout ]
 webkit.org/b/60094 [ Debug ] fast/encoding/parser-tests-120.html [ Pass Timeout ]
 
-# Needs results
-webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
-
 # Flaky since creation because we lack testRunner.setSerializeHTTPLoads
 webkit.org/b/57593 fast/preloader/document-write-2.html [ Failure ]
 webkit.org/b/57593 fast/preloader/document-write.html [ Failure ]
