@@ -209,7 +209,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
 
     cookiesChanged = false;
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage2, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));

@@ -168,7 +168,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_new_with_injected_bundle_path)
 TEST_F(EWK2UnitTestBase, ewk_context_ref)
 {
     Ewk_Context* context = ewk_context_new();
-    ASSERT_EQ(ewk_context_ref(context), context);
+    ASSERT_EQ(context, ewk_context_ref(context));
     ewk_context_unref(context);
     ewk_context_unref(context);
 }

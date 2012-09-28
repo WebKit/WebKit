@@ -1,3 +1,14 @@
+2012-09-28  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed test fixes after r129892.
+
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F): Fix a copy&paste error that changed the test
+        expectations.
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F): Revert the change here since it was already in the right
+        format before.
+
 2012-09-28  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Some expected and actual parameters in unit tests are reversed
