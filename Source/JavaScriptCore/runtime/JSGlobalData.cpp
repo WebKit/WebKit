@@ -231,7 +231,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     
     interpreter->initialize(this->canUseJIT());
     
+#if ENABLE(JIT)
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
+#endif
 
     heap.notifyIsSafeToCollect();
     
