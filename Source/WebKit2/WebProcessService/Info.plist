@@ -32,7 +32,7 @@
 		<string>Application</string>
 		<key>RunLoopType</key>
 		<string>_NSApplicationMain</string>
-		<key>_MultipleInstance</key>
+		<key>_MultipleInstances</key>
 		<true/>
 		<key>EnvironmentVariables</key>
 		<dict>
