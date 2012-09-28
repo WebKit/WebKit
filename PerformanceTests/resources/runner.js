@@ -226,7 +226,7 @@ PerfTestRunner.measureTime = function (test) {
 }
 
 PerfTestRunner.runPerSecond = function (test) {
-    this._runCount = 20;
+    this._runCount = test.runCount || 20; // Only used by tests in fast/harness/perftests
     this.unit = 'runs/s';
     this._runner = this._measureRunsPerSecondOnce;
     this._start(test);

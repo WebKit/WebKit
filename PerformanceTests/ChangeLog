@@ -1,3 +1,10 @@
+2012-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add back test.runCount for runPerSecond as it's used by tests in fast/harness/perftests.
+
+        * resources/runner.js:
+        (PerfTestRunner.runPerSecond):
+
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r129824.
