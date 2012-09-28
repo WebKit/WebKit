@@ -1,0 +1,15 @@
+<html>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setFrameFlatteningEnabled(true);
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+    }
+</script>
+
+<frameset rows="100%,*" cols="*" frameborder="NO" border="false" framespacing="0" bordercolor="#000000"> 
+    <frame src="resources/plugin-frame.html" scrolling="auto">
+</frameset>
+</html>
