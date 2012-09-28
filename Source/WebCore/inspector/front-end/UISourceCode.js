@@ -375,13 +375,13 @@ WebInspector.UISourceCode.prototype = {
             function formattedCallback()
             {
                 for (var i = 0; i < this._pendingFormattedCallbacks.length; ++i)
-                    this._pendingFormattedCallbacks();
+                    this._pendingFormattedCallbacks[i]();
                 delete this._pendingFormattedCallbacks;
                 
             }
 
             delete this._formatOnLoad;
-            this.setFormatted(true, formattedCallback);
+            this.setFormatted(true, formattedCallback.bind(this));
         }
     },
 
