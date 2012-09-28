@@ -71,6 +71,9 @@ static void setupPaint(SkPaint* paint, const SimpleFontData* fontData, const Fon
     paint->setAutohinted(false); // freetype specific
     paint->setLCDRenderText(shouldSmoothFonts);
     paint->setSubpixelText(true);
+    
+    if (font->fontDescription().textRenderingMode() == GeometricPrecision)
+        paint->setHinting(SkPaint::kNo_Hinting);
 }
 
 // TODO: This needs to be split into helper functions to better scope the
