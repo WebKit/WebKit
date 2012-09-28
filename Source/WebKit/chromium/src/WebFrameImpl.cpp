@@ -116,7 +116,6 @@
 #include "PageOverlay.h"
 #include "Performance.h"
 #include "PlatformMessagePortChannel.h"
-#include "PlatformSupport.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderBox.h"
