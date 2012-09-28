@@ -45,6 +45,7 @@ protected:
     struct Range {
         Range(int minimum, int maximum);
         int clampValue(int) const;
+        bool isInRange(int) const;
 
         int maximum;
         int minimum;
@@ -53,6 +54,8 @@ protected:
     DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder);
 
     int clampValue(int value) const { return m_range.clampValue(value); }
+    virtual int defaultValueForStepDown() const;
+    virtual int defaultValueForStepUp() const;
     const Range& range() const { return m_range; }
 
     // DateTimeFieldElement functions.

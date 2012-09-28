@@ -103,6 +103,21 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
 };
 
+class DateTimeMonthFieldElement : public DateTimeNumericFieldElement {
+    WTF_MAKE_NONCOPYABLE(DateTimeMonthFieldElement);
+
+public:
+    static PassRefPtr<DateTimeMonthFieldElement> create(Document*, FieldOwner&, const String& placeholder);
+
+private:
+    DateTimeMonthFieldElement(Document*, FieldOwner&, const String& placeholder);
+
+    // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
+    virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+};
+
 class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSecondFieldElement);
 
@@ -116,6 +131,25 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+};
+
+class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
+    WTF_MAKE_NONCOPYABLE(DateTimeYearFieldElement);
+
+public:
+    static PassRefPtr<DateTimeYearFieldElement> create(Document*, FieldOwner&, const String& placeholder);
+
+private:
+    DateTimeYearFieldElement(Document*, FieldOwner&, const String& placeholder);
+
+    // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
+    virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+
+    // DateTimeNumericFieldElement functions.
+    virtual int defaultValueForStepDown() const OVERRIDE FINAL;
+    virtual int defaultValueForStepUp() const OVERRIDE FINAL;
 };
 
 } // namespace WebCore

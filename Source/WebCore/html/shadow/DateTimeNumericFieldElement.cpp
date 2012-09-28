@@ -47,6 +47,13 @@ int DateTimeNumericFieldElement::Range::clampValue(int value) const
     return std::min(std::max(value, minimum), maximum);
 }
 
+bool DateTimeNumericFieldElement::Range::isInRange(int value) const
+{
+    return value >= minimum && value <= maximum;
+}
+
+// ----------------------------
+
 DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
@@ -55,6 +62,16 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
     , m_value(0)
     , m_hasValue(false)
 {
+}
+
+int DateTimeNumericFieldElement::defaultValueForStepDown() const
+{
+    return m_range.maximum;
+}
+
+int DateTimeNumericFieldElement::defaultValueForStepUp() const
+{
+    return m_range.minimum;
 }
 
 void DateTimeNumericFieldElement::didBlur()
@@ -138,7 +155,7 @@ void DateTimeNumericFieldElement::stepDown()
     if (m_hasValue)
         setValueAsInteger(m_value == m_range.minimum ? m_range.maximum : clampValue(m_value - 1), DispatchEvent);
     else
-        setValueAsInteger(m_range.maximum, DispatchEvent);
+        setValueAsInteger(defaultValueForStepDown(), DispatchEvent);
 }
 
 void DateTimeNumericFieldElement::stepUp()
@@ -146,7 +163,7 @@ void DateTimeNumericFieldElement::stepUp()
     if (m_hasValue)
         setValueAsInteger(m_value == m_range.maximum ? m_range.minimum : clampValue(m_value + 1), DispatchEvent);
     else
-        setValueAsInteger(m_range.minimum, DispatchEvent);
+        setValueAsInteger(defaultValueForStepUp(), DispatchEvent);
 }
 
 String DateTimeNumericFieldElement::value() const
@@ -156,7 +173,7 @@ String DateTimeNumericFieldElement::value() const
 
     Localizer& localizer = this->localizer();
     if (m_range.maximum > 999)
-        return localizer.convertToLocalizedNumber(String::number(m_value));
+        return localizer.convertToLocalizedNumber(String::format("%04d", m_value));
 
     if (m_range.maximum > 99)
         return localizer.convertToLocalizedNumber(String::format("%03d", m_value));
