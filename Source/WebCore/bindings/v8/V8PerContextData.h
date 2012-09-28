@@ -36,8 +36,13 @@
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+struct V8NPObject;
+typedef WTF::Vector<V8NPObject*> V8NPObjectVector;
+typedef WTF::HashMap<int, V8NPObjectVector> V8NPObjectMap;
 
 class V8PerContextData {
 public:
@@ -72,6 +77,11 @@ public:
         return constructorForTypeSlowCase(type);
     }
 
+    V8NPObjectMap* v8NPObjectMap()
+    {
+        return &m_v8NPObjectMap;
+    }
+
 private:
     explicit V8PerContextData(v8::Persistent<v8::Context> context)
         : m_context(context)
@@ -90,6 +100,8 @@ private:
 
     typedef WTF::HashMap<WrapperTypeInfo*, v8::Persistent<v8::Function> > ConstructorMap;
     ConstructorMap m_constructorMap;
+
+    V8NPObjectMap m_v8NPObjectMap;
 
     v8::Persistent<v8::Context> m_context;
     ScopedPersistent<v8::Value> m_errorPrototype;

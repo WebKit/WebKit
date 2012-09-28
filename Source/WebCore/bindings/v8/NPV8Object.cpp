@@ -55,9 +55,6 @@ WrapperTypeInfo* npObjectTypeInfo()
     return &typeInfo;
 }
 
-typedef Vector<V8NPObject*> V8NPObjectVector;
-typedef HashMap<int, V8NPObjectVector> V8NPObjectMap;
-
 static v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)
 {
     V8NPObject* object = reinterpret_cast<V8NPObject*>(npObject);
@@ -65,12 +62,6 @@ static v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)
     if (!window || !window->isCurrentlyDisplayedInFrame())
         return v8::Local<v8::Context>();
     return ScriptController::mainWorldContext(object->rootObject->frame());
-}
-
-static V8NPObjectMap* staticV8NPObjectMap()
-{
-    DEFINE_STATIC_LOCAL(V8NPObjectMap, v8npObjectMap, ());
-    return &v8npObjectMap;
 }
 
 // FIXME: Comments on why use malloc and free.
@@ -82,25 +73,24 @@ static NPObject* allocV8NPObject(NPP, NPClass*)
 static void freeV8NPObject(NPObject* npObject)
 {
     V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
-    if (int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash()) {
-        V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
-        if (iter != staticV8NPObjectMap()->end()) {
-            V8NPObjectVector& objects = iter->second;
-            for (size_t index = 0; index < objects.size(); ++index) {
-                if (objects.at(index) == v8NpObject) {
-                    objects.remove(index);
-                    break;
-                }
+    v8::HandleScope scope;
+    ASSERT(!v8NpObject->v8Object->CreationContext().IsEmpty());
+    if (V8PerContextData* perContextData = V8PerContextData::from(v8NpObject->v8Object->CreationContext())) {
+        V8NPObjectMap* v8NPObjectMap = perContextData->v8NPObjectMap();
+        int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash();
+        ASSERT(v8ObjectHash);
+        V8NPObjectMap::iterator iter = v8NPObjectMap->find(v8ObjectHash);
+        ASSERT(iter != v8NPObjectMap->end());
+        V8NPObjectVector& objects = iter->second;
+        for (size_t index = 0; index < objects.size(); ++index) {
+            if (objects.at(index) == v8NpObject) {
+                objects.remove(index);
+                break;
             }
-            if (objects.isEmpty())
-                staticV8NPObjectMap()->remove(v8ObjectHash);
-        } else
-            ASSERT_NOT_REACHED();
-    } else {
-        ASSERT(!v8::Context::InContext());
-        staticV8NPObjectMap()->clear();
+        }
+        if (objects.isEmpty())
+            v8NPObjectMap->remove(v8ObjectHash);
     }
-
     v8NpObject->v8Object.Dispose();
     free(v8NpObject);
 }
@@ -155,8 +145,9 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 
     int v8ObjectHash = object->GetIdentityHash();
     ASSERT(v8ObjectHash);
-    V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
-    if (iter != staticV8NPObjectMap()->end()) {
+    V8NPObjectMap* v8NPObjectMap = V8PerContextData::from(object->CreationContext())->v8NPObjectMap();
+    V8NPObjectMap::iterator iter = v8NPObjectMap->find(v8ObjectHash);
+    if (iter != v8NPObjectMap->end()) {
         V8NPObjectVector& objects = iter->second;
         for (size_t index = 0; index < objects.size(); ++index) {
             V8NPObject* v8npObject = objects.at(index);
@@ -167,7 +158,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
             }
         }
     } else {
-        iter = staticV8NPObjectMap()->set(v8ObjectHash, V8NPObjectVector()).iterator;
+        iter = v8NPObjectMap->set(v8ObjectHash, V8NPObjectVector()).iterator;
     }
 
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));
