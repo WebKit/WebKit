@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<style>
+.math {
+    display: -webkit-inline-flex;
+}
+.math > * {
+    padding-bottom: 0.35em;
+}
+.mfrac {
+    display: -webkit-inline-flex;
+    -webkit-flex-direction: column;
+}
+.mfrac > :first-child {
+    -webkit-margin-after: 0.2em;
+}
+.mfrac > :last-child {
+    -webkit-margin-before: 0.2em;
+}
+.x {
+    line-height: 9px;
+}
+.y {
+    line-height: 12px;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if it does not crash.</p>
+<div class=math>
+    <div class=mfrac>
+        <div class=mfrac>
+            <div class=x>x</div>
+            <div class=y>y</div>
+        </div>
+        <div class=mfrac>
+            <div class=mfrac>
+                <div class=x>x</div>
+                <div class=y>y</div>
+            </div>
+            <div class=x>z</div>
+        </div>
+    </div>
+</div>
+</html>
