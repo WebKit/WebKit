@@ -33,94 +33,22 @@
  * @extends {WebInspector.UISourceCode}
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
+ * @param {boolean} isEditable
  */
 WebInspector.JavaScriptSource = function(url, contentProvider, isEditable)
 {
-    WebInspector.UISourceCode.call(this, url, contentProvider);
-    this._isEditable = isEditable;
+    WebInspector.UISourceCode.call(this, url, contentProvider, isEditable);
 }
 
 WebInspector.JavaScriptSource.prototype = {
-    /**
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {WebInspector.DebuggerModel.Location}
-     */
-    uiLocationToRawLocation: function(lineNumber, columnNumber)
-    {
-        var rawLocation = WebInspector.UISourceCode.prototype.uiLocationToRawLocation.call(this, lineNumber, columnNumber);
-        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
-        return debuggerModelLocation;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    supportsEnabledBreakpointsWhileEditing: function()
-    {
-        return false;
-    },
-
-    /**
-     * @return {string}
-     */
-    breakpointStorageId: function()
-    {
-        return this.formatted() ? "deobfuscated:" + this.url : this.url;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isEditable: function()
-    {
-        return this._isEditable && WebInspector.debuggerModel.canSetScriptSource();
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isDivergedFromVM: function()
-    {
-        // FIXME: We should return true if this._isDivergedFromVM is set as well once we provide a way to set breakpoints after LiveEdit failure.
-        return this.isDirty();
-    },
-
     /**
      * @param {function(?string)} callback
      */
     workingCopyCommitted: function(callback)
     {
-        /**
-         * @param {?string} error
-         */
-        function innerCallback(error)
-        {
-            this._isDivergedFromVM = !!error;
-            callback(error);
-        }
-
-        var rawLocation = this.uiLocationToRawLocation(0, 0);
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this.uiLocationToRawLocation(0, 0);
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-        WebInspector.debuggerModel.setScriptSource(script.scriptId, this.workingCopy(), innerCallback.bind(this));
-    },
-
-    /**
-     * @param {string} query
-     * @param {boolean} caseSensitive
-     * @param {boolean} isRegex
-     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
-     */
-    searchInContent: function(query, caseSensitive, isRegex, callback)
-    {
-        var content = this.content();
-        var provider = content ? new WebInspector.StaticContentProvider(this._contentProvider.contentType(), content) : this._contentProvider;
-        provider.searchInContent(query, caseSensitive, isRegex, callback);
-    },
-
-    formattedChanged: function()
-    {
-        WebInspector.breakpointManager.restoreBreakpoints(this);
+        WebInspector.debuggerModel.setScriptSource(script.scriptId, this.workingCopy(), callback);
     }
 }
 

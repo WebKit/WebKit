@@ -33,20 +33,12 @@
  */
 WebInspector.StyleSource = function(contentProvider)
 {
-    WebInspector.UISourceCode.call(this, contentProvider.contentURL(), contentProvider);
+    WebInspector.UISourceCode.call(this, contentProvider.contentURL(), contentProvider, true);
 }
 
 WebInspector.StyleSource.updateTimeout = 200;
 
 WebInspector.StyleSource.prototype = {
-    /**
-     * @return {boolean}
-     */
-    isEditable: function()
-    {
-        return true;
-    },
-
     /**
      * @param {function(?string)} callback
      */

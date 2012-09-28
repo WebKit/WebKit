@@ -241,7 +241,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
         if (!uiSourceCode.isSnippet)
             return;
         var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
-        snippetJavaScriptSource.evaluate();
+        WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
     },
 
     /**

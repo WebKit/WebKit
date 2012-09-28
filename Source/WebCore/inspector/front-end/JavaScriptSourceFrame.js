@@ -157,19 +157,24 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._restoreBreakpointsAfterEditing();
     },
 
+    _supportsEnabledBreakpointsWhileEditing: function()
+    {
+        return this._javaScriptSource.isSnippet;
+    },
+
     _didEditContent: function(error)
     {
         if (error) {
             WebInspector.showErrorMessage(error);
             return;
         }
-        if (!this._javaScriptSource.supportsEnabledBreakpointsWhileEditing())
+        if (!this._supportsEnabledBreakpointsWhileEditing())
             this._restoreBreakpointsAfterEditing();
     },
 
     _removeBreakpointsBeforeEditing: function()
     {
-        var supportsBreakpointsOnEdit = this._javaScriptSource.supportsEnabledBreakpointsWhileEditing();
+        var supportsBreakpointsOnEdit = this._supportsEnabledBreakpointsWhileEditing();
         if (!this._javaScriptSource.isDirty() || supportsBreakpointsOnEdit) {
             // Disable all breakpoints in the model, store them as muted breakpoints.
             var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
@@ -192,7 +197,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _restoreBreakpointsAfterEditing: function()
     {
-        if (!this._javaScriptSource.isDirty() || this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()) {
+        if (!this._javaScriptSource.isDirty() || this._supportsEnabledBreakpointsWhileEditing()) {
             // Restore all muted breakpoints.
             for (var lineNumber = 0; lineNumber < this._textEditor.linesCount; ++lineNumber) {
                 var breakpointDecoration = this._textEditor.getAttribute(lineNumber, "breakpoint");
@@ -337,7 +342,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         };
         this.textEditor.setAttribute(lineNumber, "breakpoint", breakpoint);
 
-        var disabled = !enabled || (mutedWhileEditing && !this._javaScriptSource.supportsEnabledBreakpointsWhileEditing());
+        var disabled = !enabled || (mutedWhileEditing && !this._supportsEnabledBreakpointsWhileEditing());
         this.textEditor.addBreakpoint(lineNumber, disabled, !!condition);
     },
 
@@ -514,7 +519,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _handleGutterClick: function(event)
     {
-        if (this._javaScriptSource.isDirty() && !this._javaScriptSource.supportsEnabledBreakpointsWhileEditing())
+        if (this._javaScriptSource.isDirty() && !this._supportsEnabledBreakpointsWhileEditing())
             return;
 
         var lineNumber = event.data.lineNumber;
@@ -566,7 +571,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _continueToLine: function(lineNumber)
     {
-        var rawLocation = this._javaScriptSource.uiLocationToRawLocation(lineNumber, 0);
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._javaScriptSource.uiLocationToRawLocation(lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     }
 }

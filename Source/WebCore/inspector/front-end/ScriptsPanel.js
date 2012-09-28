@@ -247,7 +247,7 @@ WebInspector.ScriptsPanel.prototype = {
     _addUISourceCode: function(uiSourceCode)
     {
         if (this._toggleFormatSourceButton.toggled)
-            uiSourceCode.setFormatted(true);
+            uiSourceCode.setFormatted(true, this._uiSourceCodeFormatted.bind(this, uiSourceCode));
 
         this._navigator.addUISourceCode(uiSourceCode);
         this._editorContainer.addUISourceCode(uiSourceCode);
@@ -928,12 +928,18 @@ WebInspector.ScriptsPanel.prototype = {
         view.replaceAllWith(query, text);
     },
 
+    _uiSourceCodeFormatted: function(uiSourceCode)
+    {
+        if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+            WebInspector.breakpointManager.restoreBreakpoints(uiSourceCode);
+    },
+
     _toggleFormatSource: function()
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
-            uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
+            uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled, this._uiSourceCodeFormatted.bind(this, uiSourceCodes[i]));
     },
 
     addToWatch: function(expression)

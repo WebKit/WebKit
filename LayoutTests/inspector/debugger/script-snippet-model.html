@@ -17,7 +17,6 @@ function test()
     var workspace = new WebInspector.Workspace();
     var workspaceController = new WebInspector.WorkspaceController(workspace);
     WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace);
-
     InspectorTest.runDebuggerTestSuite([
         function testWorkspaceReset(next)
         {
@@ -69,7 +68,7 @@ function test()
                 InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_printResult", dumpResult);
                 WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
                 var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(snippetJavaScriptSource);
-                var snippetId = snippetJavaScriptSource.snippetId;
+                var snippetId = WebInspector.scriptSnippetModel._snippetIdForJavaScriptSource.get(snippetJavaScriptSource);
                 InspectorTest.addResult("Last evaluation source url for snippet: " + evaluationSourceURL);
                 InspectorTest.assertEquals(snippetId, WebInspector.scriptSnippetModel._snippetIdForSourceURL(evaluationSourceURL), "Snippet can not be identified by its evaluation sourceURL.");
 

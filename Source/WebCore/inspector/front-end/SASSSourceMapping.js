@@ -114,7 +114,9 @@ WebInspector.SASSSourceMapping.prototype = {
     {
         var uiSourceCode = this._uiSourceCodeForURL[url];
         if (!uiSourceCode) {
-            uiSourceCode = new WebInspector.SASSSource(url);
+            var content = InspectorFrontendHost.loadResourceSynchronously(url);
+            var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
+            uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, true);
             this._uiSourceCodeForURL[url] = uiSourceCode;
             this._workspace.project().addUISourceCode(uiSourceCode);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
@@ -158,26 +160,3 @@ WebInspector.SASSSourceMapping.prototype = {
     }
 }
 
-/**
- * @constructor
- * @extends {WebInspector.UISourceCode}
- * @param {string} sassURL
- */
-WebInspector.SASSSource = function(sassURL)
-{
-    var content = InspectorFrontendHost.loadResourceSynchronously(sassURL);
-    var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-    WebInspector.UISourceCode.call(this, sassURL, contentProvider);
-}
-
-WebInspector.SASSSource.prototype = {
-    /**
-     * @return {boolean}
-     */
-    isEditable: function()
-    {
-        return true;
-    }
-}
-
-WebInspector.SASSSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;
