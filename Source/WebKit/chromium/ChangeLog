@@ -1,5 +1,17 @@
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Update comment in WebFrameClient to point to new userAgent() function
+        https://bugs.webkit.org/show_bug.cgi?id=97854
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove unused PlatformSupport reference in ChromeClientImpl
         https://bugs.webkit.org/show_bug.cgi?id=97853
 

@@ -411,7 +411,7 @@ public:
 
     // Asks the embedder if a specific user agent should be used for the given
     // URL. Non-empty strings indicate an override should be used. Otherwise,
-    // WebKitPlatformSupport::userAgent() will be called to provide one.
+    // Platform::current()->userAgent() will be called to provide one.
     virtual WebString userAgentOverride(WebFrame*, const WebURL& url) { return WebString(); }
 
 protected:
