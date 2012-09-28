@@ -132,12 +132,16 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     const ContentData* contentData = style->contentData();
     if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
         RenderImage* image = new (arena) RenderImage(node);
-        image->setStyle(style);
+        // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
+        // trigger a style change now as the node is not fully attached. Moving this code to style change
+        // doesn't make sense as it should be run once at renderer creation.
+        image->m_style = style;
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
             image->setIsGeneratedContent();
         } else
             image->setImageResource(RenderImageResource::create());
+        image->m_style = 0;
         return image;
     }
 
