@@ -351,5 +351,5 @@ function runBenchmarkSuite(suite, runCount) {
         var container = document.getElementById('container');
         if (container.firstChild)
             container.removeChild(container.firstChild);
-    });
+    }});
 }

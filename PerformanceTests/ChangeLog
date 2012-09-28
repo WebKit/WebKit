@@ -1,5 +1,12 @@
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r129824.
+
+        * DOM/resources/dom-perf.js:
+        (runBenchmarkSuite):
+
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove unused features and reduce code duplications in PerfTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=97852
 
