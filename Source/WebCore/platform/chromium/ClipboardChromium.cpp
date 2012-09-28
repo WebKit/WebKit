@@ -45,7 +45,6 @@
 #include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NamedNodeMap.h"
-#include "PlatformSupport.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "StringCallback.h"
