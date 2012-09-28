@@ -1,3 +1,18 @@
+2012-09-28  Jian Li  <jianli@chromium.org>
+
+        Add draggable property to WebDraggableRegion.
+        https://bugs.webkit.org/show_bug.cgi?id=97950
+
+        Reviewed by Adam Barth.
+
+        This needs to be done before we can land the patch to use new syntax for
+        draggable regions. This is because Chromium side code cannot enable
+        the changes to support new syntax side by side when this property is
+        not present.
+
+        * public/WebDraggableRegion.h:
+        (WebDraggableRegion):
+
 2012-09-28  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebFrameImpl::m_frame is redundant now that WebFrameImpl inherits from FrameDestructionObserver
