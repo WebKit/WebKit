@@ -844,6 +844,7 @@ IntSize BitmapTextureGL::size() const
 
 TextureMapperGL::~TextureMapperGL()
 {
+    clearTexturePool();
     delete m_data;
 }
 

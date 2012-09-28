@@ -151,6 +151,7 @@ protected:
         , m_textDrawingMode(TextModeFill)
         , m_accelerationMode(accelerationMode)
     {}
+    void clearTexturePool() { m_texturePool.clear(); }
 
 private:
 #if USE(TEXTURE_MAPPER_GL)
