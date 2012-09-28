@@ -191,10 +191,12 @@ using namespace std;
 // (such as due to a double tap gesture or find in page etc.). These are
 // experimentally determined.
 static const int touchPointPadding = 32;
+static const int nonUserInitiatedPointPadding = 11;
 static const float minScaleDifference = 0.01f;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
 static const double doubleTapZoomAnimationDurationInSeconds = 0.25;
+static const float doubleTapZoomAlreadyLegibleRatio = 1.2;
 
 // Constants for zooming in on a focused text field.
 static const double scrollAndScaleAnimationDurationInSeconds = 0.2;
@@ -391,6 +393,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
     , m_savedPageScaleFactor(0)
+    , m_doubleTapZoomInEffect(false)
+    , m_shouldUseDoubleTapTimeZero(false)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
     , m_ignoreInputEvents(false)
@@ -742,6 +746,10 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         break;
     }
     case WebInputEvent::GestureDoubleTap:
+        m_client->cancelScheduledContentIntents();
+        animateZoomAroundPoint(WebPoint(event.x, event.y), DoubleTap);
+        eventSwallowed = true;
+        break;
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GesturePinchBegin:
         m_client->cancelScheduledContentIntents();
@@ -781,17 +789,15 @@ void WebViewImpl::renderingStats(WebRenderingStats& stats) const
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds)
 {
-    if (!m_layerTreeView)
-        return;
-
-    IntPoint clampedPoint = targetPosition;
+    WebPoint clampedPoint = targetPosition;
     if (!useAnchor)
         clampedPoint = clampOffsetAtScale(targetPosition, newScale);
-
-    if (!durationInSeconds && !useAnchor) {
+    if ((!durationInSeconds && !useAnchor) || m_shouldUseDoubleTapTimeZero) {
         setPageScaleFactor(newScale, clampedPoint);
         return;
     }
+    if (!m_layerTreeView)
+        return;
 
     m_layerTreeView->startPageScaleAnimation(targetPosition, useAnchor, newScale, durationInSeconds);
 }
@@ -1041,24 +1047,37 @@ WebRect WebViewImpl::widenRectWithinPageBounds(const WebRect& source, int target
     return WebRect(newX, source.y, newWidth, source.height);
 }
 
-void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType zoomType, float& scale, WebPoint& scroll)
+void WebViewImpl::shouldUseAnimateDoubleTapTimeZeroForTesting(bool setToZero)
+{
+    m_shouldUseDoubleTapTimeZero = setToZero;
+}
+
+void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType zoomType, float& scale, WebPoint& scroll, bool& isAnchor)
 {
     scale = pageScaleFactor();
     scroll.x = scroll.y = 0;
     WebRect targetRect = hitRect;
+    // Padding only depends on page scale when triggered by manually tapping
+    int padding = (zoomType == DoubleTap) ? touchPointPadding : nonUserInitiatedPointPadding;
     if (targetRect.isEmpty())
-        targetRect.width = targetRect.height = touchPointPadding;
-
+        targetRect.width = targetRect.height = padding;
     WebRect rect = computeBlockBounds(targetRect, zoomType);
+    if (zoomType == FindInPage && rect.isEmpty()) {
+        // Keep current scale (no need to scroll as x,y will normally already
+        // be visible). FIXME: Revisit this if it isn't always true.
+        return;
+    }
 
-    const float overviewScale = m_minimumPageScaleFactor;
     bool scaleUnchanged = true;
     if (!rect.isEmpty()) {
         // Pages should be as legible as on desktop when at dpi scale, so no
         // need to zoom in further when automatically determining zoom level
         // (after double tap, find in page, etc), though the user should still
         // be allowed to manually pinch zoom in further if they desire.
-        const float maxScale = deviceScaleFactor();
+        const float defaultScaleWhenAlreadyLegible = m_minimumPageScaleFactor * doubleTapZoomAlreadyLegibleRatio;
+        float legibleScale = deviceScaleFactor();
+        if (legibleScale < defaultScaleWhenAlreadyLegible)
+            legibleScale = (scale == m_minimumPageScaleFactor) ? defaultScaleWhenAlreadyLegible : m_minimumPageScaleFactor;
 
         const float defaultMargin = doubleTapZoomContentDefaultMargin * deviceScaleFactor();
         const float minimumMargin = doubleTapZoomContentMinimumMargin * deviceScaleFactor();
@@ -1071,55 +1090,61 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         rect = widenRectWithinPageBounds(rect,
                 static_cast<int>(defaultMargin * rect.width / m_size.width),
                 static_cast<int>(minimumMargin * rect.width / m_size.width));
-
         // Fit block to screen, respecting limits.
         scale *= static_cast<float>(m_size.width) / rect.width;
-        scale = min(scale, maxScale);
+        scale = min(scale, legibleScale);
         scale = clampPageScaleFactorToLimits(scale);
 
         scaleUnchanged = fabs(pageScaleFactor() - scale) < minScaleDifference;
     }
 
-    if (zoomType == DoubleTap) {
-        if (rect.isEmpty() || scaleUnchanged) {
-            // Zoom out to overview mode.
-            if (overviewScale)
-                scale = overviewScale;
-            return;
-        }
-    } else if (rect.isEmpty()) {
-        // Keep current scale (no need to scroll as x,y will normally already
-        // be visible). FIXME: Revisit this if it isn't always true.
-        return;
+    if (zoomType == DoubleTap && (rect.isEmpty() || scaleUnchanged || m_doubleTapZoomInEffect)) {
+        // Zoom out to minimum scale.
+        scale = m_minimumPageScaleFactor;
+        scroll = WebPoint(hitRect.x, hitRect.y);
+        isAnchor = true;
+        m_doubleTapZoomInEffect = false;
+    } else {
+        if (zoomType == DoubleTap && scale != m_minimumPageScaleFactor)
+            m_doubleTapZoomInEffect = true;
+        else
+            m_doubleTapZoomInEffect = false;
+        // FIXME: If this is being called for auto zoom during find in page,
+        // then if the user manually zooms in it'd be nice to preserve the
+        // relative increase in zoom they caused (if they zoom out then it's ok
+        // to zoom them back in again). This isn't compatible with our current
+        // double-tap zoom strategy (fitting the containing block to the screen)
+        // though.
+
+        float screenHeight = m_size.height / scale * pageScaleFactor();
+        float screenWidth = m_size.width / scale * pageScaleFactor();
+
+        // Scroll to vertically align the block.
+        if (rect.height < screenHeight) {
+            // Vertically center short blocks.
+            rect.y -= 0.5 * (screenHeight - rect.height);
+        } else {
+            // Ensure position we're zooming to (+ padding) isn't off the bottom of
+            // the screen.
+            rect.y = max<float>(rect.y, hitRect.y + padding - screenHeight);
+        } // Otherwise top align the block.
+
+        // Do the same thing for horizontal alignment.
+        if (rect.width < screenWidth)
+            rect.x -= 0.5 * (screenWidth - rect.width);
+        else
+            rect.x = max<float>(rect.x, hitRect.x + padding - screenWidth);
+        scroll.x = rect.x;
+        scroll.y = rect.y;
+        isAnchor = false;
     }
 
-    // FIXME: If this is being called for auto zoom during find in page,
-    // then if the user manually zooms in it'd be nice to preserve the relative
-    // increase in zoom they caused (if they zoom out then it's ok to zoom
-    // them back in again). This isn't compatible with our current double-tap
-    // zoom strategy (fitting the containing block to the screen) though.
-
-    float screenHeight = m_size.height / scale * pageScaleFactor();
-    float screenWidth = m_size.width / scale * pageScaleFactor();
-
-    // Scroll to vertically align the block.
-    if (rect.height < screenHeight) {
-        // Vertically center short blocks.
-        rect.y -= 0.5 * (screenHeight - rect.height);
-    } else {
-        // Ensure position we're zooming to (+ padding) isn't off the bottom of
-        // the screen.
-        rect.y = max<float>(rect.y, hitRect.y + touchPointPadding - screenHeight);
-    } // Otherwise top align the block.
-
-    // Do the same thing for horizontal alignment.
-    if (rect.width < screenWidth)
-        rect.x -= 0.5 * (screenWidth - rect.width);
-    else
-        rect.x = max<float>(rect.x, hitRect.x + touchPointPadding - screenWidth);
-
-    scroll.x = rect.x;
-    scroll.y = rect.y;
+    scale = clampPageScaleFactorToLimits(scale);
+    scroll = mainFrameImpl()->frameView()->windowToContents(scroll);
+    float scaleDelta = scale / pageScaleFactor();
+    scroll = WebPoint(scroll.x * scaleDelta, scroll.y * scaleDelta);
+    if (!isAnchor)
+        scroll = clampOffsetAtScale(scroll, scale);
 }
 
 static bool highlightConditions(Node* node)
@@ -1185,11 +1210,13 @@ void WebViewImpl::animateZoomAroundPoint(const IntPoint& point, AutoZoomType zoo
 
     float scale;
     WebPoint scroll;
-    computeScaleAndScrollForHitRect(WebRect(point.x(), point.y(), 0, 0), zoomType, scale, scroll);
+    bool isAnchor;
+    WebPoint webPoint = point;
+    computeScaleAndScrollForHitRect(WebRect(webPoint.x, webPoint.y, 0, 0), zoomType, scale, scroll, isAnchor);
 
     bool isDoubleTap = (zoomType == DoubleTap);
-    double durationInSeconds = isDoubleTap ? doubleTapZoomAnimationDurationInSeconds : 0;
-    startPageScaleAnimation(scroll, isDoubleTap, scale, durationInSeconds);
+    double durationInSeconds = (isDoubleTap && !m_shouldUseDoubleTapTimeZero) ? doubleTapZoomAnimationDurationInSeconds : 0;
+    startPageScaleAnimation(scroll, isAnchor, scale, durationInSeconds);
 #endif
 }
 
@@ -3430,8 +3457,10 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
-    if (*isNewNavigation && !isNavigationWithinPage)
+    if (*isNewNavigation && !isNavigationWithinPage) {
         m_pageScaleFactorIsSet = false;
+        m_doubleTapZoomInEffect = false;
+    }
 
     // Make sure link highlight from previous page is cleared.
     m_linkHighlight.clear();
@@ -3898,6 +3927,7 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
         WebPoint scaledScrollOffset(scrollOffset.width * pageScaleDelta,
                                     scrollOffset.height * pageScaleDelta);
         setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
+        m_doubleTapZoomInEffect = false;
     }
 }
 

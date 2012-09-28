@@ -1,3 +1,26 @@
+2012-09-28  Yusuf Ozuysal  <yusufo@google.com>
+
+        [Chromium]Add DoubleTap gesture
+        https://bugs.webkit.org/show_bug.cgi?id=90316
+
+        Reviewed by Adam Barth.
+
+        Added doubleTapGesture implementation and hooked it to an already present function computeScaleAndScrollForHitRect. Added 2 new tests and changed one based on the new implementation.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        (WebKit::WebViewImpl::animateZoomAroundPoint):
+        (WebKit::WebViewImpl::didCommitLoad):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+        * tests/data/get_multiple_divs_for_auto_zoom_test.html: Added.
+        * tests/data/get_scale_bounds_check_for_auto_zoom_test.html: Added.
+        * tests/data/get_scale_for_auto_zoom_into_div_test.html:
+
 2012-09-28  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebFrameImpl.cpp could use a style cleanup
