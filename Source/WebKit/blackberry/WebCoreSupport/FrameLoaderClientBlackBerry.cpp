@@ -219,18 +219,20 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
         // Let the client have a chance to say whether this navigation should be ignored or not.
         NetworkRequest platformRequest;
         request.initializePlatformRequest(platformRequest, cookiesEnabled());
-        if (platformRequest.getTargetType() == NetworkRequest::TargetIsUnknown)
-            platformRequest.setTargetType(isMainFrame() ? NetworkRequest::TargetIsMainFrame : NetworkRequest::TargetIsSubframe);
+        if (!platformRequest.getUrlRef().empty()) { // Some invalid URLs will result in empty URL in platformRequest
+            if (platformRequest.getTargetType() == NetworkRequest::TargetIsUnknown)
+                platformRequest.setTargetType(isMainFrame() ? NetworkRequest::TargetIsMainFrame : NetworkRequest::TargetIsSubframe);
 
-        if (!m_webPagePrivate->m_client->acceptNavigationRequest(platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
-            decision = PolicyIgnore;
-            if (isMainFrame()) {
-                if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
-                    m_frame->loader()->resetMultipleFormSubmissionProtection();
+            if (!m_webPagePrivate->m_client->acceptNavigationRequest(platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
+                decision = PolicyIgnore;
+                if (isMainFrame()) {
+                    if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
+                        m_frame->loader()->resetMultipleFormSubmissionProtection();
 
-                if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
-                    ResourceRequest emptyRequest;
-                    m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+                    if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
+                        ResourceRequest emptyRequest;
+                        m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+                    }
                 }
             }
         }

@@ -1,3 +1,16 @@
+2012-09-27  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Empty URL gets through to acceptNavigationRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=97076
+
+        Reviewed by George Staikos.
+
+        Invalid URLs in iframe src results in an empty URL in platform request, we should reject
+        such URL as early as we identify it.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+
 2012-09-26  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Remove blitContents() in favor of blitVisibleContents().
