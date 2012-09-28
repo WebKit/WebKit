@@ -568,6 +568,11 @@ void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)
     WebCore::resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
 }
 
+void DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks(bool shouldTrack)
+{
+    WebCore::PageGroup::setShouldTrackVisitedLinks(shouldTrack);
+}
+
 void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request, JSStringRef response)
 {
 #if ENABLE(WEB_INTENTS)

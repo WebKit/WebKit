@@ -1,3 +1,16 @@
+2012-09-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] EFL DRT should disable visited links tracking by default
+        https://bugs.webkit.org/show_bug.cgi?id=97881
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added aux DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks() function.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-09-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] No way to exit video fullscreen mode once entered

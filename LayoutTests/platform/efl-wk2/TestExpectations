@@ -1,5 +1,8 @@
 # We divide the EFL WK2 test expectations into several categories:
-# 1. TESTS EXPECTED TO FAIL
+# 1. PASSING TESTS
+#    Test cases that pass for EFL WK2 but are skipped in a top-level TestExpectations file.
+
+# 2. TESTS EXPECTED TO FAIL
 #    Test cases related to features that we don't expect to be activated for EFL WK2 since
 #    the feature implementation in WebKit2 is missing or not complete yet.
 #    If test cases related to a feature cannot be activated since e.g.
@@ -10,17 +13,23 @@
 #    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
 #    should be moved here.
 
-# 2. CRASHES
+# 3. CRASHES
 
-# 3. FLAKY TESTS
+# 4. FLAKY TESTS
 
-# 4. FAILING TESTS
+# 5. FAILING TESTS
 #    * Interim failures that are moved here for further investigation as a result of daily
 #      gardening. They should be analysed quickly and either resolved or moved to 1).
 #    * Remaining failures that are moved here until further investigation after
 #      unskipping a directory or block of tests in the Skipped list.
 #    * Tests that we expect to pass once the respective fix for DRT is available or
 #      a relevant compile time feature can be enabled for EFL.
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# PASSING TESTS
+#////////////////////////////////////////////////////////////////////////////////////////
+
+fast/history/multiple-classes-visited.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -154,6 +163,9 @@ webkit.org/b/90207 fast/forms/select/select-state-restore.html [ Failure Pass ]
 # Affects multiple platforms.
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Failure Pass ]
 
+# Flaky, probably because the result is sometimes taken before data about visited link have passed through IPC.
+webkit.org/b/81797 fast/history/visited-link-background-color.html [ Failure  Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -189,12 +201,7 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 # WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
-# Visited link color is incorrect
-Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
-webkit.org/b/81797 fast/history/visited-link-background-color.html [ Failure ]
-
 # Unclassified failures
-Bug(EFL) fast/block/float/float-in-float-hit-testing.html [ Failure ]
 Bug(EFL) fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-embed.html [ Failure ]
 Bug(EFL) fast/replaced/no-focus-ring-object.html [ Failure ]

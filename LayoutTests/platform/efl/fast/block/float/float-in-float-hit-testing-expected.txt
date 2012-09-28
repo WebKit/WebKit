@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             text run at (100,85) width 4: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderBlock (floating) {H1} at (0,170) size 245x115
-            RenderInline {A} at (0,0) size 245x112 [color=#551A8B]
+            RenderInline {A} at (0,0) size 245x112 [color=#0000EE]
               RenderText {#text} at (0,1) size 245x112
                 text run at (0,1) width 245: "PASS"
           RenderText {#text} at (0,0) size 0x0

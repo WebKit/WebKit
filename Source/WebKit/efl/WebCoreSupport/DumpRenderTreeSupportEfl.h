@@ -107,6 +107,7 @@ public:
     static void setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool);
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme);
     static void setSerializeHTTPLoads(bool);
+    static void setShouldTrackVisitedLinks(bool);
     
     // Web Intents
     static void sendWebIntentResponse(Ewk_Intent_Request*, JSStringRef response);
