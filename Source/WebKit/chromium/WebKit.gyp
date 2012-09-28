@@ -917,7 +917,7 @@
                         '<@(webinspector_image_files)',
                         '<@(devtools_image_files)',
                     ],
-               },
+                },
             ],
         },
         {
@@ -972,95 +972,75 @@
                                      'concatenated_heap_snapshot_worker_js',
                                      'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
-                },{
+                    'actions': [{
+                        'action_name': 'generate_devtools_grd',
+                        'script_name': 'scripts/generate_devtools_grd.py',
+                        'input_pages': [
+                            '<(PRODUCT_DIR)/resources/inspector/devtools.html',
+                            '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
+                            '<(PRODUCT_DIR)/resources/inspector/ElementsPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/ResourcesPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/NetworkPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/ScriptsPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/TimelinePanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/ProfilesPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/AuditsPanel.js',
+                            '<(PRODUCT_DIR)/resources/inspector/CodeMirrorTextEditor.js',
+                            '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
+                            '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
+                            '<(PRODUCT_DIR)/resources/inspector/devTools.css',
+                            '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
+                            '<@(webinspector_standalone_css_files)',
+                        ],
+                        'images': [
+                            '<@(webinspector_image_files)',
+                            '<@(devtools_image_files)',
+                        ],
+                        'inputs': [
+                            '<@(_script_name)',
+                            '<@(_input_pages)',
+                            '<@(_images)',
+                        ],
+                        'search_path': [
+                            '../../WebCore/inspector/front-end/Images',
+                            'src/js/Images',
+                        ],
+                        'outputs': ['<(SHARED_INTERMEDIATE_DIR)/devtools/devtools_resources.grd'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_pages)', '--images', '<@(_search_path)', '--output', '<@(_outputs)'],
+                    }],
+                },
+                {
                     # If we're not concatenating devtools files, we want to
                     # run after the original files have been copied to
                     # <(PRODUCT_DIR)/resources/inspector.
                     'dependencies': ['inspector_resources'],
+                    'actions': [{
+                        'action_name': 'generate_devtools_grd',
+                        'script_name': 'scripts/generate_devtools_grd.py',
+                        'input_pages': [
+                            '<@(webinspector_files)',
+                            '<@(devtools_files)',
+                            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js',
+                            '<(PRODUCT_DIR)/resources/inspector/devtools.html',
+                        ],
+                        'images': [
+                            '<@(webinspector_image_files)',
+                            '<@(devtools_image_files)',
+                        ],
+                        'inputs': [
+                            '<@(_script_name)',
+                            '<@(_input_pages)',
+                            '<@(_images)',
+                        ],
+                        'search_path': [
+                            '../../WebCore/inspector/front-end/Images',
+                            'src/js/Images',
+                        ],
+                        'outputs': ['<(SHARED_INTERMEDIATE_DIR)/devtools/devtools_resources.grd'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_pages)', '--images', '<@(_search_path)', '--output', '<@(_outputs)'],
+                    }],
                 }],
             ],
-            'actions': [{
-                'action_name': 'generate_devtools_grd',
-                'script_name': 'scripts/generate_devtools_grd.py',
-                'input_pages': [
-                    '<(PRODUCT_DIR)/resources/inspector/devtools.html',
-                    '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ElementsPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ResourcesPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/NetworkPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ScriptsPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/TimelinePanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ProfilesPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/AuditsPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/CodeMirrorTextEditor.js',
-                    '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
-                    '<(PRODUCT_DIR)/resources/inspector/devTools.css',
-                    '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
-                    '<@(webinspector_standalone_css_files)',
-                ],
-                'images': [
-                    '<@(webinspector_image_files)',
-                    '<@(devtools_image_files)',
-                ],
-                'inputs': [
-                    '<@(_script_name)',
-                    '<@(_input_pages)',
-                    '<@(_images)',
-                ],
-                'search_path': [
-                    '../../WebCore/inspector/front-end/Images',
-                    'src/js/Images',
-                ],
-                'outputs': ['<(SHARED_INTERMEDIATE_DIR)/devtools/devtools_resources.grd'],
-                'action': ['python', '<@(_script_name)', '<@(_input_pages)', '--images', '<@(_search_path)', '--output', '<@(_outputs)'],
-            }],
-        },
-        {
-            'target_name': 'generate_devtools_zip',
-            'type': 'none',
-            'dependencies': [
-                '../../WebCore/WebCore.gyp/WebCore.gyp:inspector_protocol_sources',
-            ],
-            'actions': [{
-                'action_name': 'generate_devtools_zip',
-                'script_name': 'scripts/generate_devtools_zip.py',
-                'inspector_html': '../../WebCore/inspector/front-end/inspector.html',
-                'workers_files': [
-                    '../../WebCore/inspector/front-end/HeapSnapshotWorker.js',
-                    '../../WebCore/inspector/front-end/JavaScriptFormatter.js',
-                    '../../WebCore/inspector/front-end/ScriptFormatterWorker.js',
-                    '<@(webinspector_uglifyjs_files)'
-                ],
-                'inputs': [
-                    '<@(_script_name)',
-                    'scripts/generate_devtools_html.py',
-                    'scripts/generate_devtools_extension_api.py',
-                    '<@(_inspector_html)',
-                    '<@(devtools_files)',
-                    '<@(webinspector_files)',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js',
-                    '<@(_workers_files)',
-                    '<@(webinspector_image_files)',
-                    '<@(devtools_image_files)',
-                    '<@(devtools_extension_api_files)',
-                ],
-                'search_path': [
-                    '../../WebCore/inspector/front-end',
-                    'src/js',
-                ],
-                'js_search_path': [
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore',
-                ],
-                'outputs': ['<(PRODUCT_DIR)/devtools_frontend.zip'],
-                'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
-                                     '--devtools-files', '<@(devtools_files)',
-                                     '--workers-files', '<@(_workers_files)',
-                                     '--extension-api-files', '<@(devtools_extension_api_files)',
-                                     '--search-path', '<@(_search_path)',
-                                     '--js-search-path', '<@(_js_search_path)',
-                                     '--output', '<@(_outputs)'],
-            }],
         },
     ], # targets
     'conditions': [

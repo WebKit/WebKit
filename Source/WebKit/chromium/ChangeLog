@@ -1,3 +1,15 @@
+2012-09-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [chromium] remove devtools_frontend.zip
+        https://bugs.webkit.org/show_bug.cgi?id=97650
+
+        Reviewed by Yury Semikhatsky.
+
+        This change removes the devtools_frontend zip generation and migrates to proper resource bundle for debug mode creation.
+
+        * WebKit.gyp:
+        * scripts/generate_devtools_zip.py: Removed.
+
 2012-09-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: make HashSet memory instrumentation non-intrusive
