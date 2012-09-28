@@ -65,6 +65,7 @@
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
 #include "WebViewHostOutputSurface.h"
+#include "WebViewHostSoftwareOutputDevice.h"
 #include "WebWindowFeatures.h"
 #include "platform/WebSerializedScriptValue.h"
 #include "skia/ext/platform_canvas.h"
@@ -288,11 +289,14 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
     return webkit_support::CreateSessionStorageNamespace(quota);
 }
 
-WebKit::WebCompositorOutputSurface* WebViewHost::createOutputSurface()
+WebCompositorOutputSurface* WebViewHost::createOutputSurface()
 {
     if (!webView())
         return 0;
-    return new WebKit::WebViewHostOutputSurface(adoptPtr(webkit_support::CreateGraphicsContext3D(WebKit::WebGraphicsContext3D::Attributes(), webView())));
+
+    if (m_shell->softwareCompositingEnabled())
+        return WebViewHostOutputSurface::createSoftware(adoptPtr(new WebViewHostSoftwareOutputDevice)).leakPtr();
+    return WebViewHostOutputSurface::create3d(adoptPtr(webkit_support::CreateGraphicsContext3D(WebGraphicsContext3D::Attributes(), webView()))).leakPtr();
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)

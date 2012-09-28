@@ -58,6 +58,8 @@
             'chromium/WebViewHost.h',
             'chromium/WebViewHostOutputSurface.cpp',
             'chromium/WebViewHostOutputSurface.h',
+            'chromium/WebViewHostSoftwareOutputDevice.cpp',
+            'chromium/WebViewHostSoftwareOutputDevice.h',
         ],
         'test_runner_files': [
             'DumpRenderTree.h',

@@ -33,22 +33,29 @@
 namespace WebKit {
 
 class WebCompositorOutputSurfaceClient;
+class WebCompositorSoftwareOutputDevice;
 class WebGraphicsContext3D;
 
 class WebViewHostOutputSurface : public WebKit::WebCompositorOutputSurface {
 public:
-    explicit WebViewHostOutputSurface(PassOwnPtr<WebKit::WebGraphicsContext3D>);
+    static PassOwnPtr<WebViewHostOutputSurface> create3d(PassOwnPtr<WebKit::WebGraphicsContext3D>);
+    static PassOwnPtr<WebViewHostOutputSurface> createSoftware(PassOwnPtr<WebKit::WebCompositorSoftwareOutputDevice>);
     virtual ~WebViewHostOutputSurface();
 
     virtual bool bindToClient(WebCompositorOutputSurfaceClient*) OVERRIDE;
 
     virtual const WebKit::WebCompositorOutputSurface::Capabilities& capabilities() const OVERRIDE;
     virtual WebGraphicsContext3D* context3D() const OVERRIDE;
+    virtual WebCompositorSoftwareOutputDevice* softwareDevice() const OVERRIDE;
     virtual void sendFrameToParentCompositor(const WebCompositorFrame&) OVERRIDE;
 
 private:
+    explicit WebViewHostOutputSurface(PassOwnPtr<WebKit::WebGraphicsContext3D>);
+    explicit WebViewHostOutputSurface(PassOwnPtr<WebKit::WebCompositorSoftwareOutputDevice>);
+
     WebKit::WebCompositorOutputSurface::Capabilities m_capabilities;
     OwnPtr<WebKit::WebGraphicsContext3D> m_context;
+    OwnPtr<WebKit::WebCompositorSoftwareOutputDevice> m_softwareDevice;
 };
 
 }

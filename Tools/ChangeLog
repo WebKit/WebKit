@@ -1,3 +1,51 @@
+2012-09-27  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] DumpRenderTree support for software compositing
+        https://bugs.webkit.org/show_bug.cgi?id=96853
+
+        Reviewed by James Robinson.
+
+        This adds software compositor support to DumpRenderTree.  The only
+        thing needed is a minimal OutputSurfaceSoftware that holds a
+        viewport-sized bitmap. Then, I added virtual test suite
+        platform/chromium/virtual/softwarecompositing -- a mirror of the
+        compositing/ directory with --enable-software-compositing, and
+        expectations for not yet supported tests.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::softwareCompositingEnabled):
+        (TestShell::setSoftwareCompositingEnabled):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.cpp:
+        (WebKit::WebViewHostOutputSurface::create3d):
+        (WebKit):
+        (WebKit::WebViewHostOutputSurface::createSoftware):
+        (WebKit::WebViewHostOutputSurface::WebViewHostOutputSurface):
+        (WebKit::WebViewHostOutputSurface::bindToClient):
+        (WebKit::WebViewHostOutputSurface::surfaceSoftware):
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.h:
+        (WebKit):
+        (WebViewHostOutputSurface):
+        * DumpRenderTree/chromium/WebViewHostSoftwareOutputDevice.cpp: Copied from Tools/DumpRenderTree/chromium/WebViewHostOutputSurface.cpp.
+        (WebKit):
+        (WebKit::WebViewHostSoftwareOutputDevice::lockForWrite):
+        (WebKit::WebViewHostSoftwareOutputDevice::unlockForWrite):
+        (WebKit::WebViewHostSoftwareOutputDevice::lockForRead):
+        (WebKit::WebViewHostSoftwareOutputDevice::unlockForRead):
+        (WebKit::WebViewHostSoftwareOutputDevice::viewportChanged):
+        * DumpRenderTree/chromium/WebViewHostSoftwareOutputDevice.h: Copied from Tools/DumpRenderTree/chromium/WebViewHostOutputSurface.cpp.
+        (WebKit):
+        (WebViewHostSoftwareOutputDevice):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-09-27  Nasko Oskov  <nasko@chromium.org>
 
         Move DumpRenderTree to use newer version of the name method of

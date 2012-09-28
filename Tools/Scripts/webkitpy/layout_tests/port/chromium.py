@@ -379,6 +379,9 @@ class ChromiumPort(Port):
             VirtualTestSuite('platform/chromium/virtual/gpu/fast/hidpi',
                              'fast/hidpi',
                              ['--force-compositing-mode']),
+            VirtualTestSuite('platform/chromium/virtual/softwarecompositing',
+                             'compositing',
+                             ['--enable-software-compositing']),
         ]
 
     #

@@ -55,6 +55,7 @@ static const char optionStartupDialog[] = "--testshell-startup-dialog";
 static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
 
 static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
+static const char optionEnableSoftwareCompositing[] = "--enable-software-compositing";
 static const char optionEnableThreadedCompositing[] = "--enable-threaded-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
@@ -125,6 +126,7 @@ int main(int argc, char* argv[])
     bool allowExternalPages = false;
     bool startupDialog = false;
     bool acceleratedCompositingForVideoEnabled = false;
+    bool softwareCompositingEnabled = false;
     bool threadedCompositingEnabled = false;
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
@@ -159,6 +161,8 @@ int main(int argc, char* argv[])
             hardwareAcceleratedGL = true;
         else if (argument == optionEnableAcceleratedCompositingForVideo)
             acceleratedCompositingForVideoEnabled = true;
+        else if (argument == optionEnableSoftwareCompositing)
+            softwareCompositingEnabled = true;
         else if (argument == optionEnableThreadedCompositing)
             threadedCompositingEnabled = true;
         else if (argument == optionForceCompositingMode)
@@ -211,6 +215,7 @@ int main(int argc, char* argv[])
         TestShell shell;
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
+        shell.setSoftwareCompositingEnabled(softwareCompositingEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
