@@ -11,6 +11,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestResources \
 	Programs/WebKit2APITests/TestSSL \
 	Programs/WebKit2APITests/TestWebKitVersion \
+	Programs/WebKit2APITests/TestWebKitFaviconDatabase \
 	Programs/WebKit2APITests/TestWebKitFindController \
 	Programs/WebKit2APITests/TestWebKitPolicyClient \
 	Programs/WebKit2APITests/TestWebKitSettings \
@@ -140,6 +141,12 @@ Programs_WebKit2APITests_TestPrinting_SOURCES = \
 Programs_WebKit2APITests_TestPrinting_CPPFLAGS = $(webkit2_tests_cppflags) $(GTK_UNIX_PRINTING_CFLAGS)
 Programs_WebKit2APITests_TestPrinting_LDADD = $(webkit2_tests_ldadd) $(GTK_UNIX_PRINTING_LIBS)
 Programs_WebKit2APITests_TestPrinting_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitFaviconDatabase_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp
+Programs_WebKit2APITests_TestWebKitFaviconDatabase_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitFaviconDatabase_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitFaviconDatabase_LDFLAGS = $(webkit2_tests_ldflags)
 
 Programs_WebKit2APITests_TestWebKitFindController_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFindController.cpp

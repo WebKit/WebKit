@@ -30,6 +30,7 @@
     <xi:include href="xml/WebKitPrintOperation.xml"/>
     <xi:include href="xml/WebKitWebResource.xml"/>
     <xi:include href="xml/WebKitError.xml"/>
+    <xi:include href="xml/WebKitFaviconDatabase.xml"/>
     <xi:include href="xml/WebKitFileChooserRequest.xml"/>
     <xi:include href="xml/WebKitFindController.xml"/>
     <xi:include href="xml/WebKitCookieManager.xml"/>

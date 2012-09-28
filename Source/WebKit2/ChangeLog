@@ -1,3 +1,107 @@
+2012-09-28  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Implement new Favicons API
+        https://bugs.webkit.org/show_bug.cgi?id=96476
+
+        Reviewed by Carlos Garcia Campos.
+
+        New object wrapping the internal IconDatabase from WebCore,
+        providing a simple asynchronous API to retrieve the favicon
+        associated to a page URL, and two more functions to simple query
+        the internal database for the URI of the icon associated to a
+        page, if any, and to clear the state of the internal database.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp: Added.
+        (_WebKitFaviconDatabasePrivate):
+        (webkit_favicon_database_init):
+        (webkitFaviconDatabaseFinalize):
+        (webkit_favicon_database_class_init):
+        (GetFaviconSurfaceAsyncData): New structure used to pass data
+        across the asynchronous implementation of get_favicon().
+        (GetFaviconSurfaceAsyncData::~GetFaviconSurfaceAsyncData):
+        Disconnects the cancellable if needed.
+        (getIconSurfaceSynchronously): Synchronously returns a pointer to
+        the cairo_surface with the icon's data, if available.
+        (deletePendingIconRequests): Removes the full list of
+        icon requests for a page URL.
+        (processPendingIconsForURI): Process any icon request that
+        might be still pending.
+        (iconDataReadyForPageURLCallback): Called from WebIconDatabase
+        when new data is ready for a favicon.
+        (webkitFaviconDatabaseCreate): Create the WebKitFaviconDatabase
+        object and initializes the API client for WKIconDatabaseClient.
+        (getOrCreatePendingIconRequests): Returns (if available) or
+        creates a new icon request, to be appended to the list of requests
+        for the same page URL.
+        (getIconSurfaceCancelled): Handle the case of a request being
+        cancelled. Must happen on the main thread.
+        (getIconSurfaceCancelledCallback): Callback used with
+        g_cancellable_connect(), which ensure getIconSurfaceCancelled() is
+        called from the main thread.
+        (setErrorForAsyncResult): Helper to set errors in the result.
+        (webkit_favicon_database_error_quark): New function, providint the
+        new error domain for errors of type WebKitFaviconDatabaseError.
+        (webkit_favicon_database_get_favicon): New API function, providing
+        an asynchronous mechanism to query the favicon for a page URL.
+        (webkit_favicon_database_get_favicon_finish): New API function to
+        finish the asyncrhonous request started with get_favicon().
+        (webkit_favicon_database_get_favicon_uri): New API function
+        to easily retrieve, if available, the URI of a favicon.
+        (webkit_favicon_database_clear): New API function to clear the
+        state of the internal icon database.
+        * UIProcess/API/gtk/WebKitFaviconDatabase.h: Added.
+        (_WebKitFaviconDatabase):
+        (_WebKitFaviconDatabaseClass):
+        * UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h: Added to
+        internally expose webkitFaviconDatabaseCreate() to WebKitWebContext.
+        * UIProcess/API/gtk/WebKitPrivate.h: Import WebKit2/WKIconDatabase.h.
+        * GNUmakefile.list.am: Added new files.
+
+        Add a new getter in WebIconDatabase for m_urlImportCompleted.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::isUrlImportCompleted): Added this simple
+        getter to allow knowing from WebKitFaviconDatabase whether the
+        initial import has finished, needed for making some decisions.
+        (WebKit):
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+
+        New API in WebKitWebContext to allow obtaining a valid instance of
+        WebKitFaviconDatabase and to set/get the local path to be used.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate):
+        (webkit_web_context_set_favicon_database_path): New API to allow
+        setting a path for the icon database, other than the default one.
+        (webkit_web_context_get_favicon_database_path): New API to
+        retrieve the path for the icon database currently in use.
+        (webkit_web_context_get_favicon_database): New API to get a valid
+        and properly initialized instance of WebKitFaviconDatabase.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+
+        Make sure we have a default path set for the icon database.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath): Return the
+        default path to be used for the icon database.
+
+        Add unit tests for checking this new API.
+
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp: Added.
+        (serverCallback): Callback for the test server.
+        (testSetDirectory): New unit test, checks the ability to set and
+        get a specific directory path for the icon database.
+        (testClearDatabase): New unit test, checks the ability to clear
+        the data in the icon database.
+        (testGetFavicon): New unit test, checks the ability to get a
+        favicon from the icon database in different situations.
+        (testGetFaviconURI): New unit test, checks the ability to retrieve
+        the URI for the favicon, if any, associated to a web page.
+        (deleteDatabaseFiles): Helper function to remove temporary files.
+        (beforeAll): Initialize the test server and add the unit tests.
+        (afterAll): Delete the test server and clean up.
+
 2012-09-28  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed test fixes after r129892.

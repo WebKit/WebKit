@@ -24,6 +24,7 @@
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
+#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
@@ -33,6 +34,7 @@
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -96,6 +98,7 @@ struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
 
     GRefPtr<WebKitCookieManager> cookieManager;
+    GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     GRefPtr<WebKitSecurityManager> securityManager;
     WKRetainPtr<WKSoupRequestManagerRef> requestManager;
     URISchemeHandlerMap uriSchemeHandlers;
@@ -106,6 +109,7 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(SPELLCHECK)
     OwnPtr<WebKitTextChecker> textChecker;
 #endif
+    CString faviconDatabasePath;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -321,6 +325,94 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
         priv->cookieManager = adoptGRef(webkitCookieManagerCreate(WKContextGetCookieManager(priv->context.get())));
 
     return priv->cookieManager.get();
+}
+
+/**
+ * webkit_web_context_set_favicon_database_directory:
+ * @context: a #WebKitWebContext
+ * @path: (allow-none): an absolute path to the icon database
+ * directory or %NULL to use the defaults
+ *
+ * Set the directory path to be used to store the favicons database
+ * for @context on disk. Passing %NULL as @path means using the
+ * default directory for the platform (see g_get_user_data_dir()).
+ *
+ * If you want to use a different path for the favicon database, this
+ * method must be called before the database is created by
+ * webkit_web_context_get_favicon_database(). Note that a
+ * #WebKitWebView could use the favicon database, so this should also
+ * be called before loading any web page.
+ *
+ * This function is expected to be called only once, further calls for
+ * the same instance of #WebKitWebContext after calling
+ * webkit_web_context_get_favicon_database() won't cause any effect.
+ */
+void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context, const gchar* path)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    // Calling this method twice is a programming error.
+    g_return_if_fail(!context->priv->faviconDatabase);
+
+    if (path)
+        context->priv->faviconDatabasePath = WebCore::filenameToString(path).utf8();
+}
+
+/**
+ * webkit_web_context_get_favicon_database_path:
+ * @context: a #WebKitWebContext
+ *
+ * Get the directory path being used to store the favicons database
+ * for @context. This function will always return the same path after
+ * having called webkit_web_context_get_favicon_database() for the
+ * first time. See webkit_web_context_set_favicon_database_directory()
+ * for more details.
+ *
+ * Returns: (transfer none): the path of the directory of the favicons
+ * database associated with @context.
+ */
+const gchar* webkit_web_context_get_favicon_database_directory(WebKitWebContext *context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+
+    WebKitWebContextPrivate* priv = context->priv;
+    // Use default if a different path has not been previously set.
+    if (priv->faviconDatabasePath.isNull())
+        priv->faviconDatabasePath = toImpl(priv->context.get())->iconDatabasePath().utf8();
+
+    return priv->faviconDatabasePath.data();
+}
+
+/**
+ * webkit_web_context_get_favicon_database:
+ * @context: a #WebKitWebContext
+ *
+ * Get the #WebKitFaviconDatabase associated with @context. If you
+ * want the database to be stored in a directory other than the default
+ * one, you need to call
+ * webkit_web_context_set_favicon_database_directory() before the first
+ * time you use this function.
+ *
+ * Returns: (transfer none): the #WebKitFaviconDatabase of @context.
+ */
+WebKitFaviconDatabase* webkit_web_context_get_favicon_database(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+
+    WebKitWebContextPrivate* priv = context->priv;
+    if (priv->faviconDatabase)
+        return priv->faviconDatabase.get();
+
+    // Build the full path to the icon database file on disk.
+    GOwnPtr<gchar> faviconDatabasePath(g_build_filename(webkit_web_context_get_favicon_database_directory(context),
+                                                        WebCore::IconDatabase::defaultDatabaseFilename().utf8().data(),
+                                                        NULL));
+
+    // Calling the setter in WebContext will cause the icon database to be opened.
+    WebContext* webContext = toImpl(priv->context.get());
+    webContext->setIconDatabasePath(WebCore::filenameToString(faviconDatabasePath.get()));
+    priv->faviconDatabase = adoptGRef(webkitFaviconDatabaseCreate(webContext->iconDatabase()));
+
+    return priv->faviconDatabase.get();
 }
 
 /**

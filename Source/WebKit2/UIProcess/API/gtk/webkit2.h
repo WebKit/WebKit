@@ -34,6 +34,7 @@
 #include <webkit2/WebKitEditingCommands.h>
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>
+#include <webkit2/WebKitFaviconDatabase.h>
 #include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitFormSubmissionRequest.h>

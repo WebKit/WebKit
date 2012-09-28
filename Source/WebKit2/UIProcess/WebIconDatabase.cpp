@@ -208,6 +208,11 @@ bool WebIconDatabase::isOpen()
     return m_iconDatabaseImpl && m_iconDatabaseImpl->isOpen();
 }
 
+bool WebIconDatabase::isUrlImportCompleted()
+{
+    return m_urlImportCompleted;
+}
+
 void WebIconDatabase::removeAllIcons()
 {
     m_iconDatabaseImpl->removeAllIcons();   

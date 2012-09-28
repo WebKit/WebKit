@@ -30,6 +30,9 @@ webkit_web_context_set_cache_model
 webkit_web_context_clear_cache
 webkit_web_context_download_uri
 webkit_web_context_get_cookie_manager
+webkit_web_context_get_favicon_database
+webkit_web_context_set_favicon_database_directory
+webkit_web_context_get_favicon_database_directory
 webkit_web_context_get_security_manager
 webkit_web_context_set_additional_plugins_directory
 webkit_web_context_get_plugins
@@ -599,6 +602,31 @@ webkit_policy_error_quark
 webkit_download_error_quark
 webkit_print_error_quark
 webkit_javascript_error_quark
+</SECTION>
+
+<SECTION>
+<FILE>WebKitFaviconDatabase</FILE>
+WebKitFaviconDatabase
+WEBKIT_FAVICON_DATABASE_ERROR
+WebKitFaviconDatabaseError
+webkit_favicon_database_get_favicon
+webkit_favicon_database_get_favicon_finish
+webkit_favicon_database_get_favicon_uri
+webkit_favicon_database_clear
+
+<SUBSECTION Standard>
+WebKitFaviconDatabaseClass
+WEBKIT_TYPE_FAVICON_DATABASE
+WEBKIT_FAVICON_DATABASE
+WEBKIT_IS_FAVICON_DATABASE
+WEBKIT_FAVICON_DATABASE_CLASS
+WEBKIT_IS_FAVICON_DATABASE_CLASS
+WEBKIT_FAVICON_DATABASE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFaviconDatabasePrivate
+webkit_favicon_database_get_type
+webkit_favicon_database_error_quark
 </SECTION>
 
 <SECTION>

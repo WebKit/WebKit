@@ -104,6 +104,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDownload.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEditingCommands.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitFaviconDatabase.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFindController.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFormSubmissionRequest.h \
@@ -643,6 +644,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitEditingCommands.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h \

@@ -82,6 +82,7 @@ public:
     WebCore::Image* imageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
     WebCore::NativeImagePtr nativeImageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
     bool isOpen();
+    bool isUrlImportCompleted();
 
     void removeAllIcons();
     void checkIntegrityBeforeOpening();
