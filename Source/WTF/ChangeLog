@@ -1,3 +1,30 @@
+2012-09-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: make HashSet memory instrumentation non-intrusive
+        https://bugs.webkit.org/show_bug.cgi?id=97879
+
+        Reviewed by Vsevolod Vlasov.
+
+        Removed reportMemoryUsage declarations as a friend of HashSet and HashTable. Also
+        removed MemoryInstrumentationHashTable which is not needed if we don't have
+        access to HashSet's guts.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/HashSet.h:
+        (WTF):
+        (HashSet):
+        * wtf/HashTable.h:
+        (HashTable):
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryClassInfo::addPrivateBuffer):
+        * wtf/MemoryInstrumentationHashSet.h:
+        (WTF::reportMemoryUsage):
+        * wtf/MemoryInstrumentationHashTable.h: Removed.
+
 2012-09-27  Anders Carlsson  <andersca@apple.com>
 
         Remove the clang pragmas to disable warnings in Noncopyable.h

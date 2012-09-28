@@ -31,8 +31,7 @@
 #ifndef MemoryInstrumentationHashSet_h
 #define MemoryInstrumentationHashSet_h
 
-#include <wtf/MemoryInstrumentationHashTable.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/HashSet.h>
 
 namespace WTF {
 
@@ -40,7 +39,7 @@ template<typename ValueArg, typename HashArg, typename TraitsArg>
 void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
-    info.addMember(hashSet->m_impl);
+    info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
     info.addCollectionElements(hashSet->begin(), hashSet->end());
 }
 

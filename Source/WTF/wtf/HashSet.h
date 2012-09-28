@@ -27,7 +27,6 @@
 namespace WTF {
 
     struct IdentityExtractor;
-    class MemoryObjectInfo;
     
     template<typename Value, typename HashFunctions, typename Traits> class HashSet;
     template<typename Value, typename HashFunctions, typename Traits>
@@ -97,7 +96,6 @@ namespace WTF {
     private:
         friend void deleteAllValues<>(const HashSet&);
         friend void fastDeleteAllValues<>(const HashSet&);
-        template<typename V, typename H, typename T> friend void reportMemoryUsage(const HashSet<V, H, T>* const&, MemoryObjectInfo*);
 
         HashTableType m_impl;
     };

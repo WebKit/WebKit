@@ -447,7 +447,7 @@ TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
     InstrumentedOwner<ValueType* > root(value.get());
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(count + 2, (size_t)helper.visitedObjects());
+    EXPECT_EQ(count + 1, (size_t)helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, arrayBuffer)

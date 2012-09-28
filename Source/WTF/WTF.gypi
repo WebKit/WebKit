@@ -52,7 +52,6 @@
             'wtf/MemoryInstrumentation.h',
             'wtf/MemoryInstrumentationArrayBufferView.h',
             'wtf/MemoryInstrumentationHashSet.h',
-            'wtf/MemoryInstrumentationHashTable.h',
             'wtf/MemoryInstrumentationVector.h',
             'wtf/MessageQueue.h',
             'wtf/NonCopyingSort.h',
