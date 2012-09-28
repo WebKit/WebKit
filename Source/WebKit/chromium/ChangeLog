@@ -1,3 +1,11 @@
+2012-09-28  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed Chromium Win build fix.
+
+        * src/WebViewImpl.cpp: Added "f" on initializers for floats.
+        (WebKit):
+        * tests/WebFrameTest.cpp: Added "f" on initializers for floats.
+
 2012-09-28  Yusuf Ozuysal  <yusufo@google.com>
 
         [Chromium]Add DoubleTap gesture

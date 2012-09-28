@@ -196,7 +196,7 @@ static const float minScaleDifference = 0.01f;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
 static const double doubleTapZoomAnimationDurationInSeconds = 0.25;
-static const float doubleTapZoomAlreadyLegibleRatio = 1.2;
+static const float doubleTapZoomAlreadyLegibleRatio = 1.2f;
 
 // Constants for zooming in on a focused text field.
 static const double scrollAndScaleAnimationDurationInSeconds = 0.2;
@@ -210,8 +210,8 @@ namespace WebKit {
 const double WebView::textSizeMultiplierRatio = 1.2;
 const double WebView::minTextSizeMultiplier = 0.5;
 const double WebView::maxTextSizeMultiplier = 3.0;
-const float WebView::minPageScaleFactor = 0.25;
-const float WebView::maxPageScaleFactor = 4.0;
+const float WebView::minPageScaleFactor = 0.25f;
+const float WebView::maxPageScaleFactor = 4.0f;
 
 
 // The group name identifies a namespace of pages. Page group is used on PLATFORM(MAC)
