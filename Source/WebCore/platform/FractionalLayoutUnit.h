@@ -207,7 +207,11 @@ public:
     }
     int round() const
     {
-#if ENABLE(SUBPIXEL_LAYOUT)
+#if ENABLE(SUBPIXEL_LAYOUT) && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+        if (m_value > 0)
+            return saturatedAddition(rawValue(), kFixedPointDenominator / 2) / kFixedPointDenominator;
+        return saturatedSubtraction(rawValue(), kFixedPointDenominator / 2) / kFixedPointDenominator;
+#elif ENABLE(SUBPIXEL_LAYOUT)
         if (m_value > 0)
             return (m_value + (kFixedPointDenominator / 2)) / kFixedPointDenominator;
         return (m_value - (kFixedPointDenominator / 2)) / kFixedPointDenominator;
@@ -290,9 +294,9 @@ private:
     inline void setValue(int value)
     {
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
-        if (value >= intMaxForLayoutUnit)
+        if (value > intMaxForLayoutUnit)
             m_value = std::numeric_limits<int>::max();
-        else if (value <= intMinForLayoutUnit)
+        else if (value < intMinForLayoutUnit)
             m_value = std::numeric_limits<int>::min();
         else
             m_value = value * kFixedPointDenominator;
