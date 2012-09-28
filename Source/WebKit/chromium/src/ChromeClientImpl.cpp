@@ -63,7 +63,6 @@
 #include "Page.h"
 #include "PagePopupDriver.h"
 #include "PlatformScreen.h"
-#include "PlatformSupport.h"
 #include "PopupContainer.h"
 #include "PopupMenuChromium.h"
 #include "RenderWidget.h"

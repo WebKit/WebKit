@@ -1,5 +1,16 @@
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Remove unused PlatformSupport reference in ChromeClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=97853
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/ChromeClientImpl.cpp:
+
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Clean up includes in DateTimeChooserImpl
         https://bugs.webkit.org/show_bug.cgi?id=97847
 
