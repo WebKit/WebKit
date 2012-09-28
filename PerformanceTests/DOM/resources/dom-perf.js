@@ -331,7 +331,7 @@ BenchmarkSuite.prototype.generateLargeTree = function() {
 };
 
 function runBenchmarkSuite(suite, runCount) {
-    PerfTestRunner.run(function () {
+    PerfTestRunner.measureTime({run: function () {
         var container = document.getElementById('container');
         var content = document.getElementById('benchmark_content');
         suite.benchmarkContentHolder = container;
@@ -345,7 +345,9 @@ function runBenchmarkSuite(suite, runCount) {
                 totalMeanTime += result.mean;
         }
         return totalMeanTime;
-    }, 1, runCount || 20, function () {
+    },
+    runCount: runCount,
+    done: function () {
         var container = document.getElementById('container');
         if (container.firstChild)
             container.removeChild(container.firstChild);

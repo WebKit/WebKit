@@ -101,17 +101,17 @@
     </div>
     <script src="../resources/runner.js"></script>
     <script>
-      PerfTestRunner.run(function() {
+      PerfTestRunner.measureTime({run: function() {
         for (var i = 0; i < 6000; i++) {
           var x = 600 * Math.random();
           var y = 400 * Math.random();
           var el = document.elementFromPoint(x, y);
         }
-      }, 1, 10, function() {
+      }, done:function() {
         var wrapper = document.getElementById('wrapper');
         if (wrapper)
           wrapper.parentNode.removeChild(wrapper);
-      });
+      }, runCount: 10});
     </script>
   </body>
 </html>

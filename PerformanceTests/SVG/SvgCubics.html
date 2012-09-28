@@ -826,7 +826,7 @@
     <script src="../resources/runner.js"></script>
     <script>
       var t = 0;
-      PerfTestRunner.run(function() {
+      PerfTestRunner.measureTime({run: function() {
         // transform a tiger so it spins in a circle
         var rad = 0.05 * t;
         var tiger1 = document.getElementById('tiger1');
@@ -911,11 +911,11 @@
         document.getElementById('svg').offsetTop;
 
         t++;
-      }, 1, 20, function() {
+      }, done:function() {
         var wrapper = document.getElementById('wrapper');
         if (wrapper)
           wrapper.parentNode.removeChild(wrapper);
-      });
+      }});
     </script>
   </body>
 </html>

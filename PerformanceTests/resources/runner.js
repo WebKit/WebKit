@@ -151,19 +151,15 @@ PerfTestRunner._runLoop = function () {
 
 PerfTestRunner._runner = function () {
     var start = this.now();
-    var totalTime = 0;
+    var returnValue = this._runFunction.call(window);
+    var end = this.now();
 
-    for (var i = 0; i < this._loopsPerRun; ++i) {
-        var returnValue = this._runFunction.call(window);
-        if (returnValue - 0 === returnValue) {
-            if (returnValue <= 0)
-                this.log("runFunction returned a non-positive value: " + returnValue);
-            totalTime += returnValue;
-        }
-    }
-
-    // Assume totalTime can never be zero when _runFunction returns a number.
-    var time = totalTime ? totalTime : this.now() - start;
+    if (returnValue - 0 === returnValue) {
+        if (returnValue <= 0)
+            this.log("runFunction returned a non-positive value: " + returnValue);
+        time = returnValue;
+    } else
+        time = end - start;
 
     this.ignoreWarmUpAndLog(time);
     this._runLoop();
@@ -219,20 +215,22 @@ PerfTestRunner.initAndStartLoop = function() {
     this._runLoop();
 }
 
-PerfTestRunner.run = function (runFunction, loopsPerRun, runCount, doneFunction, description) {
-    this._runFunction = runFunction;
-    this._loopsPerRun = loopsPerRun || 10;
-    this._runCount = runCount || 20;
-    this._doneFunction = doneFunction || function () {};
-    this._description = description || "";
+PerfTestRunner.measureTime = function (test) {
+    this._runFunction = test.run;
+    this._doneFunction = test.done || function () {};
+    this._description = test.description || "";
+    this._runCount = test.runCount || 20;
+    this._callsPerIteration = 1;
     this.unit = 'ms';
+
+    this._test = test;
     this.initAndStartLoop();
 }
 
 PerfTestRunner.runPerSecond = function (test) {
-    this._doneFunction = function () { if (test.done) test.done(); };
+    this._doneFunction = test.done || function () {};
     this._description = test.description || "";
-    this._runCount = test.runCount || 20;
+    this._runCount = 20;
     this._callsPerIteration = 1;
     this.unit = 'runs/s';
 

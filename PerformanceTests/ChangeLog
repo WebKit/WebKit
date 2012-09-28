@@ -1,5 +1,31 @@
 2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        PerfTestRunner.run should take an object
+        https://bugs.webkit.org/show_bug.cgi?id=97743
+
+        Reviewed by Kentaro Hara.
+
+        Rename PerfTestRunner.run to PerfTestRunner.measureTime and make it take an object instead of
+        5 arguments. Also get rid of PerfTestRunner._loopsPerRun since it's no longer used (it's always 1).
+
+        * CSS/StyleSheetInsert.html:
+        * DOM/resources/dom-perf.js:
+        * Layout/floats_100_100.html:
+        * Layout/floats_100_100_nested.html:
+        * Layout/floats_20_100.html:
+        * Layout/floats_20_100_nested.html:
+        * Layout/floats_2_100.html:
+        * Layout/floats_2_100_nested.html:
+        * Layout/floats_50_100.html:
+        * Layout/floats_50_100_nested.html:
+        * Parser/html-parser.html:
+        * Parser/html5-full-render.html:
+        * SVG/SvgCubics.html:
+        * SVG/SvgHitTesting.html:
+        * resources/runner.js:
+
+2012-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         PerformanceTests/CSS/StyleSheetInsert.html has a time-dependent non-Gaussian distribution
         https://bugs.webkit.org/show_bug.cgi?id=97741
 

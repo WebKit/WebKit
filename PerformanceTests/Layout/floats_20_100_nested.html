@@ -9,7 +9,8 @@
     <body>
         <pre id="log"></pre>
         <script>
-            PerfTestRunner.run(createFloatsLayoutTestFunction(20, 100, 100, 100), 1, 6);
+            PerfTestRunner.measureTime({run: createFloatsLayoutTestFunction(20, 100, 100, 100),
+                runCount: 6});
         </script>
     </body>
 </html>
