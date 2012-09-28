@@ -2482,7 +2482,7 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 
 # Accelerated compositing is disabled for elements in a RenderFlowThread
 webkit.org/b/84900 compositing/regions/webkit-flow-renderer-layer-compositing.html [ ImageOnlyFailure ]
-webkit.org/b/84900 platform/chromium/virtual/softwarecompositing/regions/webkit-flow-renderer-layer-platform/chromium/virtual/softwarecompositing.html [ ImageOnlyFailure ]
+webkit.org/b/84900 platform/chromium/virtual/softwarecompositing/regions/webkit-flow-renderer-layer-platform/chromium/virtual/softwarecompositing.html [ Skip ]
 
 webkit.org/b/92131 inspector/styles/region-style-crash.html
 
