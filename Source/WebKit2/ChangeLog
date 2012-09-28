@@ -1,3 +1,37 @@
+2012-09-28  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Some expected and actual parameters in unit tests are reversed
+        https://bugs.webkit.org/show_bug.cgi?id=97624
+
+        Reviewed by Laszlo Gombos.
+
+        According to the gtest guide, ASSERT_XXX, EXPECT_XXX(expected, actual) are recommended
+        but some unit tests do not follow this.(http://code.google.com/p/googletest/wiki/Primer)
+        Google Test's failure messages are optimized for this convention.
+
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (schemeRequestCallback):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        (on_download_requested):
+        (on_download_finished):
+        * UIProcess/API/efl/tests/test_ewk2_intents.cpp:
+        (onIntentServiceRegistration):
+        (onIntentReceived):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_refptr_evas_object.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        (onFormAboutToBeSubmitted):
+        (checkBasicPopupMenuItem):
+        (showPopupMenu):
+        (showColorPicker):
+
 2012-09-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] QRawWebView tests are broke after r129545

@@ -56,11 +56,11 @@ TEST_F(EWK2UnitTestBase, ewk_context_cookie_manager_get)
 static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userData)
 {
     const char* scheme = ewk_url_scheme_request_scheme_get(request);
-    ASSERT_STREQ(scheme, "fooscheme");
+    ASSERT_STREQ("fooscheme", scheme);
     const char* url = ewk_url_scheme_request_url_get(request);
-    ASSERT_STREQ(url, "fooscheme:MyPath");
+    ASSERT_STREQ("fooscheme:MyPath", url);
     const char* path = ewk_url_scheme_request_path_get(request);
-    ASSERT_STREQ(path, "MyPath");
+    ASSERT_STREQ("MyPath", path);
     ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
 }
 
@@ -68,7 +68,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_uri_scheme_register)
 {
     ewk_context_uri_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
     loadUrlSync("fooscheme:MyPath");
-    ASSERT_STREQ(ewk_view_title_get(webView()), "Foo");
+    ASSERT_STREQ("Foo", ewk_view_title_get(webView()));
 }
 
 struct VibrationCbData {
@@ -128,7 +128,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
 
     // This case the pattern will cause the device to vibrate for 200 ms, be still for 100 ms, and then vibrate for 5000 ms.
     loadVibrationHTMLString(webView(), "[200, 100, 5000]", true, &data);
-    ASSERT_EQ(data.vibrateCalledCount, 2);
+    ASSERT_EQ(2, data.vibrateCalledCount);
     ASSERT_TRUE(data.didReceiveVibrateCallback);
 
     // Cancel outstanding vibration pattern.
@@ -141,13 +141,13 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
     // Make sure we don't receive vibration event.
     loadVibrationHTMLString(webView(), "[5000]", false, &data);
     ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
-    ASSERT_STREQ(ewk_view_title_get(webView()), "Loaded");
+    ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
     ASSERT_FALSE(data.didReceiveVibrateCallback);
 
     // Make sure we don't receive cancel vibration event.
     loadVibrationHTMLString(webView(), "0", false, &data);
     ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
-    ASSERT_STREQ(ewk_view_title_get(webView()), "Loaded");
+    ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
     ASSERT_FALSE(data.didReceiveCancelVibrationCallback);
 }
 
@@ -168,7 +168,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_new_with_injected_bundle_path)
 TEST_F(EWK2UnitTestBase, ewk_context_ref)
 {
     Ewk_Context* context = ewk_context_new();
-    ASSERT_EQ(context, ewk_context_ref(context));
+    ASSERT_EQ(ewk_context_ref(context), context);
     ewk_context_unref(context);
     ewk_context_unref(context);
 }

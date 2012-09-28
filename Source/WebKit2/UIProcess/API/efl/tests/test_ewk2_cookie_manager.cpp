@@ -125,32 +125,32 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     ASSERT_TRUE(cookieManager);
 
     // Default policy is EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY.
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, getAcceptPolicy(cookieManager));
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
 
     Eina_List* hostnames = getHostnamesWithCookies(cookieManager);
-    ASSERT_EQ(eina_list_count(hostnames), 1);
-    ASSERT_STREQ(static_cast<char*>(eina_list_nth(hostnames, 0)), FIRST_PARTY_DOMAIN);
+    ASSERT_EQ(1, eina_list_count(hostnames));
+    ASSERT_STREQ(FIRST_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 0)));
     freeHostNames(hostnames);
     ewk_cookie_manager_cookies_clear(cookieManager);
 
     // Change policy to EWK_COOKIE_ACCEPT_POLICY_ALWAYS
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
 
     hostnames = getHostnamesWithCookies(cookieManager);
-    ASSERT_EQ(eina_list_count(hostnames), 2);
-    ASSERT_STREQ(static_cast<char*>(eina_list_nth(hostnames, 0)), FIRST_PARTY_DOMAIN);
-    ASSERT_STREQ(static_cast<char*>(eina_list_nth(hostnames, 1)), THIRD_PARTY_DOMAIN);
+    ASSERT_EQ(2, eina_list_count(hostnames));
+    ASSERT_STREQ(FIRST_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 0)));
+    ASSERT_STREQ(THIRD_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 1)));
     freeHostNames(hostnames);
     ewk_cookie_manager_cookies_clear(cookieManager);
 
     // Change policy to EWK_COOKIE_ACCEPT_POLICY_NEVER
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_NEVER);
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_NEVER);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_NEVER, getAcceptPolicy(cookieManager));
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
 void onCookiesChanged(void *eventInfo)
@@ -168,7 +168,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
 
     // Watch for changes
     bool cookiesChanged = false;
@@ -191,7 +191,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     ewk_cookie_manager_changes_watch(cookieManager, 0, 0);
     cookiesChanged = false;
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
     ASSERT_FALSE(cookiesChanged);
 
     // Watch again for notifications
@@ -205,14 +205,14 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
 
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     cookiesChanged = false;
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage2, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     ASSERT_FALSE(cookiesChanged);
 
@@ -231,31 +231,31 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
 
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
     Eina_List* hostnames = getHostnamesWithCookies(cookieManager);
-    ASSERT_EQ(eina_list_count(hostnames), 2);
+    ASSERT_EQ(2, eina_list_count(hostnames));
     freeHostNames(hostnames);
 
     // Delete first party cookie
     ewk_cookie_manager_hostname_cookies_clear(cookieManager, FIRST_PARTY_DOMAIN);
     hostnames = getHostnamesWithCookies(cookieManager);
-    ASSERT_EQ(eina_list_count(hostnames), 1);
-    ASSERT_STREQ(static_cast<char*>(eina_list_nth(hostnames, 0)), THIRD_PARTY_DOMAIN);
+    ASSERT_EQ(1, eina_list_count(hostnames));
+    ASSERT_STREQ(THIRD_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 0)));
     freeHostNames(hostnames);
 
     // Delete third party cookie
     ewk_cookie_manager_hostname_cookies_clear(cookieManager, THIRD_PARTY_DOMAIN);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     // Get all cookies again
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // Clear all cookies
     ewk_cookie_manager_cookies_clear(cookieManager);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
 TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
@@ -273,33 +273,33 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
     ASSERT_TRUE(cookieManager);
 
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
-    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+    ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
 
     // Text storage using a new file.
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // SQLite storage using a new file.
     ewk_cookie_manager_persistent_storage_set(cookieManager, sqliteStorage, EWK_COOKIE_PERSISTENT_STORAGE_SQLITE);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     loadUrlSync(httpServer->getURIForPath("/index.html").data());
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // Text storage using an existing file.
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
     ewk_cookie_manager_cookies_clear(cookieManager);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     // SQLite storage with an existing file.
     ewk_cookie_manager_persistent_storage_set(cookieManager, sqliteStorage, EWK_COOKIE_PERSISTENT_STORAGE_SQLITE);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
     ewk_cookie_manager_cookies_clear(cookieManager);
-    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+    ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     // Final clean up.
     unlink(textStorage);

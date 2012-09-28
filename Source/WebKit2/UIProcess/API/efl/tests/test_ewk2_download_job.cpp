@@ -102,23 +102,23 @@ static void on_download_requested(void* userData, Evas_Object* webview, void* ev
 {
     DownloadTestData* testData = static_cast<DownloadTestData*>(userData);
     Ewk_Download_Job* download = static_cast<Ewk_Download_Job*>(eventInfo);
-    ASSERT_EQ(ewk_download_job_state_get(download), EWK_DOWNLOAD_JOB_STATE_NOT_STARTED);
-    ASSERT_EQ(ewk_download_job_estimated_progress_get(download), 0);
-    ASSERT_EQ(ewk_download_job_elapsed_time_get(download), 0);
+    ASSERT_EQ(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED, ewk_download_job_state_get(download));
+    ASSERT_EQ(0, ewk_download_job_estimated_progress_get(download));
+    ASSERT_EQ(0, ewk_download_job_elapsed_time_get(download));
 
     Ewk_Url_Request* request = ewk_download_job_request_get(download);
     ASSERT_TRUE(request);
-    EXPECT_STREQ(ewk_url_request_url_get(request), testData->fileUrl);
+    EXPECT_STREQ(testData->fileUrl, ewk_url_request_url_get(request));
 
     Ewk_Url_Response* response = ewk_download_job_response_get(download);
     ASSERT_TRUE(response);
-    EXPECT_STREQ(ewk_url_response_mime_type_get(response), "application/pdf");
+    EXPECT_STREQ("application/pdf", ewk_url_response_mime_type_get(response));
 
-    EXPECT_STREQ(ewk_download_job_suggested_filename_get(download), serverSuggestedFilename);
+    EXPECT_STREQ(serverSuggestedFilename, ewk_download_job_suggested_filename_get(download));
 
     ASSERT_FALSE(fileExists(testData->destinationPath));
     ewk_download_job_destination_set(download, testData->destinationPath);
-    EXPECT_STREQ(ewk_download_job_destination_get(download), testData->destinationPath);
+    EXPECT_STREQ(testData->destinationPath, ewk_download_job_destination_get(download));
 }
 
 static void on_download_cancelled(void* userData, Evas_Object* webview, void* eventInfo)
@@ -141,8 +141,8 @@ static void on_download_finished(void* userData, Evas_Object* webview, void* eve
     DownloadTestData* testData = static_cast<DownloadTestData*>(userData);
     Ewk_Download_Job* download = static_cast<Ewk_Download_Job*>(eventInfo);
 
-    ASSERT_EQ(ewk_download_job_estimated_progress_get(download), 1);
-    ASSERT_EQ(ewk_download_job_state_get(download), EWK_DOWNLOAD_JOB_STATE_FINISHED);
+    ASSERT_EQ(1, ewk_download_job_estimated_progress_get(download));
+    ASSERT_EQ(EWK_DOWNLOAD_JOB_STATE_FINISHED, ewk_download_job_state_get(download));
     ASSERT_GT(ewk_download_job_elapsed_time_get(download), 0);
 
     ASSERT_TRUE(fileExists(testData->destinationPath));

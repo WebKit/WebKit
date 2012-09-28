@@ -65,14 +65,14 @@ TEST_F(EWK2UnitTestBase, reffing)
     RefPtr<Evas_Object> object = adoptRef(evas_object_box_add(canvas()));
     ASSERT_TRUE(object);
     // Evas_Objec external ref count is not as you would expect.
-    ASSERT_EQ(evas_object_ref_get(object.get()), 0);
+    ASSERT_EQ(0, evas_object_ref_get(object.get()));
 
     {
         RefPtr<Evas_Object> aRef = object;
         ASSERT_TRUE(object);
         ASSERT_TRUE(aRef);
-        ASSERT_EQ(evas_object_ref_get(object.get()), 1);
-        ASSERT_EQ(evas_object_ref_get(aRef.get()), 1);
+        ASSERT_EQ(1, evas_object_ref_get(object.get()));
+        ASSERT_EQ(1, evas_object_ref_get(aRef.get()));
 
         {
             RefPtr<Evas_Object> bRef = object;
@@ -81,51 +81,51 @@ TEST_F(EWK2UnitTestBase, reffing)
             ASSERT_TRUE(aRef);
             ASSERT_TRUE(bRef);
 
-            ASSERT_EQ(evas_object_ref_get(object.get()), 2);
-            ASSERT_EQ(evas_object_ref_get(aRef.get()), 2);
+            ASSERT_EQ(2, evas_object_ref_get(object.get()));
+            ASSERT_EQ(2, evas_object_ref_get(aRef.get()));
 
             RefPtr<Evas_Object> cRef = bRef;
             ASSERT_TRUE(cRef);
 
-            ASSERT_EQ(evas_object_ref_get(object.get()), 3);
-            ASSERT_EQ(evas_object_ref_get(aRef.get()), 3);
-            ASSERT_EQ(evas_object_ref_get(bRef.get()), 3);
-            ASSERT_EQ(evas_object_ref_get(cRef.get()), 3);
+            ASSERT_EQ(3, evas_object_ref_get(object.get()));
+            ASSERT_EQ(3, evas_object_ref_get(aRef.get()));
+            ASSERT_EQ(3, evas_object_ref_get(bRef.get()));
+            ASSERT_EQ(3, evas_object_ref_get(cRef.get()));
 
             bRef.clear();
-            ASSERT_EQ(evas_object_ref_get(object.get()), 2);
-            ASSERT_EQ(evas_object_ref_get(aRef.get()), 2);
-            ASSERT_EQ(evas_object_ref_get(cRef.get()), 2);
+            ASSERT_EQ(2, evas_object_ref_get(object.get()));
+            ASSERT_EQ(2, evas_object_ref_get(aRef.get()));
+            ASSERT_EQ(2, evas_object_ref_get(cRef.get()));
         }
-        ASSERT_EQ(evas_object_ref_get(object.get()), 1);
-        ASSERT_EQ(evas_object_ref_get(aRef.get()), 1);
+        ASSERT_EQ(1, evas_object_ref_get(object.get()));
+        ASSERT_EQ(1, evas_object_ref_get(aRef.get()));
     }
-    ASSERT_EQ(evas_object_ref_get(object.get()), 0);
+    ASSERT_EQ(0, evas_object_ref_get(object.get()));
 }
 
 TEST_F(EWK2UnitTestBase, destruction)
 {
     RefPtr<Evas_Object> object = adoptRef(evas_object_box_add(canvas()));
     ASSERT_TRUE(object);
-    ASSERT_EQ(evas_object_ref_get(object.get()), 0);
+    ASSERT_EQ(0, evas_object_ref_get(object.get()));
 
     RefPtr<Evas_Object> aRef = object;
     ASSERT_TRUE(object);
     ASSERT_TRUE(aRef);
-    ASSERT_EQ(evas_object_ref_get(object.get()), 1);
-    ASSERT_EQ(evas_object_ref_get(aRef.get()), 1);
+    ASSERT_EQ(1, evas_object_ref_get(object.get()));
+    ASSERT_EQ(1, evas_object_ref_get(aRef.get()));
 
     object = nullptr;
-    ASSERT_EQ(evas_object_ref_get(object.get()), 0);
-    ASSERT_EQ(evas_object_ref_get(aRef.get()), 0);
+    ASSERT_EQ(0, evas_object_ref_get(object.get()));
+    ASSERT_EQ(0, evas_object_ref_get(aRef.get()));
 
     object = aRef;
-    ASSERT_EQ(evas_object_ref_get(object.get()), 1);
-    ASSERT_EQ(evas_object_ref_get(aRef.get()), 1);
+    ASSERT_EQ(1, evas_object_ref_get(object.get()));
+    ASSERT_EQ(1, evas_object_ref_get(aRef.get()));
 
     object = 0;
-    ASSERT_EQ(evas_object_ref_get(object.get()), 0);
-    ASSERT_EQ(evas_object_ref_get(aRef.get()), 0);
+    ASSERT_EQ(0, evas_object_ref_get(object.get()));
+    ASSERT_EQ(0, evas_object_ref_get(aRef.get()));
 
     aRef.clear();
     ASSERT_FALSE(aRef);

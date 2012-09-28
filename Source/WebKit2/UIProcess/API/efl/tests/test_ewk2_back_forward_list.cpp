@@ -107,10 +107,10 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_previous_item_get)
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
     loadUrlSync(url1);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     loadUrlSync(urlFromTitle(httpServer.get(), title2));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
@@ -128,11 +128,11 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_next_item_get)
     httpServer->run(serverCallbackNavigation);
 
     loadUrlSync(urlFromTitle(httpServer.get(), title1));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
     loadUrlSync(url2);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     // Go back to Page1.
     ewk_view_back(webView());
@@ -155,10 +155,10 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_item_at_index_get)
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
     loadUrlSync(url1);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     loadUrlSync(urlFromTitle(httpServer.get(), title2));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
@@ -179,15 +179,15 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_count)
     httpServer->run(serverCallbackNavigation);
 
     loadUrlSync(urlFromTitle(httpServer.get(), title1));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     loadUrlSync(urlFromTitle(httpServer.get(), title2));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
 
-    EXPECT_EQ(ewk_back_forward_list_count(backForwardList), 2);
+    EXPECT_EQ(2, ewk_back_forward_list_count(backForwardList));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
@@ -197,21 +197,21 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
     loadUrlSync(url1);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
     loadUrlSync(url2);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     loadUrlSync(urlFromTitle(httpServer.get(), title3));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title3);
+    ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
 
     Eina_List* backList = ewk_back_forward_list_n_back_items_copy(backForwardList, 1);
     ASSERT_TRUE(backList);
-    ASSERT_EQ(eina_list_count(backList), 1);
+    ASSERT_EQ(1, eina_list_count(backList));
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 0)), title2, url2, url2);
     freeEinaList(backList);
 
@@ -221,7 +221,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
 
     backList = ewk_back_forward_list_n_back_items_copy(backForwardList, -1);
     ASSERT_TRUE(backList);
-    ASSERT_EQ(eina_list_count(backList), 2);
+    ASSERT_EQ(2, eina_list_count(backList));
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 0)), title1, url1, url1);
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 1)), title2, url2, url2);
     freeEinaList(backList);
@@ -233,15 +233,15 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
     httpServer->run(serverCallbackNavigation);
 
     loadUrlSync(urlFromTitle(httpServer.get(), title1));
-    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+    ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
     loadUrlSync(url2);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+    ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     WKEinaSharedString url3 = urlFromTitle(httpServer.get(), title3);
     loadUrlSync(url3);
-    ASSERT_STREQ(ewk_view_title_get(webView()), title3);
+    ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     // Go back to Page1.
     ewk_view_back(webView());
@@ -254,7 +254,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
 
     Eina_List* forwardList = ewk_back_forward_list_n_forward_items_copy(backForwardList, 1);
     ASSERT_TRUE(forwardList);
-    ASSERT_EQ(eina_list_count(forwardList), 1);
+    ASSERT_EQ(1, eina_list_count(forwardList));
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 0)), title2, url2, url2);
     freeEinaList(forwardList);
 
@@ -264,7 +264,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
 
     forwardList = ewk_back_forward_list_n_forward_items_copy(backForwardList, -1);
     ASSERT_TRUE(forwardList);
-    ASSERT_EQ(eina_list_count(forwardList), 2);
+    ASSERT_EQ(2, eina_list_count(forwardList));
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 0)), title2, url2, url2);
     checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 1)), title3, url3, url3);
     freeEinaList(forwardList);

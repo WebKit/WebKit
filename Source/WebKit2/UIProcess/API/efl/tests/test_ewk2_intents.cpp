@@ -43,11 +43,11 @@ static void onIntentServiceRegistration(void* userData, Evas_Object*, void* even
 
     Ewk_Intent_Service* service = static_cast<Ewk_Intent_Service*>(eventInfo);
     ASSERT_TRUE(service);
-    EXPECT_STREQ(ewk_intent_service_action_get(service), "action");
-    EXPECT_STREQ(ewk_intent_service_type_get(service), "type");
-    EXPECT_STREQ(ewk_intent_service_title_get(service), "Title");
-    EXPECT_STREQ(ewk_intent_service_href_get(service), "http://example.com/service");
-    EXPECT_STREQ(ewk_intent_service_disposition_get(service), "inline");
+    EXPECT_STREQ("action", ewk_intent_service_action_get(service));
+    EXPECT_STREQ("type", ewk_intent_service_type_get(service));
+    EXPECT_STREQ("Title", ewk_intent_service_title_get(service));
+    EXPECT_STREQ("http://example.com/service", ewk_intent_service_href_get(service));
+    EXPECT_STREQ("inline", ewk_intent_service_disposition_get(service));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_intent_service_registration)
@@ -76,22 +76,22 @@ static void onIntentReceived(void* userData, Evas_Object*, void* eventInfo)
 
     if (*intentReceivedCount == 1) {
         // First intent.
-        EXPECT_STREQ(ewk_intent_action_get(intent), "action1");
-        EXPECT_STREQ(ewk_intent_type_get(intent), "mime/type1");
-        EXPECT_STREQ(ewk_intent_service_get(intent), "http://service1.com/");
-        EXPECT_STREQ(ewk_intent_extra_get(intent, "key1"), "value1");
-        EXPECT_STREQ(ewk_intent_extra_get(intent, "key2"), "value2");
+        EXPECT_STREQ("action1", ewk_intent_action_get(intent));
+        EXPECT_STREQ("mime/type1", ewk_intent_type_get(intent));
+        EXPECT_STREQ("http://service1.com/", ewk_intent_service_get(intent));
+        EXPECT_STREQ("value1", ewk_intent_extra_get(intent, "key1"));
+        EXPECT_STREQ("value2", ewk_intent_extra_get(intent, "key2"));
     } else {
         // Second intent.
-        EXPECT_STREQ(ewk_intent_action_get(intent), "action2");
-        EXPECT_STREQ(ewk_intent_type_get(intent), "mime/type2");
+        EXPECT_STREQ("action2", ewk_intent_action_get(intent));
+        EXPECT_STREQ("mime/type2", ewk_intent_type_get(intent));
         Eina_List* suggestions = ewk_intent_suggestions_get(intent);
         ASSERT_TRUE(suggestions);
-        ASSERT_EQ(eina_list_count(suggestions), 2);
+        ASSERT_EQ(2, eina_list_count(suggestions));
         // We need to sort the suggestions since Intent is using a HashSet internally.
         suggestions = eina_list_sort(suggestions, 2, stringSortCb);
-        EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 0)), "http://service1.com/");
-        EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 1)), "http://service2.com/");
+        EXPECT_STREQ("http://service1.com/", static_cast<const char*>(eina_list_nth(suggestions, 0)));
+        EXPECT_STREQ("http://service2.com/", static_cast<const char*>(eina_list_nth(suggestions, 1)));
 
         void* listData = 0;
         EINA_LIST_FREE(suggestions, listData)
@@ -109,12 +109,12 @@ TEST_F(EWK2UnitTestBase, ewk_intent_request)
     mouseClick(5, 5);
     while (intentReceivedCount != 1)
         ecore_main_loop_iterate();
-    ASSERT_EQ(intentReceivedCount, 1);
+    ASSERT_EQ(1, intentReceivedCount);
 
     // Generate a second intent request.
     mouseClick(5, 5);
     while (intentReceivedCount != 2)
         ecore_main_loop_iterate();
-    ASSERT_EQ(intentReceivedCount, 2);
+    ASSERT_EQ(2, intentReceivedCount);
     evas_object_smart_callback_del(webView(), "intent,request,new", onIntentReceived);
 }
