@@ -223,6 +223,13 @@ bool WebNode::focused() const
     return m_private->focused();
 }
 
+bool WebNode::remove()
+{
+    ExceptionCode exceptionCode = 0;
+    m_private->remove(exceptionCode);
+    return !exceptionCode;
+}
+
 bool WebNode::hasNonEmptyBoundingBox() const
 {
     m_private->document()->updateLayoutIgnorePendingStylesheets();

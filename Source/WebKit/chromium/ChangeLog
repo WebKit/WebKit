@@ -1,3 +1,36 @@
+2012-09-28  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Fix the find-in-page implementation for detaching frames.
+        https://bugs.webkit.org/show_bug.cgi?id=97807
+
+        Reviewed by Adam Barth.
+
+        Follow-up of 97688. Introduces proper test coverage for the find-in-page
+        feature in detaching/detached frame situations, fixing a few crashes and
+        ensuring that a final reply is always sent.
+
+        * public/WebNode.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        (WebKit::WebFrameImpl::flushCurrentScopingEffort):
+        (WebKit):
+        (WebKit::WebFrameImpl::finishCurrentScopingEffort):
+        (WebKit::WebFrameImpl::cancelPendingScopingEffort):
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::setWebCoreFrame):
+        (WebKit::WebFrameImpl::initializeAsMainFrame):
+        (WebKit::WebFrameImpl::createChildFrame):
+        (WebKit::WebFrameImpl::shouldScopeMatches):
+        (WebKit::WebFrameImpl::willDetachPage):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::remove):
+        (WebKit):
+        * tests/WebFrameTest.cpp:
+        * tests/data/find_in_page.html:
+
 2012-09-28  Kent Tamura  <tkent@chromium.org>
 
         Clean up Localizer-related functions

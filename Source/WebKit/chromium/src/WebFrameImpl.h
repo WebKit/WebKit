@@ -35,6 +35,7 @@
 #include "WebFrame.h"
 
 #include "Frame.h"
+#include "FrameDestructionObserver.h"
 #include "FrameLoaderClientImpl.h"
 #include <wtf/Compiler.h>
 #include <wtf/OwnPtr.h>
@@ -69,7 +70,10 @@ struct WebPrintParams;
 template <typename T> class WebVector;
 
 // Implementation of WebFrame, note that this is a reference counted object.
-class WebFrameImpl : public WebFrame, public RefCounted<WebFrameImpl> {
+class WebFrameImpl
+    : public WebFrame
+    , public RefCounted<WebFrameImpl>
+    , public WebCore::FrameDestructionObserver {
 public:
     // WebFrame methods:
     virtual WebString uniqueName() const;
@@ -239,6 +243,9 @@ public:
     virtual bool selectionStartHasSpellingMarkerFor(int from, int length) const;
     virtual WebString layerTreeAsText(bool showDebugInfo = false) const;
 
+    // WebCore::FrameDestructionObserver methods.
+    virtual void willDetachPage();
+
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     virtual ~WebFrameImpl();
 
@@ -330,6 +337,9 @@ private:
     // WebFrameLoaderClient
     void closing();
 
+    // Sets the local WebCore frame and registers destruction observers.
+    void setWebCoreFrame(WebCore::Frame*);
+
     // Notifies the delegate about a new selection rect.
     void reportFindInPageSelection(
         const WebRect& selectionRect, int activeMatchOrdinal, int identifier);
@@ -381,6 +391,11 @@ private:
     // was searched.
     bool shouldScopeMatches(const WTF::String& searchText);
 
+    // Removes the current frame from the global scoping effort and triggers any
+    // updates if appropriate. This method does not mark the scoping operation
+    // as finished.
+    void flushCurrentScopingEffort(int identifier);
+
     // Finishes the current scoping effort and triggers any updates if appropriate.
     void finishCurrentScopingEffort(int identifier);
 
@@ -406,6 +421,7 @@ private:
 
     WebFrameClient* m_client;
 
+    // FIXME: this is redundant as we already have m_frame from FrameDestructionObserver.
     // This is a weak pointer to our corresponding WebCore frame.  A reference to
     // ourselves is held while frame_ is valid.  See our Closing method.
     WebCore::Frame* m_frame;
@@ -437,8 +453,7 @@ private:
 
     // Keeps track of how many matches this frame has found so far, so that we
     // don't loose count between scoping efforts, and is also used (in conjunction
-    // with m_lastSearchString and m_scopingComplete) to figure out if we need to
-    // search the frame again.
+    // with m_lastSearchString) to figure out if we need to search the frame again.
     int m_lastMatchCount;
 
     // This variable keeps a cumulative total of matches found so far for ALL the
@@ -451,9 +466,12 @@ private:
     // It should be -1 for all other frames.
     int m_framesScopingCount;
 
-    // Keeps track of whether the scoping effort was completed (the user may
-    // interrupt it before it completes by submitting a new search).
-    bool m_scopingComplete;
+    // Identifier of the latest find-in-page request. Required to be stored in
+    // the frame in order to reply if required in case the frame is detached.
+    int m_findRequestIdentifier;
+
+    // Keeps track of whether there is an scoping effort ongoing in the frame.
+    bool m_scopingInProgress;
 
     // Keeps track of whether the last find request completed its scoping effort
     // without finding any matches in this frame.

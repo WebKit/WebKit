@@ -525,8 +525,6 @@ WebFrameImpl::FindMatch::FindMatch(PassRefPtr<Range> range, int ordinal)
 {
 }
 
-// WebFrame -------------------------------------------------------------------
-
 class WebFrameImpl::DeferredScopeStringMatches {
 public:
     DeferredScopeStringMatches(WebFrameImpl* webFrame,
@@ -558,7 +556,6 @@ private:
     WebFindOptions m_options;
     bool m_reset;
 };
-
 
 // WebFrame -------------------------------------------------------------------
 
@@ -1618,6 +1615,9 @@ bool WebFrameImpl::find(int identifier,
                         bool wrapWithinFrame,
                         WebRect* selectionRect)
 {
+    if (!frame() || !frame()->page())
+        return false;
+
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
     if (!options.findNext)
@@ -1716,12 +1716,14 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                                       const WebFindOptions& options,
                                       bool reset)
 {
-    WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
-
     if (reset) {
         // This is a brand new search, so we need to reset everything.
         // Scoping is just about to begin.
-        m_scopingComplete = false;
+        m_scopingInProgress = true;
+
+        // Need to keep the current identifier locally in order to finish the
+        // request in case the frame is detached during the process.
+        m_findRequestIdentifier = identifier;
 
         // Clear highlighting for this frame.
         if (frame() && frame()->page() && frame()->editor()->markedTextMatchesAreHighlighted())
@@ -1736,7 +1738,9 @@ void WebFrameImpl::scopeStringMatches(int identifier,
 
         m_resumeScopingFromRange = 0;
 
-        mainFrameImpl->m_framesScopingCount++;
+        // The view might be null on detached frames.
+        if (frame() && frame()->page())
+            viewImpl()->mainFrameImpl()->m_framesScopingCount++;
 
         // Now, defer scoping until later to allow find operation to finish quickly.
         scopeStringMatchesSoon(
@@ -1755,6 +1759,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         return;
     }
 
+    WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
     RefPtr<Range> searchRange(rangeOfContents(frame()->document()));
 
     Node* originalEndContainer = searchRange->endContainer();
@@ -1884,20 +1889,29 @@ void WebFrameImpl::scopeStringMatches(int identifier,
     finishCurrentScopingEffort(identifier);
 }
 
-void WebFrameImpl::finishCurrentScopingEffort(int identifier)
+void WebFrameImpl::flushCurrentScopingEffort(int identifier)
 {
+    if (!frame() || !frame()->page())
+        return;
+
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
     // This frame has no further scoping left, so it is done. Other frames might,
     // of course, continue to scope matches.
-    m_scopingComplete = true;
     mainFrameImpl->m_framesScopingCount--;
-    m_lastFindRequestCompletedWithNoMatches = !m_lastMatchCount;
 
     // If this is the last frame to finish scoping we need to trigger the final
     // update to be sent.
     if (!mainFrameImpl->m_framesScopingCount)
         mainFrameImpl->increaseMatchCount(0, identifier);
+}
+
+void WebFrameImpl::finishCurrentScopingEffort(int identifier)
+{
+    flushCurrentScopingEffort(identifier);
+
+    m_scopingInProgress = false;
+    m_lastFindRequestCompletedWithNoMatches = !m_lastMatchCount;
 
     // This frame is done, so show any scrollbar tickmarks we haven't drawn yet.
     invalidateArea(InvalidateScrollbar);
@@ -1910,8 +1924,11 @@ void WebFrameImpl::cancelPendingScopingEffort()
 
     m_activeMatchIndexInCurrentFrame = -1;
 
-    if (!m_scopingComplete)
+    // Last request didn't complete.
+    if (m_scopingInProgress)
         m_lastFindRequestCompletedWithNoMatches = false;
+
+    m_scopingInProgress = false;
 }
 
 void WebFrameImpl::increaseMatchCount(int count, int identifier)
@@ -2273,7 +2290,8 @@ PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)
 }
 
 WebFrameImpl::WebFrameImpl(WebFrameClient* client)
-    : m_frameLoaderClient(this)
+    : FrameDestructionObserver(0)
+    , m_frameLoaderClient(this)
     , m_client(client)
     , m_frame(0)
     , m_currentActiveMatchFrame(0)
@@ -2283,7 +2301,8 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_lastMatchCount(-1)
     , m_totalMatchCount(-1)
     , m_framesScopingCount(-1)
-    , m_scopingComplete(false)
+    , m_findRequestIdentifier(-1)
+    , m_scopingInProgress(false)
     , m_lastFindRequestCompletedWithNoMatches(false)
     , m_nextInvalidateAfter(0)
     , m_findMatchMarkersVersion(0)
@@ -2304,10 +2323,17 @@ WebFrameImpl::~WebFrameImpl()
     cancelPendingScopingEffort();
 }
 
+void WebFrameImpl::setWebCoreFrame(WebCore::Frame* frame)
+{
+    ASSERT(frame);
+    m_frame = frame;
+    observeFrame(m_frame);
+}
+
 void WebFrameImpl::initializeAsMainFrame(WebCore::Page* page)
 {
     RefPtr<Frame> frame = Frame::create(page, 0, &m_frameLoaderClient);
-    m_frame = frame.get();
+    setWebCoreFrame(frame.get());
 
     // Add reference on behalf of FrameLoader.  See comments in
     // WebFrameLoaderClient::frameLoaderDestroyed for more info.
@@ -2330,7 +2356,7 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
 
     RefPtr<Frame> childFrame = Frame::create(
         m_frame->page(), ownerElement, &webframe->m_frameLoaderClient);
-    webframe->m_frame = childFrame.get();
+    webframe->setWebCoreFrame(childFrame.get());
 
     childFrame->tree()->setName(request.frameName());
 
@@ -2569,7 +2595,8 @@ bool WebFrameImpl::shouldScopeMatches(const String& searchText)
 {
     // Don't scope if we can't find a frame or a view.
     // The user may have closed the tab/application, so abort.
-    if (!frame() || !frame()->view())
+    // Also ignore detached frames, as many find operations report to the main frame.
+    if (!frame() || !frame()->view() || !frame()->page())
         return false;
 
     ASSERT(frame()->document() && frame()->view());
@@ -2655,6 +2682,23 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
 
     if (!m_frame->navigationScheduler()->locationChangePending())
         m_frame->document()->loader()->writer()->replaceDocument(scriptResult, ownerDocument.get());
+}
+
+void WebFrameImpl::willDetachPage()
+{
+    if (!frame() || !frame()->page())
+        return;
+
+    // Do not expect string scoping results from any frames that got detached
+    // in the middle of the operation.
+    if (m_scopingInProgress) {
+
+        // There is a possibility that the frame being detached was the only
+        // pending one. We need to make sure final replies can be sent.
+        flushCurrentScopingEffort(m_findRequestIdentifier);
+
+        cancelPendingScopingEffort();
+    }
 }
 
 } // namespace WebKit

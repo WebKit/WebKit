@@ -900,6 +900,8 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     WebFrameImpl* mainFrame = static_cast<WebFrameImpl*>(webView->mainFrame());
     EXPECT_TRUE(mainFrame->find(kFindIdentifier, searchText, options, false, 0));
 
+    mainFrame->resetMatchCount();
+
     for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
         frame->scopeStringMatches(kFindIdentifier, searchText, options, true);
 
@@ -987,6 +989,129 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     webkit_support::RunAllPendingMessages();
     EXPECT_TRUE(mainFrame->findMatchMarkersVersion() != rectsVersion);
 
+    webView->close();
+}
+
+TEST_F(WebFrameTest, FindOnDetachedFrame)
+{
+    registerMockedHttpURLLoad("find_in_page.html");
+    registerMockedHttpURLLoad("find_in_page_frame.html");
+
+    FindUpdateWebFrameClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find_in_page.html", true, &client);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    static const char* kFindString = "result";
+    static const int kFindIdentifier = 12345;
+
+    WebFindOptions options;
+    WebString searchText = WebString::fromUTF8(kFindString);
+    WebFrameImpl* mainFrame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    WebFrameImpl* secondFrame = static_cast<WebFrameImpl*>(mainFrame->traverseNext(false));
+    RefPtr<WebCore::Frame> holdSecondFrame = secondFrame->frame();
+
+    // Detach the frame before finding.
+    EXPECT_TRUE(mainFrame->document().getElementById("frame").remove());
+
+    EXPECT_TRUE(mainFrame->find(kFindIdentifier, searchText, options, false, 0));
+    EXPECT_FALSE(secondFrame->find(kFindIdentifier, searchText, options, false, 0));
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_FALSE(client.findResultsAreReady());
+
+    mainFrame->resetMatchCount();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        frame->scopeStringMatches(kFindIdentifier, searchText, options, true);
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_TRUE(client.findResultsAreReady());
+
+    holdSecondFrame.release();
+    webView->close();
+}
+
+TEST_F(WebFrameTest, FindDetachFrameBeforeScopeStrings)
+{
+    registerMockedHttpURLLoad("find_in_page.html");
+    registerMockedHttpURLLoad("find_in_page_frame.html");
+
+    FindUpdateWebFrameClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find_in_page.html", true, &client);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    static const char* kFindString = "result";
+    static const int kFindIdentifier = 12345;
+
+    WebFindOptions options;
+    WebString searchText = WebString::fromUTF8(kFindString);
+    WebFrameImpl* mainFrame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    WebFrameImpl* secondFrame = static_cast<WebFrameImpl*>(mainFrame->traverseNext(false));
+    RefPtr<WebCore::Frame> holdSecondFrame = secondFrame->frame();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        EXPECT_TRUE(frame->find(kFindIdentifier, searchText, options, false, 0));
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_FALSE(client.findResultsAreReady());
+
+    // Detach the frame between finding and scoping.
+    EXPECT_TRUE(mainFrame->document().getElementById("frame").remove());
+
+    mainFrame->resetMatchCount();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        frame->scopeStringMatches(kFindIdentifier, searchText, options, true);
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_TRUE(client.findResultsAreReady());
+
+    holdSecondFrame.release();
+    webView->close();
+}
+
+TEST_F(WebFrameTest, FindDetachFrameWhileScopingStrings)
+{
+    registerMockedHttpURLLoad("find_in_page.html");
+    registerMockedHttpURLLoad("find_in_page_frame.html");
+
+    FindUpdateWebFrameClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find_in_page.html", true, &client);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    static const char* kFindString = "result";
+    static const int kFindIdentifier = 12345;
+
+    WebFindOptions options;
+    WebString searchText = WebString::fromUTF8(kFindString);
+    WebFrameImpl* mainFrame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    WebFrameImpl* secondFrame = static_cast<WebFrameImpl*>(mainFrame->traverseNext(false));
+    RefPtr<WebCore::Frame> holdSecondFrame = secondFrame->frame();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        EXPECT_TRUE(frame->find(kFindIdentifier, searchText, options, false, 0));
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_FALSE(client.findResultsAreReady());
+
+    mainFrame->resetMatchCount();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        frame->scopeStringMatches(kFindIdentifier, searchText, options, true);
+
+    // The first scopeStringMatches will have reset the state. Detach before it actually scopes.
+    EXPECT_TRUE(mainFrame->document().getElementById("frame").remove());
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_TRUE(client.findResultsAreReady());
+
+    holdSecondFrame.release();
     webView->close();
 }
 
