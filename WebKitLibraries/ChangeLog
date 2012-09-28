@@ -1,3 +1,16 @@
+2012-09-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports to override text track rendering style
+        <rdar://problem/12044964>
+
+        Reviewed by Jessie Berlin.
+
+        Update WKSI libraries.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/12351906> Have DumpRenderTree and WebKitTestRunner crash logs show which test crashed
