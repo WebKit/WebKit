@@ -83,9 +83,9 @@ public:
     String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
     {
         return generateCSSString(top()->customSerializeResolvingVariables(variables),
-                                 right()->customSerializeResolvingVariables(variables),
-                                 bottom()->customSerializeResolvingVariables(variables),
-                                 left()->customSerializeResolvingVariables(variables));
+            right()->customSerializeResolvingVariables(variables),
+            bottom()->customSerializeResolvingVariables(variables),
+            left()->customSerializeResolvingVariables(variables));
     }
 #endif
 
@@ -113,9 +113,9 @@ public:
     String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
     {
         return generateCSSString(top()->customSerializeResolvingVariables(variables),
-                                 right()->customSerializeResolvingVariables(variables),
-                                 bottom()->customSerializeResolvingVariables(variables),
-                                 left()->customSerializeResolvingVariables(variables));
+            right()->customSerializeResolvingVariables(variables),
+            bottom()->customSerializeResolvingVariables(variables),
+            left()->customSerializeResolvingVariables(variables));
     }
 #endif
 
@@ -125,6 +125,8 @@ private:
     static String generateCSSString(const String& top, const String& right, const String& bottom, const String& left)
     {
         StringBuilder result;
+        // reserve space for the four strings, plus three space separator characters.
+        result.reserveCapacity(top.length() + right.length() + bottom.length() + left.length() + 3);
         result.append(top);
         if (right != top || bottom != top || left != top) {
             result.append(' ');

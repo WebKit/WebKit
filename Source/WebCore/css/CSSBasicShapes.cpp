@@ -39,20 +39,24 @@ namespace WebCore {
 
 static String buildRectangleString(const String& x, const String& y, const String& width, const String& height, const String& radiusX, const String& radiusY)
 {
+    char opening[] = "rectangle(";
+    char separator[] = ", ";
     StringBuilder result;
-    result.appendLiteral("rectangle(");
+    // Compute the required capacity in advance to reduce allocations.
+    result.reserveCapacity((sizeof(opening) - 1) + (5 * (sizeof(separator) -1 )) + 1 + x.length() + y.length() + width.length() + height.length() + radiusX.length() + radiusY.length());
+    result.appendLiteral(opening);
     result.append(x);
-    result.appendLiteral(", ");
+    result.appendLiteral(separator);
     result.append(y);
-    result.appendLiteral(", ");
+    result.appendLiteral(separator);
     result.append(width);
-    result.appendLiteral(", ");
+    result.appendLiteral(separator);
     result.append(height);
     if (!radiusX.isNull()) {
-        result.appendLiteral(", ");
+        result.appendLiteral(separator);
         result.append(radiusX);
         if (!radiusY.isNull()) {
-            result.appendLiteral(", ");
+            result.appendLiteral(separator);
             result.append(radiusY);
         }
     }
@@ -63,22 +67,22 @@ static String buildRectangleString(const String& x, const String& y, const Strin
 String CSSBasicShapeRectangle::cssText() const
 {
     return buildRectangleString(m_x->cssText(),
-                                m_y->cssText(),
-                                m_width->cssText(),
-                                m_height->cssText(),
-                                m_radiusX.get() ? m_radiusX->cssText() : String(),
-                                m_radiusY.get() ? m_radiusY->cssText() : String());
+        m_y->cssText(),
+        m_width->cssText(),
+        m_height->cssText(),
+        m_radiusX.get() ? m_radiusX->cssText() : String(),
+        m_radiusY.get() ? m_radiusY->cssText() : String());
 }
 
 #if ENABLE(CSS_VARIABLES)
 String CSSBasicShapeRectangle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
     return buildRectangleString(m_x->serializeResolvingVariables(variables),
-                                m_y->serializeResolvingVariables(variables),
-                                m_width->serializeResolvingVariables(variables),
-                                m_height->serializeResolvingVariables(variables),
-                                m_radiusX.get() ? m_radiusX->serializeResolvingVariables(variables) : String(),
-                                m_radiusY.get() ? m_radiusY->serializeResolvingVariables(variables) : String());
+        m_y->serializeResolvingVariables(variables),
+        m_width->serializeResolvingVariables(variables),
+        m_height->serializeResolvingVariables(variables),
+        m_radiusX.get() ? m_radiusX->serializeResolvingVariables(variables) : String(),
+        m_radiusY.get() ? m_radiusY->serializeResolvingVariables(variables) : String());
 }
 
 bool CSSBasicShapeRectangle::hasVariableReference() const
@@ -106,8 +110,8 @@ String CSSBasicShapeCircle::cssText() const
 String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
     return buildCircleString(m_centerX->serializeResolvingVariables(variables),
-                             m_centerY->serializeResolvingVariables(variables),
-                             m_radius->serializeResolvingVariables(variables));
+        m_centerY->serializeResolvingVariables(variables),
+        m_radius->serializeResolvingVariables(variables));
 }
 
 bool CSSBasicShapeCircle::hasVariableReference() const
@@ -132,9 +136,9 @@ String CSSBasicShapeEllipse::cssText() const
 String CSSBasicShapeEllipse::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
     return buildEllipseString(m_centerX->serializeResolvingVariables(variables),
-                              m_centerY->serializeResolvingVariables(variables),
-                              m_radiusX->serializeResolvingVariables(variables),
-                              m_radiusY->serializeResolvingVariables(variables));
+        m_centerY->serializeResolvingVariables(variables),
+        m_radiusX->serializeResolvingVariables(variables),
+        m_radiusY->serializeResolvingVariables(variables));
 }
 
 bool CSSBasicShapeEllipse::hasVariableReference() const
@@ -148,18 +152,32 @@ bool CSSBasicShapeEllipse::hasVariableReference() const
 
 static String buildPolygonString(const WindRule& windRule, const Vector<String>& points)
 {
+    ASSERT(!(points.size() % 2));
+
     StringBuilder result;
+    char evenOddOpening[] = "polygon(evenodd, ";
+    char nonZeroOpening[] = "polygon(nonzero, ";
+    char commaSeparator[] = ", ";
+    COMPILE_ASSERT(sizeof(evenOddOpening) == sizeof(nonZeroOpening), polygon_string_openings_have_same_length);
+    
+    // Compute the required capacity in advance to reduce allocations.
+    size_t length = sizeof(evenOddOpening) - 1;
+    for (size_t i = 0; i < points.size(); i += 2) {
+        if (i)
+            length += (sizeof(commaSeparator) - 1);
+        // add length of two strings, plus one for the space separator.
+        length += points[i].length() + 1 + points[i + 1].length();
+    }
+    result.reserveCapacity(length);
 
     if (windRule == RULE_EVENODD)
-        result.appendLiteral("polygon(evenodd, ");
+        result.appendLiteral(evenOddOpening);
     else
-        result.appendLiteral("polygon(nonzero, ");
-
-    ASSERT(!(points.size() % 2));
+        result.appendLiteral(nonZeroOpening);
 
     for (size_t i = 0; i < points.size(); i += 2) {
         if (i)
-            result.appendLiteral(", ");
+            result.appendLiteral(commaSeparator);
         result.append(points[i]);
         result.append(' ');
         result.append(points[i + 1]);
