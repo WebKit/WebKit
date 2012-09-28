@@ -268,8 +268,7 @@ public:
 
     WebViewImpl* viewImpl() const;
 
-    WebCore::Frame* frame() const { return m_frame; }
-    WebCore::FrameView* frameView() const { return m_frame ? m_frame->view() : 0; }
+    WebCore::FrameView* frameView() const { return frame() ? frame()->view() : 0; }
 
     // Getters for the impls corresponding to Get(Provisional)DataSource. They
     // may return 0 if there is no corresponding data source.
@@ -331,11 +330,7 @@ private:
       InvalidateAll          // Both content area and the scrollbar.
     };
 
-    WebFrameImpl(WebFrameClient*);
-
-    // Informs the WebFrame that the Frame is being closed, called by the
-    // WebFrameLoaderClient
-    void closing();
+    explicit WebFrameImpl(WebFrameClient*);
 
     // Sets the local WebCore frame and registers destruction observers.
     void setWebCoreFrame(WebCore::Frame*);
@@ -420,11 +415,6 @@ private:
     FrameLoaderClientImpl m_frameLoaderClient;
 
     WebFrameClient* m_client;
-
-    // FIXME: this is redundant as we already have m_frame from FrameDestructionObserver.
-    // This is a weak pointer to our corresponding WebCore frame.  A reference to
-    // ourselves is held while frame_ is valid.  See our Closing method.
-    WebCore::Frame* m_frame;
 
     // A way for the main frame to keep track of which frame has an active
     // match. Should be 0 for all other frames.

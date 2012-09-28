@@ -1,3 +1,22 @@
+2012-09-28  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebFrameImpl::m_frame is redundant now that WebFrameImpl inherits from FrameDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=97934
+
+        Reviewed by James Robinson.
+
+        After http://trac.webkit.org/changeset/129910, WebFrameImpl inherits
+        from FrameDestructionObserver, which means it no longer need to manage
+        its own weak pointer to WebCore::Frame.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::frameLoaderDestroyed):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::setWebCoreFrame):
+        * src/WebFrameImpl.h:
+        (WebKit::WebFrameImpl::frameView):
+
 2012-09-28  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed Chromium Win build fix.

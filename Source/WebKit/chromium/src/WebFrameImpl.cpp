@@ -2170,7 +2170,6 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     : FrameDestructionObserver(0)
     , m_frameLoaderClient(this)
     , m_client(client)
-    , m_frame(0)
     , m_currentActiveMatchFrame(0)
     , m_activeMatchIndexInCurrentFrame(-1)
     , m_locatingActiveRect(false)
@@ -2203,8 +2202,7 @@ WebFrameImpl::~WebFrameImpl()
 void WebFrameImpl::setWebCoreFrame(WebCore::Frame* frame)
 {
     ASSERT(frame);
-    m_frame = frame;
-    observeFrame(m_frame);
+    observeFrame(frame);
 }
 
 void WebFrameImpl::initializeAsMainFrame(WebCore::Page* page)
@@ -2394,11 +2392,6 @@ void WebFrameImpl::didFail(const ResourceError& error, bool wasProvisional)
 void WebFrameImpl::setCanHaveScrollbars(bool canHaveScrollbars)
 {
     frame()->view()->setCanHaveScrollbars(canHaveScrollbars);
-}
-
-void WebFrameImpl::closing()
-{
-    m_frame = 0;
 }
 
 void WebFrameImpl::invalidateArea(AreaToInvalidate area)

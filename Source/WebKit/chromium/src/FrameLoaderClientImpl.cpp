@@ -125,7 +125,7 @@ void FrameLoaderClientImpl::frameLoaderDestroyed()
     // serves to keep us alive until the FrameLoader is done with us.  The
     // FrameLoader calls this method when it's going away.  Therefore, we balance
     // out that extra reference, which may cause 'this' to be deleted.
-    m_webFrame->closing();
+    ASSERT(!m_webFrame->frame());
     m_webFrame->deref();
 }
 
