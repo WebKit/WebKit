@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-static const char* tooLargeSize = "Size is too large (or is negative).";
-static const char* outOfRangeLengthAndOffset = "Index is out of range.";
+const char tooLargeSize[] = "Size is too large (or is negative).";
+const char outOfRangeLengthAndOffset[] = "Index is out of range.";
 
 // Copy the elements from the source array to the typed destination array.
 // Returns true if it succeeded, otherwise returns false.

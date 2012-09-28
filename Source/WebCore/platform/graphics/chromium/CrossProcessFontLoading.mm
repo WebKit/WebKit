@@ -89,17 +89,6 @@ WTF::String hashKeyFromNSFont(NSFont* srcFont)
     return WTF::String::format("%s %x", [[srcFont fontName] UTF8String], traits);
 }
 
-ATSFontContainerRef fontContainerRefFromNSFont(NSFont* srcFont)
-{
-    ATSFontRef fontRef = CTFontGetPlatformFont(toCTFontRef(srcFont), 0);
-    if (!fontRef)
-        return kATSFontContainerRefUnspecified;
-    ATSFontContainerRef fontContainer = kATSFontContainerRefUnspecified;
-    if (ATSFontGetContainer(fontRef, 0, &fontContainer) != noErr)
-        return kATSFontContainerRefUnspecified;
-    return fontContainer;
-}
-
 // The only way we can tell that an in-process font has failed to load
 // is if CTFontCopyGraphicsFont() returns the LastResort font.
 bool isLastResortFont(CGFontRef cgFont)

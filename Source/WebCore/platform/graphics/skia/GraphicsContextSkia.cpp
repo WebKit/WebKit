@@ -83,11 +83,6 @@ inline int fastMod(int value, int max)
     return value;
 }
 
-inline float square(float n)
-{
-    return n * n;
-}
-
 }  // namespace
 
 // Local helper functions ------------------------------------------------------
