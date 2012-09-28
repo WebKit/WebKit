@@ -49,6 +49,7 @@
 #include "FontFeatureSettings.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
+#include "HTMLFrameOwnerElement.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
@@ -58,6 +59,7 @@
 #include "StyleInheritedData.h"
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
+#include "StyleResolver.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
@@ -1384,15 +1386,57 @@ static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
+static bool isLayoutDependentProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyHeight:
+    case CSSPropertyMargin:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+    case CSSPropertyPadding:
+    case CSSPropertyPaddingTop:
+    case CSSPropertyPaddingBottom:
+    case CSSPropertyPaddingLeft:
+    case CSSPropertyPaddingRight:
+    case CSSPropertyWebkitPerspectiveOrigin:
+    case CSSPropertyWebkitTransformOrigin:
+    case CSSPropertyWebkitTransform:
+#if ENABLE(CSS_FILTERS)
+    case CSSPropertyWebkitFilter:
+#endif
+        return true;
+    default:
+        return false;
+    }
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
     if (!node)
         return 0;
 
-    // Make sure our layout is up to date before we allow a query on these attributes.
-    if (updateLayout)
-        node->document()->updateLayoutIgnorePendingStylesheets();
+    if (updateLayout) {
+        Document* document = m_node->document();
+        // FIXME: Some of these cases could be narrowed down or optimized better.
+        bool forceFullLayout = isLayoutDependentProperty(propertyID)
+            || node->isInShadowTree()
+            || (document->styleResolverIfExists() && document->styleResolverIfExists()->hasViewportDependentMediaQueries() && document->ownerElement())
+            || document->seamlessParentIFrame();
+
+        if (forceFullLayout)
+            document->updateLayoutIgnorePendingStylesheets();
+        else {
+            bool needsStyleRecalc = document->hasPendingForcedStyleRecalc();
+            for (Node* n = m_node.get(); n && !needsStyleRecalc; n = n->parentNode())
+                needsStyleRecalc = n->needsStyleRecalc();
+            if (needsStyleRecalc)
+                document->updateStyleIfNeeded();
+        }
+    }
 
     RenderObject* renderer = node->renderer();
 

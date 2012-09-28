@@ -173,7 +173,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     // Set image dimensions, taking into account the size of the alt text.
     if (m_imageResource->errorOccurred()) {
-        if (!m_altText.isEmpty() && document()->isPendingStyleRecalc()) {
+        if (!m_altText.isEmpty() && document()->hasPendingStyleRecalc()) {
             ASSERT(node());
             if (node()) {
                 m_needsToSetSizeForAltText = true;

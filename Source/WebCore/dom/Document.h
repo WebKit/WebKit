@@ -713,7 +713,8 @@ public:
     void scheduleForcedStyleRecalc();
     void scheduleStyleRecalc();
     void unscheduleStyleRecalc();
-    bool isPendingStyleRecalc() const;
+    bool hasPendingStyleRecalc() const;
+    bool hasPendingForcedStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
     void registerNodeListCache(DynamicNodeListCacheBase*);

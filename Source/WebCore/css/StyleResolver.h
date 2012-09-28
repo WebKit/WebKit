@@ -232,7 +232,7 @@ public:
     CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 
     void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
-
+    bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
     bool affectedByViewportChange() const;
 
     void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
