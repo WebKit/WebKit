@@ -50,6 +50,7 @@ public:
     void writeDocument(DocumentWriter&);
     virtual IntSize contentSize();
     virtual String htmlSource();
+    virtual Localizer& localizer();
     virtual void setValueAndClosePopup(int, const String&);
     virtual void didClosePopup();
     void closePopup();

@@ -83,6 +83,11 @@ String ColorPickerClient::htmlSource() const
     return m_source;
 }
 
+Localizer& ColorPickerClient::localizer()
+{
+    return m_element->document()->getLocalizer(nullAtom);
+}
+
 void ColorPickerClient::setValueAndClosePopup(int, const String& value)
 {
     ASSERT(m_element);

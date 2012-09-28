@@ -56,6 +56,7 @@ DateTimeChooserImpl::DateTimeChooserImpl(ChromeClientImpl* chromeClient, WebCore
     , m_client(client)
     , m_popup(0)
     , m_parameters(parameters)
+    , m_localizer(WebCore::Localizer::create(nullAtom))
 {
     ASSERT(m_chromeClient);
     ASSERT(m_client);
@@ -127,6 +128,11 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     writer.addData(WebCore::suggestionPickerJs, sizeof(WebCore::suggestionPickerJs));
     writer.addData(WebCore::calendarPickerJs, sizeof(WebCore::calendarPickerJs));
     addString("</script></body>\n", writer);
+}
+
+WebCore::Localizer& DateTimeChooserImpl::localizer()
+{
+    return *m_localizer;
 }
 
 void DateTimeChooserImpl::setValueAndClosePopup(int numValue, const String& stringValue)

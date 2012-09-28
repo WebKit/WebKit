@@ -53,6 +53,7 @@ ColorChooserUIController::ColorChooserUIController(ChromeClientImpl* chromeClien
     : m_chromeClient(chromeClient)
     , m_client(client)
     , m_popup(0)
+    , m_localizer(WebCore::Localizer::create(nullAtom))
 {
     if (m_client->shouldShowSuggestions())
         openPopup();
@@ -114,6 +115,11 @@ void ColorChooserUIController::writeDocument(WebCore::DocumentWriter& writer)
     writer.addData(WebCore::pickerCommonJs, sizeof(WebCore::pickerCommonJs));
     writer.addData(WebCore::colorSuggestionPickerJs, sizeof(WebCore::colorSuggestionPickerJs));
     WebCore::PagePopupClient::addString("</script></body>\n", writer);
+}
+
+WebCore::Localizer& ColorChooserUIController::localizer()
+{
+    return *m_localizer;
 }
 
 void ColorChooserUIController::setValueAndClosePopup(int numValue, const String& stringValue)

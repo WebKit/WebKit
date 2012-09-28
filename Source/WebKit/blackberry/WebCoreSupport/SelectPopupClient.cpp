@@ -150,6 +150,11 @@ String SelectPopupClient::htmlSource()
     return m_source;
 }
 
+Localizer& SelectPopupClient::localizer()
+{
+    return m_element->document()->getLocalizer(nullAtom);
+}
+
 void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 {
     ASSERT(m_element);
