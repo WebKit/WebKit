@@ -43,7 +43,7 @@
 #include "NotImplemented.h"
 #include "PickerCommon.h"
 #include "RenderTheme.h"
-#include "platform/WebKitPlatformSupport.h"
+#include <public/Platform.h>
 #include <public/WebLocalizedString.h>
 
 using namespace WTF::Unicode;
