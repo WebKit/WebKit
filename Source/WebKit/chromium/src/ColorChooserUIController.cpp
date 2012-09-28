@@ -36,8 +36,8 @@
 #include "LocalizedStrings.h"
 #include "PickerCommon.h"
 #include "WebColorChooser.h"
-#include "platform/WebColor.h"
-#include "platform/WebKitPlatformSupport.h"
+#include <public/Platform.h>
+#include <public/WebColor.h>
 #include <public/WebLocalizedString.h>
 
 namespace WebKit {
