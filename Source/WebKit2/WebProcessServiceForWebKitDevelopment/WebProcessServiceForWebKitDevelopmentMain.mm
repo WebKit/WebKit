@@ -81,8 +81,8 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
 
                 posix_spawnattr_setflags(&attr, flags);
 
-                uint32_t pathLength;
                 char path[4 * PATH_MAX];
+                uint32_t pathLength = sizeof(path);
                 _NSGetExecutablePath(path, &pathLength);
 
                 // Setup the command line.
