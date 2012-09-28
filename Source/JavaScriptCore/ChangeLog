@@ -1,5 +1,25 @@
 2012-09-28  Filip Pizlo  <fpizlo@apple.com>
 
+        ASSERTION in m_graph[tailNodeIndex].op() == Flush || m_graph[tailNodeIndex].op() == SetLocal on plus.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=97656
+
+        Reviewed by Mark Hahnenberg.
+
+        There were two bugs here:
+        
+        1) In case of multiple GetLocals to the same captured variable, the bytecode parser would linke the first,
+           rather than the last, of the GetLocals into the vars-at-tail table.
+        
+        2) The constant folding phase was asserting that any GetLocal it eliminates must be linked into the
+           vars-at-tail table, when for captured variables only the last of those should be.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2012-09-28  Filip Pizlo  <fpizlo@apple.com>
+
         DFGStructureHoistingPhase SetLocal assumes StructureTransitionWatchpoint has a structure set
         https://bugs.webkit.org/show_bug.cgi?id=97810
 

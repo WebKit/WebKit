@@ -227,7 +227,10 @@ private:
                 if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
                 
-                return injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                NodeIndex newGetLocal = injectLazyOperandSpeculation(
+                    addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                m_currentBlock->variablesAtTail.local(operand) = newGetLocal;
+                return newGetLocal;
             }
             
             if (nodePtr->op() == GetLocal)

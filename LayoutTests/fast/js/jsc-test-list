@@ -148,6 +148,7 @@ fast/js/dfg-poison-fuzz
 fast/js/dfg-proto-access-inline-osr-exit
 fast/js/dfg-put-by-id-prototype-check
 fast/js/dfg-putbyval-cfa-clobber
+fast/js/dfg-redundant-load-of-captured-variable-proven-constant
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
 fast/js/dfg-uint16array
