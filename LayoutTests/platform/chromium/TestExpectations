@@ -786,6 +786,7 @@ fast/fast-mobile-scrolling/no-fixed-position-elements.html [ WontFix ]
 fast/frames/flattening [ WontFix ]
 fast/text-autosizing/narrow-iframe-flattened.html [ WontFix ]
 http/tests/misc/iframe-flattening-3level-nesting-with-blocking-resource.html [ WontFix ]
+plugins/frameset-with-plugin-frame.html [ WontFix ]
 
 # This should be tested differently (see discussion on https://bugs.webkit.org/show_bug.cgi?id=35063).
 # No need to waste cycles implementing harness support for this variant of the test.
