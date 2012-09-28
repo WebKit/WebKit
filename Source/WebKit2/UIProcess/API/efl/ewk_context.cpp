@@ -35,6 +35,7 @@
 #include "ewk_cookie_manager_private.h"
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
+#include "ewk_main_private.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -81,6 +82,8 @@ struct _Ewk_Context {
         , cookieManager(0)
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
     {
+        ewk_init();
+
 #if ENABLE(BATTERY_STATUS)
         WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(contextRef.get());
         batteryProvider = BatteryProvider::create(wkBatteryManager);
@@ -114,6 +117,8 @@ struct _Ewk_Context {
         HashMap<uint64_t, Ewk_Download_Job*>::iterator end = downloadJobs.end();
         for ( ; it != end; ++it)
             ewk_download_job_unref(it->second);
+
+        ewk_shutdown();
     }
 };
 

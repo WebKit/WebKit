@@ -32,6 +32,9 @@ static bool useX11Window = false;
 
 static Ecore_Evas* initEcoreEvas()
 {
+    if (!ecore_evas_init())
+        return 0;
+
     Ecore_Evas* ecoreEvas = useX11Window ? ecore_evas_new(0, 0, 0, 800, 600, 0) : ecore_evas_buffer_new(800, 600);
     if (!ecoreEvas)
         return 0;
@@ -57,6 +60,7 @@ PlatformWebView::~PlatformWebView()
 {
     evas_object_del(m_view);
     ecore_evas_free(m_window);
+    ecore_evas_shutdown();
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)

@@ -20,7 +20,6 @@
 */
 
 #include "config.h"
-#include "ewk_main.h"
 
 #include "ewk_private.h"
 #include <Ecore.h>
@@ -39,6 +38,13 @@ static int _ewkInitCount = 0;
  */
 int _ewk_log_dom = -1;
 
+/**
+ * @internal
+ * Initializes WebKit's instance.
+ * - initializes components needed by EFL,
+ * - increases a reference count of WebKit's instance.
+ * Returns a reference count of WebKit's instance on success or 0 on failure
+ */
 int ewk_init(void)
 {
     if (_ewkInitCount)
@@ -68,6 +74,11 @@ int ewk_init(void)
         goto error_ecore_evas;
     }
 
+    if (!edje_init()) {
+        CRITICAL("could not init edje.");
+        goto error_edje;
+    }
+
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate()) {
@@ -77,6 +88,8 @@ int ewk_init(void)
 
     return ++_ewkInitCount;
 
+error_edje:
+    ecore_evas_shutdown();
 error_ecore_evas:
     ecore_shutdown();
 error_ecore:
@@ -90,11 +103,18 @@ error_eina:
     return 0;
 }
 
+/**
+ * @internal
+ * Decreases a reference count of WebKit's instance, possibly destroying it.
+ * If the reference count reaches 0, WebKit's instance is destroyed.
+ * Returns a reference count of WebKit's instance
+ */
 int ewk_shutdown(void)
 {
     if (--_ewkInitCount)
         return _ewkInitCount;
 
+    edje_shutdown();
     ecore_evas_shutdown();
     ecore_shutdown();
     evas_shutdown();

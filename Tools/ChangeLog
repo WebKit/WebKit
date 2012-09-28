@@ -1,3 +1,22 @@
+2012-09-28  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Reviewed by Gyuyoung Kim.
+
+        The initialization and shutdown are done inside the webkit, so we don't
+        have to call them out of the webkit.
+
+        * MiniBrowser/efl/main.c:
+        (quit):
+        (main):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::initEcoreEvas):
+        (WTR::PlatformWebView::~PlatformWebView):
+        * WebKitTestRunner/efl/main.cpp:
+        (main):
+
 2012-09-27  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] DumpRenderTree support for software compositing
