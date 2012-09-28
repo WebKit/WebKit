@@ -70,8 +70,6 @@
 		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
 		225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F881409F97E8A00423A40 /* WebPluginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
-		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		312E2FE514E48182007CCA18 /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 312E2FE314E48182007CCA18 /* WebNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -455,8 +453,6 @@
 		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		225F881409F97E8A00423A40 /* WebPluginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginPrivate.h; sourceTree = "<group>"; };
-		226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeDeprecatedFunctions.h; sourceTree = "<group>"; };
-		226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebNetscapeDeprecatedFunctions.c; sourceTree = "<group>"; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2568C72C0174912D0ECA149E /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = OutlookQuirksUserScript.js; sourceTree = "<group>"; };
@@ -1130,8 +1126,6 @@
 				0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */,
 				0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */,
 				0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */,
-				226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */,
-				226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
 				F5F7171F0288493C018635CA /* WebNetscapePluginPackage.mm */,
 				F5A672B90263866E01000102 /* WebNetscapePluginStream.h */,
@@ -1568,7 +1562,6 @@
 				5185F62610712B80007AA393 /* WebNavigationData.h in Headers */,
 				0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */,
 				0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */,
-				226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */,
 				1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */,
 				1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */,
 				1AEA6A500DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h in Headers */,
@@ -1982,7 +1975,6 @@
 				5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */,
 				0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */,
 				0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */,
-				226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */,
 				1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */,
 				1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */,
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,

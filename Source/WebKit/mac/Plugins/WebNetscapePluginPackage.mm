@@ -34,7 +34,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebNSObjectExtras.h"
-#import "WebNetscapeDeprecatedFunctions.h"
 #import <WebCore/npruntime_impl.h>
 #import <wtf/RetainPtr.h>
 
@@ -46,13 +45,6 @@ using namespace WebKit;
 
 using namespace WebCore;
 
-#ifdef SUPPORT_CFM
-typedef void (* FunctionPointer)(void);
-typedef void (* TransitionVector)(void);
-static FunctionPointer functionPointerForTVector(TransitionVector);
-static TransitionVector tVectorForFunctionPointer(FunctionPointer);
-#endif
-
 #define PluginNameOrDescriptionStringNumber     126
 #define MIMEDescriptionStringNumber             127
 #define MIMEListStringStringNumber              128
@@ -62,45 +54,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 @end
 
 @implementation WebNetscapePluginPackage
-
-#ifndef __LP64__
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-+ (void)initialize
-{
-    // The Shockwave plugin requires a valid file in CurApRefNum.
-    // But it doesn't seem to matter what file it is.
-    // If we're called inside a Cocoa application which won't have a
-    // CurApRefNum, we set it to point to the system resource file.
-
-    // Call CurResFile before testing the result of WebLMGetCurApRefNum.
-    // If we are called before the bundle resource map has been opened
-    // for a Carbon application (or a Cocoa app with Resource Manager
-    // resources) we *do not* want to set CurApRefNum to point at the
-    // system resource file. CurResFile triggers Resource Manager lazy
-    // initialization, and will open the bundle resource map as necessary.
-
-    CurResFile();
-
-    if (WebLMGetCurApRefNum() == -1) {
-        // To get the refNum for the system resource file, we have to do
-        // UseResFile(kSystemResFile) and then look at CurResFile().
-        short savedCurResFile = CurResFile();
-        UseResFile(kSystemResFile);
-        WebLMSetCurApRefNum(CurResFile());
-        UseResFile(savedCurResFile);
-    }
-}
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-
-#endif
 
 - (ResFileRefNum)openResourceFile
 {
@@ -281,10 +234,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
     NP_InitializeFuncPtr NP_Initialize = NULL;
     NPError npErr;
-
-#ifdef SUPPORT_CFM
-    MainFuncPtr pluginMainFunc = NULL;
-#endif
 
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();

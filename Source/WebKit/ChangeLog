@@ -1,3 +1,14 @@
+2012-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of more unused WK1 plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=97835
+
+        Reviewed by Mark Rowe.
+
+        Remove WebNetscapeDeprecatedFunctions.c and WebNetscapeDeprecatedFunctions.h from the Xcode project.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2012-09-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][CMAKE] Default theme files are outdated in PlatformEfl.cmake
