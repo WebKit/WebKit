@@ -21,8 +21,10 @@
 
 #include "PlatformContextSkia.h"
 
+#include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
@@ -62,25 +64,25 @@ SurfacePool::SurfacePool()
 {
 }
 
-void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
+void SurfacePool::initialize(const Platform::IntSize& tileSize)
 {
     if (m_initialized)
         return;
     m_initialized = true;
 
-    const unsigned numberOfTiles = BlackBerry::Platform::Settings::instance()->numberOfBackingStoreTiles();
-    const unsigned maxNumberOfTiles = BlackBerry::Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
+    const unsigned numberOfTiles = Platform::Settings::instance()->numberOfBackingStoreTiles();
+    const unsigned maxNumberOfTiles = Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
 
     if (numberOfTiles) { // Only allocate if we actually use a backingstore.
         unsigned byteLimit = (maxNumberOfTiles /*pool*/ + 2 /*visible tile buffer, backbuffer*/) * tileSize.width() * tileSize.height() * 4;
-        bool success = BlackBerry::Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
+        bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
         if (!success) {
-            BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn,
+            Platform::log(Platform::LogLevelWarn,
                 "Shared buffer pool could not be set up, using regular memory allocation instead.");
         }
     }
 
-    m_tileRenderingSurface = BlackBerry::Platform::Graphics::drawingSurface();
+    m_tileRenderingSurface = Platform::Graphics::drawingSurface();
 
     if (!numberOfTiles)
         return; // we only use direct rendering when 0 tiles are specified.
@@ -113,7 +115,7 @@ void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
     pthread_mutexattr_destroy(&attr);
 }
 
-PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(BlackBerry::Platform::Graphics::Drawable* drawable) const
+PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(Platform::Graphics::Drawable* drawable) const
 {
     return new WebCore::PlatformContextSkia(drawable);
 }
@@ -123,7 +125,7 @@ PlatformGraphicsContext* SurfacePool::lockTileRenderingSurface() const
     if (!m_tileRenderingSurface)
         return 0;
 
-    return createPlatformGraphicsContext(BlackBerry::Platform::Graphics::lockBufferDrawable(m_tileRenderingSurface));
+    return createPlatformGraphicsContext(Platform::Graphics::lockBufferDrawable(m_tileRenderingSurface));
 }
 
 void SurfacePool::releaseTileRenderingSurface(PlatformGraphicsContext* context) const
@@ -132,10 +134,10 @@ void SurfacePool::releaseTileRenderingSurface(PlatformGraphicsContext* context) 
         return;
 
     delete context;
-    BlackBerry::Platform::Graphics::releaseBufferDrawable(m_tileRenderingSurface);
+    Platform::Graphics::releaseBufferDrawable(m_tileRenderingSurface);
 }
 
-void SurfacePool::initializeVisibleTileBuffer(const BlackBerry::Platform::IntSize& visibleSize)
+void SurfacePool::initializeVisibleTileBuffer(const Platform::IntSize& visibleSize)
 {
     if (!m_visibleTileBuffer || m_visibleTileBuffer->size() != visibleSize) {
         delete m_visibleTileBuffer;
@@ -161,13 +163,13 @@ void SurfacePool::createBuffers()
 
     // Create the tile pool.
     for (size_t i = 0; i < m_tilePool.size(); ++i)
-        BlackBerry::Platform::Graphics::createPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
+        Platform::Graphics::createPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
 
     if (m_visibleTileBuffer)
-        BlackBerry::Platform::Graphics::createPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
+        Platform::Graphics::createPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
 
     if (backBuffer())
-        BlackBerry::Platform::Graphics::createPixmapBuffer(backBuffer()->nativeBuffer());
+        Platform::Graphics::createPixmapBuffer(backBuffer()->nativeBuffer());
 
     m_buffersSuspended = false;
 }
@@ -183,21 +185,24 @@ void SurfacePool::releaseBuffers()
     for (size_t i = 0; i < m_tilePool.size(); ++i) {
         m_tilePool[i]->frontBuffer()->clearRenderedRegion();
         // Clear the buffer to prevent accidental leakage of (possibly sensitive) pixel data.
-        BlackBerry::Platform::Graphics::clearBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
-        BlackBerry::Platform::Graphics::destroyPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
+        Platform::Graphics::clearBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
+        Platform::Graphics::destroyPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
     }
 
     if (m_visibleTileBuffer) {
         m_visibleTileBuffer->frontBuffer()->clearRenderedRegion();
-        BlackBerry::Platform::Graphics::clearBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
-        BlackBerry::Platform::Graphics::destroyPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
+        Platform::Graphics::clearBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
+        Platform::Graphics::destroyPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
     }
 
     if (backBuffer()) {
         backBuffer()->clearRenderedRegion();
-        BlackBerry::Platform::Graphics::clearBuffer(backBuffer()->nativeBuffer(), 0, 0, 0, 0);
-        BlackBerry::Platform::Graphics::destroyPixmapBuffer(backBuffer()->nativeBuffer());
+        Platform::Graphics::clearBuffer(backBuffer()->nativeBuffer(), 0, 0, 0, 0);
+        Platform::Graphics::destroyPixmapBuffer(backBuffer()->nativeBuffer());
     }
+
+    Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+        Platform::createFunctionCallMessage(&Platform::Graphics::collectThreadSpecificGarbage));
 }
 
 void SurfacePool::waitForBuffer(TileBuffer* tileBuffer)

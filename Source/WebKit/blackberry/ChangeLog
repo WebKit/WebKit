@@ -1,3 +1,31 @@
+2012-09-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Destroy thread-specific data for Platform::Graphics::Buffer on the right thread
+        https://bugs.webkit.org/show_bug.cgi?id=97674
+
+        Reviewed by Rob Buis.
+
+        A new API was added to BlackBerry::Platform::Graphics for destroying
+        thread-specific data generated on the compositing thread when we blit
+        buffers. The buffers are otherwise created and destroyed on the WebKit
+        thread, which doesn't give platform any opportunity to destroy the
+        thread-specific data.
+
+        This patch adds calls to the new API to avoid leaking resources.
+
+        Reviewed internally by Jakob Petsovits and Filip Spacek.
+
+        PR 214644
+
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        (BlackBerry::WebKit::SurfacePool::createPlatformGraphicsContext):
+        (BlackBerry::WebKit::SurfacePool::lockTileRenderingSurface):
+        (BlackBerry::WebKit::SurfacePool::releaseTileRenderingSurface):
+        (BlackBerry::WebKit::SurfacePool::initializeVisibleTileBuffer):
+        (BlackBerry::WebKit::SurfacePool::createBuffers):
+        (BlackBerry::WebKit::SurfacePool::releaseBuffers):
+
 2012-09-27  Kent Tamura  <tkent@chromium.org>
 
         Use Localizer in PagePopupController

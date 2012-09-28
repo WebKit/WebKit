@@ -25,6 +25,8 @@
 #include "PluginLayerWebKitThread.h"
 #endif
 #include "NPCallbacksBlackBerry.h"
+#include <BlackBerryPlatformExecutableMessage.h>
+#include <BlackBerryPlatformMessageClient.h>
 #include <wtf/MainThread.h>
 
 static unsigned s_counter = 0;
@@ -277,8 +279,10 @@ bool PluginViewPrivate::createBuffers(NPSurfaceFormat format, int width, int hei
     PthreadMutexLocker backLock(&m_backBufferMutex);
     PthreadWriteLocker frontLock(&m_frontBufferRwLock);
 
+    bool didDestroyBuffers = false;
     for (int i = 0; i < PLUGIN_BUFFERS; i++) {
         if (m_pluginBuffers[i]) {
+            didDestroyBuffers = true;
             BlackBerry::Platform::Graphics::destroyBuffer(m_pluginBuffers[i]);
             m_pluginBuffers[i] = 0;
         }
@@ -298,6 +302,11 @@ bool PluginViewPrivate::createBuffers(NPSurfaceFormat format, int width, int hei
     if (success) {
         m_pluginBufferSize = IntSize(width, height);
         m_pluginBufferType = toBufferType(format);
+
+        if (didDestroyBuffers) {
+            BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+                BlackBerry::Platform::createFunctionCallMessage(&BlackBerry::Platform::Graphics::collectThreadSpecificGarbage));
+        }
     } else {
         m_pluginBufferSize = IntSize();
         m_pluginBufferType = BlackBerry::Platform::Graphics::PluginBufferWithAlpha;
@@ -358,13 +367,20 @@ bool PluginViewPrivate::destroyBuffers()
     PthreadMutexLocker backLock(&m_backBufferMutex);
     PthreadWriteLocker frontLock(&m_frontBufferRwLock);
 
+    bool didDestroyBuffers = false;
     for (int i = 0; i < PLUGIN_BUFFERS; i++) {
         if (m_pluginBuffers[i]) {
+            didDestroyBuffers = true;
             BlackBerry::Platform::Graphics::destroyBuffer(m_pluginBuffers[i]);
             m_pluginBuffers[i] = 0;
         }
     }
     m_pluginBufferSize = IntSize();
+
+    if (didDestroyBuffers) {
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+            BlackBerry::Platform::createFunctionCallMessage(&BlackBerry::Platform::Graphics::collectThreadSpecificGarbage));
+    }
 
     return true;
 }
