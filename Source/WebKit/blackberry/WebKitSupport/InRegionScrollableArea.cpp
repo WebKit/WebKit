@@ -25,6 +25,7 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "WebPage_p.h"
@@ -63,6 +64,9 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
     if (layerRenderer->isRenderView()) { // #document case
 
+        RenderView* renderView = toRenderView(layerRenderer);
+        ASSERT(renderView);
+
         FrameView* view = toRenderView(layerRenderer)->frameView();
         ASSERT(view);
 
@@ -76,8 +80,14 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_scrollsHorizontally = view->contentsWidth() > view->visibleWidth();
         m_scrollsVertically = view->contentsHeight() > view->visibleHeight();
 
-        m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->enclosingElement()); // FIXME: Needs composited layer for inner frames.
-        m_cachedNonCompositedScrollableNode = m_layer->enclosingElement();
+        m_supportsCompositedScrolling = true;
+
+        m_scrollTarget = InnerFrame;
+
+        ASSERT(!m_cachedNonCompositedScrollableNode);
+
+        m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(renderView->compositor()->scrollLayer()->platformLayer());
+        m_cachedCompositedScrollableLayer = renderView->compositor()->scrollLayer()->platformLayer();
 
     } else { // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
 
@@ -92,6 +102,8 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
         m_scrollsHorizontally = box->scrollWidth() != box->clientWidth() && box->scrollsOverflowX();
         m_scrollsVertically = box->scrollHeight() != box->clientHeight() && box->scrollsOverflowY();
+
+        m_scrollTarget = BlockElement;
 
         // Both caches below are self-exclusive.
         if (m_layer->usesCompositedScrolling()) {

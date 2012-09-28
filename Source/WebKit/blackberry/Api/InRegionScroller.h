@@ -22,6 +22,7 @@
 #include "BlackBerryGlobal.h"
 
 #include <BlackBerryPlatformPrimitives.h>
+#include <interaction/ScrollViewBase.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -36,7 +37,8 @@ public:
     ~InRegionScroller();
 
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/);
-    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/, bool acceleratedScrolling);
+    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/,
+        bool /*acceleratedScrolling*/, Platform::ScrollViewBase::ScrollTarget);
 
 private:
     friend class WebPagePrivate;
