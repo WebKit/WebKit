@@ -720,9 +720,7 @@ bool FrameLoaderClientEfl::canShowMIMETypeAsHTML(const String& /*MIMEType*/) con
 
 bool FrameLoaderClientEfl::canShowMIMEType(const String& MIMEType) const
 {
-    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType)
-        || MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType)
-        || MIMETypeRegistry::isSupportedMediaMIMEType(MIMEType))
+    if (MIMETypeRegistry::canShowMIMEType(MIMEType))
         return true;
 
 #if 0 // PluginDatabase is disabled until we have Plugin system done.

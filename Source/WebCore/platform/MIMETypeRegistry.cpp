@@ -579,6 +579,17 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
         || mimeType.startsWith("application/x-java-vm", false);
 }
 
+bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
+{
+    if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType))
+        return true;
+
+    if (mimeType.startsWith("text/", false))
+        return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
+
+    return false;
+}
+
 HashSet<String>& MIMETypeRegistry::getSupportedImageMIMETypes()
 {
     if (!supportedImageMIMETypes)

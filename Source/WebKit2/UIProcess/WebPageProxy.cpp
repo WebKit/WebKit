@@ -748,17 +748,8 @@ String WebPageProxy::committedURL() const
 
 bool WebPageProxy::canShowMIMEType(const String& mimeType) const
 {
-    if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
+    if (MIMETypeRegistry::canShowMIMEType(mimeType))
         return true;
-
-    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return true;
-
-    if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
-        return true;
-
-    if (mimeType.startsWith("text/", false))
-        return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
 
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());

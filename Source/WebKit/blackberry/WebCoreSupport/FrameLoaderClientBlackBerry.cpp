@@ -485,8 +485,8 @@ bool FrameLoaderClientBlackBerry::canShowMIMEType(const String& mimeTypeIn) cons
     String mimeType = MIMETypeRegistry::getNormalizedMIMEType(mimeTypeIn);
 
     // FIXME: Seems no other port checks empty MIME type in this function. Should we do that?
-    return MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)
-        || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType) || WebSettings::isSupportedObjectMIMEType(mimeType)
+    return MIMETypeRegistry::canShowMIMEType(mimeType)
+        || WebSettings::isSupportedObjectMIMEType(mimeType)
         || (mimeType == "application/x-shockwave-flash");
 }
 

@@ -78,6 +78,11 @@ public:
     // browser (e.g. a Qt Plugin).
     static bool isApplicationPluginMIMEType(const String& mimeType);
 
+    // Check to see if a mime type is suitable for being shown inside a page.
+    // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(), isSupportedMediaMIMEType() returns true
+    // or if given mime type begins with "text/" and isUnsupportedTextMIMEType() returns false.
+    static bool canShowMIMEType(const String& mimeType);
+
     static HashSet<String>& getSupportedImageMIMETypes();
     static HashSet<String>& getSupportedImageResourceMIMETypes();
     static HashSet<String>& getSupportedImageMIMETypesForEncoding();

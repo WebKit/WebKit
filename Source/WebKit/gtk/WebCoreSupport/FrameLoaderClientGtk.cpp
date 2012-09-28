@@ -897,9 +897,7 @@ bool FrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
 
 bool FrameLoaderClient::canShowMIMEType(const String& type) const
 {
-    return (MIMETypeRegistry::isSupportedImageMIMEType(type)
-            || MIMETypeRegistry::isSupportedNonImageMIMEType(type)
-            || MIMETypeRegistry::isSupportedMediaMIMEType(type)
+    return (MIMETypeRegistry::canShowMIMEType(type)
             || PluginDatabase::installedPlugins()->isMIMETypeRegistered(type));
 }
 

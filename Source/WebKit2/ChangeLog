@@ -1,3 +1,18 @@
+2012-09-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Code inside FrameLoaderClient::canShowMIMEType() implementations can be shared among different WK ports
+        https://bugs.webkit.org/show_bug.cgi?id=97547
+
+        Reviewed by Adam Barth.
+
+        Newly added WebCore::MIMETypeRegistry::canShowMIMEType() function is used
+        inside WebKit::WebPageProxy::canShowMIMEType() and WKBundlePageCanShowMIMEType().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCanShowMIMEType):
+
 2012-09-28  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] {Vibration,Battery,NetworkInfo}Provider should contain WKContextRef instead of proxy.
