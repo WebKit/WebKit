@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 784x34
         RenderText {#text} at (0,15) size 113x19
           text run at (0,15) width 113: "Qt Styled Widget: "
-        RenderEmbeddedObject {OBJECT} at (113,0) size 300x30 [QT: geometry: {at (0,0) size 300x30} isHidden: 1 isSelfVisible: 1 isParentVisible: 1 ] 
+        RenderEmbeddedObject {OBJECT} at (113,0) size 300x30 [QT: geometry: {at (121,42) size 300x30} isHidden: 1 isSelfVisible: 1 isParentVisible: 1 ] 
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,68) size 784x104
         RenderText {#text} at (0,85) size 115x19

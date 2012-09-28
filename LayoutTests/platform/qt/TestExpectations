@@ -407,6 +407,8 @@ inspector/styles/media-queries.html
 fast/dom/MicroData
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
+fast/dom/HTMLElement/class-list-quirks.html
+fast/dom/HTMLElement/class-list.html
 fast/mutation/added-out-of-order.html
 fast/mutation/callback-arguments.html
 fast/mutation/clear-transient-without-delivery.html

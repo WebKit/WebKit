@@ -472,6 +472,7 @@ http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
 http/tests/appcache
 
 # Qt plugins are not supported on WK2
+platform/qt/plugins/application-plugin-plugins-disabled.html
 platform/qt/plugins/qt-qwidget-plugin.html
 
 # [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
