@@ -1,3 +1,20 @@
+2012-09-28  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Add localized strings for multiple fields date/time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=97878
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces following localized string identifier for
+        month, time and week pickers:
+            - OtherMonthLabel - appeared at the last entry in suggestion list.
+            - OtherTimeLabel - ditto
+            - OtherWeekLabel - ditto
+            - ThisMonthButtonLabel - used in month picker
+            - ThisWeekButtonLabel - used in week picker
+
+        * chromium/public/WebLocalizedString.h: Added OtherMonthLabel, OtherTimeLabel, OtherWeekLabel, ThiMonthkButtonLabel, and ThisWeekButtonLabel.
+
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove screen-related functions from PlatformSupport
