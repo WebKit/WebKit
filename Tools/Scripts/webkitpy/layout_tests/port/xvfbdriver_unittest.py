@@ -30,6 +30,7 @@ import unittest
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import Port
@@ -39,8 +40,8 @@ from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 
 
 class XvfbDriverTest(unittest.TestCase):
-    def make_driver(self, worker_number=0, xorg_running=False):
-        port = Port(host=MockSystemHost(log_executive=True), config=MockConfig())
+    def make_driver(self, worker_number=0, xorg_running=False, executive=None):
+        port = Port(host=MockSystemHost(log_executive=True, executive=executive), config=MockConfig())
         port._server_process_constructor = MockServerProcess
         if xorg_running:
             port._executive._running_pids['Xorg'] = 108
@@ -61,26 +62,49 @@ class XvfbDriverTest(unittest.TestCase):
 
     def test_start_no_pixel_tests(self):
         driver = self.make_driver()
-        expected_stderr = "MOCK running_pids: []\nMOCK popen: ['Xvfb', ':0', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
+        expected_stderr = "MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':0', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
         self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":0")
         self.cleanup_driver(driver)
 
     def test_start_pixel_tests(self):
         driver = self.make_driver()
-        expected_stderr = "MOCK running_pids: []\nMOCK popen: ['Xvfb', ':1', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
-        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":1", pixel_tests=True)
+        expected_stderr = "MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':0', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
+        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":0", pixel_tests=True)
         self.cleanup_driver(driver)
 
     def test_start_arbitrary_worker_number(self):
         driver = self.make_driver(worker_number=17)
-        expected_stderr = "MOCK running_pids: []\nMOCK popen: ['Xvfb', ':35', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
-        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":35", pixel_tests=True)
+        expected_stderr = "MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':0', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
+        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":0", pixel_tests=True)
         self.cleanup_driver(driver)
 
-    def test_start_existing_xorg_process(self):
-        driver = self.make_driver(xorg_running=True)
-        expected_stderr = "MOCK running_pids: [108]\nMOCK popen: ['Xvfb', ':1', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
-        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":1")
+    def test_next_free_display(self):
+        output = "Xorg            /usr/bin/X :0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch -background none\nXvfb            Xvfb :1 -screen 0 800x600x24 -nolisten tcp"
+        executive = MockExecutive2(output)
+        driver = self.make_driver(executive=executive)
+        self.assertEqual(driver._next_free_display(), 2)
+        self.cleanup_driver(driver)
+        output = "Xvfb            Xvfb :0 -screen 0 800x600x24 -nolisten tcp"
+        executive = MockExecutive2(output)
+        driver = self.make_driver(executive=executive)
+        self.assertEqual(driver._next_free_display(), 1)
+        self.cleanup_driver(driver)
+        output = "Xvfb            Xvfb :1 -screen 0 800x600x24 -nolisten tcp\nXvfb            Xvfb :0 -screen 0 800x600x24 -nolisten tcp\nXvfb            Xvfb :3 -screen 0 800x600x24 -nolisten tcp"
+        executive = MockExecutive2(output)
+        driver = self.make_driver(executive=executive)
+        self.assertEqual(driver._next_free_display(), 2)
+        self.cleanup_driver(driver)
+
+    def test_start_next_worker(self):
+        driver = self.make_driver()
+        driver._next_free_display = lambda: 0
+        expected_stderr = "MOCK popen: ['Xvfb', ':0', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
+        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":0", pixel_tests=True)
+        self.cleanup_driver(driver)
+        driver = self.make_driver()
+        driver._next_free_display = lambda: 3
+        expected_stderr = "MOCK popen: ['Xvfb', ':3', '-screen', '0', '800x600x24', '-nolisten', 'tcp']\n"
+        self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":3", pixel_tests=True)
         self.cleanup_driver(driver)
 
     def test_stop(self):

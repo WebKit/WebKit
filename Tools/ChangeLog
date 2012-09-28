@@ -1,3 +1,29 @@
+2012-09-28  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [NRWT] XvfbDriver should choose the next free display
+        https://bugs.webkit.org/show_bug.cgi?id=88414
+
+        Reviewed by Dirk Pranke.
+
+        This change how the XvfbDriver choose the next display. Before
+        this the choosing are based on the worker number but it caused
+        errors when several nrwt run on the same time. This add process
+        based free diplay search.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver.__init__):
+        (XvfbDriver._next_free_display):
+        (XvfbDriver._start):
+        (XvfbDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver):
+        (XvfbDriverTest.test_start_no_pixel_tests):
+        (XvfbDriverTest.test_start_pixel_tests):
+        (XvfbDriverTest.test_start_arbitrary_worker_number):
+        (XvfbDriverTest.test_next_free_display):
+        (XvfbDriverTest):
+        (XvfbDriverTest.test_start_next_worker):
+
 2012-09-28  Huang Dongsung  <luxtella@company100.net>
 
         [GTK] Enable CSS Shaders layout LayoutTests on GTK+

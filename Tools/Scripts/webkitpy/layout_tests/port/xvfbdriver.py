@@ -28,29 +28,39 @@
 
 import logging
 import os
+import re
 
 from webkitpy.layout_tests.port.server_process import ServerProcess
 from webkitpy.layout_tests.port.driver import Driver
+from webkitpy.common.system.file_lock import FileLock
 
 _log = logging.getLogger(__name__)
 
 
 class XvfbDriver(Driver):
+    def __init__(self, *args, **kwargs):
+        Driver.__init__(self, *args, **kwargs)
+        self._guard_lock = None
+
+    def _next_free_display(self):
+        running_pids = self._port.host.executive.run_command(['ps', '-eo', 'comm,command'])
+        reserved_screens = set()
+        for pid in running_pids.split('\n'):
+            match = re.match('(Xvfb|Xorg).*\s:(?P<screen_number>\d+)', pid)
+            if match:
+                reserved_screens.add(int(match.group('screen_number')))
+        for i in range(99):
+            if i not in reserved_screens:
+                _guard_lock_file = self._port.host.filesystem.join('/tmp', 'WebKitXvfb.lock.%i' % i)
+                self._guard_lock = FileLock(_guard_lock_file)
+                if self._guard_lock.acquire_lock():
+                    return i
+
     def _start(self, pixel_tests, per_test_args):
-
-        # Collect the number of X servers running already and make
-        # sure our Xvfb process doesn't clash with any of them.
-        def x_filter(process_name):
-            return process_name.find("Xorg") > -1
-
-        running_displays = len(self._port.host.executive.running_pids(x_filter))
-
         # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
         # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
         # the same worker number, so this prevents them from using the same Xvfb instance.
-        display_id = self._worker_number * 2 + running_displays
-        if pixel_tests:
-            display_id += 1
+        display_id = self._next_free_display()
         self._lock_file = "/tmp/.X%d-lock" % display_id
 
         run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
@@ -71,6 +81,9 @@ class XvfbDriver(Driver):
 
     def stop(self):
         super(XvfbDriver, self).stop()
+        if self._guard_lock:
+            self._guard_lock.release_lock()
+            self._guard_lock = None
         if getattr(self, '_xvfb_process', None):
             self._port.host.executive.kill_process(self._xvfb_process.pid)
             self._xvfb_process = None
