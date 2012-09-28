@@ -196,13 +196,17 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
     if (!destRectVisibleSubset.intersect(destRect))
         return; // Nothing visible in destRect.
 
-    // Compute the transformed (screen space) portion of the visible portion for
-    // use below.
-    SkRect destRectVisibleSubsetTransformed;
-    canvas.getTotalMatrix().mapRect(&destRectVisibleSubsetTransformed, destRectVisibleSubset);
-    SkRect destBitmapSubsetTransformed = destRectVisibleSubsetTransformed;
-    destBitmapSubsetTransformed.offset(-destRectTransformed.fLeft,
-                                       -destRectTransformed.fTop);
+    // Compute the image-relative (bitmap space) subset.
+    SkRect destBitmapSubset = destRectVisibleSubset;
+    destBitmapSubset.offset(-destRect.x(), -destRect.y());
+
+    // Scale the subset to the requested size. The canvas scale can be negative,
+    // but the resampling code is only interested in positive scaling in its normal space.
+    SkMatrix subsetTransform;
+    subsetTransform.setScale(SkScalarAbs(canvas.getTotalMatrix().getScaleX()),
+                             SkScalarAbs(canvas.getTotalMatrix().getScaleY()));
+    SkRect destBitmapSubsetTransformed;
+    subsetTransform.mapRect(&destBitmapSubsetTransformed, destBitmapSubset);
     SkIRect destBitmapSubsetTransformedRounded;
     destBitmapSubsetTransformed.round(&destBitmapSubsetTransformedRounded);
 

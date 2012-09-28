@@ -1305,6 +1305,9 @@ webkit.org/b/77754 fast/css/absolute-child-with-percent-height-inside-relative-p
 
 webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
 
+# Needs results
+webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
+
 #Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
 webkit.org/b/80394 fast/block/float/024.html [ Failure ]
 webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]

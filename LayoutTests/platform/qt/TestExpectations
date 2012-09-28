@@ -2907,6 +2907,9 @@ webkit.org/b/80219 compositing/overflow/clip-descendents.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
+# Needs results
+webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
+
 # This has always failed on Qt - exposed by bug 89826
 webkit.org/b/94004 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
