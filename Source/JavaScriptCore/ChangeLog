@@ -1,3 +1,20 @@
+2012-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGStructureHoistingPhase SetLocal assumes StructureTransitionWatchpoint has a structure set
+        https://bugs.webkit.org/show_bug.cgi?id=97810
+
+        Reviewed by Mark Hahnenberg.
+
+        No tests because this can't happen in ToT: the structure check hoisting phase runs before any
+        CFA or folding, so the only StructureTransitionWatchpoints it will see are the ones inserted
+        by the parser. But the parser will only insert StructureTransitinWatchpoints on constants, which
+        will not be subject to SetLocals.
+        
+        Still, it would be good to fix this in case things changed.
+
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
 2012-09-27  Mark Lam  <mark.lam@apple.com>
 
         Put initializeHostCallReturnValue() behind #if ENABLE(JIT).
