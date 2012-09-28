@@ -152,7 +152,7 @@ String SelectPopupClient::htmlSource()
 
 Localizer& SelectPopupClient::localizer()
 {
-    return m_element->document()->getLocalizer(nullAtom);
+    return m_element->document()->getCachedLocalizer();
 }
 
 void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)

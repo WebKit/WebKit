@@ -1773,6 +1773,11 @@ AtomicString Element::computeInheritedLanguage() const
     return value;
 }
 
+Localizer& Element::localizer() const
+{
+    return document()->getCachedLocalizer(computeInheritedLanguage());
+}
+
 void Element::cancelFocusAppearanceUpdate()
 {
     if (hasRareData())

@@ -223,8 +223,7 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     if (!m_dateTimeEditElement)
         return;
 
-    Localizer& localizer = element()->document()->getLocalizer(element()->computeInheritedLanguage());
-    DateTimeEditElement::LayoutParameters layoutParameters(localizer, createStepRange(AnyIsDefaultStep));
+    DateTimeEditElement::LayoutParameters layoutParameters(element()->localizer(), createStepRange(AnyIsDefaultStep));
 
     DateComponents date;
     const bool hasValue = parseToDateComponents(element()->value(), &date);

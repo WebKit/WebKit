@@ -75,7 +75,7 @@ private:
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
 
-    Localizer& localizer() const;
+    Localizer& localizerForOwner() const;
 
     DOMTimeStamp m_lastDigitCharTime;
     const String m_placeholder;

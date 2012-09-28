@@ -1160,7 +1160,8 @@ public:
 
     bool inStyleRecalc() { return m_inStyleRecalc; }
 
-    Localizer& getLocalizer(const AtomicString& locale);
+    // Return a Localizer for the default locale if the argument is null or empty.
+    Localizer& getCachedLocalizer(const AtomicString& locale = nullAtom);
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);

@@ -120,7 +120,7 @@ String DatePickerClient::htmlSource()
 
 Localizer& SelectPopupClient::localizer()
 {
-    return m_element->document()->getLocalizer(nullAtom);
+    return m_element->document()->getCachedLocalizer();
 }
 
 void DatePickerClient::setValueAndClosePopup(int, const String& value)

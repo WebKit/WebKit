@@ -56,7 +56,7 @@ DateTimeChooserImpl::DateTimeChooserImpl(ChromeClientImpl* chromeClient, WebCore
     , m_client(client)
     , m_popup(0)
     , m_parameters(parameters)
-    , m_localizer(WebCore::Localizer::create(nullAtom))
+    , m_localizer(WebCore::Localizer::createDefault())
 {
     ASSERT(m_chromeClient);
     ASSERT(m_client);

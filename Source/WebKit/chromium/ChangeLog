@@ -1,3 +1,16 @@
+2012-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Clean up Localizer-related functions
+        https://bugs.webkit.org/show_bug.cgi?id=97899
+
+        Reviewed by Kentaro Hara.
+
+        * src/ColorChooserUIController.cpp:
+        (WebKit::ColorChooserUIController::ColorChooserUIController):
+        Use Localizer::createDefault
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::DateTimeChooserImpl): ditto.
+
 2012-09-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r129882.

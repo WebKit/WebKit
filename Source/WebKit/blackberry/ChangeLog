@@ -1,3 +1,17 @@
+2012-09-28  Kent Tamura  <tkent@chromium.org>
+
+        Clean up Localizer-related functions
+        https://bugs.webkit.org/show_bug.cgi?id=97899
+
+        Reviewed by Kentaro Hara.
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::localizer): Follow Document::getLocalizer renaming.
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::SelectPopupClient::localizer): ditto.
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::localizer): ditto.
+
 2012-09-28  Genevieve Mak  <gmak@rim.com>
 
         [BLACKBERRY] Add isVisible method to WebTapHighlight

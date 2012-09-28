@@ -53,7 +53,7 @@ ColorChooserUIController::ColorChooserUIController(ChromeClientImpl* chromeClien
     : m_chromeClient(chromeClient)
     , m_client(client)
     , m_popup(0)
-    , m_localizer(WebCore::Localizer::create(nullAtom))
+    , m_localizer(WebCore::Localizer::createDefault())
 {
     if (m_client->shouldShowSuggestions())
         openPopup();

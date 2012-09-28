@@ -26,6 +26,8 @@
 #ifndef Localizer_h
 #define Localizer_h
 
+#include "Language.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,10 +36,11 @@ class Localizer {
     WTF_MAKE_NONCOPYABLE(Localizer);
 
 public:
-    static PassOwnPtr<Localizer> create(const AtomicString&);
+    static PassOwnPtr<Localizer> create(const AtomicString& localeIdentifier);
+    static PassOwnPtr<Localizer> createDefault();
 
     // Converts the specified number string to another number string localized
-    // for the browser's current locale. The input string must conform to HTML
+    // for this Localizer locale. The input string must conform to HTML
     // floating-point numbers, and is not empty.
     String convertToLocalizedNumber(const String&);
 
@@ -113,6 +116,11 @@ private:
     String m_negativeSuffix;
     bool m_hasLocalizerData;
 };
+
+inline PassOwnPtr<Localizer> Localizer::createDefault()
+{
+    return Localizer::create(defaultLanguage());
+}
 
 }
 #endif
