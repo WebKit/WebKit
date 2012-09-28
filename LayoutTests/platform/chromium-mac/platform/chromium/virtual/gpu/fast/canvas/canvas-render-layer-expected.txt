@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x224
+  RenderBlock {HTML} at (0,0) size 800x224
+    RenderBody {BODY} at (8,8) size 784x208
+      RenderHTMLCanvas {CANVAS} at (0,0) size 100x100
+      RenderText {#text} at (100,86) size 4x18
+        text run at (100,86) width 4: " "
+      RenderText {#text} at (204,86) size 4x18
+        text run at (204,86) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (100,190) size 4x18
+        text run at (100,190) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (112,8) size 100x100
+  RenderHTMLCanvas {CANVAS} at (104,0) size 100x100
+layer at (8,112) size 100x100
+  RenderHTMLCanvas {CANVAS} at (0,104) size 100x100
+layer at (112,112) size 100x100
+  RenderHTMLCanvas {CANVAS} at (104,104) size 100x100
