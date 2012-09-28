@@ -37,9 +37,8 @@
 #include "platform/WebData.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
-#include "platform/WebVector.h"
-
 #include <public/WebDragData.h>
+#include <public/WebVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 

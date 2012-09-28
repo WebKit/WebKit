@@ -35,8 +35,8 @@
 
 #include "ScriptExecutionContext.h"
 #include "WebFileError.h"
-#include "platform/WebVector.h"
 #include <public/WebFileSystem.h>
+#include <public/WebVector.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>

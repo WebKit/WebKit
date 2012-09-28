@@ -31,7 +31,7 @@
 #include "IDBMetadata.h"
 #include "WebIDBKeyPath.h"
 #include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebVector.h>
 
 using namespace WebCore;
 

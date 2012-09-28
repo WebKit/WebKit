@@ -83,10 +83,9 @@
 #include "WrappedResourceResponse.h"
 #include "platform/WebURL.h"
 #include "platform/WebURLError.h"
-#include "platform/WebVector.h"
 #include <public/Platform.h>
 #include <public/WebMimeRegistry.h>
-
+#include <public/WebVector.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

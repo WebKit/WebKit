@@ -30,7 +30,7 @@
 
 #include "IDBKeyPath.h"
 #include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include <public/WebVector.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;

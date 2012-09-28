@@ -47,7 +47,7 @@
 #include "platform/WebURL.h"
 #include "platform/WebURLError.h"
 #include "platform/WebURLResponse.h"
-#include "platform/WebVector.h"
+#include <public/WebVector.h>
 
 using namespace WebKit;
 

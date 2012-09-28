@@ -1,5 +1,37 @@
 2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Update WebVector.h references
+        https://bugs.webkit.org/show_bug.cgi?id=97855
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/ApplicationCacheHost.cpp:
+        * src/AudioDestinationChromium.h:
+        * src/AutofillPopupMenuClient.cpp:
+        * src/CompositionUnderlineBuilder.h:
+        * src/CompositionUnderlineVectorBuilder.h:
+        * src/ContextMenuClientImpl.cpp:
+        * src/ExternalPopupMenu.cpp:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/PlatformSupport.cpp:
+        * src/WebDataSourceImpl.cpp:
+        * src/WebDragData.cpp:
+        * src/WebFileChooserCompletionImpl.h:
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebHistoryItem.cpp:
+        * src/WebIDBKeyPath.cpp:
+        * src/WebIDBMetadata.cpp:
+        * src/WebNode.cpp:
+        * src/WebPageSerializer.cpp:
+        * src/WebPageSerializerImpl.cpp:
+        * src/WebTextCheckingCompletionImpl.cpp:
+        * src/WorkerFileSystemCallbacksBridge.h:
+
+2012-09-27  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Update comment in WebFrameClient to point to new userAgent() function
         https://bugs.webkit.org/show_bug.cgi?id=97854
 

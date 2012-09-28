@@ -55,7 +55,6 @@
 #include "platform/WebSerializedScriptValue.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
-#include "platform/WebVector.h"
 
 #if OS(WINDOWS)
 #include "platform/WebRect.h"
@@ -93,6 +92,7 @@
 #include <public/WebCookie.h>
 #include <public/WebCookieJar.h>
 #include <public/WebMimeRegistry.h>
+#include <public/WebVector.h>
 #include <wtf/Assertions.h>
 
 // We are part of the WebKit implementation.

@@ -34,7 +34,7 @@
 #include "ApplicationCacheHostInternal.h"
 #include "platform/WebURL.h"
 #include "platform/WebURLError.h"
-#include "platform/WebVector.h"
+#include <public/WebVector.h>
 
 using namespace WebCore;
 

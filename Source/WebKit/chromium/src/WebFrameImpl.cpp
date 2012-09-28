@@ -179,10 +179,9 @@
 #include "platform/WebSerializedScriptValue.h"
 #include "platform/WebSize.h"
 #include "platform/WebURLError.h"
-#include "platform/WebVector.h"
-
 #include <algorithm>
 #include <public/Platform.h>
+#include <public/WebVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 
