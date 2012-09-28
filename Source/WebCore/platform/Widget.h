@@ -32,7 +32,6 @@
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(CHROMIUM)
-#include "PageClientChromium.h"
 #include "PlatformWidget.h"
 #endif
 
@@ -94,8 +93,6 @@ typedef PageClientBlackBerry* PlatformPageClient;
 #elif PLATFORM(EFL)
 class PageClientEfl;
 typedef PageClientEfl* PlatformPageClient;
-#elif PLATFORM(CHROMIUM)
-typedef WebCore::PageClientChromium* PlatformPageClient;
 #else
 typedef PlatformWidget PlatformPageClient;
 #endif

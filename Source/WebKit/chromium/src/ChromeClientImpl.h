@@ -60,11 +60,10 @@ class WebColorChooser;
 class WebColorChooserClient;
 class WebViewImpl;
 struct WebCursorInfo;
-struct WebScreenInfo;
 struct WebPopupMenuInfo;
 
 // Handles window-level notifications from WebCore on behalf of a WebView.
-class ChromeClientImpl : public WebCore::ChromeClientChromium, public WebCore::PageClientChromium {
+class ChromeClientImpl : public WebCore::ChromeClientChromium {
 public:
     explicit ChromeClientImpl(WebViewImpl* webView);
     virtual ~ChromeClientImpl();
@@ -124,7 +123,7 @@ public:
         const WebCore::IntRect& clipRect);
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const;
-    virtual PlatformPageClient platformPageClient() const { return PlatformPageClient(this); }
+    virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
     virtual void layoutUpdated(WebCore::Frame*) const;
     virtual void scrollRectIntoView(
@@ -194,9 +193,6 @@ public:
                              bool handleExternally);
     virtual void popupClosed(WebCore::PopupContainer* popupContainer);
     virtual void postAccessibilityNotification(WebCore::AccessibilityObject*, WebCore::AXObjectCache::AXNotification);
-
-    // PageClientChromium methods:
-    virtual WebScreenInfo screenInfo();
 
     // ChromeClientImpl:
     void setCursorForPlugin(const WebCursorInfo&);

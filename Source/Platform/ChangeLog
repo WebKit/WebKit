@@ -1,3 +1,14 @@
+2012-09-28  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r129825.
+        http://trac.webkit.org/changeset/129825
+        https://bugs.webkit.org/show_bug.cgi?id=97474
+
+        DOMWindow.resizeTo() is broken. Asked by Mark Pilgrim.
+
+        * Platform.gypi:
+        * chromium/public/WebScreenInfo.h: Removed.
+
 2012-09-28  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Add localized strings for multiple fields date/time input UI

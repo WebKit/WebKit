@@ -98,6 +98,15 @@ public:
     static bool plugins(bool refresh, Vector<PluginInfo>*);
     static NPObject* pluginScriptableObject(Widget*);
 
+    // Screen -------------------------------------------------------------
+    static int screenHorizontalDPI(Widget*);
+    static int screenVerticalDPI(Widget*);
+    static int screenDepth(Widget*);
+    static int screenDepthPerComponent(Widget*);
+    static bool screenIsMonochrome(Widget*);
+    static IntRect screenRect(Widget*);
+    static IntRect screenAvailableRect(Widget*);
+
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)
     static void paintButton(
