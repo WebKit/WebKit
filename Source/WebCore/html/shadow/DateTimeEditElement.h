@@ -58,6 +58,7 @@ public:
         virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const = 0;
         virtual bool isEditControlOwnerDisabled() const = 0;
         virtual bool isEditControlOwnerReadOnly() const = 0;
+        virtual AtomicString localeIdentifier() const = 0;
     };
 
     struct LayoutParameters {
@@ -123,6 +124,7 @@ private:
     virtual void fieldValueChanged() OVERRIDE FINAL;
     virtual bool focusOnNextField(const DateTimeFieldElement&) OVERRIDE FINAL;
     virtual bool focusOnPreviousField(const DateTimeFieldElement&) OVERRIDE FINAL;
+    virtual AtomicString localeIdentifier() const OVERRIDE FINAL;
 
     // SpinButtonElement::SpinButtonOwner functions.
     virtual void focusAndSelectSpinButtonOwner() OVERRIDE FINAL;

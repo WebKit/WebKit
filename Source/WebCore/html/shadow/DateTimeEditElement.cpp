@@ -367,6 +367,11 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters, const
     appendChild(spinButton);
 }
 
+AtomicString DateTimeEditElement::localeIdentifier() const
+{
+    return m_editControlOwner ? m_editControlOwner->localeIdentifier() : nullAtom;
+}
+
 void DateTimeEditElement::readOnlyStateChanged()
 {
     updateUIState();

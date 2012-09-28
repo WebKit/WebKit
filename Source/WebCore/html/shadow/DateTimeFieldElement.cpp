@@ -157,6 +157,11 @@ bool DateTimeFieldElement::isRTL() const
     return renderer() && renderer()->style()->direction() == RTL;
 }
 
+AtomicString DateTimeFieldElement::localeIdentifier() const
+{
+    return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom;
+}
+
 void DateTimeFieldElement::setReadOnly()
 {
     // Set HTML attribute readonly to change apperance.

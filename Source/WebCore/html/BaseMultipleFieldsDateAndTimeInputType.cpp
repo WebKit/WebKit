@@ -161,6 +161,11 @@ bool BaseMultipleFieldsDateAndTimeInputType::isMouseFocusable() const
     return false;
 }
 
+AtomicString BaseMultipleFieldsDateAndTimeInputType::localeIdentifier() const
+{
+    return element()->computeInheritedLanguage();
+}
+
 void BaseMultipleFieldsDateAndTimeInputType::minOrMaxAttributeChanged()
 {
     updateInnerTextValue();

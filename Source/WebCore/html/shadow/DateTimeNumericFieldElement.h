@@ -72,6 +72,8 @@ private:
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
 
+    Localizer& localizer() const;
+
     DOMTimeStamp m_lastDigitCharTime;
     const Range m_range;
     int m_value;

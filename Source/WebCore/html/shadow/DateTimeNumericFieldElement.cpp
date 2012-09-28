@@ -28,7 +28,7 @@
 #include "DateTimeNumericFieldElement.h"
 
 #include "KeyboardEvent.h"
-#include "LocalizedNumber.h"
+#include "Localizer.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -93,7 +93,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEve
     DOMTimeStamp delta = keyboardEvent->timeStamp() - m_lastDigitCharTime;
     m_lastDigitCharTime = 0;
 
-    String number = convertFromLocalizedNumber(String(&charCode, 1));
+    String number = localizer().convertFromLocalizedNumber(String(&charCode, 1));
     const int digit = number[0] - '0';
     if (digit < 0 || digit > 9)
         return;
@@ -109,6 +109,11 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEve
 bool DateTimeNumericFieldElement::hasValue() const
 {
     return m_hasValue;
+}
+
+Localizer& DateTimeNumericFieldElement::localizer() const
+{
+    return document()->getLocalizer(localeIdentifier());
 }
 
 int DateTimeNumericFieldElement::maximum() const
@@ -164,13 +169,14 @@ String DateTimeNumericFieldElement::value() const
     if (!m_hasValue)
         return emptyString();
 
+    Localizer& localizer = this->localizer();
     if (m_range.maximum > 999)
-        return convertToLocalizedNumber(String::number(m_value));
+        return localizer.convertToLocalizedNumber(String::number(m_value));
 
     if (m_range.maximum > 99)
-        return convertToLocalizedNumber(String::format("%03d", m_value));
+        return localizer.convertToLocalizedNumber(String::format("%03d", m_value));
 
-    return convertToLocalizedNumber(String::format("%02d", m_value));
+    return localizer.convertToLocalizedNumber(String::format("%02d", m_value));
 }
 
 int DateTimeNumericFieldElement::valueAsInteger() const

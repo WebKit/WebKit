@@ -51,6 +51,7 @@ private:
     virtual void editControlValueChanged() OVERRIDE FINAL;
     virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
     virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
+    virtual AtomicString localeIdentifier() const OVERRIDE FINAL;
 
     // InputType functions
     virtual void blur() OVERRIDE FINAL;

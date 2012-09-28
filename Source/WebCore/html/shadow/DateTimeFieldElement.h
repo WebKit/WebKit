@@ -55,6 +55,7 @@ public:
         virtual void fieldValueChanged() = 0;
         virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
+        virtual AtomicString localeIdentifier() const = 0;
     };
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
@@ -80,6 +81,7 @@ protected:
     void focusOnNextField();
     virtual void handleKeyboardEvent(KeyboardEvent*) = 0;
     void initialize(const AtomicString& shadowPseudoId, const String& axHelpText);
+    AtomicString localeIdentifier() const;
     virtual int maximum() const = 0;
     virtual int minimum() const = 0;
     void updateVisibleValue(EventBehavior);
