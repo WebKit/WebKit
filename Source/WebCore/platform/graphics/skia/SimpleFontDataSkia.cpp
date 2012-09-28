@@ -242,6 +242,8 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     SkPaint paint;
 
     m_platformData.setupPaint(&paint);
+    if (platformData().orientation() == Vertical && m_isBrokenIdeographFallback)
+        paint.setVerticalText(false);
 
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
     SkScalar width = paint.measureText(&glyph, 2);
