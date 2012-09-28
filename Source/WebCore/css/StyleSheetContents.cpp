@@ -485,6 +485,12 @@ void StyleSheetContents::removedFromMemoryCache()
     m_isInMemoryCache = false;
 }
 
+void StyleSheetContents::shrinkToFit()
+{
+    m_importRules.shrinkToFit();
+    m_childRules.shrinkToFit();
+}
+
 void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

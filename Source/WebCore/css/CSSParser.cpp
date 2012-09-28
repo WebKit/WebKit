@@ -380,6 +380,7 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int 
     m_lineNumber = startLineNumber;
     setupParser("", string, "");
     cssyyparse(this);
+    sheet->shrinkToFit();
     m_currentRuleDataStack.clear();
     m_ruleSourceDataResult = 0;
     m_rule = 0;

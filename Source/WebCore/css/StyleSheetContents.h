@@ -138,6 +138,8 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void shrinkToFit();
+
 private:
     StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
