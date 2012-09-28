@@ -1710,9 +1710,9 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     }
 #endif
     
-    // The answer to requiresLayer() for plugins and iframes can change outside of the style system,
-    // since it depends on whether we decide to composite these elements. When the layer status of
-    // one of these elements changes, we need to force a layout.
+    // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
+    // style changing, since it depends on whether we decide to composite these elements. When the
+    // layer status of one of these elements changes, we need to force a layout.
     if (diff == StyleDifferenceEqual && style() && isBoxModelObject()) {
         if (hasLayer() != toRenderBoxModelObject(this)->requiresLayer())
             diff = StyleDifferenceLayout;
@@ -1732,9 +1732,9 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style) {
 #if USE(ACCELERATED_COMPOSITING)
-        // We need to run through adjustStyleDifference() for iframes and plugins, so
+        // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
-        ASSERT(!isRenderIFrame() && !isEmbeddedObject());
+        ASSERT(!isRenderIFrame() && !isEmbeddedObject() && !isCanvas());
 #endif
         return;
     }
