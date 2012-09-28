@@ -65,80 +65,14 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static void drawVerticalTextWithBrokenIdeographs(GraphicsContext* gc, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point)
-{
-    const GlyphBufferAdvance* adv = glyphBuffer.advances(from);
-    Vector<SkPoint, 32> beginPoints(numGlyphs);
-    Vector<SkPoint, 32> endPoints(numGlyphs);
-    SkScalar x = SkFloatToScalar(point.x());
-    SkScalar y = SkFloatToScalar(point.y());
-
-    for (int i = 0; i < numGlyphs; ++i) {
-        SkScalar width = SkFloatToScalar(adv[0].width());
-        beginPoints[i].set(x + width, y);
-        endPoints[i].set(x + width, y - width);
-        x += SkFloatToScalar(width);
-        y += SkFloatToScalar(adv[i].height());
-    }
-
-    SkCanvas* canvas = gc->platformContext()->canvas();
-    const GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
-    TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
-
-    if (textMode & TextModeFill) {
-        SkPaint paint;
-        gc->platformContext()->setupPaintForFilling(&paint);
-        font->platformData().setupPaint(&paint);
-        gc->platformContext()->adjustTextRenderMode(&paint);
-        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-
-        SkPath path;
-        for (int i = 0; i < numGlyphs; ++i) {
-            path.reset();
-            path.moveTo(beginPoints[i]);
-            path.lineTo(endPoints[i]);
-            canvas->drawTextOnPath(glyphs + i, sizeof(GlyphBufferGlyph), path, 0, paint);
-        }
-    }
-
-    if ((textMode & TextModeStroke)
-        && gc->platformContext()->getStrokeStyle() != NoStroke
-        && gc->platformContext()->getStrokeThickness() > 0) {
-        SkPaint paint;
-        gc->platformContext()->setupPaintForStroking(&paint, 0, 0);
-        font->platformData().setupPaint(&paint);
-        gc->platformContext()->adjustTextRenderMode(&paint);
-        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-
-        if (textMode & TextModeFill)
-            paint.setLooper(0);
-
-        SkPath path;
-        for (int i = 0; i < numGlyphs; ++i) {
-            path.reset();
-            path.moveTo(beginPoints[i]);
-            path.lineTo(endPoints[i]);
-            canvas->drawTextOnPath(glyphs + i, sizeof(GlyphBufferGlyph), path, 0, paint);
-        }
-    }
-}
-
 void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,  int from, int numGlyphs,
                       const FloatPoint& point) const {
     SkASSERT(sizeof(GlyphBufferGlyph) == sizeof(uint16_t)); // compile-time assert
 
-    bool isVertical = font->platformData().orientation() == Vertical;
+    const GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
     SkScalar x = SkFloatToScalar(point.x());
     SkScalar y = SkFloatToScalar(point.y());
-
-    if (isVertical) {
-        if (!font->hasVerticalGlyphs()) {
-            drawVerticalTextWithBrokenIdeographs(gc, font, glyphBuffer, from, numGlyphs, point);
-            return;
-        }
-        y += SkFloatToScalar(font->fontMetrics().floatAscent(IdeographicBaseline) - font->fontMetrics().floatAscent());
-    }
 
     // FIXME: text rendering speed:
     // Android has code in their WebCore fork to special case when the
@@ -147,25 +81,24 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     // patches may be upstreamed to WebKit so we always use the slower path
     // here.
     const GlyphBufferAdvance* adv = glyphBuffer.advances(from);
-    const GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
-    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs);
+    SkAutoSTMalloc<32, SkPoint> storage(numGlyphs), storage2(numGlyphs), storage3(numGlyphs);
     SkPoint* pos = storage.get();
+    SkPoint* vPosBegin = storage2.get();
+    SkPoint* vPosEnd = storage3.get();
 
-    SkCanvas* canvas = gc->platformContext()->canvas();
+    bool isVertical = font->platformData().orientation() == Vertical;
     for (int i = 0; i < numGlyphs; i++) {
+        SkScalar myWidth = SkFloatToScalar(adv[i].width());
         pos[i].set(x, y);
-        x += SkFloatToScalar(adv[i].width());
+        if (isVertical) {
+            vPosBegin[i].set(x + myWidth, y);
+            vPosEnd[i].set(x + myWidth, y - myWidth);
+        }
+        x += myWidth;
         y += SkFloatToScalar(adv[i].height());
     }
-    if (isVertical) {
-        canvas->save();
-        canvas->rotate(-90);
-        SkMatrix rotator;
-        rotator.reset();
-        rotator.setRotate(90);
-        rotator.mapPoints(pos, numGlyphs);
-    }
 
+    SkCanvas* canvas = gc->platformContext()->canvas();
     TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
 
     // We draw text up to two times (once for fill, once for stroke).
@@ -176,7 +109,16 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         gc->platformContext()->adjustTextRenderMode(&paint);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
-        canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+        if (isVertical) {
+            SkPath path;
+            for (int i = 0; i < numGlyphs; ++i) {
+                path.reset();
+                path.moveTo(vPosBegin[i]);
+                path.lineTo(vPosEnd[i]);
+                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+            }
+        } else
+            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 
     if ((textMode & TextModeStroke)
@@ -196,10 +138,17 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
             paint.setLooper(0);
         }
 
-        canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+        if (isVertical) {
+            SkPath path;
+            for (int i = 0; i < numGlyphs; ++i) {
+                path.reset();
+                path.moveTo(vPosBegin[i]);
+                path.lineTo(vPosEnd[i]);
+                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+            }
+        } else
+            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
-    if (isVertical)
-        canvas->restore();
 }
 
 static void setupForTextPainting(SkPaint* paint, SkColor color)
@@ -256,15 +205,12 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
-            // FIXME: Complex text doen't support vertical text.
-            fillPaint.setVerticalText(false);
             gc->platformContext()->adjustTextRenderMode(&fillPaint);
             canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, fillPaint);
         }
 
         if (stroke) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
-            fillPaint.setVerticalText(false);
             gc->platformContext()->adjustTextRenderMode(&strokePaint);
             canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, strokePaint);
         }

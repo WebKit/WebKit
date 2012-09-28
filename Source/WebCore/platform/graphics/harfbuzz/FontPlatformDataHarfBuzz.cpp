@@ -230,7 +230,6 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
     paint->setTypeface(m_typeface);
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
-    paint->setVerticalText(m_orientation == Vertical);
 }
 
 SkFontID FontPlatformData::uniqueID() const
