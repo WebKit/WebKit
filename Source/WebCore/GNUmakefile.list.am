@@ -4781,8 +4781,6 @@ webcore_sources += \
 	Source/WebCore/platform/text/LocaleToScriptMappingDefault.cpp \
 	Source/WebCore/platform/text/LocalizedDate.h \
 	Source/WebCore/platform/text/LocalizedDateNone.cpp \
-	Source/WebCore/platform/text/LocalizedNumber.h \
-	Source/WebCore/platform/text/LocalizedNumberNone.cpp \
 	Source/WebCore/platform/text/Localizer.cpp \
 	Source/WebCore/platform/text/Localizer.h \
 	Source/WebCore/platform/text/ParserUtilities.h \

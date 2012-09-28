@@ -33726,20 +33726,12 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\LocalizedNumber.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\LocalizedNumberNone.cpp"
-					>
-				<File
 					RelativePath="..\platform\text\Localizer.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\text\Localizer.h"
 					>
-				</File>
 				</File>
 				<File
 					RelativePath="..\platform\text\ParserUtilities.h"

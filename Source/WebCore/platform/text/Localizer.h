@@ -35,9 +35,22 @@ class Localizer {
 
 public:
     static PassOwnPtr<Localizer> create(const AtomicString&);
+
+    // Converts the specified number string to another number string localized
+    // for the browser's current locale. The input string must conform to HTML
+    // floating-point numbers, and is not empty.
     String convertToLocalizedNumber(const String&);
+
+    // Converts the specified localized number string to a number string in the
+    // HTML floating-point number format. The input string is provided by a end
+    // user, and might not be a number string. It's ok that the function returns
+    // a string which is not conforms to the HTML floating-point number format,
+    // callers of this function are responsible to check the format of the
+    // resultant string.
     String convertFromLocalizedNumber(const String&);
+
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    // Returns localized decimal separator, e.g. "." for English, "," for French.
     String localizedDecimalSeparator();
 
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
