@@ -1,3 +1,26 @@
+2012-09-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] Remove the gutter overlay moving its functionality into the InspectorOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=97799
+
+        Reviewed by Pavel Feldman.
+
+        - Dispatch the webViewResized() event on InspectorController, which is necessary to update the InspectorOverlay.
+        - Remove the gutter overlay painting code.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::DeviceMetricsSupport):
+        (WebKit::DeviceMetricsSupport::~DeviceMetricsSupport):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::webViewResized):
+        (WebKit::WebDevToolsAgentImpl::overrideDeviceMetrics):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+        * src/WebDevToolsAgentPrivate.h:
+        (WebDevToolsAgentPrivate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2012-09-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [chromium] remove devtools_frontend.zip
