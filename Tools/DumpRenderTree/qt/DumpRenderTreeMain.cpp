@@ -57,10 +57,10 @@
 
 #include <wtf/Assertions.h>
 
-void messageHandler(QtMsgType type, const char *message)
+void messageHandler(QtMsgType type, const QMessageLogContext&, const QString &message)
 {
     if (type == QtCriticalMsg) {
-        fprintf(stderr, "%s\n", message);
+        fprintf(stderr, "%s\n", qPrintable(message));
         return;
     }
     // do nothing
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     // Has to be done before QApplication is constructed in case
     // QApplication itself produces debug output.
     if (suppressQtDebugOutput)
-        qInstallMsgHandler(messageHandler);
+        qInstallMessageHandler(messageHandler);
 
     WebKit::initializeTestFonts();
 

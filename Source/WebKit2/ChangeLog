@@ -1,3 +1,22 @@
+2012-09-28  Kai Koehne  <kai.koehne@digia.com>
+
+        [Qt] Use qInstallMessageHandler() 
+        https://bugs.webkit.org/show_bug.cgi?id=96648
+
+        Reviewed by Jocelyn Turcotte.
+
+        qInstallMsgHandler() got deprecated in Qt 5.
+
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        (WebKit::messageHandler):
+        (WebKit::PluginProcessMain):
+        * UIProcess/API/qt/tests/util.cpp:
+        (messageHandler):
+        (suppressDebugOutput):
+        * qt/MainQt.cpp:
+        (messageHandler):
+        (main):
+
 2012-09-28  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Clear provider on destructor of {Vibration,Battery,NetworkInfo}Provider.

@@ -57,10 +57,10 @@ bool waitForSignal(QObject* obj, const char* signal, int timeout)
     return timeoutSpy.isEmpty();
 }
 
-static void messageHandler(QtMsgType type, const char* message)
+static void messageHandler(QtMsgType type, const QMessageLogContext&, const QString& message)
 {
     if (type == QtCriticalMsg) {
-        fprintf(stderr, "%s\n", message);
+        fprintf(stderr, "%s\n", qPrintable(message));
         return;
     }
     // Do nothing
@@ -68,7 +68,7 @@ static void messageHandler(QtMsgType type, const char* message)
 
 void suppressDebugOutput()
 {
-    qInstallMsgHandler(messageHandler); \
+    qInstallMessageHandler(messageHandler); \
     if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty()) \
         qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
 }

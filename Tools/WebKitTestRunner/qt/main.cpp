@@ -74,10 +74,10 @@ static void sigcontHandler(int)
 }
 #endif
 
-void messageHandler(QtMsgType type, const char* message)
+void messageHandler(QtMsgType type, const QMessageLogContext&, const QString& message)
 {
     if (type == QtCriticalMsg) {
-        fprintf(stderr, "%s\n", message);
+        fprintf(stderr, "%s\n", qPrintable(message));
         return;
     }
 
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
     // Has to be done before QApplication is constructed in case
     // QApplication itself produces debug output.
     if (suppressQtDebugOutput) {
-        qInstallMsgHandler(messageHandler);
+        qInstallMessageHandler(messageHandler);
         if (qgetenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT").isEmpty())
             qputenv("QT_WEBKIT_SUPPRESS_WEB_PROCESS_OUTPUT", "1");
     }
