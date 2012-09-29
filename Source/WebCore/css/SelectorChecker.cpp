@@ -456,6 +456,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
     SelectorCheckingContext nextContext(context);
     nextContext.selector = historySelector;
 
+    PseudoId ignoreDynamicPseudo = NOPSEUDO;
     if (relation != CSSSelector::SubSelector) {
         // Abort if the next selector would exceed the scope.
         if (context.element == context.scope)
@@ -472,9 +473,6 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.pseudoStyle = NOPSEUDO;
     }
 
-    PseudoId nonSubSelectorPseudo(NOPSEUDO);
-    PseudoId& currentDynamicPseudo = relation == CSSSelector::SubSelector ? dynamicPseudo : nonSubSelectorPseudo;
-
     switch (relation) {
     case CSSSelector::Descendant:
         nextContext.element = context.element->parentElement();
@@ -482,7 +480,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->parentElement()) {
-            SelectorMatch match = checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+            SelectorMatch match = checkSelector(nextContext, ignoreDynamicPseudo, hasUnknownPseudoElements);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
             if (nextContext.element == nextContext.scope)
@@ -497,7 +495,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, ignoreDynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::DirectAdjacent:
         if (m_mode == ResolvingStyle && context.element->parentElement()) {
@@ -511,7 +509,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.isSubSelector = false;
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
-        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, ignoreDynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::IndirectAdjacent:
         if (m_mode == ResolvingStyle && context.element->parentElement()) {
@@ -524,7 +522,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         nextContext.elementStyle = 0;
         nextContext.elementParentStyle = 0;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
-            SelectorMatch match = checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+            SelectorMatch match = checkSelector(nextContext, ignoreDynamicPseudo, hasUnknownPseudoElements);
             if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
         };
@@ -538,7 +536,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
              && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
         nextContext.isSubSelector = true;
-        return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+        return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
 
     case CSSSelector::ShadowDescendant:
         {
@@ -552,7 +550,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
             nextContext.isSubSelector = false;
             nextContext.elementStyle = 0;
             nextContext.elementParentStyle = 0;
-            return checkSelector(nextContext, currentDynamicPseudo, hasUnknownPseudoElements);
+            return checkSelector(nextContext, ignoreDynamicPseudo, hasUnknownPseudoElements);
         }
     }
 
