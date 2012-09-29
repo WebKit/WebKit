@@ -493,9 +493,6 @@ webkit.org/b/85262 fast/css/image-resolution
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
 
-# This test assumes we cannot play RTSP, but we can.
-Bug(EFL) media/unsupported-rtsp.html [ Skip ]
-
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]
 
