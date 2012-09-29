@@ -1,3 +1,22 @@
+2012-09-29  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Fix build error : Link webkit2 library to ewk2UnitTestInjectedBundleSample.
+        https://bugs.webkit.org/show_bug.cgi?id=97622
+
+        Reviewed by Gyuyoung Kim.
+
+        There is no dependency between ewk2UnitTestInjectedBundleSample and
+        webkit2 library.
+
+        Because of this, on the first build, compiler tries to build
+        injected_bundle_sample.cpp before the forwarding headers are created.
+        This makes build error that the header file 'WebKit2/WKBaseSoup.h'
+        cannot be found.
+
+        To prevent this, webkit2 library is linked to ewk2UnitTestInjectedBundleSample.
+
+        * PlatformEfl.cmake:
+
 2012-09-28  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [WK2][GTK][EFL] Share WebKit2-GTK plugin process implementation with EFL port

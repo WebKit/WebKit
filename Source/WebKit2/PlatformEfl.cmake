@@ -340,6 +340,7 @@ IF (ENABLE_API_TESTS)
     ENDFOREACH ()
 
     ADD_LIBRARY(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
+    TARGET_LINK_LIBRARIES(ewk2UnitTestInjectedBundleSample ${WebKit2_LIBRARY_NAME})
 ENDIF ()
 
 IF (ENABLE_INSPECTOR)
