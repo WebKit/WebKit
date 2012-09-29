@@ -460,6 +460,8 @@ protected:
     static void startDelayUpdateScrollInfo();
     static void finishDelayUpdateScrollInfo();
 
+    void updateScrollInfoAfterLayout();
+
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -857,8 +859,6 @@ private:
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
-
-    void updateScrollInfoAfterLayout();
 
     void splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
                      RenderObject* beforeChild, RenderBoxModelObject* oldCont);

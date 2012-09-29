@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+div.flexbox {
+    display: -webkit-flex;
+}
+div.overflow-auto {
+    overflow: auto;
+}
+div.flex {
+    -webkit-flex: 1;
+}
+.container {
+    width: 100px;
+    height: 100px;
+}
+</style>
+<script>
+    function runTest() {
+        document.querySelector('.overflow-auto').scrollTop = 50;
+        document.querySelector('#sidebar').innerHTML = '';
+        shouldBe("document.querySelector('.overflow-auto').scrollTop", "50");
+    }
+</script>
+
+</head>
+<body onload="runTest()">
+<div class="container flexbox">
+    <div class="flex overflow-auto flexbox">
+        <div style="height: 400px"></div>
+    </div>
+    <div id="sidebar">foo</div>
+</div>
+<div id="console"></div>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

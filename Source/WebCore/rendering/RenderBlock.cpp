@@ -1355,6 +1355,15 @@ void RenderBlock::finishDelayUpdateScrollInfo()
 void RenderBlock::updateScrollInfoAfterLayout()
 {
     if (hasOverflowClip()) {
+        if (style()->isFlippedBlocksWritingMode()) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=97937
+            // Workaround for now. We cannot delay the scroll info for overflow
+            // for items with opposite writing directions, as the contents needs
+            // to overflow in that direction
+            layer()->updateScrollInfoAfterLayout();
+            return;
+        }
+
         if (gDelayUpdateScrollInfo)
             gDelayedUpdateScrollInfoSet->add(this);
         else
