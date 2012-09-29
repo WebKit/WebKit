@@ -1,3 +1,20 @@
+2012-09-29  Emil A Eklund  <eae@chromium.org>
+
+        Enable SATURATED_LAYOUT_ARITHMETIC for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=95053
+
+        Reviewed by Abhishek Arya.
+
+        Enable the SATURATED_LAYOUT_ARITHMETIC flag for the chromium port.
+        This changes the behavior of FractionalLayoutUnit to clamp to the
+        max or min value instead of overflowing.
+
+        This may very well impact performance so the current plan is to enable
+        it for a couple of hours to a day to collect performance data and then
+        disable it again until we've had a chance to review the perf data.
+
+        * wtf/Platform.h:
+
 2012-09-28  Anders Carlsson  <andersca@apple.com>
 
         Remove Java bridge
