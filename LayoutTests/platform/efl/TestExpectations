@@ -184,8 +184,6 @@ compositing/framesets/composited-frame-alignment.html
 compositing/images/direct-pdf-image.html
 compositing/reflections/backface-hidden-reflection.html
 compositing/tiling/constrained-layer-size.html
-fast/dom/horizontal-scrollbar-in-rtl.html
-fast/dom/vertical-scrollbar-in-rtl.html
 fast/events/overflow-viewport-renderer-deleted.html
 fast/forms/listbox-onchange.html
 fast/forms/onselect-textfield.html
