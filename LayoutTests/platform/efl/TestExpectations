@@ -1502,8 +1502,5 @@ webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFail
 # Frame does not get focus as expected
 webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 
-# Needs rebaseline.
-webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]
-
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
