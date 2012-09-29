@@ -24,19 +24,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessMainGtk_h
-#define PluginProcessMainGtk_h
+#include "PluginProcessMainUnix.h"
 
-#include <WebKit2/WKBase.h>
-
-namespace WebKit {
-
-#ifdef __cplusplus
-extern "C" {
-WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[]);
-} // extern "C"
-#endif // __cplusplus
-
-} // namespace WebKit
-
-#endif // PluginProcessMain_h
+int main(int argc, char** argv)
+{
+    return WebKit::PluginProcessMainUnix(argc, argv);
+}

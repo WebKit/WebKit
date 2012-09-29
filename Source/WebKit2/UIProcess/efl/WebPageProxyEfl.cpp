@@ -83,4 +83,14 @@ void WebPageProxy::setThemePath(const String& themePath)
     process()->send(Messages::WebPage::SetThemePath(themePath), m_pageID, 0);
 }
 
+void WebPageProxy::createPluginContainer(uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect&, const WebCore::IntRect&, uint64_t)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

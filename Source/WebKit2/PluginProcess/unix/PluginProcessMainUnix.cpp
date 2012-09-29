@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011 Apple Inc.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +12,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -24,44 +26,61 @@
  */
 
 #include "config.h"
-#include "PluginProcessMainGtk.h"
+#include "PluginProcessMainUnix.h"
 
+#include "Logging.h"
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
+#include "ScriptController.h"
 #include <WebCore/RunLoop.h>
+#if PLATFORM(GTK)
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
-#include <runtime/InitializeThreading.h>
-#include <wtf/MainThread.h>
+#elif PLATFORM(EFL) && HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
 
 using namespace WebCore;
 
 namespace WebKit {
 
-static int webkitgtkXError(Display* xdisplay, XErrorEvent* error)
+#ifdef XP_UNIX
+static const char* xErrorString = "The program '%s' received an X Window System error.\n"
+    "This probably reflects a bug in a browser plugin.\n"
+    "The error was '%s'.\n"
+    "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n";
+static char* programName = 0;
+
+static int webkitXError(Display* xdisplay, XErrorEvent* error)
 {
-    gchar errorMessage[64];
+    char errorMessage[64];
     XGetErrorText(xdisplay, error->error_code, errorMessage, 63);
-    g_warning("The program '%s' received an X Window System error.\n"
-              "This probably reflects a bug in a browser plugin.\n"
-              "The error was '%s'.\n"
-              "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n",
-              g_get_prgname(), errorMessage,
-              error->serial, error->error_code,
-              error->request_code, error->minor_code);
+
+    LOG(Plugins, xErrorString,
+        programName, errorMessage,
+        error->serial, error->error_code,
+        error->request_code, error->minor_code);
+
     return 0;
 }
+#endif
 
-WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
+WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
 {
     ASSERT(argc == 2 || argc == 3);
     bool scanPlugin = !strcmp(argv[1], "-scanPlugin");
     ASSERT(argc == 2 || (argc == 3 && scanPlugin));
 
+#if PLATFORM(GTK)
     gtk_init(&argc, &argv);
+#elif PLATFORM(EFL)
+#ifdef HAVE_ECORE_X
+    if (!ecore_x_init(0))
+#endif
+        return 1;
+#endif
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
+    ScriptController::initializeThreading();
 
     if (scanPlugin) {
         String pluginPath(argv[2]);
@@ -75,7 +94,10 @@ WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
     // Plugins can produce X errors that are handled by the GDK X error handler, which
     // exits the process. Since we don't want to crash due to plugin bugs, we install a
     // custom error handler to show a warning when a X error happens without aborting.
-    XSetErrorHandler(webkitgtkXError);
+#if defined(XP_UNIX)
+    programName = basename(argv[0]);
+    XSetErrorHandler(webkitXError);
+#endif
 
     int socket = atoi(argv[1]);
     WebKit::PluginProcess::shared().initialize(socket, RunLoop::main());
@@ -85,5 +107,3 @@ WK_EXPORT int PluginProcessMainGtk(int argc, char* argv[])
 }
 
 } // namespace WebKit
-
-

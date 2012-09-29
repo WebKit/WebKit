@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011 Apple Inc.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +12,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -31,10 +33,11 @@
 #include "PluginProcessCreationParameters.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/GOwnPtrGtk.h>
-#include <glib.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#if PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
+#include <glib.h>
+#endif
 
 using namespace WebCore;
 
@@ -46,6 +49,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
+#if PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
     CString binaryPath = fileSystemRepresentation(executablePathOfPluginProcess());
     CString pluginPathCString = fileSystemRepresentation(pluginPath);
     char* argv[4];
@@ -54,27 +58,37 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     argv[2] = const_cast<char*>(pluginPathCString.data());
     argv[3] = 0;
 
-    gint status;
-    GOwnPtr<gchar> stdOut;
-    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut.outPtr(), 0, &status, 0))
+    int status;
+    char* stdOut = 0;
+
+    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
         return false;
+
     if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS)
         return false;
 
     const unsigned kNumLinesExpected = 3;
     String lines[kNumLinesExpected];
     unsigned lineIndex = 0;
-    const UChar* current = reinterpret_cast<const UChar*>(stdOut.get());
+
+    const UChar* current = reinterpret_cast<const UChar*>(stdOut);
+
     while (lineIndex < kNumLinesExpected) {
         const UChar* start = current;
         while (*current++ != UChar('\n')) { }
         lines[lineIndex++] = String(start, current - start - 1);
     }
 
+    if (stdOut)
+        free(stdOut);
+
     result.name.swap(lines[0]);
     result.description.swap(lines[1]);
     result.mimeDescription.swap(lines[2]);
     return !result.mimeDescription.isEmpty();
+#else // PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
+    return false;
+#endif // PLATFORM(GTK) || (PLATFORM(EFL) && ENABLE(GLIB_SUPPORT))
 }
 
 } // namespace WebKit

@@ -329,7 +329,7 @@ my @features = (
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => (isBlackBerry() || isEfl()), value => \$registerProtocolHandlerSupport },
 
     { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
-      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginAPISupport },
+      define => "ENABLE_NETSCAPE_PLUGIN_API", default => 1, value => \$netscapePluginAPISupport },
 
     { option => "network-info", desc => "Toggle Network Info support",
       define => "ENABLE_NETWORK_INFO", default => isEfl(), value => \$networkInfoSupport },

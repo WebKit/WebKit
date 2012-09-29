@@ -1,3 +1,14 @@
+2012-09-28  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [WK2][GTK][EFL] Share WebKit2-GTK plugin process implementation with EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=91844
+
+        Reviewed by Simon Hausmann.
+
+        Turn on Netscape Plugin API by default  for WebKit2-Efl.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-09-28  Alpha Lam  <hclam@chromium.org>
 
         REGRESSION(r122215) - CachedImage::likelyToBeUsedSoon crashes on accessing a deleted CachedImageClient

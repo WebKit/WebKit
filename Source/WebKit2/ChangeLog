@@ -1,3 +1,57 @@
+2012-09-28  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [WK2][GTK][EFL] Share WebKit2-GTK plugin process implementation with EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=91844
+
+        Reviewed by Simon Hausmann.
+
+        Implement windowless plugin and functions needed to launch PluginProcess.
+
+        * GNUmakefile.am: Change files and folders related to plugin process from gtk to unix.
+        * GNUmakefile.list.am: Change files and folders related to plugin process from gtk to unix.
+        * Platform/Logging.cpp: Add Plugins channel for LOG.
+        (WebKit):
+        (WebKit::getChannelFromName):
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+        (WebKit):
+        * PlatformEfl.cmake: Add files needed by plugin process.
+        * PluginProcess/unix/PluginControllerProxyUnix.cpp: Renamed from Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp.
+        (WebKit):
+        (WebKit::PluginControllerProxy::platformInitialize): Add macros for gtk/efl differents.
+        (WebKit::PluginControllerProxy::platformDestroy):
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        * PluginProcess/unix/PluginProcessMainUnix.cpp: Renamed from Source/WebKit2/PluginProcess/gtk/PluginProcessMainGtk.cpp.
+        (WebKit):
+        (WebKit::webkitXError):
+        (WebKit::PluginProcessMainUnix):
+        * PluginProcess/unix/PluginProcessMainUnix.h: Renamed from Source/WebKit2/PluginProcess/gtk/PluginProcessMainGtk.h.
+        (WebKit):
+        * PluginProcess/unix/PluginProcessUnix.cpp: Renamed from Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp.
+        (WebKit):
+        (WebKit::PluginProcess::platformInitialize):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp: Renamed from Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp.
+        (WebKit):
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/efl/WebPageProxyEfl.cpp: Add stubs.
+        (WebKit::WebPageProxy::createPluginContainer):
+        (WebKit):
+        (WebKit::WebPageProxy::windowedPluginGeometryDidChange):
+        * WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp: Renamed from Source/WebKit2/WebProcess/Plugins/Netscape/gtk/PluginProxyGtk.cpp.
+        (WebKit):
+        (WebKit::PluginProxy::needsBackingStore):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: Plugin's windowless implementation.
+        (WebKit::getPluginDisplay):
+        (WebKit::x11Screen):
+        (WebKit::displayDepth):
+        (WebKit::rootWindowID):
+        (WebKit::NetscapePlugin::x11HostDisplay):
+        (WebKit::NetscapePlugin::platformPaint):
+        * config.h:
+        * unix/PluginMainUnix.cpp: Renamed from Source/WebKit2/gtk/PluginMainGtk.cpp.
+        (main):
+
 2012-09-28  Anders Carlsson  <andersca@apple.com>
 
         Remove Java bridge

@@ -278,8 +278,8 @@ webkit2_sources += \
 	Source/WebKit2/PluginProcess/PluginProcessMain.h \
 	Source/WebKit2/PluginProcess/WebProcessConnection.cpp \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
-	Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp \
-	Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp \
+	Source/WebKit2/PluginProcess/unix/PluginControllerProxyUnix.cpp \
+	Source/WebKit2/PluginProcess/unix/PluginProcessUnix.cpp \
 	Source/WebKit2/Shared/DragControllerAction.h \
 	Source/WebKit2/Shared/FontInfo.h \
 	Source/WebKit2/Shared/HTTPCookieAcceptPolicy.h \
@@ -806,8 +806,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Plugins/PluginProcessProxy.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.cpp \
-	Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp \
 	Source/WebKit2/UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
+	Source/WebKit2/UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp \
 	Source/WebKit2/UIProcess/ProcessModel.h \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.cpp \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.h \
@@ -1066,7 +1066,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
-	Source/WebKit2/WebProcess/Plugins/Netscape/gtk/PluginProxyGtk.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/WebProcess/Plugins/PluginController.h \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
@@ -1236,10 +1236,10 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.cpp \
 	Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.h \
-	Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp \
-	Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp \
-	Source/WebKit2/PluginProcess/gtk/PluginProcessMainGtk.h \
-	Source/WebKit2/PluginProcess/gtk/PluginProcessMainGtk.cpp \
+	Source/WebKit2/PluginProcess/unix/PluginControllerProxyUnix.cpp \
+	Source/WebKit2/PluginProcess/unix/PluginProcessMainUnix.h \
+	Source/WebKit2/PluginProcess/unix/PluginProcessMainUnix.cpp \
+	Source/WebKit2/PluginProcess/unix/PluginProcessUnix.cpp \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \
@@ -1272,7 +1272,7 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
 	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
-	Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp \
+	Source/WebKit2/UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
@@ -1284,6 +1284,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
-	Source/WebKit2/gtk/PluginMainGtk.cpp
+	Source/WebKit2/unix/PluginMainUnix.cpp
 
 endif # ENABLE_PLUGIN_PROCESS

@@ -108,7 +108,7 @@ static const type& name() \
 #define PLUGIN_ARCHITECTURE_MAC 1
 #elif PLATFORM(WIN)
 #define PLUGIN_ARCHITECTURE_WIN 1
-#elif PLATFORM(GTK) && (OS(UNIX) && !OS(MAC_OS_X))
+#elif (PLATFORM(GTK) || PLATFORM(EFL)) && (OS(UNIX) && !OS(MAC_OS_X))
 #define PLUGIN_ARCHITECTURE_X11 1
 #elif PLATFORM(QT)
 // Qt handles this features.prf

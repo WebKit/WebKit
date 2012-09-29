@@ -7,6 +7,10 @@ LIST(APPEND WebKit2_SOURCES
     Platform/CoreIPC/unix/ConnectionUnix.cpp
     Platform/CoreIPC/unix/AttachmentUnix.cpp
 
+    PluginProcess/unix/PluginControllerProxyUnix.cpp
+    PluginProcess/unix/PluginProcessMainUnix.cpp
+    PluginProcess/unix/PluginProcessUnix.cpp
+
     Shared/API/c/cairo/WKImageCairo.cpp
 
     Shared/API/c/gtk/WKGraphicsContextGtk.cpp
@@ -27,6 +31,8 @@ LIST(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/DefaultUndoController.cpp
+
+    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     UIProcess/API/C/efl/WKView.cpp
     
@@ -85,6 +91,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
+    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
@@ -93,6 +100,10 @@ LIST(APPEND WebKit2_SOURCES
     WebProcess/Downloads/soup/DownloadSoup.cpp
 
     WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp
+
+    WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
+
+    WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 
     WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp
     WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp
@@ -235,6 +246,29 @@ SET (EWebKit2_HEADERS
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
 INSTALL(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
+
+IF (ENABLE_PLUGIN_PROCESS)
+    ADD_DEFINITIONS(-DENABLE_PLUGIN_PROCESS=1)
+
+    SET (PluginProcess_EXECUTABLE_NAME PluginProcess)
+    LIST (APPEND PluginProcess_INCLUDE_DIRECTORIES
+        "${WEBKIT2_DIR}/PluginProcess/unix"
+    )
+
+    INCLUDE_DIRECTORIES(${PluginProcess_INCLUDE_DIRECTORIES})
+
+    LIST (APPEND PluginProcess_SOURCES
+        ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
+    )
+
+    SET(PluginProcess_LIBRARIES
+        ${WebKit2_LIBRARY_NAME}
+    )
+
+    ADD_EXECUTABLE(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
+    TARGET_LINK_LIBRARIES(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
+    INSTALL(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+ENDIF () # ENABLE_PLUGIN_PROCESS
 
 INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest/include)
 

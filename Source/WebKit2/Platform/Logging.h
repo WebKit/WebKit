@@ -40,6 +40,7 @@ namespace WebKit {
 extern WTFLogChannel LogContextMenu;
 extern WTFLogChannel LogIconDatabase;
 extern WTFLogChannel LogKeyHandling;
+extern WTFLogChannel LogPlugins;
 extern WTFLogChannel LogSessionState;
 extern WTFLogChannel LogTextInput;
 extern WTFLogChannel LogView;
