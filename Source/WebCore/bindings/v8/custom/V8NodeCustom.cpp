@@ -125,50 +125,49 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     return v8::Null(args.GetIsolate());
 }
 
-v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
 
-    if (!forceNewObject) {
-        v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
-        if (!wrapper.IsEmpty())
-            return wrapper;
-    }
+    v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+
     switch (impl->nodeType()) {
     case Node::ELEMENT_NODE:
         if (impl->isHTMLElement())
-            return toV8(toHTMLElement(impl), creationContext, isolate, forceNewObject);
+            return toV8(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
         if (impl->isSVGElement())
-            return toV8(static_cast<SVGElement*>(impl), creationContext, isolate, forceNewObject);
+            return toV8(static_cast<SVGElement*>(impl), creationContext, isolate);
 #endif
-        return V8Element::wrap(static_cast<Element*>(impl), creationContext, isolate, forceNewObject);
+        return V8Element::wrap(static_cast<Element*>(impl), creationContext, isolate);
     case Node::ATTRIBUTE_NODE:
-        return toV8(static_cast<Attr*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<Attr*>(impl), creationContext, isolate);
     case Node::TEXT_NODE:
-        return toV8(toText(impl), creationContext, isolate, forceNewObject);
+        return toV8(toText(impl), creationContext, isolate);
     case Node::CDATA_SECTION_NODE:
-        return toV8(static_cast<CDATASection*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<CDATASection*>(impl), creationContext, isolate);
     case Node::ENTITY_REFERENCE_NODE:
-        return toV8(static_cast<EntityReference*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<EntityReference*>(impl), creationContext, isolate);
     case Node::ENTITY_NODE:
-        return toV8(static_cast<Entity*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<Entity*>(impl), creationContext, isolate);
     case Node::PROCESSING_INSTRUCTION_NODE:
-        return toV8(static_cast<ProcessingInstruction*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<ProcessingInstruction*>(impl), creationContext, isolate);
     case Node::COMMENT_NODE:
-        return toV8(static_cast<Comment*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<Comment*>(impl), creationContext, isolate);
     case Node::DOCUMENT_NODE:
-        return toV8(static_cast<Document*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<Document*>(impl), creationContext, isolate);
     case Node::DOCUMENT_TYPE_NODE:
-        return toV8(static_cast<DocumentType*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<DocumentType*>(impl), creationContext, isolate);
     case Node::DOCUMENT_FRAGMENT_NODE:
-        return toV8(static_cast<DocumentFragment*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<DocumentFragment*>(impl), creationContext, isolate);
     case Node::NOTATION_NODE:
-        return toV8(static_cast<Notation*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<Notation*>(impl), creationContext, isolate);
     default:
         break; // XPATH_NAMESPACE_NODE
     }
-    return V8Node::wrap(impl, creationContext, isolate, forceNewObject);
+    return V8Node::wrap(impl, creationContext, isolate);
 }
 } // namespace WebCore

@@ -1176,7 +1176,7 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
-v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     typedef HashMap<WTF::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
@@ -1218,7 +1218,7 @@ END
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
         return createWrapperFunction(element, creationContext, isolate);
-    return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate, forceNewObject);
+    return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
 END
 ;
     }
@@ -1278,7 +1278,7 @@ namespace WebCore {
 
     class $parameters{namespace}Element;
 
-    v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, v8::Handle<v8::Object> creationContext, v8::Isolate*, bool);
+    v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 }
 END
 ;

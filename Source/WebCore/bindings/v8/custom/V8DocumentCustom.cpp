@@ -95,17 +95,17 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 
-v8::Handle<v8::Value> toV8(Document* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(Document* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     if (impl->isHTMLDocument())
-        return toV8(static_cast<HTMLDocument*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<HTMLDocument*>(impl), creationContext, isolate);
 #if ENABLE(SVG)
     if (impl->isSVGDocument())
-        return toV8(static_cast<SVGDocument*>(impl), creationContext, isolate, forceNewObject);
+        return toV8(static_cast<SVGDocument*>(impl), creationContext, isolate);
 #endif
-    v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, creationContext, isolate, forceNewObject);
+    v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8DOMWindowShell::enteredIsolatedContextData()) {

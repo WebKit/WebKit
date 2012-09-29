@@ -176,11 +176,11 @@ void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
     info.This()->ForceSet(name, value);
 }
 
-v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, creationContext, isolate, forceNewObject);
+    v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8DOMWindowShell::enteredIsolatedContextData()) {

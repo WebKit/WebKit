@@ -372,10 +372,6 @@ END
         push(@headerContent, "false;\n");
     }
 
-    my $forceNewObjectParameter = IsDOMNodeType($interfaceName) ? ", bool forceNewObject = false" : "";
-    my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
-    my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
-
     push(@headerContent, <<END);
     static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
@@ -384,7 +380,7 @@ END
     {
         return reinterpret_cast<${nativeType}*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0${forceNewObjectParameter});
+    inline static v8::Handle<v8::Object> wrap(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
@@ -483,10 +479,9 @@ private:
 END
 
     push(@headerContent, <<END);
-v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate${forceNewObjectInput})
+v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
 END
-    push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "isolate");
     my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
     push(@headerContent, <<END);
@@ -494,7 +489,6 @@ END
         if (!wrapper.IsEmpty())
             return wrapper;
 END
-    push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
     push(@headerContent, <<END);
     return ${className}::wrapSlow(impl, creationContext, isolate);
 }
@@ -505,41 +499,39 @@ END
     } elsif (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
         push(@headerContent, <<END);
 
-inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0${forceNewObjectParameter})
+inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return ${className}::wrap(impl, creationContext, isolate${forceNewObjectCall});
+    return ${className}::wrap(impl, creationContext, isolate);
 }
 END
     } elsif ($interfaceName ne 'Node') {
         push(@headerContent, <<END);
 
-v8::Handle<v8::Value> toV8(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0${forceNewObjectParameter});
+v8::Handle<v8::Value> toV8(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
 END
     } else {
         push(@headerContent, <<END);
 
-v8::Handle<v8::Value> toV8Slow(Node*, v8::Handle<v8::Object> creationContext, v8::Isolate*, bool);
+v8::Handle<v8::Value> toV8Slow(Node*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 
-inline v8::Handle<v8::Value> toV8(Node* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0, bool forceNewObject = false)
+inline v8::Handle<v8::Value> toV8(Node* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
-    if (UNLIKELY(forceNewObject))
-        return toV8Slow(impl, creationContext, isolate, forceNewObject);
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return toV8Slow(impl, creationContext, isolate, false);
+    return toV8Slow(impl, creationContext, isolate);
 }
 END
     }
 
     push(@headerContent, <<END);
-inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0${forceNewObjectParameter})
+inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get(), creationContext, isolate${forceNewObjectCall});
+    return toV8(impl.get(), creationContext, isolate);
 }
 END
 
@@ -3357,8 +3349,6 @@ sub GenerateToV8Converters
     my $nativeType = shift;
 
     my $domMapName = GetDomMapName($dataNode, $interfaceName);
-    my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
-    my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
     my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($dataNode);
 
@@ -4084,9 +4074,8 @@ sub NativeToJSValue
 
     AddIncludesForType($type);
 
-    # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}$getCreationContextArg$getIsolateArg" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", true)" : ")");
+        return "toV8($value$getCreationContextArg$getIsolateArg)";
     }
 
     if ($type eq "EventTarget") {

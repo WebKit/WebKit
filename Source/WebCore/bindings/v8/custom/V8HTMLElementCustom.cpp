@@ -40,11 +40,11 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return createV8HTMLWrapper(impl, creationContext, isolate, forceNewObject);
+    return createV8HTMLWrapper(impl, creationContext, isolate);
 }
 
 #if ENABLE(MICRODATA)
