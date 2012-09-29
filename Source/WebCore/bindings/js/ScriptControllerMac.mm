@@ -49,10 +49,6 @@
 #import "npruntime_impl.h"
 #endif
 
-#if ENABLE(JAVA_BRIDGE)
-#import "JavaInstanceJSC.h"
-#endif
-
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
 - (NPObject *)createPluginScriptableObject;
@@ -95,14 +91,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
 #endif
     }
 
-#if ENABLE(JAVA_BRIDGE)
-    jobject applet = m_frame->loader()->client()->javaApplet(widgetView);
-    if (!applet)
-        return 0;
-    return JSC::Bindings::JavaInstance::create(applet, rootObject.release());
-#else
     return 0;
-#endif
 }
 
 WebScriptObject* ScriptController::windowScriptObject()
@@ -135,14 +124,5 @@ void ScriptController::disconnectPlatformScriptObjects()
         [(DOMAbstractView *)m_windowScriptObject.get() _disconnectFrame];
     }
 }
-
-#if ENABLE(JAVA_BRIDGE)
-
-void ScriptController::initJavaJSBindings()
-{
-    JSC::Bindings::JavaJSObject::initializeJNIThreading();
-}
-
-#endif
 
 }

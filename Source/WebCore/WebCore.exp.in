@@ -2293,19 +2293,6 @@ __ZNK7WebCore9FloatQuad12containsQuadERKS0_
 __ZNK7WebCore9FloatQuad13containsPointERKNS_10FloatPointE
 #endif
 
-#if ENABLE(JAVA_BRIDGE)
-_KJS_JSCreateNativeJSObject
-_KJS_JSObject_JSFinalize
-_KJS_JSObject_JSObjectCall
-_KJS_JSObject_JSObjectEval
-_KJS_JSObject_JSObjectGetMember
-_KJS_JSObject_JSObjectGetSlot
-_KJS_JSObject_JSObjectRemoveMember
-_KJS_JSObject_JSObjectSetMember
-_KJS_JSObject_JSObjectSetSlot
-_KJS_JSObject_JSObjectToString
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 __NPN_Construct
 __NPN_CreateObject

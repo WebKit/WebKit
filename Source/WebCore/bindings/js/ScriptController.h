@@ -150,9 +150,6 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-#if ENABLE(JAVA_BRIDGE)
-    static void initJavaJSBindings();
-#endif
     WebScriptObject* windowScriptObject();
 #endif
 

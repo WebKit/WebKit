@@ -219,10 +219,6 @@ private:
 
     virtual void registerForIconNotification(bool listen) OVERRIDE;
 
-#if ENABLE(JAVA_BRIDGE)
-    virtual jobject javaApplet(NSView*) OVERRIDE;
-#endif
-
 #if PLATFORM(MAC)
     virtual RemoteAXObjectRef accessibilityRemoteObject() OVERRIDE { return 0; }
 #endif

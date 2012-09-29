@@ -128,10 +128,6 @@
 #import <WebCore/HTMLMediaElement.h>
 #endif
 
-#if ENABLE(JAVA_BRIDGE)
-#import "WebJavaPlugIn.h"
-#endif
-
 #if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
 #import "NetscapePluginHostManager.h"
 #import "WebHostedNetscapePluginView.h"
@@ -140,12 +136,6 @@
 using namespace WebCore;
 using namespace HTMLNames;
 using namespace std;
-
-#if ENABLE(JAVA_BRIDGE)
-@interface NSView (WebJavaPluginDetails)
-- (jobject)pollForAppletInWindow:(NSWindow *)window;
-@end
-#endif
 
 // For backwards compatibility with older WebKit plug-ins.
 NSString *WebPluginBaseURLKey = @"WebPluginBaseURL";
@@ -1763,7 +1753,6 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const KURL& baseURL, 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-#if ENABLE(JAVA_BRIDGE)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = nil;
@@ -1778,24 +1767,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
 
     if (pluginPackage) {
         if (!WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
-            if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
-                // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
-                NSMutableArray *names = kit(paramNames);
-                NSMutableArray *values = kit(paramValues);
-                if (parameterValue(paramNames, paramValues, "width").isNull()) {
-                    [names addObject:@"width"];
-                    [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
-                }
-                if (parameterValue(paramNames, paramValues, "height").isNull()) {
-                    [names addObject:@"height"];
-                    [values addObject:[NSString stringWithFormat:@"%d", size.height()]];
-                }
-                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
-                if (view)
-                    return adoptRef(new PluginWidget(view));
-            }
     #if ENABLE(NETSCAPE_PLUGIN_API)
-            else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+            if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
                 view = [[[NETSCAPE_PLUGIN_VIEW alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                     pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                     URL:nil
@@ -1807,8 +1780,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                     element:element] autorelease];
                 if (view)
                     return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
-            } else {
-                ASSERT_NOT_REACHED();
             }
     #endif
         } else {
@@ -1830,7 +1801,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     }
 
     END_BLOCK_OBJC_EXCEPTIONS;
-#endif // ENABLE(JAVA_BRIDGE)
+
     return 0;
 }
 
@@ -1971,21 +1942,6 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
 {
     return WebFrameNetworkingContext::create(core(m_webFrame.get()));
 }
-
-#if ENABLE(JAVA_BRIDGE)
-jobject WebFrameLoaderClient::javaApplet(NSView* view)
-{
-    if ([view respondsToSelector:@selector(webPlugInGetApplet)])
-        return [view webPlugInGetApplet];
-
-    // Compatibility with older versions of Java.
-    // FIXME: Do we still need this?
-    if ([view respondsToSelector:@selector(pollForAppletInWindow:)])
-        return [view pollForAppletInWindow:[[m_webFrame.get() frameView] window]];
-
-    return 0;
-}
-#endif
 
 @implementation WebFramePolicyListener
 + (void)initialize

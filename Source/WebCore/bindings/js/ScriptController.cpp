@@ -75,13 +75,6 @@ ScriptController::ScriptController(Frame* frame)
     , m_windowScriptObject(0)
 #endif
 {
-#if PLATFORM(MAC) && ENABLE(JAVA_BRIDGE)
-    static bool initializedJavaJSBindings;
-    if (!initializedJavaJSBindings) {
-        initializedJavaJSBindings = true;
-        initJavaJSBindings();
-    }
-#endif
 }
 
 ScriptController::~ScriptController()

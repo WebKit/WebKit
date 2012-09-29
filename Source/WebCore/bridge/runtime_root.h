@@ -26,9 +26,6 @@
 #ifndef RUNTIME_ROOT_H_
 #define RUNTIME_ROOT_H_
 
-#if PLATFORM(MAC)
-#include "jni_jsobject.h"
-#endif
 #include <heap/Strong.h>
 #include <heap/Weak.h>
 #include <wtf/Forward.h>
