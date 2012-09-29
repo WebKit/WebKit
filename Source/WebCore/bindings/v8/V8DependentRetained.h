@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
         , m_propertyName(createPropertyName())
     {
         ASSERT(!m_value.isEmpty());
-        m_value.get().MakeWeak(this, &V8DependentRetained::valueWeakCallback);
+        m_value.get().MakeWeak(this, &V8DependentRetained::weakCallback);
         if (!owner.IsEmpty())
             retain(owner);
     }
@@ -69,8 +70,8 @@ public:
         ASSERT(m_owner.isEmpty() && !owner.IsEmpty());
         ASSERT(!m_value.isEmpty());
         owner->SetHiddenValue(m_propertyName.get(), get());
-        m_owner = owner;
-        m_owner.get().MakeWeak(this, &V8DependentRetained::ownerWeakCallback);
+        m_owner.set(owner);
+        m_owner.get().MakeWeak(this, &V8DependentRetained::weakCallback);
     }
 
 private:
@@ -82,17 +83,10 @@ private:
         return V8HiddenPropertyName::hiddenReferenceName(reinterpret_cast<const char*>(name.characters8()), name.length(), NewString);
     }
 
-    static void ownerWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
+    static void weakCallback(v8::Persistent<v8::Value> object, void* parameter)
     {
         V8DependentRetained* value = static_cast<V8DependentRetained*>(parameter);
         value->release();
-    }
-
-    static void valueWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
-    {
-        V8DependentRetained* value = static_cast<V8DependentRetained*>(parameter);
-        // The owner callback should always be called first, since it retains the value.
-        ASSERT_UNUSED(value, value->isEmpty());
     }
 
     void release()

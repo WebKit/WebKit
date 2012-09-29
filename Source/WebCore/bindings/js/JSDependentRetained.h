@@ -27,6 +27,7 @@
 #ifndef JSDependentRetained_h
 #define JSDependentRetained_h
 
+#include "JSDOMGlobalObject.h"
 #include <heap/Weak.h>
 #include <runtime/JSObject.h>
 #include <runtime/PrivateName.h>
@@ -36,8 +37,9 @@ namespace WebCore {
 
 class JSDependentRetained {
 public:
-    JSDependentRetained(JSC::JSObject* owner, JSC::JSObject* value)
+    JSDependentRetained(JSC::JSObject* owner, JSC::JSObject* value, JSDOMGlobalObject* globalObject)
         : m_value(value)
+        , m_globalObject(globalObject)
     {
         ASSERT(value);
         if (owner)
@@ -64,7 +66,7 @@ public:
         ASSERT(!m_owner && owner);
         ASSERT(m_value);
         m_owner = JSC::PassWeak<JSC::JSObject>(owner);
-        m_owner->putDirect(m_propertyName, get());
+        m_owner->putDirect(m_globalObject->globalData(), m_propertyName, get());
     }
 
 private:
@@ -72,7 +74,7 @@ private:
     void release()
     {
         if (m_owner)
-            m_owner->removeDirect(m_propertyName);
+            m_owner->removeDirect(m_globalObject->globalData(), m_propertyName);
         m_value.clear();
         m_owner.clear();
     }
@@ -80,6 +82,7 @@ private:
     JSC::Weak<JSC::JSObject> m_owner;
     JSC::Weak<JSC::JSObject> m_value;
     JSC::PrivateName m_propertyName;
+    JSC::Weak<JSDOMGlobalObject> m_globalObject;
 };
 
 } // namespace WebCore
