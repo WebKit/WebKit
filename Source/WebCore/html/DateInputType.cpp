@@ -37,7 +37,7 @@
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
-#include "LocalizedDate.h"
+#include "Localizer.h"
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_TYPE_DATE)
@@ -164,7 +164,7 @@ bool DateInputType::usesFixedPlaceholder() const
 
 String DateInputType::fixedPlaceholder()
 {
-    return localizedDateFormatText();
+    return element()->localizer().dateFormatText();
 }
 #endif // ENABLE(CALENDAR_PICKER)
 

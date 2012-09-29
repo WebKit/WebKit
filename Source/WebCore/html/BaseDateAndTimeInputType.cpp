@@ -34,7 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "LocalizedDate.h"
+#include "Localizer.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
@@ -156,7 +156,7 @@ String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) cons
     if (!parseToDateComponents(proposedValue, &date))
         return proposedValue;
 
-    String localized = formatLocalizedDate(date);
+    String localized = element()->localizer().formatDateTime(date);
     return localized.isEmpty() ? proposedValue : localized;
 }
 
@@ -170,7 +170,7 @@ String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleVa
     if (visibleValue.isEmpty())
         return visibleValue;
 
-    double parsedValue = parseLocalizedDate(visibleValue, dateType());
+    double parsedValue = element()->localizer().parseDateTime(visibleValue, dateType());
     if (!isfinite(parsedValue))
         return visibleValue;
 

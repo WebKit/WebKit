@@ -33718,14 +33718,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\LocalizedDate.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\LocalizedDateNone.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\Localizer.cpp"
 					>
 				</File>

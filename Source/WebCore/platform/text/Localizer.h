@@ -88,7 +88,17 @@ public:
     virtual String dateFormatText() = 0;
 #endif
 
+    // Parses a string representation of a date/time string localized
+    // for this Localizer locale. If the input string is not valid or
+    // an implementation doesn't support localized dates, this
+    // function returns NaN. If the input string is valid this
+    // function returns the number of milliseconds since 1970-01-01
+    // 00:00:00.000 UTC.
     virtual double parseDateTime(const String&, DateComponents::Type) = 0;
+
+    // Serializes the specified date into a formatted date string to
+    // display to the user. If an implementation doesn't support
+    // localized dates the function should return an empty string.
     virtual String formatDateTime(const DateComponents&) = 0;
 
     virtual ~Localizer();

@@ -1647,7 +1647,6 @@
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
         ['exclude', 'platform/text/LocaleToScriptMappingICU\\.cpp$'],
-        ['exclude', 'platform/text/LocalizedDateNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
       ],
       'conditions': [
@@ -1776,13 +1775,11 @@
 
             ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
 
-            # We use LocalizedDateMac.cpp with LocaleMac.mm instead of
-            # LocalizedDateICU.cpp in order to apply system locales.
+            # We use LocaleMac.mm instead of LocaleICU.cpp in order to
+            # apply system locales.
             ['exclude', 'platform/text/LocaleICU\\.cpp$'],
             ['exclude', 'platform/text/LocaleICU\\.h$'],
-            ['exclude', 'platform/text/LocalizedDateICU\\.cpp$'],
             ['include', 'platform/text/mac/LocaleMac\\.mm$'],
-            ['include', 'platform/text/mac/LocalizedDateMac\\.cpp$'],
 
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
             # implementation.
@@ -1859,8 +1856,6 @@
 
             ['exclude', 'platform/text/LocaleICU\\.cpp$'],
             ['exclude', 'platform/text/LocaleICU\\.h$'],
-            ['exclude', 'platform/text/LocalizedDateICU\.cpp$'],
-            ['include', 'platform/text/LocalizedDateWin\.cpp$'],
             ['include', 'platform/text/LocaleWin\.cpp$'],
             ['include', 'platform/text/LocaleWin\.h$'],
           ],
