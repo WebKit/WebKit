@@ -140,8 +140,7 @@ bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, PropertyNa
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
-            MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
-            if (methodList.size() > 0) {
+            if (aClass->methodNamed(propertyName, instance.get())) {
                 slot.setCustom(thisObject, thisObject->methodGetter);
                 
                 instance->end();
@@ -187,8 +186,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, 
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
-            MethodList methodList = aClass->methodsNamed(propertyName, instance.get());
-            if (methodList.size() > 0) {
+            if (aClass->methodNamed(propertyName, instance.get())) {
                 PropertySlot slot;
                 slot.setCustom(thisObject, methodGetter);
                 instance->end();

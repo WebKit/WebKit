@@ -122,9 +122,9 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
 }
 
 // This functionality is handled by the fallback case above...
-MethodList QtClass::methodsNamed(PropertyName, Instance*) const
+Method* QtClass::methodNamed(PropertyName, Instance*) const
 {
-    return MethodList();
+    return 0;
 }
 
 // ### we may end up with a different search order than QtScript by not

@@ -181,14 +181,14 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod : public RuntimeMethod {
 public:
-    static ObjCRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
+    static ObjCRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(exec);
-        ObjCRuntimeMethod* method = new (NotNull, allocateCell<ObjCRuntimeMethod>(*exec->heap())) ObjCRuntimeMethod(globalObject, domStructure, list);
-        method->finishCreation(exec->globalData(), name);
-        return method;
+        ObjCRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<ObjCRuntimeMethod>(*exec->heap())) ObjCRuntimeMethod(globalObject, domStructure, method);
+        runtimeMethod->finishCreation(exec->globalData(), name);
+        return runtimeMethod;
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSValue prototype)
@@ -201,8 +201,8 @@ public:
 private:
     typedef RuntimeMethod Base;
 
-    ObjCRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& list)
-        : RuntimeMethod(globalObject, structure, list)
+    ObjCRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
+        : RuntimeMethod(globalObject, structure, method)
     {
     }
 
@@ -217,8 +217,8 @@ const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMetho
 
 JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
-    MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
+    Method* method = getClass()->methodNamed(propertyName, this);
+    return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), method);
 }
 
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
@@ -226,13 +226,10 @@ JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     if (!asObject(runtimeMethod)->inherits(&ObjCRuntimeMethod::s_info))
         return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
-    const MethodList& methodList = *runtimeMethod->methods();
+    ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());
+    ASSERT(method);
 
-    // Overloading methods is not allowed in ObjectiveC.  Should only be one
-    // name match for a particular method.
-    ASSERT(methodList.size() == 1);
-
-    return invokeObjcMethod(exec, static_cast<ObjcMethod*>(methodList[0]));
+    return invokeObjcMethod(exec, method);
 }
 
 JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)

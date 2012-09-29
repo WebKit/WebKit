@@ -2456,15 +2456,6 @@ webcore_sources += \
 	Source/WebCore/bridge/c/c_utility.h \
 	Source/WebCore/bridge/IdentifierRep.cpp \
 	Source/WebCore/bridge/IdentifierRep.h \
-	Source/WebCore/bridge/jni/JNIUtility.h \
-	Source/WebCore/bridge/jni/JavaType.h \
-	Source/WebCore/bridge/jni/jni_jsobject.h \
-	Source/WebCore/bridge/jni/jsc/JavaArrayJSC.h \
-	Source/WebCore/bridge/jni/jsc/JavaClassJSC.h \
-	Source/WebCore/bridge/jni/jsc/JavaFieldJSC.h \
-	Source/WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
-	Source/WebCore/bridge/jni/jsc/JavaMethodJSC.cpp \
-	Source/WebCore/bridge/jni/jsc/JavaMethodJSC.h \
 	Source/WebCore/bridge/jsc/BridgeJSC.cpp \
 	Source/WebCore/bridge/jsc/BridgeJSC.h \
 	Source/WebCore/bridge/NP_jsobject.cpp \

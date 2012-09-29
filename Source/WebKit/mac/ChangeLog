@@ -1,5 +1,25 @@
 2012-09-28  Anders Carlsson  <andersca@apple.com>
 
+        Remove support for method overloading from bridge code
+        https://bugs.webkit.org/show_bug.cgi?id=97959
+
+        Reviewed by Dan Bernstein.
+
+        Update for WebCore changes; MethodList has been replaced with a single Method* everywhere.
+
+        * Plugins/Hosted/ProxyInstance.h:
+        (ProxyInstance):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (ProxyClass):
+        (WebKit::ProxyClass::methodNamed):
+        (WebKit::ProxyRuntimeMethod::create):
+        (WebKit::ProxyRuntimeMethod::ProxyRuntimeMethod):
+        (WebKit::ProxyInstance::getMethod):
+        (WebKit::ProxyInstance::invokeMethod):
+        (WebKit::ProxyInstance::methodNamed):
+
+2012-09-28  Anders Carlsson  <andersca@apple.com>
+
         Remove Java bridge
         https://bugs.webkit.org/show_bug.cgi?id=97954
 

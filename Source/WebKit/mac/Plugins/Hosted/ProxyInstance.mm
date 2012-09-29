@@ -50,13 +50,13 @@ namespace WebKit {
 
 class ProxyClass : public JSC::Bindings::Class {
 private:
-    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Method* methodNamed(PropertyName, Instance*) const;
     virtual Field* fieldNamed(PropertyName, Instance*) const;
 };
 
-MethodList ProxyClass::methodsNamed(PropertyName propertyName, Instance* instance) const
+Method* ProxyClass::methodNamed(PropertyName propertyName, Instance* instance) const
 {
-    return static_cast<ProxyInstance*>(instance)->methodsNamed(propertyName);
+    return static_cast<ProxyInstance*>(instance)->methodNamed(propertyName);
 }
 
 Field* ProxyClass::fieldNamed(PropertyName propertyName, Instance* instance) const
@@ -181,14 +181,14 @@ class ProxyRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
+    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // exec-globalData() is also likely wrong.
         Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec);
-        ProxyRuntimeMethod* method = new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(globalObject, domStructure, list);
-        method->finishCreation(exec->globalData(), name);
-        return method;
+        ProxyRuntimeMethod* runtimeMethod = new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(globalObject, domStructure, method);
+        runtimeMethod->finishCreation(exec->globalData(), name);
+        return runtimeMethod;
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
@@ -199,8 +199,8 @@ public:
     static const ClassInfo s_info;
 
 private:
-    ProxyRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& list)
-        : RuntimeMethod(globalObject, structure, list)
+    ProxyRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
+        : RuntimeMethod(globalObject, structure, method)
     {
     }
 
@@ -215,8 +215,8 @@ const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMet
 
 JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName)
 {
-    MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
+    Method* method = getClass()->methodNamed(propertyName, this);
+    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), method);
 }
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
@@ -224,11 +224,8 @@ JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtime
     if (!asObject(runtimeMethod)->inherits(&ProxyRuntimeMethod::s_info))
         return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
-    const MethodList& methodList = *runtimeMethod->methods();
-
-    ASSERT(methodList.size() == 1);
-
-    ProxyMethod* method = static_cast<ProxyMethod*>(methodList[0]);
+    ProxyMethod* method = static_cast<ProxyMethod*>(runtimeMethod->method());
+    ASSERT(method);
 
     return invoke(exec, Invoke, method->serverIdentifier(), ArgList(exec));
 }
@@ -346,22 +343,20 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     }
 }
 
-MethodList ProxyInstance::methodsNamed(PropertyName propertyName)
+Method* ProxyInstance::methodNamed(PropertyName propertyName)
 {
     String name(propertyName.publicName());
     if (name.isNull())
-        return MethodList();
+        return 0;
 
     if (!m_instanceProxy)
-        return MethodList();
+        return 0;
     
     // If we already have an entry in the map, use it.
     MethodMap::iterator existingMapEntry = m_methods.find(name.impl());
     if (existingMapEntry != m_methods.end()) {
-        MethodList methodList;
         if (existingMapEntry->second)
-            methodList.append(existingMapEntry->second);
-        return methodList;
+            return existingMapEntry->second;
     }
     
     uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
@@ -370,24 +365,21 @@ MethodList ProxyInstance::methodsNamed(PropertyName propertyName)
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
                                m_instanceProxy->pluginID(), requestID,
                                m_objectID, methodName) != KERN_SUCCESS)
-        return MethodList();
+        return 0;
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get())
-        return MethodList();
+        return 0;
 
     if (!reply->m_result && !m_instanceProxy->hostProxy()->shouldCacheMissingPropertiesAndMethods())
-        return MethodList();
+        return 0;
 
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     MethodMap::AddResult mapAddResult = m_methods.add(name.impl(), 0);
     if (mapAddResult.isNewEntry && reply->m_result)
         mapAddResult.iterator->second = new ProxyMethod(methodName);
 
-    MethodList methodList;
-    if (mapAddResult.iterator->second)
-        methodList.append(mapAddResult.iterator->second);
-    return methodList;
+    return mapAddResult.iterator->second;
 }
 
 Field* ProxyInstance::fieldNamed(PropertyName propertyName)

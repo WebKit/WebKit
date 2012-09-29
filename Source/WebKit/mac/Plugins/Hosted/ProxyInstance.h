@@ -46,7 +46,7 @@ public:
     }
     ~ProxyInstance();
 
-    JSC::Bindings::MethodList methodsNamed(JSC::PropertyName);
+    JSC::Bindings::Method* methodNamed(JSC::PropertyName);
     JSC::Bindings::Field* fieldNamed(JSC::PropertyName);
 
     JSC::JSValue fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;

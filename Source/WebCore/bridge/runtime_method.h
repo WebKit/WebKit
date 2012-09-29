@@ -37,16 +37,14 @@ class RuntimeMethod : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static void destroy(JSCell*);
-
-    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::MethodList& methodList)
+    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
     {
-        RuntimeMethod* method = new (NotNull, allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(globalObject, structure, methodList);
-        method->finishCreation(exec->globalData(), name);
-        return method;
+        RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(globalObject, structure, method);
+        runtimeMethod->finishCreation(exec->globalData(), name);
+        return runtimeMethod;
     }
 
-    Bindings::MethodList* methods() const { return _methodList.get(); }
+    Bindings::Method* method() const { return m_method; }
 
     static const ClassInfo s_info;
 
@@ -61,7 +59,7 @@ public:
     }
 
 protected:
-    RuntimeMethod(JSGlobalObject*, Structure*, Bindings::MethodList&);
+    RuntimeMethod(JSGlobalObject*, Structure*, Bindings::Method*);
     void finishCreation(JSGlobalData&, const String&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
@@ -72,7 +70,7 @@ protected:
 private:
     static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
 
-    OwnPtr<Bindings::MethodList> _methodList;
+    Bindings::Method* m_method;
 };
 
 } // namespace JSC

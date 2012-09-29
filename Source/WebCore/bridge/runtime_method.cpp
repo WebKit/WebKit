@@ -43,16 +43,11 @@ ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 
 const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeMethod) };
 
-RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& m)
-    // Callers will need to pass in the right global object corresponding to this native object "m".
+RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
+    // Callers will need to pass in the right global object corresponding to this native object "method".
     : InternalFunction(globalObject, structure)
-    , _methodList(adoptPtr(new MethodList(m)))
+    , m_method(method)
 {
-}
-
-void RuntimeMethod::destroy(JSCell* cell)
-{
-    static_cast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
 }
 
 void RuntimeMethod::finishCreation(JSGlobalData& globalData, const String& ident)
@@ -65,13 +60,7 @@ JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
 {
     RuntimeMethod* thisObj = static_cast<RuntimeMethod*>(asObject(slotBase));
 
-    // Ick!  There may be more than one method with this name.  Arbitrarily
-    // just pick the first method.  The fundamental problem here is that 
-    // JavaScript doesn't have the notion of method overloading and
-    // Java does.
-    // FIXME: a better solution might be to give the maximum number of parameters
-    // of any method
-    return jsNumber(thisObj->_methodList->at(0)->numParameters());
+    return jsNumber(thisObj->m_method->numParameters());
 }
 
 bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -102,7 +91,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 {
     RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->callee());
 
-    if (method->methods()->isEmpty())
+    if (!method->method())
         return JSValue::encode(jsUndefined());
 
     RefPtr<Instance> instance;

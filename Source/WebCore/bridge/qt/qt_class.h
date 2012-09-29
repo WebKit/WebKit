@@ -41,7 +41,7 @@ public:
     virtual ~QtClass();
 
     virtual const char* name() const;
-    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Method* methodNamed(PropertyName, Instance*) const;
     virtual Field* fieldNamed(PropertyName, Instance*) const;
 
     virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName);
