@@ -78,6 +78,13 @@ public:
         m_handle.Clear();
     }
 
+    v8::Persistent<T> leakHandle()
+    {
+        v8::Persistent<T> handle = m_handle;
+        m_handle.Clear();
+        return handle;
+    }
+
 private:
     v8::Persistent<T> m_handle;
 };

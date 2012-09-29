@@ -146,7 +146,8 @@ void ScriptController::resetIsolatedWorlds()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
          iter != m_isolatedWorlds.end(); ++iter) {
-        iter->second->destroyIsolatedShell();
+        iter->second->clearIsolatedShell();
+        delete iter->second;
     }
     m_isolatedWorlds.clear();
     m_isolatedWorldSecurityOrigins.clear();
@@ -390,11 +391,12 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
             resultArray->Set(i, evaluationResult);
         }
 
-        // Mark temporary shell for weak destruction.
+        // Destroy temporary world.
         if (worldID == DOMWrapperWorld::uninitializedWorldId) {
             int actualWorldId = isolatedWorldShell->world()->worldId();
             m_isolatedWorlds.remove(actualWorldId);
-            isolatedWorldShell->destroyIsolatedShell();
+            isolatedWorldShell->clearIsolatedShell();
+            delete isolatedWorldShell;
         }
 
         v8Results = evaluateHandleScope.Close(resultArray);
@@ -429,11 +431,20 @@ void ScriptController::finishedWithEvent(Event* event)
 
 v8::Local<v8::Context> ScriptController::currentWorldContext()
 {
-    if (V8DOMWindowShell* isolatedShell = V8DOMWindowShell::getEntered()) {
-        v8::Persistent<v8::Context> context = isolatedShell->context();
-        if (context.IsEmpty() || m_frame != toFrameIfNotDetached(context))
+    V8DOMWindowShell::IsolatedContextData* isolatedContextData = V8DOMWindowShell::enteredIsolatedContextData();
+    if (UNLIKELY(!!isolatedContextData)) {
+        V8DOMWindowShell* isolatedShell = existingWindowShellInternal(isolatedContextData->world());
+        // A temporary isolated world has been deleted, so use the current context.
+        if (UNLIKELY(!isolatedShell)) {
+            v8::Handle<v8::Context> context = v8::Context::GetEntered();
+            if (m_frame != toFrameIfNotDetached(context))
+                return v8::Local<v8::Context>();
+            return v8::Local<v8::Context>::New(context);
+        }
+        // The shell exists, but potentially it has a new context, so use it.
+        if (isolatedShell->context().IsEmpty() || m_frame != toFrameIfNotDetached(isolatedShell->context()))
             return v8::Local<v8::Context>();
-        return v8::Local<v8::Context>::New(context);
+        return v8::Local<v8::Context>::New(isolatedShell->context());
     }
     windowShell()->initializeIfNeeded();
     return v8::Local<v8::Context>::New(windowShell()->context());
