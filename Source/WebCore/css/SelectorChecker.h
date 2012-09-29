@@ -118,7 +118,7 @@ public:
 
 private:
     bool checkOneSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
-    bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
+    bool checkScrollbarPseudoClass(CSSSelector*) const;
     static bool isFrameFocused(const Element*);
 
     bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;

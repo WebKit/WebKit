@@ -759,7 +759,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
-            return checkScrollbarPseudoClass(selector, dynamicPseudo);
+            return checkScrollbarPseudoClass(selector);
         } else if (dynamicPseudo == SELECTION) {
             if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
                 return !m_document->page()->focusController()->isActive();
@@ -1198,7 +1198,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
     return true;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, PseudoId&) const
+bool SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel) const
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
     ScrollbarPart part = RenderScrollbar::partForStyleResolve();
