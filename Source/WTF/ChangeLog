@@ -1,3 +1,14 @@
+2012-09-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129982.
+        http://trac.webkit.org/changeset/129982
+        https://bugs.webkit.org/show_bug.cgi?id=97971
+
+        hit assert in fast/overflow/overflow-height-float-not-removed-
+        crash3.html (Requested by eae on #webkit).
+
+        * wtf/Platform.h:
+
 2012-09-29  Emil A Eklund  <eae@chromium.org>
 
         Enable SATURATED_LAYOUT_ARITHMETIC for chromium
