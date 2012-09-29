@@ -39,8 +39,8 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
-bool invokeCallback(v8::Persistent<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
+bool invokeCallback(v8::Handle<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
+bool invokeCallback(v8::Handle<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext*);
 
 enum CallbackAllowedValueFlag {
     CallbackAllowUndefined = 1,

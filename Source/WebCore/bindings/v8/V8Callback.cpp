@@ -36,19 +36,19 @@
 
 namespace WebCore {
 
-bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
+bool invokeCallback(v8::Handle<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
 {
     return invokeCallback(callback, v8::Context::GetCurrent()->Global(), argc, argv, callbackReturnValue, scriptExecutionContext);
 }
 
-bool invokeCallback(v8::Persistent<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
+bool invokeCallback(v8::Handle<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
 {
     v8::TryCatch exceptionCatcher;
     exceptionCatcher.SetVerbose(true);
 
     v8::Local<v8::Function> callbackFunction;
     if (callback->IsFunction()) {
-        callbackFunction = v8::Local<v8::Function>::New(v8::Persistent<v8::Function>::Cast(callback));
+        callbackFunction = v8::Local<v8::Function>::New(v8::Handle<v8::Function>::Cast(callback));
     } else if (callback->IsObject()) {
         v8::Local<v8::Value> handleEventFunction = callback->Get(v8::String::NewSymbol("handleEvent"));
         if (handleEventFunction->IsFunction())
