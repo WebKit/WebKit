@@ -1031,6 +1031,7 @@ void FrameView::layout(bool allowSubtree)
     ASSERT(m_frame->view() == this);
 
     Document* document = m_frame->document();
+    ASSERT(!document->inPageCache());
     bool subtree;
     RenderObject* root;
 

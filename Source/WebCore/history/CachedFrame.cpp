@@ -157,7 +157,6 @@ CachedFrame::CachedFrame(Frame* frame)
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();
 
-    frame->clearTimers();
     m_document->setInPageCache(true);
     frame->loader()->stopLoading(UnloadEventPolicyUnloadAndPageHide);
 
@@ -182,6 +181,9 @@ CachedFrame::CachedFrame(Frame* frame)
     if (m_isComposited && pageCache()->shouldClearBackingStores())
         frame->view()->clearBackingStores();
 #endif
+
+    // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.
+    frame->clearTimers();
 
     // Deconstruct the FrameTree, to restore it later.
     // We do this for two reasons:
