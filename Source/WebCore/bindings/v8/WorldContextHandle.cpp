@@ -44,28 +44,27 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
     if (worldToUse == UseMainWorld || worldToUse == UseWorkerWorld)
         return;
 
-    if (!v8::Context::InContext()) {
-        m_worldToUse = UseMainWorld;
-        return;
-    }
-
-    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
-    ASSERT(!context.IsEmpty());
-    v8::Handle<v8::Object> innerGlobal = toInnerGlobalObject(context);
 #if ENABLE(WORKERS)
-    if (UNLIKELY(!V8DOMWrapper::isWrapperOfType(innerGlobal, &V8DOMWindow::info))) {
-        m_worldToUse = UseWorkerWorld;
-        return;
+    // FIXME We are duplicating a lot of effort here checking the context for the worker and for the isolated world.
+    if (v8::Context::InContext()) {
+        v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+        if (!context.IsEmpty()) {
+            if (UNLIKELY(!V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info))) {
+                m_worldToUse = UseWorkerWorld;
+                return;
+            }
+        }
     }
 #endif
 
-    V8DOMWindowShell::IsolatedContextData* data = V8DOMWindowShell::toIsolatedContextData(innerGlobal);
-    if (LIKELY(!data)) {
+    V8DOMWindowShell* shell = V8DOMWindowShell::getEntered();
+    if (LIKELY(!shell)) {
         m_worldToUse = UseMainWorld;
         return;
     }
 
-    m_context = SharedPersistent<v8::Context>::create(context);
+    ASSERT(!shell->context().IsEmpty());
+    m_context = SharedPersistent<v8::Context>::create(shell->context());
 }
 
 v8::Local<v8::Context> WorldContextHandle::adjustedContext(ScriptController* script) const

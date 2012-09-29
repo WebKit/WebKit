@@ -183,7 +183,7 @@ v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Handle<v8::Object> creationCo
     v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
-    if (!V8DOMWindowShell::enteredIsolatedContextData()) {
+    if (!V8DOMWindowShell::getEntered()) {
         if (Frame* frame = impl->frame())
             frame->script()->windowShell()->updateDocumentWrapper(wrapper);
     }
