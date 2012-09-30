@@ -1,3 +1,27 @@
+2012-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Fix issues with WebKitFaviconDatabase in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=97966
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix failing ASSERTs detected when running the unit tests from
+        TestWebKitFaviconDatabase in debug builds.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseDispose): Close IconDatabase here, which is
+        the right place to do it according to GObject documentation.
+        (webkitFaviconDatabaseFinalize): Just destroy the private data
+        structure and chain up to parent class's finalize method.
+        (webkit_favicon_database_class_init): Override dispose method.
+
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseFinalizedCallback): Delete files when the
+        WebKitFaviconDatabase is being finalized, since by that time the
+        IconDatabase from WebCore will be already closed.
+        (afterAll): Add a weak reference to WebKitFaviconDatabase and
+        provide a GWeakNotify callback (webkitFaviconDatabaseFinalizedCallback).
+
 2012-09-29  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Fix build error : Link webkit2 library to ewk2UnitTestInjectedBundleSample.

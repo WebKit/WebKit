@@ -167,20 +167,6 @@ static void testGetFaviconURI(FaviconDatabaseTest* test, gconstpointer)
     g_assert_cmpstr(iconURI.get(), ==, kServer->getURIForPath("/favicon.ico").data());
 }
 
-static void deleteDatabaseFiles()
-{
-    if (!g_file_test(kTempDirectory, G_FILE_TEST_IS_DIR))
-        return;
-
-    GOwnPtr<char> filename(g_build_filename(kTempDirectory, "WebpageIcons.db", NULL));
-    g_unlink(filename.get());
-
-    filename.set(g_build_filename(kTempDirectory, "WebpageIcons.db-journal", NULL));
-    g_unlink(filename.get());
-
-    g_rmdir(kTempDirectory);
-}
-
 void beforeAll()
 {
     // Start a soup server for testing.
@@ -197,8 +183,23 @@ void beforeAll()
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "clear-database", testClearDatabase);
 }
 
+static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)
+{
+    if (!g_file_test(kTempDirectory, G_FILE_TEST_IS_DIR))
+        return;
+
+    GOwnPtr<char> filename(g_build_filename(kTempDirectory, "WebpageIcons.db", NULL));
+    g_unlink(filename.get());
+
+    g_rmdir(kTempDirectory);
+}
+
 void afterAll()
 {
     delete kServer;
-    deleteDatabaseFiles();
+
+    // Delete the temporary files after the IconDatabase has been
+    // closed, that is, once WebKitFaviconDatabase is being destroyed.
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webkit_web_context_get_default());
+    g_object_weak_ref(G_OBJECT(database), webkitFaviconDatabaseFinalizedCallback, 0);
 }
