@@ -39,8 +39,8 @@ fast/history/multiple-classes-visited.html [ Pass ]
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(EFL) fast/dom/register-protocol-handler.html [ Crash ]
-Bug(EFL) fast/dom/unregister-protocol-handler.html [ Crash ]
+webkit.org/b/92726 fast/dom/register-protocol-handler.html [ Crash ]
+webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 
 # WebKitTestRunner needs an implementation for download attribute feature
 # The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
