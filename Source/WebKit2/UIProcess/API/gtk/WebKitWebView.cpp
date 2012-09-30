@@ -30,6 +30,7 @@
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
+#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitFormClient.h"
 #include "WebKitFullscreenClient.h"
 #include "WebKitHitTestResultPrivate.h"
@@ -102,6 +103,7 @@ enum {
     PROP_WEB_CONTEXT,
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
+    PROP_FAVICON,
     PROP_URI,
     PROP_ZOOM_LEVEL,
     PROP_IS_LOADING
@@ -120,6 +122,7 @@ struct _WebKitWebViewPrivate {
 
     bool waitingForMainResource;
     gulong mainResourceResponseHandlerID;
+    gulong watchForChangesInFaviconHandlerID;
     WebKitLoadEvent lastDelayedEvent;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
@@ -260,6 +263,15 @@ static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebVie
     getPage(webView)->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 }
 
+static void iconReadyCallback(WebKitFaviconDatabase *database, const char *uri, WebKitWebView *webView)
+{
+    // Consider only the icon matching the active URI for this webview.
+    if (webView->priv->activeURI != uri)
+        return;
+
+    g_object_notify(G_OBJECT(webView), "favicon");
+}
+
 static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* settings)
 {
     webView->priv->settings = settings;
@@ -283,6 +295,29 @@ static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebK
     if (priv->mainResourceResponseHandlerID)
         g_signal_handler_disconnect(priv->mainResource.get(), priv->mainResourceResponseHandlerID);
     priv->mainResourceResponseHandlerID = 0;
+}
+
+static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+
+    // Make sure we only connect to this signal once per view.
+    if (priv->watchForChangesInFaviconHandlerID)
+        return;
+
+    priv->watchForChangesInFaviconHandlerID =
+        g_signal_connect(database, "favicon-ready", G_CALLBACK(iconReadyCallback), webView);
+}
+
+static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+
+    if (priv->watchForChangesInFaviconHandlerID)
+        g_signal_handler_disconnect(database, priv->watchForChangesInFaviconHandlerID);
+    priv->watchForChangesInFaviconHandlerID = 0;
 }
 
 static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
@@ -385,6 +420,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
         break;
+    case PROP_FAVICON:
+        g_value_set_pointer(value, webkit_web_view_get_favicon(webView));
+        break;
     case PROP_URI:
         g_value_set_string(value, webkit_web_view_get_uri(webView));
         break;
@@ -413,6 +451,7 @@ static void webkitWebViewFinalize(GObject* object)
 
     webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
+    webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
 
     priv->~WebKitWebViewPrivate();
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
@@ -499,6 +538,18 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         _("An estimate of the percent completion for a document load"),
                                                         0.0, 1.0, 0.0,
                                                         WEBKIT_PARAM_READABLE));
+    /**
+     * WebKitWebView:favicon:
+     *
+     * The favicon currently associated to the #WebKitWebView.
+     * See webkit_web_view_get_favicon() for more details.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_FAVICON,
+                                    g_param_spec_pointer("favicon",
+                                                         _("Favicon"),
+                                                         _("The favicon associated to the view, if any"),
+                                                         WEBKIT_PARAM_READABLE));
     /**
      * WebKitWebView:uri:
      *
@@ -1158,9 +1209,10 @@ static void setCertificateToMainResource(WebKitWebView* webView)
 
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
-    if (loadEvent == WEBKIT_LOAD_STARTED)
+    if (loadEvent == WEBKIT_LOAD_STARTED) {
         webkitWebViewSetIsLoading(webView, true);
-    else if (loadEvent == WEBKIT_LOAD_FINISHED) {
+        webkitWebViewWatchForChangesInFavicon(webView);
+    } else if (loadEvent == WEBKIT_LOAD_FINISHED) {
         webkitWebViewSetIsLoading(webView, false);
         webView->priv->waitingForMainResource = false;
         webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
@@ -1847,6 +1899,27 @@ const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     return webView->priv->activeURI.data();
+}
+
+/**
+ * webkit_web_view_get_favicon:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns favicon currently associated to @web_view, if any. You can
+ * connect to notify::favicon signal of @web_view to be notified when
+ * the favicon is available.
+ *
+ * Returns: (transfer full): a pointer to a #cairo_surface_t with the
+ *    favicon or %NULL if there's no icon associated with @web_view.
+ */
+cairo_surface_t* webkit_web_view_get_favicon(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    if (webView->priv->activeURI.isNull())
+        return 0;
+
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context);
+    return webkitFaviconDatabaseGetFavicon(database, webView->priv->activeURI);
 }
 
 /**

@@ -37,6 +37,7 @@ public:
         , m_favicon(0)
         , m_error(0)
         , m_iconReadySignalReceived(false)
+        , m_faviconNotificationReceived(false)
     {
     }
 
@@ -50,6 +51,13 @@ public:
     {
         g_assert_cmpstr(webkit_web_view_get_uri(test->m_webView), ==, pageURI);
         test->m_iconReadySignalReceived = true;
+    }
+
+    static void faviconChangedCallback(WebKitWebView* webView, GParamSpec* pspec, gpointer data)
+    {
+        FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
+        g_assert(test->m_webView == webView);
+        test->m_faviconNotificationReceived = true;
     }
 
     static void getFaviconCallback(GObject* sourceObject, GAsyncResult* result, void* data)
@@ -68,6 +76,7 @@ public:
         webkit_favicon_database_get_favicon(database, kServer->getURIForPath("/").data(), 0, getFaviconCallback, this);
 
         g_signal_connect(database, "favicon-ready", G_CALLBACK(iconReadyCallback), this);
+        g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(faviconChangedCallback), this);
 
         g_main_loop_run(m_mainLoop);
     }
@@ -83,6 +92,7 @@ public:
     cairo_surface_t* m_favicon;
     GOwnPtr<GError> m_error;
     bool m_iconReadySignalReceived;
+    bool m_faviconNotificationReceived;
 };
 
 static void
@@ -167,6 +177,25 @@ static void testGetFaviconURI(FaviconDatabaseTest* test, gconstpointer)
     g_assert_cmpstr(iconURI.get(), ==, kServer->getURIForPath("/favicon.ico").data());
 }
 
+static void testWebViewFavicon(FaviconDatabaseTest* test, gconstpointer)
+{
+    cairo_surface_t* iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
+    g_assert(!iconFromWebView);
+
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    test->m_faviconNotificationReceived = false;
+    test->askForIconAndWaitUntilReady();
+    g_assert(test->m_faviconNotificationReceived);
+
+    iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
+    g_assert(iconFromWebView);
+    g_assert(cairo_image_surface_get_width(iconFromWebView) > 0);
+    g_assert(cairo_image_surface_get_height(iconFromWebView) > 0);
+    cairo_surface_destroy(iconFromWebView);
+}
+
 void beforeAll()
 {
     // Start a soup server for testing.
@@ -181,6 +210,7 @@ void beforeAll()
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon", testGetFavicon);
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon-uri", testGetFaviconURI);
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "clear-database", testClearDatabase);
+    FaviconDatabaseTest::add("WebKitWebView", "favicon", testWebViewFavicon);
 }
 
 static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)

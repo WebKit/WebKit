@@ -183,6 +183,18 @@ WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebIconDatabase* iconDatabase
     return faviconDatabase;
 }
 
+cairo_surface_t* webkitFaviconDatabaseGetFavicon(WebKitFaviconDatabase* database, const CString& pageURL)
+{
+    ASSERT(WEBKIT_IS_FAVICON_DATABASE(database));
+    ASSERT(!pageURL.isNull());
+
+    cairo_surface_t* iconSurface = getIconSurfaceSynchronously(database, String::fromUTF8(pageURL.data()));
+    if (!iconSurface)
+        return 0;
+
+    return cairo_surface_reference(iconSurface);
+}
+
 static PendingIconRequestVector* getOrCreatePendingIconRequests(WebKitFaviconDatabase* database, const String& pageURL)
 {
     PendingIconRequestVector* icons = database->priv->pendingIconRequests.get(pageURL);

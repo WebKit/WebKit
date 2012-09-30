@@ -1,5 +1,48 @@
 2012-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [WK2][GTK] Add API to get the favicon for a WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=96477
+
+        Reviewed by Carlos Garcia Campos.
+
+        Provide a new simple API to synchronously try to get the favicon
+        associated with a WebView, if any, and to keep track of changes on
+        it, through a new GObject property.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate):
+        (webkitWebViewIconReadyCallback): Callback to handle the
+        'icon-ready' signal coming from WebKitFaviconDatabase.
+        (webkitWebViewWatchForChangesInFavicon): Connects to the
+        'icon-ready' signal from WebKitFaviconDatabase, to keep track of
+        changes in favicons, that must be related to the current view.
+        (webkitWebViewDisconnectFaviconDatabaseSignalHandlers):
+        Disconnects the handler for 'icon-ready' if needed.
+        (webkitWebViewGetProperty): Updated for the new "favicon" property .
+        (webkitWebViewFinalize): Disconnect the new signal handler.
+        (webkit_web_view_class_init): Definition of the new property.
+        (webkitWebViewEmitLoadChanged): Make sure we will be watching for
+        changes in the favicon from WEBKIT_LOAD_STARTED on.
+        (webkit_web_view_get_favicon): New API funtcion, returning the
+        current favicon for the WebView, if any, or NULL otherwise.
+        * UIProcess/API/gtk/WebKitWebView.h:
+
+        Internally expose a way to try to get the favicon associated to a
+        page URL synchronously, through WebKitFaviconDatabase.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseGetFaviconSync): New internal function, it
+        will return either 0 or a valid pointer to a cairo_surface_t.
+        * UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h:
+
+        Add unit tests for checking this new API.
+
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (testWebViewFavicon): New unit test.
+        (beforeAll): Add the test to the test suite.
+
+2012-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [WK2][GTK] Fix issues with WebKitFaviconDatabase in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=97966
 
