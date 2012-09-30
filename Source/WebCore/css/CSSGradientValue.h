@@ -59,7 +59,7 @@ public:
 
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
 
-    Vector<CSSGradientColorStop>& stops() { return m_stops; }
+    unsigned stopCount() const { return m_stops.size(); }
 
     void sortStopsIfNeeded();
 
@@ -116,7 +116,7 @@ protected:
     RefPtr<CSSPrimitiveValue> m_secondY;
 
     // Stops
-    Vector<CSSGradientColorStop> m_stops;
+    Vector<CSSGradientColorStop, 2> m_stops;
     bool m_stopsSorted;
     bool m_deprecatedType; // -webkit-gradient()
     bool m_repeating;

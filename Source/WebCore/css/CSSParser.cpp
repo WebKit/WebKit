@@ -6911,8 +6911,7 @@ bool CSSParser::parseLinearGradient(CSSParserValueList* valueList, RefPtr<CSSVal
     if (!parseGradientColorStops(args, result.get(), expectComma))
         return false;
 
-    Vector<CSSGradientColorStop>& stops = result->stops();
-    if (stops.isEmpty())
+    if (!result->stopCount())
         return false;
 
     gradient = result.release();
@@ -7073,7 +7072,7 @@ bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradie
     }
 
     // Must have 2 or more stops to be valid.
-    return gradient->stops().size() > 1;
+    return gradient->stopCount() >= 2;
 }
 
 bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
