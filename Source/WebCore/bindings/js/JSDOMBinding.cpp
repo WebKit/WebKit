@@ -223,7 +223,6 @@ bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame, String& message)
         return false;
     if (BindingSecurity::shouldAllowAccessToFrame(exec, frame, DoNotReportSecurityError))
         return true;
-    // FIXME: The following line of code should move somewhere that it can be shared with immediatelyReportUnsafeAccessTo.
     message = frame->document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(exec));
     return false;
 }
@@ -234,7 +233,6 @@ bool shouldAllowAccessToDOMWindow(ExecState* exec, DOMWindow* target, String& me
         return false;
     if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, target, DoNotReportSecurityError))
         return true;
-    // FIXME: The following line of code should move somewhere that it can be shared with immediatelyReportUnsafeAccessTo.
     message = target->crossDomainAccessErrorMessage(activeDOMWindow(exec));
     return false;
 }
