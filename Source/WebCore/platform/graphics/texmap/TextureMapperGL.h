@@ -133,19 +133,18 @@ public:
     virtual bool isValid() const;
     virtual bool canReuseWith(const IntSize& contentsSize, Flags = 0);
     virtual void didReset();
-    void bind();
+    void bind(TextureMapperGL*);
     void initializeStencil();
     ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
     uint32_t textureTarget() const { return GraphicsContext3D::TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
-    void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
     void updateContents(Image*, const IntRect&, const IntPoint&);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
     virtual bool isBackedByOpenGL() const { return true; }
 
 #if ENABLE(CSS_FILTERS)
-    virtual PassRefPtr<BitmapTexture> applyFilters(const BitmapTexture& contentTexture, const FilterOperations&);
+    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const BitmapTexture& contentTexture, const FilterOperations&);
 #endif
 
 private:
@@ -156,17 +155,10 @@ private:
     Platform3DObject m_rbo;
     bool m_shouldClear;
     TextureMapperGL::ClipStack m_clipStack;
-    TextureMapperGL* m_textureMapper;
+    RefPtr<GraphicsContext3D> m_context3D;
 
+    BitmapTextureGL(TextureMapperGL*);
     BitmapTextureGL();
-    BitmapTextureGL(TextureMapperGL* textureMapper)
-        : m_id(0)
-        , m_fbo(0)
-        , m_rbo(0)
-        , m_shouldClear(true)
-        , m_textureMapper(textureMapper)
-    {
-    }
 
     void clearIfNeeded();
     void createFboIfNeeded();

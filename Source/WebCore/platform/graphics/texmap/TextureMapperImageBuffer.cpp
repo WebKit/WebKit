@@ -121,7 +121,7 @@ void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const F
 }
 
 #if ENABLE(CSS_FILTERS)
-PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
+PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(TextureMapper*, const BitmapTexture& contentTexture, const FilterOperations& filters)
 {
     RefPtr<FilterEffectRenderer> renderer = FilterEffectRenderer::create();
     renderer->setSourceImageRect(FloatRect(FloatPoint::zero(), contentTexture.size()));

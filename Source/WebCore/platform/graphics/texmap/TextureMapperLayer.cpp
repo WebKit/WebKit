@@ -342,7 +342,7 @@ static PassRefPtr<BitmapTexture> applyFilters(const FilterOperations& filters, T
         return source;
 
     RefPtr<BitmapTexture> filterSurface = shouldKeepContentTexture(filters) ? textureMapper->acquireTextureFromPool(source->size()) : source;
-    return filterSurface->applyFilters(*source, filters);
+    return filterSurface->applyFilters(textureMapper, *source, filters);
 }
 #endif
 
