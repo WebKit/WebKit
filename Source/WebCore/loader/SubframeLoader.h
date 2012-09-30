@@ -71,7 +71,7 @@ public:
     PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 #endif
 
-    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
+    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     bool allowPlugins(ReasonForCallingAllowPlugins);
 

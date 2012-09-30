@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -25,8 +25,11 @@
 #include "HTMLAppletElement.h"
 
 #include "Attribute.h"
+#include "Frame.h"
 #include "HTMLDocument.h"
+#include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLParamElement.h"
 #include "RenderApplet.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -36,15 +39,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* document)
-    : HTMLPlugInElement(tagName, document)
+HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* document, bool createdByParser)
+    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
 {
     ASSERT(hasTagName(appletTag));
 }
 
-PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
 {
-    return adoptRef(new HTMLAppletElement(tagName, document));
+    return adoptRef(new HTMLAppletElement(tagName, document, createdByParser));
 }
 
 void HTMLAppletElement::parseMappedAttribute(Attribute* attr)
@@ -73,9 +76,9 @@ void HTMLAppletElement::parseMappedAttribute(Attribute* attr)
         }
         m_id = newId;
         // also call superclass
-        HTMLPlugInElement::parseMappedAttribute(attr);
+        HTMLPlugInImageElement::parseMappedAttribute(attr);
     } else
-        HTMLPlugInElement::parseMappedAttribute(attr);
+        HTMLPlugInImageElement::parseMappedAttribute(attr);
 }
 
 void HTMLAppletElement::insertedIntoDocument()
@@ -86,7 +89,7 @@ void HTMLAppletElement::insertedIntoDocument()
         document->addExtraNamedItem(m_id);
     }
 
-    HTMLPlugInElement::insertedIntoDocument();
+    HTMLPlugInImageElement::insertedIntoDocument();
 }
 
 void HTMLAppletElement::removedFromDocument()
@@ -97,7 +100,7 @@ void HTMLAppletElement::removedFromDocument()
         document->removeExtraNamedItem(m_id);
     }
 
-    HTMLPlugInElement::removedFromDocument();
+    HTMLPlugInImageElement::removedFromDocument();
 }
 
 bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
@@ -105,50 +108,15 @@ bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
     if (!fastHasAttribute(codeAttr))
         return false;
 
-    return HTMLPlugInElement::rendererIsNeeded(style);
+    return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
 RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style)
 {
-    if (canEmbedJava()) {
-        HashMap<String, String> args;
+    if (!canEmbedJava())
+        return RenderObject::createObject(this, style);
 
-        args.set("code", getAttribute(codeAttr));
-
-        const AtomicString& codeBase = getAttribute(codebaseAttr);
-        if (!codeBase.isNull())
-            args.set("codeBase", codeBase);
-
-        const AtomicString& name = document()->isHTMLDocument() ? getAttribute(nameAttr) : getIdAttribute();
-        if (!name.isNull())
-            args.set("name", name);
-        const AtomicString& archive = getAttribute(archiveAttr);
-        if (!archive.isNull())
-            args.set("archive", archive);
-
-        args.set("baseURL", document()->baseURL().string());
-
-        const AtomicString& mayScript = getAttribute(mayscriptAttr);
-        if (!mayScript.isNull())
-            args.set("mayScript", mayScript);
-
-        // Other arguments (from <PARAM> tags) are added later.
-        
-        return new (document()->renderArena()) RenderApplet(this, args);
-    }
-
-    return RenderObject::createObject(this, style);
-}
-
-void HTMLAppletElement::defaultEventHandler(Event* event)
-{
-    RenderObject* r = renderer();
-    if (!r || !r->isWidget())
-        return;
-    Widget* widget = toRenderWidget(r)->widget();
-    if (!widget)
-        return;
-    widget->handleEvent(event);
+    return new (document()->renderArena()) RenderApplet(this);
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
@@ -156,11 +124,73 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
     if (!canEmbedJava())
         return 0;
 
-    RenderApplet* applet = toRenderApplet(renderer());
-    if (applet)
-        applet->createWidgetIfNecessary();
+    document()->updateLayoutIgnorePendingStylesheets();
+    return renderPart();
+}
 
-    return applet;
+void HTMLAppletElement::updateWidget(PluginCreationOption)
+{
+    setNeedsWidgetUpdate(false);
+    // FIXME: This should ASSERT isFinishedParsingChildren() instead.
+    if (!isFinishedParsingChildren())
+        return;
+
+    RenderEmbeddedObject* renderer = renderEmbeddedObject();
+
+    int contentWidth = renderer->style()->width().isFixed() ? renderer->style()->width().value() :
+        renderer->width() - renderer->borderAndPaddingWidth();
+    int contentHeight = renderer->style()->height().isFixed() ? renderer->style()->height().value() :
+        renderer->height() - renderer->borderAndPaddingHeight();
+
+    Vector<String> paramNames;
+    Vector<String> paramValues;
+
+    paramNames.append("code");
+    paramValues.append(getAttribute(codeAttr).string());
+
+    const AtomicString& codeBase = getAttribute(codebaseAttr);
+    if (!codeBase.isNull()) {
+        paramNames.append("codeBase");
+        paramValues.append(codeBase);
+    }
+
+    const AtomicString& name = document()->isHTMLDocument() ? getAttribute(nameAttr) : getIdAttribute();
+    if (!name.isNull()) {
+        paramNames.append("name");
+        paramValues.append(name);
+    }
+
+    const AtomicString& archive = getAttribute(archiveAttr);
+    if (!archive.isNull()) {
+        paramNames.append("archive");
+        paramValues.append(archive);
+    }
+
+    paramNames.append("baseURL");
+    paramValues.append(document()->baseURL().string());
+
+    const AtomicString& mayScript = getAttribute(mayscriptAttr);
+    if (!mayScript.isNull()) {
+        paramNames.append("mayScript");
+        paramValues.append(mayScript);
+    }
+
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->hasTagName(paramTag))
+            continue;
+
+        HTMLParamElement* param = static_cast<HTMLParamElement*>(child);
+        if (param->name().isEmpty())
+            continue;
+
+        paramNames.append(param->name());
+        paramValues.append(param->value());
+    }
+
+    Frame* frame = document()->frame();
+    ASSERT(frame);
+
+    renderer->setWidget(frame->loader()->subframeLoader()->createJavaAppletWidget(IntSize(contentWidth, contentHeight), this, paramNames, paramValues));
 }
 
 bool HTMLAppletElement::canEmbedJava() const
@@ -170,14 +200,6 @@ bool HTMLAppletElement::canEmbedJava() const
 
     Settings* settings = document()->settings();
     return settings && settings->isJavaEnabled();
-}
-
-void HTMLAppletElement::finishParsingChildren()
-{
-    // The parser just reached </applet>, so all the params are available now.
-    HTMLPlugInElement::finishParsingChildren();
-    if (renderer())
-        renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
 }
 
 }

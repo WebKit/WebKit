@@ -23,28 +23,25 @@
 #ifndef HTMLAppletElement_h
 #define HTMLAppletElement_h
 
-#include "HTMLPlugInElement.h"
+#include "HTMLPlugInImageElement.h"
 
 namespace WebCore {
 
-class HTMLAppletElement : public HTMLPlugInElement {
+class HTMLAppletElement : public HTMLPlugInImageElement {
 public:
-    static PassRefPtr<HTMLAppletElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLAppletElement> create(const QualifiedName&, Document*, bool createdByParser);
 
 private:
-    HTMLAppletElement(const QualifiedName&, Document*);
+    HTMLAppletElement(const QualifiedName&, Document*, bool createdByParser);
 
     virtual void parseMappedAttribute(Attribute*);
     
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void finishParsingChildren();
-
-    virtual void defaultEventHandler(Event*);
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
+    virtual void updateWidget(PluginCreationOption);
 
-    void setupApplet() const;
     bool canEmbedJava() const;
 
     virtual void insertedIntoDocument();

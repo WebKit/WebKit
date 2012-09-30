@@ -22,47 +22,20 @@
 #ifndef RenderApplet_h
 #define RenderApplet_h
 
-#include "RenderWidget.h"
-#include <wtf/text/StringHash.h>
+#include "RenderEmbeddedObject.h"
 
 namespace WebCore {
 
 class HTMLAppletElement;
 
-class RenderApplet : public RenderWidget {
+class RenderApplet : public RenderEmbeddedObject {
 public:
-    RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
+    RenderApplet(HTMLAppletElement*);
     virtual ~RenderApplet();
-
-    void createWidgetIfNecessary();
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual bool allowsAcceleratedCompositing() const;
-#endif
 
 private:
     virtual const char* renderName() const { return "RenderApplet"; }
-
-    virtual bool isApplet() const { return true; }
-
-    virtual void layout();
-    virtual IntSize intrinsicSize() const;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual bool requiresLayer() const;
-#endif
-
-    HashMap<String, String> m_args;
 };
-
-inline RenderApplet* toRenderApplet(RenderObject* object)
-{
-    ASSERT(!object || object->isApplet());
-    return static_cast<RenderApplet*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderApplet(const RenderApplet*);
 
 } // namespace WebCore
 
