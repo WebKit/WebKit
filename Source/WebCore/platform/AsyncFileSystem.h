@@ -64,8 +64,7 @@ public:
     static PassOwnPtr<AsyncFileSystem> create();
 
     // Opens a new file system. The create parameter specifies whether or not to create the path if it does not already exists.
-    // FIXME: Add FileSystemType parameter.
-    static void openFileSystem(const String& basePath, const String& storageIdentifier, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
+    static void openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
 
     // Deletes the file system.
     static void deleteFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>);
