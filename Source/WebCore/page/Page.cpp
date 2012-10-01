@@ -651,7 +651,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     FrameView* view = document->view();
 
     if (scale == m_pageScaleFactor) {
-        if (view && view->scrollPosition() != origin) {
+        if (view && (view->scrollPosition() != origin || view->delegatesScrolling())) {
             document->updateLayoutIgnorePendingStylesheets();
             view->setScrollPosition(origin);
         }
