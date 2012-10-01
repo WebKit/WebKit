@@ -155,14 +155,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         else:
             return '/usr/sbin/apache2'
 
-    def _path_to_apache_config_file(self):
-        if self._is_redhat_based():
-            config_name = 'fedora-httpd.conf'
-        else:
-            config_name = 'apache2-debian-httpd.conf'
-
-        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_name)
-
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"
 
