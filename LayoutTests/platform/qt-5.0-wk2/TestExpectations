@@ -138,7 +138,6 @@ fast/js/regexp-range-bound-ffff.html
 fast/js/switch-behaviour.html
 fast/text/format-control.html
 fast/url/anchor.html
-http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
 # layoutTestController.ignoreLegacyWebNotificationPermissionRequests is unimplemented
 fast/notifications
