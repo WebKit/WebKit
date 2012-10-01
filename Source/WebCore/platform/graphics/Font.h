@@ -261,12 +261,12 @@ public:
     static String normalizeSpaces(const UChar*, unsigned length);
 
     bool needsTranscoding() const { return m_needsTranscoding; }
-    FontFallbackList* fontList() const { return m_fontList.get(); }
+    FontFallbackList* fontList() const { return m_fontFallbackList.get(); }
 
 private:
     bool loadingCustomFonts() const
     {
-        return m_fontList && m_fontList->loadingCustomFonts();
+        return m_fontFallbackList && m_fontFallbackList->loadingCustomFonts();
     }
 
 #if PLATFORM(QT)
@@ -274,7 +274,7 @@ private:
 #endif
 
     FontDescription m_fontDescription;
-    mutable RefPtr<FontFallbackList> m_fontList;
+    mutable RefPtr<FontFallbackList> m_fontFallbackList;
     short m_letterSpacing;
     short m_wordSpacing;
     bool m_isPlatformFont;
@@ -287,25 +287,25 @@ inline Font::~Font()
 
 inline const SimpleFontData* Font::primaryFont() const
 {
-    ASSERT(m_fontList);
-    return m_fontList->primarySimpleFontData(this);
+    ASSERT(m_fontFallbackList);
+    return m_fontFallbackList->primarySimpleFontData(this);
 }
 
 inline const FontData* Font::fontDataAt(unsigned index) const
 {
-    ASSERT(m_fontList);
-    return m_fontList->fontDataAt(this, index);
+    ASSERT(m_fontFallbackList);
+    return m_fontFallbackList->fontDataAt(this, index);
 }
 
 inline bool Font::isFixedPitch() const
 {
-    ASSERT(m_fontList);
-    return m_fontList->isFixedPitch(this);
+    ASSERT(m_fontFallbackList);
+    return m_fontFallbackList->isFixedPitch(this);
 }
 
 inline FontSelector* Font::fontSelector() const
 {
-    return m_fontList ? m_fontList->fontSelector() : 0;
+    return m_fontFallbackList ? m_fontFallbackList->fontSelector() : 0;
 }
 
 inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const

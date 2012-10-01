@@ -86,7 +86,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 }
 
 Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMode fontSmoothingMode)
-    : m_fontList(FontFallbackList::create())
+    : m_fontFallbackList(FontFallbackList::create())
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_isPlatformFont(true)
@@ -94,12 +94,12 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMo
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
     m_needsTranscoding = fontTranscoder().needsTranscoding(fontDescription());
-    m_fontList->setPlatformFont(fontData);
+    m_fontFallbackList->setPlatformFont(fontData);
 }
 
 Font::Font(const Font& other)
     : m_fontDescription(other.m_fontDescription)
-    , m_fontList(other.m_fontList)
+    , m_fontFallbackList(other.m_fontFallbackList)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_isPlatformFont(other.m_isPlatformFont)
@@ -110,7 +110,7 @@ Font::Font(const Font& other)
 Font& Font::operator=(const Font& other)
 {
     m_fontDescription = other.m_fontDescription;
-    m_fontList = other.m_fontList;
+    m_fontFallbackList = other.m_fontFallbackList;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
     m_isPlatformFont = other.m_isPlatformFont;
@@ -125,15 +125,15 @@ bool Font::operator==(const Font& other) const
     if (loadingCustomFonts() || other.loadingCustomFonts())
         return false;
     
-    FontSelector* first = m_fontList ? m_fontList->fontSelector() : 0;
-    FontSelector* second = other.m_fontList ? other.m_fontList->fontSelector() : 0;
+    FontSelector* first = m_fontFallbackList ? m_fontFallbackList->fontSelector() : 0;
+    FontSelector* second = other.m_fontFallbackList ? other.m_fontFallbackList->fontSelector() : 0;
 
     return first == second
-           && m_fontDescription == other.m_fontDescription
-           && m_letterSpacing == other.m_letterSpacing
-           && m_wordSpacing == other.m_wordSpacing
-           && (m_fontList ? m_fontList->fontSelectorVersion() : 0) == (other.m_fontList ? other.m_fontList->fontSelectorVersion() : 0)
-           && (m_fontList ? m_fontList->generation() : 0) == (other.m_fontList ? other.m_fontList->generation() : 0);
+        && m_fontDescription == other.m_fontDescription
+        && m_letterSpacing == other.m_letterSpacing
+        && m_wordSpacing == other.m_wordSpacing
+        && (m_fontFallbackList ? m_fontFallbackList->fontSelectorVersion() : 0) == (other.m_fontFallbackList ? other.m_fontFallbackList->fontSelectorVersion() : 0)
+        && (m_fontFallbackList ? m_fontFallbackList->generation() : 0) == (other.m_fontFallbackList ? other.m_fontFallbackList->generation() : 0);
 }
 
 void Font::update(PassRefPtr<FontSelector> fontSelector) const
@@ -143,9 +143,9 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     // style anyway. Other copies are transient, e.g., the state in the GraphicsContext, and
     // won't stick around long enough to get you in trouble). Still, this is pretty disgusting,
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
-    if (!m_fontList)
-        m_fontList = FontFallbackList::create();
-    m_fontList->invalidate(fontSelector);
+    if (!m_fontFallbackList)
+        m_fontFallbackList = FontFallbackList::create();
+    m_fontFallbackList->invalidate(fontSelector);
 }
 
 void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
