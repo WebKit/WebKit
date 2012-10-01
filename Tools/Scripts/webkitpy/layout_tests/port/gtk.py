@@ -89,12 +89,6 @@ class GtkPort(Port, PulseAudioSanitizer):
     def _path_to_image_diff(self):
         return self._build_path('Programs', 'ImageDiff')
 
-    def _path_to_wdiff(self):
-        if self._is_redhat_based():
-            return '/usr/bin/dwdiff'
-        else:
-            return '/usr/bin/wdiff'
-
     def _path_to_webcore_library(self):
         gtk_library_names = [
             "libwebkitgtk-1.0.so",

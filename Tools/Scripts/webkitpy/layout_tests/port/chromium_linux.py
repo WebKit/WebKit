@@ -170,9 +170,3 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def _path_to_helper(self):
         return None
-
-    def _path_to_wdiff(self):
-        if self._is_redhat_based():
-            return '/usr/bin/dwdiff'
-        else:
-            return '/usr/bin/wdiff'

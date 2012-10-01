@@ -1226,11 +1226,15 @@ class Port(object):
         This is needed only by ports that use the http_server.py module."""
         raise NotImplementedError('Port._path_to_lighttpd_php')
 
+    @memoized
     def _path_to_wdiff(self):
         """Returns the full path to the wdiff binary, or None if it is not available.
 
         This is likely used only by wdiff_text()"""
-        return 'wdiff'
+        for path in ("/usr/bin/wdiff", "/usr/bin/dwdiff"):
+            if self._filesystem.exists(path):
+                return path
+        return None
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
