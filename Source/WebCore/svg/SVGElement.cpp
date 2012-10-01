@@ -569,10 +569,8 @@ void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 
 SVGAttributeToPropertyMap& SVGElement::localAttributeToPropertyMap()
 {
-    ASSERT_NOT_REACHED();
-
-    DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, dummyMap, ());
-    return dummyMap;
+    DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, emptyMap, ());
+    return emptyMap;
 }
 
 void SVGElement::synchronizeRequiredFeatures(void* contextElement)
