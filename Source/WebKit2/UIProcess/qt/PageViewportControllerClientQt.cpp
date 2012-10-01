@@ -468,8 +468,10 @@ void PageViewportControllerClientQt::pinchGestureCancelled()
     m_scaleUpdateDeferrer.reset();
 }
 
-void PageViewportControllerClientQt::didChangeContentsSize()
+void PageViewportControllerClientQt::didChangeContentsSize(const IntSize& newSize)
 {
+    m_pageItem->setContentsSize(QSizeF(newSize));
+
     // Emit for testing purposes, so that it can be verified that
     // we didn't do scale adjustment.
     emit m_viewportItem->experimental()->test()->contentsScaleCommitted();

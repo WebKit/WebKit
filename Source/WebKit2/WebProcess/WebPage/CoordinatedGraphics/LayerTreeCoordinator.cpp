@@ -272,7 +272,9 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
 
     if (m_shouldSyncFrame) {
         didSync = true;
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame());
+
+        IntSize contentsSize = roundedIntSize(m_nonCompositedContentLayer->size());
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame(contentsSize));
         m_waitingForUIProcess = true;
         m_shouldSyncFrame = false;
     }

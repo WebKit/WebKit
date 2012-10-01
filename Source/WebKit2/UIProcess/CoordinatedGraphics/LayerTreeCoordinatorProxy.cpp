@@ -116,10 +116,15 @@ void LayerTreeCoordinatorProxy::setCompositingLayerFilters(WebLayerID id, const 
 }
 #endif
 
-void LayerTreeCoordinatorProxy::didRenderFrame()
+void LayerTreeCoordinatorProxy::didRenderFrame(const WebCore::IntSize& contentsSize)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::flushLayerChanges, m_renderer.get()));
     updateViewport();
+#if PLATFORM(QT)
+    m_drawingAreaProxy->page()->didRenderFrame(contentsSize);
+#else
+    UNUSED_PARAM(contentsSize);
+#endif
 }
 
 void LayerTreeCoordinatorProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)

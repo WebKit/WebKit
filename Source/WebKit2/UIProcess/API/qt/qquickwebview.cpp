@@ -877,13 +877,6 @@ void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
         m_pageViewportController->pageDidRequestScroll(pos);
 }
 
-void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
-{
-    QQuickWebViewPrivate::didChangeContentsSize(newSize);
-    pageView->setContentsSize(newSize); // emits contentsSizeChanged()
-    m_pageViewportController->didChangeContentsSize(newSize);
-}
-
 void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
 {
     if (!pageView->eventHandler())

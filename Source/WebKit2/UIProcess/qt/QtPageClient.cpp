@@ -73,6 +73,11 @@ void QtPageClient::setViewNeedsDisplay(const WebCore::IntRect& rect)
     QQuickWebViewPrivate::get(m_webView)->setNeedsDisplay();
 }
 
+void QtPageClient::didRenderFrame(const WebCore::IntSize& contentsSize)
+{
+    QQuickWebViewPrivate::get(m_webView)->viewportController()->didRenderFrame(contentsSize);
+}
+
 void QtPageClient::pageDidRequestScroll(const IntPoint& pos)
 {
     QQuickWebViewPrivate::get(m_webView)->pageDidRequestScroll(pos);
@@ -90,7 +95,7 @@ void QtPageClient::didRelaunchProcess()
 
 void QtPageClient::didChangeContentsSize(const IntSize& newSize)
 {
-    QQuickWebViewPrivate::get(m_webView)->didChangeContentsSize(newSize);
+    QQuickWebViewPrivate::get(m_webView)->viewportController()->didChangeContentsSize(newSize);
 }
 
 void QtPageClient::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)

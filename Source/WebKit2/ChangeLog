@@ -1,5 +1,82 @@
 2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Delay viewport position, scale and contents size updates until tiles are rendered
+        https://bugs.webkit.org/show_bug.cgi?id=97775
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        A few events from the web process can cause the viewport position or scale to be
+        adjusted in the UI process:
+        - Scroll position request
+        - Viewport attributes (initialScale, minimumScale)
+        - Contents size change
+
+        We previously applied those updates directly to the viewport, which would then in turn
+        produce a corresponding visible rect request to the web process to render the contents
+        at the new position/scale. This could leave the viewport showing the old content, either
+        by scaling the tiles, or by showing checkerboard if no contents was rendered at this
+        position yet. When the web process was done rendering new tiles, the proper tiles
+        were then shown to the user.
+        Since many of these updates happen during page load, all producing an iterative adjustment
+        to the viewport, this could show sharpness and position jitter until the final rendering
+        was done.
+
+        This patch makes those updates go through the PageViewportController first and then to the
+        QQuickWebView rather than the other way around, and keep them pending until the
+        LayerTreeHostProxy reports that the new tiles are ready to be shown. Since the rendering
+        is blocked until the page first layout is done, this apply the modifications to
+        the viewport only once when the first frame is ready to be shown.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        (QRawWebViewPrivate::didRenderFrame):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::didRenderFrame):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didCommitLoad):
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::initialViewportReady):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::resumeContent):
+        (WebKit::PageViewportController::applyScaleAfterRenderingContents):
+        (WebKit):
+        (WebKit::PageViewportController::applyPositionAfterRenderingContents):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/PageViewportControllerClient.h:
+        (PageViewportControllerClient):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::didChangeContentsSize):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::didRenderFrame):
+        (WebKit):
+        (WebKit::QtPageClient::didChangeContentsSize):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit::QtWebPageLoadClient::didCommitLoad):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::didRenderFrame):
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Wait for the UI process before re-enabling rendering during page load
         https://bugs.webkit.org/show_bug.cgi?id=97773
 

@@ -95,8 +95,10 @@ public:
     void didChangeContentsVisibility(const WebCore::FloatPoint& viewportPos, float viewportScale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
 
     // Notifications from the WebProcess.
+    void didCommitLoad();
     void didChangeContentsSize(const WebCore::IntSize& newSize);
     void didChangeViewportAttributes(const WebCore::ViewportAttributes&);
+    void didRenderFrame(const WebCore::IntSize& contentsSize);
     void pageTransitionViewportReady();
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
@@ -104,6 +106,8 @@ private:
     float fromViewportScale(float scale) const { return scale / devicePixelRatio(); }
     float toViewportScale(float scale) const { return scale * devicePixelRatio(); }
     void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
+    void applyScaleAfterRenderingContents(float scale);
+    void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
     void updateMinimumScaleToFit();
 
     WebPageProxy* const m_webPageProxy;
@@ -122,6 +126,9 @@ private:
     WebCore::FloatSize m_viewportSize;
     WebCore::FloatSize m_contentsSize;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
+
+    bool m_viewportPosIsLocked;
+    bool m_effectiveScaleIsLocked;
 
     friend class ViewportUpdateDeferrer;
 };

@@ -356,6 +356,7 @@ public:
     bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
     void setMaintainsInactiveSelection(bool);
 #if PLATFORM(QT)
+    void didRenderFrame(const WebCore::IntSize& contentsSize);
     void registerApplicationScheme(const String& scheme);
     void resolveApplicationSchemeRequest(QtNetworkRequestData);
     void sendApplicationSchemeReply(const QQuickNetworkReply*);

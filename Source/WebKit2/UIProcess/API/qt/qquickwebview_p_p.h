@@ -130,7 +130,6 @@ public:
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);
     virtual void pageDidRequestScroll(const QPoint& pos) { }
-    virtual void didChangeContentsSize(const QSize& newSize) { }
     void processDidCrash();
     void didRelaunchProcess();
     PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
@@ -223,7 +222,6 @@ public:
     virtual void updateViewportSize();
 
     virtual void pageDidRequestScroll(const QPoint& pos);
-    virtual void didChangeContentsSize(const QSize& newSize);
     virtual void handleMouseEvent(QMouseEvent*);
 };
 

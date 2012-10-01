@@ -37,7 +37,7 @@ public:
     virtual void setContentsScale(float, bool treatAsInitialValue) = 0;
 
     virtual void didResumeContent() = 0;
-    virtual void didChangeContentsSize() = 0;
+    virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
     virtual void didChangeVisibleContents() = 0;
     virtual void didChangeViewportAttributes() = 0;
 
