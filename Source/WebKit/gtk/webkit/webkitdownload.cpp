@@ -473,6 +473,10 @@ static gboolean webkit_download_open_stream_for_uri(WebKitDownload* download, co
         return FALSE;
     }
 
+    GRefPtr<GFileInfo> info = adoptGRef(g_file_info_new());
+    g_file_info_set_attribute_string(info.get(), "metadata::download-uri", webkit_download_get_uri(download));
+    g_file_set_attributes_async(file.get(), info.get(), G_FILE_QUERY_INFO_NONE, G_PRIORITY_DEFAULT, 0, 0, 0);
+
     return TRUE;
 }
 
