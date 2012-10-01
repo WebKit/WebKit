@@ -712,9 +712,6 @@ Bug(EFL) inspector/profiler/heap-snapshot.html [ Failure Pass ]
 Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
 webkit.org/b/95066 inspector/styles/media-queries.html [ Failure Pass ]
 
-# Test is flaky and needs to be fixed
-webkit.org/b/95813 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
-
 # Sometimes asserts in MessagePort::contextDestroyed
 webkit.org/b/94458 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure Pass ]
 
