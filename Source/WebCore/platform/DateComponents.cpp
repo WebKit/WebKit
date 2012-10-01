@@ -41,6 +41,12 @@ using namespace std;
 
 namespace WebCore {
 
+// HTML5 specification defines minimum week of year is one.
+const int DateComponents::minimumWeekNumber = 1;
+
+// HTML5 specification defines maximum week of year is 53.
+const int DateComponents::maximumWeekNumber = 53;
+
 // HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
 // 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
 static const int minimumYear = 1;
@@ -95,7 +101,7 @@ static int dayOfWeek(int year, int month, int day)
 int DateComponents::maxWeekNumberInYear() const
 {
     int day = dayOfWeek(m_year, 0, 1); // January 1.
-    return day == Thursday || (day == Wednesday && isLeapYear(m_year)) ? 53 : 52;
+    return day == Thursday || (day == Wednesday && isLeapYear(m_year)) ? maximumWeekNumber : maximumWeekNumber - 1;
 }
 
 static unsigned countDigits(const UChar* src, unsigned length, unsigned start)
@@ -394,7 +400,7 @@ bool DateComponents::parseWeek(const UChar* src, unsigned length, unsigned start
     ++index;
 
     int week;
-    if (!toInt(src, length, index, 2, week) || week < 1 || week > maxWeekNumberInYear())
+    if (!toInt(src, length, index, 2, week) || week < minimumWeekNumber || week > maxWeekNumberInYear())
         return false;
     if (m_year == maximumYear && week > maximumWeekInMaximumYear)
         return false;

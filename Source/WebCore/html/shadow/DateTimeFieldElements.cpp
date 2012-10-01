@@ -340,6 +340,47 @@ void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
 
 // ----------------------------
 
+DateTimeWeekFieldElement::DateTimeWeekFieldElement(Document* document, FieldOwner& fieldOwner)
+    : DateTimeNumericFieldElement(document, fieldOwner, DateComponents::minimumWeekNumber, DateComponents::maximumWeekNumber, "--")
+{
+}
+
+PassRefPtr<DateTimeWeekFieldElement> DateTimeWeekFieldElement::create(Document* document, FieldOwner& fieldOwner)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, weekPsuedoId, ("-webkit-datetime-edit-week-field"));
+    RefPtr<DateTimeWeekFieldElement> field = adoptRef(new DateTimeWeekFieldElement(document, fieldOwner));
+    field->initialize(weekPsuedoId, AXWeekOfYearFieldText());
+    return field.release();
+}
+
+void DateTimeWeekFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    dateTimeFieldsState.setWeekOfYear(hasValue() ? valueAsInteger() : DateTimeFieldsState::emptyValue);
+}
+
+void DateTimeWeekFieldElement::setValueAsDate(const DateComponents& date)
+{
+    setValueAsInteger(date.week());
+}
+
+void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasWeekOfYear()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const unsigned value = dateTimeFieldsState.weekOfYear();
+    if (range().isInRange(static_cast<int>(value))) {
+        setValueAsInteger(value);
+        return;
+    }
+
+    setEmptyValue(dateForReadOnlyField);
+}
+
+// ----------------------------
+
 // HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
 // 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
 static const int minimumYear = 1;

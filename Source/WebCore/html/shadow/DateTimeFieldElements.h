@@ -133,6 +133,21 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
 };
 
+class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
+    WTF_MAKE_NONCOPYABLE(DateTimeWeekFieldElement);
+
+public:
+    static PassRefPtr<DateTimeWeekFieldElement> create(Document*, FieldOwner&);
+
+private:
+    DateTimeWeekFieldElement(Document*, FieldOwner&);
+
+    // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
+    virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+};
+
 class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeYearFieldElement);
 

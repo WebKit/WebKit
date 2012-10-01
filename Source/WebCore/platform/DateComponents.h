@@ -159,6 +159,9 @@ public:
     static inline double maximumTime() { return 86399999; } // 23:59:59.999
     static inline double maximumWeek() { return 8639999568000000.0; } // 275760-09-08, the Monday of the week including 275760-09-13.
 
+    static const int minimumWeekNumber;
+    static const int maximumWeekNumber;
+
 private:
     // Returns the maximum week number in this DateComponents's year.
     // The result is either of 52 and 53.
