@@ -685,7 +685,7 @@ key_list:
     ;
 
 key:
-    PERCENTAGE { $$.id = 0; $$.isInt = false; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+    maybe_unary_operator PERCENTAGE { $$.id = 0; $$.isInt = false; $$.fValue = $1 * $2; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
     | IDENT {
         $$.id = 0; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
         CSSParserString& str = $1;
