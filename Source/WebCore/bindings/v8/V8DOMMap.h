@@ -31,6 +31,7 @@
 #ifndef V8DOMMap_h
 #define V8DOMMap_h
 
+#include "Node.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -40,7 +41,6 @@
 
 namespace WebCore {
     class DOMDataStore;
-    class Node;
 
     template <class KeyType, class ValueType> class AbstractWeakReferenceMap {
     public:
