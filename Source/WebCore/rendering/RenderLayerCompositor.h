@@ -283,6 +283,7 @@ private:
 
     bool isFlushingLayers() const { return m_flushingLayers; }
 
+    GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
 
     // Whether a running transition or animation enforces the need for a compositing layer.

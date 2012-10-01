@@ -2452,6 +2452,16 @@ ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
     return 0;
 }
 
+GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
+{
+    if (Frame* frame = m_renderView->frameView()->frame()) {
+        if (Page* page = frame->page())
+            return page->chrome()->client()->graphicsLayerFactory();
+    }
+
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
