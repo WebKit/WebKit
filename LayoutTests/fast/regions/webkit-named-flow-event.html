@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
 #article {
     -webkit-flow-into: article;
@@ -54,7 +55,7 @@
     }
     
     function startTest() {    
-        var flowThread = document.webkitGetFlowByName("article");
+        var flowThread = getFlowByName("article");
         flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
         
         debug("Flow content");

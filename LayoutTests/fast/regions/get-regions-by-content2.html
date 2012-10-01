@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="resources/helper.js"></script>
         <style>
             body { font-family: monospace; }
             #region, #region2 { width: 250px; height: 50px; }
@@ -22,7 +23,7 @@
                 testRunner.dumpAsText();
             description("Test for 90759: [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent");
 
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
 
             // Getting the regions for a non existant node should return null.
             var pElement;
@@ -73,7 +74,7 @@
 
             // Move the article to another named flow, the region list should be empty.
             document.getElementById("article").className = "article2";
-            var namedFlow2 = document.webkitGetFlowByName("flow2");
+            var namedFlow2 = getFlowByName("flow2");
             var regionList8 = namedFlow2.getRegionsByContent(pElement);
             shouldBeNonNull("regionList8");
             shouldEvaluateTo("regionList8.length", 0);

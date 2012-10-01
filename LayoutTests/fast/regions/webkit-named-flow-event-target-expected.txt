@@ -6,13 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Flow content
 PASS event.target.name is "article"
 PASS 2 is >= updatedCount
-PASS document.webkitGetFlowByName("article") is non-null.
+PASS getFlowByName("article") is non-null.
 PASS recreated is false
-PASS document.webkitGetFlowByName("article") is null
+PASS getFlowByName("article") is null
 PASS event.target.name is "article"
 PASS 2 is >= updatedCount
 PASS recreated is true
-PASS document.webkitGetFlowByName("article") is non-null.
+PASS getFlowByName("article") is non-null.
 PASS successfullyParsed is true
 
 TEST COMPLETE

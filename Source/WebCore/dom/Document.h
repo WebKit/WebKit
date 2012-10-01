@@ -359,7 +359,6 @@ public:
     bool cssStickyPositionEnabled() const;
     bool cssRegionsEnabled() const;
 #if ENABLE(CSS_REGIONS)
-    PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
     PassRefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif
 

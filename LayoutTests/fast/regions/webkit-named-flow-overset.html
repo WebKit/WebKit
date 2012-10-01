@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
     body { font-family: monospace; }
     .flow { -webkit-flow-into: flow }
@@ -24,7 +25,7 @@
         window.testRunner.dumpAsText();
 
     // Flow article does not have any regions yet
-    var namedFlow = document.webkitGetFlowByName("flow");
+    var namedFlow = getFlowByName("flow");
 
     // Overset should be false for a flow without regions
     shouldBe("namedFlow.overset", "true");

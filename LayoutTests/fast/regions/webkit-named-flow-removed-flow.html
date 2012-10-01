@@ -6,6 +6,7 @@
     On success, you should see a PASS below.
     -->
     <head>
+        <script src="resources/helper.js"></script>
         <style>
             .pass {
                 font-weight: bold;
@@ -37,12 +38,12 @@
                 testRunner.dumpAsText();
 
             // Get the named flow object before removing the flow thread.
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
             var namedFlow2;
 
             function test()
             {
-                namedFlow2 = document.webkitGetFlowByName("flow");
+                namedFlow2 = getFlowByName("flow");
                 if (namedFlow && !namedFlow2) {
                     document.getElementById("result").innerText = "PASS";
                     document.getElementById("result").className = "pass";

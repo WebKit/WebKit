@@ -18,12 +18,12 @@
             var arrFlowInvalidNames = ["auto", "default", "inherit", "initial", "none", "", "-12px", "flow; color: red;"];
             var arrLen = arrFlowInvalidNames.length;
             for (var i = 0; i < arrLen; ++i) {
-                var nullNamedFlow = document.webkitGetFlowByName(arrFlowInvalidNames[i]);
+                var nullNamedFlow = getFlowByName(arrFlowInvalidNames[i]);
                 assert(nullNamedFlow == null, "Named flow for " + arrFlowInvalidNames[i] + " should be null");
             }
 
             // It should not be possible to get the NamedFlow object for a missing flow.
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
             assert(namedFlow == null, "Named flow for flow should be null");
         </script>
     </body>

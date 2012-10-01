@@ -6,6 +6,7 @@
     On success, you should see a PASS below.
     -->
     <head>
+        <script src="resources/helper.js"></script>
         <style>
             .pass {
                 font-weight: bold;
@@ -32,8 +33,8 @@
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            var namedFlow = document.webkitGetFlowByName("flow");
-            var namedFlow2 = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
+            var namedFlow2 = getFlowByName("flow");
             if (namedFlow === namedFlow2) {
                 document.getElementById("result").innerText = "PASS";
                 document.getElementById("result").className = "pass";

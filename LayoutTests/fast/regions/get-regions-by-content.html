@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="resources/helper.js"></script>
         <style>
             body { font-family: monospace; }
             #article { -webkit-flow-into: flow; }
@@ -30,14 +31,14 @@
 
             description("Test for 90759: [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent.");
 
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
             var targetNode = document.getElementById("p1");
             var regionList = namedFlow.getRegionsByContent(targetNode);
 
             shouldEvaluateTo("regionList.length", 1);
             shouldBeEqualToString("regionList.item(0).id", "region");
 
-            namedFlow = document.webkitGetFlowByName("flow2");
+            namedFlow = getFlowByName("flow2");
             // Test that the p2 element is flown into 2 regions
             targetNode = document.getElementById("p2");
             regionList = namedFlow.getRegionsByContent(targetNode);

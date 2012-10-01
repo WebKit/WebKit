@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
 #article {
     -webkit-flow-into: article;
@@ -33,7 +34,7 @@
     }
 
     function getRegionAt(index) {
-        var flow = document.webkitGetFlowByName("article");
+        var flow = getFlowByName("article");
         var regions = flow.getRegions();
         if (regions.length <= index)
             return null;

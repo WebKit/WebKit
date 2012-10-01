@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
 #article {
     -webkit-flow-into: article;
@@ -79,7 +80,7 @@ if (window.testRunner) {
     }
     
     function startTest() {
-        var flow = document.webkitGetFlowByName("article");
+        var flow = getFlowByName("article");
         flow.addEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
         
         debug("Flow content");

@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="resources/helper.js"></script>
         <style>
             html { -webkit-writing-mode: horizontal-bt; }
             body { font-family: monospace; }
@@ -37,7 +38,7 @@
             if (window.testRunner)
                 window.testRunner.dumpAsText();
             description("Test for 90759: [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent");
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
 
             function hideRegions()
             {
@@ -110,7 +111,7 @@
             shouldEvaluateTo("regionListTextNode32.length", 1);
             shouldBeEqualToString("regionListTextNode32.item(0).id", "region3");
 
-            var namedFlow2 = document.webkitGetFlowByName("flow2");
+            var namedFlow2 = getFlowByName("flow2");
             var regionListP1 = namedFlow2.getRegionsByContent(document.getElementById("p1"));
             shouldBeNonNull("regionListP1");
             shouldEvaluateTo("regionListP1.length", 1);

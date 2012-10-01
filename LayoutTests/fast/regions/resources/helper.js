@@ -4,6 +4,12 @@ function isDebugEnabled()
     return window.location.hash == "#debug";
 }
 
+function getFlowByName(name)
+{
+    var namedFlows = document.webkitGetNamedFlows();
+    return namedFlows[name] ? namedFlows[name] : null;
+}
+
 function rectToArray(rect)
 {
     return [rect.top, rect.left, rect.bottom, rect.right, rect.width, rect.height];

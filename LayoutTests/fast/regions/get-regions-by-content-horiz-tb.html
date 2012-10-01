@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="resources/helper.js"></script>
         <style>
             body { font-family: monospace; }
             #article { -webkit-flow-into: flow; }
@@ -50,7 +51,7 @@
                 document.getElementById("region5").style.visibility = "hidden";
             }
 
-            var namedFlow = document.webkitGetFlowByName("flow");
+            var namedFlow = getFlowByName("flow");
 
             var regionListArticle = namedFlow.getRegionsByContent(document.getElementById("article"));
             shouldBeNonNull("regionListArticle ");
@@ -112,7 +113,7 @@
             shouldEvaluateTo("regionListTextNode32.length", 1);
             shouldBeEqualToString("regionListTextNode32.item(0).id", "region3");
 
-            var namedFlow2 = document.webkitGetFlowByName("flow2");
+            var namedFlow2 = getFlowByName("flow2");
             var regionListP1 = namedFlow2.getRegionsByContent(document.getElementById("p1"));
             shouldBeNonNull("regionListP1");
             shouldEvaluateTo("regionListP1.length", 1);

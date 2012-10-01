@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
     .flow { -webkit-flow-into: flow-name; }
     .region { -webkit-flow-from: flow-name; }
@@ -20,7 +21,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 // Flow article does not have any regions yet
-var namedFlow = document.webkitGetFlowByName("flow-name");
+var namedFlow = getFlowByName("flow-name");
 
 // The name should be 'flow-name' when there are no regions to flow into
 shouldBe("namedFlow.name", "'flow-name'");

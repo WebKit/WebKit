@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/helper.js"></script>
 <style>
 #article {
     -webkit-flow-into: article;
@@ -48,7 +49,7 @@ function flowContent(flowName) {
 }
 
 function makeFlowNull() {
-	shouldBeNonNull('document.webkitGetFlowByName("article")');
+	shouldBeNonNull('getFlowByName("article")');
 
     var el = document.getElementById("region_1");
     el.style.webkitFlowFrom = "no_article";
@@ -60,7 +61,7 @@ function makeFlowNull() {
 
 var recreated = false;
 function makeFlowCreated() {
-	shouldBeNull('document.webkitGetFlowByName("article")');
+	shouldBeNull('getFlowByName("article")');
 	gc();
 
     var el = document.getElementById("region_1");
@@ -96,7 +97,7 @@ function flowThreadUpdated(event) {
 }
 
 function startTest() {    
-    var flowThread = document.webkitGetFlowByName("article");
+    var flowThread = getFlowByName("article");
     flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
     
     debug("Flow content");

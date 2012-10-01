@@ -3,7 +3,7 @@ Test for 90163: [CSSRegions]Rename NamedFlow::contentNodes to NamedFlow::getCont
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.webkitGetFlowByName("flow") is null
+PASS getFlowByName("flow") is null
 PASS namedFlowContent3.length is 1
 PASS namedFlowContent3.item(0).id is "article"
 PASS namedFlowContent4.length is 1
@@ -26,7 +26,7 @@ PASS namedFlowContent12.item(0).id is "article"
 PASS namedFlowContent11.length is 0
 PASS namedFlowContent12.length is 1
 PASS namedFlowContent12.item(0).id is "article"
-PASS document.webkitGetFlowByName("flow2") is null
+PASS getFlowByName("flow2") is null
 PASS namedFlowContent13.length is 0
 PASS namedFlowContent14.length is 0
 PASS namedFlowContent15.length is 1

@@ -1142,17 +1142,6 @@ bool Document::cssGridLayoutEnabled() const
 
 #if ENABLE(CSS_REGIONS)
 
-PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
-{
-    if (!cssRegionsEnabled() || !renderer())
-        return 0;
-
-    // It's possible to have pending styles not applied that affect the existing flows.
-    updateStyleIfNeeded();
-
-    return namedFlows()->flowByName(flowName);
-}
-
 PassRefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
 {
     if (!cssRegionsEnabled() || !renderer())
