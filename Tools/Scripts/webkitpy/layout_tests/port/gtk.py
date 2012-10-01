@@ -89,12 +89,6 @@ class GtkPort(Port, PulseAudioSanitizer):
     def _path_to_image_diff(self):
         return self._build_path('Programs', 'ImageDiff')
 
-    def _path_to_apache(self):
-        if self._is_redhat_based():
-            return '/usr/sbin/httpd'
-        else:
-            return '/usr/sbin/apache2'
-
     def _path_to_wdiff(self):
         if self._is_redhat_based():
             return '/usr/bin/dwdiff'
