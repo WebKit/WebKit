@@ -232,14 +232,6 @@ public:
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
-    EventTargetData* eventTargetData() { return m_eventTargetData.get(); }
-    EventTargetData* ensureEventTargetData()
-    {
-        if (!m_eventTargetData)
-            m_eventTargetData = adoptPtr(new EventTargetData);
-        return m_eventTargetData.get();
-    }
-
 #if ENABLE(MUTATION_OBSERVERS)
     Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry() { return m_mutationObserverRegistry.get(); }
     Vector<OwnPtr<MutationObserverRegistration> >* ensureMutationObserverRegistry()
@@ -321,7 +313,6 @@ private:
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
-    OwnPtr<EventTargetData> m_eventTargetData;
     short m_tabIndex;
     bool m_tabIndexWasSetExplicitly : 1;
     bool m_isFocused : 1;

@@ -410,6 +410,9 @@ Node::~Node()
     if (hasRareData())
         clearRareData();
 
+    if (hasEventTargetData())
+        clearEventTargetData();
+
     if (renderer())
         detach();
 
@@ -2409,14 +2412,32 @@ bool Node::removeEventListener(const AtomicString& eventType, EventListener* lis
     return tryRemoveEventListener(this, eventType, listener, useCapture);
 }
 
+typedef HashMap<Node*, OwnPtr<EventTargetData> > EventTargetDataMap;
+
+static EventTargetDataMap& eventTargetDataMap()
+{
+    DEFINE_STATIC_LOCAL(EventTargetDataMap, map, ());
+    return map;
+}
+
 EventTargetData* Node::eventTargetData()
 {
-    return hasRareData() ? rareData()->eventTargetData() : 0;
+    return hasEventTargetData() ? eventTargetDataMap().get(this) : 0;
 }
 
 EventTargetData* Node::ensureEventTargetData()
 {
-    return ensureRareData()->ensureEventTargetData();
+    if (hasEventTargetData())
+        return eventTargetDataMap().get(this);
+    setHasEventTargetData(true);
+    EventTargetData* data = new EventTargetData;
+    eventTargetDataMap().set(this, adoptPtr(data));
+    return data;
+}
+
+void Node::clearEventTargetData()
+{
+    eventTargetDataMap().remove(this);
 }
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -2522,7 +2543,7 @@ void Node::notifyMutationObserversNodeWillDetach()
 
 void Node::handleLocalEvents(Event* event)
 {
-    if (!hasRareData() || !rareData()->eventTargetData())
+    if (!hasEventTargetData())
         return;
 
     if (disabled() && event->isMouseEvent())

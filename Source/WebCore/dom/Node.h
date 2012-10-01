@@ -351,6 +351,9 @@ public:
     bool hasScopedHTMLStyleChild() const { return getFlag(HasScopedHTMLStyleChildFlag); }
     void setHasScopedHTMLStyleChild(bool flag) { setFlag(flag, HasScopedHTMLStyleChildFlag); }
 
+    bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
+    void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
+
     enum ShouldSetAttached {
         SetAttached,
         DoNotSetAttached
@@ -710,10 +713,11 @@ private:
         InNamedFlowFlag = 1 << 26,
         HasAttrListFlag = 1 << 27,
         HasCustomCallbacksFlag = 1 << 28,
-        HasScopedHTMLStyleChildFlag = 1 << 29
+        HasScopedHTMLStyleChildFlag = 1 << 29,
+        HasEventTargetDataFlag = 1 << 30,
     };
 
-    // 3 bits remaining
+    // 2 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -746,6 +750,8 @@ protected:
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
     void clearRareData();
+
+    void clearEventTargetData();
 
     void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
 
