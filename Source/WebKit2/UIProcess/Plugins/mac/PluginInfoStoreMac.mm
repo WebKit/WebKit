@@ -76,6 +76,33 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
+static size_t findPluginWithBundleIdentifier(const Vector<PluginInfoStore::Plugin>& plugins, const String& bundleIdentifier)
+{
+    for (size_t i = 0; i < plugins.size(); ++i) {
+        if (plugins[i].bundleIdentifier == bundleIdentifier)
+            return i;
+    }
+
+    return notFound;
+}
+
+// Returns true if the given plug-in should be loaded, false otherwise.
+static bool checkForPreferredPlugin(Vector<PluginInfoStore::Plugin>& alreadyLoadedPlugins, const PluginInfoStore::Plugin& plugin, const String& oldPluginBundleIdentifier, const String& newPluginBundleIdentifier)
+{
+    if (plugin.bundleIdentifier == oldPluginBundleIdentifier) {
+        // If we've already found the new plug-in, we don't want to load the old plug-in.
+        if (findPluginWithBundleIdentifier(alreadyLoadedPlugins, newPluginBundleIdentifier) != notFound)
+            return false;
+    } else if (plugin.bundleIdentifier == newPluginBundleIdentifier) {
+        // If we've already found the old plug-in, remove it from the list of loaded plug-ins.
+        size_t oldPluginIndex = findPluginWithBundleIdentifier(alreadyLoadedPlugins, oldPluginBundleIdentifier);
+        if (oldPluginIndex != notFound)
+            alreadyLoadedPlugins.remove(oldPluginIndex);
+    }
+
+    return true;
+}
+
 bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
 {
     for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
@@ -85,6 +112,10 @@ bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, cons
         if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier)
             return false;
     }
+
+    // Prefer the Oracle Java plug-in over the Apple java plug-in.
+    if (!checkForPreferredPlugin(alreadyLoadedPlugins, plugin, "com.apple.java.JavaAppletPlugin", "com.oracle.java.JavaAppletPlugin"))
+        return false;
 
     return true;
 }
