@@ -1,17 +1,12 @@
 <!DOCTYPE html>
+<!--The test makes four canvases. The first never receives a getContext. The
+  second is rendered into immediately. The third and fourth are rendered
+  into with from nested setTimeout callbacks. When the canvases are accelerated
+  we expect that the latter three are all placed in render layers while
+  the first is not.-->
 <html>
 <body>
-  <!--The test makes four canvases. The first never receives a getContext. The
-      second is rendered into immediately. The third and fourth are rendered
-      into with from nested setTimeout callbacks. When the canvases are accelerated
-      we expect that the latter three are all placed in render layers while
-      the first is not.-->
-  <canvas id="A" width=100 height=100></canvas>
-  <canvas id="B" width=100 height=100></canvas>
-  <br>
-  <canvas id="C" width=100 height=100></canvas>
-  <canvas id="D" width=100 height=100></canvas>
-
+  <canvas id="A" width=100 height=100></canvas><canvas id="B" width=100 height=100></canvas><canvas id="C" width=100 height=100></canvas><canvas id="D" width=100 height=100></canvas>
   <script type="text/javascript" charset="utf-8">
     if (window.testRunner)
         testRunner.waitUntilDone();
