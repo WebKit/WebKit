@@ -1,3 +1,10 @@
+2012-10-01  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed, upgrade eae to reviewer. 
+        http://lists.webkit.org/mailman/private/webkit-committers/2012-October/000191.html
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-01  Ming Xie  <mxie@rim.com>
 
         [BlackBerry] Add a early return in buildCMakeProjectOrExit()
