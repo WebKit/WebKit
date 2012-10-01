@@ -1499,3 +1499,12 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
+
+# Needs rebaseline eventually
+webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/fractions-vertical-alignment.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/mo-stretch.html [ Failure ]
+webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/row-alignment.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]

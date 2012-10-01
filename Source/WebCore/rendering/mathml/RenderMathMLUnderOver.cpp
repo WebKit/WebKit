@@ -59,11 +59,12 @@ RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
 
 LayoutUnit RenderMathMLUnderOver::firstLineBoxBaseline() const
 {
-    if (!firstChildBox())
+    RenderBox* base = firstChildBox();
+    if (!base)
         return -1;
-    LayoutUnit baseline = firstChildBox()->firstLineBoxBaseline();
-    if (baseline != -1 && m_kind != Under)
-        baseline += lastChildBox()->pixelSnappedOffsetHeight(); // Add in the overscript's height.
+    LayoutUnit baseline = base->firstLineBoxBaseline();
+    if (baseline != -1)
+        baseline += base->logicalTop();
     return baseline;
 }
 

@@ -43,6 +43,15 @@
 
 webkit.org/b/97401 mathml/presentation/tables.xhtml [ Failure ]
 
+webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/fractions-vertical-alignment.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/mo-stretch.html [ Failure ]
+webkit.org/b/97990 mathml/presentation/over.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/row-alignment.xhtml [ Failure ]
+webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
