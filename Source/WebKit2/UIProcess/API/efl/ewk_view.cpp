@@ -384,20 +384,20 @@ static inline void _ewk_view_feed_touch_event_using_touch_point_list_of_evas(Eva
 
     void* data;
     EINA_LIST_FREE(points, data)
-        delete data;
+        delete static_cast<Ewk_Touch_Point*>(data);
 }
 
-static void _ewk_view_on_touch_down(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_touch_down(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
 {
     _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_START);
 }
 
-static void _ewk_view_on_touch_up(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_touch_up(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
 {
     _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_END);
 }
 
-static void _ewk_view_on_touch_move(void* data, Evas* canvas, Evas_Object* ewkView, void* eventInfo)
+static void _ewk_view_on_touch_move(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
 {
     _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_MOVE);
 }

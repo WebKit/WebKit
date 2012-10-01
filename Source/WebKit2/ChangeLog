@@ -1,3 +1,20 @@
+2012-10-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Fix compilation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=98020
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix compilation warnings related to ewk_view.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_feed_touch_event_using_touch_point_list_of_evas):
+        (_ewk_view_on_touch_down):
+        (_ewk_view_on_touch_up):
+        (_ewk_view_on_touch_move):
+        * UIProcess/API/efl/ewk_view_ui_client.cpp:
+        (exceededDatabaseQuota):
+
 2012-10-01  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WK2] Save the download uri as file metadata

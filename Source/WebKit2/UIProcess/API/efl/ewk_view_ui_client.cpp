@@ -74,7 +74,7 @@ static void hideColorPicker(WKPageRef, const void* clientInfo)
 #endif
 
 #if ENABLE(SQL_DATABASE)
-static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
 {
     return ewk_view_database_quota_exceeded(toEwkView(clientInfo), WKEinaSharedString(databaseName), WKEinaSharedString(displayName), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
 }
