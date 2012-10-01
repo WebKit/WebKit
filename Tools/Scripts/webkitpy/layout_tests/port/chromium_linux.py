@@ -184,6 +184,3 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             return '/usr/bin/dwdiff'
         else:
             return '/usr/bin/wdiff'
-
-    def _is_redhat_based(self):
-        return self._filesystem.exists(self._filesystem.join('/etc', 'redhat-release'))
