@@ -1,3 +1,9 @@
+2012-09-30  Taiju Tsuiki  <tzik@chromium.org>
+
+        Unreviewed. Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add a test to verify that a plugin does not receive touch-events unless it explicitly requests for them
