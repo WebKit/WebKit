@@ -1317,6 +1317,7 @@ SET(WebCore_SOURCES
     html/BaseCheckableInputType.cpp
     html/BaseClickableWithKeyInputType.cpp
     html/BaseDateAndTimeInputType.cpp
+    html/BaseMultipleFieldsDateAndTimeInputType.cpp
     html/BaseTextInputType.cpp
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp
@@ -1516,6 +1517,11 @@ SET(WebCore_SOURCES
 
     html/shadow/ContentDistributor.cpp
     html/shadow/ContentSelectorQuery.cpp
+    html/shadow/DateTimeEditElement.cpp
+    html/shadow/DateTimeFieldElement.cpp
+    html/shadow/DateTimeFieldElements.cpp
+    html/shadow/DateTimeNumericFieldElement.cpp
+    html/shadow/DateTimeSymbolicFieldElement.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
     html/shadow/HTMLShadowElement.cpp

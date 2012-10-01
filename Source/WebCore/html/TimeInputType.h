@@ -32,11 +32,7 @@
 #define TimeInputType_h
 
 #if ENABLE(INPUT_TYPE_TIME)
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
-#else
-#include "BaseDateAndTimeInputType.h"
-#endif
 
 namespace WebCore {
 

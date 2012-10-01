@@ -59075,6 +59075,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BaseMultipleFieldsDateAndTimeInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseMultipleFieldsDateAndTimeInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\BaseTextInputType.cpp"
 				>
 			</File>
@@ -64083,6 +64091,46 @@
 				</File>
 				<File
 					RelativePath="..\html\shadow\ContentSelectorQuery.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeEditElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeEditElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeFieldElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeFieldElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeFieldElements.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeFieldElements.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeNumericFieldElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeNumericFieldElement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeSymbolicFieldElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DateTimeSymbolicFieldElement.h"
 					>
 				</File>
 				<File

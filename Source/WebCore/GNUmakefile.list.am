@@ -3141,6 +3141,8 @@ webcore_sources += \
 	Source/WebCore/html/BaseClickableWithKeyInputType.h \
 	Source/WebCore/html/BaseDateAndTimeInputType.cpp \
 	Source/WebCore/html/BaseDateAndTimeInputType.h \
+	Source/WebCore/html/BaseMultipleFieldsDateAndTimeInputType.cpp \
+	Source/WebCore/html/BaseMultipleFieldsDateAndTimeInputType.h \
 	Source/WebCore/html/BaseTextInputType.cpp \
 	Source/WebCore/html/BaseTextInputType.h \
 	Source/WebCore/html/ButtonInputType.cpp \
@@ -3512,6 +3514,16 @@ webcore_sources += \
 	Source/WebCore/html/shadow/ContentDistributor.h \
 	Source/WebCore/html/shadow/ContentSelectorQuery.cpp \
 	Source/WebCore/html/shadow/ContentSelectorQuery.h \
+	Source/WebCore/html/shadow/DateTimeEditElement.cpp \
+	Source/WebCore/html/shadow/DateTimeEditElement.h \
+	Source/WebCore/html/shadow/DateTimeFieldElement.cpp \
+	Source/WebCore/html/shadow/DateTimeFieldElement.h \
+	Source/WebCore/html/shadow/DateTimeFieldElements.cpp \
+	Source/WebCore/html/shadow/DateTimeFieldElements.h \
+	Source/WebCore/html/shadow/DateTimeNumericFieldElement.cpp \
+	Source/WebCore/html/shadow/DateTimeNumericFieldElement.h \
+	Source/WebCore/html/shadow/DateTimeSymbolicFieldElement.cpp \
+	Source/WebCore/html/shadow/DateTimeSymbolicFieldElement.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
 	Source/WebCore/html/shadow/DetailsMarkerControl.h \
 	Source/WebCore/html/shadow/HTMLContentElement.cpp \
