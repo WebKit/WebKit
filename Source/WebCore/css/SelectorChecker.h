@@ -65,6 +65,8 @@ public:
             , elementParentStyle(0)
             , isSubSelector(false)
             , pseudoStyle(NOPSEUDO)
+            , hasScrollbarPseudo(false)
+            , hasSelectionPseudo(false)
         { }
 
         CSSSelector* selector;
@@ -75,6 +77,8 @@ public:
         RenderStyle* elementParentStyle;
         bool isSubSelector;
         PseudoId pseudoStyle;
+        bool hasScrollbarPseudo;
+        bool hasSelectionPseudo;
     };
 
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
@@ -117,7 +121,7 @@ public:
     static bool elementMatchesSelectorScopes(const StyledElement*, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes);
 
 private:
-    bool checkOneSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
+    bool checkOneSelector(const SelectorCheckingContext&) const;
     bool checkScrollbarPseudoClass(CSSSelector*) const;
     static bool isFrameFocused(const Element*);
 

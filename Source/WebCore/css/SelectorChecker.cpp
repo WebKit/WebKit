@@ -266,9 +266,9 @@ bool SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isF
         return fastCheckSelector(sel, element);
     }
 
-    PseudoId dynamicPseudo = NOPSEUDO;
+    PseudoId ignoreDynamicPseudo = NOPSEUDO;
     bool hasUnknownPseudoElements = false;
-    return checkSelector(SelectorCheckingContext(sel, element, SelectorChecker::VisitedMatchDisabled), dynamicPseudo, hasUnknownPseudoElements) == SelectorMatches;
+    return checkSelector(SelectorCheckingContext(sel, element, SelectorChecker::VisitedMatchDisabled), ignoreDynamicPseudo, hasUnknownPseudoElements) == SelectorMatches;
 }
 
 namespace {
@@ -442,8 +442,27 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
 SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorCheckingContext& context, PseudoId& dynamicPseudo, bool& hasUnknownPseudoElements) const
 {
     // first selector has to match
-    if (!checkOneSelector(context, dynamicPseudo, hasUnknownPseudoElements))
+    if (!checkOneSelector(context))
         return SelectorFailsLocally;
+
+    if (context.selector->m_match == CSSSelector::PseudoElement) {
+        if (context.selector->isUnknownPseudoElement()) {
+            hasUnknownPseudoElements = true;
+            if (context.element->shadowPseudoId() != context.selector->value())
+                return SelectorFailsLocally;
+        } else {
+            if ((!context.elementStyle && m_mode == ResolvingStyle) || m_mode == QueryingRules)
+                return SelectorFailsLocally;
+
+            PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoType());
+            if (pseudoId == FIRST_LETTER) {
+                if (Document* document = context.element->document())
+                    document->styleSheetCollection()->setUsesFirstLetterRules(true);
+            }
+            if (pseudoId != NOPSEUDO)
+                dynamicPseudo = pseudoId;
+        }
+    }
 
     // The rest of the selectors has to match
     CSSSelector::Relation relation = context.selector->relation();
@@ -532,8 +551,11 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        if ((context.elementStyle || m_mode == CollectingRules || m_mode == QueryingRules) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
-             && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && nextContext.selector->m_match == CSSSelector::PseudoClass))
+        nextContext.hasScrollbarPseudo = RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER;
+        nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
+        if ((context.elementStyle || m_mode == CollectingRules || m_mode == QueryingRules) && dynamicPseudo != NOPSEUDO
+            && !nextContext.hasSelectionPseudo
+            && !(nextContext.hasScrollbarPseudo && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
         nextContext.isSubSelector = true;
         return checkSelector(nextContext, dynamicPseudo, hasUnknownPseudoElements);
@@ -704,7 +726,7 @@ static bool anyAttributeMatches(Element* element, CSSSelector::Match match, cons
     return false;
 }
 
-bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, PseudoId& dynamicPseudo, bool& hasUnknownPseudoElements) const
+bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context) const
 {
     Element* const & element = context.element;
     CSSSelector* const & selector = context.selector;
@@ -751,14 +773,14 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 // We select between :visited and :link when applying. We don't know which one applied (or not) yet.
                 if (subContext.selector->pseudoType() == CSSSelector::PseudoVisited || (subContext.selector->pseudoType() == CSSSelector::PseudoLink && subContext.visitedMatchType == VisitedMatchEnabled))
                     return true;
-                if (!checkOneSelector(subContext, dynamicPseudo, hasUnknownPseudoElements))
+                if (!checkOneSelector(subContext))
                     return true;
             }
-        } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
+        } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
             return checkScrollbarPseudoClass(selector);
-        } else if (dynamicPseudo == SELECTION) {
+        } else if (context.hasSelectionPseudo) {
             if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
                 return !m_document->page()->focusController()->isActive();
         }
@@ -1000,8 +1022,10 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             {
                 SelectorCheckingContext subContext(context);
                 subContext.isSubSelector = true;
+                bool hasUnknownPseudoElements = false;
+                PseudoId ignoreDynamicPseudo = NOPSEUDO;
                 for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
-                    if (checkSelector(subContext, dynamicPseudo, hasUnknownPseudoElements) == SelectorMatches)
+                    if (checkSelector(subContext, ignoreDynamicPseudo, hasUnknownPseudoElements) == SelectorMatches)
                         return true;
                 }
             }
@@ -1174,23 +1198,6 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             break;
         }
         return false;
-    }
-    if (selector->m_match == CSSSelector::PseudoElement) {
-        if (selector->isUnknownPseudoElement()) {
-            hasUnknownPseudoElements = true;
-            return element->shadowPseudoId() == selector->value();
-        }
-
-        if ((!context.elementStyle && m_mode == ResolvingStyle) || m_mode == QueryingRules)
-            return false;
-
-        PseudoId pseudoId = CSSSelector::pseudoId(selector->pseudoType());
-        if (pseudoId == FIRST_LETTER) {
-            if (Document* document = element->document())
-                document->styleSheetCollection()->setUsesFirstLetterRules(true);
-        }
-        if (pseudoId != NOPSEUDO)
-            dynamicPseudo = pseudoId;
     }
     // ### add the rest of the checks...
     return true;
