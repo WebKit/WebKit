@@ -1,3 +1,17 @@
+2012-10-01  Alberto Garcia  <agarcia@igalia.com>
+
+        WebPrintOperationGtk destructor should be virtual
+        https://bugs.webkit.org/show_bug.cgi?id=98002
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebPrintOperationGtk is an abstract class which can be deleted
+        using a pointer to itself, yet its destructor is not virtual.
+        Fixes -Wdelete-non-virtual-dtor.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        (WebPrintOperationGtk):
+
 2012-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Add API to get the favicon for a WebKitWebView

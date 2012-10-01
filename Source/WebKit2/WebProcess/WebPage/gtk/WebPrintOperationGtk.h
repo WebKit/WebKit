@@ -48,7 +48,7 @@ class WebPage;
 class WebPrintOperationGtk : public RefCounted<WebPrintOperationGtk> {
 public:
     static PassRefPtr<WebPrintOperationGtk> create(WebPage*, const PrintInfo&);
-    ~WebPrintOperationGtk();
+    virtual ~WebPrintOperationGtk();
 
     WebCore::PrintContext* printContext() const { return m_printContext; }
     GtkPrintSettings* printSettings() const { return m_printSettings.get(); }
