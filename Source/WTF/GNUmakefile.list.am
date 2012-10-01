@@ -232,7 +232,9 @@ wtf_sources += \
     Source/WTF/wtf/unicode/CollatorDefault.cpp \
     Source/WTF/wtf/unicode/UTF8.cpp \
     Source/WTF/wtf/unicode/UTF8.h \
-    Source/WTF/wtf/unicode/Unicode.h
+    Source/WTF/wtf/unicode/Unicode.h \
+    Source/WTF/wtf/url/api/URLBuffer.h \
+    Source/WTF/wtf/url/api/URLQueryCharsetConverter.h
 
 if TARGET_WIN32
 wtf_sources += \

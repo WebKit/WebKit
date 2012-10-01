@@ -1,3 +1,9 @@
+2012-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files to compilation.
+
 2012-09-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Clean up HasTrivialConstructor/Destructor

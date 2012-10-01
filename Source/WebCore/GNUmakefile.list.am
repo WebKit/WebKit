@@ -4903,6 +4903,7 @@ webcore_sources += \
 	Source/WebCore/rendering/BidiRun.h \
 	Source/WebCore/rendering/break_lines.cpp \
 	Source/WebCore/rendering/break_lines.h \
+	Source/WebCore/rendering/ClipPathOperation.h \
 	Source/WebCore/rendering/ColumnInfo.h \
 	Source/WebCore/rendering/CounterNode.cpp \
 	Source/WebCore/rendering/CounterNode.h \
@@ -5143,7 +5144,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/BasicShapes.h \
 	Source/WebCore/rendering/style/BorderData.h \
 	Source/WebCore/rendering/style/BorderValue.h \
-	Source/WebCore/rendering/style/ClipPathOperation.h \
 	Source/WebCore/rendering/style/CollapsedBorderValue.h \
 	Source/WebCore/rendering/style/ContentData.cpp \
 	Source/WebCore/rendering/style/ContentData.h \
