@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScopedDOMDataStore.h"
 
+#include "Node.h"
 #include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {

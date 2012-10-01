@@ -34,6 +34,7 @@
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/OwnPtr.h>
 #include <v8.h>
 
@@ -137,7 +138,7 @@ namespace WebCore {
         virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
         {
             MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-            info.addHashMap(m_map);
+            info.addMember(m_map);
         }
 
     protected:

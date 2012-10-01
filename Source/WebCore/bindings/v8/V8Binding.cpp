@@ -52,6 +52,7 @@
 #include "XPathNSResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
@@ -221,7 +222,7 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addHashMap(m_stringCache);
+    info.addMember(m_stringCache);
 }
     
 PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value)

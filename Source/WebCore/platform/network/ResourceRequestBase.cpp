@@ -28,6 +28,7 @@
 
 #include "PlatformMemoryInstrumentation.h"
 #include "ResourceRequest.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
 
 using namespace std;
@@ -451,8 +452,7 @@ void ResourceRequestBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.addMember(m_url);
     info.addMember(m_firstPartyForCookies);
     info.addMember(m_httpMethod);
-    info.addHashMap(m_httpHeaderFields);
-    info.addInstrumentedMapEntries(m_httpHeaderFields);
+    info.addMember(m_httpHeaderFields);
     info.addMember(m_responseContentDispositionEncodingFallbackArray);
     info.addMember(m_httpBody);
 }

@@ -45,6 +45,7 @@
 #include "WorkerThread.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
@@ -719,12 +720,7 @@ MemoryCache::Statistics MemoryCache::getStatistics()
 void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::MemoryCacheStructures);
-    info.addHashMap(m_resources);
-    CachedResourceMap::const_iterator e = m_resources.end();
-    for (CachedResourceMap::const_iterator i = m_resources.begin(); i != e; ++i) {
-        info.addMember(i->first);
-        info.addMember(i->second);
-    }
+    info.addMember(m_resources);
     info.addMember(m_allResources);
     info.addMember(m_liveDecodedResources);
 }

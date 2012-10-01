@@ -126,6 +126,7 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/StdLibExtras.h>
@@ -2569,7 +2570,7 @@ RuleSet::RuleSet()
 
 static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap& atomicRuleMap)
 {
-    info->addHashMap(atomicRuleMap);
+    info->addMember(atomicRuleMap);
     for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
         info->addMember(*it->second);
 }
@@ -5781,25 +5782,21 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_userStyle);
     info.addMember(m_siblingRuleSet);
     info.addMember(m_uncommonAttributeRuleSet);
-    info.addHashMap(m_keyframesRuleMap);
-    info.addHashMap(m_matchedPropertiesCache);
-    info.addInstrumentedMapValues(m_matchedPropertiesCache);
+    info.addMember(m_keyframesRuleMap);
+    info.addMember(m_matchedPropertiesCache);
     info.addMember(m_matchedRules);
 
     info.addMember(m_ruleList);
-    info.addHashMap(m_pendingImageProperties);
-    info.addInstrumentedMapValues(m_pendingImageProperties);
+    info.addMember(m_pendingImageProperties);
     info.addMember(m_lineHeightValue);
     info.addMember(m_viewportDependentMediaQueryResults);
-    info.addHashMap(m_styleRuleToCSSOMWrapperMap);
-    info.addInstrumentedMapEntries(m_styleRuleToCSSOMWrapperMap);
+    info.addMember(m_styleRuleToCSSOMWrapperMap);
     info.addMember(m_styleSheetCSSOMWrapperSet);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    info.addHashMap(m_pendingSVGDocuments);
+    info.addMember(m_pendingSVGDocuments);
 #endif
 #if ENABLE(STYLE_SCOPED)
-    info.addHashMap(m_scopedAuthorStyles);
-    info.addInstrumentedMapEntries(m_scopedAuthorStyles);
+    info.addMember(m_scopedAuthorStyles);
     info.addMember(m_scopeStack);
 #endif
 

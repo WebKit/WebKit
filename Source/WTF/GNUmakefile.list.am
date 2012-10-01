@@ -81,6 +81,7 @@ wtf_sources += \
     Source/WTF/wtf/MediaTime.cpp \
     Source/WTF/wtf/MemoryInstrumentation.h \
     Source/WTF/wtf/MemoryInstrumentationArrayBufferView.h \
+    Source/WTF/wtf/MemoryInstrumentationHashMap.h \
     Source/WTF/wtf/MemoryInstrumentationHashSet.h \
     Source/WTF/wtf/MemoryInstrumentationVector.h \
     Source/WTF/wtf/MessageQueue.h \

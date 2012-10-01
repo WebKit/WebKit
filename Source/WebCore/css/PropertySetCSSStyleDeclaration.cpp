@@ -32,6 +32,7 @@
 #include "StyledElement.h"
 #include "UndoManager.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
 
 using namespace std;
 
@@ -173,8 +174,7 @@ void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryO
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_propertySet);
-    if (m_cssomCSSValueClones)
-        info.addInstrumentedMapEntries(*m_cssomCSSValueClones);
+    info.addMember(m_cssomCSSValueClones);
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const

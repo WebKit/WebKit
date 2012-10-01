@@ -51,6 +51,7 @@
             'wtf/MathExtras.h',
             'wtf/MemoryInstrumentation.h',
             'wtf/MemoryInstrumentationArrayBufferView.h',
+            'wtf/MemoryInstrumentationHashMap.h',
             'wtf/MemoryInstrumentationHashSet.h',
             'wtf/MemoryInstrumentationVector.h',
             'wtf/MessageQueue.h',

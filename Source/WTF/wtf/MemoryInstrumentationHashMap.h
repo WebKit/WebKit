@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef MemoryInstrumentationHashMap_h
+#define MemoryInstrumentationHashMap_h
+
+#include <wtf/HashMap.h>
+#include <wtf/TypeTraits.h>
+
+namespace WTF {
+
+template<typename KeyType>
+struct SequenceMemoryInstrumentationTraits {
+    template <typename I> static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
+    {
+        info.addCollectionElements(iterator, end);
+    }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<int> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<void*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
+void reportMemoryUsage(const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>* const& hashMap, MemoryObjectInfo* memoryObjectInfo)
+{
+    MemoryClassInfo info(memoryObjectInfo, hashMap);
+    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+
+    typedef HashMapValueTraits<KeyArg, MappedArg> ValueTraits;
+    typedef HashTable<typename HashMapType::KeyType, typename HashMapType::ValueType, KeyValuePairKeyExtractor<typename HashMapType::ValueType>, HashArg, ValueTraits, KeyTraitsArg> HashTableType;
+
+    info.addPrivateBuffer(sizeof(typename HashTableType::ValueType) * hashMap->capacity());
+
+    // Check if type is convertible to integer to handle enum keys and values.
+    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<KeyArg>::value, int, KeyArg>::Type>::reportMemoryUsage(hashMap->begin().keys(), hashMap->end().keys(), info);
+    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<MappedArg>::value, int, MappedArg>::Type>::reportMemoryUsage(hashMap->begin().values(), hashMap->end().values(), info);
+}
+
+}
+
+#endif // !defined(MemoryInstrumentationHashMap_h)

@@ -175,6 +175,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/PassRefPtr.h>
@@ -5887,17 +5888,17 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_xmlEncoding);
     info.addMember(m_xmlVersion);
     info.addMember(m_contentLanguage);
-    info.addHashMap(m_documentNamedItemCollections);
-    info.addHashMap(m_windowNamedItemCollections);
+    info.addMember(m_documentNamedItemCollections);
+    info.addMember(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)
     info.addMember(m_dashboardRegions);
 #endif
-    info.addHashMap(m_cssCanvasElements);
+    info.addMember(m_cssCanvasElements);
     info.addMember(m_iconURLs);
     info.addMember(m_documentSuspensionCallbackElements);
     info.addMember(m_mediaVolumeCallbackElements);
     info.addMember(m_privateBrowsingStateChangedElements);
-    info.addHashMap(m_elementsByAccessKey);
+    info.addMember(m_elementsByAccessKey);
     info.addMember(m_eventQueue);
     info.addMember(m_mediaCanStartListeners);
     info.addMember(m_pendingTasks);

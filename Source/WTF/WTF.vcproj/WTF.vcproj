@@ -909,6 +909,10 @@
 			>
 		</File>
 		<File
+		        RelativePath="..\wtf\MemoryInstrumentationHashMap.h"
+			>
+		</File>
+		<File
 		        RelativePath="..\wtf\MemoryInstrumentationHashSet.h"
 			>
 		</File>

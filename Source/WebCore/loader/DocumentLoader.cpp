@@ -53,6 +53,7 @@
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/CString.h>
@@ -377,7 +378,7 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_response);
     info.addMember(m_lastCheckedRequest);
     info.addMember(m_responses);
-    info.addHashMap(m_pendingSubstituteResources);
+    info.addMember(m_pendingSubstituteResources);
     info.addMember(m_resourcesClientKnowsAbout);
     info.addMember(m_resourcesLoadedFromMemoryCacheForClientNotification);
     info.addMember(m_clientRedirectSourceForHistory);

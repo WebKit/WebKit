@@ -1,3 +1,27 @@
+2012-10-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide memory instrumentation for HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=98005
+
+        Reviewed by Pavel Feldman.
+
+        Extracted HashMap memory instrumentation into its own file. The map's content
+        elements will be automatically traversed if their types are supported
+        by the memory instrumentation. No need to call special method for hash map
+        fields any more.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WTF):
+        * wtf/MemoryInstrumentationHashMap.h: Added.
+        (WTF):
+        (WTF::SequenceMemoryInstrumentationTraits::reportMemoryUsage):
+        (WTF::reportMemoryUsage):
+
 2012-10-01  Alberto Garcia  <agarcia@igalia.com>
 
         Check that __cplusplus is defined before comparing its value

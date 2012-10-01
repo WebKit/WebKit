@@ -275,6 +275,7 @@
 		A8A4748C151A8264004123FF /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; };
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
 		CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; };
+		F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -555,6 +556,7 @@
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
+		F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationHashMap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -697,6 +699,7 @@
 				CD5497AB15857D0300B5BC30 /* MediaTime.h */,
 				4F1D115315FF11BE0026E908 /* MemoryInstrumentation.h */,
 				4FD8554616133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h */,
+				F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */,
 				4F1B2DB5160B44AA00586559 /* MemoryInstrumentationHashSet.h */,
 				4FCB7109160A1A07008425EC /* MemoryInstrumentationVector.h */,
 				A8A472CC151A825B004123FF /* MessageQueue.h */,
@@ -1153,6 +1156,7 @@
 				4FCB710A160A1A07008425EC /* MemoryInstrumentationVector.h in Headers */,
 				4F1B2DB6160B44AA00586559 /* MemoryInstrumentationHashSet.h in Headers */,
 				4FD8554716133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h in Headers */,
+				F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

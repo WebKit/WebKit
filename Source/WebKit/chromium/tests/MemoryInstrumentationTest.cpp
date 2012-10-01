@@ -37,8 +37,10 @@
 #include <gtest/gtest.h>
 
 #include <wtf/ArrayBuffer.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentationArrayBufferView.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/RefCounted.h>
@@ -50,6 +52,25 @@
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
+
+namespace {
+enum TestEnum { ONE = 1, TWO, THREE, MY_ENUM_MAX };
+}
+
+namespace WTF {
+
+template<> struct DefaultHash<TestEnum> {
+    typedef IntHash<unsigned> Hash;
+};
+
+template<> struct HashTraits<TestEnum> : GenericHashTraits<TestEnum> {
+    static const bool emptyValueIsZero = true;
+    static const bool needsDestruction = false;
+    static void constructDeletedValue(TestEnum& slot) { slot = static_cast<TestEnum>(MY_ENUM_MAX + 1); }
+    static bool isDeletedValue(TestEnum value) { return value == (MY_ENUM_MAX + 1); }
+};
+
+}
 
 namespace {
 
@@ -448,6 +469,141 @@ TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, (size_t)helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithNotInstrumentedKeysAndValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<int, int> IntToIntMap;
+    OwnPtr<IntToIntMap> value = adoptPtr(new IntToIntMap());
+    size_t count = 10;
+    for (size_t i = 1; i <= count; ++i)
+        value->set(i, i);
+    InstrumentedOwner<IntToIntMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(IntToIntMap) + sizeof(IntToIntMap::ValueType) * value->capacity(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeys)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<String, int> StringToIntMap;
+    OwnPtr<StringToIntMap> value = adoptPtr(new StringToIntMap());
+    int count = 10;
+    for (int i = 1; i <= count; ++i)
+        value->set(String::number(i), i);
+    InstrumentedOwner<StringToIntMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(StringToIntMap) + sizeof(StringToIntMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithInstrumentedValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<int, String> IntToStringMap;
+    OwnPtr<IntToStringMap> value = adoptPtr(new IntToStringMap());
+    int count = 10;
+    for (int i = 1; i <= count; ++i)
+        value->set(i, String::number(i));
+    InstrumentedOwner<IntToStringMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(IntToStringMap) + sizeof(IntToStringMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeysAndValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<String, String> StringToStringMap;
+    OwnPtr<StringToStringMap> value = adoptPtr(new StringToStringMap());
+    int count = 10;
+    for (int i = 1; i <= count; ++i)
+        value->set(String::number(count + i), String::number(i));
+    InstrumentedOwner<StringToStringMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(StringToStringMap) + sizeof(StringToStringMap::ValueType) * value->capacity() + 2 * sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2 * count + 1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<Instrumented*, Instrumented*> InstrumentedToInstrumentedMap;
+    OwnPtr<InstrumentedToInstrumentedMap> value = adoptPtr(new InstrumentedToInstrumentedMap());
+    Vector<OwnPtr<Instrumented> > valuesVector;
+    int count = 10;
+    for (int i = 0; i < count; ++i) {
+        valuesVector.append(adoptPtr(new Instrumented()));
+        valuesVector.append(adoptPtr(new Instrumented()));
+        value->set(valuesVector[2 * i].get(), valuesVector[2 * i + 1].get());
+    }
+    InstrumentedOwner<InstrumentedToInstrumentedMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(InstrumentedToInstrumentedMap) + sizeof(InstrumentedToInstrumentedMap::ValueType) * value->capacity() + 2 * (sizeof(Instrumented) + sizeof(NotInstrumented)) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2 * 2 * count + 1, helper.visitedObjects());
+}
+
+class InstrumentedConvertibleToInt {
+public:
+    InstrumentedConvertibleToInt() : m_notInstrumented(0) { }
+    ~InstrumentedConvertibleToInt() { }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        info.addMember(m_notInstrumented);
+    }
+
+    operator int() const { return 2012; }
+
+    NotInstrumented* m_notInstrumented;
+};
+
+// This test checks if reportMemoryUsage method will be called on a class
+// that can be implicitly cast to int. Currently objects of such classes are
+// treated as integers when they are stored in a HashMap by value and
+// reportMemoryUsage will not be called on them. We may fix that later.
+TEST(MemoryInstrumentationTest, hashMapWithValuesConvertibleToInt)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<InstrumentedConvertibleToInt*, InstrumentedConvertibleToInt> TestMap;
+    OwnPtr<TestMap> value = adoptPtr(new TestMap());
+    Vector<OwnPtr<InstrumentedConvertibleToInt> > keysVector;
+    Vector<OwnPtr<NotInstrumented> > valuesVector;
+    int count = 10;
+    for (int i = 0; i < count; ++i) {
+        keysVector.append(adoptPtr(new InstrumentedConvertibleToInt()));
+        valuesVector.append(adoptPtr(new NotInstrumented()));
+        value->set(keysVector[i].get(), InstrumentedConvertibleToInt()).iterator->second.m_notInstrumented = valuesVector[i].get();
+    }
+    InstrumentedOwner<TestMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(TestMap) + sizeof(TestMap::ValueType) * value->capacity() +
+        sizeof(InstrumentedConvertibleToInt) * count /* + sizeof(NotInstrumented) * count */, helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashMapWithEnumKeysAndInstrumentedValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashMap<TestEnum, String> EnumToStringMap;
+    OwnPtr<EnumToStringMap> value = adoptPtr(new EnumToStringMap());
+    int count = MY_ENUM_MAX;
+    for (int i = ONE; i <= count; ++i)
+        value->set(static_cast<TestEnum>(i), String::number(i));
+    InstrumentedOwner<EnumToStringMap* > root(value.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(EnumToStringMap) + sizeof(EnumToStringMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(count + 1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, arrayBuffer)
