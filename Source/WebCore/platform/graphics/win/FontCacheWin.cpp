@@ -186,10 +186,10 @@ static HFONT createMLangFont(IMLangFontLink2* langFontLink, HDC hdc, DWORD codeP
     return hfont;
 }
 
-const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     UChar character = characters[0];
-    SimpleFontData* fontData = 0;
+    RefPtr<SimpleFontData> fontData;
     HWndDC hdc(0);
     HFONT primaryFont = font.primaryFont()->fontDataForCharacter(character)->platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
@@ -293,24 +293,24 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         DeleteObject(hfont);
     }
 
-    return fontData;
+    return fontData.release();
 }
 
-SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
+PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-SimpleFontData* FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName)
+PassRefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
     AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
-    SimpleFontData* fontData = getCachedFontData(fontDescription, familyName, false, shouldRetain);
+    RefPtr<SimpleFontData> fontData = getCachedFontData(fontDescription, familyName, false, shouldRetain);
     if (fontData)
         outFontFamilyName = familyName;
-    return fontData;
+    return fontData.release();
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
     if (!fallbackFontName.isEmpty())
@@ -329,11 +329,11 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
         AtomicString("Lucida Sans Unicode"),
         AtomicString("Arial")
     };
-    SimpleFontData* simpleFont;
+    RefPtr<SimpleFontData> simpleFont;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
         if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i], false, shouldRetain)) {
             fallbackFontName = fallbackFonts[i];
-            return simpleFont;
+            return simpleFont.release();
         }
     }
 
@@ -342,7 +342,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, defaultGUILogFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
     }
 
     // Fall back to Non-client metrics fonts.
@@ -350,15 +350,15 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
         if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
-            return simpleFont;
+            return simpleFont.release();
     }
     
     ASSERT_NOT_REACHED();

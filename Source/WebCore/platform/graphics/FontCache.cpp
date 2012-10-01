@@ -34,7 +34,6 @@
 #include "FontFallbackList.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
-#include "GlyphPageTreeNode.h"
 #include "OpenTypeVerticalData.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
@@ -286,7 +285,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, pair<SimpleFontData*, unsigned>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, pair<RefPtr<SimpleFontData>, unsigned>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache* gFontDataCache = 0;
 
@@ -297,9 +296,9 @@ const int cTargetInactiveFontData = 200;
 const int cMaxInactiveFontData = 50; // Pretty Low Threshold
 const int cTargetInactiveFontData = 30;
 #endif
-static ListHashSet<const SimpleFontData*>* gInactiveFontData = 0;
+static ListHashSet<RefPtr<SimpleFontData> >* gInactiveFontData = 0;
 
-SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
+PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
 {
     FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, checkingAlternateName);
     if (!platformData)
@@ -308,7 +307,7 @@ SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescript
     return getCachedFontData(platformData, shouldRetain);
 }
 
-SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData, ShouldRetain shouldRetain)
+PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontPlatformData* platformData, ShouldRetain shouldRetain)
 {
     if (!platformData)
         return 0;
@@ -320,16 +319,16 @@ SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformDat
 
     if (!gFontDataCache) {
         gFontDataCache = new FontDataCache;
-        gInactiveFontData = new ListHashSet<const SimpleFontData*>;
+        gInactiveFontData = new ListHashSet<RefPtr<SimpleFontData> >;
     }
 
     FontDataCache::iterator result = gFontDataCache->find(*platformData);
     if (result == gFontDataCache->end()) {
-        pair<SimpleFontData*, unsigned> newValue(new SimpleFontData(*platformData), shouldRetain == Retain ? 1 : 0);
+        pair<RefPtr<SimpleFontData>, unsigned> newValue(SimpleFontData::create(*platformData), shouldRetain == Retain ? 1 : 0);
         gFontDataCache->set(*platformData, newValue);
         if (shouldRetain == DoNotRetain)
             gInactiveFontData->add(newValue.first);
-        return newValue.first;
+        return newValue.first.release();
     }
 
     if (!result.get()->second.second) {
@@ -350,7 +349,7 @@ SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformDat
 
 SimpleFontData* FontCache::getNonRetainedLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    return getLastResortFallbackFont(fontDescription, DoNotRetain);
+    return getLastResortFallbackFont(fontDescription, DoNotRetain).leakRef();
 }
 
 void FontCache::releaseFontData(const SimpleFontData* fontData)
@@ -363,7 +362,7 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
 
     ASSERT(it->second.second);
     if (!--it->second.second)
-        gInactiveFontData->add(fontData);
+        gInactiveFontData->add(it->second.first);
 }
 
 void FontCache::purgeInactiveFontDataIfNeeded()
@@ -383,11 +382,11 @@ void FontCache::purgeInactiveFontData(int count)
 
     isPurging = true;
 
-    Vector<const SimpleFontData*, 20> fontDataToDelete;
-    ListHashSet<const SimpleFontData*>::iterator end = gInactiveFontData->end();
-    ListHashSet<const SimpleFontData*>::iterator it = gInactiveFontData->begin();
+    Vector<RefPtr<SimpleFontData>, 20> fontDataToDelete;
+    ListHashSet<RefPtr<SimpleFontData> >::iterator end = gInactiveFontData->end();
+    ListHashSet<RefPtr<SimpleFontData> >::iterator it = gInactiveFontData->begin();
     for (int i = 0; i < count && it != end; ++it, ++i) {
-        const SimpleFontData* fontData = *it.get();
+        RefPtr<SimpleFontData>& fontData = *it.get();
         gFontDataCache->remove(fontData->platformData());
         // We should not delete SimpleFontData here because deletion can modify gInactiveFontData. See http://trac.webkit.org/changeset/44011
         fontDataToDelete.append(fontData);
@@ -401,9 +400,7 @@ void FontCache::purgeInactiveFontData(int count)
             gInactiveFontData->remove(gInactiveFontData->begin());
     }
 
-    size_t fontDataToDeleteCount = fontDataToDelete.size();
-    for (size_t i = 0; i < fontDataToDeleteCount; ++i)
-        delete fontDataToDelete[i];
+    fontDataToDelete.clear();
 
     if (gFontPlatformDataCache) {
         Vector<FontPlatformDataCacheKey> keysToRemove;
@@ -462,9 +459,9 @@ size_t FontCache::inactiveFontDataCount()
     return 0;
 }
 
-const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)
+PassRefPtr<FontData> FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)
 {
-    FontData* result = 0;
+    RefPtr<FontData> result;
 
     int startIndex = familyIndex;
     const FontFamily* startFamily = &font.fontDescription().family();
@@ -498,14 +495,14 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
 
         if (fontSelector) {
             // Try the user's preferred standard font.
-            if (FontData* data = fontSelector->getFontData(font.fontDescription(), standardFamily))
-                return data;
+            if (RefPtr<FontData> data = fontSelector->getFontData(font.fontDescription(), standardFamily))
+                return data.release();
         }
 
         // Still no result.  Hand back our last resort fallback font.
         result = getLastResortFallbackFont(font.fontDescription());
     }
-    return result;
+    return result.release();
 }
 
 static HashSet<FontSelector*>* gClients;

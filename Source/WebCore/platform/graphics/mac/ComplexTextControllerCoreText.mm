@@ -282,13 +282,13 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                         m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation + runRange.location, runRange.length, m_run.ltr()));
                         continue;
                     }
-                    runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain);
+                    runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain).get();
 #if !PLATFORM(WX)
                     // Core Text may have used a font that is not known to NSFontManager. In that case, fall back on
                     // using the font as returned, even though it may not have the best NSFontRenderingMode.
                     if (!runFontData) {
                         FontPlatformData runFontPlatformData((NSFont *)runFont, CTFontGetSize(runFont), m_font.fontDescription().usePrinterFont());
-                        runFontData = fontCache()->getCachedFontData(&runFontPlatformData, FontCache::DoNotRetain);
+                        runFontData = fontCache()->getCachedFontData(&runFontPlatformData, FontCache::DoNotRetain).get();
                     }
 #else
                     // just assert for now, until we can devise a better fix that works with wx.

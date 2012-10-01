@@ -97,8 +97,8 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                         }
                     } else {
                         if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
-                            const SimpleFontData* verticalRightFontData = data.fontData->verticalRightOrientationFontData();
-                            GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData, pageNumber);
+                            RefPtr<SimpleFontData> verticalRightFontData = data.fontData->verticalRightOrientationFontData();
+                            GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData.get(), pageNumber);
                             GlyphPage* verticalRightPage = verticalRightNode->page();
                             if (verticalRightPage) {
                                 GlyphData verticalRightData = verticalRightPage->glyphDataForCharacter(c);
@@ -111,8 +111,8 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                                     return make_pair(verticalRightData, verticalRightPage);
                             }
                         } else if (m_fontDescription.textOrientation() == TextOrientationUpright) {
-                            const SimpleFontData* uprightFontData = data.fontData->uprightOrientationFontData();
-                            GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData, pageNumber);
+                            RefPtr<SimpleFontData> uprightFontData = data.fontData->uprightOrientationFontData();
+                            GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData.get(), pageNumber);
                             GlyphPage* uprightPage = uprightNode->page();
                             if (uprightPage) {
                                 GlyphData uprightData = uprightPage->glyphDataForCharacter(c);
@@ -152,11 +152,11 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                 if (data.fontData) {
                     // The variantFontData function should not normally return 0.
                     // But if it does, we will just render the capital letter big.
-                    const SimpleFontData* variantFontData = data.fontData->variantFontData(m_fontDescription, variant);
+                    RefPtr<SimpleFontData> variantFontData = data.fontData->variantFontData(m_fontDescription, variant);
                     if (!variantFontData)
                         return make_pair(data, page);
 
-                    GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData, pageNumber);
+                    GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData.get(), pageNumber);
                     GlyphPage* variantPage = variantNode->page();
                     if (variantPage) {
                         GlyphData data = variantPage->glyphDataForCharacter(c);
@@ -198,7 +198,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
         codeUnits[1] = U16_TRAIL(c);
         codeUnitsLength = 2;
     }
-    const SimpleFontData* characterFontData = fontCache()->getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
+    RefPtr<SimpleFontData> characterFontData = fontCache()->getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
     if (characterFontData) {
         if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && isCJKIdeographOrSymbol(c))
             variant = BrokenIdeographVariant;
@@ -207,7 +207,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
     }
     if (characterFontData) {
         // Got the fallback glyph and font.
-        GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();
+        GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData.get(), pageNumber)->page();
         GlyphData data = fallbackPage && fallbackPage->fontDataForCharacter(c) ? fallbackPage->glyphDataForCharacter(c) : characterFontData->missingGlyphData();
         // Cache it so we don't have to do system fallback again next time.
         if (variant == NormalVariant) {
