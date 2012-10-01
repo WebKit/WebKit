@@ -1254,11 +1254,6 @@ void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
     if (!isInputModeEnabled() && visible)
         return;
 
-    if (processingChange()) {
-        ASSERT(visible);
-        return;
-    }
-
     if (!m_delayKeyboardVisibilityChange) {
         m_webPage->showVirtualKeyboard(visible);
         return;
