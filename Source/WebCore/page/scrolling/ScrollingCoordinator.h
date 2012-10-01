@@ -52,7 +52,7 @@ class Page;
 class Region;
 class ScrollableArea;
 class ScrollingCoordinatorPrivate;
-class ScrollingTreeState;
+class ScrollingStateTree;
 
 #if ENABLE(THREADED_SCROLLING)
 class ScrollingTree;
@@ -176,12 +176,12 @@ private:
 #if ENABLE(THREADED_SCROLLING)
     void scheduleTreeStateCommit();
 
-    void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);
+    void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinator>*);
     void commitTreeState();
 
-    OwnPtr<ScrollingTreeState> m_scrollingTreeState;
+    OwnPtr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;
-    Timer<ScrollingCoordinator> m_scrollingTreeStateCommitterTimer;
+    Timer<ScrollingCoordinator> m_scrollingStateTreeCommitterTimer;
 #endif
 
     ScrollingCoordinatorPrivate* m_private;

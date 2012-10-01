@@ -30,9 +30,9 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollingCoordinator.h"
+#include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeNode.h"
-#include "ScrollingTreeState.h"
 #include <wtf/MainThread.h>
 #include <wtf/TemporaryChange.h>
 
@@ -120,24 +120,24 @@ void ScrollingTree::invalidate()
     callOnMainThread(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
 }
 
-void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingTreeState)
+void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
-    if (scrollingTreeState->changedProperties() & (ScrollingTreeState::WheelEventHandlerCount | ScrollingTreeState::NonFastScrollableRegion | ScrollingTreeState::ScrollLayer)) {
+    if (scrollingStateTree->rootStateNode()->changedProperties() & (ScrollingStateScrollingNode::WheelEventHandlerCount | ScrollingStateScrollingNode::NonFastScrollableRegion) || scrollingStateTree->rootStateNode()->scrollLayerDidChange()) {
         MutexLocker lock(m_mutex);
 
-        if (scrollingTreeState->changedProperties() & ScrollingTreeState::ScrollLayer)
+        if (scrollingStateTree->rootStateNode()->scrollLayerDidChange())
             m_mainFrameScrollPosition = IntPoint();
-        if (scrollingTreeState->changedProperties() & ScrollingTreeState::WheelEventHandlerCount)
-            m_hasWheelEventHandlers = scrollingTreeState->wheelEventHandlerCount();
-        if (scrollingTreeState->changedProperties() & ScrollingTreeState::NonFastScrollableRegion)
-            m_nonFastScrollableRegion = scrollingTreeState->nonFastScrollableRegion();
+        if (scrollingStateTree->rootStateNode()->changedProperties() & ScrollingStateScrollingNode::WheelEventHandlerCount)
+            m_hasWheelEventHandlers = scrollingStateTree->rootStateNode()->wheelEventHandlerCount();
+        if (scrollingStateTree->rootStateNode()->changedProperties() & ScrollingStateScrollingNode::NonFastScrollableRegion)
+            m_nonFastScrollableRegion = scrollingStateTree->rootStateNode()->nonFastScrollableRegion();
     }
     
-    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollingTreeState->requestedScrollPositionRepresentsProgrammaticScroll());
+    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollingStateTree->rootStateNode()->requestedScrollPositionRepresentsProgrammaticScroll());
 
-    m_rootNode->update(scrollingTreeState.get());
+    m_rootNode->update(scrollingStateTree->rootStateNode());
 
     updateDebugRootLayer();
 }

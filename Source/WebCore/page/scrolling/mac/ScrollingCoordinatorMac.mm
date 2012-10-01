@@ -33,7 +33,7 @@
 #import "Page.h"
 #import "ScrollingThread.h"
 #import "ScrollingTree.h"
-#import "ScrollingTreeState.h"
+#import "ScrollingStateTree.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>

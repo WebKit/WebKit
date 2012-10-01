@@ -506,9 +506,6 @@
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */; };
 		1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */; };
-		1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */; };
-		1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */; };
 		1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */; };
 		1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */; };
 		1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */; };
@@ -3146,6 +3143,13 @@
 		93153BE214195A5700FCF5BE /* missingImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BE114195A5700FCF5BE /* missingImage.png */; };
 		93153BE414195B2A00FCF5BE /* inputSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BE314195B2900FCF5BE /* inputSpeech.png */; };
 		931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931CBD06161A44E900E4C874 /* ScrollingStateNode.cpp */; };
+		931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD07161A44E900E4C874 /* ScrollingStateNode.h */; };
+		931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931CBD08161A44E900E4C874 /* ScrollingStateScrollingNode.cpp */; };
+		931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */; };
+		931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */; };
+		931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */; };
+		931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 931CBD12161A44F800E4C874 /* ScrollingStateNodeMac.mm */; };
 		931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */ = {isa = PBXBuildFile; fileRef = 931D72F515FE695300C4C07E /* LayoutMilestones.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
@@ -7567,9 +7571,6 @@
 		1AA8798F11CBE846003C664F /* PluginStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStrategy.h; sourceTree = "<group>"; };
 		1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTree.cpp; sourceTree = "<group>"; };
 		1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTree.h; sourceTree = "<group>"; };
-		1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeState.cpp; sourceTree = "<group>"; };
-		1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeState.h; sourceTree = "<group>"; };
-		1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeStateMac.mm; sourceTree = "<group>"; };
 		1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeNode.cpp; sourceTree = "<group>"; };
 		1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeNode.h; sourceTree = "<group>"; };
 		1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeNodeMac.mm; sourceTree = "<group>"; };
@@ -10324,6 +10325,13 @@
 		93153BE114195A5700FCF5BE /* missingImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = missingImage.png; sourceTree = "<group>"; };
 		93153BE314195B2900FCF5BE /* inputSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inputSpeech.png; sourceTree = "<group>"; };
 		931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCanStartListener.h; sourceTree = "<group>"; };
+		931CBD06161A44E900E4C874 /* ScrollingStateNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateNode.cpp; sourceTree = "<group>"; };
+		931CBD07161A44E900E4C874 /* ScrollingStateNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateNode.h; sourceTree = "<group>"; };
+		931CBD08161A44E900E4C874 /* ScrollingStateScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateScrollingNode.cpp; sourceTree = "<group>"; };
+		931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateScrollingNode.h; sourceTree = "<group>"; };
+		931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateTree.cpp; sourceTree = "<group>"; };
+		931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateTree.h; sourceTree = "<group>"; };
+		931CBD12161A44F800E4C874 /* ScrollingStateNodeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingStateNodeMac.mm; sourceTree = "<group>"; };
 		931D72F515FE695300C4C07E /* LayoutMilestones.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestones.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
@@ -14546,14 +14554,18 @@
 				1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */,
 				1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */,
 				3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */,
+				931CBD06161A44E900E4C874 /* ScrollingStateNode.cpp */,
+				931CBD07161A44E900E4C874 /* ScrollingStateNode.h */,
+				931CBD08161A44E900E4C874 /* ScrollingStateScrollingNode.cpp */,
+				931CBD09161A44E900E4C874 /* ScrollingStateScrollingNode.h */,
+				931CBD0A161A44E900E4C874 /* ScrollingStateTree.cpp */,
+				931CBD0B161A44E900E4C874 /* ScrollingStateTree.h */,
 				1AF62F2014DAFE790041556C /* ScrollingThread.cpp */,
 				1AF62F2114DAFE790041556C /* ScrollingThread.h */,
 				1AAADDA114DB409F00AF64B3 /* ScrollingTree.cpp */,
 				1AAADDA214DB409F00AF64B3 /* ScrollingTree.h */,
 				1AAADDE114DC8C8F00AF64B3 /* ScrollingTreeNode.cpp */,
 				1AAADDE214DC8C8F00AF64B3 /* ScrollingTreeNode.h */,
-				1AAADDBC14DC640600AF64B3 /* ScrollingTreeState.cpp */,
-				1AAADDBD14DC640600AF64B3 /* ScrollingTreeState.h */,
 			);
 			path = scrolling;
 			sourceTree = "<group>";
@@ -14562,11 +14574,11 @@
 			isa = PBXGroup;
 			children = (
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
+				931CBD12161A44F800E4C874 /* ScrollingStateNodeMac.mm */,
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				1A35862A152522540022A659 /* ScrollingTreeMac.mm */,
 				1AAADDE714DC8DF800AF64B3 /* ScrollingTreeNodeMac.h */,
 				1AAADDE614DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm */,
-				1AAADDD814DC74EC00AF64B3 /* ScrollingTreeStateMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -24845,7 +24857,6 @@
 				1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
 				1AAADDE914DC8DF800AF64B3 /* ScrollingTreeNodeMac.h in Headers */,
-				1AAADDBF14DC640700AF64B3 /* ScrollingTreeState.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 				BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */,
 				F55B3DD21251F12D003EF269 /* SearchInputType.h in Headers */,
@@ -25515,6 +25526,9 @@
 				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
+				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
+				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
+				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28061,8 +28075,6 @@
 				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
 				1AAADDE814DC8DF800AF64B3 /* ScrollingTreeNodeMac.mm in Sources */,
-				1AAADDBE14DC640700AF64B3 /* ScrollingTreeState.cpp in Sources */,
-				1AAADDDA14DC74EC00AF64B3 /* ScrollingTreeStateMac.mm in Sources */,
 				BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				F55B3DD11251F12D003EF269 /* SearchInputType.cpp in Sources */,
@@ -28608,6 +28620,10 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */,
 				4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */,
+				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,
+				931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */,
+				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
+				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

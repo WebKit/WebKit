@@ -28,7 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "ScrollingTreeState.h"
+#include "ScrollingStateTree.h"
 
 namespace WebCore {
 
@@ -48,36 +48,36 @@ ScrollingTreeNode::~ScrollingTreeNode()
 {
 }
 
-void ScrollingTreeNode::update(ScrollingTreeState* state)
+void ScrollingTreeNode::update(ScrollingStateScrollingNode* state)
 {
-    if (state->changedProperties() & ScrollingTreeState::ViewportRect)
+    if (state->changedProperties() & ScrollingStateScrollingNode::ViewportRect)
         m_viewportRect = state->viewportRect();
 
-    if (state->changedProperties() & ScrollingTreeState::ContentsSize)
+    if (state->changedProperties() & ScrollingStateScrollingNode::ContentsSize)
         m_contentsSize = state->contentsSize();
 
-    if (state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThread)
+    if (state->changedProperties() & ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)
         m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();
 
-    if (state->changedProperties() & ScrollingTreeState::HorizontalScrollElasticity)
+    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollElasticity)
         m_horizontalScrollElasticity = state->horizontalScrollElasticity();
 
-    if (state->changedProperties() & ScrollingTreeState::VerticalScrollElasticity)
+    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollElasticity)
         m_verticalScrollElasticity = state->verticalScrollElasticity();
 
-    if (state->changedProperties() & ScrollingTreeState::HasEnabledHorizontalScrollbar)
+    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledHorizontalScrollbar)
         m_hasEnabledHorizontalScrollbar = state->hasEnabledHorizontalScrollbar();
 
-    if (state->changedProperties() & ScrollingTreeState::HasEnabledVerticalScrollbar)
+    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledVerticalScrollbar)
         m_hasEnabledVerticalScrollbar = state->hasEnabledVerticalScrollbar();
 
-    if (state->changedProperties() & ScrollingTreeState::HorizontalScrollbarMode)
+    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollbarMode)
         m_horizontalScrollbarMode = state->horizontalScrollbarMode();
 
-    if (state->changedProperties() & ScrollingTreeState::VerticalScrollbarMode)
+    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollbarMode)
         m_verticalScrollbarMode = state->verticalScrollbarMode();
 
-    if (state->changedProperties() & ScrollingTreeState::ScrollOrigin)
+    if (state->changedProperties() & ScrollingStateScrollingNode::ScrollOrigin)
         m_scrollOrigin = state->scrollOrigin();
 }
 

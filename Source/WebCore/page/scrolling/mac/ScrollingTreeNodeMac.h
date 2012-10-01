@@ -43,7 +43,7 @@ public:
 
 private:
     // ScrollingTreeNode member functions.
-    virtual void update(ScrollingTreeState*) OVERRIDE;
+    virtual void update(ScrollingStateScrollingNode*) OVERRIDE;
     virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
 
     // ScrollElasticityController member functions.

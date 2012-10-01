@@ -36,7 +36,8 @@
 #include "Region.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
-#include "ScrollingTreeState.h"
+#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateTree.h"
 #include <wtf/MainThread.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -56,9 +57,9 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
     , m_forceMainThreadScrollLayerPositionUpdates(false)
 #if ENABLE(THREADED_SCROLLING)
-    , m_scrollingTreeState(ScrollingTreeState::create())
+    , m_scrollingStateTree(ScrollingStateTree::create())
     , m_scrollingTree(ScrollingTree::create(this))
-    , m_scrollingTreeStateCommitterTimer(this, &ScrollingCoordinator::scrollingTreeStateCommitterTimerFired)
+    , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinator::scrollingStateTreeCommitterTimerFired)
 #endif
     , m_private(0)
 {
@@ -70,7 +71,7 @@ void ScrollingCoordinator::pageDestroyed()
     m_page = 0;
 
 #if ENABLE(THREADED_SCROLLING)
-    m_scrollingTreeStateCommitterTimer.stop();
+    m_scrollingStateTreeCommitterTimer.stop();
 
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
     ScrollingThread::dispatch(bind(&ScrollingTree::invalidate, m_scrollingTree.release()));
@@ -253,7 +254,7 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
         return true;
     }
 
-    m_scrollingTreeState->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
+    m_scrollingStateTree->rootStateNode()->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
     scheduleTreeStateCommit();
     return true;
 #else
@@ -418,35 +419,37 @@ void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool for
 #if ENABLE(THREADED_SCROLLING)
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
 {
-    m_scrollingTreeState->setScrollLayer(scrollLayer);
+    m_scrollingStateTree->rootStateNode()->setScrollLayer(scrollLayer);
     scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
 {
-    m_scrollingTreeState->setNonFastScrollableRegion(region);
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(region);
     scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinator::setScrollParameters(const ScrollParameters& scrollParameters)
 {
-    m_scrollingTreeState->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
-    m_scrollingTreeState->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
-    m_scrollingTreeState->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
-    m_scrollingTreeState->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
-    m_scrollingTreeState->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
-    m_scrollingTreeState->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
+    // FIXME: In the future, this function and all of the other functions in this class need to
+    // handle more than just the root node. 
+    m_scrollingStateTree->rootStateNode()->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
+    m_scrollingStateTree->rootStateNode()->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
+    m_scrollingStateTree->rootStateNode()->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
+    m_scrollingStateTree->rootStateNode()->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
+    m_scrollingStateTree->rootStateNode()->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
+    m_scrollingStateTree->rootStateNode()->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
 
-    m_scrollingTreeState->setScrollOrigin(scrollParameters.scrollOrigin);
-    m_scrollingTreeState->setViewportRect(scrollParameters.viewportRect);
-    m_scrollingTreeState->setContentsSize(scrollParameters.contentsSize);
+    m_scrollingStateTree->rootStateNode()->setScrollOrigin(scrollParameters.scrollOrigin);
+    m_scrollingStateTree->rootStateNode()->setViewportRect(scrollParameters.viewportRect);
+    m_scrollingStateTree->rootStateNode()->setContentsSize(scrollParameters.contentsSize);
     scheduleTreeStateCommit();
 }
 
 
 void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
 {
-    m_scrollingTreeState->setWheelEventHandlerCount(wheelEventHandlerCount);
+    m_scrollingStateTree->rootStateNode()->setWheelEventHandlerCount(wheelEventHandlerCount);
     scheduleTreeStateCommit();
 }
 
@@ -457,40 +460,40 @@ void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(MainTh
     // in order to avoid layer positioning bugs.
     if (reasons)
         updateMainFrameScrollLayerPosition();
-    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(reasons);
+    m_scrollingStateTree->rootStateNode()->setShouldUpdateScrollLayerPositionOnMainThread(reasons);
     scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinator::scheduleTreeStateCommit()
 {
-    if (m_scrollingTreeStateCommitterTimer.isActive())
+    if (m_scrollingStateTreeCommitterTimer.isActive())
         return;
 
-    if (!m_scrollingTreeState->hasChangedProperties())
+    if (!m_scrollingStateTree->hasChangedProperties())
         return;
 
-    m_scrollingTreeStateCommitterTimer.startOneShot(0);
+    m_scrollingStateTreeCommitterTimer.startOneShot(0);
 }
 
-void ScrollingCoordinator::scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*)
+void ScrollingCoordinator::scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinator>*)
 {
     commitTreeState();
 }
 
 void ScrollingCoordinator::commitTreeStateIfNeeded()
 {
-    if (!m_scrollingTreeState->hasChangedProperties())
+    if (!m_scrollingStateTree->hasChangedProperties())
         return;
 
     commitTreeState();
-    m_scrollingTreeStateCommitterTimer.stop();
+    m_scrollingStateTreeCommitterTimer.stop();
 }
 
 void ScrollingCoordinator::commitTreeState()
 {
-    ASSERT(m_scrollingTreeState->hasChangedProperties());
+    ASSERT(m_scrollingStateTree->hasChangedProperties());
 
-    OwnPtr<ScrollingTreeState> treeState = m_scrollingTreeState->commit();
+    OwnPtr<ScrollingStateTree> treeState = m_scrollingStateTree->commit();
     ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
 }
 
