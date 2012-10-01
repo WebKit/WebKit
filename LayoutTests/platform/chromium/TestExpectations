@@ -3363,12 +3363,6 @@ webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass
 # V8 does not support static attributes
 webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
 
-# Flaky
-webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ ImageOnlyFailure Pass ]
-webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-element.html [ ImageOnlyFailure Pass ]
-webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-optimums.html [ ImageOnlyFailure Pass ]
-webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-styles.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/93801 [ Lion ] fast/speech/input-appearance-searchandspeech.html [ ImageOnlyFailure Pass ]
 
 # Flaky
