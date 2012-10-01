@@ -21,12 +21,13 @@ Item {
 
     TestCase {
         name: "WheelEventHandling"
+        when: windowShown
 
         property variant test: webView.experimental.test
 
         function init() {
             webView.url = Qt.resolvedUrl("../common/test4.html")
-            verify(webView.waitForLoadSucceeded())
+            verify(webView.waitForViewportReady())
             webView.contentY = 0
         }
 
@@ -38,7 +39,7 @@ Item {
             scrollSpy.wait()
             var position = webView.contentY
             webView.reload()
-            verify(webView.waitForLoadSucceeded())
+            verify(webView.waitForViewportReady())
             // The check below will fail if the previous position was not restored after reload.
             verify(position == webView.contentY)
         }
@@ -46,7 +47,7 @@ Item {
         function test_wheelScrollEventAfterReload() {
             scrollSpy.clear()
             webView.reload()
-            verify(webView.waitForLoadSucceeded())
+            verify(webView.waitForViewportReady())
             var centerPoint = Qt.point(webView.width / 2, webView.height / 2)
             test.wheelEvent(webView, centerPoint.x, centerPoint.y, -500);
             // The signal spy below will time out if the wheel event did not scroll the content.

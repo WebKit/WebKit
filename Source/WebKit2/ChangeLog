@@ -1,5 +1,27 @@
 2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Fix viewport QML auto tests after the viewport changes
+        https://bugs.webkit.org/show_bug.cgi?id=97781
+
+        Reviewed by Simon Hausmann.
+
+        Since the viewport controller has to hold any QML-side viewport updates
+        while it applies and render the new requested position, this has the
+        effect of blocking all those tests if the view is not visible (thus
+        disabling the tile rendering completely in the web process).
+        The viewport should be unlocked after the first rendered frame for
+        static contents.
+
+        Fix those tests by forcing the QQuickView to be visible and by making
+        them wait for the first frame rather than the earlier end of provisional load.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_doubleTapToZoom.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_fitToView.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_wheelEventHandling.qml:
+        * UIProcess/API/qt/tests/qmltests/common/TestWebView.qml:
+
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Add a loadVisuallyCommitted() signal
         https://bugs.webkit.org/show_bug.cgi?id=97780
 

@@ -40,6 +40,7 @@ Item {
 
     TestCase {
         name: "DoubleTapToZoom"
+        when: windowShown
 
         property variant test: webView.experimental.test
 
@@ -78,7 +79,7 @@ Item {
 
         function test_basic() {
             webView.url = webView.content
-            verify(webView.waitForLoadSucceeded())
+            verify(webView.waitForViewportReady())
 
             compare(documentSize(), "480x720")
 
