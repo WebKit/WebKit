@@ -80,14 +80,7 @@ webkit.org/b/93631 [ Android ] fast/js/exception-sequencing-binops2.html [ Pass 
 webkit.org/b/93631 [ Android ] fast/js/toInt32UInt32.html [ Pass Slow ]
 crbug.com/24182 [ Android Debug ] editing/selection/caret-at-bidi-boundary.html [ Pass Slow ]
 crbug.com/24182 [ Android Debug ] fast/css/css-selector-deeply-nested.html [ Pass Slow ]
-# These tests are slow when run with --fully-parallel.
-crbug.com/24182 storage/indexeddb/database-closepending-flag.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/factory-basics-workers.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/factory-basics.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/intversion-and-setversion.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/key-generator.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/metadata.html [ Pass Slow ]
-crbug.com/24182 storage/indexeddb/structured-clone.html [ Pass Slow ]
+crbug.com/65862 storage/indexeddb [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Linux Win Debug ] inspector [ Pass Slow ]
@@ -2532,9 +2525,6 @@ webkit.org/b/67915 [ Android Linux Win ] fast/borders/borderRadiusDashed06.html 
 
 webkit.org/b/95365 fast/loader/reload-zero-byte-plugin.html
 
-webkit.org/b/65862 [ Debug ] storage/indexeddb/index-cursor.html [ Pass Slow ]
-webkit.org/b/65862 [ Android Release ] storage/indexeddb/index-cursor.html [ Pass Slow ]
-
 # Performance issues with border radius clipping on Chromium not yet resolved
 crbug.com/97716 fast/clip/overflow-border-radius-composited.html [ ImageOnlyFailure ]
 # Consistently failing as of about r95590
@@ -3630,6 +3620,7 @@ webkit.org/b/97900 [ Win Debug ] media/audio-repaint.html [ ImageOnlyFailure Pas
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
+webkit.org/b/97558 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
 
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
