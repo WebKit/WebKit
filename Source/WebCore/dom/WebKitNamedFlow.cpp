@@ -195,7 +195,7 @@ EventTargetData* WebKitNamedFlow::ensureEventTargetData()
 
 void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
 {
-    ASSERT(!eventDispatchForbidden());
+    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
     ASSERT(m_parentFlowThread);
 
     RefPtr<Event> event = UIEvent::create(eventNames().webkitRegionLayoutUpdateEvent, false, false, m_parentFlowThread->document()->defaultView(), 0);
