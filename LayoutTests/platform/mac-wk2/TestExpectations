@@ -272,8 +272,6 @@ fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 # All spatial navigation tests fail on Mac WK2
 webkit.org/b/96438 fast/spatial-navigation
 
-webkit.org/b/96652 fast/events/dispatch-message-string-data.html [ Failure ]
-
 # WK2 tests fail image diff
 webkit.org/b/96580 css3/filters/custom/filter-fallback-to-software.html [ ImageOnlyFailure ]
 
