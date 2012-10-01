@@ -39,8 +39,13 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
 {
     ASSERT(m_selectors.isEmpty());
 
+    unsigned selectorCount = 0;
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.append(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
+        selectorCount++;
+
+    m_selectors.reserveInitialCapacity(selectorCount);
+    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
+        m_selectors.uncheckedAppend(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
 }
 
 bool SelectorDataList::matches(const SelectorChecker& selectorChecker, Element* targetElement) const
