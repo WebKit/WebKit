@@ -279,6 +279,9 @@ webkit.org/b/96580 css3/filters/custom/filter-fallback-to-software.html [ ImageO
 webkit.org/b/96832 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 webkit.org/b/96832 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 
+# Failure, most likely in WTR implementation of geolocation provider
+webkit.org/b/98081 fast/dom/Geolocation/maximum-age.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
