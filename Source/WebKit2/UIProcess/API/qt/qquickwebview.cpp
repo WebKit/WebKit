@@ -484,8 +484,6 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 {
     qWarning("WARNING: The web process has been successfully restarted.");
 
-    // Reset to default so that the later update can reach the web process.
-    webPageProxy->setCustomDeviceScaleFactor(0);
     webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
 
     updateViewportSize();
@@ -1232,7 +1230,7 @@ void QQuickWebViewExperimental::setDevicePixelRatio(qreal devicePixelRatio)
     if (0 >= devicePixelRatio || devicePixelRatio == this->devicePixelRatio())
         return;
 
-    d->webPageProxy->setCustomDeviceScaleFactor(devicePixelRatio);
+    d->webPageProxy->setIntrinsicDeviceScaleFactor(devicePixelRatio);
     emit devicePixelRatioChanged();
 }
 
