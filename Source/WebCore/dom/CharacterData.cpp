@@ -224,10 +224,10 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
         dispatchSubtreeModifiedEvent();
-    }
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::characterDataModified(document(), this);
+        InspectorInstrumentation::characterDataModified(document(), this);
 #endif
+    }
 }
 
 void CharacterData::checkCharDataOperation(unsigned offset, ExceptionCode& ec)
