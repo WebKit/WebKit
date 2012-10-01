@@ -523,6 +523,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace);
     new WebInspector.DebuggerScriptMapping(this.workspace);
+    this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);
     new WebInspector.NetworkUISourceCodeProvider(this.workspace);
     new WebInspector.StylesSourceMapping(this.workspace);
     if (WebInspector.experimentsSettings.sass.isEnabled())
