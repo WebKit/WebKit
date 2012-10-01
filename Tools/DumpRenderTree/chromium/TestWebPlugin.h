@@ -42,6 +42,9 @@ class WebGraphicsContext3D;
 // background-color: black (default), red, green, blue.
 // primitive-color: black (default), red, green, blue.
 // opacity: [0.0 - 1.0]. Default is 1.0.
+//
+// Whether the plugin accepts touch events or not can be customized using the
+// 'accepts-touch' plugin parameter (defaults to false).
 class TestWebPlugin : public WebKit::WebPlugin {
 public:
     TestWebPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
@@ -104,6 +107,7 @@ private:
     Primitive parsePrimitive(const WebKit::WebString&);
     void parseColor(const WebKit::WebString&, unsigned color[3]);
     float parseOpacity(const WebKit::WebString&);
+    bool parseBoolean(const WebKit::WebString&);
 
     // Functions for loading and drawing scene.
     bool initScene();
@@ -124,6 +128,8 @@ private:
     unsigned m_colorTexture;
     unsigned m_framebuffer;
     Scene m_scene;
+
+    bool m_acceptsTouchEvent;
 };
 
 #endif // TestPepperPlugin_h

@@ -81,11 +81,13 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
     : m_frame(frame)
     , m_container(0)
     , m_context(0)
+    , m_acceptsTouchEvent(false)
 {
     static const WebString kAttributePrimitive = WebString::fromUTF8("primitive");
     static const WebString kAttributeBackgroundColor = WebString::fromUTF8("background-color");
     static const WebString kAttributePrimitiveColor = WebString::fromUTF8("primitive-color");
     static const WebString kAttributeOpacity = WebString::fromUTF8("opacity");
+    static const WebString kAttributeAcceptsTouch = WebString::fromUTF8("accepts-touch");
 
     ASSERT(params.attributeNames.size() == params.attributeValues.size());
     size_t size = params.attributeNames.size();
@@ -101,6 +103,8 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
             parseColor(attributeValue, m_scene.primitiveColor);
         else if (attributeName == kAttributeOpacity)
             m_scene.opacity = parseOpacity(attributeValue);
+        else if (attributeName == kAttributeAcceptsTouch)
+            m_acceptsTouchEvent = parseBoolean(attributeValue);
     }
 }
 
@@ -129,6 +133,7 @@ bool TestWebPlugin::initialize(WebPluginContainer* container)
 
     m_container = container;
     m_container->setBackingTextureId(m_colorTexture);
+    m_container->setIsAcceptingTouchEvents(m_acceptsTouchEvent);
     return true;
 }
 
@@ -206,6 +211,12 @@ void TestWebPlugin::parseColor(const WebString& string, unsigned color[3])
 float TestWebPlugin::parseOpacity(const WebString& string)
 {
     return static_cast<float>(atof(string.utf8().data()));
+}
+
+bool TestWebPlugin::parseBoolean(const WebString& string)
+{
+    static const WebString kPrimitiveTrue = WebString::fromUTF8("true");
+    return string == kPrimitiveTrue;
 }
 
 bool TestWebPlugin::initScene()

@@ -1,3 +1,21 @@
+2012-09-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Add a test to verify that a plugin does not receive touch-events unless it explicitly requests for them
+        https://bugs.webkit.org/show_bug.cgi?id=97975
+
+        Reviewed by Adam Barth.
+
+        TestWebPlugin can now be configured to accept touch events or not. Use this
+        configurability to verify that a plugin does not receive touch events unless
+        it explicitly requests for them.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::TestWebPlugin):
+        (TestWebPlugin::initialize):
+        (TestWebPlugin::parseBoolean):
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        (TestWebPlugin):
+
 2012-09-28  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [WK2][GTK][EFL] Share WebKit2-GTK plugin process implementation with EFL port
