@@ -1,3 +1,30 @@
+2012-10-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        webkitpy should accept a different httpd.conf specified by the user
+        https://bugs.webkit.org/show_bug.cgi?id=98071
+
+        Reviewed by Dirk Pranke.
+
+        The existing httpd.conf variants (or lighttpd.conf, for that
+        matter) we have do not always suit the user's system. This is
+        particularly true on Linux/Unix, where Apache can be installed in
+        a plethora of ways and the LoadModule calls can fail to specify
+        the proper module paths.
+
+        For now, we start accepting the WEBKIT_HTTP_SERVER_CONF_PATH
+        environment variable, which allows the user to specify the
+        absolute path to another http server configuration file that might
+        work on the user's system.
+
+        In the long term, we should try to generate our configuration file
+        and stop requiring all the different httpd.conf files we have as
+        well as this hack.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._path_to_apache_config_file):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (test_path_to_apache_config_file):
+
 2012-10-01  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed, upgrade eae to reviewer. 

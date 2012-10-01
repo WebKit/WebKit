@@ -1165,9 +1165,18 @@ class Port(object):
         return "apache2-httpd.conf"
 
     def _path_to_apache_config_file(self):
-        """Returns the full path to the apache binary.
+        """Returns the full path to the apache configuration file.
+
+        If the WEBKIT_HTTP_SERVER_CONF_PATH environment variable is set, its
+        contents will be used instead.
 
         This is needed only by ports that use the apache_http_server module."""
+        config_file_from_env = os.environ.get('WEBKIT_HTTP_SERVER_CONF_PATH')
+        if config_file_from_env:
+            if not self._filesystem.exists(config_file_from_env):
+                raise IOError('%s was not found on the system' % config_file_from_env)
+            return config_file_from_env
+
         config_file_name = self._apache_config_file_name_for_platform(sys.platform)
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
 
