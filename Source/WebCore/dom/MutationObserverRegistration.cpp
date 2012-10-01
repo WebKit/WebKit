@@ -40,15 +40,16 @@
 
 namespace WebCore {
 
-PassOwnPtr<MutationObserverRegistration> MutationObserverRegistration::create(PassRefPtr<MutationObserver> observer, Node* registrationNode)
+PassOwnPtr<MutationObserverRegistration> MutationObserverRegistration::create(PassRefPtr<MutationObserver> observer, Node* registrationNode, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
 {
-    return adoptPtr(new MutationObserverRegistration(observer, registrationNode));
+    return adoptPtr(new MutationObserverRegistration(observer, registrationNode, options, attributeFilter));
 }
 
-MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<MutationObserver> observer, Node* registrationNode)
-     : m_observer(observer)
-     , m_registrationNode(registrationNode)
-     , m_options(0)
+MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<MutationObserver> observer, Node* registrationNode, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
+    : m_observer(observer)
+    , m_registrationNode(registrationNode)
+    , m_options(options)
+    , m_attributeFilter(attributeFilter)
 {
     m_observer->observationStarted(this);
 }

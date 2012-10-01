@@ -656,7 +656,7 @@ public:
 
 #if ENABLE(MUTATION_OBSERVERS)
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
-    MutationObserverRegistration* registerMutationObserver(MutationObserver*);
+    void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration*);
     void registerTransientMutationObserver(MutationObserverRegistration*);
     void unregisterTransientMutationObserver(MutationObserverRegistration*);

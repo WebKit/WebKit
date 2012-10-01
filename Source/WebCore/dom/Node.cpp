@@ -2478,16 +2478,23 @@ void Node::getRegisteredMutationObserversOfType(HashMap<MutationObserver*, Mutat
     }
 }
 
-MutationObserverRegistration* Node::registerMutationObserver(MutationObserver* observer)
+void Node::registerMutationObserver(MutationObserver* observer, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter)
 {
+    MutationObserverRegistration* registration = 0;
     Vector<OwnPtr<MutationObserverRegistration> >* registry = ensureRareData()->ensureMutationObserverRegistry();
     for (size_t i = 0; i < registry->size(); ++i) {
-        if (registry->at(i)->observer() == observer)
-            return registry->at(i).get();
+        if (registry->at(i)->observer() == observer) {
+            registration = registry->at(i).get();
+            registration->resetObservation(options, attributeFilter);
+        }
     }
 
-    registry->append(MutationObserverRegistration::create(observer, this));
-    return registry->last().get();
+    if (!registration) {
+        registry->append(MutationObserverRegistration::create(observer, this, options, attributeFilter));
+        registration = registry->last().get();
+    }
+
+    document()->addMutationObserverTypes(registration->mutationTypes());
 }
 
 void Node::unregisterMutationObserver(MutationObserverRegistration* registration)

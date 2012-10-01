@@ -116,10 +116,7 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
         return;
     }
 
-    MutationObserverRegistration* registration = node->registerMutationObserver(this);
-    registration->resetObservation(options, attributeFilter);
-
-    node->document()->addMutationObserverTypes(registration->mutationTypes());
+    node->registerMutationObserver(this, options, attributeFilter);
 }
 
 Vector<RefPtr<MutationRecord> > MutationObserver::takeRecords()

@@ -44,7 +44,7 @@ class QualifiedName;
 
 class MutationObserverRegistration {
 public:
-    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<MutationObserver>, Node*);
+    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     ~MutationObserverRegistration();
 
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
@@ -61,7 +61,7 @@ public:
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
 private:
-    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*);
+    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
 
     RefPtr<MutationObserver> m_observer;
     Node* m_registrationNode;
