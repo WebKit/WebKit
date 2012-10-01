@@ -10,23 +10,32 @@
 description("This test verifies PerfTestRunner.runPerSecond() calls runFunction as many times as expected.");
 
 var iteration = 0;
-
+var currentTime = 100;
 var callsInIterations = [];
-var timesInIterations = [0, 10, 30, 60, 100, 100, 100, 100, 500];
+var timesInIterations = [0, 10, 30, 60, 200, 200, 200, 200, 750];
 var logLines = [];
 
-PerfTestRunner.log = function (line) { logLines.push(line); }
-PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
-    callsInIterations[iteration] = callsPerIteration;
-    return timesInIterations[iteration++];
+PerfTestRunner.now = function () {
+    iteration++;
+    if (iteration % 2 == 0)
+        currentTime += timesInIterations.shift();
+    return currentTime;
 }
 
+PerfTestRunner.log = function (line) { logLines.push(line); }
+
+var originalTimesInIterations = timesInIterations.slice();
+
 PerfTestRunner.runPerSecond({
-    run: function () { },
+    run: function () {
+        var i = Math.floor(iteration / 2);
+        if (callsInIterations[i] == undefined)
+            callsInIterations[i] = 0;
+        callsInIterations[i]++;
+    },
     runCount: 1,
-    timeToRun: 500,
     done: function () {
-        debug("Returning times: [" + timesInIterations.join(", ") + "]");
+        debug("Returning times: [" + originalTimesInIterations.join(", ") + "]");
         shouldEvaluateTo("callsInIterations[0]", 1);
         shouldEvaluateTo("callsInIterations[1]", 10);
         shouldBeTrue("callsInIterations[1] + 5 < callsInIterations[2]");

@@ -1,3 +1,32 @@
+2012-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Encapsulate private properties in PerfTestRunner better
+        https://bugs.webkit.org/show_bug.cgi?id=97833
+
+        Reviewed by Ojan Vafai.
+
+        This patch moves "private" methods and properties of PerfTestRunner into a closure so that they're
+        inaccssible from outside. Also catch exceptions from test.run, test.done, and other runner code
+        to ensure we call notifyDone() even if we broke tests. Otherwise DRT will timeout and we end up
+        waiting for 10 minutes per each broken test on bots.
+
+        * resources/runner.js:
+        (PerfTestRunner.gc):
+        (logInDocument): Extracted from PerfTestRunner.log.
+        (PerfTestRunner.log): Moved.
+        (logFatalError): Added.
+        (start): Renamed from PerfTestRunner._start.
+        (scheduleNextRun): Extracted from PerfTestRunner._runLoop. Also catch any exceptions that happen
+        in the runner and ignoreWarmUpAndLog so that we don't end up timing out. We call logFatalError in
+        such cases, which in turn ensures notifyDone() is called.
+        (ignoreWarmUpAndLog): Renamed from PerfTestRunner._ignoreWarmUpAndLog.
+        (finish): Extracted from PerfTestRunner._runLoop.
+        (PerfTestRunner.measureTime): Moved. The initialization of runCount is moved into start().
+        (measureTimeOnce): Renamed from PerfTestRunner._measureTimeOnce.
+        (PerfTestRunner.runPerSecond): Moved. Ditto about runCount.
+        (measureRunsPerSecondOnce): Renamed from PerfTestRunner._measureRunsPerSecondOnce.
+        (callRunAndMeasureTime): Renamed from PerfTestRunner._perSecondRunnerIterator.
+
 2012-10-01  Florin Malita  <fmalita@chromium.org>
 
         Add a performance test for nested <use> elements

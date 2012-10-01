@@ -10,28 +10,37 @@ var logLines = [];
 var initial = true;
 var runs = 0;
 
-PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
-    return 1000 / runs;
+var iteration = 0;
+var currentTime = 0;
+
+PerfTestRunner.now = function () {
+    iteration++;
+    if (iteration % 2 == 0)
+        currentTime += 1000 / runs;
+    return currentTime;
 }
 
 PerfTestRunner.storeHeapResults = function () { }
 
 var printStatistics = PerfTestRunner.printStatistics;
-PerfTestRunner.printStatistics = function (statistics) {
+PerfTestRunner.printStatistics = function (statistics, title) {
+    if (statistics.unit == 'bytes')
+        return;
     statistics.stdev = statistics.stdev.toPrecision(3);
-    return printStatistics.call(PerfTestRunner, statistics, 'Time:');
+    return printStatistics.call(PerfTestRunner, statistics, title);
 }
 
 PerfTestRunner.runPerSecond({
     setup: function () {
-        if (initial)
-            initial = false;
-        else
+        runs++;
+        // Avoid 3, 6, 7, 9.
+        if (runs == 6)
+            runs += 2;
+        else if (!(runs % 3))
             runs++;
     },
     run: function () { },
     runCount: 5,
-    timeToRun: 500,
 });
 
 </script>
