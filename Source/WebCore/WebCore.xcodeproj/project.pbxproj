@@ -547,6 +547,7 @@
 		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
+		1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */; };
 		1ACD1B630B029739007E5016 /* DOMCSSStyleDeclarationInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711440AC5D5340053270F /* DOMCSSStyleDeclarationInternal.h */; };
 		1ACE53DF0A8D18810022947D /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */; };
 		1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACE53DE0A8D18810022947D /* JSDOMParser.h */; };
@@ -7607,6 +7608,7 @@
 		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
+		1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerFactory.h; sourceTree = "<group>"; };
 		1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; };
 		1ACE53DE0A8D18810022947D /* JSDOMParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMParser.h; sourceTree = "<group>"; };
 		1ACE53E10A8D18E70022947D /* DOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMParser.cpp; sourceTree = "<group>"; };
@@ -19878,6 +19880,7 @@
 				0F580B090F12A2690051D689 /* GraphicsLayer.cpp */,
 				0F580B0A0F12A2690051D689 /* GraphicsLayer.h */,
 				0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */,
+				1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */,
 				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
 				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
 				77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */,
@@ -25504,6 +25507,7 @@
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
+				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

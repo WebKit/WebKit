@@ -32,6 +32,7 @@
 #include "Animation.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "GraphicsLayerFactory.h"
 #include "PlatformCALayer.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
@@ -254,6 +255,14 @@ static inline bool supportsAcceleratedFilterAnimations()
 #endif
 }
 #endif
+
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+{
+    if (!factory)
+        return adoptPtr(new GraphicsLayerCA(client));
+
+    return factory->createGraphicsLayer(client);
+}
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
