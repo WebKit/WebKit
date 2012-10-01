@@ -1508,7 +1508,6 @@ crbug.com/10384 [ Mac ] fast/dom/Window/new-window-opener.html [ Failure Pass Sl
 crbug.com/10399 [ Mac ] fast/encoding/char-decoding-mac.html [ Failure ]
 crbug.com/10399 [ Mac ] fast/encoding/char-encoding-mac.html [ Failure ]
 
-crbug.com/23496 [ Lion ] fast/text/whitespace/normal-after-nowrap-breaking.html [ ImageOnlyFailure ]
 crbug.com/23496 [ Mac ] tables/mozilla_expected_failures/core/captions1.html [ Failure ]
 crbug.com/23496 [ Mac ] tables/mozilla_expected_failures/core/captions2.html [ Failure ]
 
@@ -3138,7 +3137,6 @@ webkit.org/b/87175 fast/regions/render-region-renderer.html
 # Failing since sub-pixel was turned on, eae and leviw working on it.
 webkit.org/b/89238 fast/repaint/reflection-repaint-test.html
 webkit.org/b/89238 fast/repaint/transform-layout-repaint.html
-webkit.org/b/87282 [ Win ] fast/sub-pixel/layout-boxes-with-zoom.html [ ImageOnlyFailure ]
 
 webkit.org/b/87273 [ Release ] webaudio/audioparam-connect-audioratesignal.html [ Pass Timeout ]
 
@@ -3641,7 +3639,7 @@ crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/overflow/
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/repaint/newly-composited-on-scroll.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/scrollbar-painting.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure Crash Pass ]
-crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
+crbug.com/152953 [ Win ] platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
 
 
 # Render surfaces do not draw anything in the software compositor.
