@@ -553,7 +553,7 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValu
 class InstrumentedConvertibleToInt {
 public:
     InstrumentedConvertibleToInt() : m_notInstrumented(0) { }
-    ~InstrumentedConvertibleToInt() { }
+    virtual ~InstrumentedConvertibleToInt() { }
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
