@@ -1,3 +1,9 @@
+2012-10-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, update the URL of the Szeged SVN mirror.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-10-01  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Create WebSocket watch list, and add myself to that list.
