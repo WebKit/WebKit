@@ -188,6 +188,7 @@ Bug(GTK) fast/forms/color [ Skip ]
 webkit.org/b/29359 fast/forms/date [ Failure ]
 webkit.org/b/29359 fast/forms/date/date-interactive-validation-required.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-pre-100.html [ Skip ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-with-step.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-key-operations.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-type-change-onclick.html [ Pass ]
@@ -555,6 +556,8 @@ webkit.org/b/97390 mathml/presentation/msubsup-base-changed.xhtml [ ImageOnlyFai
 webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout Pass ]
+
+webkit.org/b/98036 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
