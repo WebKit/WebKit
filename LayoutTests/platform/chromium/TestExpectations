@@ -3581,8 +3581,6 @@ crbug.com/146401 [ Android ] css3/filters/custom/effect-custom-transform-paramet
 crbug.com/146401 [ Android ] css3/filters/custom/filter-fallback-to-software.html [ ImageOnlyFailure ]
 crbug.com/146401 [ Android ] fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 
-webkit.org/b/95813 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
-
 webkit.org/b/96441 [ Win Debug ] fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/96441 [ Linux SnowLeopard Win ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
 
