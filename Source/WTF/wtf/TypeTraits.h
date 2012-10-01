@@ -228,7 +228,7 @@ namespace WTF {
         >::Type Type;
     };
 
-#if COMPILER(CLANG) || GCC_VERSION_AT_LEAST(4, 6, 0) || (defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER))
+#if COMPILER(CLANG) || GCC_VERSION_AT_LEAST(4, 6, 0) || (defined(_MSC_VER) && (_MSC_VER >= 1400) && (_MSC_VER < 1600) && !defined(__INTEL_COMPILER))
     // VC8 (VS2005) and later has __has_trivial_constructor and __has_trivial_destructor,
     // but the implementation returns false for built-in types. We add the extra IsPod condition to 
     // work around this.
