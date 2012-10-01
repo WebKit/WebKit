@@ -1,5 +1,21 @@
 2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Move Qt-only related methods from WebPageProxy.cpp to WebPageProxyQt.cpp
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        (WebKit):
+        (WebKit::WebPageProxy::findZoomableAreaForPoint):
+        (WebKit::WebPageProxy::didReceiveMessageFromNavigatorQtObject):
+        (WebKit::WebPageProxy::authenticationRequiredRequest):
+        (WebKit::WebPageProxy::proxyAuthenticationRequiredRequest):
+        (WebKit::WebPageProxy::certificateVerificationRequest):
+
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Decide when to apply a scrolled position to the viewport based on the rect covered by the tiles
         https://bugs.webkit.org/show_bug.cgi?id=97777
 

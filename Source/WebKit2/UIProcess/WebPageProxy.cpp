@@ -2698,41 +2698,6 @@ void WebPageProxy::setMediaVolume(float volume)
     m_process->send(Messages::WebPage::SetMediaVolume(volume), m_pageID);    
 }
 
-#if PLATFORM(QT)
-void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
-{
-    m_pageClient->didFindZoomableArea(target, area);
-}
-
-void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point, const IntSize& area)
-{
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::FindZoomableAreaForPoint(point, area), m_pageID);
-}
-
-void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents)
-{
-    m_pageClient->didReceiveMessageFromNavigatorQtObject(contents);
-}
-
-void WebPageProxy::authenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password)
-{
-    m_pageClient->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, username, password);
-}
-
-void WebPageProxy::proxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password)
-{
-    m_pageClient->handleProxyAuthenticationRequiredRequest(hostname, port, prefilledUsername, username, password);
-}
-
-void WebPageProxy::certificateVerificationRequest(const String& hostname, bool& ignoreErrors)
-{
-    m_pageClient->handleCertificateVerificationRequest(hostname, ignoreErrors);
-}
-#endif // PLATFORM(QT).
-
 #if PLATFORM(QT) || PLATFORM(EFL)
 void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
 {
