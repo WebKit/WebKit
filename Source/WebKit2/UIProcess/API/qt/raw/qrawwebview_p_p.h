@@ -82,6 +82,7 @@ public:
 
     virtual void setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves);
     virtual void toolTipChanged(const String&, const String& newTooltip);
+    virtual void pageTransitionViewportReady();
 
     virtual void startDrag(const WebCore::DragData& dragData, PassRefPtr<WebKit::ShareableBitmap> dragImage);
 

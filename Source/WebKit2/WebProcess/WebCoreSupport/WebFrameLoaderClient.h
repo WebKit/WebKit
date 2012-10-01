@@ -241,6 +241,7 @@ private:
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
+    bool m_didCompletePageTransitionAlready;
     bool m_frameHasCustomRepresentation;
     bool m_frameCameFromPageCache;
 };

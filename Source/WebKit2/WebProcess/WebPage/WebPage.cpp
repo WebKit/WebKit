@@ -1780,6 +1780,22 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, ui
     frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), downloadID);
 }
 
+void WebPage::didStartPageTransition()
+{
+    m_drawingArea->setLayerTreeStateIsFrozen(true);
+}
+
+void WebPage::didCompletePageTransition()
+{
+#if PLATFORM(QT)
+    if (m_mainFrame->coreFrame()->view()->delegatesScrolling())
+        // Wait until the UI process sent us the visible rect it wants rendered.
+        send(Messages::WebPageProxy::PageTransitionViewportReady());
+    else
+#endif
+        m_drawingArea->setLayerTreeStateIsFrozen(false);
+}
+
 void WebPage::show()
 {
     send(Messages::WebPageProxy::ShowPage());

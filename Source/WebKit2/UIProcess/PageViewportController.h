@@ -97,6 +97,7 @@ public:
     // Notifications from the WebProcess.
     void didChangeContentsSize(const WebCore::IntSize& newSize);
     void didChangeViewportAttributes(const WebCore::ViewportAttributes&);
+    void pageTransitionViewportReady();
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
 private:

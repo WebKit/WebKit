@@ -118,6 +118,7 @@ public:
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
 #endif
 #if PLATFORM(QT)
+    virtual void pageTransitionViewportReady() = 0;
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
     virtual void didReceiveMessageFromNavigatorQtObject(const String&) = 0;
     virtual void updateTextInputState() = 0;

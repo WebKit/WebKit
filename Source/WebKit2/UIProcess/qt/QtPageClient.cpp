@@ -220,6 +220,11 @@ void QtPageClient::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
+void QtPageClient::pageTransitionViewportReady()
+{
+    QQuickWebViewPrivate::get(m_webView)->viewportController()->pageTransitionViewportReady();
+}
+
 void QtPageClient::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
     ASSERT(m_eventHandler);

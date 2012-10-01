@@ -167,6 +167,11 @@ void QRawWebViewPrivate::toolTipChanged(const String&, const String& newTooltip)
     notImplemented();
 }
 
+void QRawWebViewPrivate::pageTransitionViewportReady()
+{
+    m_webPageProxy->commitPageTransitionViewport();
+}
+
 void QRawWebViewPrivate::startDrag(const WebCore::DragData& dragData, PassRefPtr<WebKit::ShareableBitmap> dragImage)
 {
     notImplemented();

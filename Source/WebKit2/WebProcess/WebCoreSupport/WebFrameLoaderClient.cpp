@@ -92,6 +92,7 @@ namespace WebKit {
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* frame)
     : m_frame(frame)
     , m_hasSentResponseToPluginView(false)
+    , m_didCompletePageTransitionAlready(false)
     , m_frameHasCustomRepresentation(false)
     , m_frameCameFromPageCache(false)
 {
@@ -563,8 +564,10 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
         if (m_frame == m_frame->page()->mainWebFrame()) {
-            if (!webPage->corePage()->settings()->suppressesIncrementalRendering())
-                webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
+            if (!webPage->corePage()->settings()->suppressesIncrementalRendering() && !m_didCompletePageTransitionAlready) {
+                webPage->didCompletePageTransition();
+                m_didCompletePageTransitionAlready = true;
+            }
         }
     
 #if USE(TILED_BACKING_STORE)
@@ -1121,12 +1124,15 @@ String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLSc
 
 void WebFrameLoaderClient::frameLoadCompleted()
 {
+    // Note: Can be called multiple times.
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
-    if (m_frame == m_frame->page()->mainWebFrame())
-        webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
+    if (m_frame == m_frame->page()->mainWebFrame() && !m_didCompletePageTransitionAlready) {
+        webPage->didCompletePageTransition();
+        m_didCompletePageTransitionAlready = true;
+    }
 }
 
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
@@ -1156,8 +1162,10 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     if (!webPage)
         return;
 
-    if (m_frame == m_frame->page()->mainWebFrame())
-        webPage->drawingArea()->setLayerTreeStateIsFrozen(true);
+    if (m_frame == m_frame->page()->mainWebFrame()) {
+        webPage->didStartPageTransition();
+        m_didCompletePageTransitionAlready = false;
+    }
 }
 
 void WebFrameLoaderClient::didFinishLoad()

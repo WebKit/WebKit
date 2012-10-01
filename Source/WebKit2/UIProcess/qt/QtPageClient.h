@@ -99,6 +99,7 @@ public:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual void findStringInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
+    virtual void pageTransitionViewportReady();
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void updateTextInputState();
     virtual void doneWithGestureEvent(const WebGestureEvent&, bool wasEventHandled);

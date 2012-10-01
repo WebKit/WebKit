@@ -244,6 +244,7 @@ messages -> WebPage {
 #endif
 
 #if PLATFORM(QT)
+    CommitPageTransitionViewport()
     SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
     CancelComposition()

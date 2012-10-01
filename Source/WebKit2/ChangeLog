@@ -1,3 +1,64 @@
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Wait for the UI process before re-enabling rendering during page load
+        https://bugs.webkit.org/show_bug.cgi?id=97773
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        During page navigation, WebCore might ask asynchronously the UI process to
+        scroll to an anchor or restored history position and the UI process will
+        return the corresponding visible rect to be rendered by the web process.
+
+        To avoid rendering tiles for the invalidated area by the new page layout at
+        the wrong position, we should do an extra message round-trip to the UI
+        process before resuming the rendering.
+        Assuming that all messages are handled in order by both the web and UI process,
+        sending the round-trip request in the web process once we sent all scroll
+        requests, contents size and viewport attributes updates and then handling
+        the round-trip response, we make sure that final visible rect request have
+        been handled already.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebViewPrivate::pageTransitionViewportReady):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        (QRawWebViewPrivate):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        (WebKit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::pageTransitionViewportReady):
+        (WebKit):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::commitPageTransitionViewport):
+        (WebKit):
+        (WebKit::WebPageProxy::pageTransitionViewportReady):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::frameLoadCompleted):
+        (WebKit::WebFrameLoaderClient::provisionalLoadStarted):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit):
+        (WebKit::WebPage::didCompletePageTransition):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::commitPageTransitionViewport):
+        (WebKit):
+
 2012-10-01  Alberto Garcia  <agarcia@igalia.com>
 
         WebPrintOperationGtk destructor should be virtual
