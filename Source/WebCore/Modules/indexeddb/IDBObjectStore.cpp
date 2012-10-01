@@ -88,10 +88,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->get(keyRange, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 
@@ -219,10 +216,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, source, m_transaction.get());
     m_backend->putWithIndexKeys(serializedValue.release(), key.release(), putMode, request, m_transaction->backend(), indexNames, indexKeys, ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 
@@ -248,10 +242,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->deleteFunction(keyRange, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 
@@ -282,10 +273,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->clear(request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 
@@ -514,10 +502,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorDetails(IDBCursorBackendInterface::ObjectStoreCursor, direction);
     m_backend->openCursor(range, direction, request, taskType, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 
@@ -564,10 +549,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, Pa
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->count(range, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 

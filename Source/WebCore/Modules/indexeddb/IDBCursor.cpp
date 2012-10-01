@@ -176,8 +176,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     m_request->setPendingCursor(this);
     m_gotValue = false;
     m_backend->advance(count, m_request, ec);
-    if (ec)
-        m_request->markEarlyDeath();
+    ASSERT(!ec);
 }
 
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
@@ -218,8 +217,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
     m_request->setPendingCursor(this);
     m_gotValue = false;
     m_backend->continueFunction(key, m_request, ec);
-    if (ec)
-        m_request->markEarlyDeath();
+    ASSERT(!ec);
 }
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
@@ -234,16 +232,13 @@ PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context
         return 0;
     }
 
-    if (!m_gotValue) {
+    if (!m_gotValue || isKeyCursor()) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->deleteFunction(request, ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
+    ASSERT(!ec);
     return request.release();
 }
 

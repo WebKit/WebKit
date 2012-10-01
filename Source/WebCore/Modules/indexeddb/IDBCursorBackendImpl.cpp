@@ -63,20 +63,22 @@ IDBCursorBackendImpl::~IDBCursorBackendImpl()
     m_objectStore.clear();
 }
 
-void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
-    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, prpKey, prpCallbacks)))
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, prpKey, callbacks)))
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
 }
 
-void IDBCursorBackendImpl::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBCursorBackendImpl::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::advance");
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
-    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::advanceInternal, this, count, prpCallbacks)))
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::advanceInternal, this, count, callbacks)))
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
 }
 
 void IDBCursorBackendImpl::advanceInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
@@ -107,27 +109,25 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
     callbacks->onSuccess(cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
-void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::delete");
     ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
 
-    if (!m_cursor || m_cursorType == IndexKeyCursor) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return;
-    }
-
+    ExceptionCode ec = 0;
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(m_cursor->primaryKey(), ec);
     ASSERT(!ec);
 
     m_objectStore->deleteFunction(keyRange.release(), prpCallbacks, m_transaction.get(), ec);
+    ASSERT(!ec);
 }
 
-void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::prefetchContinue");
-    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, callbacks)))
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
 }
 
 void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)

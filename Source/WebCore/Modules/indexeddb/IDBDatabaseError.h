@@ -37,6 +37,13 @@ namespace WebCore {
 
 class IDBDatabaseError : public RefCounted<IDBDatabaseError> {
 public:
+    static PassRefPtr<IDBDatabaseError> create(unsigned short code)
+    {
+        ASSERT(code >= IDBDatabaseException::IDBDatabaseExceptionOffset);
+        ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionMax);
+        return adoptRef(new IDBDatabaseError(code));
+    }
+
     static PassRefPtr<IDBDatabaseError> create(unsigned short code, const String& message)
     {
         ASSERT(code >= IDBDatabaseException::IDBDatabaseExceptionOffset);
@@ -52,8 +59,10 @@ public:
     const String name() const { return IDBDatabaseException::getErrorName(m_code); };
 
 private:
+    IDBDatabaseError(unsigned short code)
+        : m_code(code), m_message(IDBDatabaseException::getErrorDescription(code)) { }
     IDBDatabaseError(unsigned short code, const String& message)
-            : m_code(code), m_message(message) { }
+        : m_code(code), m_message(message) { }
 
     const unsigned short m_code;
     const String m_message;

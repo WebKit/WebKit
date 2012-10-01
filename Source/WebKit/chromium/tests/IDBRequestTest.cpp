@@ -58,6 +58,21 @@ TEST(IDBRequestTest, EventsAfterStopping)
     request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
 }
 
+TEST(IDBRequestTest, AbortErrorAfterAbort)
+{
+    ScriptExecutionContext* context = 0;
+    IDBTransaction* transaction = 0;
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::createInvalid(), transaction);
+    EXPECT_EQ(request->readyState(), "pending");
+
+    // Simulate the IDBTransaction having received onAbort from back end and aborting the request:
+    request->abort();
+
+    // Now simulate the back end having fired an abort error at the request to clear up any intermediaries.
+    // Ensure an assertion is not raised.
+    request->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Description goes here."));
+}
+
 } // namespace
 
 #endif // ENABLE(INDEXED_DATABASE)
