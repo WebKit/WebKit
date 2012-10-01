@@ -1,3 +1,16 @@
+2012-10-01  Daniel Drake  <dsd@laptop.org>
+
+        Another SIGILL in JavaScriptCore on a Geode processor
+        https://bugs.webkit.org/show_bug.cgi?id=96286
+
+        Reviewed by Filip Pizlo.
+
+        Disable LLint for the GTK build where the build target does not
+        support SSE2 instructions. Restores support for non-SSE2 processors
+        such as the AMD Geode.
+
+        * wtf/Platform.h:
+
 2012-10-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide memory instrumentation for HashMap
