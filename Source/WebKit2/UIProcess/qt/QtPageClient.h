@@ -43,7 +43,7 @@ public:
 
     // QQuickWebView.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
-    virtual void didRenderFrame(const WebCore::IntSize& contentsSize);
+    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     virtual WebCore::IntSize viewSize();
     virtual bool isViewFocused();
     virtual bool isViewVisible();

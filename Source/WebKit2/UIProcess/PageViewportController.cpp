@@ -111,6 +111,9 @@ FloatPoint PageViewportController::clampViewportToContents(const WebCore::FloatP
 
 void PageViewportController::didCommitLoad()
 {
+    // Do not count the previous committed page contents as covered.
+    m_lastFrameCoveredRect = FloatRect();
+
     // Reset the position to the top, page/history scroll requests may override this before we re-enable rendering.
     applyPositionAfterRenderingContents(FloatPoint());
 }
@@ -121,10 +124,12 @@ void PageViewportController::didChangeContentsSize(const IntSize& newSize)
     updateMinimumScaleToFit();
 }
 
-void PageViewportController::didRenderFrame(const IntSize& contentsSize)
+void PageViewportController::didRenderFrame(const IntSize& contentsSize, const IntRect& coveredRect)
 {
     // Only update the viewport's contents dimensions along with its render.
     m_client->didChangeContentsSize(contentsSize);
+
+    m_lastFrameCoveredRect = coveredRect;
 
     // Apply any scale or scroll position we locked to be set on the viewport
     // only when there is something to display there. The scale goes first to
@@ -138,8 +143,12 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize)
         m_effectiveScaleIsLocked = false;
     }
     if (m_viewportPosIsLocked) {
-        m_client->setViewportPosition(clampViewportToContents(m_viewportPos, m_effectiveScale));
-        m_viewportPosIsLocked = false;
+        FloatPoint clampedPos = clampViewportToContents(m_viewportPos, m_effectiveScale);
+        // There might be rendered frames not covering our requested position yet, wait for it.
+        if (FloatRect(clampedPos, m_viewportSize / m_effectiveScale).intersects(coveredRect)) {
+            m_client->setViewportPosition(clampedPos);
+            m_viewportPosIsLocked = false;
+        }
     }
 }
 
@@ -163,8 +172,12 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     if (m_activeDeferrerCount)
         return;
 
-    // Keep the unclamped position in case the contents size is changed later on.
-    applyPositionAfterRenderingContents(cssPosition);
+    FloatRect endVisibleContentRect(clampViewportToContents(cssPosition, m_effectiveScale), m_viewportSize / m_effectiveScale);
+    if (m_lastFrameCoveredRect.intersects(endVisibleContentRect))
+        m_client->setViewportPosition(endVisibleContentRect.location());
+    else
+        // Keep the unclamped position in case the contents size is changed later on.
+        applyPositionAfterRenderingContents(cssPosition);
 }
 
 void PageViewportController::didChangeViewportSize(const FloatSize& newSize)

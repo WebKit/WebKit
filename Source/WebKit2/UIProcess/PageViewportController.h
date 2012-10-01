@@ -98,7 +98,7 @@ public:
     void didCommitLoad();
     void didChangeContentsSize(const WebCore::IntSize& newSize);
     void didChangeViewportAttributes(const WebCore::ViewportAttributes&);
-    void didRenderFrame(const WebCore::IntSize& contentsSize);
+    void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     void pageTransitionViewportReady();
     void pageDidRequestScroll(const WebCore::IntPoint& cssPosition);
 
@@ -129,6 +129,7 @@ private:
 
     bool m_viewportPosIsLocked;
     bool m_effectiveScaleIsLocked;
+    WebCore::FloatRect m_lastFrameCoveredRect;
 
     friend class ViewportUpdateDeferrer;
 };

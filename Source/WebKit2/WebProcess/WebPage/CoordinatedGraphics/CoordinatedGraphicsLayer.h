@@ -133,6 +133,7 @@ public:
 
     GraphicsLayer* maskTarget() const { return m_maskTarget; }
     void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
+    IntRect coverRect() const { return m_mainBackingStore ? m_mainBackingStore->coverRect() : IntRect(); }
 
     static void initFactory();
 

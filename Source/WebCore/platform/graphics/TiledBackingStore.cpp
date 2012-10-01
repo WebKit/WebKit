@@ -255,10 +255,11 @@ void TiledBackingStore::createTiles()
     if (visibleRect.isEmpty())
         return;
 
-    IntRect keepRect;
     IntRect coverRect;
+    IntRect keepRect;
     computeCoverAndKeepRect(visibleRect, coverRect, keepRect);
 
+    setCoverRect(coverRect);
     setKeepRect(keepRect);
 
     // Resize tiles at the edge in case the contents size has changed, but only do so

@@ -31,7 +31,7 @@ messages -> LayerTreeCoordinatorProxy {
     RemoveTileForLayer(uint32_t layerID, int tileID)
     CreateDirectlyCompositedImage(int64_t key, WebKit::ShareableBitmap::Handle handle)
     DestroyDirectlyCompositedImage(int64_t key)
-    DidRenderFrame(WebCore::IntSize contentsSize)
+    DidRenderFrame(WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
     DidChangeScrollPosition(WebCore::IntPoint position)
     SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
     SetLayerAnimatedOpacity(uint32_t id, float opacity)

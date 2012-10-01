@@ -274,7 +274,8 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
         didSync = true;
 
         IntSize contentsSize = roundedIntSize(m_nonCompositedContentLayer->size());
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame(contentsSize));
+        IntRect coveredRect = toCoordinatedGraphicsLayer(m_nonCompositedContentLayer.get())->coverRect();
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame(contentsSize, coveredRect));
         m_waitingForUIProcess = true;
         m_shouldSyncFrame = false;
     }

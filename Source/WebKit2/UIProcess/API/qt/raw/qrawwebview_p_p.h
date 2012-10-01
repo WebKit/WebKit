@@ -105,7 +105,7 @@ public:
     virtual void didRelaunchProcess();
     virtual void setViewNeedsDisplay(const WebCore::IntRect& rect);
     virtual void didChangeContentsSize(const WebCore::IntSize& newSize);
-    virtual void didRenderFrame(const WebCore::IntSize& contentsSize) { }
+    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) { }
     virtual void setCursor(const WebCore::Cursor&);
 
     virtual bool isViewFocused() { return m_focused; }

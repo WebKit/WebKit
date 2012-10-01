@@ -93,9 +93,9 @@ void WebPageProxy::cancelComposition()
     process()->send(Messages::WebPage::CancelComposition(), m_pageID);
 }
 
-void WebPageProxy::didRenderFrame(const WebCore::IntSize& contentsSize)
+void WebPageProxy::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
-    m_pageClient->didRenderFrame(contentsSize);
+    m_pageClient->didRenderFrame(contentsSize, coveredRect);
 }
 
 void WebPageProxy::registerApplicationScheme(const String& scheme)

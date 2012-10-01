@@ -1,5 +1,46 @@
 2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Decide when to apply a scrolled position to the viewport based on the rect covered by the tiles
+        https://bugs.webkit.org/show_bug.cgi?id=97777
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch achieves two things:
+        - Apply a short scroll position request directly if we already have rendered tiles
+          at this position.
+        - Since our visible rect request is asynchronous, the next frame might not always
+          be the one covering this position. This will wait for a frame that does to apply it.
+
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        (QRawWebViewPrivate::didRenderFrame):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::didRenderFrame):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didCommitLoad):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::didRenderFrame):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::didRenderFrame):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (WebCore::CoordinatedGraphicsLayer::coverRect):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Delay viewport position, scale and contents size updates until tiles are rendered
         https://bugs.webkit.org/show_bug.cgi?id=97775
 

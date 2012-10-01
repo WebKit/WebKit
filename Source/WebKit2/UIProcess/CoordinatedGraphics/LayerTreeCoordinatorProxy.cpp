@@ -116,14 +116,15 @@ void LayerTreeCoordinatorProxy::setCompositingLayerFilters(WebLayerID id, const 
 }
 #endif
 
-void LayerTreeCoordinatorProxy::didRenderFrame(const WebCore::IntSize& contentsSize)
+void LayerTreeCoordinatorProxy::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::flushLayerChanges, m_renderer.get()));
     updateViewport();
 #if PLATFORM(QT)
-    m_drawingAreaProxy->page()->didRenderFrame(contentsSize);
+    m_drawingAreaProxy->page()->didRenderFrame(contentsSize, coveredRect);
 #else
     UNUSED_PARAM(contentsSize);
+    UNUSED_PARAM(coveredRect);
 #endif
 }
 

@@ -72,6 +72,7 @@ public:
     Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
     double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
 
+    IntRect coverRect() const { return m_coverRect; }
     bool visibleAreaIsCovered() const;
     void removeAllNonVisibleTiles();
 
@@ -94,6 +95,7 @@ private:
     void commitScaleChange();
 
     bool resizeEdgeTiles();
+    void setCoverRect(const IntRect& rect) { m_coverRect = rect; }
     void setKeepRect(const IntRect&);
 
     PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
@@ -125,6 +127,7 @@ private:
     FloatPoint m_trajectoryVector;
     IntRect m_visibleRect;
 
+    IntRect m_coverRect;
     IntRect m_keepRect;
     IntRect m_rect;
 
