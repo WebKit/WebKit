@@ -1,3 +1,9 @@
+2012-10-01  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Create WebSocket watch list, and add myself to that list.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-09-30  Taiju Tsuiki  <tzik@chromium.org>
 
         Unreviewed. Adding myself as a committer.
