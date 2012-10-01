@@ -88,6 +88,11 @@ using namespace HTMLNames;
 
 %{
 
+#if YYDEBUG > 0
+#define YYPRINT(File,Type,Value) print_token_value(File,Type,Value)
+static void print_token_value(FILE * yyoutput, int yytype, YYSTYPE const &yyvalue);
+#endif
+
 static inline int cssyyerror(void*, const char*)
 {
     return 1;
@@ -1729,3 +1734,17 @@ invalid_block_list:
 ;
 
 %%
+
+#if YYDEBUG > 0
+static void print_token_value(FILE * yyoutput, int yytype, YYSTYPE const &yyvalue)
+{
+    switch (yytype) {
+    case IDENT:
+    case STRING:
+        YYFPRINTF(yyoutput, "%s", ((String)yyvalue.string).utf8().data());
+        break;
+    default:
+        break;
+    }
+}
+#endif
