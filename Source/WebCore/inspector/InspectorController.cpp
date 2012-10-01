@@ -223,8 +223,6 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
         (*it)->setFrontend(frontend);
 
-    if (!InspectorInstrumentation::hasFrontends())
-        ScriptController::setCaptureCallStackForUncaughtExceptions(true);
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
@@ -252,8 +250,6 @@ void InspectorController::disconnectFrontend()
     m_inspectorFrontend.clear();
 
     InspectorInstrumentation::frontendDeleted();
-    if (!InspectorInstrumentation::hasFrontends())
-        ScriptController::setCaptureCallStackForUncaughtExceptions(false);
 }
 
 void InspectorController::show()
