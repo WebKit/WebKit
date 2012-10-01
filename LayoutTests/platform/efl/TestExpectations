@@ -1411,6 +1411,7 @@ webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting.html [ Skip 
 webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Skip ]
 
 # ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
+webkit.org/b/97299 fast/forms/month-multiple-fields
 webkit.org/b/94186 fast/forms/time-multiple-fields
 
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]

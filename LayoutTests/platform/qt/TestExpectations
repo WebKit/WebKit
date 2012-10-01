@@ -2720,6 +2720,7 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 fast/events/autoscroll-in-textarea.html
 
 # ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
+fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
 
 # [Qt] New inspector/timeline/timeline-decode-resize.html introduced in r125790 fails

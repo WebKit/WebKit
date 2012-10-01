@@ -1,0 +1,29 @@
+<html>
+<head>
+<style type="text/css">
+:disabled { color: gray; }
+:enabled { color: blue; }
+:invalid { color: pink; }
+:in-range { font-weight: bold; }
+:out-of-range { color: red; }
+:read-only { color: yellow; }
+:valid { color: green; }
+</style>
+</head>
+<body>
+<h1>Input Type "month"</h1>
+<h2>Pseudo Classes</h2>
+<table>
+<tr><th>:enabled, :valid</th><td><input type="month" value="1982-11"></td></tr>
+<tr><th>:disabled</th><td><input type="month" value="1982-11" disabled></td></tr>
+<tr><th>:invalid</th><td><input type="month" value="1982-11" min="1982-10" step="2"></td></tr>
+<tr><th>:in-range</th><td><input type="month" value="1982-11" min="1982-01" max="1982-12"></td></tr>
+<tr><th>:out-of-range</th><td><input type="month" value="1982-11" min="1981-01" max="1981-12"></td></tr>
+<tr><th>:read-only</th><td><input type="month" value="1982-11" readonly></td></tr>
+</table>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+</script>
+</html>
