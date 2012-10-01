@@ -54,7 +54,7 @@ public:
     virtual bool metricsOverridden() = 0;
 
     // WebViewImpl has been resized.
-    virtual void webViewResized() = 0;
+    virtual void webViewResized(const WebSize&) = 0;
 };
 
 } // namespace WebKit

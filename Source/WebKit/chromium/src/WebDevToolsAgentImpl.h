@@ -76,7 +76,7 @@ public:
     virtual void didCreateScriptContext(WebFrameImpl*, int worldId);
     virtual void mainFrameViewCreated(WebFrameImpl*);
     virtual bool metricsOverridden();
-    virtual void webViewResized();
+    virtual void webViewResized(const WebSize&);
 
     // WebDevToolsAgent implementation.
     virtual void attach();

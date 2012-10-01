@@ -58,6 +58,7 @@ class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorState;
 class InstrumentingAgents;
+class IntSize;
 class Page;
 class PostWorkerNotificationToFrontendTask;
 class Node;
@@ -91,6 +92,7 @@ public:
     void disconnectFrontend();
     void reconnectFrontend(InspectorFrontendChannel*, const String& inspectorStateCookie);
     void setProcessId(long);
+    void webViewResized(const IntSize&);
 
     void inspect(Node*);
     void drawHighlight(GraphicsContext&) const;
