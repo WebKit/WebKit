@@ -201,7 +201,7 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node* nod
 
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode* node)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
+    NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint->inDocument());
 
     if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
@@ -216,7 +216,7 @@ inline void ChildNodeInsertionNotifier::notifyInsertedIntoDocument(Node* node)
 
 inline void ChildNodeInsertionNotifier::notify(Node* node)
 {
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::didInsertDOMNode(node->document(), node);
@@ -246,7 +246,7 @@ inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromDocument(Node* node)
 
 inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromTree(ContainerNode* node)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
+    NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint->inDocument());
 
     node->removedFrom(m_insertionPoint);

@@ -41,9 +41,9 @@ namespace Private {
     void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer*);
 };
 
-class AssertNoEventDispatch {
+class NoEventDispatchAssertion {
 public:
-    AssertNoEventDispatch()
+    NoEventDispatchAssertion()
     {
         ASSERT(isMainThread());
 #ifndef NDEBUG
@@ -51,7 +51,7 @@ public:
 #endif
     }
 
-    ~AssertNoEventDispatch()
+    ~NoEventDispatchAssertion()
     {
         ASSERT(isMainThread());
         ASSERT(s_count);

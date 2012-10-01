@@ -65,7 +65,7 @@ static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
 
 #ifndef NDEBUG
-unsigned AssertNoEventDispatch::s_count = 0;
+unsigned NoEventDispatchAssertion::s_count = 0;
 #endif
 
 static void collectTargetNodes(Node* node, NodeVector& nodes)
@@ -190,7 +190,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
 void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
+    NoEventDispatchAssertion assertNoEventDispatch;
 
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
@@ -313,7 +313,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
         // Add child before "next".
         {
-            AssertNoEventDispatch assertNoEventDispatch;
+            NoEventDispatchAssertion assertNoEventDispatch;
             if (next)
                 insertBeforeCommon(next.get(), child);
             else
@@ -440,7 +440,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* oldChild)
 {
-    AssertNoEventDispatch assertNoEventDispatch;
+    NoEventDispatchAssertion assertNoEventDispatch;
 
     ASSERT(oldChild);
     ASSERT(oldChild->parentNode() == this);
@@ -503,7 +503,7 @@ void ContainerNode::removeChildren()
     Vector<RefPtr<Node>, 10> removedChildren;
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        AssertNoEventDispatch assertNoEventDispatch;
+        NoEventDispatchAssertion assertNoEventDispatch;
         removedChildren.reserveInitialCapacity(childNodeCount());
         while (RefPtr<Node> n = m_firstChild) {
             Node* next = n->nextSibling();
@@ -592,7 +592,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
         // Append child to the end of the list
         {
-            AssertNoEventDispatch assertNoEventDispatch;
+            NoEventDispatchAssertion assertNoEventDispatch;
             appendChildToContainer(child, this);
         }
 
@@ -610,7 +610,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 
     Node* last = m_lastChild;
     {
-        AssertNoEventDispatch assertNoEventDispatch;
+        NoEventDispatchAssertion assertNoEventDispatch;
         // FIXME: This method should take a PassRefPtr.
         appendChildToContainer(newChild.get(), this);
         treeScope()->adoptIfNeeded(newChild.get());
@@ -951,7 +951,7 @@ static void dispatchChildInsertionEvents(Node* child)
     if (child->isInShadowTree())
         return;
 
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
@@ -971,7 +971,7 @@ static void dispatchChildRemovalEvents(Node* child)
     if (child->isInShadowTree())
         return;
 
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
 

@@ -159,7 +159,7 @@ void EventTarget::uncaughtExceptionInEventHandler()
 
 bool EventTarget::fireEventListeners(Event* event)
 {
-    ASSERT(!AssertNoEventDispatch::isEventDispatchForbidden());
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event && !event->type().isEmpty());
 
     EventTargetData* d = eventTargetData();
