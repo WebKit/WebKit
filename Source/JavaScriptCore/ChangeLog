@@ -1,3 +1,15 @@
+2012-10-01  Jonathan Liu  <net147@gmail.com>
+
+        Remove unused sys/mman.h include
+        https://bugs.webkit.org/show_bug.cgi?id=97995
+
+        Reviewed by Kentaro Hara.
+
+        The sys/mman.h is not used and removing it improves portability as not
+        all systems have sys/mman.h.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2012-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION in m_graph[tailNodeIndex].op() == Flush || m_graph[tailNodeIndex].op() == SetLocal on plus.google.com
