@@ -313,7 +313,7 @@ function CalendarPicker(element, config) {
     this.minimumDate = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min) : CalendarPicker.MinimumPossibleDate;
     // We assume this._config.max is a valid date.
     this.maximumDate = (typeof this._config.max !== "undefined") ? parseDateString(this._config.max) : CalendarPicker.MaximumPossibleDate;
-    this.step = (typeof this._config.step !== undefined) ? this._config.step * CalendarPicker.BaseStep : CalendarPicker.BaseStep;
+    this.step = (typeof this._config.step !== undefined) ? this._config.step : CalendarPicker.BaseStep;
     this.yearMonthController = new YearMonthController(this);
     this.daysTable = new DaysTable(this);
     this._hadKeyEvent = false;

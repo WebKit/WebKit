@@ -137,9 +137,9 @@ void CalendarPickerElement::openPopup()
     parameters.required = input->required();
     Decimal step;
     if (hostInput()->getAllowedValueStep(&step))
-        parameters.step = 1.0;
-    else
         parameters.step = step.toDouble();
+    else
+        parameters.step = 1.0;
     parameters.anchorRectInRootView = document()->view()->contentsToRootView(hostInput()->pixelSnappedBoundingBox());
     parameters.currentValue = input->value();
     parameters.isAnchorElementRTL = input->computedStyle()->direction() == RTL;
