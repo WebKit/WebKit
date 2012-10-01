@@ -153,6 +153,10 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
         return;
     }
 
+    case DateTimeFormat::FieldTypeWeekOfYear:
+        m_editElement.addField(DateTimeWeekFieldElement::create(document, m_editElement));
+        return;
+
     case DateTimeFormat::FieldTypeYear:
         m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement, m_placeholderForYear));
         return;

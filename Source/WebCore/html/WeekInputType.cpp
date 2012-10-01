@@ -39,6 +39,12 @@
 
 #if ENABLE(INPUT_TYPE_WEEK)
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#include "DateTimeFieldsState.h"
+#include "LocalizedStrings.h"
+#include <wtf/text/WTFString.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -90,6 +96,23 @@ bool WeekInputType::isWeekField() const
 {
     return true;
 }
+
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+String WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
+{
+    if (!dateTimeFieldsState.hasYear() || !dateTimeFieldsState.hasWeekOfYear())
+        return emptyString();
+    return String::format("%04u-W%02u", dateTimeFieldsState.year(), dateTimeFieldsState.weekOfYear());
+}
+
+void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
+{
+    layoutParameters.dateTimeFormat = weekFormatInLDML();
+    layoutParameters.fallbackDateTimeFormat = "'Week' WW-yyyy";
+    layoutParameters.placeholderForYear = "----";
+}
+#endif
 
 } // namespace WebCore
 
