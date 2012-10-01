@@ -355,6 +355,7 @@ public Q_SLOTS:
     void evaluateJavaScript(const QString& script, const QJSValue& value = QJSValue());
 
 Q_SIGNALS:
+    void loadVisuallyCommitted();
     void alertDialogChanged();
     void confirmDialogChanged();
     void promptDialogChanged();

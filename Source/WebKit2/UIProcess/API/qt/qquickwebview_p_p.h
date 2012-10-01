@@ -189,6 +189,7 @@ protected:
 
     QList<QUrl> userScripts;
 
+    bool m_betweenLoadCommitAndFirstFrame;
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;

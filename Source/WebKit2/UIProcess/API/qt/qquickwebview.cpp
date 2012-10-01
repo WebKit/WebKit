@@ -268,6 +268,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , filePicker(0)
     , databaseQuotaDialog(0)
     , colorChooser(0)
+    , m_betweenLoadCommitAndFirstFrame(false)
     , m_useDefaultContentItemSize(true)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
@@ -370,6 +371,7 @@ void QQuickWebViewPrivate::loadDidCommit()
     Q_Q(QQuickWebView);
     ASSERT(q->loading());
 
+    m_betweenLoadCommitAndFirstFrame = true;
     emit q->navigationHistoryChanged();
     emit q->titleChanged();
 }
@@ -453,6 +455,10 @@ void QQuickWebViewPrivate::setNeedsDisplay()
         return;
     }
 
+    if (m_betweenLoadCommitAndFirstFrame) {
+        emit q->experimental()->loadVisuallyCommitted();
+        m_betweenLoadCommitAndFirstFrame = false;
+    }
     q->page()->update();
 }
 

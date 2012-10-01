@@ -1,5 +1,23 @@
 2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Add a loadVisuallyCommitted() signal
+        https://bugs.webkit.org/show_bug.cgi?id=97780
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This signal is emitted when the first DidRenderFrame message is received from
+        the web process after loadCommitted.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::setNeedsDisplay):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
+2012-09-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Move Qt-only related methods from WebPageProxy.cpp to WebPageProxyQt.cpp
 
         Reviewed by Simon Hausmann.
