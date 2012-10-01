@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div itemscope id="mydiv"></div>
+<script>
+description("This test verifies properties.names.item(index) behavior for out-of-range index.");
+
+debug("Test itemType[index]");
+var element = document.getElementById("mydiv");
+shouldBeNull("element.properties.names.item(0)");
+shouldBeNull("element.properties.names.item(-1)");
+element.innerHTML = "<div itemprop='foo'></div";
+shouldBe("element.properties.names.item(0)", "'foo'");
+shouldBeNull("element.properties.names.item(1)");
+shouldBeNull("element.properties.names.item(-1)");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

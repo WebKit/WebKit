@@ -1,0 +1,15 @@
+This test verifies properties.names.item(index) behavior for out-of-range index.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test itemType[index]
+PASS element.properties.names.item(0) is null
+PASS element.properties.names.item(-1) is null
+PASS element.properties.names.item(0) is 'foo'
+PASS element.properties.names.item(1) is null
+PASS element.properties.names.item(-1) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

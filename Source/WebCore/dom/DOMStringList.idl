@@ -30,7 +30,7 @@ module core {
         JSCustomToNativeObject
     ] DOMStringList {
         readonly attribute unsigned long length;
-        [TreatReturnedNullStringAs=Null] DOMString item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
+        [TreatReturnedNullStringAs=Null] DOMString item(in [Optional=DefaultIsUndefined] unsigned long index);
         boolean contains(in [Optional=DefaultIsUndefined] DOMString string);
     };
 
