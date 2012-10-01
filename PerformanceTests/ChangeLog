@@ -1,3 +1,15 @@
+2012-10-01  Florin Malita  <fmalita@chromium.org>
+
+        Add a performance test for nested <use> elements
+        https://bugs.webkit.org/show_bug.cgi?id=98047
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently at ~5 runs per second on my workstation, but should go up significantly (100+)
+        after landing a fix for https://bugs.webkit.org/show_bug.cgi?id=97905.
+
+        * SVG/SvgNestedUse.html: Added.
+
 2012-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add back test.runCount for runPerSecond as it's used by tests in fast/harness/perftests.
