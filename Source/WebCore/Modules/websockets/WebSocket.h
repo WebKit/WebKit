@@ -86,7 +86,7 @@ public:
     String extensions() const;
 
     String binaryType() const;
-    void setBinaryType(const String& binaryType, ExceptionCode&);
+    void setBinaryType(const String&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(message);

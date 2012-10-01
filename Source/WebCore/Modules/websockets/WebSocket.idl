@@ -60,8 +60,7 @@ module websockets {
         readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString protocol;
         readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString extensions;
 
-        attribute [TreatReturnedNullStringAs=Undefined] DOMString binaryType
-            setter raises(DOMException);
+        attribute DOMString binaryType;
 
         // FIXME: Use overloading provided by our IDL code generator.
         // According to Web IDL specification, overloaded function with DOMString argument

@@ -18,9 +18,16 @@ shouldBeEqualToString("ws.binaryType", "arraybuffer");
 ws.binaryType = "blob";
 shouldBeEqualToString("ws.binaryType", "blob");
 
-shouldThrow("ws.binaryType = 'Blob'", "'Error: SYNTAX_ERR: DOM Exception 12'");
-shouldThrow("ws.binaryType = 'ArrayBuffer'", "'Error: SYNTAX_ERR: DOM Exception 12'");
-shouldThrow("ws.binaryType = ''", "'Error: SYNTAX_ERR: DOM Exception 12'");
+debug("Set invalid values to binaryType. They should be ignored. No exception should be thrown.");
+
+ws.binaryType = "Blob";
+shouldBeEqualToString("ws.binaryType", "blob");
+
+ws.binaryType = "ArrayBuffer"
+shouldBeEqualToString("ws.binaryType", "blob");
+
+ws.binaryType = "";
+shouldBeEqualToString("ws.binaryType", "blob");
 
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
