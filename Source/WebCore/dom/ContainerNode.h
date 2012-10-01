@@ -45,7 +45,8 @@ class NoEventDispatchAssertion {
 public:
     NoEventDispatchAssertion()
     {
-        ASSERT(isMainThread());
+        if (!isMainThread())
+            return;
 #ifndef NDEBUG
         s_count++;
 #endif
@@ -53,7 +54,8 @@ public:
 
     ~NoEventDispatchAssertion()
     {
-        ASSERT(isMainThread());
+        if (!isMainThread())
+            return;
         ASSERT(s_count);
 #ifndef NDEBUG
         s_count--;
@@ -61,7 +63,12 @@ public:
     }
 
 #ifndef NDEBUG
-    static bool isEventDispatchForbidden() { return s_count; }
+    static bool isEventDispatchForbidden()
+    {
+        if (!isMainThread())
+            return false;
+        return s_count;
+    }
 #endif
 
 private:
