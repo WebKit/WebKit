@@ -1,3 +1,18 @@
+2012-10-01  Alberto Garcia  <agarcia@igalia.com>
+
+        Check that __cplusplus is defined before comparing its value
+        https://bugs.webkit.org/show_bug.cgi?id=98015
+
+        Reviewed by Xan Lopez.
+
+        If __cplusplus is not defined is interpreted as having the value
+        0, but it produces a compilation warning with -Wundef.
+
+        This is the case with some API tests that are written in C
+        (JSNode.c, JSNodeList.c, minidom.c).
+
+        * wtf/Compiler.h:
+
 2012-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
