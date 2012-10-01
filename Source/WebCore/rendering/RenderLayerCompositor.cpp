@@ -507,7 +507,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             // its replica GraphicsLayer. In practice this should never happen because reflectee and reflection 
             // are both either composited, or not composited.
             if (layer->isReflection()) {
-                RenderLayer* sourceLayer = toRenderBoxModelObject(layer->renderer()->parent())->layer();
+                RenderLayer* sourceLayer = toRenderLayerModelObject(layer->renderer()->parent())->layer();
                 if (RenderLayerBacking* backing = sourceLayer->backing()) {
                     ASSERT(backing->graphicsLayer()->replicaLayer() == layer->backing()->graphicsLayer());
                     backing->graphicsLayer()->setReplicatedByLayer(0);
@@ -570,7 +570,7 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer* layer)
     if (layer->renderer() != m_renderView && !layer->renderer()->parent())
         return;
 
-    RenderBoxModelObject* repaintContainer = layer->renderer()->containerForRepaint();
+    RenderLayerModelObject* repaintContainer = layer->renderer()->containerForRepaint();
     if (!repaintContainer)
         repaintContainer = m_renderView;
 
@@ -1439,7 +1439,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
     // The compositing state of a reflection should match that of its reflected layer.
     if (layer->isReflection()) {
         renderer = renderer->parent(); // The RenderReplica's parent is the object being reflected.
-        layer = toRenderBoxModelObject(renderer)->layer();
+        layer = toRenderLayerModelObject(renderer)->layer();
     }
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)
@@ -1508,7 +1508,7 @@ const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer
     RenderObject* renderer = layer->renderer();
     if (layer->isReflection()) {
         renderer = renderer->parent();
-        layer = toRenderBoxModelObject(renderer)->layer();
+        layer = toRenderLayerModelObject(renderer)->layer();
     }
 
     if (requiresCompositingForTransform(renderer))

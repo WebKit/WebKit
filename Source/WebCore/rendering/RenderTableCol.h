@@ -87,7 +87,7 @@ private:
     virtual bool canHaveChildren() const;
     virtual bool requiresLayer() const { return false; }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const OVERRIDE;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

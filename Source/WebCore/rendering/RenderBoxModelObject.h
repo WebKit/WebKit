@@ -25,7 +25,7 @@
 #define RenderBoxModelObject_h
 
 #include "LayoutTypesInlineMethods.h"
-#include "RenderObject.h"
+#include "RenderLayerModelObject.h"
 #include "ShadowData.h"
 
 namespace WebCore {
@@ -56,7 +56,7 @@ class StickyPositionViewportConstraints;
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
-class RenderBoxModelObject : public RenderObject {
+class RenderBoxModelObject : public RenderLayerModelObject {
 public:
     RenderBoxModelObject(Node*);
     virtual ~RenderBoxModelObject();
@@ -82,14 +82,9 @@ public:
     int pixelSnappedOffsetWidth() const;
     int pixelSnappedOffsetHeight() const;
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual void updateBoxModelInfoFromStyle();
+    virtual void updateFromStyle() OVERRIDE;
 
-    bool hasSelfPaintingLayer() const;
-    RenderLayer* layer() const { return m_layer; }
-
-    virtual bool requiresLayer() const { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns(); }
+    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns(); }
 
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
@@ -164,9 +159,6 @@ public:
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
 
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const OVERRIDE;
-
-    // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed
-    void destroyLayer();
 
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
@@ -307,16 +299,6 @@ private:
     void drawBoxSideFromPath(GraphicsContext*, const LayoutRect&, const Path&, const class BorderEdge[],
                             float thickness, float drawThickness, BoxSide, const RenderStyle*, 
                             Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
-
-    friend class RenderView;
-
-    RenderLayer* m_layer;
-    
-    // Used to store state between styleWillChange and styleDidChange
-    static bool s_wasFloating;
-    static bool s_hadLayer;
-    static bool s_hadTransform;
-    static bool s_layerWasSelfPainting;
 };
 
 inline RenderBoxModelObject* toRenderBoxModelObject(RenderObject* object)

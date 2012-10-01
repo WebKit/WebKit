@@ -188,7 +188,7 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-LayoutRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
+LayoutRect RenderTableRow::clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const
 {
     ASSERT(parent());
 

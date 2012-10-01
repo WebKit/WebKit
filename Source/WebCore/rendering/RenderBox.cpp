@@ -201,7 +201,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
 
 void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    // Horizontal writing mode definition is updated in RenderBoxModelObject::updateBoxModelInfoFromStyle,
+    // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
     // (as part of the RenderBoxModelObject::styleDidChange call below). So, we can safely cache the horizontal
     // writing mode value before style change here.
     bool oldHorizontalWritingMode = isHorizontalWritingMode();
@@ -269,9 +269,9 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 }
 
-void RenderBox::updateBoxModelInfoFromStyle()
+void RenderBox::updateFromStyle()
 {
-    RenderBoxModelObject::updateBoxModelInfoFromStyle();
+    RenderBoxModelObject::updateFromStyle();
 
     RenderStyle* styleToUse = style();
     bool isRootObject = isRoot();
@@ -447,7 +447,7 @@ FloatQuad RenderBox::absoluteContentQuad() const
     return localToAbsoluteQuad(FloatRect(rect));
 }
 
-LayoutRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, LayoutPoint* cachedOffsetToRepaintContainer) const
+LayoutRect RenderBox::outlineBoundsForRepaint(RenderLayerModelObject* repaintContainer, LayoutPoint* cachedOffsetToRepaintContainer) const
 {
     LayoutRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
@@ -1258,7 +1258,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->adjustContentBoxLogicalHeightForBoxSizing(logicalHeightLength.value());
 }
 
-void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1323,7 +1323,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, Tran
     o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
-const RenderObject* RenderBox::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT(ancestorToStopAt != this);
 
@@ -1473,7 +1473,7 @@ void RenderBox::deleteLineBoxWrapper()
     }
 }
 
-LayoutRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
+LayoutRect RenderBox::clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const
 {
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
@@ -1500,7 +1500,7 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     return r;
 }
 
-void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+void RenderBox::computeRectForRepaint(RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
@@ -3820,7 +3820,7 @@ RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->hasLayer() && curr->isBox() ? toRenderBoxModelObject(curr)->layer() : 0;
+        RenderLayer* layer = curr->hasLayer() && curr->isBox() ? toRenderBox(curr)->layer() : 0;
         if (layer && layer->isSelfPaintingLayer())
             return layer;
         curr = curr->parent();

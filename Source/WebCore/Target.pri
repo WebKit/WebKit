@@ -1151,6 +1151,7 @@ SOURCES += \
     rendering/RenderLayerBacking.cpp \
     rendering/RenderLayerCompositor.cpp \
     rendering/RenderLayerFilterInfo.cpp \
+    rendering/RenderLayerModelObject.cpp \
     rendering/RenderLineBoxList.cpp \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \
@@ -2352,6 +2353,7 @@ HEADERS += \
     rendering/RenderLayer.h \
     rendering/RenderLayerBacking.h \
     rendering/RenderLayerCompositor.h \
+    rendering/RenderLayerModelObject.h \
     rendering/RenderLineBoxList.h \
     rendering/RenderListBox.h \
     rendering/RenderListItem.h \

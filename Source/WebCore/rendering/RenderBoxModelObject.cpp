@@ -53,11 +53,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool RenderBoxModelObject::s_wasFloating = false;
-bool RenderBoxModelObject::s_hadLayer = false;
-bool RenderBoxModelObject::s_hadTransform = false;
-bool RenderBoxModelObject::s_layerWasSelfPainting = false;
-
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
@@ -317,16 +312,12 @@ bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Ima
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Node* node)
-    : RenderObject(node)
-    , m_layer(0)
+    : RenderLayerModelObject(node)
 {
 }
 
 RenderBoxModelObject::~RenderBoxModelObject()
 {
-    // Our layer should have been destroyed and cleared by now
-    ASSERT(!hasLayer());
-    ASSERT(!m_layer);
     if (gImageQualityController) {
         gImageQualityController->objectDestroyed(this);
         if (gImageQualityController->isEmpty()) {
@@ -334,14 +325,6 @@ RenderBoxModelObject::~RenderBoxModelObject()
             gImageQualityController = 0;
         }
     }
-}
-
-void RenderBoxModelObject::destroyLayer()
-{
-    ASSERT(!hasLayer()); // Callers should have already called setHasLayer(false)
-    ASSERT(m_layer);
-    m_layer->destroy(renderArena());
-    m_layer = 0;
 }
 
 void RenderBoxModelObject::willBeDestroyed()
@@ -363,114 +346,13 @@ void RenderBoxModelObject::willBeDestroyed()
     if (firstLetterRemainingText())
         setFirstLetterRemainingText(0);
 
-    // RenderObject::willBeDestroyed calls back to destroyLayer() for layer destruction
-    RenderObject::willBeDestroyed();
+    RenderLayerModelObject::willBeDestroyed();
 }
 
-bool RenderBoxModelObject::hasSelfPaintingLayer() const
+void RenderBoxModelObject::updateFromStyle()
 {
-    return m_layer && m_layer->isSelfPaintingLayer();
-}
+    RenderLayerModelObject::updateFromStyle();
 
-void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    s_wasFloating = isFloating();
-    s_hadLayer = hasLayer();
-    s_hadTransform = hasTransform();
-    if (s_hadLayer)
-        s_layerWasSelfPainting = layer()->isSelfPaintingLayer();
-
-    // If our z-index changes value or our visibility changes,
-    // we need to dirty our stacking context's z-order list.
-    RenderStyle* oldStyle = style();
-    if (oldStyle && newStyle) {
-        if (parent()) {
-            // Do a repaint with the old style first, e.g., for example if we go from
-            // having an outline to not having an outline.
-            if (diff == StyleDifferenceRepaintLayer) {
-                layer()->repaintIncludingDescendants();
-                if (!(oldStyle->clip() == newStyle->clip()))
-                    layer()->clearClipRectsIncludingDescendants();
-            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < oldStyle->outlineSize())
-                repaint();
-        }
-        
-        if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
-            // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
-            // end up being destroyed.
-            if (hasLayer()) {
-                if (oldStyle->position() != newStyle->position()
-                    || oldStyle->zIndex() != newStyle->zIndex()
-                    || oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex()
-                    || !(oldStyle->clip() == newStyle->clip())
-                    || oldStyle->hasClip() != newStyle->hasClip()
-                    || oldStyle->opacity() != newStyle->opacity()
-                    || oldStyle->transform() != newStyle->transform()
-#if ENABLE(CSS_FILTERS)
-                    || oldStyle->filter() != newStyle->filter()
-#endif
-                    )
-                layer()->repaintIncludingDescendants();
-            } else if (newStyle->hasTransform() || newStyle->opacity() < 1 || newStyle->hasFilter()) {
-                // If we don't have a layer yet, but we are going to get one because of transform or opacity,
-                //  then we need to repaint the old position of the object.
-                repaint();
-            }
-        }
-    }
-
-    RenderObject::styleWillChange(diff, newStyle);
-}
-
-void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderObject::styleDidChange(diff, oldStyle);
-    updateBoxModelInfoFromStyle();
-    
-    if (requiresLayer()) {
-        if (!layer() && layerCreationAllowedForSubtree()) {
-            if (s_wasFloating && isFloating())
-                setChildNeedsLayout(true);
-            m_layer = new (renderArena()) RenderLayer(this);
-            setHasLayer(true);
-            m_layer->insertOnlyThisLayer();
-            if (parent() && !needsLayout() && containingBlock()) {
-                m_layer->setRepaintStatus(NeedsFullRepaint);
-                // There is only one layer to update, it is not worth using |cachedOffset| since
-                // we are not sure the value will be used.
-                m_layer->updateLayerPositions(0);
-            }
-        }
-    } else if (layer() && layer()->parent()) {
-        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
-        setHasReflection(false);
-        m_layer->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
-        if (s_wasFloating && isFloating())
-            setChildNeedsLayout(true);
-        if (s_hadTransform)
-            setNeedsLayoutAndPrefWidthsRecalc();
-    }
-
-    if (layer()) {
-        layer()->styleChanged(diff, oldStyle);
-        if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
-            setChildNeedsLayout(true);
-    }
-
-    if (FrameView *frameView = view()->frameView()) {
-        bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();
-        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
-        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
-            if (newStyleIsViewportConstained && layer())
-                frameView->addViewportConstrainedObject(this);
-            else
-                frameView->removeViewportConstrainedObject(this);
-        }
-    }
-}
-
-void RenderBoxModelObject::updateBoxModelInfoFromStyle()
-{
     // Set the appropriate bits for a box model object.  Since all bits are cleared in styleWillChange,
     // we only check for bits that could possibly be set to true.
     RenderStyle* styleToUse = style();

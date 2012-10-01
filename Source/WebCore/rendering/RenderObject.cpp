@@ -312,7 +312,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
     // and stop creating layers at all for these cases - they're not used anyways.
     if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
-        toRenderBoxModelObject(newChild)->layer()->removeOnlyThisLayer();
+        toRenderLayerModelObject(newChild)->layer()->removeOnlyThisLayer();
 }
 
 void RenderObject::removeChild(RenderObject* oldChild)
@@ -434,7 +434,7 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = 0;
         }
-        parentLayer->addChild(toRenderBoxModelObject(obj)->layer(), beforeChild);
+        parentLayer->addChild(toRenderLayerModelObject(obj)->layer(), beforeChild);
         return;
     }
 
@@ -458,7 +458,7 @@ void RenderObject::removeLayers(RenderLayer* parentLayer)
         return;
 
     if (hasLayer()) {
-        parentLayer->removeChild(toRenderBoxModelObject(this)->layer());
+        parentLayer->removeChild(toRenderLayerModelObject(this)->layer());
         return;
     }
 
@@ -472,7 +472,7 @@ void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
 
     if (hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(this)->layer();
+        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
         ASSERT(oldParent == layer->parent());
         if (oldParent)
             oldParent->removeChild(layer);
@@ -492,7 +492,7 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
         return 0;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? toRenderBoxModelObject(this)->layer() : 0;
+    RenderLayer* ourLayer = hasLayer() ? toRenderLayerModelObject(this)->layer() : 0;
     if (ourLayer && ourLayer->parent() == parentLayer)
         return ourLayer;
 
@@ -524,7 +524,7 @@ RenderLayer* RenderObject::enclosingLayer() const
 {
     const RenderObject* curr = this;
     while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? toRenderBoxModelObject(curr)->layer() : 0;
+        RenderLayer* layer = curr->hasLayer() ? toRenderLayerModelObject(curr)->layer() : 0;
         if (layer)
             return layer;
         curr = curr->parent();
@@ -720,13 +720,13 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 void RenderObject::setLayerNeedsFullRepaint()
 {
     ASSERT(hasLayer());
-    toRenderBoxModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaint);
+    toRenderLayerModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaint);
 }
 
 void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 {
     ASSERT(hasLayer());
-    toRenderBoxModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
+    toRenderLayerModelObject(this)->layer()->setRepaintStatus(NeedsFullRepaintForPositionedMovementLayout);
 }
 
 RenderBlock* RenderObject::containingBlock() const
@@ -1245,13 +1245,13 @@ void RenderObject::paint(PaintInfo&, const LayoutPoint&)
 {
 }
 
-RenderBoxModelObject* RenderObject::containerForRepaint() const
+RenderLayerModelObject* RenderObject::containerForRepaint() const
 {
     RenderView* v = view();
     if (!v)
         return 0;
     
-    RenderBoxModelObject* repaintContainer = 0;
+    RenderLayerModelObject* repaintContainer = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
     if (v->usesCompositing()) {
@@ -1281,7 +1281,7 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
-void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer, const IntRect& r, bool immediate) const
+void RenderObject::repaintUsingContainer(RenderLayerModelObject* repaintContainer, const IntRect& r, bool immediate) const
 {
     if (!repaintContainer) {
         view()->repaintViewRectangle(r, immediate);
@@ -1334,7 +1334,7 @@ void RenderObject::repaint(bool immediate) const
     if (view->printing())
         return; // Don't repaint if we're printing.
 
-    RenderBoxModelObject* repaintContainer = containerForRepaint();
+    RenderLayerModelObject* repaintContainer = containerForRepaint();
     repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(clippedOverflowRectForRepaint(repaintContainer)), immediate);
 }
 
@@ -1354,7 +1354,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate) const
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     dirtyRect.move(view->layoutDelta());
 
-    RenderBoxModelObject* repaintContainer = containerForRepaint();
+    RenderLayerModelObject* repaintContainer = containerForRepaint();
     computeRectForRepaint(repaintContainer, dirtyRect);
     repaintUsingContainer(repaintContainer ? repaintContainer : view, pixelSnappedIntRect(dirtyRect), immediate);
 }
@@ -1364,7 +1364,7 @@ IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
     return pixelSnappedIntRect(absoluteClippedOverflowRect());
 }
 
-bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr, const LayoutRect* newOutlineBoxRectPtr)
+bool RenderObject::repaintAfterLayoutIfNeeded(RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr, const LayoutRect* newOutlineBoxRectPtr)
 {
     RenderView* v = view();
     if (v->printing())
@@ -1485,20 +1485,20 @@ bool RenderObject::checkForRepaintDuringLayout() const
     return !document()->view()->needsFullRepaint() && !hasLayer() && everHadLayout();
 }
 
-LayoutRect RenderObject::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, LayoutUnit outlineWidth) const
+LayoutRect RenderObject::rectWithOutlineForRepaint(RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
 {
     LayoutRect r(clippedOverflowRectForRepaint(repaintContainer));
     r.inflate(outlineWidth);
     return r;
 }
 
-LayoutRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject*) const
+LayoutRect RenderObject::clippedOverflowRectForRepaint(RenderLayerModelObject*) const
 {
     ASSERT_NOT_REACHED();
     return LayoutRect();
 }
 
-void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+void RenderObject::computeRectForRepaint(RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1521,7 +1521,7 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
     }
 }
 
-void RenderObject::computeFloatRectForRepaint(RenderBoxModelObject*, FloatRect&, bool) const
+void RenderObject::computeFloatRectForRepaint(RenderLayerModelObject*, FloatRect&, bool) const
 {
     ASSERT_NOT_REACHED();
 }
@@ -1682,7 +1682,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
         // Text nodes share style with their parents but transforms don't apply to them,
         // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
-        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited())) {
+        if (!isText() && (!hasLayer() || !toRenderLayerModelObject(this)->layer()->isComposited())) {
             // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
             // then we actually need SimplifiedLayoutAndPositionedMovement.
             if (!hasLayer())
@@ -1698,7 +1698,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     // If opacity changed, and we are not composited, need to repaint (also
     // ignoring text nodes)
     if (contextSensitiveProperties & ContextSensitivePropertyOpacity) {
-        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited()))
+        if (!isText() && (!hasLayer() || !toRenderLayerModelObject(this)->layer()->isComposited()))
             diff = StyleDifferenceRepaintLayer;
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
@@ -1706,7 +1706,7 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     
 #if ENABLE(CSS_FILTERS)
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
-        RenderLayer* layer = toRenderBoxModelObject(this)->layer();
+        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
         if (!layer->isComposited() || layer->paintsWithFilters())
             diff = StyleDifferenceRepaintLayer;
         else if (diff < StyleDifferenceRecompositeLayer)
@@ -1717,8 +1717,8 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
-    if (diff == StyleDifferenceEqual && style() && isBoxModelObject()) {
-        if (hasLayer() != toRenderBoxModelObject(this)->requiresLayer())
+    if (diff == StyleDifferenceEqual && style() && isLayerModelObject()) {
+        if (hasLayer() != toRenderLayerModelObject(this)->requiresLayer())
             diff = StyleDifferenceLayout;
     }
 #else
@@ -2026,7 +2026,7 @@ FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, bool 
     return transformState.lastPlanarPoint();
 }
 
-void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
+void RenderObject::mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -2054,7 +2054,7 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, T
     o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
-const RenderObject* RenderObject::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+const RenderObject* RenderObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT_UNUSED(ancestorToStopAt, ancestorToStopAt != this);
 
@@ -2087,7 +2087,7 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderObject* container
 #if ENABLE(3D_RENDERING)
     // hasTransform() indicates whether the object has transform, transform-style or perspective. We just care about transform,
     // so check the layer's transform directly.
-    return (hasLayer() && toRenderBoxModelObject(this)->layer()->transform()) || (containerObject && containerObject->style()->hasPerspective());
+    return (hasLayer() && toRenderLayerModelObject(this)->layer()->transform()) || (containerObject && containerObject->style()->hasPerspective());
 #else
     UNUSED_PARAM(containerObject);
     return hasTransform();
@@ -2099,14 +2099,14 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
     transform.makeIdentity();
     transform.translate(offsetInContainer.width(), offsetInContainer.height());
     RenderLayer* layer;
-    if (hasLayer() && (layer = toRenderBoxModelObject(this)->layer()) && layer->transform())
+    if (hasLayer() && (layer = toRenderLayerModelObject(this)->layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
     
 #if ENABLE(3D_RENDERING)
     if (containerObject && containerObject->hasLayer() && containerObject->style()->hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.
         ASSERT(containerObject->hasLayer());
-        FloatPoint perspectiveOrigin = toRenderBoxModelObject(containerObject)->layer()->perspectiveOrigin();
+        FloatPoint perspectiveOrigin = toRenderLayerModelObject(containerObject)->layer()->perspectiveOrigin();
 
         TransformationMatrix perspectiveMatrix;
         perspectiveMatrix.applyPerspective(containerObject->style()->perspective());
@@ -2120,7 +2120,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
 #endif
 }
 
-FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
+FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderLayerModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
 {
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
@@ -2136,7 +2136,7 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderB
     return transformState.lastPlanarQuad();
 }
 
-FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
+FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderLayerModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
     MapLocalToContainerFlags mode = ApplyContainerFlip | UseTransforms;
@@ -2239,7 +2239,7 @@ bool RenderObject::hasOutlineAnnotation() const
     return node() && node()->isLink() && document()->printing();
 }
 
-RenderObject* RenderObject::container(const RenderBoxModelObject* repaintContainer, bool* repaintContainerSkipped) const
+RenderObject* RenderObject::container(const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped) const
 {
     if (repaintContainerSkipped)
         *repaintContainerSkipped = false;
@@ -2372,7 +2372,7 @@ void RenderObject::willBeDestroyed()
     // be moved into RenderBoxModelObject::destroy.
     if (hasLayer()) {
         setHasLayer(false);
-        toRenderBoxModelObject(this)->destroyLayer();
+        toRenderLayerModelObject(this)->destroyLayer();
     }
 
     setAncestorLineBoxDirty(false);
@@ -2526,7 +2526,7 @@ void RenderObject::updateDragState(bool dragOn)
 
 bool RenderObject::isComposited() const
 {
-    return hasLayer() && toRenderBoxModelObject(this)->layer()->isComposited();
+    return hasLayer() && toRenderLayerModelObject(this)->layer()->isComposited();
 }
 
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter)

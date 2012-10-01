@@ -128,7 +128,7 @@ void RenderGeometryMap::mapToAbsolute(TransformState& transformState) const
     transformState.flatten();    
 }
 
-void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderBoxModelObject* ancestorRenderer)
+void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderLayerModelObject* ancestorRenderer)
 {
     // We need to push mappings in reverse order here, so do insertions rather than appends.
     TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
@@ -172,7 +172,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
         push(renderer, toLayoutSize(layerOffset), /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }
-    const RenderBoxModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
+    const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
     pushMappingsToAncestor(renderer, ancestorRenderer);
 }
 
@@ -218,7 +218,7 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
     stepInserted(step);
 }
 
-void RenderGeometryMap::popMappingsToAncestor(const RenderBoxModelObject* ancestorRenderer)
+void RenderGeometryMap::popMappingsToAncestor(const RenderLayerModelObject* ancestorRenderer)
 {
     ASSERT(m_mapping.size());
 
@@ -230,7 +230,7 @@ void RenderGeometryMap::popMappingsToAncestor(const RenderBoxModelObject* ancest
 
 void RenderGeometryMap::popMappingsToAncestor(const RenderLayer* ancestorLayer)
 {
-    const RenderBoxModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
+    const RenderLayerModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
     popMappingsToAncestor(ancestorRenderer);
 }
 

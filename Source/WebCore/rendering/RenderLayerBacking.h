@@ -180,7 +180,7 @@ private:
     
     PassOwnPtr<GraphicsLayer> createGraphicsLayer(const String&);
 
-    RenderBoxModelObject* renderer() const { return m_owningLayer->renderer(); }
+    RenderLayerModelObject* renderer() const { return m_owningLayer->renderer(); }
     RenderLayerCompositor* compositor() const { return m_owningLayer->compositor(); }
 
     void updateInternalHierarchy();

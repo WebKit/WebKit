@@ -216,7 +216,7 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    GapRects selectionGapRectsForRepaint(RenderBoxModelObject* repaintContainer);
+    GapRects selectionGapRectsForRepaint(RenderLayerModelObject* repaintContainer);
     LayoutRect logicalLeftSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
                                        RenderObject* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const PaintInfo*);
     LayoutRect logicalRightSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
@@ -811,14 +811,14 @@ private:
     // children.
     virtual RenderBlock* firstLineBlock() const;
 
-    virtual LayoutRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, LayoutUnit outlineWidth) const;
+    virtual LayoutRect rectWithOutlineForRepaint(RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const OVERRIDE;
     virtual RenderStyle* outlineStyleForRepaint() const;
     
     virtual RenderObject* hoverAncestor() const;
     virtual void updateDragState(bool dragOn);
     virtual void childBecameNonInline(RenderObject* child);
 
-    virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool /*clipToVisibleContent*/)
+    virtual LayoutRect selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) OVERRIDE
     {
         return selectionGapRectsForRepaint(repaintContainer);
     }

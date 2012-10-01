@@ -66,6 +66,7 @@
 #include "RenderInline.cpp"
 #include "RenderLayer.cpp"
 #include "RenderLayerCompositor.cpp"
+#include "RenderLayerModelObject.cpp"
 #include "RenderLineBoxList.cpp"
 #include "RenderListBox.cpp"
 #include "RenderListItem.cpp"

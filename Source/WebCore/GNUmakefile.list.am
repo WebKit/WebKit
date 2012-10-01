@@ -5016,6 +5016,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderLayerCompositor.h \
 	Source/WebCore/rendering/RenderLayerFilterInfo.cpp \
 	Source/WebCore/rendering/RenderLayerFilterInfo.h \
+	Source/WebCore/rendering/RenderLayerModelObject.cpp \
+	Source/WebCore/rendering/RenderLayerModelObject.h \
 	Source/WebCore/rendering/RenderLineBoxList.cpp \
 	Source/WebCore/rendering/RenderLineBoxList.h \
 	Source/WebCore/rendering/RenderListBox.cpp \

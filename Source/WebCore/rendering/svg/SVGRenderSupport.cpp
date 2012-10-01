@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer)
+LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderLayerModelObject* repaintContainer)
 {
     // Return early for any cases where we don't actually paint
     if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
@@ -59,7 +59,7 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* o
     return enclosingLayoutRect(repaintRect);
 }
 
-void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
+void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
 {
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
@@ -71,7 +71,7 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, Re
     object->parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderLayerModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
 {
     transformState.applyTransform(object->localToParentTransform());
 
@@ -89,7 +89,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
-const RenderObject* SVGRenderSupport::pushMappingToContainer(const RenderObject* object, const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap)
+const RenderObject* SVGRenderSupport::pushMappingToContainer(const RenderObject* object, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap)
 {
     ASSERT_UNUSED(ancestorToStopAt, ancestorToStopAt != object);
 

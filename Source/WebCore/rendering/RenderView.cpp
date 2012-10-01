@@ -176,7 +176,7 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
+void RenderView::mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
@@ -193,7 +193,7 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, Tra
         transformState.move(m_frameView->scrollOffsetForFixedPosition());
 }
 
-const RenderObject* RenderView::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
@@ -268,7 +268,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 static inline bool isComposited(RenderObject* object)
 {
-    return object->hasLayer() && toRenderBoxModelObject(object)->layer()->isComposited();
+    return object->hasLayer() && toRenderLayerModelObject(object)->layer()->isComposited();
 }
 
 static inline bool rendererObscuresBackground(RenderObject* object)
@@ -391,7 +391,7 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur,
 #endif
 }
 
-void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+void RenderView::computeRectForRepaint(RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
@@ -413,20 +413,20 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, L
         rect.move(m_frameView->scrollOffsetForFixedPosition());
         
     // Apply our transform if we have one (because of full page zooming).
-    if (!repaintContainer && m_layer && m_layer->transform())
-        rect = m_layer->transform()->mapRect(rect);
+    if (!repaintContainer && layer() && layer()->transform())
+        rect = layer()->transform()->mapRect(rect);
 }
 
 void RenderView::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(pixelSnappedIntRect(accumulatedOffset, m_layer->size()));
+    rects.append(pixelSnappedIntRect(accumulatedOffset, layer()->size()));
 }
 
 void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     if (wasFixed)
         *wasFixed = false;
-    quads.append(FloatRect(FloatPoint(), m_layer->size()));
+    quads.append(FloatRect(FloatPoint(), layer()->size()));
 }
 
 static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)
@@ -471,7 +471,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
         RenderSelectionInfo* info = i->second.get();
         // RenderSelectionInfo::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
         LayoutRect currRect = info->rect();
-        if (RenderBoxModelObject* repaintContainer = info->repaintContainer()) {
+        if (RenderLayerModelObject* repaintContainer = info->repaintContainer()) {
             FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(FloatRect(currRect));
             currRect = absQuad.enclosingBoundingBox(); 
         }
@@ -576,7 +576,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     }
 
     if (blockRepaintMode != RepaintNothing)
-        m_layer->clearBlockSelectionGapsBounds();
+        layer()->clearBlockSelectionGapsBounds();
 
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
@@ -656,7 +656,7 @@ void RenderView::getSelection(RenderObject*& startRenderer, int& startOffset, Re
 
 void RenderView::clearSelection()
 {
-    m_layer->repaintBlockSelectionGaps();
+    layer()->repaintBlockSelectionGaps();
     setSelection(0, -1, 0, -1, RepaintNewMinusOld);
 }
 

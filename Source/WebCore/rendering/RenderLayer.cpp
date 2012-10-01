@@ -131,7 +131,7 @@ bool ClipRect::intersects(const HitTestLocation& hitTestLocation)
     return hitTestLocation.intersects(m_rect);
 }
 
-RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
+RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
     : m_inResizeMode(false)
     , m_scrollDimensionsDirty(true)
     , m_normalFlowListDirty(true)
@@ -392,7 +392,7 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         // LayoutState outside the layout() phase and use it here.
         ASSERT(!view->layoutStateEnabled());
 
-        RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+        RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
         LayoutRect oldRepaintRect = m_repaintRect;
         LayoutRect oldOutlineBox = m_outlineBox;
         computeRepaintRects(offsetFromRoot);
@@ -489,7 +489,7 @@ void RenderLayer::computeRepaintRects(LayoutPoint* offsetFromRoot)
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+    RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
     m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, offsetFromRoot);
 }
@@ -630,10 +630,10 @@ TransformationMatrix RenderLayer::renderableTransform(PaintBehavior paintBehavio
     return *m_transform;
 }
 
-static bool checkContainingBlockChainForPagination(RenderBoxModelObject* renderer, RenderBox* ancestorColumnsRenderer)
+static bool checkContainingBlockChainForPagination(RenderLayerModelObject* renderer, RenderBox* ancestorColumnsRenderer)
 {
     RenderView* view = renderer->view();
-    RenderBoxModelObject* prevBlock = renderer;
+    RenderLayerModelObject* prevBlock = renderer;
     RenderBlock* containingBlock;
     for (containingBlock = renderer->containingBlock();
          containingBlock && containingBlock != view && containingBlock != ancestorColumnsRenderer;
@@ -894,7 +894,7 @@ void RenderLayer::updateLayerPosition()
     }
     
     if (renderer()->isInFlowPositioned()) {
-        m_offsetForInFlowPosition = renderer()->offsetForInFlowPosition();
+        m_offsetForInFlowPosition = toRenderBoxModelObject(renderer())->offsetForInFlowPosition();
         localPoint.move(m_offsetForInFlowPosition);
     } else {
         m_offsetForInFlowPosition = LayoutSize();
@@ -957,7 +957,7 @@ RenderLayer* RenderLayer::stackingContext() const
 
 static inline bool isPositionedContainer(RenderLayer* layer)
 {
-    RenderBoxModelObject* layerRenderer = layer->renderer();
+    RenderLayerModelObject* layerRenderer = layer->renderer();
     return layer->isRootLayer() || layerRenderer->isPositioned() || layer->hasTransform();
 }
 
@@ -1135,7 +1135,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
 bool RenderLayer::hasAncestorWithFilterOutsets() const
 {
     for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        RenderBoxModelObject* renderer = curr->renderer();
+        RenderLayerModelObject* renderer = curr->renderer();
         if (renderer->style()->hasFilterOutsets())
             return true;
     }
@@ -1735,7 +1735,7 @@ void RenderLayer::scrollTo(int x, int y)
         updateCompositingLayersAfterScroll();
     }
 
-    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+    RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
     Frame* frame = renderer()->frame();
     if (frame) {
         // The caret rect needs to be invalidated after scrolling
@@ -4704,7 +4704,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)
 }
 
 // Since we're only painting non-composited layers, we know that they all share the same repaintContainer.
-void RenderLayer::repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer)
+void RenderLayer::repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer)
 {
     renderer()->repaintUsingContainer(repaintContainer, pixelSnappedIntRect(renderer()->clippedOverflowRectForRepaint(repaintContainer)));
 
