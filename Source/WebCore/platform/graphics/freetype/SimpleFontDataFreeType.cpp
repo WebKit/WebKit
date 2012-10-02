@@ -171,4 +171,11 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     return w;    
 }
 
+#if USE(HARFBUZZ_NG)
+bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar*, size_t) const
+{
+    return false;
+}
+#endif
+
 }

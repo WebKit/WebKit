@@ -184,6 +184,9 @@ public:
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ_NG)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
@@ -288,6 +291,9 @@ private:
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
+#endif
+
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ_NG)
     mutable OwnPtr<HashMap<String, bool> > m_combiningCharacterSequenceSupport;
 #endif
 

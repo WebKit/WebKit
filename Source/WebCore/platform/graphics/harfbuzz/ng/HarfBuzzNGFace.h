@@ -33,6 +33,7 @@
 
 #include <hb.h>
 
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -59,6 +60,7 @@ private:
     FontPlatformData* m_platformData;
     uint64_t m_uniqueID;
     hb_face_t* m_face;
+    WTF::HashMap<uint32_t, uint16_t>* m_glyphCacheForFaceCacheEntry;
 };
 
 }
