@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "CalendarPickerElement.h"
+#include "PickerIndicatorElement.h"
 
 #if ENABLE(CALENDAR_PICKER)
 
@@ -49,39 +49,39 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline CalendarPickerElement::CalendarPickerElement(Document* document)
+inline PickerIndicatorElement::PickerIndicatorElement(Document* document)
     : HTMLDivElement(divTag, document)
     , m_chooser(nullptr)
 {
     setShadowPseudoId("-webkit-calendar-picker-indicator");
 }
 
-PassRefPtr<CalendarPickerElement> CalendarPickerElement::create(Document* document)
+PassRefPtr<PickerIndicatorElement> PickerIndicatorElement::create(Document* document)
 {
-    return adoptRef(new CalendarPickerElement(document));
+    return adoptRef(new PickerIndicatorElement(document));
 }
 
-CalendarPickerElement::~CalendarPickerElement()
+PickerIndicatorElement::~PickerIndicatorElement()
 {
     closePopup();
     ASSERT(!m_chooser);
 }
 
-RenderObject* CalendarPickerElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* PickerIndicatorElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderDetailsMarker(this);
 }
 
-inline HTMLInputElement* CalendarPickerElement::hostInput()
+inline HTMLInputElement* PickerIndicatorElement::hostInput()
 {
-    // JavaScript code can't create CalendarPickerElement objects. This is
+    // JavaScript code can't create PickerIndicatorElement objects. This is
     // always in shadow of <input>.
     ASSERT(shadowHost());
     ASSERT(shadowHost()->hasTagName(inputTag));
     return static_cast<HTMLInputElement*>(shadowHost());
 }
 
-void CalendarPickerElement::defaultEventHandler(Event* event)
+void PickerIndicatorElement::defaultEventHandler(Event* event)
 {
     if (!renderer())
         return;
@@ -98,7 +98,7 @@ void CalendarPickerElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
-bool CalendarPickerElement::willRespondToMouseClickEvents()
+bool PickerIndicatorElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = hostInput();
     if (renderer() && !input->readOnly() && !input->disabled())
@@ -107,17 +107,17 @@ bool CalendarPickerElement::willRespondToMouseClickEvents()
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
-void CalendarPickerElement::didChooseValue(const String& value)
+void PickerIndicatorElement::didChooseValue(const String& value)
 {
     hostInput()->setValue(value, DispatchChangeEvent);
 }
 
-void CalendarPickerElement::didEndChooser()
+void PickerIndicatorElement::didEndChooser()
 {
     m_chooser.clear();
 }
 
-void CalendarPickerElement::openPopup()
+void PickerIndicatorElement::openPopup()
 {
     if (m_chooser)
         return;
@@ -156,14 +156,14 @@ void CalendarPickerElement::openPopup()
     m_chooser = chrome->client()->openDateTimeChooser(this, parameters);
 }
 
-void CalendarPickerElement::closePopup()
+void PickerIndicatorElement::closePopup()
 {
     if (!m_chooser)
         return;
     m_chooser->endChooser();
 }
 
-void CalendarPickerElement::detach()
+void PickerIndicatorElement::detach()
 {
     closePopup();
     HTMLDivElement::detach();

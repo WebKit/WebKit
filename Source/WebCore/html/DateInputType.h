@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class CalendarPickerElement;
+class PickerIndicatorElement;
 
 class DateInputType : public BaseDateAndTimeInputType {
 public:
@@ -65,7 +65,7 @@ private:
     virtual bool needsContainer() const OVERRIDE;
     virtual bool shouldHaveSpinButton() const OVERRIDE;
 
-    CalendarPickerElement* m_pickerElement;
+    PickerIndicatorElement* m_pickerElement;
 #endif
 };
 

@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CalendarPickerElement_h
-#define CalendarPickerElement_h
+#ifndef PickerIndicatorElement_h
+#define PickerIndicatorElement_h
 
 #if ENABLE(CALENDAR_PICKER)
 
@@ -43,10 +43,10 @@ namespace WebCore {
 class HTMLInputElement;
 class PagePopup;
 
-class CalendarPickerElement : public HTMLDivElement, public DateTimeChooserClient {
+class PickerIndicatorElement : public HTMLDivElement, public DateTimeChooserClient {
 public:
-    static PassRefPtr<CalendarPickerElement> create(Document*);
-    virtual ~CalendarPickerElement();
+    static PassRefPtr<PickerIndicatorElement> create(Document*);
+    virtual ~PickerIndicatorElement();
     void openPopup();
     void closePopup();
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
@@ -56,7 +56,7 @@ public:
     virtual void didEndChooser() OVERRIDE;
 
 private:
-    CalendarPickerElement(Document*);
+    PickerIndicatorElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;

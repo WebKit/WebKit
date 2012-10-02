@@ -31,13 +31,13 @@
 #include "config.h"
 #include "DateInputType.h"
 
-#include "CalendarPickerElement.h"
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "Localizer.h"
+#include "PickerIndicatorElement.h"
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_TYPE_DATE)
@@ -106,7 +106,7 @@ bool DateInputType::isDateField() const
 void DateInputType::createShadowSubtree()
 {
     BaseDateAndTimeInputType::createShadowSubtree();
-    RefPtr<CalendarPickerElement> pickerElement = CalendarPickerElement::create(element()->document());
+    RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(element()->document());
     m_pickerElement = pickerElement.get();
     containerElement()->insertBefore(m_pickerElement, innerBlockElement()->nextSibling(), ASSERT_NO_EXCEPTION);
 }
