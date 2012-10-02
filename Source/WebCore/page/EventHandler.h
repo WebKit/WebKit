@@ -111,6 +111,7 @@ public:
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
     void updateAutoscrollRenderer();
+    bool autoscrollInProgress() const { return m_autoscrollInProgress; }
 
     void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);

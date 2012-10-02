@@ -1806,7 +1806,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))
                     frameElement = static_cast<HTMLFrameElement*>(ownerElement);
 
-                if (frameElement && frameElement->scrollingMode() != ScrollbarAlwaysOff) {
+                if ((frameElement && frameElement->scrollingMode() != ScrollbarAlwaysOff)
+                    || (!frameView->frame()->eventHandler()->autoscrollInProgress() && !frameView->wasScrolledByUser())) {
                     LayoutRect viewRect = frameView->visibleContentRect();
                     LayoutRect exposeRect = getRectToExpose(viewRect, rect, alignX, alignY);
 
