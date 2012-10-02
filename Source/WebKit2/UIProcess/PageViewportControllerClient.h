@@ -23,6 +23,11 @@
 
 #include <wtf/Noncopyable.h>
 
+namespace WebCore {
+class FloatPoint;
+class IntSize;
+}
+
 namespace WebKit {
 
 class PageViewportController;
