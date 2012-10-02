@@ -56,6 +56,15 @@
         "webkitpy": {
             "filename": r"Tools/Scripts/webkitpy/",
         },
+        "webkitperl": {
+            "filename": r"Tools/Scripts/webkitperl/"
+                        r"|Tools/Scripts/webkitdirs.pm"
+                        r"|Tools/Scripts/VCSUtils.pm"
+                        r"|Tools/Scripts/test-webkitperl",
+        },
+        "SVNScripts": {
+            "filename": r"Tools/Scripts/svn-.*",
+        },
         "TestFailures": {
             "filename": r"Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/",
         },
@@ -63,6 +72,9 @@
             "more": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
             "less": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
             "filename": r"XSS|[Ss]ecurity",
+        },
+        "XSS": {
+            "filename": r".*XSS",
         },
         "SkiaGraphics": {
             "filename": r"Source/WebCore/platform/graphics/skia/"
@@ -273,6 +285,7 @@
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "zoltan@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "zoltan@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "Rendering": [ "eric@webkit.org" ],
+        "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
@@ -286,9 +299,11 @@
         "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
+        "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org", "dpranke@chromium.org" ],
         "WebSocket": [ "yutak@chromium.org" ],
         "WTF": [ "benjamin@webkit.org",],
+        "XSS": [ "dbates@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
