@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationManager_h
-#define WebGeolocationManager_h
+#include "config.h"
+#include "MessageReceiverMap.h"
 
 #include "MessageReceiver.h"
-#include "WebGeolocationPosition.h"
-#include <wtf/HashSet.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
+
+MessageReceiverMap::MessageReceiverMap()
+{
 }
 
-namespace WebCore {
-class Geolocation;
+MessageReceiverMap::~MessageReceiverMap()
+{
 }
 
-namespace WTF {
-class String;
+void MessageReceiverMap::addMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
+{
+    ASSERT(!m_globalMessageReceiverMap.contains(messageClass));
+    m_globalMessageReceiverMap.set(messageClass, messageReceiver);
 }
 
-namespace WebKit {
+bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder)
+{
+    if (MessageReceiver* messageReceiver = m_globalMessageReceiverMap.get(messageID.messageClass())) {
+        messageReceiver->didReceiveMessage(connection, messageID, argumentDecoder);
+        return true;
+    }
 
-class WebProcess;
-class WebPage;
+    return false;
+}
 
-class WebGeolocationManager : private CoreIPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
-public:
-    explicit WebGeolocationManager(WebProcess*);
-    ~WebGeolocationManager();
-
-    void registerWebPage(WebPage*);
-    void unregisterWebPage(WebPage*);
-
-    void requestPermission(WebCore::Geolocation*);
-
-
-private:
-    // MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
-
-    // Implemented in generated WebGeolocationManagerMessageReceiver.cpp
-    void didReceiveWebGeolocationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-    void didChangePosition(const WebGeolocationPosition::Data&);
-    void didFailToDeterminePosition(const WTF::String& errorMessage);
-
-    WebProcess* m_process;
-    HashSet<WebPage*> m_pageSet;
-};
-
-} // namespace WebKit
-
-#endif // WebGeolocationManager_h
+} // namespace CoreIPC

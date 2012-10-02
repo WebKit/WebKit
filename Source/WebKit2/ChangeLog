@@ -1,3 +1,72 @@
+2012-10-01  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to simplify IPC message dispatching logic in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=98097
+
+        Reviewed by Sam Weinig.
+
+        Move the Connection::MessageReceiver class to its own header file. Add a MessageReceiverMap helper class
+        that will be used for dispatching messages based on message class (and eventually destination ID).
+
+        Convert AuthenticationManager and WebGeolocationManager over to this new mechanism.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        Add new files.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchMessage):
+        Check with the message receiver map first before calling Connection::Client::didReceiveMessage.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::addMessageReceiver):
+        Call through to the message receiver map.
+
+        * Platform/CoreIPC/MessageID.h:
+        (CoreIPC::MessageID::messageClass):
+        Rename MessageClassReserved to MessageClassInvalid.
+
+        (MessageID):
+        * Platform/CoreIPC/MessageReceiver.h:
+        Move MessageReceiver from Connection.h to its own file.
+
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        New helper class.
+
+        (CoreIPC::MessageReceiverMap::addMessageReceiver):
+        Add the receiver to the map of receivers.
+
+        (CoreIPC::MessageReceiverMap::dispatchMessage):
+        Check if we have any registered receivers for this message class.
+
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        New file.
+
+        * Target.pri:
+        Add new files.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        Register the authentication manager as a message receiver.
+
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::WebGeolocationManager):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        Register the geolocation manager as a message receiver.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        Remove checks for authentication manager and geolocation manager messages.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Programs/WebKit2APITests/TestCookieManager fails

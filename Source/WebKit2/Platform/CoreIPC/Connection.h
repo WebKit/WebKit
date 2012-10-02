@@ -31,9 +31,9 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
-#include "MessageID.h"
+#include "MessageReceiver.h"
+#include "MessageReceiverMap.h"
 #include "WorkQueue.h"
-#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
@@ -85,15 +85,6 @@ while (0)
 
 class Connection : public ThreadSafeRefCounted<Connection> {
 public:
-    class MessageReceiver {
-    public:
-        virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
-        virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, OwnPtr<ArgumentEncoder>&) { ASSERT_NOT_REACHED(); }
-
-    protected:
-        virtual ~MessageReceiver() { }
-    };
-    
     class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection*) = 0;
@@ -180,6 +171,11 @@ public:
 
     void addQueueClient(QueueClient*);
     void removeQueueClient(QueueClient*);
+
+    void addMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
+    {
+        m_messageReceiverMap.addMessageReceiver(messageClass, messageReceiver);
+    }
 
     bool open();
     void invalidate();
@@ -279,8 +275,9 @@ private:
 
     // Called on the listener thread.
     void dispatchConnectionDidClose();
-    void dispatchMessage(IncomingMessage&);
     void dispatchOneMessage();
+    void dispatchMessage(IncomingMessage&);
+    void dispatchMessage(MessageID, ArgumentDecoder*);
     void dispatchSyncMessage(MessageID, ArgumentDecoder*);
     void didFailToSendSyncMessage();
 
@@ -310,6 +307,8 @@ private:
     // Incoming messages.
     Mutex m_incomingMessagesLock;
     Deque<IncomingMessage> m_incomingMessages;
+
+    MessageReceiverMap m_messageReceiverMap;
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;

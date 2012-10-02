@@ -42,6 +42,7 @@ namespace WebKit {
 WebGeolocationManager::WebGeolocationManager(WebProcess* process)
     : m_process(process)
 {
+    WebProcess::shared().connection()->addMessageReceiver(CoreIPC::MessageClassWebGeolocationManager, this);
 }
 
 WebGeolocationManager::~WebGeolocationManager()

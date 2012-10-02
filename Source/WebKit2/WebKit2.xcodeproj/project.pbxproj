@@ -115,6 +115,9 @@
 		1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD205125E5A2F004515E6 /* APIClient.h */; };
 		1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */; };
 		1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */; };
+		1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */; };
+		1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */; };
+		1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
 		1A4A9AA812B7E796008FE984 /* WKTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */; };
 		1A4A9AA912B7E796008FE984 /* WKTextInputWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */; };
@@ -1149,6 +1152,9 @@
 		1A3DD205125E5A2F004515E6 /* APIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClient.h; sourceTree = "<group>"; };
 		1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlatformStrategies.h; sourceTree = "<group>"; };
 		1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformStrategies.cpp; sourceTree = "<group>"; };
+		1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageReceiverMap.cpp; sourceTree = "<group>"; };
+		1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiverMap.h; sourceTree = "<group>"; };
+		1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiver.h; sourceTree = "<group>"; };
 		1A433F0C113C53DD00FACDE9 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextInputWindowController.h; sourceTree = "<group>"; };
 		1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextInputWindowController.mm; sourceTree = "<group>"; };
@@ -2600,6 +2606,9 @@
 				1A8EFDF91253CAA200F7067F /* DataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				BC032DA410F437D10058C15A /* MessageID.h */,
+				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
+				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
+				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
 				1A119A94127B796200A9ECB1 /* MessageSender.h */,
 			);
 			path = CoreIPC;
@@ -4299,6 +4308,8 @@
 				BC59548915C7868500FD1E3E /* WebKit2.h in Headers */,
 				BCDC308815FD6A8B006B6695 /* WebProcessInitialization.h in Headers */,
 				BCDC308C15FD6CD1006B6695 /* WebProcessServiceEntryPoints.h in Headers */,
+				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
+				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5155,6 +5166,7 @@
 				CD67D30E15C08F9A00843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp in Sources */,
 				BCDC308715FD6A8B006B6695 /* WebProcessInitialization.mm in Sources */,
 				BCDC308B15FD6CD1006B6695 /* WebProcessServiceEntryPoints.mm in Sources */,
+				1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

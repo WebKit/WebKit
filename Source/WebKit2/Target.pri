@@ -26,6 +26,8 @@ HEADERS += \
     Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageID.h \
+    Platform/CoreIPC/MessageReceiver.h \
+    Platform/CoreIPC/MessageReceiverMap.h \
     Platform/CoreIPC/MessageSender.h \
     Platform/Logging.h \
     Platform/Module.h \
@@ -382,6 +384,7 @@ SOURCES += \
     Platform/CoreIPC/Attachment.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
+    Platform/CoreIPC/MessageReceiverMap.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/WorkQueue.cpp \

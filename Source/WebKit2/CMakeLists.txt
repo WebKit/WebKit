@@ -123,6 +123,7 @@ SET(WebKit2_SOURCES
     Platform/CoreIPC/BinarySemaphore.cpp
     Platform/CoreIPC/Connection.cpp
     Platform/CoreIPC/DataReference.cpp
+    Platform/CoreIPC/MessageReceiverMap.cpp
 
     PluginProcess/PluginControllerProxy.cpp
     PluginProcess/PluginCreationParameters.cpp

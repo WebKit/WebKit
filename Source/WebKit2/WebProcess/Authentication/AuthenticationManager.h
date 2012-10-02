@@ -26,6 +26,7 @@
 #ifndef AuthenticationManager_h
 #define AuthenticationManager_h
 
+#include "MessageReceiver.h"
 #include <wtf/HashMap.h>
 
 namespace CoreIPC {
@@ -45,13 +46,11 @@ class Download;
 class PlatformCertificateInfo;
 class WebFrame;
 
-class AuthenticationManager {
+class AuthenticationManager : private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 
 public:
     static AuthenticationManager& shared();
-
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
@@ -62,6 +61,9 @@ public:
 
 private:
     AuthenticationManager();
+
+    // MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
 
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 

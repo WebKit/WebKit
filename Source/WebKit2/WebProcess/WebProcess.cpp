@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "AuthenticationManager.h"
 #include "DownloadManager.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
@@ -638,11 +637,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassAuthenticationManager>()) {
-        AuthenticationManager::shared().didReceiveMessage(connection, messageID, arguments);
-        return;
-    }
-
     if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManager>()) {
         WebApplicationCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
@@ -659,11 +653,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 #endif
-
-    if (messageID.is<CoreIPC::MessageClassWebGeolocationManager>()) {
-        m_geolocationManager.didReceiveMessage(connection, messageID, arguments);
-        return;
-    }
 
 #if ENABLE(BATTERY_STATUS)
     if (messageID.is<CoreIPC::MessageClassWebBatteryManager>()) {

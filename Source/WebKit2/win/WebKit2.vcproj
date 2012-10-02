@@ -4090,6 +4090,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\MessageReceiver.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageReceiverMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageReceiverMap.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\MessageSender.h"
 					>
 				</File>
