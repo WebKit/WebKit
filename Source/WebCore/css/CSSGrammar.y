@@ -1741,7 +1741,21 @@ static void print_token_value(FILE * yyoutput, int yytype, YYSTYPE const &yyvalu
     switch (yytype) {
     case IDENT:
     case STRING:
-        YYFPRINTF(yyoutput, "%s", ((String)yyvalue.string).utf8().data());
+    case NTH:
+    case HEX:
+    case IDSEL:
+    case DIMEN:
+    case INVALIDDIMEN:
+    case URI:
+    case FUNCTION:
+    case ANYFUNCTION:
+    case NOTFUNCTION:
+    case CALCFUNCTION:
+    case MINFUNCTION:
+    case MAXFUNCTION:
+    case VAR_DEFINITION:
+    case UNICODERANGE:
+        YYFPRINTF(yyoutput, "%s", String(yyvalue.string).utf8().data());
         break;
     default:
         break;
