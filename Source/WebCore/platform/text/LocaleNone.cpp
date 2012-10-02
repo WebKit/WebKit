@@ -78,7 +78,7 @@ String LocaleNone::dateFormatText()
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String LocaleNone::dateFormat()
 {
-    return ASCIILiteral("dd/mm/yyyyy");
+    return ASCIILiteral("dd/MM/yyyyy");
 }
 #endif
 
