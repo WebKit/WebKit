@@ -327,6 +327,19 @@ namespace JSC {
             }
         }
         
+        bool hasSparseMap()
+        {
+            switch (structure()->indexingType()) {
+            case ALL_BLANK_INDEXING_TYPES:
+                return false;
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                return m_butterfly->arrayStorage()->m_sparseMap;
+            default:
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        }
+        
         bool inSparseIndexingMode()
         {
             switch (structure()->indexingType()) {

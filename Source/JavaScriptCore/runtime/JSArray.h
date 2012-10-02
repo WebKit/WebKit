@@ -103,7 +103,7 @@ namespace JSC {
 
         bool unshiftCountSlowCase(JSGlobalData&, bool, unsigned);
         
-        unsigned compactForSorting(JSGlobalData&);
+        unsigned compactForSorting();
     };
 
     inline Butterfly* createArrayButterfly(JSGlobalData& globalData, unsigned initialLength)

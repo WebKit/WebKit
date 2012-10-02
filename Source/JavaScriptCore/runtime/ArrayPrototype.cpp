@@ -655,7 +655,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(function, callData);
 
-    if (thisObj->classInfo() == &JSArray::s_info && !asArray(thisObj)->inSparseIndexingMode() && !shouldUseSlowPut(thisObj->structure()->indexingType())) {
+    if (thisObj->classInfo() == &JSArray::s_info && !asArray(thisObj)->hasSparseMap() && !shouldUseSlowPut(thisObj->structure()->indexingType())) {
         if (isNumericCompareFunction(exec, callType, callData))
             asArray(thisObj)->sortNumeric(exec, function, callType, callData);
         else if (callType != CallTypeNone)

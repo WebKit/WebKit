@@ -297,6 +297,7 @@ fast/js/sort-no-jit-code-crash
 fast/js/sort-non-numbers
 fast/js/sort-randomly
 fast/js/sort-stability
+fast/js/sort-with-side-effecting-comparisons
 fast/js/sparse-array
 fast/js/stack-overflow-arrity-catch
 fast/js/stack-overflow-catch
