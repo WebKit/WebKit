@@ -1,3 +1,10 @@
+2012-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r130135. Dromaeo tests only report single memory value,
+        and computeStatistics should report variance as 0 in such cases.
+
+        * resources/runner.js:
+
 2012-10-02  Philip Rogers  <pdr@google.com>
 
         Fix PerfTest standard deviation calculation.

@@ -80,7 +80,7 @@ if (window.testRunner) {
             result.mean += delta / sweep;
             squareSum += delta * (x - result.mean);
         }
-        result.variance = squareSum / (data.length - 1);
+        result.variance = data.length <= 1 ? 0 : squareSum / (data.length - 1);
         result.stdev = Math.sqrt(result.variance);
         result.unit = unit || "ms";
 
