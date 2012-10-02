@@ -77,7 +77,8 @@ public:
         v8::Persistent<v8::Object> wrapper = node->wrapper();
         if (wrapper.IsEmpty())
             return false;
-        ASSERT(wrapper == value);
+        if (wrapper != value)
+            return false;
         node->disposeWrapper();
         m_nodes.remove(node);
         return true;
