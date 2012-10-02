@@ -79,6 +79,7 @@ public:
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
 
     WEBKIT_EXPORT WebString encoding() const;
+    WEBKIT_EXPORT WebString contentLanguage() const;
 
     // The url of the OpenSearch Desription Document (if any).
     WEBKIT_EXPORT WebURL openSearchDescriptionURL() const;

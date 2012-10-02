@@ -81,6 +81,11 @@ WebString WebDocument::encoding() const
     return constUnwrap<Document>()->encoding();
 }
 
+WebString WebDocument::contentLanguage() const
+{
+    return constUnwrap<Document>()->contentLanguage();
+}
+
 WebURL WebDocument::openSearchDescriptionURL() const
 {
     return const_cast<Document*>(constUnwrap<Document>())->openSearchDescriptionURL();
