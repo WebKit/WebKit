@@ -2,129 +2,12 @@
 
 // We need access to console.memory for the memory measurements
 if (window.internals)
-     internals.settings.setMemoryInfoEnabled(true);
+    internals.settings.setMemoryInfoEnabled(true);
 
-var PerfTestRunner = {};
-
-// To make the benchmark results predictable, we replace Math.random with a
-// 100% deterministic alternative.
-PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed = 49734321;
-
-PerfTestRunner.resetRandomSeed = function() {
-    PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
-
-PerfTestRunner.random = Math.random = function() {
-    // Robert Jenkins' 32 bit integer hash function.
-    var randomSeed = PerfTestRunner.randomSeed;
-    randomSeed = ((randomSeed + 0x7ed55d16) + (randomSeed << 12))  & 0xffffffff;
-    randomSeed = ((randomSeed ^ 0xc761c23c) ^ (randomSeed >>> 19)) & 0xffffffff;
-    randomSeed = ((randomSeed + 0x165667b1) + (randomSeed << 5))   & 0xffffffff;
-    randomSeed = ((randomSeed + 0xd3a2646c) ^ (randomSeed << 9))   & 0xffffffff;
-    randomSeed = ((randomSeed + 0xfd7046c5) + (randomSeed << 3))   & 0xffffffff;
-    randomSeed = ((randomSeed ^ 0xb55a4f09) ^ (randomSeed >>> 16)) & 0xffffffff;
-    PerfTestRunner.randomSeed = randomSeed;
-    return (randomSeed & 0xfffffff) / 0x10000000;
-};
-
-PerfTestRunner.now = window.performance && window.performance.webkitNow ? function () { return window.performance.webkitNow(); } : Date.now;
-
-PerfTestRunner.logInfo = function (text) {
-    if (!window.testRunner)
-        this.log(text);
-}
-
-PerfTestRunner.loadFile = function (path) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", path, false);
-    xhr.send(null);
-    return xhr.responseText;
-}
-
-PerfTestRunner.computeStatistics = function (times, unit) {
-    var data = times.slice();
-
-    // Add values from the smallest to the largest to avoid the loss of significance
-    data.sort(function(a,b){return a-b;});
-
-    var middle = Math.floor(data.length / 2);
-    var result = {
-        min: data[0],
-        max: data[data.length - 1],
-        median: data.length % 2 ? data[middle] : (data[middle - 1] + data[middle]) / 2,
-    };
-
-    // Compute the mean and variance using a numerically stable algorithm.
-    var squareSum = 0;
-    result.values = times;
-    result.mean = data[0];
-    result.sum = data[0];
-    for (var i = 1; i < data.length; ++i) {
-        var x = data[i];
-        var delta = x - result.mean;
-        var sweep = i + 1.0;
-        result.mean += delta / sweep;
-        result.sum += x;
-        squareSum += delta * delta * (i / sweep);
-    }
-    result.variance = squareSum / data.length;
-    result.stdev = Math.sqrt(result.variance);
-    result.unit = unit || "ms";
-
-    return result;
-}
-
-PerfTestRunner.logStatistics = function (values, unit, title) {
-    var statistics = this.computeStatistics(values, unit);
-    this.printStatistics(statistics, title);
-}
-
-PerfTestRunner.printStatistics = function (statistics, title) {
-    this.log("");
-    this.log(title);
-    if (statistics.values)
-        this.log("values " + statistics.values.join(', ') + " " + statistics.unit);
-    this.log("avg " + statistics.mean + " " + statistics.unit);
-    this.log("median " + statistics.median + " " + statistics.unit);
-    this.log("stdev " + statistics.stdev + " " + statistics.unit);
-    this.log("min " + statistics.min + " " + statistics.unit);
-    this.log("max " + statistics.max + " " + statistics.unit);
-}
-
-PerfTestRunner.getUsedMallocHeap = function() {
-    var stats = window.internals.mallocStatistics();
-    return stats.committedVMBytes - stats.freeListBytes;
-}
-
-PerfTestRunner.getUsedJSHeap = function() {
-    return console.memory.usedJSHeapSize;
-}
-
-PerfTestRunner.getAndPrintMemoryStatistics = function() {
-    if (!window.internals)
-        return;
-    var jsMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedJSHeap()], "bytes");
-    PerfTestRunner.printStatistics(jsMemoryStats, "JS Heap:");
-
-    var mallocMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedMallocHeap()], "bytes");
-    PerfTestRunner.printStatistics(mallocMemoryStats, "Malloc:");
-}
-
-PerfTestRunner.gc = function () {
-    if (window.GCController)
-        window.GCController.collect();
-    else {
-        function gcRec(n) {
-            if (n < 1)
-                return {};
-            var temp = {i: "ab" + i + (i / 100000)};
-            temp += "foo";
-            gcRec(n-1);
-        }
-        for (var i = 0; i < 1000; i++)
-            gcRec(10);
-    }
-};
 
 (function () {
     var logLines = null;
@@ -136,10 +19,132 @@ PerfTestRunner.gc = function () {
     var mallocHeapResults = [];
     var runCount = undefined;
 
+    var PerfTestRunner = {};
+
+    // To make the benchmark results predictable, we replace Math.random with a
+    // 100% deterministic alternative.
+    PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed = 49734321;
+
+    PerfTestRunner.resetRandomSeed = function() {
+        PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed
+    }
+
+    PerfTestRunner.random = Math.random = function() {
+        // Robert Jenkins' 32 bit integer hash function.
+        var randomSeed = PerfTestRunner.randomSeed;
+        randomSeed = ((randomSeed + 0x7ed55d16) + (randomSeed << 12))  & 0xffffffff;
+        randomSeed = ((randomSeed ^ 0xc761c23c) ^ (randomSeed >>> 19)) & 0xffffffff;
+        randomSeed = ((randomSeed + 0x165667b1) + (randomSeed << 5))   & 0xffffffff;
+        randomSeed = ((randomSeed + 0xd3a2646c) ^ (randomSeed << 9))   & 0xffffffff;
+        randomSeed = ((randomSeed + 0xfd7046c5) + (randomSeed << 3))   & 0xffffffff;
+        randomSeed = ((randomSeed ^ 0xb55a4f09) ^ (randomSeed >>> 16)) & 0xffffffff;
+        PerfTestRunner.randomSeed = randomSeed;
+        return (randomSeed & 0xfffffff) / 0x10000000;
+    };
+
+    PerfTestRunner.now = window.performance && window.performance.webkitNow ? function () { return window.performance.webkitNow(); } : Date.now;
+
+    PerfTestRunner.logInfo = function (text) {
+        if (!window.testRunner)
+            this.log(text);
+    }
+
+    PerfTestRunner.loadFile = function (path) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", path, false);
+        xhr.send(null);
+        return xhr.responseText;
+    }
+
+    PerfTestRunner.computeStatistics = function (times, unit) {
+        var data = times.slice();
+
+        // Add values from the smallest to the largest to avoid the loss of significance
+        data.sort(function(a,b){return a-b;});
+
+        var middle = Math.floor(data.length / 2);
+        var result = {
+            min: data[0],
+            max: data[data.length - 1],
+            median: data.length % 2 ? data[middle] : (data[middle - 1] + data[middle]) / 2,
+        };
+
+        // Compute the mean and variance using a numerically stable algorithm.
+        var squareSum = 0;
+        result.values = times;
+        result.mean = data[0];
+        result.sum = data[0];
+        for (var i = 1; i < data.length; ++i) {
+            var x = data[i];
+            var delta = x - result.mean;
+            var sweep = i + 1.0;
+            result.mean += delta / sweep;
+            result.sum += x;
+            squareSum += delta * delta * (i / sweep);
+        }
+        result.variance = squareSum / data.length;
+        result.stdev = Math.sqrt(result.variance);
+        result.unit = unit || "ms";
+
+        return result;
+    }
+
+    PerfTestRunner.logStatistics = function (values, unit, title) {
+        var statistics = this.computeStatistics(values, unit);
+        this.printStatistics(statistics, title);
+    }
+
+    PerfTestRunner.printStatistics = function (statistics, title) {
+        this.log("");
+        this.log(title);
+        if (statistics.values)
+            this.log("values " + statistics.values.join(", ") + " " + statistics.unit);
+        this.log("avg " + statistics.mean + " " + statistics.unit);
+        this.log("median " + statistics.median + " " + statistics.unit);
+        this.log("stdev " + statistics.stdev + " " + statistics.unit);
+        this.log("min " + statistics.min + " " + statistics.unit);
+        this.log("max " + statistics.max + " " + statistics.unit);
+    }
+
+    PerfTestRunner.getUsedMallocHeap = function() {
+        var stats = window.internals.mallocStatistics();
+        return stats.committedVMBytes - stats.freeListBytes;
+    }
+
+    PerfTestRunner.getUsedJSHeap = function() {
+        return console.memory.usedJSHeapSize;
+    }
+
+    PerfTestRunner.getAndPrintMemoryStatistics = function() {
+        if (!window.internals)
+            return;
+        var jsMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedJSHeap()], "bytes");
+        PerfTestRunner.printStatistics(jsMemoryStats, "JS Heap:");
+
+        var mallocMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedMallocHeap()], "bytes");
+        PerfTestRunner.printStatistics(mallocMemoryStats, "Malloc:");
+    }
+
+    PerfTestRunner.gc = function () {
+        if (window.GCController)
+            window.GCController.collect();
+        else {
+            function gcRec(n) {
+                if (n < 1)
+                    return {};
+                var temp = {i: "ab" + i + (i / 100000)};
+                temp += "foo";
+                gcRec(n-1);
+            }
+            for (var i = 0; i < 1000; i++)
+                gcRec(10);
+        }
+    };
+
     function logInDocument(text) {
         if (!document.getElementById("log")) {
-            var pre = document.createElement('pre');
-            pre.id = 'log';
+            var pre = document.createElement("pre");
+            pre.id = "log";
             document.body.appendChild(pre);
         }
         document.getElementById("log").innerHTML += text + "\n";
@@ -160,7 +165,7 @@ PerfTestRunner.gc = function () {
 
     function start(test, runner) {
         if (!test) {
-            logFatalError('Got a bad test object.');
+            logFatalError("Got a bad test object.");
             return;
         }
         currentTest = test;
@@ -176,7 +181,7 @@ PerfTestRunner.gc = function () {
             try {
                 var measuredValue = runner();
             } catch (exception) {
-                logFatalError('Got an exception while running test.run with name=' + exception.name + ', message=' + exception.message);
+                logFatalError("Got an exception while running test.run with name=" + exception.name + ", message=" + exception.message);
                 return;
             }
 
@@ -185,7 +190,7 @@ PerfTestRunner.gc = function () {
             try {
                 ignoreWarmUpAndLog(measuredValue);
             } catch (exception) {
-                logFatalError('Got an exception while logging the result with name=' + exception.name + ', message=' + exception.message);
+                logFatalError("Got an exception while logging the result with name=" + exception.name + ", message=" + exception.message);
                 return;
             }
 
@@ -224,7 +229,7 @@ PerfTestRunner.gc = function () {
             if (currentTest.done)
                 currentTest.done();
         } catch (exception) {
-            logInDocument('Got an exception while finalizing the test with name=' + exception.name + ', message=' + exception.message);
+            logInDocument("Got an exception while finalizing the test with name=" + exception.name + ", message=" + exception.message);
         }
 
         if (window.testRunner)
@@ -232,7 +237,7 @@ PerfTestRunner.gc = function () {
     }
 
     PerfTestRunner.measureTime = function (test) {
-        PerfTestRunner.unit = 'ms';
+        PerfTestRunner.unit = "ms";
         start(test, measureTimeOnce);
     }
 
@@ -251,7 +256,7 @@ PerfTestRunner.gc = function () {
     }
 
     PerfTestRunner.runPerSecond = function (test) {
-        PerfTestRunner.unit = 'runs/s';
+        PerfTestRunner.unit = "runs/s";
         start(test, measureRunsPerSecondOnce);
     }
 
@@ -280,9 +285,5 @@ PerfTestRunner.gc = function () {
         return PerfTestRunner.now() - startTime;
     }
 
+    window.PerfTestRunner = PerfTestRunner;
 })();
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
