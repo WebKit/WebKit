@@ -280,7 +280,7 @@ TEST_F(DateTimeFormatTest, SingleLowerCaseCharacter)
     EXPECT_EQ(DateTimeFormat::FieldTypeSecond, single('s'));
     EXPECT_EQ(DateTimeFormat::FieldTypeExtendedYear, single('u'));
     EXPECT_EQ(DateTimeFormat::FieldTypeNonLocationZone, single('v'));
-    EXPECT_EQ(DateTimeFormat::FieldTypeWeekOfMonth, single('w'));
+    EXPECT_EQ(DateTimeFormat::FieldTypeWeekOfMonth, single('W'));
     EXPECT_EQ(DateTimeFormat::FieldTypeYear, single('y'));
     EXPECT_EQ(DateTimeFormat::FieldTypeZone, single('z'));
 }
@@ -313,7 +313,7 @@ TEST_F(DateTimeFormatTest, SingleUpperCaseCharacter)
     EXPECT_EQ(DateTimeFormat::FieldTypeMonth, single('M'));
     EXPECT_EQ(DateTimeFormat::FieldTypeQuater, single('Q'));
     EXPECT_EQ(DateTimeFormat::FieldTypeFractionalSecond, single('S'));
-    EXPECT_EQ(DateTimeFormat::FieldTypeWeekOfYear, single('W'));
+    EXPECT_EQ(DateTimeFormat::FieldTypeWeekOfYear, single('w'));
     EXPECT_EQ(DateTimeFormat::FieldTypeYearOfWeekOfYear, single('Y'));
     EXPECT_EQ(DateTimeFormat::FieldTypeRFC822Zone, single('Z'));
 }
