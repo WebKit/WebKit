@@ -42,7 +42,7 @@ namespace WebKit {
 WebGeolocationManager::WebGeolocationManager(WebProcess* process)
     : m_process(process)
 {
-    m_process.connection()->addMessageReceiver(CoreIPC::MessageClassWebGeolocationManager, this);
+    m_process->connection()->addMessageReceiver(CoreIPC::MessageClassWebGeolocationManager, this);
 }
 
 WebGeolocationManager::~WebGeolocationManager()
