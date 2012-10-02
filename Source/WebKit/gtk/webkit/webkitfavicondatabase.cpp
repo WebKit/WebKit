@@ -80,7 +80,6 @@ static void webkitFaviconDatabaseClose(WebKitFaviconDatabase* database);
 class IconDatabaseClientGtk : public IconDatabaseClient {
 public:
     // IconDatabaseClient interface
-    virtual bool performImport() { return true; }
     virtual void didRemoveAllIcons() { };
 
     // Called when an icon is requested while the initial import is

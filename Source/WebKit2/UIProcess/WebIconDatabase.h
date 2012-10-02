@@ -91,7 +91,6 @@ public:
     void initializeIconDatabaseClient(const WKIconDatabaseClient*);
 
     // WebCore::IconDatabaseClient
-    virtual bool performImport();
     virtual void didImportIconURLForPageURL(const String&);
     virtual void didImportIconDataForPageURL(const String&);
     virtual void didChangeIconForPageURL(const String&);

@@ -93,7 +93,6 @@ static String urlForLogging(const String& url)
 class DefaultIconDatabaseClient : public IconDatabaseClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual bool performImport() { return true; }
     virtual void didImportIconURLForPageURL(const String&) { } 
     virtual void didImportIconDataForPageURL(const String&) { }
     virtual void didChangeIconForPageURL(const String&) { }
@@ -805,8 +804,6 @@ IconDatabase::IconDatabase()
     , m_retainOrReleaseIconRequested(false)
     , m_initialPruningComplete(false)
     , m_client(defaultClient())
-    , m_imported(false)
-    , m_isImportedSet(false)
 {
     LOG(IconDatabase, "Creating IconDatabase %p", this);
     ASSERT(isMainThread());
@@ -968,27 +965,6 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
 // *** Sync Thread Only ***
 // ************************
 
-void IconDatabase::importIconURLForPageURL(const String& iconURL, const String& pageURL)
-{
-    ASSERT_ICON_SYNC_THREAD();
-    
-    // This function is only for setting actual existing url mappings so assert that neither of these URLs are empty
-    ASSERT(!iconURL.isEmpty());
-    ASSERT(!pageURL.isEmpty());
-    ASSERT(documentCanHaveIcon(pageURL));
-    
-    setIconURLForPageURLInSQLDatabase(iconURL, pageURL);    
-}
-
-void IconDatabase::importIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String& iconURL)
-{
-    ASSERT_ICON_SYNC_THREAD();
-    
-    ASSERT(!iconURL.isEmpty());
-
-    writeIconSnapshotToSQLDatabase(IconSnapshot(iconURL, (int)currentTime(), data.get()));
-}
-
 bool IconDatabase::shouldStopThreadActivity() const
 {
     ASSERT_ICON_SYNC_THREAD();
@@ -1060,32 +1036,6 @@ void IconDatabase::iconDatabaseSyncThread()
     LOG(IconDatabase, "(THREAD) performOpenInitialization() took %.4f seconds, now %.4f seconds from thread start", newStamp - timeStamp, newStamp - startTime);
     timeStamp = newStamp;
 #endif 
-
-    if (!imported()) {
-        LOG(IconDatabase, "(THREAD) Performing Safari2 import procedure");
-        SQLiteTransaction importTransaction(m_syncDB);
-        importTransaction.begin();
-        
-        // Commit the transaction only if the import completes (the import should be atomic)
-        if (m_client->performImport()) {
-            setImported(true);
-            importTransaction.commit();
-        } else {
-            LOG(IconDatabase, "(THREAD) Safari 2 import was cancelled");
-            importTransaction.rollback();
-        }
-        
-        if (shouldStopThreadActivity()) {
-            syncThreadMainLoop();
-            return;
-        }
-            
-#if !LOG_DISABLED
-        newStamp = currentTime();
-        LOG(IconDatabase, "(THREAD) performImport() took %.4f seconds, now %.4f seconds from thread start", newStamp - timeStamp, newStamp - startTime);
-        timeStamp = newStamp;
-#endif 
-    }
         
     // Uncomment the following line to simulate a long lasting URL import (*HUGE* icon databases, or network home directories)
     // while (currentTime() - timeStamp < 10);
@@ -1912,54 +1862,6 @@ void* IconDatabase::cleanupSyncThread()
     
     m_syncThreadRunning = false;
     return 0;
-}
-
-bool IconDatabase::imported()
-{
-    ASSERT_ICON_SYNC_THREAD();
-    
-    if (m_isImportedSet)
-        return m_imported;
-        
-    SQLiteStatement query(m_syncDB, "SELECT IconDatabaseInfo.value FROM IconDatabaseInfo WHERE IconDatabaseInfo.key = \"ImportedSafari2Icons\";");
-    if (query.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare imported statement");
-        return false;
-    }
-    
-    int result = query.step();
-    if (result == SQLResultRow)
-        result = query.getColumnInt(0);
-    else {
-        if (result != SQLResultDone)
-            LOG_ERROR("imported statement failed");
-        result = 0;
-    }
-    
-    m_isImportedSet = true;
-    return m_imported = result;
-}
-
-void IconDatabase::setImported(bool import)
-{
-    ASSERT_ICON_SYNC_THREAD();
-
-    m_imported = import;
-    m_isImportedSet = true;
-    
-    String queryString = import ?
-        "INSERT INTO IconDatabaseInfo (key, value) VALUES (\"ImportedSafari2Icons\", 1);" :
-        "INSERT INTO IconDatabaseInfo (key, value) VALUES (\"ImportedSafari2Icons\", 0);";
-        
-    SQLiteStatement query(m_syncDB, queryString);
-    
-    if (query.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to prepare set imported statement");
-        return;
-    }    
-    
-    if (query.step() != SQLResultDone)
-        LOG_ERROR("set imported statement failed");
 }
 
 // readySQLiteStatement() handles two things

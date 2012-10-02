@@ -316,12 +316,6 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
 
 // IconDatabaseClient
 
-bool WebIconDatabase::performImport()
-{
-    // Windows doesn't do any old-style database importing.
-    return true;
-}
-
 void WebIconDatabase::didRemoveAllIcons()
 {
     // Queueing the empty string is a special way of saying "this queued notification is the didRemoveAllIcons notification"

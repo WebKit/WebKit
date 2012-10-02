@@ -37,9 +37,6 @@
 // releaseIconForURL: in response to this notification.
 extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 
-// Key to store the path to look for old style icons in to convert to the new icon db
-extern NSString *WebIconDatabaseImportDirectoryDefaultsKey;
-
 @interface WebIconDatabase (WebPendingPublic)
 
 /*!

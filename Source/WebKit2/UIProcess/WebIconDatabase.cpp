@@ -234,11 +234,6 @@ void WebIconDatabase::initializeIconDatabaseClient(const WKIconDatabaseClient* c
 }
 
 // WebCore::IconDatabaseClient
-bool WebIconDatabase::performImport()
-{
-    // WebKit2 icon database doesn't currently support importing any old icon database formats.
-    return true;
-}
 
 void WebIconDatabase::didImportIconURLForPageURL(const String& pageURL)
 {

@@ -47,5 +47,4 @@ namespace WebCore {
 - (void)_startUpIconDatabase;
 @end
 
-extern bool importToWebCoreFormat();
 NSImage *webGetNSImage(WebCore::Image*, NSSize);

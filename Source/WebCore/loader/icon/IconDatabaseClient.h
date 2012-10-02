@@ -37,7 +37,6 @@ class IconDatabaseClient {
 public:
     virtual ~IconDatabaseClient() { }
 
-    virtual bool performImport() = 0;
     virtual void didImportIconURLForPageURL(const String&) = 0;
     virtual void didImportIconDataForPageURL(const String&) = 0;
     virtual void didChangeIconForPageURL(const String&) = 0;

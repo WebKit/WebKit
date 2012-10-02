@@ -57,11 +57,6 @@ bool IconDatabaseClientBlackBerry::initIconDatabase(const BlackBerry::WebKit::We
     return m_initState == InitializeSucceeded;
 }
 
-bool IconDatabaseClientBlackBerry::performImport()
-{
-    return true;
-}
-
 void IconDatabaseClientBlackBerry::didRemoveAllIcons()
 {
 }

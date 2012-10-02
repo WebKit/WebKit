@@ -25,12 +25,6 @@
 
 namespace WebCore {
 
-bool IconDatabaseClientEfl::performImport()
-{
-    notImplemented();
-    return true;
-}
-
 void IconDatabaseClientEfl::didRemoveAllIcons()
 {
     notImplemented();
