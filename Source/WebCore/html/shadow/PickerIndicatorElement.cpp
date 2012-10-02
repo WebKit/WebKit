@@ -135,11 +135,16 @@ void PickerIndicatorElement::openPopup()
     parameters.minimum = input->minimum();
     parameters.maximum = input->maximum();
     parameters.required = input->required();
-    Decimal step;
-    if (hostInput()->getAllowedValueStep(&step))
-        parameters.step = step.toDouble();
-    else
+
+    StepRange stepRange = input->createStepRange(RejectAny);
+    if (stepRange.hasStep()) {
+        parameters.step = stepRange.step().toDouble();
+        parameters.stepBase = stepRange.stepBase().toDouble();
+    } else {
         parameters.step = 1.0;
+        parameters.stepBase = 0;
+    }
+
     parameters.anchorRectInRootView = document()->view()->contentsToRootView(hostInput()->pixelSnappedBoundingBox());
     parameters.currentValue = input->value();
     parameters.isAnchorElementRTL = input->computedStyle()->direction() == RTL;

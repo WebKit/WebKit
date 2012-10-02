@@ -29,7 +29,7 @@ function sendKey(input, keyName) {
 
 function test1() {
     debug("Step without min.");
-    shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-09", "2011-05-18", "2011-05-27"].join(",")');
+    shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-08", "2011-05-17", "2011-05-26"].join(",")');
     pickerWindow.removeEventListener('resize', test1);
 
     // Close popup

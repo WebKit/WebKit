@@ -46,6 +46,7 @@ struct DateTimeChooserParameters {
     double minimum;
     double maximum;
     double step;
+    double stepBase;
     bool required;
     bool isAnchorElementRTL;
 };

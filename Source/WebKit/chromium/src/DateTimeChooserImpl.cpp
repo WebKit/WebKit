@@ -87,6 +87,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     date.setMillisecondsSinceEpochForDate(m_parameters.maximum);
     String maxString = date.toString();
     String stepString = String::number(m_parameters.step);
+    String stepBaseString = String::number(m_parameters.stepBase, 11, WTF::TruncateTrailingZeros);
     OwnPtr<Localizer> localizer = Localizer::create(nullAtom);
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
@@ -101,6 +102,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("min", minString, writer);
     addProperty("max", maxString, writer);
     addProperty("step", stepString, writer);
+    addProperty("stepBase", stepBaseString, writer);
     addProperty("required", m_parameters.required, writer);
     addProperty("currentValue", m_parameters.currentValue, writer);
     addProperty("locale", WebCore::defaultLanguage(), writer);

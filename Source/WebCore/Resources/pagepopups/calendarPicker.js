@@ -234,7 +234,8 @@ function handleArgumentsTimeout() {
         cancelLabel : "Cancel",
         currentValue : "",
         weekStartDay : 0,
-        step : 1
+        step : CalendarPicker.DefaultStepScaleFactor,
+        stepBase: CalendarPicker.DefaultStepBase
     };
     initialize(args);
 }
@@ -313,7 +314,8 @@ function CalendarPicker(element, config) {
     this.minimumDate = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min) : CalendarPicker.MinimumPossibleDate;
     // We assume this._config.max is a valid date.
     this.maximumDate = (typeof this._config.max !== "undefined") ? parseDateString(this._config.max) : CalendarPicker.MaximumPossibleDate;
-    this.step = (typeof this._config.step !== undefined) ? this._config.step : CalendarPicker.BaseStep;
+    this.step = (typeof this._config.step !== undefined) ? Number(this._config.step) : CalendarPicker.DefaultStepScaleFactor;
+    this.stepBase = (typeof this._config.stepBase !== "undefined") ? Number(this._config.stepBase) : CalendarPicker.DefaultStepBase;
     this.yearMonthController = new YearMonthController(this);
     this.daysTable = new DaysTable(this);
     this._hadKeyEvent = false;
@@ -334,7 +336,8 @@ CalendarPicker.prototype = Object.create(Picker.prototype);
 CalendarPicker.MinimumPossibleDate = new Date(-62135596800000.0);
 CalendarPicker.MaximumPossibleDate = new Date(8640000000000000.0);
 // See WebCore/html/DateInputType.cpp.
-CalendarPicker.BaseStep = 86400000;
+CalendarPicker.DefaultStepScaleFactor = 86400000;
+CalendarPicker.DefaultStepBase = 0.0;
 
 CalendarPicker.prototype.cleanup = function() {
     document.body.removeEventListener("keydown", this._handleBodyKeyDownBound, false);
@@ -864,7 +867,7 @@ DaysTable.prototype.attachTo = function(element) {
  * @return {!boolean}
  */
 CalendarPicker.prototype.stepMismatch = function(time) {
-    return (time - this.minimumDate.getTime()) % this.step != 0;
+    return (time - this.stepBase) % this.step != 0;
 }
 
 /**

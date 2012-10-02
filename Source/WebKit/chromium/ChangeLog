@@ -1,3 +1,13 @@
+2012-10-01  Keishi Hattori  <keishi@webkit.org>
+
+        Calendar picker should use zero as default step base
+        https://bugs.webkit.org/show_bug.cgi?id=97976
+
+        Reviewed by Kent Tamura.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument): stepBase needs 11 digits of precision when setting maximum possible date.
+
 2012-10-01  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Move onSuccess(IDBDatabaseBackendInterface) to IDBOpenDBRequest

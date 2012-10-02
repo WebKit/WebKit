@@ -1,3 +1,12 @@
+2012-10-01  Keishi Hattori  <keishi@webkit.org>
+
+        Calendar picker should use zero as default step base
+        https://bugs.webkit.org/show_bug.cgi?id=97976
+
+        Reviewed by Kent Tamura.
+
+        * ManualTests/forms/calendar-picker.html: Added stepBase parameters.
+
 2012-09-28  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [WK2][GTK][EFL] Share WebKit2-GTK plugin process implementation with EFL port
