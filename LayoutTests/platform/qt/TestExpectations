@@ -2921,3 +2921,6 @@ webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 # [Qt] REGRESSION(r130160): It made 2 tests crash
 webkit.org/b/98158 svg/text/text-fonts-02-t.svg [ Crash Pass ]
 webkit.org/b/98158 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Crash Pass ]
+
+# [Qt] REGRESSION(r130167): It made inspector/styles/edit-inspector-stylesheet.html fail
+webkit.org/b/98160 inspector/styles/edit-inspector-stylesheet.html
