@@ -127,6 +127,8 @@ private:
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
+
+    bool m_closingConnection;
 };
 
 } // namespace WebCore

@@ -1038,8 +1038,6 @@ webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout ]
 
 webkit.org/b/78810 [ Linux Win Debug ] inspector/debugger/script-formatter-console.html [ Pass Slow ]
 
-webkit.org/b/93225 [ Linux Win Debug ] http/tests/inspector/indexeddb/database-structure.html [ Crash ]
-
 # -----------------------------------------------------------------
 # Editing tests
 # -----------------------------------------------------------------
@@ -3392,8 +3390,6 @@ webkit.org/b/95246 http/tests/security/mixedContent/filesystem-url-in-iframe.htm
 
 webkit.org/b/95581 http/tests/xmlhttprequest/zero-length-response.html [ Pass Timeout ]
 webkit.org/b/95581 http/tests/misc/javascript-url-stop-loaders.html [ Pass Timeout ]
-
-webkit.org/b/94261 [ Debug ] http/tests/inspector/indexeddb/resources-panel.html [ Crash Pass Timeout ]
 
 # ENABLE_ACCELERATED_OVERFLOW_SCROLLING is not currently enabled in Chromium.
 webkit.org/b/94353 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
