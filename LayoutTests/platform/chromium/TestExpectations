@@ -3711,4 +3711,7 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/bounds-i
 crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 
+webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
+webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
+
 webkit.org/b/97231 inspector/debugger/source-url-comment.html [ Failure Timeout ]
