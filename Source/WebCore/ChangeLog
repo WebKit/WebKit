@@ -1,3 +1,9 @@
+2012-10-01  Andy Estes  <aestes@apple.com>
+
+        Update Localizable.strings by running update-webkit-localizable-strings.
+
+        * English.lproj/Localizable.strings:
+
 2012-09-30  Andy Estes  <aestes@apple.com>
 
         Merge r123907.
