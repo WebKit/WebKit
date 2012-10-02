@@ -130,6 +130,7 @@ private:
     Scene m_scene;
 
     bool m_acceptsTouchEvent;
+    bool m_printEventDetails;
 };
 
 #endif // TestPepperPlugin_h

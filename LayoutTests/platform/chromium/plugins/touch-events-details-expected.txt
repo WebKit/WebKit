@@ -1,0 +1,11 @@
+Plugin received event: TouchStart
+* 10, 10: Pressed
+* 10, 10: Pressed
+* 10, 10: Pressed
+Plugin received event: TouchMove
+* 20, 15: Moved
+* 20, 15: Moved
+* 20, 15: Moved
+Plugin received event: TouchEnd
+* 20, 15: Released
+

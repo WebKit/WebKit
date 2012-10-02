@@ -1,3 +1,20 @@
+2012-10-02  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Make sure the touch-points in the touch-events have the correct state.
+        https://bugs.webkit.org/show_bug.cgi?id=98110
+
+        Reviewed by Adam Barth.
+
+        It is necessary for the WebTouchPoints in the reconstructed WebTouchEvent
+        to have the correct state. Without this change, the states were always
+        unknown.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toWebTouchPointState):
+        (WebKit):
+        (WebKit::addTouchPoints):
+        (WebKit::WebTouchEventBuilder::WebTouchEventBuilder):
+
 2012-10-02  Brian White  <bcwhite@chromium.org>
 
         WebDocument doesn't export document language to outside users.
