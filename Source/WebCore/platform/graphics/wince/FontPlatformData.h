@@ -67,7 +67,6 @@ namespace WebCore {
         bool operator==(const FontPlatformData& other) const {     return m_private == other.m_private; }
         HFONT getScaledFontHandle(int height, int width) const;
         const LOGFONT& logFont() const;
-        int averageCharWidth() const;
         bool isDisabled() const;
         bool discardFontHandle();
         DWORD codePages() const;

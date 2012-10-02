@@ -463,11 +463,6 @@ const LOGFONT& FontPlatformData::logFont() const
     return m_private->m_rootFontData->m_font;
 }
 
-int FontPlatformData::averageCharWidth() const
-{
-    return (m_private->m_rootFontData->m_metrics.tmAveCharWidth * size() + 36) / 72;
-}
-
 bool FontPlatformData::isDisabled() const
 {
     return !isValid() || m_private->m_disabled;

@@ -1598,7 +1598,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
     double scaleY = m_data->m_transform.d();
 
     int height = fontData->platformData().size() * scaleY;
-    int width = fontData->platformData().averageCharWidth() * scaleX;
+    int width = fontData->avgCharWidth() * scaleX;
 
     if (!height || !width)
         return;
