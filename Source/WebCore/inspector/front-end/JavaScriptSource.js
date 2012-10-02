@@ -52,9 +52,9 @@ WebInspector.JavaScriptSource.prototype = {
         function innerCallback(error)
         {
             if (error)
-                uiSourceCode.hasDivergedFromVM = true;
+                this.hasDivergedFromVM = true;
             else
-                delete uiSourceCode.hasDivergedFromVM;
+                delete this.hasDivergedFromVM;
 
             callback(error);
         }
