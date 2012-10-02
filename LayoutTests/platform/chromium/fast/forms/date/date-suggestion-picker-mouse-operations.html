@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -122,38 +123,6 @@ function highlightedEntry() {
     if (typeof action === "string")
         return "@" + action;
     return null;
-}
-
-function cumulativeOffset(element) {
-    var x = 0;
-    var y = 0;
-    var parentFrame = element.ownerDocument.defaultView.frameElement;
-    if (parentFrame) {
-        var parentFrameOffset = cumulativeOffset(parentFrame);
-        x = parentFrameOffset[0];
-        y = parentFrameOffset[1];
-    }
-    if (element.parentNode) {
-        do {
-            x += element.offsetLeft || 0;
-            y += element.offsetTop  || 0;
-            element = element.offsetParent;
-        } while (element);
-    }
-    return [x, y];
-}
-
-function hoverOverElement(element) {
-    var offset = cumulativeOffset(element);
-    var centerX = offset[0] + element.offsetWidth / 2;
-    var centerY = offset[1] + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(centerX, centerY);
-}
-
-function clickElement(element) {
-    hoverOverElement(element);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
 }
 
 function sendMousedown(element) {

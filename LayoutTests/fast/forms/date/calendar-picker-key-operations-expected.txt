@@ -6,31 +6,54 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Check that page popup doesn't exist at first.
 PASS document.getElementById("mock-page-popup") is null
 Check that page popup exists.
-PASS pickerWindow.pagePopupController.toString() is "[object PagePopupController]"
+PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
 PASS selectedDate() is "2000-01-02"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
 Check that arrow keys work properly even when going between weeks and months.
 PASS selectedDate() is "1999-12-26"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
 PASS selectedDate() is "2000-01-02"
-PASS selectedMonthYear() is "1999-11"
+PASS currentMonth() is "1999-11"
 PASS selectedDate() is "1999-12-26"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
 PASS selectedDate() is "2000-01-02"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
 PASS selectedDate() is "1999-12-26"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
 PASS selectedDate() is "2000-01-08"
-PASS selectedMonthYear() is "1999-11"
+PASS currentMonth() is "1999-11"
 PASS selectedDate() is "1999-12-26"
-PASS selectedMonthYear() is "2000-0"
+PASS currentMonth() is "2000-0"
+press m
+FAIL selectedDate() should be 2000-01-26. Was 2000-01-30.
+PASS currentMonth() is "2000-1"
+press shift + m
+PASS selectedDate() is "1999-12-26"
+PASS currentMonth() is "2000-0"
+press y
+PASS selectedDate() is "2000-12-31"
+PASS currentMonth() is "2001-0"
+press shift + y
+PASS selectedDate() is "1999-12-26"
+PASS currentMonth() is "2000-0"
+press d
+PASS selectedDate() is "2009-12-27"
+PASS currentMonth() is "2010-0"
+press shift + d
+PASS selectedDate() is "1999-12-26"
+PASS currentMonth() is "2000-0"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("date").value is "1999-12-26"
+PASS testToday() || testToday() is true
 Check if tabbing works.
 PASS focusedElement() is ".days-area-container"
 PASS focusedElement() is ".today-button[value=Today]"
 PASS focusedElement() is ".clear-button[value=Clear]"
 PASS focusedElement() is ".year-month-button[value=<<]"
 PASS focusedElement() is ".clear-button[value=Clear]"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("date").value is "1999-12-26"
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

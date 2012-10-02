@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="calendar-picker-common.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -9,52 +10,96 @@
 <input type=date id=date value="2000-01-02">
 <script>
 description("Tests if calendar picker key bindings work as expected.");
-window.jsTestIsAsync = true;
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-sendKey(document.getElementById('date'), 'Down');
+openPicker(document.getElementById('date'));
 
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener("resize", function() {
+popupWindow.addEventListener("resize", test1, false);
+
+function test1() {
+    popupWindow.removeEventListener("resize", test1, false);
+
     debug('Check that page popup exists.');
-    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+    shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
 
     debug('Check that arrow keys work properly even when going between weeks and months.');
 
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
     // Move from first row of January 2000 to last row of December 1999.
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('selectedMonthYear()', '"1999-11"');
+    shouldBe('currentMonth()', '"1999-11"');
     
     eventSender.keyDown('downArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
     eventSender.keyDown('downArrow');
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
 
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
 
     // Move from top left of January 2000 to bottom right of December 1999.
     eventSender.keyDown('leftArrow');
     shouldBe('selectedDate()', '"2000-01-08"');
-    shouldBe('selectedMonthYear()', '"1999-11"');
+    shouldBe('currentMonth()', '"1999-11"');
 
     eventSender.keyDown('rightArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('selectedMonthYear()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-0"');
+
+    debug("press m");
+    eventSender.keyDown('m');
+    shouldBe('selectedDate()', '"2000-01-26"');
+    shouldBe('currentMonth()', '"2000-1"');
+
+    debug("press shift + m");
+    eventSender.keyDown('M');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('currentMonth()', '"2000-0"');
+
+    debug("press y");
+    eventSender.keyDown('y');
+    shouldBe('selectedDate()', '"2000-12-31"');
+    shouldBe('currentMonth()', '"2001-0"');
+
+    debug("press shift + y");
+    eventSender.keyDown('Y');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('currentMonth()', '"2000-0"');
+
+    debug("press d");
+    eventSender.keyDown('d');
+    shouldBe('selectedDate()', '"2009-12-27"');
+    shouldBe('currentMonth()', '"2010-0"');
+
+    debug("press shift + d");
+    eventSender.keyDown('D');
+    shouldBe('selectedDate()', '"1999-12-26"');
+    shouldBe('currentMonth()', '"2000-0"');
+
+    eventSender.keyDown('\n');
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"1999-12-26"');
+
+    openPicker(document.getElementById('date'));
+    popupWindow.addEventListener("resize", test2, false);
+}
+
+function test2() {
+    popupWindow.removeEventListener("resize", test2, false);
+
+    // Test twice in case midnight.
+    shouldBeTrue('testToday() || testToday()');
 
     debug('Check if tabbing works.');
     shouldBe('focusedElement()', '".days-area-container"');
@@ -67,25 +112,30 @@ pickerWindow.addEventListener("resize", function() {
     eventSender.keyDown('\t', ['shiftKey']);
     shouldBe('focusedElement()', '".clear-button[value=Clear]"');
 
-    finishJSTest();
-}, false);
+    eventSender.keyDown('\x1B');
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"1999-12-26"');
 
-function selectedDate() {
-    var element = pickerWindow.document.querySelector(".day-selected");
-    if (!element)
-        return null;
-    return element.dataset.submitValue;
+    finishJSTest();
 }
 
-function selectedMonthYear() {
-    var element = pickerWindow.document.querySelector(".selected-month-year");
-    if (!element)
-        return null;
-    return element.dataset.value;
+function testToday() {
+    eventSender.keyDown('t');
+    var now = new Date();
+    var expectedDate = serializeDate(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    var expectedMonth = now.getUTCFullYear() + "-" + now.getMonth();
+    return selectedDate() === expectedDate && currentMonth() === expectedMonth;
+}
+
+function serializeDate(year, month, day) {
+    var yearString = String(year);
+    if (yearString.length < 4)
+        yearString = ("000" + yearString).substr(-4, 4);
+    return yearString + "-" + ("0" + (month + 1)).substr(-2, 2) + "-" + ("0" + day).substr(-2, 2);
 }
 
 function focusedElement() {
-    var element = pickerWindow.document.activeElement;
+    var element = popupWindow.document.activeElement;
     if (!element)
         return null;
     var identifier = "." + element.className;
@@ -94,11 +144,6 @@ function focusedElement() {
     return identifier;
 }
 
-function sendKey(input, keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
-}
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

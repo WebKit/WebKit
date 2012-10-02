@@ -200,6 +200,7 @@ webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-pre-100.html [ Ski
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-with-step.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-key-operations.html [ Skip ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-mouse-operations.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-type-change-onclick.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/date-stepup-stepdown-from-renderer.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/no-page-popup-controller.html [ Pass ]
