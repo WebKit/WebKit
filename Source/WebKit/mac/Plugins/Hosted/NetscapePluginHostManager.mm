@@ -161,9 +161,17 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     [hostProperties release];
 
     ProcessSerialNumber psn;
-    GetCurrentProcess(&psn);
 
-    kr = _WKPHCheckInWithPluginHost(pluginHostPort, (uint8_t*)[data bytes], [data length], clientPort, psn.highLongOfPSN, psn.lowLongOfPSN, renderServerPort, 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    GetCurrentProcess(&psn);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
+    kr = _WKPHCheckInWithPluginHost(pluginHostPort, (uint8_t*)[data bytes], [data length], clientPort, psn.highLongOfPSN, psn.lowLongOfPSN, renderServerPort,
                                     &pluginHostPSN.highLongOfPSN, &pluginHostPSN.lowLongOfPSN);
     
     if (kr != KERN_SUCCESS) {
@@ -291,8 +299,15 @@ void NetscapePluginHostManager::didCreateWindow()
         if (!hostProxy->isMenuBarVisible()) {
             // Make ourselves the front process.
             ProcessSerialNumber psn;
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
             GetCurrentProcess(&psn);
             SetFrontProcess(&psn);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
             return;
         }
     }

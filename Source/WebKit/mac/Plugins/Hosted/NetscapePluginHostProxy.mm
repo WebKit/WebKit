@@ -197,23 +197,14 @@ void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
 
 void NetscapePluginHostProxy::didEnterFullscreen() const
 {
-    SetFrontProcess(&m_pluginHostPSN);
+    makePluginHostProcessFrontProcess();
 }
 
 void NetscapePluginHostProxy::didExitFullscreen() const
 {
     // If the plug-in host is the current application then we should bring ourselves to the front when it exits full-screen mode.
-
-    ProcessSerialNumber frontProcess;
-    GetFrontProcess(&frontProcess);
-    Boolean isSameProcess = 0;
-    SameProcess(&frontProcess, &m_pluginHostPSN, &isSameProcess);
-    if (!isSameProcess)
-        return;
-
-    ProcessSerialNumber currentProcess;
-    GetCurrentProcess(&currentProcess);
-    SetFrontProcess(&currentProcess);
+    if (isPluginHostProcessFrontProcess())
+        makeCurrentProcessFrontProcess();
 }
 
 void NetscapePluginHostProxy::setFullscreenWindowIsShowing(bool isShowing)
@@ -231,7 +222,7 @@ void NetscapePluginHostProxy::setFullscreenWindowIsShowing(bool isShowing)
 
 void NetscapePluginHostProxy::applicationDidBecomeActive()
 {
-    SetFrontProcess(&m_pluginHostPSN);
+    makePluginHostProcessFrontProcess();
 }
 
 void NetscapePluginHostProxy::beginModal()
@@ -264,13 +255,10 @@ void NetscapePluginHostProxy::endModal()
     CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
     
     [NSApp stopModal];
-    
-    // Make ourselves the front process.
-    ProcessSerialNumber psn;
-    GetCurrentProcess(&psn);
-    SetFrontProcess(&psn);            
+
+    makeCurrentProcessFrontProcess();
 }
-    
+
 
 void NetscapePluginHostProxy::setModal(bool modal)
 {
@@ -335,6 +323,50 @@ bool NetscapePluginHostProxy::processRequests()
     ASSERT_NOT_REACHED();
     s_processingRequests--;
     return false;
+}
+
+void NetscapePluginHostProxy::makeCurrentProcessFrontProcess()
+{
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    ProcessSerialNumber psn;
+    GetCurrentProcess(&psn);
+    SetFrontProcess(&psn);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+}
+
+void NetscapePluginHostProxy::makePluginHostProcessFrontProcess() const
+{
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    SetFrontProcess(&m_pluginHostPSN);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+}
+
+bool NetscapePluginHostProxy::isPluginHostProcessFrontProcess() const
+{
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    ProcessSerialNumber frontProcess;
+    GetFrontProcess(&frontProcess);
+
+    Boolean isSameProcess = 0;
+    SameProcess(&frontProcess, &m_pluginHostPSN, &isSameProcess);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
+    return isSameProcess;
 }
 
 } // namespace WebKit

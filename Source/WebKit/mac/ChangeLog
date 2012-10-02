@@ -1,3 +1,22 @@
+2012-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (NetscapePluginHostProxy):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::didEnterFullscreen):
+        (WebKit::NetscapePluginHostProxy::didExitFullscreen):
+        (WebKit::NetscapePluginHostProxy::applicationDidBecomeActive):
+        (WebKit::NetscapePluginHostProxy::endModal):
+        (WebKit):
+        (WebKit::NetscapePluginHostProxy::makeCurrentProcessFrontProcess):
+        (WebKit::NetscapePluginHostProxy::makePluginHostProcessFrontProcess):
+        (WebKit::NetscapePluginHostProxy::isPluginHostProcessFrontProcess):
+
 2012-10-01  Brady Eidson  <beidson@apple.com>
 
         Remove the Safari 2 -> Safari 3 icon database import code.

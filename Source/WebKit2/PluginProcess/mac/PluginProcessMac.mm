@@ -189,11 +189,18 @@ static unsigned modalCount = 0;
 
 static void beginModal()
 {
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
     // Make sure to make ourselves the front process
     ProcessSerialNumber psn;
     GetCurrentProcess(&psn);
     SetFrontProcess(&psn);
-    
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
     if (!modalCount++)
         setModal(true);
 }

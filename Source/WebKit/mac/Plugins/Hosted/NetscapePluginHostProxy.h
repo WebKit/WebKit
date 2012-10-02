@@ -65,8 +65,13 @@ public:
     static bool isProcessingRequests() { return s_processingRequests; }
     
     bool shouldCacheMissingPropertiesAndMethods() const { return m_shouldCacheMissingPropertiesAndMethods; }
-    
+
+    static void makeCurrentProcessFrontProcess();
+    void makePluginHostProcessFrontProcess() const;
+    bool isPluginHostProcessFrontProcess() const;
+
 private:
+
     ~NetscapePluginHostProxy();
     void pluginHostDied();
 

@@ -1,3 +1,15 @@
+2012-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::beginModal):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::getPluginProcessSerialNumber):
+        (WebKit::PluginProcessProxy::makePluginProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::makeUIProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::exitFullscreen):
+
 2012-10-02  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12407139> WebKit2 should provide API that returns all pages in the same process as a given page
