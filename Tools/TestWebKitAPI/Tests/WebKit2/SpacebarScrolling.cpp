@@ -89,7 +89,11 @@ TEST(WebKit2, SpacebarScrolling)
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
 
+    // This EXPECT_JS_TRUE test fails on Windows port
+    // https://bugs.webkit.org/show_bug.cgi?id=84961
+#if !PLATFORM(WIN)
     EXPECT_JS_TRUE(webView.page(), "isDocumentScrolled()");
+#endif
     EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
 
 #if PLATFORM(MAC)

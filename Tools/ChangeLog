@@ -1,3 +1,16 @@
+2012-10-02  Roger Fong  <roger_fong@apple.com>
+
+        Ignore failing line of SpacebarScrolling API test on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=84961
+
+        Reviewed by Anders Carlsson.
+
+        Test is failing because of https://bugs.webkit.org/show_bug.cgi?id=97946.
+        Ignoring the line that fails on Windows for now until the larger problem at hand is fixed.
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-10-02  Tony Chang  <tony@chromium.org>
 
         check-webkit-style can't handle qt-arm, qt-win, qt-mac, qt-5.0, qt-5.0-wk1 and qt-5.0-wk2 TestExpecatations
