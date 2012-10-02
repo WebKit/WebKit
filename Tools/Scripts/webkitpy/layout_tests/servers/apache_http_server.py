@@ -54,7 +54,6 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._name = 'httpd'
         self._mappings = [{'port': 8000},
                           {'port': 8080},
-                          {'port': 8081},
                           {'port': 8443, 'sslcert': True}]
         self._output_dir = output_dir
         self._filesystem.maybe_make_directory(output_dir)
@@ -79,7 +78,6 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
             '-c', "\'Alias /media-resources \"%s\"'" % media_resources_dir,
             '-C', "\'Listen %s\'" % "127.0.0.1:8000",
-            '-C', "\'Listen %s\'" % "127.0.0.1:8081",
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,

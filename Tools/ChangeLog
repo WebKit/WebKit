@@ -1,3 +1,22 @@
+2012-10-02  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        webkitpy: Stop listening on port 8081 when using Apache.
+        https://bugs.webkit.org/show_bug.cgi?id=98155
+
+        Reviewed by Eric Seidel.
+
+        No test currently uses this port, and the lighttpd configuration
+        does not open it.
+
+        This helps the efforts of bringing some consistency to the Apache
+        configuration at the moment by opening the same ports in the
+        webkitpy side and in the httpd.conf side (the idea is to remove
+        the httpd.conf side later), and also makes the behavior consistent
+        across the two servers we currently support.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+
 2012-10-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] REGRESSION(r128623): It made layout tests extremely slow
