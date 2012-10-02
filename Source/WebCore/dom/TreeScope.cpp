@@ -110,7 +110,8 @@ Node* TreeScope::ancestorInThisScope(Node* node) const
             return node;
         if (!node->isInShadowTree())
             return 0;
-        node = node->shadowAncestorNode();
+
+        node = node->shadowHost();
     }
 
     return 0;
