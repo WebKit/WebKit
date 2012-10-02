@@ -1,3 +1,19 @@
+2012-10-01  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] crash when accelerated composition is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=98099
+
+        Reviewed by Martin Robinson.
+
+        frame->view()->updateLayoutAndStyleIfNeededRecursive() may reset root
+        compositing layer in flushAndRenderLayers. So, we check if compositing
+        is enabled afterwards, and return if it is not.
+
+        This bug is handled by LayoutTests/compositing/toggle-compositing.html
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::flushAndRenderLayers):
+
 2012-10-01  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Save original uri for downloaded files
