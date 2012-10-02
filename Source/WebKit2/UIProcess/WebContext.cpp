@@ -263,6 +263,8 @@ void WebContext::setProcessModel(ProcessModel processModel)
     // Guard against API misuse.
     if (!m_processes.isEmpty())
         CRASH();
+    if (processModel != ProcessModelSharedSecondaryProcess && !m_messagesToInjectedBundlePostedToEmptyContext.isEmpty())
+        CRASH();
 
 #if !ENABLE(PLUGIN_PROCESS)
     // Plugin process is required for multiple web process mode.
@@ -367,6 +369,16 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get())), 0);
 
     m_processes.append(process);
+
+    if (m_processModel == ProcessModelSharedSecondaryProcess) {
+        for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
+            pair<String, RefPtr<APIObject> >& message = m_messagesToInjectedBundlePostedToEmptyContext[i];
+            process->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message.first, WebContextUserMessageEncoder(message.second.get())));
+        }
+        m_messagesToInjectedBundlePostedToEmptyContext.clear();
+    } else
+        ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
+
 
     return process.release();
 }
@@ -560,8 +572,11 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (m_processes.isEmpty())
+    if (m_processes.isEmpty()) {
+        if (m_processModel == ProcessModelSharedSecondaryProcess)
+            m_messagesToInjectedBundlePostedToEmptyContext.append(std::make_pair(messageName, messageBody));
         return;
+    }
 
     // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
 

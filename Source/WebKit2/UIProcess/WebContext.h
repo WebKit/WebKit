@@ -307,6 +307,10 @@ private:
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;
 
+    // Messages that were posted before any pages were created.
+    // The client should use initialization messages instead, so that a restarted process would get the same state.
+    Vector<pair<String, RefPtr<APIObject> > > m_messagesToInjectedBundlePostedToEmptyContext;
+
     CacheModel m_cacheModel;
 
     WebDownloadClient m_downloadClient;
