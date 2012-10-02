@@ -1,3 +1,25 @@
+2012-10-02  Tony Chang  <tony@chromium.org>
+
+        check-webkit-style can't handle qt-arm, qt-win, qt-mac, qt-5.0, qt-5.0-wk1 and qt-5.0-wk2 TestExpecatations
+        https://bugs.webkit.org/show_bug.cgi?id=98140
+
+        Reviewed by Eric Seidel.
+
+        Fix a bug where we were always using the host OS rather than using what was passed in as part of the
+        port name on Qt.
+
+        There's also a bug with being able to test for qt-5.0 expectations files when on a system with
+        Qt 4.8 installed. I'm not sure how to solve that, so for now, stop emitting a style warning about
+        not checking a file.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._search_paths): Use passed in OS.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.check): Don't warn if we don't know about the TestExpectations file.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path): Added a test case for the OS fix.
+        Add a commented out test for the version case.
+
 2012-10-02  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Remove the last bits of MSYS support from webkitperl.

@@ -135,7 +135,7 @@ class QtPort(Port):
             search_paths.append('qt-4.8')
         elif version:
             search_paths.append('qt-5.0')
-        search_paths.append(self.port_name + '-' + self.host.platform.os_name)
+        search_paths.append(self.port_name + '-' + self.operating_system())
         search_paths.append(self.port_name)
         return search_paths
 

@@ -94,8 +94,6 @@ class TestExpectationsChecker(object):
         expectations = '\n'.join(lines)
         if self._port_obj:
             self.check_test_expectations(expectations_str=expectations, tests=None)
-        else:
-            self._handle_style_error(1, 'test/expectations', 5,
-                                     'No port uses path %s for test_expectations' % self._file_path)
+
         # Warn tabs in lines as well
         self.check_tabs(lines)
