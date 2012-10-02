@@ -546,6 +546,7 @@ Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure*
     transition->m_previous.set(globalData, transition, structure);
     transition->m_attributesInPrevious = attributes;
     transition->m_indexingType = indexingType;
+    transition->m_offset = structure->m_offset;
     
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
