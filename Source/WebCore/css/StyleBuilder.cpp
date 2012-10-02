@@ -51,8 +51,6 @@ using namespace std;
 
 namespace WebCore {
 
-namespace {
-
 enum ExpandValueBehavior {SuppressValue = 0, ExpandValue};
 template <ExpandValueBehavior expandValue, CSSPropertyID one = CSSPropertyInvalid, CSSPropertyID two = CSSPropertyInvalid, CSSPropertyID three = CSSPropertyInvalid, CSSPropertyID four = CSSPropertyInvalid, CSSPropertyID five = CSSPropertyInvalid>
 class ApplyPropertyExpanding {
@@ -1782,8 +1780,6 @@ public:
     }
 };
 #endif
-
-} // namespace
 
 const StyleBuilder& StyleBuilder::sharedStyleBuilder()
 {
