@@ -220,7 +220,7 @@ static Eina_Bool showPopupMenu(Ewk_View_Smart_Data* smartData, Eina_Rectangle, E
 
     item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 1));
     checkBasicPopupMenuItem(item, "second", false);
-    EXPECT_EQ(false, ewk_popup_menu_item_enabled_get(item));
+    EXPECT_FALSE(ewk_popup_menu_item_enabled_get(item));
 
     item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 2));
     checkBasicPopupMenuItem(item, "third", true);
@@ -431,35 +431,35 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_alert)
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
-    EXPECT_EQ(true, alertCallbackData.called);
+    EXPECT_TRUE(alertCallbackData.called);
 
     alertHTML = "<!doctype html><body onload=\"alert('');\"></body>";
     alertCallbackData.expectedMessage = "";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
-    EXPECT_EQ(true, alertCallbackData.called);
+    EXPECT_TRUE(alertCallbackData.called);
 
     alertHTML = "<!doctype html><body onload=\"alert(null);\"></body>";
     alertCallbackData.expectedMessage = "null";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
-    EXPECT_EQ(true, alertCallbackData.called);
+    EXPECT_TRUE(alertCallbackData.called);
 
     alertHTML = "<!doctype html><body onload=\"alert();\"></body>";
     alertCallbackData.expectedMessage = "undefined";
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
-    EXPECT_EQ(true, alertCallbackData.called);
+    EXPECT_TRUE(alertCallbackData.called);
 
     ewkViewClass()->run_javascript_alert = 0;
 
     alertCallbackData.called = false;
     ewk_view_html_string_load(webView(), alertHTML, 0, 0);
     EXPECT_TRUE(waitUntilLoadFinished());
-    EXPECT_EQ(false, alertCallbackData.called);
+    EXPECT_FALSE(alertCallbackData.called);
 }
 
 static Eina_Bool checkConfirm(Ewk_View_Smart_Data*, const char* message)
@@ -480,7 +480,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ("true", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, confirmCallbackData.called);
+    EXPECT_TRUE(confirmCallbackData.called);
 
     confirmCallbackData.expectedMessage = "Confirm message";
     confirmCallbackData.result = false;
@@ -488,7 +488,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("false"));
     EXPECT_STREQ("false", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, confirmCallbackData.called);
+    EXPECT_TRUE(confirmCallbackData.called);
 
     confirmHTML = "<!doctype html><body onload=\"document.title = confirm('');\"></body>";
     confirmCallbackData.expectedMessage = "";
@@ -497,7 +497,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ("true", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, confirmCallbackData.called);
+    EXPECT_TRUE(confirmCallbackData.called);
 
     confirmHTML = "<!doctype html><body onload=\"document.title = confirm(null);\"></body>";
     confirmCallbackData.expectedMessage = "null";
@@ -506,7 +506,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ("true", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, confirmCallbackData.called);
+    EXPECT_TRUE(confirmCallbackData.called);
 
     confirmHTML = "<!doctype html><body onload=\"document.title = confirm();\"></body>";
     confirmCallbackData.expectedMessage = "undefined";
@@ -515,7 +515,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("true"));
     EXPECT_STREQ("true", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, confirmCallbackData.called);
+    EXPECT_TRUE(confirmCallbackData.called);
 
     ewkViewClass()->run_javascript_confirm = 0;
 
@@ -523,7 +523,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     ewk_view_html_string_load(webView(), confirmHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("false"));
     EXPECT_STREQ("false", ewk_view_title_get(webView()));
-    EXPECT_EQ(false, confirmCallbackData.called);
+    EXPECT_FALSE(confirmCallbackData.called);
 }
 
 static const char* checkPrompt(Ewk_View_Smart_Data*, const char* message, const char* defaultValue)
@@ -553,7 +553,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(promptResult, ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<!doctype html><body onload=\"document.title = prompt('Prompt message', '');\"></body>";
     promptCallbackData.expectedMessage = promptMessage;
@@ -563,7 +563,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(promptResult, ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<!doctype html><body onload=\"document.title = prompt('Prompt message');\"></body>";
     promptCallbackData.expectedMessage = promptMessage;
@@ -573,7 +573,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(promptResult, ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<!doctype html><body onload=\"document.title = prompt('');\"></body>";
     promptCallbackData.expectedMessage = "";
@@ -583,7 +583,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(promptResult, ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<!doctype html><body onload=\"document.title = prompt();\"></body>";
     promptCallbackData.expectedMessage = "undefined";
@@ -593,7 +593,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(promptResult));
     EXPECT_STREQ(promptResult, ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptHTML = "<html><head><title>Default title</title></head>"
                  "<body onload=\"var promptResult = prompt('Prompt message');"
@@ -606,7 +606,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo(""));
     EXPECT_STREQ("", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     promptCallbackData.expectedMessage = promptMessage;
     promptCallbackData.expectedDefaultValue = "";
@@ -615,7 +615,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("null"));
     EXPECT_STREQ("null", ewk_view_title_get(webView()));
-    EXPECT_EQ(true, promptCallbackData.called);
+    EXPECT_TRUE(promptCallbackData.called);
 
     ewkViewClass()->run_javascript_prompt = 0;
 
@@ -623,7 +623,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     ewk_view_html_string_load(webView(), promptHTML, 0, 0);
     EXPECT_TRUE(waitUntilTitleChangedTo("null"));
     EXPECT_STREQ("null", ewk_view_title_get(webView()));
-    EXPECT_EQ(false, promptCallbackData.called);
+    EXPECT_FALSE(promptCallbackData.called);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
