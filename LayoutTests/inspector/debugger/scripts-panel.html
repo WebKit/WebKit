@@ -86,7 +86,7 @@ function test()
             next();
         },
 
-        function testSourceReplaced(next)
+        function testTemporaryUISourceCodeAddedAndRemoved(next)
         {
             var workspace = new WebInspector.Workspace();
             var panel = new WebInspector.ScriptsPanel(workspace);
@@ -95,13 +95,14 @@ function test()
             var uiSourceCodeFoo = createUISouceCode("foo.js");
             workspace.project().addUISourceCode(uiSourceCodeFoo);
             var compiledSourceCode = createUISouceCode("compiled.js");
-            workspace.project().addUISourceCode(compiledSourceCode);
+            workspace.project().addTemporaryUISourceCode(compiledSourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
             var sourceSourceCode = createUISouceCode("source.js");
-            workspace.project().replaceUISourceCode(compiledSourceCode, sourceSourceCode);
+            workspace.project().addUISourceCode(sourceSourceCode);
+            workspace.project().removeTemporaryUISourceCode(compiledSourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
             next();

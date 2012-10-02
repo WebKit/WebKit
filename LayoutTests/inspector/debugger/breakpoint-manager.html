@@ -108,6 +108,7 @@ function test()
     {
     }
 
+    var temporaryUISourceCodes = {};
     WorkspaceMock.prototype = {
         _addUISourceCode: function(url)
         {
@@ -116,6 +117,29 @@ function test()
             uiSourceCodes[url] = uiSourceCode;
             this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
             return uiSourceCode;
+        },
+
+        _addTemporaryUISourceCode: function(url)
+        {
+            var uiSourceCode = new WebInspector.JavaScriptSource(url, null, null, false);
+            uiSourceCode.qq = 345;
+            uiSourceCode.setSourceMapping(defaultMapping);
+            uiSourceCodes[url] = uiSourceCode;
+            temporaryUISourceCodes[url] = uiSourceCode;
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, uiSourceCode);
+            return uiSourceCode;
+        },
+
+        _removeTemporaryUISourceCode: function(url)
+        {
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, temporaryUISourceCodes[url]);
+            delete temporaryUISourceCodes[url];
+            delete uiSourceCodes[url];
+        },
+
+        uiSourceCodes: function()
+        {
+            return Object.values(uiSourceCodes);
         },
 
         reset: function()
@@ -158,6 +182,19 @@ function test()
         breakpointManager._debuggerModel._addScript(url, url);
         InspectorTest.addResult("  Adding UISourceCode: " + url + ")");
         return breakpointManager._workspace._addUISourceCode(url);
+    }
+
+    function addTemporaryUISourceCode(breakpointManager, url)
+    {
+        breakpointManager._debuggerModel._addScript(url, url);
+        InspectorTest.addResult("  Adding temporary UISourceCode: " + url + ")");
+        return breakpointManager._workspace._addTemporaryUISourceCode(url);
+    }
+
+    function removeTemporaryUISourceCode(breakpointManager, url)
+    {
+        InspectorTest.addResult("  Removing temporary UISourceCode: " + url + ")");
+        breakpointManager._workspace._removeTemporaryUISourceCode(url);
     }
 
     function createBreakpoint(uiSourceCodeId, lineNumber, condition, enabled)
@@ -261,6 +298,15 @@ function test()
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             addUISourceCode(breakpointManager, "a.js");
             addUISourceCode(breakpointManager, "a.js");
+            resetBreakpointManager(breakpointManager, next);
+        },
+
+        function testRestoreBreakpointsAfterTemporaryUISourceCodeRemoved(next)
+        {
+            var breakpointManager = createBreakpointManager(serializedBreakpoints);
+            addTemporaryUISourceCode(breakpointManager, "a.js");
+            addUISourceCode(breakpointManager, "a.js");
+            removeTemporaryUISourceCode(breakpointManager, "a.js");
             resetBreakpointManager(breakpointManager, next);
         },
 

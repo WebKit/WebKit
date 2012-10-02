@@ -38,6 +38,7 @@ WebInspector.NetworkUISourceCodeProvider = function(workspace)
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
 
     this._uiSourceCodeForResource = {};
 }
@@ -56,6 +57,21 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
         }
 
         populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _parsedScriptSource: function(event)
+    {
+        var script = /** @type {WebInspector.Script} */ event.data;
+        if (!script.hasSourceURL)
+            return;
+        if (this._uiSourceCodeForResource[script.sourceURL])
+            return;
+        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, true);
+        this._uiSourceCodeForResource[script.sourceURL] = uiSourceCode;
+        this._workspace.project().addUISourceCode(uiSourceCode);
     },
 
     /**

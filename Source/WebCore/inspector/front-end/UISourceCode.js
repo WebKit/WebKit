@@ -576,7 +576,8 @@ WebInspector.UISourceCodeProvider = function()
 
 WebInspector.UISourceCodeProvider.Events = {
     UISourceCodeAdded: "UISourceCodeAdded",
-    UISourceCodeReplaced: "UISourceCodeReplaced",
+    TemporaryUISourceCodeAdded: "TemporaryUISourceCodeAdded",
+    TemporaryUISourceCodeRemoved: "TemporaryUISourceCodeRemoved",
     UISourceCodeRemoved: "UISourceCodeRemoved"
 }
 

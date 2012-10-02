@@ -21,9 +21,8 @@ Dumping ScriptsNavigator 'Scripts' tab:
   bar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 
-Running: testSourceReplaced
+Running: testTemporaryUISourceCodeAddedAndRemoved
 Dumping ScriptsNavigator 'Scripts' tab:
-  compiled.js
   foo.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 Dumping ScriptsNavigator 'Scripts' tab:

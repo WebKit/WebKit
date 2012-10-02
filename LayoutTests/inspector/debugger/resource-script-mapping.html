@@ -25,32 +25,34 @@ function test()
 
             function step1()
             {
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
                 InspectorTest.addResult("Adding script for pending request.");
                 script = InspectorTest.createScriptMock(url, 0, 0, true, "<content script source>");
                 resourceScriptMapping.addScript(script);
-            }
+                
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
+                script.rawLocationToUILocation(0, 5);
 
-            function uiSourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.checkUILocation(uiSourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
-                InspectorTest.checkRawLocation(script, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                function temporaryUISourceCodeAdded(uiSourceCode)
+                {
+                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
+                    InspectorTest.checkRawLocation(script, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
+                    InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                }
             }
 
             function step2()
             {
                 InspectorTest.addResult("Adding uiSourceCode for finished resource.");
-                InspectorTest.waitForWorkspaceUISourceCodeReplacedEvent(uiSourceCodeReplacedWithResource);
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(function() { });
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent(function() { });
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
                 InspectorTest.addMockUISourceCodeToWorkspace(url, WebInspector.resourceTypes.Script, "<content script resource content>");
-            }
 
-            function uiSourceCodeReplacedWithResource(uiSourceCode, oldUISourceCode)
-            {
-                InspectorTest.checkUILocation(uiSourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
-                InspectorTest.checkRawLocation(script, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                InspectorTest.dumpUISourceCode(uiSourceCode, next);
+                function uiSourceCodeAdded(uiSourceCode)
+                {
+                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
+                    InspectorTest.checkRawLocation(script, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
+                    InspectorTest.dumpUISourceCode(uiSourceCode, next);
+                }
             }
         },
 
@@ -98,47 +100,50 @@ function test()
 
             function step1()
             {
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
                 InspectorTest.addResult("Adding first script for pending request.");
                 script1 = InspectorTest.createScriptMock(url, 0, 10, false, "<script source 1>");
                 resourceScriptMapping.addScript(script1);
-            }
+                
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
+                script1.rawLocationToUILocation(0, 5);
 
-            function uiSourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.checkUILocation(uiSourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
-                InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                function temporaryUISourceCodeAdded(uiSourceCode)
+                {
+                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
+                    InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
+                    InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                }
             }
 
             function step2()
             {
                 InspectorTest.addResult("Adding second script for pending request.");
-                InspectorTest.waitForWorkspaceUISourceCodeReplacedEvent(uiSourceCodeReplaced);
                 script2 = InspectorTest.createScriptMock(url, 0, 45, false, "<script source 2>");
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent(function() { });
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
                 resourceScriptMapping.addScript(script2);
-            }
 
-            function uiSourceCodeReplaced(uiSourceCode, oldUISourceCode)
-            {
-                InspectorTest.checkUILocation(uiSourceCode, 0, 5, script2.rawLocationToUILocation(0, 5));
-                InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                InspectorTest.dumpUISourceCode(uiSourceCode, step3);
+                function temporaryUISourceCodeAdded(uiSourceCode)
+                {
+                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script2.rawLocationToUILocation(0, 5));
+                    InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
+                    InspectorTest.dumpUISourceCode(uiSourceCode, step3);
+                }
             }
 
             function step3()
             {
                 InspectorTest.addResult("Adding uiSourceCode for finished resource.");
-                InspectorTest.waitForWorkspaceUISourceCodeReplacedEvent(uiSourceCodeReplacedWithResource);
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(function() { });
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent(function() { });
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
                 InspectorTest.addMockUISourceCodeToWorkspace(url, WebInspector.resourceTypes.Document, "<resource content>");
-            }
 
-            function uiSourceCodeReplacedWithResource(uiSourceCode, oldUISourceCode)
-            {
-                InspectorTest.checkUILocation(uiSourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
-                InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                InspectorTest.dumpUISourceCode(uiSourceCode, next);
+                function uiSourceCodeAdded(uiSourceCode)
+                {
+                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
+                    InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
+                    InspectorTest.dumpUISourceCode(uiSourceCode, next);
+                }
             }
         },
 

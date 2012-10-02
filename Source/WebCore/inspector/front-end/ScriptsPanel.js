@@ -194,8 +194,8 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     WebInspector.endBatchUpdate();
 
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
-    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset.bind(this), this);
 
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._workspace));
@@ -480,19 +480,6 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         this._sourceFramesByUISourceCode.remove(uiSourceCode);
         sourceFrame.detach();
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _uiSourceCodeReplaced: function(event)
-    {
-        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
-
-        this._navigator.replaceUISourceCode(oldUISourceCode, uiSourceCode);
-        this._editorContainer.replaceFile(oldUISourceCode, uiSourceCode);
-        this._removeSourceFrame(oldUISourceCode);
     },
 
     _clearCurrentExecutionLine: function()

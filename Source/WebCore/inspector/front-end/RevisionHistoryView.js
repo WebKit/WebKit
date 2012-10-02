@@ -55,8 +55,8 @@ WebInspector.RevisionHistoryView = function()
 
     WebInspector.workspace.uiSourceCodes().forEach(populateRevisions.bind(this));
     WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.UISourceCodeContentCommitted, this._revisionAdded, this);
-    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 
     this._statusElement = document.createElement("span");
@@ -158,17 +158,6 @@ WebInspector.RevisionHistoryView.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         this._removeUISourceCode(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _uiSourceCodeReplaced: function(event)
-    {
-        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
-        this._removeUISourceCode(oldUISourceCode);
-        this._revealUISourceCode(uiSourceCode);
     },
 
     /**

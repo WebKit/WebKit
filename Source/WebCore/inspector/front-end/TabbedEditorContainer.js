@@ -212,9 +212,17 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     removeUISourceCode: function(uiSourceCode)
     {
+        var wasCurrent = this._currentFile === uiSourceCode;
+
         var tabId = this._tabIds.get(uiSourceCode);
         if (tabId)
             this._tabbedPane.closeTab(tabId);
+        
+        if (wasCurrent && uiSourceCode.isTemporary) {
+            var newUISourceCode = WebInspector.workspace.uiSourceCodeForURL(uiSourceCode.url);
+            if (newUISourceCode)
+                this._innerShowFile(newUISourceCode, false);
+        }
     },
 
     /**
@@ -316,30 +324,6 @@ WebInspector.TabbedEditorContainer.prototype = {
 
         var uiSourceCode = this._files[tabId];
         this._innerShowFile(uiSourceCode, userGesture);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} oldUISourceCode
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    replaceFile: function(oldUISourceCode, uiSourceCode)
-    {
-        var tabId = this._tabIds.get(oldUISourceCode);
-        
-        if (!tabId)
-            return;
-        
-        delete this._files[this._tabIds.get(oldUISourceCode)]
-        this._tabIds.remove(oldUISourceCode);
-        this._tabIds.put(uiSourceCode, tabId);
-        this._files[tabId] = uiSourceCode;
-
-        this._tabbedPane.changeTabTitle(tabId, this._titleForFile(uiSourceCode));
-        this._tabbedPane.changeTabView(tabId, this._delegate.viewForFile(uiSourceCode));
-        this._tabbedPane.changeTabTooltip(tabId, this._tooltipForFile(uiSourceCode));
-
-        this._removeUISourceCodeListeners(oldUISourceCode);
-        this._addUISourceCodeListeners(uiSourceCode);
     },
 
     /**
