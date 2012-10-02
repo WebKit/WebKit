@@ -1,3 +1,19 @@
+2012-10-02  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Add field to WebRenderingStats to track if we have impl-thread scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=97919
+
+        Reviewed by James Robinson.
+
+        Add two new members |numImplThreadScrolls| and |numMainThreadScrolls| to track
+        the total number of times we have impl-thread scrolled and main-thread scrolled,
+        respectively.
+
+        * chromium/public/WebRenderingStats.h:
+        (WebRenderingStats):
+        (WebKit::WebRenderingStats::WebRenderingStats):
+        (WebKit::WebRenderingStats::enumerateFields):
+
 2012-09-28  Harald Tveit Alvestrand  <harald@alvestrand.no>
 
         Implement the GetStats interface on PeerConnection
