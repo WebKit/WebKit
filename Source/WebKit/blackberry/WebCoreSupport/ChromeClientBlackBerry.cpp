@@ -392,7 +392,8 @@ bool ChromeClientBlackBerry::runBeforeUnloadConfirmPanel(const String& message, 
 
 void ChromeClientBlackBerry::closeWindowSoon()
 {
-    m_webPagePrivate->m_client->scheduleCloseWindow();
+    if (m_webPagePrivate->m_page->openedByDOM())
+        m_webPagePrivate->m_client->scheduleCloseWindow();
 }
 
 void ChromeClientBlackBerry::setStatusbarText(const String& status)
