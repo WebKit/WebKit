@@ -65,6 +65,8 @@ function test()
             function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
             {
                 InspectorTest.addSniffer(WebInspector.SnippetScriptMapping.prototype, "addScript", dumpScript);
+                // JSC does not support compile-and-run for snippet evaluation, so different platforms have slightly different codeflow here, hence two sniffers.
+                InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_printResult", dumpResult);
                 InspectorTest.addSniffer(WebInspector.ScriptSnippetModel.prototype, "_printRunScriptResult", dumpResult);
                 WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
                 var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(snippetJavaScriptSource);
