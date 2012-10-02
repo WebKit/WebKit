@@ -1974,7 +1974,7 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
     return style.release();
 }
 
-void Document::registerCustomFont(PassOwnPtr<FontData> fontData)
+void Document::registerCustomFont(PassRefPtr<FontData> fontData)
 {
     m_customFonts.append(fontData);
 }

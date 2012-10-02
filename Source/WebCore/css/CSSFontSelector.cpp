@@ -350,7 +350,7 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
+static PassRefPtr<FontData> fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
     if (!document || !document->frame())
         return 0;
@@ -465,7 +465,7 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     return false;
 }
 
-FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
+PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
     if (m_fontFaces.isEmpty()) {
         if (familyName.startsWith("-webkit-"))

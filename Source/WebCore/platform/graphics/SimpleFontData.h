@@ -79,10 +79,16 @@ public:
     };
 
     // Used to create platform fonts.
-    SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
+    static PassRefPtr<SimpleFontData> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
+    {
+        return adoptRef(new SimpleFontData(platformData, isCustomFont, isLoading, isTextOrientationFallback));
+    }
 
     // Used to create SVG Fonts.
-    SimpleFontData(PassOwnPtr<AdditionalFontData>, float fontSize, bool syntheticBold, bool syntheticItalic);
+    static PassRefPtr<SimpleFontData> create(PassOwnPtr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    {
+        return adoptRef(new SimpleFontData(fontData, fontSize, syntheticBold, syntheticItalic));
+    }
 
     virtual ~SimpleFontData();
 
@@ -91,11 +97,11 @@ public:
     const OpenTypeVerticalData* verticalData() const { return m_verticalData; }
 #endif
 
-    SimpleFontData* smallCapsFontData(const FontDescription&) const;
-    SimpleFontData* emphasisMarkFontData(const FontDescription&) const;
-    SimpleFontData* brokenIdeographFontData() const;
+    PassRefPtr<SimpleFontData> smallCapsFontData(const FontDescription&) const;
+    PassRefPtr<SimpleFontData> emphasisMarkFontData(const FontDescription&) const;
+    PassRefPtr<SimpleFontData> brokenIdeographFontData() const;
 
-    SimpleFontData* variantFontData(const FontDescription& description, FontDataVariant variant) const
+    PassRefPtr<SimpleFontData> variantFontData(const FontDescription& description, FontDataVariant variant) const
     {
         switch (variant) {
         case SmallCapsVariant:
@@ -112,8 +118,8 @@ public:
         return const_cast<SimpleFontData*>(this);
     }
 
-    SimpleFontData* verticalRightOrientationFontData() const;
-    SimpleFontData* uprightOrientationFontData() const;
+    PassRefPtr<SimpleFontData> verticalRightOrientationFontData() const;
+    PassRefPtr<SimpleFontData> uprightOrientationFontData() const;
 
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
     bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
@@ -201,6 +207,10 @@ public:
 #endif
 
 private:
+    SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
+
+    SimpleFontData(PassOwnPtr<AdditionalFontData> , float fontSize, bool syntheticBold, bool syntheticItalic);
+
     void platformInit();
     void platformGlyphInit();
     void platformCharWidthInit();
@@ -210,7 +220,7 @@ private:
 
     void commonInit();
 
-    PassOwnPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
+    PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
 
 #if (PLATFORM(WIN) && !OS(WINCE)) \
     || (OS(WINDOWS) && PLATFORM(WX))
@@ -254,11 +264,11 @@ private:
         ~DerivedFontData();
 
         bool forCustomFont;
-        OwnPtr<SimpleFontData> smallCaps;
-        OwnPtr<SimpleFontData> emphasisMark;
-        OwnPtr<SimpleFontData> brokenIdeograph;
-        OwnPtr<SimpleFontData> verticalRightOrientation;
-        OwnPtr<SimpleFontData> uprightOrientation;
+        RefPtr<SimpleFontData> smallCaps;
+        RefPtr<SimpleFontData> emphasisMark;
+        RefPtr<SimpleFontData> brokenIdeograph;
+        RefPtr<SimpleFontData> verticalRightOrientation;
+        RefPtr<SimpleFontData> uprightOrientation;
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
 #endif

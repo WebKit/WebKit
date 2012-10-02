@@ -540,7 +540,7 @@ public:
     PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
-    void registerCustomFont(PassOwnPtr<FontData>);
+    void registerCustomFont(PassRefPtr<FontData>);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     bool isPageBoxVisible(int pageIndex);
@@ -1256,7 +1256,7 @@ private:
     // do eventually load.
     PendingSheetLayout m_pendingSheetLayout;
 
-    Vector<OwnPtr<FontData> > m_customFonts;
+    Vector<RefPtr<FontData> > m_customFonts;
 
     Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;

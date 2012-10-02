@@ -63,7 +63,7 @@ void SimpleFontData::platformDestroy()
 {
 }
 
-PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     FontDescription fontDesc(fontDescription);
     fontDesc.setComputedSize(lroundf(scaleFactor * fontDesc.computedSize()));
@@ -71,28 +71,28 @@ PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
     fontDesc.setKeywordSize(lroundf(scaleFactor * fontDesc.keywordSize()));
     FontPlatformData* result = fontCache()->getCachedFontPlatformData(fontDesc, m_platformData.family());
     if (!result)
-        return nullptr;
-    return adoptPtr(new SimpleFontData(*result));
+        return 0;
+    return SimpleFontData::create(*result);
 }
 
-SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
+PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFontData(fontDescription, .7);
 
-    return m_derivedFontData->smallCaps.get();
+    return m_derivedFontData->smallCaps;
 }
 
-SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, .5);
 
-    return m_derivedFontData->emphasisMark.get();
+    return m_derivedFontData->emphasisMark;
 }
 
 DWORD getKnownFontCodePages(const wchar_t* family);

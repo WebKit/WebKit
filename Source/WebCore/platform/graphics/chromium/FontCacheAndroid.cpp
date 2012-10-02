@@ -97,7 +97,7 @@ void FontCache::platformInit()
 {
 }
 
-const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     // FIXME: We do not use fontconfig on Android, so use simple logic for now.
     // https://bugs.webkit.org/show_bug.cgi?id=67587
@@ -105,12 +105,12 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain), DoNotRetain);
 }
 
-SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
+PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
+PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, serif, ("Serif"));
     DEFINE_STATIC_LOCAL(const AtomicString, monospace, ("Monospace"));

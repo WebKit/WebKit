@@ -51,7 +51,6 @@ class FontMetrics;
 class FontPlatformData;
 class FontSelector;
 class GlyphBuffer;
-class GlyphPageTreeNode;
 class GraphicsContext;
 class RenderText;
 class TextLayout;

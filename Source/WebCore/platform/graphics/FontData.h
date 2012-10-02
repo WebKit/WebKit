@@ -29,13 +29,15 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 class SimpleFontData;
 
-class FontData {
+class FontData : public RefCounted<FontData> {
     WTF_MAKE_NONCOPYABLE(FontData); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontData()

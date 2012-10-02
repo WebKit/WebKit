@@ -99,7 +99,7 @@ static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
     return appKitFontWeight >= 7;
 }
 
-const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     UChar32 character;
     U16_GET(characters, 0, 0, length, character);
@@ -172,12 +172,12 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return getCachedFontData(&alternateFont, DoNotRetain);
 }
 
-SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
+PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
 {
     // Attempt to find an appropriate font using a match based on 
     // the presence of keywords in the the requested names.  For example, we'll
     // match any name that contains "Arabic" to Geeza Pro.
-    SimpleFontData* simpleFontData = 0;
+    RefPtr<SimpleFontData> simpleFontData;
     const FontFamily* currFamily = &font.fontDescription().family();
     while (currFamily && !simpleFontData) {
         if (currFamily->family().length()) {
@@ -190,18 +190,18 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
         currFamily = currFamily->next();
     }
 
-    return simpleFontData;
+    return simpleFontData.release();
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times"));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    SimpleFontData* simpleFontData = getCachedFontData(fontDescription, timesStr, false, shouldRetain);
+    RefPtr<SimpleFontData> simpleFontData = getCachedFontData(fontDescription, timesStr, false, shouldRetain);
     if (simpleFontData)
-        return simpleFontData;
+        return simpleFontData.release();
 
     // The Times fallback will almost always work, but in the highly unusual case where
     // the user doesn't have it, we fall back on Lucida Grande because that's
