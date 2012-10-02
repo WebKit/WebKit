@@ -70,8 +70,11 @@ WebInspector.RequestTimingView.prototype = {
 
         this._tableElement = WebInspector.RequestTimingView.createTimingTable(this._request);
         this.element.appendChild(this._tableElement);
-    }
+    },
+
+    __proto__: WebInspector.View.prototype
 }
+
 
 WebInspector.RequestTimingView.createTimingTable = function(request)
 {
@@ -157,5 +160,3 @@ WebInspector.RequestTimingView.createTimingTable = function(request)
     }
     return tableElement;
 }
-
-WebInspector.RequestTimingView.prototype.__proto__ = WebInspector.View.prototype;

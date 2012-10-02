@@ -108,7 +108,7 @@ WebInspector.GoToLineDialog.prototype = {
     onEnter: function()
     {
         this._applyLineNumber();
-    }
-}
+    },
 
-WebInspector.GoToLineDialog.prototype.__proto__ = WebInspector.DialogDelegate.prototype;
+    __proto__: WebInspector.DialogDelegate.prototype
+}

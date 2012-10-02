@@ -100,10 +100,10 @@ WebInspector.NetworkItemView.prototype = {
     request: function()
     {
         return this._request;
-    }
-}
+    },
 
-WebInspector.NetworkItemView.prototype.__proto__ = WebInspector.TabbedPane.prototype;
+    __proto__: WebInspector.TabbedPane.prototype
+}
 
 /**
  * @constructor
@@ -170,7 +170,7 @@ WebInspector.RequestContentView.prototype = {
     {
         if (this.canHighlightLine())
             this._innerView.highlightLine(line);
-    }
-}
+    },
 
-WebInspector.RequestContentView.prototype.__proto__ = WebInspector.RequestView.prototype;
+    __proto__: WebInspector.RequestView.prototype
+}

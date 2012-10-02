@@ -218,10 +218,10 @@ WebInspector.ApplicationCacheModel.prototype = {
     {
         this._onLine = isNowOnline;
         this.dispatchEventToListeners(WebInspector.ApplicationCacheModel.EventTypes.NetworkStateChanged, isNowOnline);
-    }
-}
+    },
 
-WebInspector.ApplicationCacheModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

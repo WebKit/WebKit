@@ -232,7 +232,7 @@ WebInspector.Script.Location.prototype = {
     {
         WebInspector.LiveLocation.prototype.dispose.call(this);
         this._script._locations.remove(this);
-    }
-}
+    },
 
-WebInspector.Script.Location.prototype.__proto__ = WebInspector.LiveLocation.prototype;
+    __proto__: WebInspector.LiveLocation.prototype
+}

@@ -1112,10 +1112,10 @@ WebInspector.ProfilesPanel.prototype = {
 
         contextMenu.appendItem(WebInspector.UIString("Reveal in Dominators View"), revealInView.bind(this, "Dominators"));
         contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInView.bind(this, "Summary"));
-    }
-}
+    },
 
-WebInspector.ProfilesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}
 
 /**
  * @constructor
@@ -1253,10 +1253,10 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Load profile\u2026"), profilesPanel._fileSelectorElement.click.bind(profilesPanel._fileSelectorElement));
         contextMenu.appendItem(WebInspector.UIString("Delete profile"), this.ondelete.bind(this));
         contextMenu.show(event);
-    }
-}
+    },
 
-WebInspector.ProfileSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+    __proto__: WebInspector.SidebarTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1274,10 +1274,10 @@ WebInspector.ProfileGroupSidebarTreeElement.prototype = {
     {
         if (this.children.length > 0)
             WebInspector.ProfilesPanel._instance.showProfile(this.children[this.children.length - 1].profile);
-    }
-}
+    },
 
-WebInspector.ProfileGroupSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+    __proto__: WebInspector.SidebarTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1300,10 +1300,10 @@ WebInspector.ProfilesSidebarTreeElement.prototype = {
     get selectable()
     {
         return true;
-    }
-}
+    },
 
-WebInspector.ProfilesSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+    __proto__: WebInspector.SidebarTreeElement.prototype
+}
 
 importScript("ProfileDataGridTree.js");
 importScript("BottomUpProfileDataGridTree.js");

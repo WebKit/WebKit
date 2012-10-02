@@ -79,7 +79,7 @@ WebInspector.StyleSource.prototype = {
         if (this._incrementalUpdateTimer)
             clearTimeout(this._incrementalUpdateTimer);
         delete this._incrementalUpdateTimer;
-    }
-}
+    },
 
-WebInspector.StyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;
+    __proto__: WebInspector.UISourceCode.prototype
+}

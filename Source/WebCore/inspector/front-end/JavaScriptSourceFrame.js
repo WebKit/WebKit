@@ -573,7 +573,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._javaScriptSource.uiLocationToRawLocation(lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
-    }
-}
+    },
 
-WebInspector.JavaScriptSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+    __proto__: WebInspector.SourceFrame.prototype
+}

@@ -588,10 +588,10 @@ WebInspector.DebuggerModel.prototype = {
                 this._pausedScript(newCallFrames, this._debuggerPausedDetails.reason, this._debuggerPausedDetails.auxData);
 
         }
-    }
-}
+    },
 
-WebInspector.DebuggerModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 WebInspector.DebuggerEventTypes = {
     JavaScriptPause: 0,

@@ -61,7 +61,7 @@ WebInspector.JavaScriptSource.prototype = {
         var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this.uiLocationToRawLocation(0, 0);
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
         WebInspector.debuggerModel.setScriptSource(script.scriptId, this.workingCopy(), innerCallback);
-    }
-}
+    },
 
-WebInspector.JavaScriptSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;
+    __proto__: WebInspector.UISourceCode.prototype
+}

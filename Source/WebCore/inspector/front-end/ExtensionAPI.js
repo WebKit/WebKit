@@ -378,10 +378,10 @@ PanelWithSidebarImpl.prototype = {
             callback(new ExtensionSidebarPane(id));
         }
         extensionServer.sendRequest(request, callback && callbackWrapper);
-    }
-}
+    },
 
-PanelWithSidebarImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
+    __proto__: ExtensionViewImpl.prototype
+}
 
 /**
  * @constructor
@@ -430,10 +430,10 @@ ExtensionPanelImpl.prototype = {
             id: this._id
         };
         extensionServer.sendRequest(request);
-    }
-};
+    },
 
-ExtensionPanelImpl.prototype.__proto__ = ExtensionViewImpl.prototype;
+    __proto__: ExtensionViewImpl.prototype
+}
 
 /**
  * @constructor

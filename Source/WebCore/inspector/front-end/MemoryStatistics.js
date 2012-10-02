@@ -126,10 +126,10 @@ WebInspector.SwatchCheckbox.prototype = {
     {
         this.checked = !this.checked;
         this.dispatchEventToListeners(WebInspector.SwatchCheckbox.Events.Changed);
-    }
-}
+    },
 
-WebInspector.SwatchCheckbox.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

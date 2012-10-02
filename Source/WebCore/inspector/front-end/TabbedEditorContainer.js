@@ -416,10 +416,10 @@ WebInspector.TabbedEditorContainer.prototype = {
     currentFile: function()
     {
         return this._currentFile;
-    }
-}
+    },
 
-WebInspector.TabbedEditorContainer.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -455,10 +455,10 @@ WebInspector.TabbedEditorContainer.HistoryItem.prototype = {
         serializedHistoryItem.selectionRange = this.selectionRange;
         serializedHistoryItem.scrollLineNumber = this.scrollLineNumber;
         return serializedHistoryItem;
-    }
-}
+    },
 
-WebInspector.TabbedEditorContainer.HistoryItem.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -585,7 +585,7 @@ WebInspector.TabbedEditorContainer.History.prototype = {
         for (var i = 0; i < this._items.length; ++i)
             serializedHistory.push(this._items[i].serializeToObject());
         return serializedHistory;
-    }
-}
+    },
 
-WebInspector.TabbedEditorContainer.History.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

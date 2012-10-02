@@ -76,7 +76,7 @@ WebInspector.NativeBreakpointsSidebarPane.prototype = {
             this.bodyElement.removeChild(this.listElement);
             this.bodyElement.appendChild(this.emptyElement);
         }
-    }
-}
+    },
 
-WebInspector.NativeBreakpointsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}

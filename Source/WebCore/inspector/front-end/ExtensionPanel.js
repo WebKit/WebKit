@@ -88,10 +88,10 @@ WebInspector.ExtensionPanel.prototype = {
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.PreviousSearchResult);
         WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this);
-    }
-}
+    },
 
-WebInspector.ExtensionPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}
 
 /**
  * @constructor
@@ -240,7 +240,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
         section.editable = false;
         this._objectPropertiesView.element.appendChild(section.element);
         callback();
-    }
-}
+    },
 
-WebInspector.ExtensionSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}

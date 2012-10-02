@@ -271,6 +271,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         // InspectorBackend.deleteCachedResource(...)
         // this._update();
     },
+
+    __proto__: WebInspector.View.prototype
 }
 
-WebInspector.ApplicationCacheItemsView.prototype.__proto__ = WebInspector.View.prototype;

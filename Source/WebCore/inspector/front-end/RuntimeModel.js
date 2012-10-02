@@ -319,10 +319,10 @@ WebInspector.RuntimeModel.prototype = {
             results.push(property);
         }
         completionsReadyCallback(results);
-    }
-}
+    },
 
-WebInspector.RuntimeModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @type {WebInspector.RuntimeModel}
@@ -445,7 +445,7 @@ WebInspector.FrameExecutionContextList.prototype =
             return name + "( " + subtitle + " )";
         }
         return "<iframe>";
-    }
-}
+    },
 
-WebInspector.FrameExecutionContextList.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

@@ -218,10 +218,10 @@ HTMLScriptFormatter.prototype = {
 
     styleSheetEnded: function(cursor)
     {
-    }
-}
+    },
 
-HTMLScriptFormatter.prototype.__proto__ = WebInspector.SourceHTMLTokenizer.prototype;
+    __proto__: WebInspector.SourceHTMLTokenizer.prototype
+}
 
 function require()
 {

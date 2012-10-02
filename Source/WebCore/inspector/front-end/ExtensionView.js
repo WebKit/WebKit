@@ -68,10 +68,10 @@ WebInspector.ExtensionView.prototype = {
         this._frameIndex = Array.prototype.indexOf.call(window.frames, this._iframe.contentWindow);
         if (this.isShowing())
             WebInspector.extensionServer.notifyViewShown(this._id, this._frameIndex);
-    }
-}
+    },
 
-WebInspector.ExtensionView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -94,7 +94,7 @@ WebInspector.ExtensionNotifierView.prototype = {
     willHide: function()
     {
         WebInspector.extensionServer.notifyViewHidden(this._id);
-    }
-}
+    },
 
-WebInspector.ExtensionNotifierView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

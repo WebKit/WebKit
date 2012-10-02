@@ -1904,10 +1904,11 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
             this._iterationOrder.sortRange(compareNodeAndEdge, leftBound, rightBound, count);
         else
             this._iterationOrder.sortRange(compareNodeAndNode, leftBound, rightBound, count);
-    }
-};
+    },
 
-WebInspector.HeapSnapshotEdgesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
+    __proto__: WebInspector.HeapSnapshotFilteredOrderedIterator.prototype
+}
+
 
 /**
  * @constructor
@@ -1981,7 +1982,8 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
         }
 
         this._iterationOrder.sortRange(sortByComparator, leftBound, rightBound, count);
-    }
-};
+    },
 
-WebInspector.HeapSnapshotNodesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
+    __proto__: WebInspector.HeapSnapshotFilteredOrderedIterator.prototype
+}
+

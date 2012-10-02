@@ -483,10 +483,10 @@ WebInspector.IndexedDBModel.prototype = {
 
         var keyRange = WebInspector.IndexedDBModel.keyRangeFromIDBKeyRange(idbKeyRange);
         IndexedDBAgent.requestData(frameId, databaseName, objectStoreName, indexName, skipCount, pageSize, keyRange ? keyRange : undefined, innerCallback.bind(this));
-    }
-}
+    },
 
-WebInspector.IndexedDBModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

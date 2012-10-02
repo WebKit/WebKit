@@ -246,10 +246,10 @@ WebInspector.InspectorView.prototype = {
     {
         WebInspector.searchController.disableSearchUntilExplicitAction();
         this.setCurrentPanel(panel);
-    }
-}
+    },
 
-WebInspector.InspectorView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @type {WebInspector.InspectorView}

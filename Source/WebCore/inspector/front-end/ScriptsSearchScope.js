@@ -124,7 +124,7 @@ WebInspector.ScriptsSearchScope.prototype = {
         uiSourceCodes.sort(comparator);
         
         return uiSourceCodes;
-    }
-}
+    },
 
-WebInspector.ScriptsSearchScope.prototype.__proto__ = WebInspector.SearchScope.prototype;
+    __proto__: WebInspector.SearchScope.prototype
+}

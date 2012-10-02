@@ -127,7 +127,7 @@ WebInspector.ProfileLauncherView.prototype = {
     {
         this._isProfiling = false;
         this._updateControls();
-    }
-}
+    },
 
-WebInspector.ProfileLauncherView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

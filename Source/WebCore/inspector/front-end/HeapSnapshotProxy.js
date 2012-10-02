@@ -42,10 +42,10 @@ WebInspector.HeapSnapshotWorkerWrapper.prototype =  {
     },
     terminate: function()
     {
-    }
-}
+    },
 
-WebInspector.HeapSnapshotWorkerWrapper.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -84,10 +84,11 @@ WebInspector.HeapSnapshotRealWorker.prototype = {
     terminate: function()
     {
         this._worker.terminate();
-    }
-};
+    },
 
-WebInspector.HeapSnapshotRealWorker.prototype.__proto__ = WebInspector.HeapSnapshotWorkerWrapper.prototype;
+    __proto__: WebInspector.HeapSnapshotWorkerWrapper.prototype
+}
+
 
 /**
  * @constructor
@@ -165,10 +166,11 @@ WebInspector.HeapSnapshotFakeWorker.prototype = {
             this.dispatchEventToListeners("message", message);
         }
         this._asyncTaskQueue.addTask(send.bind(this));
-    }
-};
+    },
 
-WebInspector.HeapSnapshotFakeWorker.prototype.__proto__ = WebInspector.HeapSnapshotWorkerWrapper.prototype;
+    __proto__: WebInspector.HeapSnapshotWorkerWrapper.prototype
+}
+
 
 /**
  * @constructor
@@ -295,10 +297,11 @@ WebInspector.HeapSnapshotWorker.prototype = {
     _postMessage: function(message)
     {
         this._worker.postMessage(message);
-    }
-};
+    },
 
-WebInspector.HeapSnapshotWorker.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
+
 
 /**
  * @constructor
@@ -411,10 +414,11 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
             this._pendingSnapshotConsumers = [];
         }
         this.callMethod(buildSnapshot.bind(this), "close");
-    }
-};
+    },
 
-WebInspector.HeapSnapshotLoaderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
+    __proto__: WebInspector.HeapSnapshotProxyObject.prototype
+}
+
 
 /**
  * @constructor
@@ -524,10 +528,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
     get uid()
     {
         return this._staticData.uid;
-    }
-};
+    },
 
-WebInspector.HeapSnapshotProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
+    __proto__: WebInspector.HeapSnapshotProxyObject.prototype
+}
+
 
 /**
  * @constructor
@@ -557,7 +562,8 @@ WebInspector.HeapSnapshotProviderProxy.prototype = {
     sortAndRewind: function(comparator, callback)
     {
         this.callMethod(callback, "sortAndRewind", comparator);
-    }
-};
+    },
 
-WebInspector.HeapSnapshotProviderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
+    __proto__: WebInspector.HeapSnapshotProxyObject.prototype
+}
+

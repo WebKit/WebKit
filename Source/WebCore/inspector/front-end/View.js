@@ -358,10 +358,10 @@ WebInspector.View.prototype = {
             return;
 
         WebInspector.setCurrentFocusElement(element);
-    }
-}
+    },
 
-WebInspector.View.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 WebInspector.View._originalAppendChild = Element.prototype.appendChild;
 WebInspector.View._originalInsertBefore = Element.prototype.insertBefore;

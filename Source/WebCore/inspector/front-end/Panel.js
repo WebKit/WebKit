@@ -247,10 +247,10 @@ WebInspector.Panel.prototype = {
     unregisterShortcut: function(key)
     {
         delete this._shortcuts[key];
-    }
-}
+    },
 
-WebInspector.Panel.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor

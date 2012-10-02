@@ -185,10 +185,10 @@ WebInspector.RevisionHistoryView.prototype = {
     {
         this._treeOutline.removeChildren();
         this._uiSourceCodeItems.clear();
-    }
-}
+    },
 
-WebInspector.RevisionHistoryView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -322,7 +322,7 @@ WebInspector.RevisionHistoryTreeElement.prototype = {
     allowRevert: function()
     {
         this._revertElement.removeStyleClass("hidden");
-    }
-}
+    },
 
-WebInspector.RevisionHistoryTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}

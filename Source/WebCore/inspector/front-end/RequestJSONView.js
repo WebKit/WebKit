@@ -100,10 +100,10 @@ WebInspector.RequestJSONView.prototype = {
         section.expand();
         section.editable = false;
         this.element.appendChild(section.element);
-    }
-}
+    },
 
-WebInspector.RequestJSONView.prototype.__proto__ = WebInspector.RequestView.prototype;
+    __proto__: WebInspector.RequestView.prototype
+}
 
 /**
  * @constructor

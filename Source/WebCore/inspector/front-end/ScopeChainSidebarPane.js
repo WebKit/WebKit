@@ -118,10 +118,10 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             this._sections.push(section);
             this.bodyElement.appendChild(section.element);
         }
-    }
-}
+    },
 
-WebInspector.ScopeChainSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}
 
 /**
  * @constructor
@@ -180,7 +180,7 @@ WebInspector.ScopeVariableTreeElement.prototype = {
 
         this._propertyPath = result;
         return result;
-    }
-}
+    },
 
-WebInspector.ScopeVariableTreeElement.prototype.__proto__ = WebInspector.ObjectPropertyTreeElement.prototype;
+    __proto__: WebInspector.ObjectPropertyTreeElement.prototype
+}

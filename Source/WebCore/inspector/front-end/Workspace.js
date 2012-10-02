@@ -161,10 +161,10 @@ WebInspector.Workspace.prototype = {
     uiSourceCodes: function()
     {
         return this._project.uiSourceCodes();
-    }
-}
+    },
 
-WebInspector.Workspace.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @type {?WebInspector.Workspace}

@@ -89,9 +89,10 @@ WebInspector.IDBDatabaseView.prototype = {
         this._database = database;
         this._refreshDatabase();
     },
+
+    __proto__: WebInspector.View.prototype
 }
 
-WebInspector.IDBDatabaseView.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor
@@ -362,10 +363,10 @@ WebInspector.IDBDataView.prototype = {
             value.release();
         }
         this._entries = [];
-    }
-}
+    },
 
-WebInspector.IDBDataView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -427,7 +428,8 @@ WebInspector.IDBDataGridNode.prototype = {
             contents.addStyleClass("primitive-value");
             contents.appendChild(document.createTextNode(value.description));
         }
-    }
-};
+    },
 
-WebInspector.IDBDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+    __proto__: WebInspector.DataGridNode.prototype
+}
+

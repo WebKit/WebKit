@@ -155,10 +155,10 @@ WebInspector.CookieItemsView.prototype = {
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._update.bind(this));
             contextMenu.show(event);
         }
-    }
-}
+    },
 
-WebInspector.CookieItemsView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -197,7 +197,7 @@ WebInspector.SimpleCookiesTable.prototype = {
             this._dataGrid.rootNode().appendChild(node);
         }
         this._dataGrid.rootNode().children[0].selected = true;
-    }
-}
+    },
 
-WebInspector.SimpleCookiesTable.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

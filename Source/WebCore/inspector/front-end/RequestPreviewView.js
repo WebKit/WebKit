@@ -90,7 +90,7 @@ WebInspector.RequestPreviewView.prototype = {
             return this._createEmptyView();
 
         return WebInspector.RequestView.nonSourceViewForRequest(this.request);
-    }
-}
+    },
 
-WebInspector.RequestPreviewView.prototype.__proto__ = WebInspector.RequestContentView.prototype;
+    __proto__: WebInspector.RequestContentView.prototype
+}

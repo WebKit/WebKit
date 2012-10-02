@@ -407,7 +407,7 @@ WebInspector.RequestHeadersView.prototype = {
     {
         var toggleTitle = isHeadersTextShown ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
         return this._createToggleButton(toggleTitle);
-    }
-}
+    },
 
-WebInspector.RequestHeadersView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

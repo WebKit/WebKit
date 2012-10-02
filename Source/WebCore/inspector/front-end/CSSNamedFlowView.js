@@ -250,7 +250,7 @@ WebInspector.CSSNamedFlowView.prototype = {
         this._mergeRegions(this._flow.regions, newFlow.regions);
 
         this._flow = newFlow;
-    }
-}
+    },
 
-WebInspector.CSSNamedFlowView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

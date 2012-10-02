@@ -119,7 +119,7 @@ WebInspector.ProgressIndicator.prototype = {
     worked: function(worked)
     {
         this.setWorked(this._worked + (worked || 1));
-    }
-}
+    },
 
-WebInspector.ProgressIndicator.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

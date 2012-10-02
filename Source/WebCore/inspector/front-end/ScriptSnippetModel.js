@@ -403,10 +403,10 @@ WebInspector.ScriptSnippetModel.prototype = {
     _projectDidReset: function()
     {
         this._loadSnippets();
-    }
-}
+    },
 
-WebInspector.ScriptSnippetModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -435,10 +435,10 @@ WebInspector.SnippetJavaScriptSource.prototype = {
     workingCopyChanged: function()
     {  
         this._scriptSnippetModel._scriptSnippetEdited(this);
-    }
-}
+    },
 
-WebInspector.SnippetJavaScriptSource.prototype.__proto__ = WebInspector.JavaScriptSource.prototype;
+    __proto__: WebInspector.JavaScriptSource.prototype
+}
 
 /**
  * @constructor
@@ -500,7 +500,9 @@ WebInspector.SnippetContentProvider = function(snippet)
     WebInspector.StaticContentProvider.call(this, WebInspector.resourceTypes.Script, snippet.content);
 }
 
-WebInspector.SnippetContentProvider.prototype.__proto__ = WebInspector.StaticContentProvider.prototype;
+WebInspector.SnippetContentProvider.prototype = {
+    __proto__: WebInspector.StaticContentProvider.prototype
+}
 
 /**
  * @type {?WebInspector.ScriptSnippetModel}

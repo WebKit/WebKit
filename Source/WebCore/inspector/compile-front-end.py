@@ -225,6 +225,13 @@ modules = [
         ]
     },
     {
+        "name": "workers",
+        "dependencies": ["components"],
+        "sources": [
+            "WorkerManager.js",
+        ]
+    },
+    {
         "name": "scripts",
         "dependencies": ["components", "workers"],
         "sources": [
@@ -297,13 +304,6 @@ modules = [
         "dependencies": ["components", "extensions"],
         "sources": [
             "SettingsScreen.js",
-        ]
-    },
-    {
-        "name": "workers",
-        "dependencies": ["components"],
-        "sources": [
-            "WorkerManager.js",
         ]
     },
     {

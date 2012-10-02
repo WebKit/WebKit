@@ -217,6 +217,8 @@ WebInspector.ClipboardAccessDeniedScreen = function()
     }
 }
 
-WebInspector.ClipboardAccessDeniedScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
+WebInspector.ClipboardAccessDeniedScreen.prototype = {
+    __proto__: WebInspector.HelpScreen.prototype
+}
 
 }

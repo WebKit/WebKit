@@ -752,10 +752,11 @@ WebInspector.TextPrompt.prototype = {
             return this._suggestBox.pageDownKeyPressed(event);
 
         return false;
-    }
+    },
+
+    __proto__: WebInspector.Object.prototype
 }
 
-WebInspector.TextPrompt.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor
@@ -920,10 +921,10 @@ WebInspector.TextPromptWithHistory.prototype = {
         }
 
         return WebInspector.TextPrompt.prototype.defaultKeyHandler.apply(this, arguments);
-    }
-}
+    },
 
-WebInspector.TextPromptWithHistory.prototype.__proto__ = WebInspector.TextPrompt.prototype;
+    __proto__: WebInspector.TextPrompt.prototype
+}
 
 /**
  * @constructor

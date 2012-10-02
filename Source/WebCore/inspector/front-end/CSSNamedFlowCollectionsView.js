@@ -371,10 +371,10 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
 
         this._tabbedPane.removeEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
         this._tabbedPane.removeEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
-    }
-}
+    },
 
-WebInspector.CSSNamedFlowCollectionsView.prototype.__proto__ = WebInspector.SplitView.prototype;
+    __proto__: WebInspector.SplitView.prototype
+}
 
 /**
  * @constructor
@@ -410,7 +410,7 @@ WebInspector.FlowTreeElement.prototype = {
         }
 
         this._overset = newOverset;
-    }
-}
+    },
 
-WebInspector.FlowTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}

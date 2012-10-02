@@ -385,7 +385,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 <*> [^] { this.tokenType = null; return cursor; }
             */
         }
-    }
-}
+    },
 
-WebInspector.SourceHTMLTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;
+    __proto__: WebInspector.SourceTokenizer.prototype
+}

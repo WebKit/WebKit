@@ -732,10 +732,11 @@ WebInspector.HeapSnapshotView.prototype = {
             filterOption.label = title;
             this.filterSelectElement.appendChild(filterOption);
         }
-    }
-};
+    },
 
-WebInspector.HeapSnapshotView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
+
 
 /**
  * @constructor
@@ -794,10 +795,10 @@ WebInspector.HeapSnapshotProfileType.prototype = {
     createProfile: function(profile)
     {
         return new WebInspector.HeapProfileHeader(this, profile.title, profile.uid, profile.maxJSObjectId || 0);
-    }
-}
+    },
 
-WebInspector.HeapSnapshotProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+    __proto__: WebInspector.ProfileType.prototype
+}
 
 /**
  * @constructor
@@ -990,10 +991,10 @@ WebInspector.HeapProfileHeader.prototype = {
     _createFileReader: function(file, delegate)
     {
         return new WebInspector.ChunkedFileReader(file, 10000000, delegate);
-    }
-}
+    },
 
-WebInspector.HeapProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;
+    __proto__: WebInspector.ProfileHeader.prototype
+}
 
 /**
  * @constructor

@@ -412,15 +412,16 @@ WebInspector.FileSystemModel.prototype = {
             if (Object.isEmpty(this._fileSystemsForOrigin[origin]))
                 delete this._fileSystemsForOrigin[origin];
         }
-    }
+    },
+
+    __proto__: WebInspector.Object.prototype
 }
+
 
 WebInspector.FileSystemModel.EventTypes = {
     FileSystemAdded: "FileSystemAdded",
     FileSystemRemoved: "FileSystemRemoved"
 }
-
-WebInspector.FileSystemModel.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor
@@ -552,10 +553,10 @@ WebInspector.FileSystemModel.Directory.prototype = {
     requestDirectoryContent: function(callback)
     {
         this.fileSystemModel.requestDirectoryContent(this, callback);
-    }
-}
+    },
 
-WebInspector.FileSystemModel.Directory.prototype.__proto__ = WebInspector.FileSystemModel.Entry.prototype;
+    __proto__: WebInspector.FileSystemModel.Entry.prototype
+}
 
 /**
  * @constructor
@@ -608,7 +609,7 @@ WebInspector.FileSystemModel.File.prototype = {
     requestFileContent: function(readAsText, start, end, charset, callback)
     {
         this.fileSystemModel.requestFileContent(this, readAsText, start, end, charset, callback);
-    }
-}
+    },
 
-WebInspector.FileSystemModel.File.prototype.__proto__ = WebInspector.FileSystemModel.Entry.prototype;
+    __proto__: WebInspector.FileSystemModel.Entry.prototype
+}

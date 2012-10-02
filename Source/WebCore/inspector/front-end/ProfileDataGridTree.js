@@ -294,10 +294,10 @@ WebInspector.ProfileDataGridNode.prototype = {
             else
                 this.appendChild(orphanedChild);
         }
-    }
-}
+    },
 
-WebInspector.ProfileDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+    __proto__: WebInspector.DataGridNode.prototype
+}
 
 /**
  * @constructor

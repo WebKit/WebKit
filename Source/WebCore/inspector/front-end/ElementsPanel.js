@@ -1117,7 +1117,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
-    }
-}
+    },
 
-WebInspector.ElementsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}

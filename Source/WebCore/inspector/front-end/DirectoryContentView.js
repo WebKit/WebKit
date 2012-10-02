@@ -86,10 +86,10 @@ WebInspector.DirectoryContentView.prototype = {
     {
         var column = /** @type {string} */ this.sortColumnIdentifier;
         this.sortNodes(WebInspector.DirectoryContentView.Node.comparator(column, this.sortOrder === "descending"), false);
-    }
-}
+    },
 
-WebInspector.DirectoryContentView.prototype.__proto__ = WebInspector.DataGrid.prototype;
+    __proto__: WebInspector.DataGrid.prototype
+}
 
 /**
  * @constructor
@@ -193,7 +193,7 @@ WebInspector.DirectoryContentView.Node.prototype = {
             data[indexes.Size] = Number.bytesToString(metadata.size);
         data[indexes.ModificationTime] = new Date(metadata.modificationTime).toGMTString();
         this.data = data;
-    }
-}
+    },
 
-WebInspector.DirectoryContentView.Node.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+    __proto__: WebInspector.DataGridNode.prototype
+}

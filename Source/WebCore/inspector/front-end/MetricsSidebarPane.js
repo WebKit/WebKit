@@ -419,7 +419,7 @@ WebInspector.MetricsSidebarPane.prototype = {
     {
         this.editingEnded(element, context);
         this._applyUserInput(element, userInput, previousContent, context, true);
-    }
-}
+    },
 
-WebInspector.MetricsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}

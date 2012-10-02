@@ -199,7 +199,7 @@ WebInspector.DatabaseQueryView.prototype = {
         resultElement.className = "database-query-result";
         element.appendChild(resultElement);
         return resultElement;
-    }
-}
+    },
 
-WebInspector.DatabaseQueryView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

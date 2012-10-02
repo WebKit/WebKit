@@ -339,10 +339,10 @@ WebInspector.ResourceTreeModel.prototype = {
     _createResourceFromFramePayload: function(frame, url, type, mimeType)
     {
         return new WebInspector.Resource(null, url, frame.url, frame.id, frame.loaderId, type, mimeType);
-    }
-}
+    },
 
-WebInspector.ResourceTreeModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

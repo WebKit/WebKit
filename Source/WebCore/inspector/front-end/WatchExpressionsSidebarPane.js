@@ -110,10 +110,10 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
     {
         event.consume();
         this.refreshExpressions();
-    }
-}
+    },
 
-WebInspector.WatchExpressionsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}
 
 /**
  * @constructor
@@ -320,10 +320,10 @@ WebInspector.WatchExpressionsSection.prototype = {
         }
 
         this._lastMouseMovePageY = pageY;
-    }
-}
+    },
 
-WebInspector.WatchExpressionsSection.prototype.__proto__ = WebInspector.ObjectPropertiesSection.prototype;
+    __proto__: WebInspector.ObjectPropertiesSection.prototype
+}
 
 WebInspector.WatchExpressionsSection.CompareProperties = function(propertyA, propertyB)
 {
@@ -411,7 +411,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
 
         this.property.name = expression;
         this.treeOutline.section.updateExpression(this, expression);
-    }
-}
+    },
 
-WebInspector.WatchExpressionTreeElement.prototype.__proto__ = WebInspector.ObjectPropertyTreeElement.prototype;
+    __proto__: WebInspector.ObjectPropertyTreeElement.prototype
+}

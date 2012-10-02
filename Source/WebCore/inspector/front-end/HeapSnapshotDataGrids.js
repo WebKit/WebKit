@@ -252,10 +252,11 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             return;
         if (!--this._recursiveSortingDepth)
             this.dispatchEventToListeners("sorting complete");
-    }
-};
+    },
 
-WebInspector.HeapSnapshotSortableDataGrid.prototype.__proto__ = WebInspector.DataGrid.prototype;
+    __proto__: WebInspector.DataGrid.prototype
+}
+
 
 
 /**
@@ -393,10 +394,10 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
             WebInspector.HeapSnapshotSortableDataGrid.prototype.highlightNode.call(this, this._nodeToHighlightAfterScroll);
             this._nodeToHighlightAfterScroll = null;
         }
-    }
-}
+    },
 
-WebInspector.HeapSnapshotViewportDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
+    __proto__: WebInspector.HeapSnapshotSortableDataGrid.prototype
+}
 
 /**
  * @constructor
@@ -450,10 +451,11 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
     sortingChanged: function()
     {
         this.rootNode().sort();
-    }
-};
+    },
 
-WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
+    __proto__: WebInspector.HeapSnapshotSortableDataGrid.prototype
+}
+
 
 /**
  * @constructor
@@ -488,9 +490,10 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
         this.rootNode().removeChildren();
         this.resetSortingCache();
     },
+
+    __proto__: WebInspector.HeapSnapshotContainmentDataGrid.prototype
 }
 
-WebInspector.HeapSnapshotRetainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotContainmentDataGrid.prototype;
 
 /**
  * @constructor
@@ -597,9 +600,9 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this._populateChildren();
     },
 
-};
+    __proto__: WebInspector.HeapSnapshotViewportDataGrid.prototype
+}
 
-WebInspector.HeapSnapshotConstructorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotViewportDataGrid.prototype;
 
 /**
  * @constructor
@@ -682,10 +685,11 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
         // we first need to collect information about the nodes in the first snapshot and
         // then pass it to the second snapshot to calclulate the diff.
         this.baseSnapshot.aggregatesForDiff(aggregatesForDiffReceived.bind(this));
-    }
-};
+    },
 
-WebInspector.HeapSnapshotDiffDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotViewportDataGrid.prototype;
+    __proto__: WebInspector.HeapSnapshotViewportDataGrid.prototype
+}
+
 
 /**
  * @constructor
@@ -769,7 +773,8 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
         }
 
         this.snapshot.dominatorIdsForNode(parseInt(id, 10), didGetDominators.bind(this));
-    }
-};
+    },
 
-WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
+    __proto__: WebInspector.HeapSnapshotSortableDataGrid.prototype
+}
+

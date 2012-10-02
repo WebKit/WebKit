@@ -849,7 +849,7 @@ WebInspector.NetworkRequest.prototype = {
             this._frames.splice(0, 10);
         }
         this._frames.push(object);
-    }
-}
+    },
 
-WebInspector.NetworkRequest.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

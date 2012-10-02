@@ -854,10 +854,10 @@ WebInspector.ResourcesPanel.prototype = {
             this._previousHoveredElement.hovered = false;
             delete this._previousHoveredElement;
         }
-    }
-}
+    },
 
-WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}
 
 /**
  * @constructor
@@ -982,10 +982,10 @@ WebInspector.BaseStorageTreeElement.prototype = {
     get searchMatchesCount()
     {
         return 0;
-    }
-}
+    },
 
-WebInspector.BaseStorageTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1027,10 +1027,10 @@ WebInspector.StorageCategoryTreeElement.prototype = {
     oncollapse: function()
     {
         WebInspector.settings[this._expandedSettingKey].set(false);
-    }
-}
+    },
 
-WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1147,10 +1147,10 @@ WebInspector.FrameTreeElement.prototype = {
                 break;
         }
         parentTreeElement.insertChild(childTreeElement, i);
-    }
-}
+    },
 
-WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1317,10 +1317,10 @@ WebInspector.FrameResourceTreeElement.prototype = {
             }
         }
         return this._sourceView;
-    }
-}
+    },
 
-WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1360,10 +1360,10 @@ WebInspector.DatabaseTreeElement.prototype = {
                 this.appendChild(new WebInspector.DatabaseTableTreeElement(this._storagePanel, this._database, tableNames[i]));
         }
         this._database.getTableNames(tableNamesCallback.bind(this));
-    }
-}
+    },
 
-WebInspector.DatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1386,9 +1386,10 @@ WebInspector.DatabaseTableTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel._showDatabase(this._database, this._tableName);
-    }
+    },
+
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
 }
-WebInspector.DatabaseTableTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor
@@ -1500,10 +1501,10 @@ WebInspector.IndexedDBTreeElement.prototype = {
         if (index !== -1)
             return this._idbDatabaseTreeElements[i];
         return null;
-    }
-}
+    },
 
-WebInspector.IndexedDBTreeElement.prototype.__proto__ = WebInspector.StorageCategoryTreeElement.prototype;
+    __proto__: WebInspector.StorageCategoryTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1571,10 +1572,10 @@ WebInspector.FileSystemListTreeElement.prototype = {
         }
 
         this._fileSystemModel.refreshFileSystemList();
-    }
-}
+    },
 
-WebInspector.FileSystemListTreeElement.prototype.__proto__ = WebInspector.StorageCategoryTreeElement.prototype;
+    __proto__: WebInspector.StorageCategoryTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1677,10 +1678,10 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
     {
         for (var objectStoreName in this._idbObjectStoreTreeElements)
             this._objectStoreRemoved(objectStoreName);
-    }
-}
+    },
 
-WebInspector.IDBDatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1780,10 +1781,10 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
             this._indexRemoved(indexName);
         if (this._view)
             this._view.clear();
-    }
-}
+    },
 
-WebInspector.IDBObjectStoreTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1847,10 +1848,10 @@ WebInspector.IDBIndexTreeElement.prototype = {
     {
         if (this._view)
             this._view.clear();
-    }
-}
+    },
 
-WebInspector.IDBIndexTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -1872,9 +1873,10 @@ WebInspector.DOMStorageTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel._showDOMStorage(this._domStorage);
-    }
+    },
+
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
 }
-WebInspector.DOMStorageTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor
@@ -1896,9 +1898,10 @@ WebInspector.CookieTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel.showCookies(this, this._cookieDomain);
-    }
+    },
+
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
 }
-WebInspector.CookieTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor
@@ -1927,9 +1930,10 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel.showCategoryView(this._manifestURL);
-    }
+    },
+
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
 }
-WebInspector.ApplicationCacheManifestTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor
@@ -1979,9 +1983,10 @@ WebInspector.ApplicationCacheFrameTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel.showApplicationCache(this._frameId);
-    }
+    },
+
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
 }
-WebInspector.ApplicationCacheFrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 /**
  * @constructor
@@ -2018,10 +2023,10 @@ WebInspector.FileSystemTreeElement.prototype = {
     {
         if (this.fileSystemView && this._storagePanel.visibleView == this.fileSystemView)
             this._storagePanel.closeVisibleView();
-    }
-}
+    },
 
-WebInspector.FileSystemTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+    __proto__: WebInspector.BaseStorageTreeElement.prototype
+}
 
 /**
  * @constructor
@@ -2040,10 +2045,10 @@ WebInspector.StorageCategoryView.prototype = {
     setText: function(text)
     {
         this._emptyView.text = text;
-    }
-}
+    },
 
-WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor

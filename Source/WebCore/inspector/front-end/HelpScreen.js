@@ -118,7 +118,7 @@ WebInspector.HelpScreen.prototype = {
         // Pretend we're modal, grab focus back if we're still shown.
         if (this.isShowing() && !this.element.isSelfOrAncestor(event.target))
             WebInspector.setCurrentFocusElement(this.element);
-    }
-}
+    },
 
-WebInspector.HelpScreen.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

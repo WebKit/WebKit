@@ -44,10 +44,10 @@ WebInspector.ResourceView.prototype = {
     hasContent: function()
     {
         return false;
-    }
-}
+    },
 
-WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @param {WebInspector.Resource} resource
@@ -97,7 +97,7 @@ WebInspector.ResourceSourceFrame.prototype = {
         contextMenu.appendApplicableItems(this._resource);
         if (this._resource.request)
             contextMenu.appendApplicableItems(this._resource.request);
-    }
-}
+    },
 
-WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+    __proto__: WebInspector.SourceFrame.prototype
+}

@@ -143,10 +143,10 @@ WebInspector.ConsoleModel.prototype = {
             msgCopy.repeatDelta = msgCopy.repeatCount;
             this.addMessage(msgCopy);
         }
-    }
-}
+    },
 
-WebInspector.ConsoleModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

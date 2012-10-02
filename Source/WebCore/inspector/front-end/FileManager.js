@@ -108,9 +108,9 @@ WebInspector.FileManager.prototype = {
     appendedToURL: function(url)
     {
         this.dispatchEventToListeners(WebInspector.FileManager.EventTypes.AppendedToURL, url);
-    }
-}
+    },
 
-WebInspector.FileManager.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 WebInspector.fileManager = new WebInspector.FileManager();

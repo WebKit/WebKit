@@ -107,10 +107,10 @@ WebInspector.SettingsScreen.prototype = {
     {
         this._onHide();
         WebInspector.HelpScreen.prototype.willHide.call(this);
-    }
-}
+    },
 
-WebInspector.SettingsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
+    __proto__: WebInspector.HelpScreen.prototype
+}
 
 /**
  * @constructor
@@ -236,10 +236,10 @@ WebInspector.SettingsTab.prototype = {
         fieldsetElement.appendChild(element);
         p.appendChild(fieldsetElement);
         return p;
-    }
-}
+    },
 
-WebInspector.SettingsTab.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -333,10 +333,10 @@ WebInspector.GenericSettingsTab.prototype = {
     {
         // We need to manually update the checkbox state, since enabling JavaScript in the page can actually uncover the "forbidden" state.
         PageAgent.setScriptExecutionDisabled(WebInspector.settings.javaScriptDisabled.get(), this._updateScriptDisabledCheckbox.bind(this));
-    }
-}
+    },
 
-WebInspector.GenericSettingsTab.prototype.__proto__ = WebInspector.SettingsTab.prototype;
+    __proto__: WebInspector.SettingsTab.prototype
+}
 
 /**
  * @constructor
@@ -863,10 +863,10 @@ WebInspector.UserAgentSettingsTab.prototype = {
         this._gammaElement = this._createInput(cellElement, "device-orientation-override-gamma", String(deviceOrientation.gamma), this._applyDeviceOrientationUserInput.bind(this));
 
         return fieldsetElement;
-    }
-}
+    },
 
-WebInspector.UserAgentSettingsTab.prototype.__proto__ = WebInspector.SettingsTab.prototype;
+    __proto__: WebInspector.SettingsTab.prototype
+}
 
 /**
  * @constructor
@@ -918,10 +918,10 @@ WebInspector.ExperimentsSettingsTab.prototype = {
         label.appendChild(document.createTextNode(WebInspector.UIString(experiment.title)));
         p.appendChild(label);
         return p;
-    }
-}
+    },
 
-WebInspector.ExperimentsSettingsTab.prototype.__proto__ = WebInspector.SettingsTab.prototype;
+    __proto__: WebInspector.SettingsTab.prototype
+}
 
 /**
  * @constructor

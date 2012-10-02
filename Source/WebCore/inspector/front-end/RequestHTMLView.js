@@ -65,7 +65,7 @@ WebInspector.RequestHTMLView.prototype = {
         iframe.setAttribute("sandbox", ""); // Forbid to run JavaScript and set unique origin.
 
         iframe.contentDocument.body.innerHTML = this.request.content;
-    }
-}
+    },
 
-WebInspector.RequestHTMLView.prototype.__proto__ = WebInspector.RequestView.prototype;
+    __proto__: WebInspector.RequestView.prototype
+}

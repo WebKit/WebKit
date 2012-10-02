@@ -192,7 +192,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                 <*> [^] { this.tokenType = null; return cursor; }
             */
         }
-    }
-}
+    },
 
-WebInspector.SourceJavaScriptTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;
+    __proto__: WebInspector.SourceTokenizer.prototype
+}

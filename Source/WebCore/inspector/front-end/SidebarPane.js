@@ -132,7 +132,7 @@ WebInspector.SidebarPane.prototype = {
     {
         if (isEnterKey(event) || event.keyCode === WebInspector.KeyboardShortcut.Keys.Space.code)
             this.toggleExpanded();
-    }
-}
+    },
 
-WebInspector.SidebarPane.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

@@ -150,10 +150,10 @@ WebInspector.CanvasProfileView.prototype = {
             this._replayImageElement.src = dataURL;
         }
         CanvasAgent.replayTraceLog(item.traceLogId, item.stepNo, didReplayTraceLog.bind(this));
-    }
-}
+    },
 
-WebInspector.CanvasProfileView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -232,10 +232,10 @@ WebInspector.CanvasProfileType.prototype = {
     createProfile: function(profile)
     {
         return new WebInspector.CanvasProfileHeader(this, profile.title, -1);
-    }
-}
+    },
 
-WebInspector.CanvasProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+    __proto__: WebInspector.ProfileType.prototype
+}
 
 /**
  * @constructor
@@ -277,7 +277,7 @@ WebInspector.CanvasProfileHeader.prototype = {
     createView: function(profilesPanel)
     {
         return new WebInspector.CanvasProfileView(this);
-    }
-}
+    },
 
-WebInspector.CanvasProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;
+    __proto__: WebInspector.ProfileHeader.prototype
+}

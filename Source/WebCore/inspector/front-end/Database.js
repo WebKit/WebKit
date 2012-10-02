@@ -171,10 +171,10 @@ WebInspector.DatabaseModel.prototype = {
     {
         this._databases.push(database);
         this.dispatchEventToListeners(WebInspector.DatabaseModel.Events.DatabaseAdded, database);
-    }
-}
+    },
 
-WebInspector.DatabaseModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

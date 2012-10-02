@@ -360,8 +360,8 @@ WebInspector.Resource.prototype = {
     isHidden: function()
     {
         return !!this._isHidden;
-    }
-}
+    },
 
-WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 

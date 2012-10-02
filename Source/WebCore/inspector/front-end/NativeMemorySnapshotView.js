@@ -57,10 +57,10 @@ WebInspector.NativeMemorySnapshotView.prototype = {
     get profile()
     {
         return this._profile;
-    }
-}
+    },
 
-WebInspector.NativeMemorySnapshotView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -145,10 +145,10 @@ WebInspector.NativeMemoryProfileType.prototype = {
     createProfile: function(profile)
     {
         return new WebInspector.NativeMemoryProfileHeader(this, profile.title, -1);
-    }
-}
+    },
 
-WebInspector.NativeMemoryProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+    __proto__: WebInspector.ProfileType.prototype
+}
 
 /**
  * @constructor
@@ -183,10 +183,10 @@ WebInspector.NativeMemoryProfileHeader.prototype = {
     createView: function(profilesPanel)
     {
         return new WebInspector.NativeMemorySnapshotView(this);
-    }
-}
+    },
 
-WebInspector.NativeMemoryProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;
+    __proto__: WebInspector.ProfileHeader.prototype
+}
 
 /**
  * @constructor
@@ -369,10 +369,10 @@ WebInspector.NativeMemoryPieChart.prototype = {
     _clear: function() {
         var ctx = this._canvas.getContext("2d");
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    }
-}
+    },
 
-WebInspector.NativeMemoryPieChart.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -489,7 +489,7 @@ WebInspector.NativeMemoryBarChart.prototype = {
 
         var memoryBlockViewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(memoryBlock);
         this._totalDiv.textContent = memoryBlockViewProperties._description + ": " + (memoryBlock.size / MB).toFixed(1) + "\u2009MB";
-    }
-}
+    },
 
-WebInspector.NativeMemoryBarChart.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

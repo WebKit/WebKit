@@ -87,7 +87,7 @@ WebInspector.UISourceCodeFrame.prototype = {
         WebInspector.SourceFrame.prototype.populateTextAreaContextMenu.call(this, contextMenu, lineNumber);
         contextMenu.appendApplicableItems(this._uiSourceCode);
         contextMenu.appendSeparator();
-    }
-}
+    },
 
-WebInspector.UISourceCodeFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+    __proto__: WebInspector.SourceFrame.prototype
+}

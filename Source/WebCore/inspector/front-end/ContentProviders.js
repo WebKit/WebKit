@@ -177,10 +177,10 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
         }
 
         return content;
-    }
-}
+    },
 
-WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+    __proto__: WebInspector.ContentProvider.prototype
+}
 
 /**
  * @constructor
@@ -233,10 +233,10 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
     searchInContent: function(query, caseSensitive, isRegex, callback)
     {
         callback([]);
-    }
-}
+    },
 
-WebInspector.CompilerSourceMappingContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+    __proto__: WebInspector.ContentProvider.prototype
+}
 
 /**
  * @constructor
@@ -306,7 +306,7 @@ WebInspector.StaticContentProvider.prototype = {
 
         // searchInContent should call back later.
         window.setTimeout(performSearch.bind(this), 0);
-    }
-}
+    },
 
-WebInspector.StaticContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+    __proto__: WebInspector.ContentProvider.prototype
+}

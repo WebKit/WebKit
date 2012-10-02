@@ -219,10 +219,10 @@ WebInspector.WorkerManager.prototype = {
         var screen = new WebInspector.WorkerTerminatedScreen();
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
         screen.showModal();
-    }
-}
+    },
 
-WebInspector.WorkerManager.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -287,7 +287,7 @@ WebInspector.WorkerTerminatedScreen.prototype = {
     {
         WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this.hide, this);
         WebInspector.HelpScreen.prototype.willHide.call(this);
-    }
-}
+    },
 
-WebInspector.WorkerTerminatedScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
+    __proto__: WebInspector.HelpScreen.prototype
+}

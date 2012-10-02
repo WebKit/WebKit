@@ -501,10 +501,10 @@ WebInspector.CSSStyleModel.prototype = {
     {
         var sourceMapping = this._sourceMappings[rawLocation.url];
         return sourceMapping ? sourceMapping.rawLocationToUILocation(rawLocation) : null;
-    }
-}
+    },
 
-WebInspector.CSSStyleModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

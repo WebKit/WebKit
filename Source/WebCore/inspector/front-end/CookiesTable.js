@@ -217,7 +217,7 @@ WebInspector.CookiesTable.prototype = {
     _onDeleteFromGrid: function(deleteCallback, node)
     {
         deleteCallback(node.cookie);
-    }
-}
+    },
 
-WebInspector.CookiesTable.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

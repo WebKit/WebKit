@@ -247,10 +247,10 @@ WebInspector.TimelineModel.prototype = {
     recordOffsetInSeconds: function(rawRecord)
     {
         return WebInspector.TimelineModel.startTimeInSeconds(rawRecord) - this._minimumRecordTime;
-    }
-}
+    },
 
-WebInspector.TimelineModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

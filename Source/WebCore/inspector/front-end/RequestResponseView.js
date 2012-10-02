@@ -63,7 +63,7 @@ WebInspector.RequestResponseView.prototype = {
             this.sourceView.show(this.element);
             this.innerView = this.sourceView;
         }
-    }
-}
+    },
 
-WebInspector.RequestResponseView.prototype.__proto__ = WebInspector.RequestContentView.prototype;
+    __proto__: WebInspector.RequestContentView.prototype
+}

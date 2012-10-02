@@ -574,10 +574,10 @@ WebInspector.DefaultTextEditor.prototype = {
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, false);
         this._freeCachedElements();
-    }
-}
+    },
 
-WebInspector.DefaultTextEditor.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -1061,10 +1061,10 @@ WebInspector.TextEditorGutterPanel.prototype = {
             if (!decorations.length)
                 delete this._decorations[lineNumber];
         }
-    }
-}
+    },
 
-WebInspector.TextEditorGutterPanel.prototype.__proto__ = WebInspector.TextEditorChunkedPanel.prototype;
+    __proto__: WebInspector.TextEditorChunkedPanel.prototype
+}
 
 /**
  * @constructor
@@ -2508,10 +2508,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         textContents = textContent.split("\n");
         for (var i = 0; i < textContents.length; ++i)
             lines.push(textContents[i]);
-    }
-}
+    },
 
-WebInspector.TextEditorMainPanel.prototype.__proto__ = WebInspector.TextEditorChunkedPanel.prototype;
+    __proto__: WebInspector.TextEditorChunkedPanel.prototype
+}
 
 /**
  * @constructor

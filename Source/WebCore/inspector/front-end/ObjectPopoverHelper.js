@@ -153,7 +153,7 @@ WebInspector.ObjectPopoverHelper.prototype = {
             }
         }
         this._sectionUpdateProperties(properties, rootTreeElementConstructor, rootPropertyComparer);
-    }
-}
+    },
 
-WebInspector.ObjectPopoverHelper.prototype.__proto__ = WebInspector.PopoverHelper.prototype;
+    __proto__: WebInspector.PopoverHelper.prototype
+}

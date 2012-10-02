@@ -120,10 +120,10 @@ WebInspector.SnippetStorage.prototype = {
         this._lastSnippetIdentifierSetting.set(0);
         this._snippetsSetting.set([]);
         this._snippets = {};
-    }
-}
+    },
 
-WebInspector.SnippetStorage.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -204,7 +204,7 @@ WebInspector.Snippet.prototype = {
         serializedSnippet.name = this.name;
         serializedSnippet.content = this.content;
         return serializedSnippet;
-    }
-}
+    },
 
-WebInspector.Snippet.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

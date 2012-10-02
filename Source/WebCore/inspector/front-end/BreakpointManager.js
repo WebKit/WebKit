@@ -289,10 +289,10 @@ WebInspector.BreakpointManager.prototype = {
         if (!lineBreakpoints.length)
             delete breakpoints[uiLocation.lineNumber];
         this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.BreakpointRemoved, {breakpoint: breakpoint, uiLocation: uiLocation});
-    }
-}
+    },
 
-WebInspector.BreakpointManager.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

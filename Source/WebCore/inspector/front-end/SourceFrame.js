@@ -650,10 +650,10 @@ WebInspector.SourceFrame.prototype = {
         if (this._url && WebInspector.fileManager.isURLSaved(this._url))
             WebInspector.fileManager.save(this._url, content, false);
         return true;
-    }
-}
+    },
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 
 /**
@@ -706,7 +706,7 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     {
         var targetLocation = WebInspector.ParsedURL.completeURL(this._sourceFrame._url, hrefValue);
         return WebInspector.linkifyURLAsNode(targetLocation || hrefValue, hrefValue, undefined, isExternal);
-    }
-}
+    },
 
-WebInspector.TextEditorDelegateForSourceFrame.prototype.__proto__ = WebInspector.TextEditorDelegate.prototype;
+    __proto__: WebInspector.TextEditorDelegate.prototype
+}

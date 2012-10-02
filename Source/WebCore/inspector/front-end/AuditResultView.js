@@ -46,9 +46,8 @@ WebInspector.AuditResultView = function(categoryResults)
 }
 
 WebInspector.AuditResultView.prototype = {
+    __proto__: WebInspector.View.prototype
 }
-
-WebInspector.AuditResultView.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor
@@ -118,7 +117,7 @@ WebInspector.AuditCategoryResultPane.prototype = {
             treeElement.expand();
         }
         return treeElement;
-    }
-}
+    },
 
-WebInspector.AuditCategoryResultPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}

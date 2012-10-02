@@ -215,10 +215,10 @@ StackTraceV8.prototype = {
         this._stackTrace = this._error.stack;
         Error.prepareStackTrace = oldPrepareStackTrace;
         delete this._error; // No longer needed, free memory.
-    }
-}
+    },
 
-StackTraceV8.prototype.__proto__ = StackTrace.prototype;
+    __proto__: StackTrace.prototype
+}
 
 /**
  * @constructor
@@ -1020,10 +1020,10 @@ WebGLBoundResource.prototype = {
             this._state.BINDING = target;
             this.pushCall(new Call(WebGLRenderingContextResource.forObject(this), bindMethodName, [target, this]));
         }
-    }
-}
+    },
 
-WebGLBoundResource.prototype.__proto__ = Resource.prototype;
+    __proto__: Resource.prototype
+}
 
 /**
  * @constructor
@@ -1107,13 +1107,14 @@ WebGLTextureResource.prototype = {
             console.error("ASSERT_NOT_REACHED: Could not properly process a gl." + call.functionName() + " call while the DRAWING BUFFER is bound.");
         }
         this.pushCall(call);
-    }
+    },
+
+    pushCall_texParameteri: WebGLTextureResource.prototype.pushCall_texParameterf,
+
+    pushCall_copyTexSubImage2D: WebGLTextureResource.prototype.pushCall_copyTexImage2D,
+
+    __proto__: WebGLBoundResource.prototype
 }
-
-WebGLTextureResource.prototype.pushCall_texParameteri = WebGLTextureResource.prototype.pushCall_texParameterf;
-WebGLTextureResource.prototype.pushCall_copyTexSubImage2D = WebGLTextureResource.prototype.pushCall_copyTexImage2D;
-
-WebGLTextureResource.prototype.__proto__ = WebGLBoundResource.prototype;
 
 /**
  * @constructor
@@ -1234,10 +1235,10 @@ WebGLProgramResource.prototype = {
         // FIXME: remove any older calls that no longer contribute to the resource state.
         // FIXME: handle multiple attachShader && detachShader.
         Resource.prototype.pushCall.call(this, call);
-    }
-}
+    },
 
-WebGLProgramResource.prototype.__proto__ = Resource.prototype;
+    __proto__: Resource.prototype
+}
 
 /**
  * @constructor
@@ -1258,10 +1259,10 @@ WebGLShaderResource.prototype = {
         // FIXME: remove any older calls that no longer contribute to the resource state.
         // FIXME: handle multiple shaderSource calls.
         Resource.prototype.pushCall.call(this, call);
-    }
-}
+    },
 
-WebGLShaderResource.prototype.__proto__ = Resource.prototype;
+    __proto__: Resource.prototype
+}
 
 /**
  * @constructor
@@ -1282,10 +1283,10 @@ WebGLBufferResource.prototype = {
         // FIXME: remove any older calls that no longer contribute to the resource state.
         // FIXME: Optimize memory for bufferSubData.
         WebGLBoundResource.prototype.pushCall.call(this, call);
-    }
-}
+    },
 
-WebGLBufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+    __proto__: WebGLBoundResource.prototype
+}
 
 /**
  * @constructor
@@ -1305,10 +1306,10 @@ WebGLFramebufferResource.prototype = {
     {
         // FIXME: remove any older calls that no longer contribute to the resource state.
         WebGLBoundResource.prototype.pushCall.call(this, call);
-    }
-}
+    },
 
-WebGLFramebufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+    __proto__: WebGLBoundResource.prototype
+}
 
 /**
  * @constructor
@@ -1328,10 +1329,10 @@ WebGLRenderbufferResource.prototype = {
     {
         // FIXME: remove any older calls that no longer contribute to the resource state.
         WebGLBoundResource.prototype.pushCall.call(this, call);
-    }
-}
+    },
 
-WebGLRenderbufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+    __proto__: WebGLBoundResource.prototype
+}
 
 /**
  * @constructor
@@ -1799,10 +1800,10 @@ WebGLRenderingContextResource.prototype = {
             WebGLRenderingContextResource._wrapFunctions = wrapFunctions;
         }
         return wrapFunctions;
-    }
-}
+    },
 
-WebGLRenderingContextResource.prototype.__proto__ = Resource.prototype;
+    __proto__: Resource.prototype
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // 2D Canvas
@@ -2020,10 +2021,10 @@ CanvasRenderingContext2DResource.prototype = {
             CanvasRenderingContext2DResource._wrapFunctions = wrapFunctions;
         }
         return wrapFunctions;
-    }
-};
+    },
 
-CanvasRenderingContext2DResource.prototype.__proto__ = Resource.prototype;
+    __proto__: Resource.prototype
+}
 
 /**
  * @constructor

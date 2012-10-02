@@ -135,10 +135,10 @@ WebInspector.DOMStorageModel.prototype = {
         for (var storageId in this._storages)
             result.push(this._storages[storageId]);
         return result;
-    }
-}
+    },
 
-WebInspector.DOMStorageModel.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

@@ -455,7 +455,7 @@ WebInspector.Spectrum.prototype = {
             this.hide(false);
             event.consume(true);
         }
-    }
-}
+    },
 
-WebInspector.Spectrum.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}

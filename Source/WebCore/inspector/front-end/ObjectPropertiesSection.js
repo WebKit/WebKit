@@ -123,10 +123,10 @@ WebInspector.ObjectPropertiesSection.prototype = {
             var infoElement = new TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
-    }
-}
+    },
 
-WebInspector.ObjectPropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
+    __proto__: WebInspector.PropertiesSection.prototype
+}
 
 WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, propertyB)
 {
@@ -370,7 +370,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             }
         };
         this.property.parentObject.setPropertyValue(this.property.name, expression.trim(), callback.bind(this));
-    }
+    },
+
+    __proto__: TreeElement.prototype
 }
 
 /**
@@ -406,8 +408,6 @@ WebInspector.ObjectPropertyTreeElement.populate = function(treeElement, value) {
 
     value.getOwnProperties(callback);
 }
-
-WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
 
 /**
  * @constructor
@@ -482,10 +482,10 @@ WebInspector.FunctionScopeMainTreeElement.prototype = {
 
         }
         DebuggerAgent.getFunctionDetails(this._remoteObject.objectId, didGetDetails.bind(this));
-    }
-};
+    },
 
-WebInspector.FunctionScopeMainTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}
 
 /**
  * @constructor
@@ -506,10 +506,10 @@ WebInspector.ScopeTreeElement.prototype = {
     onpopulate: function()
     {
         return WebInspector.ObjectPropertyTreeElement.populate(this, this._remoteObject);
-    }
-};
+    },
 
-WebInspector.ScopeTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}
 
 /**
  * @constructor
@@ -730,10 +730,10 @@ WebInspector.ArrayGroupingTreeElement.prototype = {
     onattach: function()
     {
         this.listItemElement.addStyleClass("name");
-    }
-}
+    },
 
-WebInspector.ArrayGroupingTreeElement.prototype.__proto__ = TreeElement.prototype;
+    __proto__: TreeElement.prototype
+}
 
 /**
  * @constructor
@@ -748,4 +748,6 @@ WebInspector.ObjectPropertyPrompt = function(commitHandler, cancelHandler, rende
         this.renderAsBlock();
 }
 
-WebInspector.ObjectPropertyPrompt.prototype.__proto__ = WebInspector.TextPrompt.prototype;
+WebInspector.ObjectPropertyPrompt.prototype = {
+    __proto__: WebInspector.TextPrompt.prototype
+}

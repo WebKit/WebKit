@@ -85,10 +85,10 @@ WebInspector.FileContentView.prototype = {
 
         if (this._file.isTextFile)
             this._file.requestMetadata(this._metadataReceived.bind(this));
-    }
-}
+    },
 
-WebInspector.FileContentView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor

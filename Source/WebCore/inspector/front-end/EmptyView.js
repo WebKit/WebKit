@@ -51,6 +51,7 @@ WebInspector.EmptyView.prototype = {
         if (this.isShowing())
             this.element.textContent = this._text;
     },
+
+    __proto__: WebInspector.View.prototype
 }
 
-WebInspector.EmptyView.prototype.__proto__ = WebInspector.View.prototype;

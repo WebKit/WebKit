@@ -140,7 +140,7 @@ WebInspector.ImageView.prototype = {
     _openInNewTab: function(event)
     {
         InspectorFrontendHost.openInNewTab(this.resource.url);
-    }
-}
+    },
 
-WebInspector.ImageView.prototype.__proto__ = WebInspector.ResourceView.prototype;
+    __proto__: WebInspector.ResourceView.prototype
+}

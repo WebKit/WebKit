@@ -716,7 +716,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     clone: function()
     {
         return WebInspector.ConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.repeatCount, this._parameters, this._stackTrace, this._request ? this._request.requestId : undefined, this._isOutdated);
-    }
-}
+    },
 
-WebInspector.ConsoleMessageImpl.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
+    __proto__: WebInspector.ConsoleMessage.prototype
+}

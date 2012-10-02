@@ -46,10 +46,10 @@ WebInspector.RequestView.prototype = {
     hasContent: function()
     {
         return false;
-    }
-}
+    },
 
-WebInspector.RequestView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @param {WebInspector.NetworkRequest} request

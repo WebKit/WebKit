@@ -252,10 +252,10 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
             this.bodyElement.appendChild(this.emptyElement);
         }
         this._items.clear();
-    }
-}
+    },
 
-WebInspector.JavaScriptBreakpointsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}
 
 /**
  * @constructor
@@ -432,10 +432,10 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
             if (breakpoint && typeof breakpoint.url === "string")
                 this._setBreakpoint(breakpoint.url, breakpoint.enabled);
         }
-    }
-}
+    },
 
-WebInspector.XHRBreakpointsSidebarPane.prototype.__proto__ = WebInspector.NativeBreakpointsSidebarPane.prototype;
+    __proto__: WebInspector.NativeBreakpointsSidebarPane.prototype
+}
 
 /**
  * @constructor
@@ -633,7 +633,7 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             if (breakpoint && typeof breakpoint.eventName === "string")
                 this._setBreakpoint(breakpoint.eventName);
         }
-    }
-}
+    },
 
-WebInspector.EventListenerBreakpointsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+    __proto__: WebInspector.SidebarPane.prototype
+}

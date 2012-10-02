@@ -150,7 +150,7 @@ WebInspector.ConsolePanel.prototype = {
         this._searchResults.length = 0;
         if (this.isShowing())
             WebInspector.searchController.updateSearchMatchesCount(0, this);
-    }
-}
+    },
 
-WebInspector.ConsolePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}

@@ -81,7 +81,7 @@ WebInspector.RequestCookiesView.prototype = {
             return;
         this._buildCookiesTable();
         this._cookiesTable.updateWidths();
-    }
-}
+    },
 
-WebInspector.RequestCookiesView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}

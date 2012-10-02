@@ -239,10 +239,10 @@ WebInspector.StatusBarButton.prototype = {
                     buttons[i]._clicked();
             }
         }
-    }
-}
+    },
 
-WebInspector.StatusBarButton.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

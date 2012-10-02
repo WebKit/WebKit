@@ -186,10 +186,10 @@ WebInspector.ScriptsNavigator.prototype = {
         this._scriptsView.reset();
         this._contentScriptsView.reset();
         this._snippetsView.reset();
-    }
-}
+    },
 
-WebInspector.ScriptsNavigator.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor
@@ -276,7 +276,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
     _snippetCreationRequested: function()
     {
         this.dispatchEventToListeners(WebInspector.SnippetsNavigatorView.Events.SnippetCreationRequested, null);
-    }
-}
+    },
 
-WebInspector.SnippetsNavigatorView.prototype.__proto__ = WebInspector.NavigatorView.prototype;
+    __proto__: WebInspector.NavigatorView.prototype
+}

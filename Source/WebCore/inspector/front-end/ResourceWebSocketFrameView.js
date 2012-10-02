@@ -95,4 +95,6 @@ WebInspector.ResourceWebSocketFrameView.OpCodes = {
     PongFrame: 10
 };
 
-WebInspector.ResourceWebSocketFrameView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.ResourceWebSocketFrameView.prototype = {
+    __proto__: WebInspector.View.prototype
+}

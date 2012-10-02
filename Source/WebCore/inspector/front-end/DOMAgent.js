@@ -770,7 +770,9 @@ WebInspector.DOMDocument = function(domAgent, payload)
     this._listeners = {};
 }
 
-WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
+WebInspector.DOMDocument.prototype = {
+    __proto__: WebInspector.DOMNode.prototype
+}
 
 /**
  * @extends {WebInspector.Object}
@@ -1333,10 +1335,10 @@ WebInspector.DOMAgent.prototype = {
 
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.UndoRedoRequested);
         DOMAgent.redo(callback);
-    }
-}
+    },
 
-WebInspector.DOMAgent.prototype.__proto__ = WebInspector.Object.prototype;
+    __proto__: WebInspector.Object.prototype
+}
 
 /**
  * @constructor

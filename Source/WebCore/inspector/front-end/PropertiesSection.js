@@ -47,4 +47,6 @@ WebInspector.PropertiesSection = function(title, subtitle)
     this.element.appendChild(this.propertiesElement);
 }
 
-WebInspector.PropertiesSection.prototype.__proto__ = WebInspector.Section.prototype;
+WebInspector.PropertiesSection.prototype = {
+    __proto__: WebInspector.Section.prototype
+}

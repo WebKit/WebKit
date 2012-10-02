@@ -1145,7 +1145,7 @@ WebInspector.ScriptsPanel.prototype = {
     showGoToSourceDialog: function()
     {
         WebInspector.OpenResourceDialog.show(this, this._workspace, this.editorView.mainElement);
-    }
-}
+    },
 
-WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}

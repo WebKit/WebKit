@@ -409,10 +409,10 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         if (itemElement.offsetTop > this._itemElementsContainer.scrollTop + this._itemHeight * (this._rowsPerViewport + 1))
             return false;
         return true;
-    }
-}
+    },
 
-WebInspector.FilteredItemSelectionDialog.prototype.__proto__ = WebInspector.DialogDelegate.prototype;
+    __proto__: WebInspector.DialogDelegate.prototype
+}
 
 /**
  * @interface
@@ -600,10 +600,10 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
     rewriteQuery: function(query)
     {
         return query;
-    }
-}
+    },
 
-WebInspector.JavaScriptOutlineDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
+    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+}
 
 /**
  * @constructor
@@ -707,10 +707,10 @@ WebInspector.OpenResourceDialog.prototype = {
         var lineNumberMatch = query.match(/([^:]+)(\:[\d]*)$/);
         this._queryLineNumber = lineNumberMatch ? lineNumberMatch[2] : "";
         return lineNumberMatch ? lineNumberMatch[1] : query;
-    }
-}
+    },
 
-WebInspector.OpenResourceDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
+    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+}
 
 /**
  * @param {WebInspector.ScriptsPanel} panel

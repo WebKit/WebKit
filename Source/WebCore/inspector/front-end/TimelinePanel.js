@@ -1153,10 +1153,10 @@ WebInspector.TimelinePanel.prototype = {
         this._searchRegExp = createPlainTextSearchRegex(searchQuery, "i");
         delete this._searchResults;
         this._updateSearchHighlight(true);
-    }
-}
+    },
 
-WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+    __proto__: WebInspector.Panel.prototype
+}
 
 /**
  * @constructor

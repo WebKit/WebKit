@@ -331,10 +331,11 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         }
 
         this._provider().sortAndRewind(this.comparator(), afterSort.bind(this));
-    }
-};
+    },
 
-WebInspector.HeapSnapshotGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+    __proto__: WebInspector.DataGridNode.prototype
+}
+
 
 /**
  * @constructor
@@ -505,10 +506,10 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             return fullName.substr(0, startPos + 2) + url + fullName.substr(endPos);
         } else
             return fullName;
-    }
-}
+    },
 
-WebInspector.HeapSnapshotGenericObjectNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGridNode.prototype
+}
 
 /**
  * @constructor
@@ -636,10 +637,10 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         separatorSpan.className = "grayed";
         separatorSpan.textContent = this.showRetainingEdges ? " in " : " :: ";
         div.appendChild(separatorSpan);
-    }
-}
+    },
 
-WebInspector.HeapSnapshotObjectNode.prototype.__proto__ = WebInspector.HeapSnapshotGenericObjectNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGenericObjectNode.prototype
+}
 
 /**
  * @constructor
@@ -720,10 +721,10 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
     get isDeletedNode()
     {
         return this._isDeletedNode;
-    }
-}
+    },
 
-WebInspector.HeapSnapshotInstanceNode.prototype.__proto__ = WebInspector.HeapSnapshotGenericObjectNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGenericObjectNode.prototype
+}
 
 /**
  * @constructor
@@ -850,10 +851,11 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     get _shallowSizePercent()
     {
         return this._shallowSize / this.dataGrid.snapshot.totalSize * 100.0;
-    }
-};
+    },
 
-WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGridNode.prototype
+}
+
 
 /**
  * @constructor
@@ -1017,10 +1019,11 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
         data["sizeDelta"] = this._signForDelta(this._sizeDelta) + Number.withThousandsSeparator(Math.abs(this._sizeDelta));
 
         return data;
-    }
-};
+    },
 
-WebInspector.HeapSnapshotDiffNode.prototype.__proto__ = WebInspector.HeapSnapshotGridNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGridNode.prototype
+}
+
 
 /**
  * @constructor
@@ -1104,7 +1107,8 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
     _emptyData: function()
     {
         return {};
-    }
-};
+    },
 
-WebInspector.HeapSnapshotDominatorObjectNode.prototype.__proto__ = WebInspector.HeapSnapshotGenericObjectNode.prototype;
+    __proto__: WebInspector.HeapSnapshotGenericObjectNode.prototype
+}
+

@@ -333,7 +333,7 @@ WebInspector.SourceCSSTokenizer.prototype = {
                 <*> [^] { this.tokenType = null; return cursor; }
             */
         }
-    }
-}
+    },
 
-WebInspector.SourceCSSTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;
+    __proto__: WebInspector.SourceTokenizer.prototype
+}

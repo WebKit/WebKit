@@ -45,10 +45,10 @@ WebInspector.AuditCategories.PagePerformance.prototype = {
         this.addRule(new WebInspector.AuditRules.CssInHeadRule(), WebInspector.AuditRule.Severity.Severe);
         this.addRule(new WebInspector.AuditRules.StylesScriptsOrderRule(), WebInspector.AuditRule.Severity.Severe);
         this.addRule(new WebInspector.AuditRules.VendorPrefixedCSSProperties(), WebInspector.AuditRule.Severity.Warning);
-    }
-}
+    },
 
-WebInspector.AuditCategories.PagePerformance.prototype.__proto__ = WebInspector.AuditCategory.prototype;
+    __proto__: WebInspector.AuditCategory.prototype
+}
 
 /**
  * @constructor
@@ -73,7 +73,7 @@ WebInspector.AuditCategories.NetworkUtilization.prototype = {
         this.addRule(new WebInspector.AuditRules.ParallelizeDownloadRule(4, 10, 0.5), WebInspector.AuditRule.Severity.Warning);
         this.addRule(new WebInspector.AuditRules.BrowserCacheControlRule(), WebInspector.AuditRule.Severity.Severe);
         this.addRule(new WebInspector.AuditRules.ProxyCacheControlRule(), WebInspector.AuditRule.Severity.Warning);
-    }
-}
+    },
 
-WebInspector.AuditCategories.NetworkUtilization.prototype.__proto__ = WebInspector.AuditCategory.prototype;
+    __proto__: WebInspector.AuditCategory.prototype
+}

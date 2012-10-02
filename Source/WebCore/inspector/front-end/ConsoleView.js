@@ -628,10 +628,10 @@ WebInspector.ConsoleView.prototype = {
             WebInspector.log(counter > 1 ? counter + " x " + previousTitle : previousTitle);
         }
         MemoryAgent.getDOMNodeCount(callback);
-    }
-}
+    },
 
-WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
+    __proto__: WebInspector.View.prototype
+}
 
 /**
  * @constructor
@@ -709,10 +709,10 @@ WebInspector.ConsoleCommandResult.prototype = {
         var element = WebInspector.ConsoleMessageImpl.prototype.toMessageElement.call(this);
         element.addStyleClass("console-user-command-result");
         return element;
-    }
-}
+    },
 
-WebInspector.ConsoleCommandResult.prototype.__proto__ = WebInspector.ConsoleMessageImpl.prototype;
+    __proto__: WebInspector.ConsoleMessageImpl.prototype
+}
 
 /**
  * @constructor

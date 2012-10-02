@@ -157,7 +157,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
     rewriteQuery: function(query)
     {
         return query;
-    }
-}
+    },
 
-WebInspector.StyleSheetOutlineDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
+    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+}

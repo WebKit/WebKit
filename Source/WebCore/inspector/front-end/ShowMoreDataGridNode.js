@@ -140,7 +140,8 @@ WebInspector.ShowMoreDataGridNode.prototype = {
 
     dispose: function()
     {
-    }
-};
+    },
 
-WebInspector.ShowMoreDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;
+    __proto__: WebInspector.DataGridNode.prototype
+}
+
