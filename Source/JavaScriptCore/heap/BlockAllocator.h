@@ -104,9 +104,17 @@ inline PageAllocationAligned BlockAllocator::allocate()
 
 inline void BlockAllocator::deallocate(PageAllocationAligned allocation)
 {
-    SpinLockHolder locker(&m_freeBlockLock);
-    m_freeBlocks.push(DeadBlock::create(allocation));
-    m_numberOfFreeBlocks++;
+    size_t numberOfFreeBlocks;
+    {
+        SpinLockHolder locker(&m_freeBlockLock);
+        m_freeBlocks.push(DeadBlock::create(allocation));
+        numberOfFreeBlocks = m_numberOfFreeBlocks++;
+    }
+
+    if (!numberOfFreeBlocks) {
+        MutexLocker mutexLocker(m_freeBlockConditionLock);
+        m_freeBlockCondition.signal();
+    }
 }
 
 } // namespace JSC

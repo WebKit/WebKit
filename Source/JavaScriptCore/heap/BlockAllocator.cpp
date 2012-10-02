@@ -138,6 +138,16 @@ void BlockAllocator::blockFreeingThreadMain()
             
             DeadBlock::destroy(block).deallocate();
         }
+
+        // Sleep until there is actually work to do rather than waking up every second to check.
+        MutexLocker locker(m_freeBlockConditionLock);
+        m_freeBlockLock.Lock();
+        while (!m_numberOfFreeBlocks && !m_blockFreeingThreadShouldQuit) {
+            m_freeBlockLock.Unlock();
+            m_freeBlockCondition.wait(m_freeBlockConditionLock);
+            m_freeBlockLock.Lock();
+        }
+        m_freeBlockLock.Unlock();
     }
 }
 
