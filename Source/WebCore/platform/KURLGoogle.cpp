@@ -44,6 +44,7 @@
 #include "PlatformMemoryInstrumentation.h"
 #include "TextEncoding.h"
 #include <wtf/HashMap.h>
+#include <wtf/MemoryInstrumentationString.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>

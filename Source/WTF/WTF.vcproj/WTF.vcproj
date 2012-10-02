@@ -917,6 +917,10 @@
 			>
 		</File>
 		<File
+		        RelativePath="..\wtf\MemoryInstrumentationString.h"
+			>
+		</File>
+		<File
 		        RelativePath="..\wtf\MemoryInstrumentationVector.h"
 			>
 		</File>

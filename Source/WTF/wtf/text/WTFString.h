@@ -457,8 +457,6 @@ public:
         return (*m_impl)[index];
     }
 
-    WTF_EXPORT_STRING_API void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     RefPtr<StringImpl> m_impl;
 };
