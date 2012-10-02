@@ -58,6 +58,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateScrolling
     , m_changedProperties(stateNode->changedProperties())
     , m_viewportRect(stateNode->viewportRect())
     , m_contentsSize(stateNode->contentsSize())
+    , m_nonFastScrollableRegion(stateNode->nonFastScrollableRegion())
     , m_wheelEventHandlerCount(stateNode->wheelEventHandlerCount())
     , m_shouldUpdateScrollLayerPositionOnMainThread(stateNode->shouldUpdateScrollLayerPositionOnMainThread())
     , m_horizontalScrollElasticity(stateNode->horizontalScrollElasticity())
