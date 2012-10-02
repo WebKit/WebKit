@@ -23,32 +23,32 @@ var test = function()
 
     function step2()
     {
-        WebInspector.consoleView.completionsForExpression("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
+        WebInspector.runtimeModel._completionsForExpression("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
     }
 
     function step3()
     {
-        WebInspector.consoleView.completionsForExpression("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
+        WebInspector.runtimeModel._completionsForExpression("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
     }
 
     function step4()
     {
-        WebInspector.consoleView.completionsForExpression("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
+        WebInspector.runtimeModel._completionsForExpression("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
     }
 
     function step5()
     {
-        WebInspector.consoleView.completionsForExpression("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
+        WebInspector.runtimeModel._completionsForExpression("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
     }
 
     function step6()
     {
-        WebInspector.consoleView.completionsForExpression("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
+        WebInspector.runtimeModel._completionsForExpression("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
     }
 
     function step7()
     {
-        WebInspector.consoleView.completionsForExpression("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
+        WebInspector.runtimeModel._completionsForExpression("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
     }
 
     function step8()

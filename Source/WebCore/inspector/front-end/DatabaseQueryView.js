@@ -46,7 +46,7 @@ WebInspector.DatabaseQueryView = function(database)
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), " ");
     this.prompt.attach(this._promptElement);
-    
+
     this.element.addEventListener("click", this._messagesClicked.bind(this), true);
 }
 

@@ -31,7 +31,7 @@
  * @constructor
  * @extends WebInspector.Object
  * @param {function(WebInspector.TextPrompt, Range, boolean, function(Array.<string>=))} completions
- * @param {string} stopCharacters
+ * @param {string=} stopCharacters
  */
 WebInspector.TextPrompt = function(completions, stopCharacters)
 {
@@ -41,7 +41,7 @@ WebInspector.TextPrompt = function(completions, stopCharacters)
     this._proxyElement;
     this._proxyElementDisplay = "inline-block";
     this._loadCompletions = completions;
-    this._completionStopCharacters = stopCharacters;
+    this._completionStopCharacters = stopCharacters || " =:[({;,!+-*/&|^<>.";
     this._suggestForceable = true;
 }
 
@@ -758,7 +758,7 @@ WebInspector.TextPrompt.prototype.__proto__ = WebInspector.Object.prototype;
  * @constructor
  * @extends {WebInspector.TextPrompt}
  * @param {function(WebInspector.TextPrompt, Range, boolean, function(Array.<string>=))} completions
- * @param {string} stopCharacters
+ * @param {string=} stopCharacters
  */
 WebInspector.TextPromptWithHistory = function(completions, stopCharacters)
 {

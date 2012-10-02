@@ -27,8 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
-
 /**
  * @extends {WebInspector.View}
  * @constructor
@@ -114,7 +112,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
 
     this._linkifier = new WebInspector.Linkifier();
 
-    this.prompt = new WebInspector.TextPromptWithHistory(this.completionsForTextPrompt.bind(this), ExpressionStopCharacters + ".");
+    this.prompt = new WebInspector.TextPromptWithHistory(WebInspector.runtimeModel.completionsForTextPrompt.bind(WebInspector.runtimeModel));
     this.prompt.setSuggestBoxEnabled("generic-suggest");
     this.prompt.renderAsBlock();
     this.prompt.attach(this.promptElement);
@@ -176,14 +174,14 @@ WebInspector.ConsoleView.prototype = {
     {
         var context = this._currentFrame();
         if (!context) {
-            delete this._currentExecutionContext;
+            WebInspector.runtimeModel.setCurrentExecutionContext(null);
             this._contextSelector.element.addStyleClass("hidden");
             return;
         }
 
         var executionContexts = context.executionContexts();
         if (executionContexts.length)
-            this._currentExecutionContext = executionContexts[0];
+            WebInspector.runtimeModel.setCurrentExecutionContext(executionContexts[0]);
 
         if (executionContexts.length === 1) {
             this._contextSelector.element.addStyleClass("hidden");
@@ -200,8 +198,8 @@ WebInspector.ConsoleView.prototype = {
      */
     _appendContextOption: function(executionContext)
     {
-        if (!this._currentExecutionContext)
-            this._currentExecutionContext = executionContext;
+        if (!WebInspector.runtimeModel.currentExecutionContext())
+            WebInspector.runtimeModel.setCurrentExecutionContext(executionContext);
         var option = document.createElement("option");
         option.text = executionContext.name;
         option.title = executionContext.id;
@@ -215,7 +213,7 @@ WebInspector.ConsoleView.prototype = {
     _contextChanged: function(event)
     {
         var option = this._contextSelector.selectedOption();
-        this._currentExecutionContext = option ? option._executionContext : undefined;
+        WebInspector.runtimeModel.setCurrentExecutionContext(option ? option._executionContext : null);
     },
 
     /**
@@ -432,143 +430,6 @@ WebInspector.ConsoleView.prototype = {
         this._linkifier.reset();
     },
 
-    completionsForTextPrompt: function(textPrompt, wordRange, force, completionsReadyCallback)
-    {
-        // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
-        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, ExpressionStopCharacters, textPrompt.proxyElement, "backward");
-        var expressionString = expressionRange.toString();
-        var prefix = wordRange.toString();
-        this.completionsForExpression(expressionString, prefix, force, completionsReadyCallback);
-    },
-
-    completionsForExpression: function(expressionString, prefix, force, completionsReadyCallback)
-    {
-        var lastIndex = expressionString.length - 1;
-
-        var dotNotation = (expressionString[lastIndex] === ".");
-        var bracketNotation = (expressionString[lastIndex] === "[");
-
-        if (dotNotation || bracketNotation)
-            expressionString = expressionString.substr(0, lastIndex);
-
-        if (expressionString && parseInt(expressionString, 10) == expressionString) {
-            // User is entering float value, do not suggest anything.
-            completionsReadyCallback([]);
-            return;
-        }
-
-        if (!prefix && !expressionString && !force) {
-            completionsReadyCallback([]);
-            return;
-        }
-
-        if (!expressionString && WebInspector.debuggerModel.selectedCallFrame())
-            WebInspector.debuggerModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
-        else
-            this.evalInInspectedWindow(expressionString, "completion", true, true, false, evaluated.bind(this));
-
-        function evaluated(result, wasThrown)
-        {
-            if (!result || wasThrown) {
-                completionsReadyCallback([]);
-                return;
-            }
-
-            function getCompletions(primitiveType)
-            {
-                var object;
-                if (primitiveType === "string")
-                    object = new String("");
-                else if (primitiveType === "number")
-                    object = new Number(0);
-                else if (primitiveType === "boolean")
-                    object = new Boolean(false);
-                else
-                    object = this;
-
-                var resultSet = {};
-                for (var o = object; o; o = o.__proto__) {
-                    try {
-                        var names = Object.getOwnPropertyNames(o);
-                        for (var i = 0; i < names.length; ++i)
-                            resultSet[names[i]] = true;
-                    } catch (e) {
-                    }
-                }
-                return resultSet;
-            }
-
-            if (result.type === "object" || result.type === "function")
-                result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
-            else if (result.type === "string" || result.type === "number" || result.type === "boolean")
-                this.evalInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEval.bind(this));
-        }
-
-        function receivedPropertyNamesFromEval(notRelevant, wasThrown, result)
-        {
-            if (result && !wasThrown)
-                receivedPropertyNames.call(this, result.value);
-            else
-                completionsReadyCallback([]);
-        }
-
-        function receivedPropertyNames(propertyNames)
-        {
-            RuntimeAgent.releaseObjectGroup("completion");
-            if (!propertyNames) {
-                completionsReadyCallback([]);
-                return;
-            }
-            var includeCommandLineAPI = (!dotNotation && !bracketNotation);
-            if (includeCommandLineAPI) {
-                const commandLineAPI = ["dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"];
-                for (var i = 0; i < commandLineAPI.length; ++i)
-                    propertyNames[commandLineAPI[i]] = true;
-            }
-            this._reportCompletions(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, Object.keys(propertyNames));
-        }
-    },
-
-    _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, properties) {
-        if (bracketNotation) {
-            if (prefix.length && prefix[0] === "'")
-                var quoteUsed = "'";
-            else
-                var quoteUsed = "\"";
-        }
-
-        var results = [];
-
-        if (!expressionString) {
-            const keywords = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in",
-                              "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with"];
-            properties = properties.concat(keywords);
-        }
-
-        properties.sort();
-
-        for (var i = 0; i < properties.length; ++i) {
-            var property = properties[i];
-
-            if (dotNotation && !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(property))
-                continue;
-
-            if (bracketNotation) {
-                if (!/^[0-9]+$/.test(property))
-                    property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + quoteUsed;
-                property += "]";
-            }
-
-            if (property.length < prefix.length)
-                continue;
-            if (prefix.length && !property.startsWith(prefix))
-                continue;
-
-            results.push(property);
-        }
-        completionsReadyCallback(results);
-    },
-
     _handleContextMenuEvent: function(event)
     {
         if (!window.getSelection().isCollapsed) {
@@ -672,47 +533,6 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    /**
-     * @param {string} expression
-     * @param {string} objectGroup
-     * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
-     * @param {boolean} returnByValue
-     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
-     */
-    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
-    {
-        if (WebInspector.debuggerModel.selectedCallFrame()) {
-            WebInspector.debuggerModel.evaluateOnSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
-            return;
-        }
-
-        if (!expression) {
-            // There is no expression, so the completion should happen against global properties.
-            expression = "this";
-        }
-
-        /**
-         * @param {?Protocol.Error} error
-         * @param {RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
-        function evalCallback(error, result, wasThrown)
-        {
-            if (error) {
-                console.error(error);
-                callback(null, false);
-                return;
-            }
-
-            if (returnByValue)
-                callback(null, !!wasThrown, wasThrown ? null : result);
-            else
-                callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
-        }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, evalCallback);
-    },
-
     evaluateUsingTextPrompt: function(expression, showResultOnly)
     {
         this._appendCommand(expression, this.prompt.text, false, showResultOnly);
@@ -735,7 +555,8 @@ WebInspector.ConsoleView.prototype = {
 
     runScript: function(scriptId)
     {
-        DebuggerAgent.runScript(scriptId, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, "console", false, runCallback.bind(this));
+        var currentExecutionContext = WebInspector.runtimeModel.currentExecutionContext();
+        DebuggerAgent.runScript(scriptId, currentExecutionContext ? currentExecutionContext.id : undefined, "console", false, runCallback.bind(this));
         WebInspector.userMetrics.ConsoleEvaluated.record();
 
         /**
@@ -783,7 +604,7 @@ WebInspector.ConsoleView.prototype = {
             
             this._printResult(result, wasThrown, commandMessage);
         }
-        this.evalInInspectedWindow(text, "console", useCommandLineAPI, false, false, printResult.bind(this));
+        WebInspector.runtimeModel.evaluate(text, "console", useCommandLineAPI, false, false, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },

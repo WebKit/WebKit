@@ -49,6 +49,22 @@ WebInspector.RuntimeModel.Events = {
 
 WebInspector.RuntimeModel.prototype = {
     /**
+     * @param {WebInspector.ExecutionContext} executionContext
+     */
+    setCurrentExecutionContext: function(executionContext)
+    {
+        this._currentExecutionContext = executionContext;
+    },
+
+    /**
+     * @return {WebInspector.ExecutionContext}
+     */
+    currentExecutionContext: function()
+    {
+        return this._currentExecutionContext;
+    },
+
+    /**
      * @return {Array.<WebInspector.FrameExecutionContextList>}
      */
     contextLists: function()
@@ -105,6 +121,184 @@ WebInspector.RuntimeModel.prototype = {
         if (!contextList)
             return;
         contextList._addExecutionContext(new WebInspector.ExecutionContext(context.id, context.name, context.isPageContext));
+    },
+
+    /**
+     * @param {string} expression
+     * @param {string} objectGroup
+     * @param {boolean} includeCommandLineAPI
+     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
+     * @param {boolean} returnByValue
+     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
+     */
+    evaluate: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    {
+        if (WebInspector.debuggerModel.selectedCallFrame()) {
+            WebInspector.debuggerModel.evaluateOnSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
+            return;
+        }
+
+        if (!expression) {
+            // There is no expression, so the completion should happen against global properties.
+            expression = "this";
+        }
+
+        /**
+         * @param {?Protocol.Error} error
+         * @param {RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
+        function evalCallback(error, result, wasThrown)
+        {
+            if (error) {
+                console.error(error);
+                callback(null, false);
+                return;
+            }
+
+            if (returnByValue)
+                callback(null, !!wasThrown, wasThrown ? null : result);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
+        }
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, evalCallback);
+    },
+
+    completionsForTextPrompt: function(textPrompt, wordRange, force, completionsReadyCallback)
+    {
+        // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
+        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, " =:[({;,!+-*/&|^<>", textPrompt.proxyElement, "backward");
+        var expressionString = expressionRange.toString();
+        var prefix = wordRange.toString();
+        this._completionsForExpression(expressionString, prefix, force, completionsReadyCallback);
+    },
+
+    _completionsForExpression: function(expressionString, prefix, force, completionsReadyCallback)
+    {
+        var lastIndex = expressionString.length - 1;
+
+        var dotNotation = (expressionString[lastIndex] === ".");
+        var bracketNotation = (expressionString[lastIndex] === "[");
+
+        if (dotNotation || bracketNotation)
+            expressionString = expressionString.substr(0, lastIndex);
+
+        if (expressionString && parseInt(expressionString, 10) == expressionString) {
+            // User is entering float value, do not suggest anything.
+            completionsReadyCallback([]);
+            return;
+        }
+
+        if (!prefix && !expressionString && !force) {
+            completionsReadyCallback([]);
+            return;
+        }
+
+        if (!expressionString && WebInspector.debuggerModel.selectedCallFrame())
+            WebInspector.debuggerModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
+        else
+            this.evaluate(expressionString, "completion", true, true, false, evaluated.bind(this));
+
+        function evaluated(result, wasThrown)
+        {
+            if (!result || wasThrown) {
+                completionsReadyCallback([]);
+                return;
+            }
+
+            function getCompletions(primitiveType)
+            {
+                var object;
+                if (primitiveType === "string")
+                    object = new String("");
+                else if (primitiveType === "number")
+                    object = new Number(0);
+                else if (primitiveType === "boolean")
+                    object = new Boolean(false);
+                else
+                    object = this;
+
+                var resultSet = {};
+                for (var o = object; o; o = o.__proto__) {
+                    try {
+                        var names = Object.getOwnPropertyNames(o);
+                        for (var i = 0; i < names.length; ++i)
+                            resultSet[names[i]] = true;
+                    } catch (e) {
+                    }
+                }
+                return resultSet;
+            }
+
+            if (result.type === "object" || result.type === "function")
+                result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
+            else if (result.type === "string" || result.type === "number" || result.type === "boolean")
+                this.evaluate("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEval.bind(this));
+        }
+
+        function receivedPropertyNamesFromEval(notRelevant, wasThrown, result)
+        {
+            if (result && !wasThrown)
+                receivedPropertyNames.call(this, result.value);
+            else
+                completionsReadyCallback([]);
+        }
+
+        function receivedPropertyNames(propertyNames)
+        {
+            RuntimeAgent.releaseObjectGroup("completion");
+            if (!propertyNames) {
+                completionsReadyCallback([]);
+                return;
+            }
+            var includeCommandLineAPI = (!dotNotation && !bracketNotation);
+            if (includeCommandLineAPI) {
+                const commandLineAPI = ["dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"];
+                for (var i = 0; i < commandLineAPI.length; ++i)
+                    propertyNames[commandLineAPI[i]] = true;
+            }
+            this._reportCompletions(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, Object.keys(propertyNames));
+        }
+    },
+
+    _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, properties) {
+        if (bracketNotation) {
+            if (prefix.length && prefix[0] === "'")
+                var quoteUsed = "'";
+            else
+                var quoteUsed = "\"";
+        }
+
+        var results = [];
+
+        if (!expressionString) {
+            const keywords = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in",
+                              "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with"];
+            properties = properties.concat(keywords);
+        }
+
+        properties.sort();
+
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
+
+            if (dotNotation && !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(property))
+                continue;
+
+            if (bracketNotation) {
+                if (!/^[0-9]+$/.test(property))
+                    property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + quoteUsed;
+                property += "]";
+            }
+
+            if (property.length < prefix.length)
+                continue;
+            if (prefix.length && !property.startsWith(prefix))
+                continue;
+
+            results.push(property);
+        }
+        completionsReadyCallback(results);
     }
 }
 

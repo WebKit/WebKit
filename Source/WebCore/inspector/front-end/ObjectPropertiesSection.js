@@ -742,8 +742,7 @@ WebInspector.ArrayGroupingTreeElement.prototype.__proto__ = TreeElement.prototyp
  */
 WebInspector.ObjectPropertyPrompt = function(commitHandler, cancelHandler, renderAsBlock)
 {
-    const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>."; // Same as in ConsoleView.js + "."
-    WebInspector.TextPrompt.call(this, WebInspector.consoleView.completionsForTextPrompt.bind(WebInspector.consoleView), ExpressionStopCharacters);
+    WebInspector.TextPrompt.call(this, WebInspector.runtimeModel.completionsForTextPrompt.bind(WebInspector.runtimeModel));
     this.setSuggestBoxEnabled("generic-suggest");
     if (renderAsBlock)
         this.renderAsBlock();
