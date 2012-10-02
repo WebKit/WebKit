@@ -1,5 +1,17 @@
 2012-10-02  Roger Fong  <roger_fong@apple.com>
 
+        executive_unittest.py fails on Apple Windows bots but not when run locally.
+        https://bugs.webkit.org/show_bug.cgi?id=98196
+
+        Reviewed by Eric Seidel.
+
+        Making the test more flexible to check for cygwin and allow different outputs from process.wait().
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+
+2012-10-02  Roger Fong  <roger_fong@apple.com>
+
         Ignore failing line of SpacebarScrolling API test on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=84961
 

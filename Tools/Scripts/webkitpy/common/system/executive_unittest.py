@@ -162,6 +162,10 @@ class ExecutiveTest(unittest.TestCase):
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54790
             # We seem to get either 0 or 1 here for some reason.
             self.assertTrue(process.wait() in (0, 1))
+        elif sys.platform == "cygwin":
+            # FIXME: https://bugs.webkit.org/show_bug.cgi?id=98196
+            # cygwin seems to give us either SIGABRT or SIGKILL
+            self.assertTrue(process.wait() in (-signal.SIGABRT, -signal.SIGKILL))
         else:
             expected_exit_code = -signal.SIGKILL
             self.assertEqual(process.wait(), expected_exit_code)
