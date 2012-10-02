@@ -39,6 +39,14 @@
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#include "DateTimeFieldsState.h"
+#include "LocalizedStrings.h"
+#include "Localizer.h"
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -102,6 +110,66 @@ bool DateTimeLocalInputType::isDateTimeLocalField() const
 {
     return true;
 }
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+// FIXME: It is better to share code for DateTimeInputType::formatDateTimeFieldsState()
+// and DateTimeInputLocalType::formatDateTimeFieldsState().
+String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
+{
+    if (!dateTimeFieldsState.hasDayOfMonth() || !dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear()
+        || !dateTimeFieldsState.hasHour() || !dateTimeFieldsState.hasMinute() || !dateTimeFieldsState.hasAMPM())
+        return emptyString();
+
+    if (dateTimeFieldsState.hasMillisecond() && dateTimeFieldsState.millisecond()) {
+        return String::format("%04u-%02u-%02uT%02u:%02u:%02u.%03u",
+            dateTimeFieldsState.year(),
+            dateTimeFieldsState.month() + 1,
+            dateTimeFieldsState.dayOfMonth(),
+            dateTimeFieldsState.hour23(),
+            dateTimeFieldsState.minute(),
+            dateTimeFieldsState.hasSecond() ? dateTimeFieldsState.second() : 0,
+            dateTimeFieldsState.millisecond());
+    }
+
+    if (dateTimeFieldsState.hasSecond() && dateTimeFieldsState.second()) {
+        return String::format("%04u-%02u-%02uT%02u:%02u:%02u",
+            dateTimeFieldsState.year(),
+            dateTimeFieldsState.month() + 1,
+            dateTimeFieldsState.dayOfMonth(),
+            dateTimeFieldsState.hour23(),
+            dateTimeFieldsState.minute(),
+            dateTimeFieldsState.second());
+    }
+
+    return String::format("%04u-%02u-%02uT%02u:%02u",
+        dateTimeFieldsState.year(),
+        dateTimeFieldsState.month() + 1,
+        dateTimeFieldsState.dayOfMonth(),
+        dateTimeFieldsState.hour23(),
+        dateTimeFieldsState.minute());
+}
+
+void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
+{
+    // FIXME: It is better to have Localizer::dateTimeFormat() and use it
+    // here rather than constructing from dateFormat() and timeFormat().
+    StringBuilder builder;
+    builder.append(layoutParameters.localizer.dateFormat());
+    builder.append(' ');
+    if (date.second() || layoutParameters.shouldHaveSecondField()) {
+        builder.append(layoutParameters.localizer.timeFormat());
+        layoutParameters.fallbackDateTimeFormat = "dd/MM/yyyy HH:mm:ss";
+    } else {
+        builder.append(layoutParameters.localizer.shortTimeFormat());
+        layoutParameters.fallbackDateTimeFormat = "dd/MM/yyyy HH:mm";
+    }
+
+    layoutParameters.dateTimeFormat = builder.toString();
+    layoutParameters.placeholderForDay = placeholderForDayOfMonthField();
+    layoutParameters.placeholderForMonth = placeholderForMonthField();
+    layoutParameters.placeholderForYear = placeholderForYearField();
+}
+#endif
 
 } // namespace WebCore
 

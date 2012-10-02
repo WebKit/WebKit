@@ -31,18 +31,23 @@
 #ifndef DateTimeLocalInputType_h
 #define DateTimeLocalInputType_h
 
-#include "BaseDateAndTimeInputType.h"
-
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+#include "BaseMultipleFieldsDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class DateTimeLocalInputType : public BaseDateAndTimeInputType {
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+typedef BaseMultipleFieldsDateAndTimeInputType BaseDateTimeLocalInputType;
+#else
+typedef BaseDateAndTimeInputType BaseDateTimeLocalInputType;
+#endif
+
+class DateTimeLocalInputType : public BaseDateTimeLocalInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    DateTimeLocalInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
+    DateTimeLocalInputType(HTMLInputElement* element) : BaseDateTimeLocalInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual double valueAsDate() const OVERRIDE;
@@ -51,6 +56,12 @@ private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateTimeLocalField() const OVERRIDE;
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    // BaseMultipleFieldsDateAndTimeInputType functions
+    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE FINAL;
+#endif
 };
 
 } // namespace WebCore

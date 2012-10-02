@@ -1,0 +1,29 @@
+Check stepping-up and -down for datetime input fields from renderer. No cases of empty initial values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Function arguments are (value, step, {min or max}, [stepCount]).
+Normal cases
+FAIL stepUp("2010-02-10T20:13Z", null, null) should be 2010-02-10T20:14Z. Was 2010-02-10T20:13Z.
+FAIL stepDown("2010-02-10T20:13Z", null, null) should be 2010-02-10T20:12Z. Was 2010-02-10T20:13Z.
+FAIL stepUp("2010-02-10T20:13Z", null, null, 10) should be 2010-02-10T20:23Z. Was 2010-02-10T20:13Z.
+FAIL stepDown("2010-02-10T20:13Z", null, null, 11) should be 2010-02-10T20:02Z. Was 2010-02-10T20:13Z.
+FAIL stepUp("1970-01-01T20:13Z", "4", null, 2) should be 1970-01-01T20:13:08Z. Was 1970-01-01T20:13Z.
+FAIL stepDown("1970-01-01T20:13Z", "4", null, 3) should be 1970-01-01T20:12:48Z. Was 1970-01-01T20:13Z.
+Step=any
+FAIL stepUp("2010-02-10T20:13Z", "any", null) should be 2010-02-10T20:14Z. Was 2010-02-10T20:13Z.
+FAIL stepDown("2010-02-10T20:13Z", "any", null) should be 2010-02-10T20:12Z. Was 2010-02-10T20:13Z.
+Overflow/underflow
+FAIL stepUp("2010-02-10T20:13Z", "3.40282346e+38", null) should be 275760-09-13T00:00:00Z. Was 2010-02-10T20:13Z.
+FAIL stepDown("2010-02-10T20:13Z", "3.40282346e+38", null) should be 1970-01-01T00:00:00Z. Was 2010-02-10T20:13Z.
+PASS stepUp("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z") is "2010-02-10T20:13Z"
+PASS stepDown("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z") is "2010-02-10T20:13Z"
+stepDown()/stepUp() for stepMismatch values
+FAIL stepDown("2010-02-10T20:13Z", "3", "2010-02-10T20:12:56Z") should be 2010-02-10T20:12:59Z. Was 2010-02-10T20:13Z.
+FAIL stepUp("1970-01-01T00:13Z", "7", "") should be 1970-01-01T00:13:04Z. Was 1970-01-01T00:13Z.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

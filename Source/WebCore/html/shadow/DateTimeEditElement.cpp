@@ -67,6 +67,7 @@ private:
     const DateComponents m_dateValue;
     const StepRange m_stepRange;
     Localizer& m_localizer;
+    const String m_placeholderForDay;
     const String m_placeholderForMonth;
     const String m_placeholderForYear;
 };
@@ -76,6 +77,7 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const Date
     , m_dateValue(dateValue)
     , m_stepRange(layoutParameters.stepRange)
     , m_localizer(layoutParameters.localizer)
+    , m_placeholderForDay(layoutParameters.placeholderForDay)
     , m_placeholderForMonth(layoutParameters.placeholderForMonth)
     , m_placeholderForYear(layoutParameters.placeholderForYear)
 {
@@ -99,6 +101,10 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
     Document* const document = m_editElement.document();
 
     switch (fieldType) {
+    case DateTimeFormat::FieldTypeDayOfMonth:
+        m_editElement.addField(DateTimeDayFieldElement::create(document, m_editElement, m_placeholderForDay));
+        return;
+
     case DateTimeFormat::FieldTypeHour11:
         m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 11));
         return;

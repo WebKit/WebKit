@@ -66,6 +66,7 @@ public:
         String fallbackDateTimeFormat;
         Localizer& localizer;
         const StepRange stepRange;
+        String placeholderForDay;
         String placeholderForMonth;
         String placeholderForYear;
 
