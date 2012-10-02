@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: line 959: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+Tests that command line api works.
+
+
+
+String($0)
+"[object HTMLParagraphElement]"
+
+
+$3
+undefined
+
+
+String(keys([3,4]))
+"0,1"
+
+
+String(values([3,4]))
+"3,4"
+
+
+String($('#foo'))
+"[object HTMLParagraphElement]"
+
+
+String($('#foo', document.body))
+"[object HTMLParagraphElement]"
+
+
+String($('#foo', 'non-node'))
+"[object HTMLParagraphElement]"
+
+
+String($('#foo', $('#bar')))
+"null"
+
+
+String($$('p#foo'))
+"[object NodeList]"
+
+
+String($$('p#foo', document.body))
+"[object NodeList]"
+
+
+String($('foo'))
+The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#foo")
+
