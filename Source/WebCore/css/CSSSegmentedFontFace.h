@@ -51,7 +51,7 @@ public:
 
     void appendFontFace(PassRefPtr<CSSFontFace>);
 
-    PassRefPtr<FontData> getFontData(const FontDescription&);
+    FontData* getFontData(const FontDescription&);
 
 private:
     CSSSegmentedFontFace(CSSFontSelector*);
@@ -60,7 +60,7 @@ private:
     bool isValid() const;
 
     CSSFontSelector* m_fontSelector;
-    HashMap<unsigned, RefPtr<SegmentedFontData> > m_fontDataTable;
+    HashMap<unsigned, SegmentedFontData*> m_fontDataTable;
     Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
 };
 

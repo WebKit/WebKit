@@ -90,32 +90,32 @@ void SimpleFontData::platformDestroy()
 #endif
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     FontDescription desc = FontDescription(fontDescription);
     desc.setSpecifiedSize(scaleFactor * fontDescription.computedSize());
     FontPlatformData platformData(desc, desc.family().family());
-    return SimpleFontData::create(platformData, isCustomFont(), false);
+    return adoptPtr(new SimpleFontData(platformData, isCustomFont(), false));
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFontData(fontDescription, .7);
 
-    return m_derivedFontData->smallCaps;
+    return m_derivedFontData->smallCaps.get();
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, .5);
 
-    return m_derivedFontData->emphasisMark;
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

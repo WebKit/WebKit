@@ -318,12 +318,12 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
 }
 
 // Tries the given font and save it |outFontFamilyName| if it succeeds.
-PassRefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName)
+SimpleFontData* FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName)
 {
-    RefPtr<SimpleFontData> fontData = getCachedFontData(fontDescription, font.lfFaceName, false, shouldRetain);
+    SimpleFontData* fontData = getCachedFontData(fontDescription, font.lfFaceName, false, shouldRetain);
     if (fontData)
         memcpy(outFontFamilyName, font.lfFaceName, sizeof(font.lfFaceName));
-    return fontData.release();
+    return fontData;
 }
 
 static LONG toGDIFontWeight(FontWeight fontWeight)
@@ -406,7 +406,7 @@ struct GetLastResortFallbackFontProcData {
     const FontDescription* m_fontDescription;
     FontCache::ShouldRetain m_shouldRetain;
     wchar_t* m_fontName;
-    RefPtr<SimpleFontData> m_fontData;
+    SimpleFontData* m_fontData;
 };
 
 static int CALLBACK getLastResortFallbackFontProc(const LOGFONT* logFont, const TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
@@ -423,7 +423,7 @@ void FontCache::platformInit()
 
 // Given the desired base font, this will create a SimpleFontData for a specific
 // font that can be used to render the given range of characters.
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     // FIXME: Consider passing fontDescription.dominantScript()
     // to GetFallbackFamily here.
@@ -508,12 +508,12 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
 
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
 {
     FontDescription::GenericFamilyType generic = description.genericFamily();
 
@@ -530,9 +530,9 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     else if (generic == FontDescription::MonospaceFamily)
         fontStr = courierStr;
 
-    RefPtr<SimpleFontData> simpleFont = getCachedFontData(description, fontStr, false, shouldRetain);
+    SimpleFontData* simpleFont = getCachedFontData(description, fontStr, false, shouldRetain);
     if (simpleFont)
-        return simpleFont.release();
+        return simpleFont;
 
     // Fall back to system fonts as Win Safari does because this function must
     // return a valid font. Once we find a valid system font, we save its name
@@ -546,7 +546,7 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, defaultGUILogFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
     }
 
     // Fall back to Non-client metrics fonts.
@@ -554,15 +554,15 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
         if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
-            return simpleFont.release();
+            return simpleFont;
     }
 
     // Fall back to all the fonts installed in this PC. When a font has a
@@ -576,7 +576,7 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
         EnumFontFamilies(dc, 0, getLastResortFallbackFontProc, reinterpret_cast<LPARAM>(&procData));
 
         if (procData.m_fontData)
-            return procData.m_fontData.release();
+            return procData.m_fontData;
     }
 
     ASSERT_NOT_REACHED();

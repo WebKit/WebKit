@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "FontCache.h"
 #include "FontDescription.h"
+#include "GlyphPageTreeNode.h"
 #include "SimpleFontData.h"
 
 #if ENABLE(SVG_FONTS)
@@ -94,7 +95,7 @@ void CSSFontFaceSource::fontLoaded(CachedFont*)
         m_face->fontLoaded(this);
 }
 
-PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, CSSFontSelector* fontSelector)
+SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, CSSFontSelector* fontSelector)
 {
     // If the font hasn't loaded or an error occurred, then we've got nothing.
     if (!isValid())
@@ -113,9 +114,11 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 6 | fontDescription.widthVariant() << 4
                        | (fontDescription.textOrientation() == TextOrientationUpright ? 8 : 0) | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
 
-    RefPtr<SimpleFontData>& fontData = m_fontDataTable.add(hashKey, 0).iterator->second;
-    if (fontData)
-        return fontData; // No release, because fontData is a reference to a RefPtr that is held in the m_fontDataTable.
+    SimpleFontData*& cachedData = m_fontDataTable.add(hashKey, 0).iterator->second;
+    if (cachedData)
+        return cachedData;
+
+    OwnPtr<SimpleFontData> fontData;
 
     // If we are still loading, then we let the system pick a font.
     if (isLoaded()) {
@@ -154,7 +157,7 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
                         m_svgFontFaceElement = fontFaceElement;
                     }
 
-                    fontData = SimpleFontData::create(SVGFontData::create(fontFaceElement), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+                    fontData = adoptPtr(new SimpleFontData(SVGFontData::create(fontFaceElement), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
                 }
             } else
 #endif
@@ -163,14 +166,14 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
                 if (!m_font->ensureCustomFontData())
                     return 0;
 
-                fontData = SimpleFontData::create(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic,
-                    fontDescription.orientation(), fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
+                fontData = adoptPtr(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(),
+                                                                                   fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
             }
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
             if (m_svgFontFaceElement)
-                fontData = SimpleFontData::create(SVGFontData::create(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+                fontData = adoptPtr(new SimpleFontData(SVGFontData::create(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
 #endif
         }
     } else {
@@ -181,15 +184,15 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         // This temporary font is not retained and should not be returned.
         FontCachePurgePreventer fontCachePurgePreventer;
         SimpleFontData* temporaryFont = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
-        fontData = SimpleFontData::create(temporaryFont->platformData(), true, true);
+        fontData = adoptPtr(new SimpleFontData(temporaryFont->platformData(), true, true));
     }
 
-    if (Document* document = fontSelector->document())
-        document->registerCustomFont(fontData);
-    else
-        fontData.clear();
+    if (Document* document = fontSelector->document()) {
+        cachedData = fontData.get();
+        document->registerCustomFont(fontData.release());
+    }
 
-    return fontData; // No release, because fontData is a reference to a RefPtr that is held in the m_fontDataTable.
+    return cachedData;
 }
 
 #if ENABLE(SVG_FONTS)

@@ -189,21 +189,21 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
             if (simpleFontData->platformData().orientation() == Vertical) {
                 if (isCJKIdeographOrSymbol(baseCharacter) && !simpleFontData->hasVerticalGlyphs()) {
                     variant = BrokenIdeographVariant;
-                    simpleFontData = simpleFontData->brokenIdeographFontData().get();
+                    simpleFontData = simpleFontData->brokenIdeographFontData();
                 } else if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
-                    SimpleFontData* verticalRightFontData = simpleFontData->verticalRightOrientationFontData().get();
+                    SimpleFontData* verticalRightFontData = simpleFontData->verticalRightOrientationFontData();
                     Glyph verticalRightGlyph = verticalRightFontData->glyphForCharacter(baseCharacter);
                     if (verticalRightGlyph == baseCharacterGlyphData.glyph)
                         simpleFontData = verticalRightFontData;
                 } else {
-                    SimpleFontData* uprightFontData = simpleFontData->uprightOrientationFontData().get();
+                    SimpleFontData* uprightFontData = simpleFontData->uprightOrientationFontData();
                     Glyph uprightGlyph = uprightFontData->glyphForCharacter(baseCharacter);
                     if (uprightGlyph != baseCharacterGlyphData.glyph)
                         simpleFontData = uprightFontData;
                 }
             }
         } else {
-            if (const SimpleFontData* variantFontData = simpleFontData->variantFontData(m_fontDescription, variant).get())
+            if (const SimpleFontData* variantFontData = simpleFontData->variantFontData(m_fontDescription, variant))
                 simpleFontData = variantFontData;
         }
 

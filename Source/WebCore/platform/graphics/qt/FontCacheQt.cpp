@@ -63,7 +63,7 @@ static QRawFont rawFontForCharacters(const QString& string, const QRawFont& font
     return glyphs.rawFont();
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     QString qstring = QString::fromRawData(reinterpret_cast<const QChar*>(characters), length);
     QRawFont computedFont = rawFontForCharacters(qstring, font.rawFont());
@@ -73,12 +73,12 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return getCachedFontData(&alternateFont, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     const AtomicString fallbackFamily = QFont(fontDescription.family().family()).lastResortFamily();
     return getCachedFontData(new FontPlatformData(fontDescription, fallbackFamily), shouldRetain);

@@ -32,8 +32,6 @@
 
 #include <limits.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
@@ -63,11 +61,11 @@ public:
 
     enum ShouldRetain { Retain, DoNotRetain };
 
-    PassRefPtr<FontData> getFontData(const Font&, int& familyIndex, FontSelector*);
+    const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
     void releaseFontData(const SimpleFontData*);
 
     // This method is implemented by the platform.
-    PassRefPtr<SimpleFontData> getFontDataForCharacters(const Font&, const UChar* characters, int length);
+    const SimpleFontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
 
     // Also implemented by the platform.
     void platformInit();
@@ -87,8 +85,8 @@ public:
 
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
-    PassRefPtr<SimpleFontData> getCachedFontData(const FontDescription&, const AtomicString&, bool checkingAlternateName = false, ShouldRetain = Retain);
-    PassRefPtr<SimpleFontData> getLastResortFallbackFont(const FontDescription&, ShouldRetain = Retain);
+    SimpleFontData* getCachedFontData(const FontDescription&, const AtomicString&, bool checkingAlternateName = false, ShouldRetain = Retain);
+    SimpleFontData* getLastResortFallbackFont(const FontDescription&, ShouldRetain = Retain);
     SimpleFontData* getNonRetainedLastResortFallbackFont(const FontDescription&);
 
     void addClient(FontSelector*);
@@ -102,9 +100,9 @@ public:
     void purgeInactiveFontData(int count = INT_MAX);
 
 #if PLATFORM(WIN)
-    PassRefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT&, AtomicString& outFontFamilyName);
+    SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName);
 #elif PLATFORM(CHROMIUM) && OS(WINDOWS)
-    PassRefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT&, wchar_t* outFontFamilyName);
+    SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -141,10 +139,10 @@ private:
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
-    PassRefPtr<SimpleFontData> getSimilarFontPlatformData(const Font&);
+    SimpleFontData* getSimilarFontPlatformData(const Font&);
     FontPlatformData* createFontPlatformData(const FontDescription&, const AtomicString& family);
 
-    PassRefPtr<SimpleFontData> getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
+    SimpleFontData* getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
 
     // Don't purge if this count is > 0;
     int m_purgePreventCount;

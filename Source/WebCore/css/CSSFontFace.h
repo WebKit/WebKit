@@ -64,7 +64,7 @@ public:
 
     void fontLoaded(CSSFontFaceSource*);
 
-    PassRefPtr<SimpleFontData> getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
     struct UnicodeRange {
         UnicodeRange(UChar32 from, UChar32 to)

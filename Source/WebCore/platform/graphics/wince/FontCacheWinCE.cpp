@@ -225,7 +225,7 @@ void FontCache::comUninitialize()
     }
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     String familyName;
     WCHAR name[LF_FACESIZE];
@@ -235,11 +235,10 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     unsigned unicodeRange = findCharUnicodeRange(character);
 
 #if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-    if (IMLangFontLink2* langFontLink = getFontLinkInterface())
+    if (IMLangFontLink2* langFontLink = getFontLinkInterface()) {
 #else
-    if (IMLangFontLink* langFontLink = getFontLinkInterface())
+    if (IMLangFontLink* langFontLink = getFontLinkInterface()) {
 #endif
-    {
         HGDIOBJ oldFont = GetCurrentObject(g_screenDC, OBJ_FONT);
         HFONT hfont = 0;
         DWORD codePages = 0;
@@ -268,11 +267,10 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
                     // We asked about a code page that is not one of the code pages
                     // returned by MLang, so the font might not contain the character.
 #if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-                    if (!currentFontContainsCharacter(langFontLink, g_screenDC, character))
+                    if (!currentFontContainsCharacter(langFontLink, g_screenDC, character)) {
 #else
-                    if (!currentFontContainsCharacter(langFontLink, g_screenDC, hfont, character, name))
+                    if (!currentFontContainsCharacter(langFontLink, g_screenDC, hfont, character, name)) {
 #endif
-                    {
                         SelectObject(g_screenDC, oldFont);
                         langFontLink->ReleaseFont(hfont);
                         hfont = 0;
@@ -310,20 +308,20 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
 
         FontPlatformData* result = getCachedFontPlatformData(fontDescription, familyName);
         if (result && result->hash() != origFont.hash()) {
-            if (RefPtr<SimpleFontData> fontData = getCachedFontData(result, DoNotRetain))
-                return fontData.release();
+            if (SimpleFontData* fontData = getCachedFontData(result, DoNotRetain))
+                return fontData;
         }
     }
 
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font&)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDesc, ShouldRetain shouldRetain)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDesc, ShouldRetain shouldRetain)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.

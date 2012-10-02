@@ -43,9 +43,9 @@ void FontCache::platformInit()
 {
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    RefPtr<SimpleFontData> fontData = 0;
+    SimpleFontData* fontData = 0;
     fontData = getCachedFontData(font.fontDescription(), font.family().family(), false, DoNotRetain);
     if (!fontData->containsCharacters(characters, length))
         fontData = getSimilarFontPlatformData(font);
@@ -53,12 +53,12 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
         fontData = getLastResortFallbackFont(font.fontDescription());
 
     ASSERT(fontData);
-    return fontData.release();
+    return fontData;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
-    RefPtr<SimpleFontData> simpleFontData = 0;
+    SimpleFontData* simpleFontData = 0;
 #if OS(DARWIN)
     // Attempt to find an appropriate font using a match based on 
     // the presence of keywords in the the requested names.  For example, we'll
@@ -78,14 +78,14 @@ PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& fon
     if (!simpleFontData)
         simpleFontData = getCachedFontData(font.fontDescription(), font.family().family());
 
-    return simpleFontData.release();
+    return simpleFontData;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    RefPtr<SimpleFontData> fallback = 0;
+    SimpleFontData* fallback = 0;
 #if OS(WINDOWS)
     static AtomicString fallbackName("Arial Unicode MS");
 #else
@@ -94,7 +94,7 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     fallback = getCachedFontData(fontDescription, fallbackName, false, shouldRetain);
     ASSERT(fallback);
     
-    return fallback.release();
+    return fallback;
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

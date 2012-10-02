@@ -66,9 +66,9 @@ void FontFallbackList::releaseFontData()
 {
     unsigned numFonts = m_fontList.size();
     for (unsigned i = 0; i < numFonts; ++i) {
-        if (!m_fontList[i]->isCustomFont()) {
-            ASSERT(!m_fontList[i]->isSegmented());
-            fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].get()));
+        if (!m_fontList[i].second) {
+            ASSERT(!m_fontList[i].first->isSegmented());
+            fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].first));
         }
     }
 }
@@ -91,7 +91,7 @@ void FontFallbackList::determinePitch(const Font* font) const
 const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realizedFontIndex) const
 {
     if (realizedFontIndex < m_fontList.size())
-        return m_fontList[realizedFontIndex].get(); // This fallback font is already in our list.
+        return m_fontList[realizedFontIndex].first; // This fallback font is already in our list.
 
     // Make sure we're not passing in some crazy value here.
     ASSERT(realizedFontIndex == m_fontList.size());
@@ -104,21 +104,21 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     // in |m_familyIndex|, so that we never scan the same spot in the list twice.  getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
     ASSERT(fontCache()->generation() == m_generation);
-    RefPtr<FontData> result = fontCache()->getFontData(*font, m_familyIndex, m_fontSelector.get());
+    const FontData* result = fontCache()->getFontData(*font, m_familyIndex, m_fontSelector.get());
     if (result) {
-        m_fontList.append(result);
+        m_fontList.append(pair<const FontData*, bool>(result, result->isCustomFont()));
         if (result->isLoading())
             m_loadingCustomFonts = true;
     }
-    return result.get();
+    return result;
 }
 
 void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;
     ASSERT(fontCache()->generation() == m_generation);
-    RefPtr<FontData> fontData = fontCache()->getCachedFontData(&platformData);
-    m_fontList.append(fontData);
+    const FontData* fontData = fontCache()->getCachedFontData(&platformData);
+    m_fontList.append(pair<const FontData*, bool>(fontData, fontData->isCustomFont()));
 }
 
 }

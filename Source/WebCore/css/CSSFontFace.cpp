@@ -91,7 +91,7 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
     fontSelector->fontLoaded();
 }
 
-PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
 {
     m_activeSource = 0;
     if (!isValid())
@@ -102,9 +102,9 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
 
     size_t size = m_sources.size();
     for (size_t i = 0; i < size; ++i) {
-        if (RefPtr<SimpleFontData> result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
+        if (SimpleFontData* result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
             m_activeSource = m_sources[i].get();
-            return result.release();
+            return result;
         }
     }
 

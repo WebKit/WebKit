@@ -51,7 +51,9 @@ void FontCache::platformInit()
 {
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
+                                                          const UChar* characters,
+                                                          int length)
 {
     icu::Locale locale = icu::Locale::getDefault();
     FontCache::SimpleFontFamily family;
@@ -88,12 +90,12 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     return getCachedFontData(&platformData, DoNotRetain);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     return 0;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, sansStr, ("Sans"));
     DEFINE_STATIC_LOCAL(const AtomicString, serifStr, ("Serif"));

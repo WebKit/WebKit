@@ -34,7 +34,7 @@ namespace WebCore {
 class SimpleFontData;
 
 struct FontDataRange {
-    FontDataRange(UChar32 from, UChar32 to, PassRefPtr<SimpleFontData> fontData)
+    FontDataRange(UChar32 from, UChar32 to, const SimpleFontData* fontData)
         : m_from(from)
         , m_to(to)
         , m_fontData(fontData)
@@ -43,18 +43,16 @@ struct FontDataRange {
 
     UChar32 from() const { return m_from; }
     UChar32 to() const { return m_to; }
-    PassRefPtr<SimpleFontData> fontData() const { return m_fontData; }
+    const SimpleFontData* fontData() const { return m_fontData; }
 
 private:
     UChar32 m_from;
     UChar32 m_to;
-    RefPtr<SimpleFontData> m_fontData;
+    const SimpleFontData* m_fontData;
 };
 
 class SegmentedFontData : public FontData {
 public:
-    static PassRefPtr<SegmentedFontData> create() { return adoptRef(new SegmentedFontData); }
-
     virtual ~SegmentedFontData();
 
     void appendRange(const FontDataRange& range) { m_ranges.append(range); }
@@ -66,8 +64,6 @@ public:
 #endif
 
 private:
-    SegmentedFontData() { }
-
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
     virtual bool containsCharacters(const UChar*, int length) const;
 

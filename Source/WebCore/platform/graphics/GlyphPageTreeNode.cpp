@@ -242,7 +242,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                             }
                             zeroFilled = true;
                         }
-                        haveGlyphs |= fill(pageToFill, from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData().get());
+                        haveGlyphs |= fill(pageToFill, from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
                         if (scratchPage) {
                             ASSERT(to <=  static_cast<int>(GlyphPage::size));
                             for (int j = from; j < to; j++) {

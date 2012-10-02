@@ -308,19 +308,19 @@ void SimpleFontData::platformDestroy()
     if (!isCustomFont() && m_derivedFontData) {
         // These come from the cache.
         if (m_derivedFontData->smallCaps)
-            fontCache()->releaseFontData(m_derivedFontData->smallCaps.get());
+            fontCache()->releaseFontData(m_derivedFontData->smallCaps.leakPtr());
 
         if (m_derivedFontData->emphasisMark)
-            fontCache()->releaseFontData(m_derivedFontData->emphasisMark.get());
+            fontCache()->releaseFontData(m_derivedFontData->emphasisMark.leakPtr());
     }
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
         scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
-        return SimpleFontData::create(scaledFontData, true, false);
+        return adoptPtr(new SimpleFontData(scaledFontData, true, false));
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -345,31 +345,31 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
         // SimpleFontData::platformDestroy() takes care of not deleting the cached font data twice.
-        return fontCache()->getCachedFontData(&scaledFontData);
+        return adoptPtr(fontCache()->getCachedFontData(&scaledFontData));
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->smallCaps)
         m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFontSizeMultiplier);
 
-    return m_derivedFontData->smallCaps;
+    return m_derivedFontData->smallCaps.get();
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
+SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)
         m_derivedFontData = DerivedFontData::create(isCustomFont());
     if (!m_derivedFontData->emphasisMark)
         m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, .5f);
 
-    return m_derivedFontData->emphasisMark;
+    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

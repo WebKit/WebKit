@@ -84,7 +84,7 @@ private:
 
     void releaseFontData();
 
-    mutable Vector<RefPtr<FontData>, 1> m_fontList;
+    mutable Vector<pair<const FontData*, bool>, 1> m_fontList;
     mutable GlyphPages m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;

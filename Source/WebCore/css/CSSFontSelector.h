@@ -55,7 +55,7 @@ public:
     
     virtual unsigned version() const OVERRIDE { return m_version; }
 
-    virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString&);
+    virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName);
 
     void clearDocument();
 
