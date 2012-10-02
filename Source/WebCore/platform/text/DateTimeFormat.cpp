@@ -55,7 +55,7 @@ static const DateTimeFormat::FieldType lowerCaseToFieldTypeMap[26] = {
     DateTimeFormat::FieldTypeInvalid, // t
     DateTimeFormat::FieldTypeExtendedYear, // u
     DateTimeFormat::FieldTypeNonLocationZone, // v
-    DateTimeFormat::FieldTypeWeekOfMonth, // w
+    DateTimeFormat::FieldTypeWeekOfYear, // w
     DateTimeFormat::FieldTypeInvalid, // x
     DateTimeFormat::FieldTypeYear, // y
     DateTimeFormat::FieldTypeZone, // z
@@ -84,7 +84,7 @@ static const DateTimeFormat::FieldType upperCaseToFieldTypeMap[26] = {
     DateTimeFormat::FieldTypeInvalid, // T
     DateTimeFormat::FieldTypeInvalid, // U
     DateTimeFormat::FieldTypeInvalid, // V
-    DateTimeFormat::FieldTypeWeekOfYear, // W
+    DateTimeFormat::FieldTypeWeekOfMonth, // W
     DateTimeFormat::FieldTypeInvalid, // X
     DateTimeFormat::FieldTypeYearOfWeekOfYear, // Y
     DateTimeFormat::FieldTypeRFC822Zone, // Z

@@ -57,8 +57,8 @@ public:
         FieldTypeMonthStandAlone = 'L',
 
         // Week: 42
-        FieldTypeWeekOfYear = 'W',
-        FieldTypeWeekOfMonth = 'w',
+        FieldTypeWeekOfYear = 'w',
+        FieldTypeWeekOfMonth = 'W',
 
         // Day: 12
         FieldTypeDayOfMonth = 'd',

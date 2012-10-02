@@ -109,7 +109,7 @@ String WeekInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateT
 void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents&) const
 {
     layoutParameters.dateTimeFormat = weekFormatInLDML();
-    layoutParameters.fallbackDateTimeFormat = "'Week' WW-yyyy";
+    layoutParameters.fallbackDateTimeFormat = "'Week' ww-yyyy";
     layoutParameters.placeholderForYear = "----";
 }
 #endif
