@@ -1,3 +1,19 @@
+2012-10-01  Michael Saboff  <msaboff@apple.com>
+
+        JSArray::unshiftCountSlowCase needs to clear array slots when adding space to end of array
+        https://bugs.webkit.org/show_bug.cgi?id=98101
+
+        Reviewed by Filip Pizlo.
+
+        Cleared new array entries when adding to end due to shifting contents to lower memory.  Also
+        checnaged the order of moving array contents and metadata in the shift left case to avoid
+        clobbering the metadata with array contents.  Optimized the to only make a memmove if the
+        count is non-zero.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::unshiftCount):
+
 2012-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         Address a FIXME in JSArray::sort

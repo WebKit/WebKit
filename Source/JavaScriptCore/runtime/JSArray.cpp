@@ -310,22 +310,28 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, bool addToFront, un
         // If we're moving contents within the same allocation, the post-capacity is being reduced.
         ASSERT(newAllocBase != butterfly->base(structure()) || postCapacity < storage->vectorLength() - length);
     }
-    
+
     unsigned newVectorLength = requiredVectorLength + postCapacity;
     unsigned newIndexBias = newStorageCapacity - newVectorLength;
 
     Butterfly* newButterfly = Butterfly::fromBase(newAllocBase, newIndexBias, propertyCapacity);
 
-    if (addToFront)
+    if (addToFront) {
+        ASSERT(count + usedVectorLength <= newVectorLength);
         memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
-    else if (newAllocBase != butterfly->base(structure()))
+        memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+    } else if ((newAllocBase != butterfly->base(structure())) || (newIndexBias != storage->m_indexBias)) {
+        memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
         memmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
 
-    memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
-    
+        WriteBarrier<Unknown>* newVector = newButterfly->arrayStorage()->m_vector;
+        for (unsigned i = requiredVectorLength; i < newVectorLength; i++)
+            newVector[i].clear();
+    }
+
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
     newButterfly->arrayStorage()->m_indexBias = newIndexBias;
-    
+
     m_butterfly = newButterfly;
 
     return true;
@@ -541,6 +547,8 @@ bool JSArray::unshiftCount(ExecState* exec, unsigned startIndex, unsigned count)
     ArrayStorage* storage = ensureArrayStorage(exec->globalData());
     unsigned length = storage->length();
 
+    ASSERT(startIndex <= length);
+
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
     if (length != storage->m_numValuesInVector || storage->inSparseMode())
@@ -569,7 +577,7 @@ bool JSArray::unshiftCount(ExecState* exec, unsigned startIndex, unsigned count)
     if (startIndex) {
         if (moveFront)
             memmove(vector, vector + count, startIndex * sizeof(JSValue));
-        else
+        else if (length - startIndex)
             memmove(vector + startIndex + count, vector + startIndex, (length - startIndex) * sizeof(JSValue));
     }
 
