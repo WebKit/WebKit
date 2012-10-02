@@ -203,6 +203,7 @@ fast/dom/shadow/focus-navigation-with-distributed-nodes.html
 fast/dom/shadow/form-in-shadow.html
 fast/dom/shadow/get-element-by-id-in-shadow-mutation.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
+fast/dom/shadow/has-shadow-insertion-point.html
 fast/dom/shadow/iframe-shadow.html
 fast/dom/shadow/invalidate-distribution.html
 fast/dom/shadow/insertion-point-list-menu-crash.html
