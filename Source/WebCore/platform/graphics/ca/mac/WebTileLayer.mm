@@ -51,7 +51,7 @@ using namespace WebCore;
     if (_tileCache) {
         _tileCache->drawLayer(self, context);
 
-        if (_tileCache->scrollingPerformanceLoggingEnabled())
+        if (static_cast<TiledBacking*>(_tileCache)->scrollingPerformanceLoggingEnabled())
             [self logFilledFreshTile];
     }
 }

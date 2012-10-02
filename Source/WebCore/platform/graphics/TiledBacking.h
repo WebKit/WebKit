@@ -32,9 +32,6 @@ class IntRect;
 
 class TiledBacking {
 public:
-    TiledBacking()
-        : m_scrollingPerformanceLoggingEnabled(0)
-    { }
     virtual ~TiledBacking() { }
 
     virtual void visibleRectChanged(const IntRect&) = 0;
@@ -42,11 +39,8 @@ public:
     virtual void setCanHaveScrollbars(bool) = 0;
     virtual void forceRepaint() = 0;
 
-    void setScrollingPerformanceLoggingEnabled(bool flag)  { m_scrollingPerformanceLoggingEnabled = flag; }
-    bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }
-
-private:
-    bool m_scrollingPerformanceLoggingEnabled;
+    virtual void setScrollingPerformanceLoggingEnabled(bool) = 0;
+    virtual bool scrollingPerformanceLoggingEnabled() const = 0;
 };
 
 } // namespace WebCore

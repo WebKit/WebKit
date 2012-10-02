@@ -83,6 +83,8 @@ private:
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setCanHaveScrollbars(bool) OVERRIDE;
     virtual void forceRepaint() OVERRIDE;
+    virtual void setScrollingPerformanceLoggingEnabled(bool flag) OVERRIDE { m_scrollingPerformanceLoggingEnabled = flag; }
+    virtual bool scrollingPerformanceLoggingEnabled() const OVERRIDE { return m_scrollingPerformanceLoggingEnabled; }
     
     IntRect bounds() const;
 
@@ -115,6 +117,7 @@ private:
     CGFloat m_scale;
     CGFloat m_deviceScaleFactor;
 
+    bool m_scrollingPerformanceLoggingEnabled;
     bool m_isInWindow;
     bool m_canHaveScrollbars;
     bool m_acceleratesDrawing;
