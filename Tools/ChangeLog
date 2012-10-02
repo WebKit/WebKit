@@ -1,3 +1,25 @@
+2012-10-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        [XvfbDriver] First tests in each worker occasionally crash
+        https://bugs.webkit.org/show_bug.cgi?id=96203
+
+        Reviewed by Dirk Pranke.
+
+        Often in debug builds, the first tests in each worker crash because they
+        can't yet open the Xvfb display assigned to them. This indicates Xvfb hasn't
+        yet been set up.
+
+        To avoid this, the execution should halt for a small amount of time before tests
+        are run so the Xvfb process has enough time to get ready. At the moment this is
+        done right after the Xvfb process is spawned and the execution halts for one
+        second. That value is overriden to zero when testing to not prolong the testing time.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver.__init__):
+        (XvfbDriver._start):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver):
+
 2012-10-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use XvfbDriver for layout tests

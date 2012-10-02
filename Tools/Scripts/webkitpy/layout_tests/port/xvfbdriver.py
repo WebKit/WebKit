@@ -29,6 +29,7 @@
 import logging
 import os
 import re
+import time
 
 from webkitpy.layout_tests.port.server_process import ServerProcess
 from webkitpy.layout_tests.port.driver import Driver
@@ -41,6 +42,7 @@ class XvfbDriver(Driver):
     def __init__(self, *args, **kwargs):
         Driver.__init__(self, *args, **kwargs)
         self._guard_lock = None
+        self._startup_delay_secs = 1.0
 
     def _next_free_display(self):
         running_pids = self._port.host.executive.run_command(['ps', '-eo', 'comm,command'])
@@ -66,6 +68,10 @@ class XvfbDriver(Driver):
         run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
+
+        # Crashes intend to occur occasionally in the first few tests that are run through each
+        # worker because the Xvfb display isn't ready yet. Halting execution a bit should avoid that.
+        time.sleep(self._startup_delay_secs)
 
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)

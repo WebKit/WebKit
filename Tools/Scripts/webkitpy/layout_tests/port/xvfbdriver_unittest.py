@@ -47,6 +47,7 @@ class XvfbDriverTest(unittest.TestCase):
             port._executive._running_pids['Xorg'] = 108
 
         driver = XvfbDriver(port, worker_number=worker_number, pixel_tests=True)
+        driver._startup_delay_secs = 0
         return driver
 
     def cleanup_driver(self, driver):
