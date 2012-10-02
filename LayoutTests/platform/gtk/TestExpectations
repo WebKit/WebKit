@@ -579,7 +579,8 @@ Bug(GTK) editing/selection/hit-test-on-text-with-line-height.html [ Pass Slow ]
 Bug(GTK) editing/selection/rtl-move-selection-right-left.html [ Pass Slow ]
 Bug(GTK) fast/events/drag-and-drop.html [ Pass Slow ]
 Bug(GTK) fast/events/dropzone-001.html [ Pass Slow ]
-webkit.org/b/96517 fast/events/popup-blocking-timers.html [ Failure Slow ]
+Bug(GTK) fast/events/popup-blocking-timers5.html [ Pass Slow ]
+Bug(GTK) fast/events/popup-blocking-timers6.html [ Pass Slow ]
 Bug(GTK) fast/forms/search-disabled-readonly.html [ Pass Slow ]
 
 # These tests expose possible peformance issues.

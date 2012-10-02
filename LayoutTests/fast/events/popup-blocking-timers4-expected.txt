@@ -1,0 +1,4 @@
+Click Here
+Test calling window.open() in a nested call to setTimeout(). A popup should not be allowed.
+PASS newWindow is undefined.
+

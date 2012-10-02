@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        var newWindow;
+        var intervalId;
+        var firstIntervalExecution = true;
+        
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
+            testRunner.setPopupBlockingEnabled(true);
+        }
+    
+        function clickHandler() {
+            intervalId = setInterval(function() {
+                debug("Test calling window.open() in a 100 ms interval. A popup should only be allowed on the first execution of the interval.");
+                newWindow = window.open("about:blank");
+                self.focus();
+                if (firstIntervalExecution) {
+                    shouldBeNonNull("newWindow");
+                    firstIntervalExecution = false;
+                } else {
+                    shouldBeUndefined("newWindow");
+                    clearInterval(intervalId);
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }
+            }, 100);
+        }
+        
+        function clickButton() {
+            var button = document.getElementById("test");
+            var buttonX = button.offsetLeft + button.offsetWidth / 2;
+            var buttonY = button.offsetTop + button.offsetHeight / 2;
+            if (window.eventSender) {
+                eventSender.mouseMoveTo(buttonX, buttonY);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+        }        
+    </script>
+</head>
+<body onload="clickButton()">
+    <button id="test" onclick="clickHandler()">Click Here</button>
+    <div id="console"></div>
+</body>

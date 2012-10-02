@@ -1,0 +1,4 @@
+Click Here
+Test calling window.open() with a 0 ms delay. A popup should be allowed.
+PASS newWindow is non-null.
+

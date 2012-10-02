@@ -2352,7 +2352,12 @@ crbug.com/79110 [ Android Linux Win ] fast/overflow/infiniteRecursionGuard.html 
 # Regression caused by r83628.
 crbug.com/79241 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 
-crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers1.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers2.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers3.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers4.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers5.html [ Failure Pass ]
+crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers6.html [ Failure Pass ]
 
 crbug.com/79859 [ Android Linux Debug ] fast/css/create_element_align.xhtml [ Pass Timeout ]
 
