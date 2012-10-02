@@ -1748,9 +1748,6 @@ crbug.com/25977 [ XP Debug ] http/tests/appcache/online-whitelist.html [ Pass Ti
 crbug.com/30826 [ Win ] platform/win/fast/events/panScroll-imageMap-noHref-scroll.html [ Failure ]
 crbug.com/30826 [ Win Debug ] platform/win/fast/events/panScroll-event-fired.html [ Failure Pass Timeout ]
 
-# WebKit roll 52468->52535
-crbug.com/31991 [ Win7 ] fast/text/international/bidi-layout-across-linebreak.html [ Failure ]
-
 crbug.com/31623 [ SnowLeopard Win ] http/tests/appcache/remove-cache.html [ Failure Pass Timeout ]
 
 # V8's implementation of getOwnPropertyNames has different results for built-in
@@ -3345,6 +3342,8 @@ webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass
 
 # V8 does not support static attributes
 webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
+
+webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-optimums.html [ Failure Pass ]
 
 webkit.org/b/93801 [ Lion ] fast/speech/input-appearance-searchandspeech.html [ ImageOnlyFailure Pass ]
 
