@@ -1,3 +1,15 @@
+2012-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix infinite recursion inside WebProcess constructor
+        https://bugs.webkit.org/show_bug.cgi?id=98206
+
+        Reviewed by Brian Weinstein.
+
+        Don't call WebProcess::shared from the WebGeolocationManager constructor since it is invoked from the WebProcess constructor.
+
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::WebGeolocationManager):
+
 2012-10-02  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [WK2] Move some tiled backing store/viewport functions from Qt to generic WebKit2 sources
