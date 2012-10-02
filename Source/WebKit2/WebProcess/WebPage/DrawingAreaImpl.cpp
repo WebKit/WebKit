@@ -303,6 +303,14 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
 #endif
 }
 
+GraphicsLayerFactory* DrawingAreaImpl::graphicsLayerFactory()
+{
+    if (m_layerTreeHost)
+        return m_layerTreeHost->graphicsLayerFactory();
+
+    return 0;
+}
+
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     // FIXME: Instead of using nested if statements, we should keep a compositing state

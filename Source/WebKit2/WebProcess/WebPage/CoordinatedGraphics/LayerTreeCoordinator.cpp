@@ -543,6 +543,11 @@ bool LayerTreeCoordinator::showRepaintCounter(const WebCore::GraphicsLayer*) con
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
+PassOwnPtr<GraphicsLayer> LayerTreeCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
+{
+    return adoptPtr(new CoordinatedGraphicsLayer(client));
+}
+
 bool LayerTreeHost::supportsAcceleratedCompositing()
 {
     return true;
@@ -610,6 +615,11 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
         m_webPage->setFixedVisibleContentRect(rect);
     if (contentsRectDidChange)
         m_shouldSendScrollPositionUpdate = true;
+}
+
+GraphicsLayerFactory* LayerTreeCoordinator::graphicsLayerFactory()
+{
+    return this;
 }
 
 void LayerTreeCoordinator::scheduleAnimation()

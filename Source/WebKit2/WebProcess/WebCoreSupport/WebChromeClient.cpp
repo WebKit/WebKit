@@ -691,6 +691,11 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebC
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
+{
+    return m_page->drawingArea()->graphicsLayerFactory();
+}
+
 void WebChromeClient::attachRootGraphicsLayer(Frame*, GraphicsLayer* layer)
 {
     if (layer)

@@ -177,6 +177,7 @@ private:
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const OVERRIDE;
 
 #if USE(ACCELERATED_COMPOSITING)
+    virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() const OVERRIDE;
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) OVERRIDE;
     virtual void setNeedsOneShotDrawingSynchronization() OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
