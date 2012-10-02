@@ -3773,8 +3773,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
     if (!active) {
         m_isAcceleratedCompositingActive = false;
         // We need to finish all GL rendering before sending didDeactivateCompositor() to prevent
-        // flickering when compositing turns off.
-        if (m_layerTreeView)
+        // flickering when compositing turns off. This is only necessary if we're not in
+        // force-compositing-mode.
+        if (m_layerTreeView && !page()->settings()->forceCompositingMode())
             m_layerTreeView->finishAllRendering();
         m_client->didDeactivateCompositor();
     } else if (m_layerTreeView) {
