@@ -45,19 +45,19 @@ class NoEventDispatchAssertion {
 public:
     NoEventDispatchAssertion()
     {
+#ifndef NDEBUG
         if (!isMainThread())
             return;
-#ifndef NDEBUG
         s_count++;
 #endif
     }
 
     ~NoEventDispatchAssertion()
     {
+#ifndef NDEBUG
         if (!isMainThread())
             return;
         ASSERT(s_count);
-#ifndef NDEBUG
         s_count--;
 #endif
     }
