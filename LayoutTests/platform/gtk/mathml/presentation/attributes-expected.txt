@@ -6,39 +6,39 @@ layer at (0,0) size 800x212
       RenderBlock {p} at (0,0) size 784x28
         RenderText {#text} at (0,2) size 432x19
           text run at (0,2) width 432: "following elements should appear in blue on an orange background: "
-        RenderMathMLMath {math} at (432,0) size 63x28 [bgcolor=#FFA500] [padding: 0 1 0 1]
+        RenderMathMLMath {math} at (432,0) size 57x28 [bgcolor=#FFA500] [padding: 0 1 0 1]
           RenderMathMLOperator {mo} at (2,4) size 15x18 [color=#0000FF]
             RenderMathMLBlock (flex) {mo} at (0,0) size 15x18
               RenderBlock (anonymous) at (0,0) size 15x18
                 RenderText {mo} at (0,-4) size 15x25
                   text run at (0,-4) width 15: "\x{2211}"
-          RenderMathMLFraction {mfrac} at (19,0) size 14x28 [color=#0000FF]
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 14x12 [padding: 0 3 0 3]
-              RenderBlock {mi} at (3,0) size 8x9
+          RenderMathMLFraction {mfrac} at (19,0) size 8x28 [color=#0000FF]
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 8x12
+              RenderBlock {mi} at (0,0) size 8x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (0,12) size 14x16 [padding: 1 3 0 3]
-              RenderBlock {mi} at (3,4) size 8x12
+            RenderMathMLBlock (anonymous, flex) at (0,12) size 8x16 [padding: 1 0 0 0]
+              RenderBlock {mi} at (0,4) size 8x12
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "y"
-          RenderBlock {mn} at (34,6) size 8x12 [color=#0000FF]
+          RenderBlock {mn} at (28,6) size 8x12 [color=#0000FF]
             RenderText {#text} at (0,-6) size 8x25
               text run at (0,-6) width 8: "1"
-          RenderMathMLSquareRoot {msqrt} at (42,3) size 20x15 [color=#0000FF] [intrinsic padding: 3 0 0 12]
+          RenderMathMLSquareRoot {msqrt} at (36,3) size 20x15 [color=#0000FF] [intrinsic padding: 3 0 0 12]
             RenderMathMLRow (anonymous) at (12,3) size 8x12
               RenderBlock {mn} at (0,0) size 8x12
                 RenderText {#text} at (0,-6) size 8x25
                   text run at (0,-6) width 8: "2"
-        RenderText {#text} at (495,2) size 4x19
-          text run at (495,2) width 4: " "
-        RenderMathMLMath {math} at (499,0) size 18x28 [bgcolor=#FFA500] [padding: 0 1 0 1]
-          RenderMathMLFraction {mfrac} at (2,0) size 14x28 [color=#0000FF]
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 14x12 [padding: 0 3 0 3]
-              RenderBlock {mi} at (3,0) size 8x9
+        RenderText {#text} at (489,2) size 4x19
+          text run at (489,2) width 4: " "
+        RenderMathMLMath {math} at (493,0) size 12x28 [bgcolor=#FFA500] [padding: 0 1 0 1]
+          RenderMathMLFraction {mfrac} at (2,0) size 8x28 [color=#0000FF]
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 8x12
+              RenderBlock {mi} at (0,0) size 8x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (0,12) size 14x16 [padding: 1 3 0 3]
-              RenderBlock {mi} at (3,4) size 8x12
+            RenderMathMLBlock (anonymous, flex) at (0,12) size 8x16 [padding: 1 0 0 0]
+              RenderBlock {mi} at (0,4) size 8x12
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "y"
         RenderText {#text} at (0,0) size 0x0

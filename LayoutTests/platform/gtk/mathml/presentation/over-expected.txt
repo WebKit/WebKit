@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x309
-  RenderBlock {html} at (0,0) size 800x309
-    RenderBody {body} at (8,16) size 784x277
+layer at (0,0) size 800x376
+  RenderBlock {html} at (0,0) size 800x376
+    RenderBody {body} at (8,16) size 784x344
       RenderBlock {p} at (0,0) size 784x21
         RenderText {#text} at (0,3) size 36x19
           text run at (0,3) width 36: "over: "
@@ -125,6 +125,19 @@ layer at (0,0) size 800x309
                 RenderBlock (anonymous) at (0,0) size 11x7
                   RenderText {mo} at (0,-7) size 11x19
                     text run at (0,-7) width 11: "\x{2192}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,293) size 784x51
+        RenderMathMLMath {math} at (0,0) size 20x49 [padding: 0 1 0 1]
+          RenderBlock {mi} at (1,40) size 9x9
+            RenderText {#text} at (0,-9) size 8x25
+              text run at (0,-9) width 8: "a"
+          RenderMathMLUnderOver {mover} at (10,2) size 9x47 [bgcolor=#FFFF00] [padding: 4 0 0 0]
+            RenderBlock {mi} at (0,19) size 9x28 [bgcolor=#FFA500]
+              RenderText {#text} at (0,10) size 8x25
+                text run at (0,10) width 8: "b"
+            RenderBlock {mi} at (1,4) size 6x7
+              RenderText {#text} at (0,-7) size 5x19
+                text run at (0,-7) width 5: "c"
         RenderText {#text} at (0,0) size 0x0
 layer at (45,199) size 8x10 scrollHeight 20
   RenderMathMLBlock (flex) {mo} at (0,0) size 8x10
