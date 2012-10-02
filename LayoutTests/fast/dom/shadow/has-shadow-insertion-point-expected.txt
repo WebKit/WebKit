@@ -1,0 +1,18 @@
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test for Bug 97184: https://bugs.webkit.org/show_bug.cgi?id=97184 - [Shadow] ShadowRoot should know whether <shadow> in its treescope
+

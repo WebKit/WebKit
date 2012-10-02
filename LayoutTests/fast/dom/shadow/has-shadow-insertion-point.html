@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+<script>
+if (!window.internals)
+    debug("windows.internals not found!");
+else if (!window.internals.hasShadowInsertionPoint)
+    debug("windows.internals.hasShadowInsertionPoint not found!");
+</script>
+</head>
+<body>
+  <span>Test for Bug 97184: <a href="https://bugs.webkit.org/show_bug.cgi?id=97184">https://bugs.webkit.org/show_bug.cgi?id=97184</a> -
+    [Shadow] ShadowRoot should know whether &lt;shadow&gt; in its treescope
+  </span>
+  <div id="host"></div>
+
+<script>
+var host = document.getElementById("host");
+var shadowRoot = new WebKitShadowRoot(host);
+
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+var div = document.createElement("div");
+div.appendChild(document.createElement("shadow"));
+shadowRoot.appendChild(div);
+shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+shadowRoot.removeChild(div);
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+shadowRoot.innerHTML = "<div>No Insertion Points</div>";
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+shadowRoot.innerHTML = "<content></content>";
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+
+shadowRoot.innerHTML = "<shadow></shadow>";
+shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+shadowRoot.innerHTML = "<div><div><div><shadow></shadow></div></div></div>";
+shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+
+var youngerShadowRoot = new WebKitShadowRoot(host);
+// Modifying older shadow root or younger shadow root doesn't affect the other.
+shouldBeTrue("internals.hasShadowInsertionPoint(shadowRoot)");
+shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+
+shadowRoot.innerHTML = "<content></content>";
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+shouldBeFalse("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+
+youngerShadowRoot.innerHTML = "<shadow></shadow>";
+shouldBeFalse("internals.hasShadowInsertionPoint(shadowRoot)");
+shouldBeTrue("internals.hasShadowInsertionPoint(youngerShadowRoot)");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

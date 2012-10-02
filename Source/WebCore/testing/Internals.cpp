@@ -297,6 +297,15 @@ Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
     return parentTreeScope ? parentTreeScope->rootNode() : 0;
 }
 
+bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
+{
+    if (root && root->isShadowRoot())
+        return toShadowRoot(root)->hasShadowInsertionPoint();
+
+    ec = INVALID_ACCESS_ERR;
+    return 0;
+}
+
 bool Internals::attached(Node* node, ExceptionCode& ec)
 {
     if (!node) {

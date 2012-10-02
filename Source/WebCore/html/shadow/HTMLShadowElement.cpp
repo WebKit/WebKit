@@ -41,6 +41,7 @@ class Document;
 
 inline HTMLShadowElement::HTMLShadowElement(const QualifiedName& tagName, Document* document)
     : InsertionPoint(tagName, document)
+    , m_registeredWithShadowRoot(false)
 {
     ASSERT(hasTagName(HTMLNames::shadowTag));
 }
@@ -66,6 +67,33 @@ bool HTMLShadowElement::doesSelectFromHostChildren() const
     if (scope->rootNode()->isShadowRoot())
         return toShadowRoot(scope->rootNode())->isOldest();
     return false;
+}
+
+Node::InsertionNotificationRequest HTMLShadowElement::insertedInto(ContainerNode* insertionPoint)
+{
+    InsertionPoint::insertedInto(insertionPoint);
+
+    if (insertionPoint->inDocument() && isActive()) {
+        if (ShadowRoot* root = shadowRoot()) {
+            root->registerShadowElement();
+            m_registeredWithShadowRoot = true;
+        }
+    }
+
+    return InsertionDone;
+}
+
+void HTMLShadowElement::removedFrom(ContainerNode* insertionPoint)
+{
+    if (insertionPoint->inDocument() && m_registeredWithShadowRoot) {
+        ShadowRoot* root = shadowRoot();
+        if (!root)
+            root = insertionPoint->shadowRoot();
+        if (root)
+            root->unregisterShadowElement();
+        m_registeredWithShadowRoot = false;
+    }
+    InsertionPoint::removedFrom(insertionPoint);
 }
 
 } // namespace WebCore

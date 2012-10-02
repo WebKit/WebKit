@@ -46,8 +46,14 @@ public:
     bool isSelectValid() const OVERRIDE { return true; }
     bool doesSelectFromHostChildren() const;
 
+protected:
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
+
 private:
     HTMLShadowElement(const QualifiedName&, Document*);
+
+    bool m_registeredWithShadowRoot;
 };
 
 } // namespace WebCore
