@@ -90,6 +90,126 @@ WebInspector.CSSCompletions.cssPropertiesMetainfoKeySet = function()
     return WebInspector.CSSCompletions._cssPropertiesMetainfoKeySet;
 }
 
+// Weight of CSS properties based their usage on few popular websites https://gist.github.com/3751436
+WebInspector.CSSCompletions.Weight = {
+    "-webkit-animation": 1,
+    "-webkit-animation-duration": 1,
+    "-webkit-animation-iteration-count": 1,
+    "-webkit-animation-name": 1,
+    "-webkit-animation-timing-function": 1,
+    "-webkit-appearance": 1,
+    "-webkit-background-clip": 2,
+    "-webkit-border-horizontal-spacing": 1,
+    "-webkit-border-vertical-spacing": 1,
+    "-webkit-box-shadow": 24,
+    "-webkit-font-smoothing": 2,
+    "-webkit-transform": 1,
+    "-webkit-transition": 8,
+    "-webkit-transition-delay": 7,
+    "-webkit-transition-duration": 7,
+    "-webkit-transition-property": 7,
+    "-webkit-transition-timing-function": 6,
+    "-webkit-user-select": 1,
+    "background": 222,
+    "background-attachment": 144,
+    "background-clip": 143,
+    "background-color": 222,
+    "background-image": 201,
+    "background-origin": 142,
+    "background-size": 25,
+    "border": 121,
+    "border-bottom": 121,
+    "border-bottom-color": 121,
+    "border-bottom-left-radius": 50,
+    "border-bottom-right-radius": 50,
+    "border-bottom-style": 114,
+    "border-bottom-width": 120,
+    "border-collapse": 3,
+    "border-left": 95,
+    "border-left-color": 95,
+    "border-left-style": 89,
+    "border-left-width": 94,
+    "border-radius": 50,
+    "border-right": 93,
+    "border-right-color": 93,
+    "border-right-style": 88,
+    "border-right-width": 93,
+    "border-top": 111,
+    "border-top-color": 111,
+    "border-top-left-radius": 49,
+    "border-top-right-radius": 49,
+    "border-top-style": 104,
+    "border-top-width": 109,
+    "bottom": 16,
+    "box-shadow": 25,
+    "box-sizing": 2,
+    "clear": 23,
+    "color": 237,
+    "cursor": 34,
+    "direction": 4,
+    "display": 210,
+    "fill": 2,
+    "filter": 1,
+    "float": 105,
+    "font": 174,
+    "font-family": 25,
+    "font-size": 174,
+    "font-style": 9,
+    "font-weight": 89,
+    "height": 161,
+    "left": 54,
+    "letter-spacing": 3,
+    "line-height": 75,
+    "list-style": 17,
+    "list-style-image": 8,
+    "list-style-position": 8,
+    "list-style-type": 17,
+    "margin": 241,
+    "margin-bottom": 226,
+    "margin-left": 225,
+    "margin-right": 213,
+    "margin-top": 241,
+    "max-height": 5,
+    "max-width": 11,
+    "min-height": 9,
+    "min-width": 6,
+    "opacity": 24,
+    "outline": 10,
+    "outline-color": 10,
+    "outline-style": 10,
+    "outline-width": 10,
+    "overflow": 57,
+    "overflow-x": 56,
+    "overflow-y": 57,
+    "padding": 216,
+    "padding-bottom": 208,
+    "padding-left": 216,
+    "padding-right": 206,
+    "padding-top": 216,
+    "position": 136,
+    "resize": 1,
+    "right": 29,
+    "stroke": 1,
+    "stroke-width": 1,
+    "table-layout": 1,
+    "text-align": 66,
+    "text-decoration": 53,
+    "text-indent": 9,
+    "text-overflow": 8,
+    "text-shadow": 19,
+    "text-transform": 5,
+    "top": 71,
+    "unicode-bidi": 1,
+    "vertical-align": 37,
+    "visibility": 11,
+    "white-space": 24,
+    "width": 255,
+    "word-wrap": 6,
+    "z-index": 32,
+    "zoom": 10
+};
+
+
 WebInspector.CSSCompletions.prototype = {
     startsWith: function(prefix)
     {
@@ -103,10 +223,22 @@ WebInspector.CSSCompletions.prototype = {
         return results;
     },
 
-    firstStartsWith: function(prefix)
+    /**
+     * @param {Array.<string>} properties
+     * @return {number}
+     */
+    mostUsedOf: function(properties)
     {
-        var foundIndex = this._firstIndexOfPrefix(prefix);
-        return (foundIndex === -1 ? "" : this._values[foundIndex]);
+        var maxWeight = 0;
+        var index = 0;
+        for (var i = 0; i < properties.length; i++) {
+            var weight = WebInspector.CSSCompletions.Weight[properties[i]];
+            if (weight > maxWeight) {
+                maxWeight = weight;
+                index = i;
+            }
+        }
+        return index;
     },
 
     _firstIndexOfPrefix: function(prefix)

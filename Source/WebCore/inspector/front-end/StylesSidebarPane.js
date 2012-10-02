@@ -2596,7 +2596,8 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             return;
 
         var results = this._cssCompletions.startsWith(prefix);
-        completionsReadyCallback(results);
+        var selectedIndex = this._cssCompletions.mostUsedOf(results);
+        completionsReadyCallback(results, selectedIndex);
     }
 }
 
