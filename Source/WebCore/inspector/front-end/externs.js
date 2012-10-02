@@ -110,7 +110,8 @@ DOMApplicationCache.prototype.DOWNLOADING = 3;
 DOMApplicationCache.prototype.UPDATEREADY = 4;
 DOMApplicationCache.prototype.OBSOLETE = 5;
 
-
+/** @type {Node} */
+Range.prototype.startContainer;
 
 // Inspector Backend
 var InspectorBackend = {}

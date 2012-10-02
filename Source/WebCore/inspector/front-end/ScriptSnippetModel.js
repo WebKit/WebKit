@@ -212,7 +212,33 @@ WebInspector.ScriptSnippetModel.prototype = {
             var breakpointLocations = this._removeBreakpoints(snippetJavaScriptSource);
             this._restoreBreakpoints(snippetJavaScriptSource, breakpointLocations);
 
-            WebInspector.consoleView.runScript(scriptId);
+            this._runScript(scriptId);
+        }
+    },
+
+    /**
+     * @param {DebuggerAgent.ScriptId} scriptId
+     */
+    _runScript: function(scriptId)
+    {
+        var currentExecutionContext = WebInspector.runtimeModel.currentExecutionContext();
+        DebuggerAgent.runScript(scriptId, currentExecutionContext ? currentExecutionContext.id : undefined, "console", false, runCallback.bind(this));
+
+        /**
+         * @param {?string} error
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
+        function runCallback(error, result, wasThrown)
+        {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+            var message = WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.JS, level, "", undefined, undefined, undefined, undefined, [result]);
+            WebInspector.console.addMessage(message)
         }
     },
 

@@ -2583,7 +2583,13 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         return this._cssCompletions.keySet().hasOwnProperty(word);
     },
 
-    _buildPropertyCompletions: function(textPrompt, wordRange, force, completionsReadyCallback)
+    /**
+     * @param {Element} proxyElement
+     * @param {Range} wordRange
+     * @param {boolean} force
+     * @param {function(Array.<string>)} completionsReadyCallback
+     */
+    _buildPropertyCompletions: function(proxyElement, wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
         if (!prefix && !force)

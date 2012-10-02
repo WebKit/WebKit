@@ -46,6 +46,7 @@ modules = [
         "dependencies": [],
         "sources": [
             "Color.js",
+            "DOMExtension.js",
             "Object.js",
             "ParsedURL.js",
             "Progress.js",
@@ -85,6 +86,7 @@ modules = [
             "NetworkLog.js",
             "NetworkUISourceCodeProvider.js",
             "PresentationConsoleMessageHelper.js",
+            "RuntimeModel.js",
             "SASSSourceMapping.js",
             "Script.js",
             "ScriptFormatter.js",
@@ -114,7 +116,6 @@ modules = [
         "sources": [
             "Checkbox.js",
             "ContextMenu.js",
-            "DOMExtension.js",
             "DOMSyntaxHighlighter.js",
             "DataGrid.js",
             "DefaultTextEditor.js",
@@ -171,7 +172,6 @@ modules = [
             "NativeBreakpointsSidebarPane.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",
-            "RuntimeModel.js",
             "SourceFrame.js",
             "ResourceView.js",
         ]
@@ -226,7 +226,7 @@ modules = [
     },
     {
         "name": "scripts",
-        "dependencies": ["components"],
+        "dependencies": ["components", "workers"],
         "sources": [
             "BreakpointsSidebarPane.js",
             "CallStackSidebarPane.js",

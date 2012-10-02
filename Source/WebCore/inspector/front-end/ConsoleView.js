@@ -553,28 +553,6 @@ WebInspector.ConsoleView.prototype = {
         this._appendCommand(str, "", true, false);
     },
 
-    runScript: function(scriptId)
-    {
-        var currentExecutionContext = WebInspector.runtimeModel.currentExecutionContext();
-        DebuggerAgent.runScript(scriptId, currentExecutionContext ? currentExecutionContext.id : undefined, "console", false, runCallback.bind(this));
-        WebInspector.userMetrics.ConsoleEvaluated.record();
-
-        /**
-         * @param {?string} error
-         * @param {?RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
-        function runCallback(error, result, wasThrown)
-        {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            
-            this._printResult(result, wasThrown, null);
-        }
-    },
-
     _printResult: function(result, wasThrown, originatingCommand)
     {
         if (!result)

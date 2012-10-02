@@ -164,15 +164,27 @@ WebInspector.RuntimeModel.prototype = {
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, evalCallback);
     },
 
-    completionsForTextPrompt: function(textPrompt, wordRange, force, completionsReadyCallback)
+    /**
+     * @param {Element} proxyElement
+     * @param {Range} wordRange
+     * @param {boolean} force
+     * @param {function(Array.<string>)} completionsReadyCallback
+     */
+    completionsForTextPrompt: function(proxyElement, wordRange, force, completionsReadyCallback)
     {
         // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
-        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, " =:[({;,!+-*/&|^<>", textPrompt.proxyElement, "backward");
+        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, " =:[({;,!+-*/&|^<>", proxyElement, "backward");
         var expressionString = expressionRange.toString();
         var prefix = wordRange.toString();
         this._completionsForExpression(expressionString, prefix, force, completionsReadyCallback);
     },
 
+    /**
+     * @param {string} expressionString
+     * @param {string} prefix
+     * @param {boolean} force
+     * @param {function(Array.<string>)} completionsReadyCallback
+     */
     _completionsForExpression: function(expressionString, prefix, force, completionsReadyCallback)
     {
         var lastIndex = expressionString.length - 1;
@@ -261,6 +273,14 @@ WebInspector.RuntimeModel.prototype = {
         }
     },
 
+    /**
+     * @param {function(Array.<string>)} completionsReadyCallback
+     * @param {boolean} dotNotation
+     * @param {boolean} bracketNotation
+     * @param {string} expressionString
+     * @param {string} prefix
+     * @param {Array.<string>} properties
+     */
     _reportCompletions: function(completionsReadyCallback, dotNotation, bracketNotation, expressionString, prefix, properties) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
