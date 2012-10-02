@@ -236,10 +236,19 @@ WebInspector.ScriptSnippetModel.prototype = {
                 return;
             }
 
-            var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
-            var message = WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.JS, level, "", undefined, undefined, undefined, undefined, [result]);
-            WebInspector.console.addMessage(message)
+            this._printRunScriptResult(result, wasThrown);
         }
+    },
+
+    /**
+     * @param {?RuntimeAgent.RemoteObject} result
+     * @param {boolean=} wasThrown
+     */
+    _printRunScriptResult: function(result, wasThrown)
+    {
+        var level = (wasThrown ? WebInspector.ConsoleMessage.MessageLevel.Error : WebInspector.ConsoleMessage.MessageLevel.Log);
+        var message = WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.JS, level, "", undefined, undefined, undefined, undefined, [result]);
+        WebInspector.console.addMessage(message)
     },
 
     /**

@@ -65,7 +65,7 @@ function test()
             function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
             {
                 InspectorTest.addSniffer(WebInspector.SnippetScriptMapping.prototype, "addScript", dumpScript);
-                InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_printResult", dumpResult);
+                InspectorTest.addSniffer(WebInspector.ScriptSnippetModel.prototype, "_printRunScriptResult", dumpResult);
                 WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
                 var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(snippetJavaScriptSource);
                 var snippetId = WebInspector.scriptSnippetModel._snippetIdForJavaScriptSource.get(snippetJavaScriptSource);
