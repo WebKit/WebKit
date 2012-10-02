@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('This tests optional title for createHTMLDocument');
+
+shouldBeNull('document.implementation.createHTMLDocument().querySelector("title")');
+
+shouldBeEqualToString('document.implementation.createHTMLDocument(null).querySelector("title").textContent', 'null');
+shouldBeEqualToString('document.implementation.createHTMLDocument(undefined).querySelector("title").textContent', 'undefined');
+shouldBeEqualToString('document.implementation.createHTMLDocument("").querySelector("title").textContent', '');
+shouldBeEqualToString('document.implementation.createHTMLDocument("x").querySelector("title").textContent', 'x');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
