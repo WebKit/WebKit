@@ -3711,6 +3711,10 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/bounds-i
 crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 
+# Sometimes missing the scrollbar.
+webkit.org/b/98198 tables/mozilla/marvin/backgr_index.html [ ImageOnlyFailure Failure Pass ]
+webkit.org/b/98198 tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html [ ImageOnlyFailure Failure Pass ]
+
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
 webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
 
