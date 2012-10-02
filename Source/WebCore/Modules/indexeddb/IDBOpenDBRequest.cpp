@@ -71,6 +71,13 @@ void IDBOpenDBRequest::onBlocked(int64_t oldVersion)
 void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> prpTransactionBackend, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend)
 {
     IDB_TRACE("IDBOpenDBRequest::onUpgradeNeeded()");
+    if (m_contextStopped || !scriptExecutionContext()) {
+        RefPtr<IDBTransactionBackendInterface> transaction = prpTransactionBackend;
+        transaction->abort();
+        RefPtr<IDBDatabaseBackendInterface> db = prpDatabaseBackend;
+        db->close(m_databaseCallbacks);
+        return;
+    }
     if (!shouldEnqueueEvent())
         return;
 
