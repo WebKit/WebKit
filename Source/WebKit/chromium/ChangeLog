@@ -1,3 +1,15 @@
+2012-09-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI make String* instrumentation non intrusive
+        https://bugs.webkit.org/show_bug.cgi?id=97964
+
+        Reviewed by Yury Semikhatsky.
+
+        The expectations were fixed because old instrumentation had wrong detector for BufferInternal type of storage.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+
 2012-10-02  Jochen Eisinger  <jochen@chromium.org>
 
         Use correct gtest macros for tests for true/false

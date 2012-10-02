@@ -37,13 +37,7 @@ namespace WTF {
 class CStringBuffer : public RefCounted<CStringBuffer> {
 public:
     const char* data() { return m_data; }
-    size_t length() { return m_length; }
-
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this, 0, sizeof(CStringBuffer) + m_length);
-    }
+    size_t length() const { return m_length; }
 
 private:
     friend class CString;
@@ -80,13 +74,6 @@ public:
     bool isNull() const { return !m_buffer; }
 
     CStringBuffer* buffer() const { return m_buffer.get(); }
-
-    template<typename MemoryObjectInfo>
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
-        info.addMember(m_buffer);
-    }
 
 private:
     void copyBufferIfNeeded();

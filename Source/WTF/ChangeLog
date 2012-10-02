@@ -1,3 +1,35 @@
+2012-09-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI make String* instrumentation non intrusive
+        https://bugs.webkit.org/show_bug.cgi?id=97964
+
+        Reviewed by Yury Semikhatsky.
+
+        MemoryInstrumentationString.h was added.
+        Intrusive instrumentation was removed.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MemoryInstrumentation.h:
+        (WTF):
+        * wtf/MemoryInstrumentationString.h: Added.
+        (WTF):
+        (WTF::reportMemoryUsage):
+        * wtf/text/AtomicString.cpp:
+        (WTF):
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        * wtf/text/CString.h:
+        (WTF::CStringBuffer::length):
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::usesInternalBuffer):
+        (WTF::StringImpl::baseString):
+        (StringImpl):
+
 2012-10-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130129.

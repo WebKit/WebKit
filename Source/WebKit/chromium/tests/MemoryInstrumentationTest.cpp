@@ -42,11 +42,13 @@
 #include <wtf/MemoryInstrumentationArrayBufferView.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
+#include <wtf/MemoryInstrumentationString.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
@@ -278,12 +280,57 @@ public:
 
 TEST(MemoryInstrumentationTest, visitStrings)
 {
-    {
+    { // 8-bit string.
         InstrumentationTestHelper helper;
         InstrumentedOwner<String> stringInstrumentedOwner("String");
-        stringInstrumentedOwner.m_value.characters(); // Force 16bit shadow creation.
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
+    }
+
+    { // 8-bit string with 16bit shadow.
+        InstrumentationTestHelper helper;
+        InstrumentedOwner<String> stringInstrumentedOwner("String");
+        stringInstrumentedOwner.m_value.characters();
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 3, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(2, helper.visitedObjects());
+    }
+
+    { // 16 bit string.
+        InstrumentationTestHelper helper;
+        String string("String");
+        InstrumentedOwner<String> stringInstrumentedOwner(String(string.characters(), string.length()));
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 2, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
+    }
+
+    { // ASCIILiteral
+        InstrumentationTestHelper helper;
+        ASCIILiteral literal("String");
+        InstrumentedOwner<String> stringInstrumentedOwner(literal);
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(1, helper.visitedObjects());
+    }
+
+    { // Substring
+        InstrumentationTestHelper helper;
+        String baseString("String");
+        baseString.characters(); // Force 16 shadow creation.
+        InstrumentedOwner<String> stringInstrumentedOwner(baseString.substringSharingImpl(1, 4));
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) * 2 + baseString.length() * 3, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(3, helper.visitedObjects());
+    }
+
+    { // Owned buffer.
+        InstrumentationTestHelper helper;
+        StringBuffer<LChar> buffer(6);
+        InstrumentedOwner<String> stringInstrumentedOwner(String::adopt(buffer));
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
         EXPECT_EQ(2, helper.visitedObjects());
     }
 
@@ -292,7 +339,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<AtomicString> atomicStringInstrumentedOwner("AtomicString");
         atomicStringInstrumentedOwner.m_value.string().characters(); // Force 16bit shadow creation.
         helper.addRootObject(atomicStringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 2, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 3, helper.reportedSizeForAllTypes());
         EXPECT_EQ(2, helper.visitedObjects());
     }
 
@@ -452,7 +499,7 @@ TEST(MemoryInstrumentationTest, vectorWithInstrumentedType)
         value->append("string");
     InstrumentedOwner<StringVector* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(StringVector) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(StringVector) + sizeof(String) * value->capacity() + (sizeof(StringImpl) + 6) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 2, (size_t)helper.visitedObjects());
 }
 
@@ -467,7 +514,7 @@ TEST(MemoryInstrumentationTest, hashSetWithInstrumentedType)
         value->add(String::number(i));
     InstrumentedOwner<ValueType* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(ValueType) + sizeof(String) * value->capacity() + (sizeof(StringImpl) + 1) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, (size_t)helper.visitedObjects());
 }
 
@@ -493,11 +540,11 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeys)
     typedef HashMap<String, int> StringToIntMap;
     OwnPtr<StringToIntMap> value = adoptPtr(new StringToIntMap());
     int count = 10;
-    for (int i = 1; i <= count; ++i)
+    for (int i = 10; i < 10 + count; ++i)
         value->set(String::number(i), i);
     InstrumentedOwner<StringToIntMap* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(StringToIntMap) + sizeof(StringToIntMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(StringToIntMap) + sizeof(StringToIntMap::ValueType) * value->capacity() + (sizeof(StringImpl) + 2) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, helper.visitedObjects());
 }
 
@@ -508,11 +555,11 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedValues)
     typedef HashMap<int, String> IntToStringMap;
     OwnPtr<IntToStringMap> value = adoptPtr(new IntToStringMap());
     int count = 10;
-    for (int i = 1; i <= count; ++i)
+    for (int i = 10; i < 10 + count; ++i)
         value->set(i, String::number(i));
     InstrumentedOwner<IntToStringMap* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(IntToStringMap) + sizeof(IntToStringMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(IntToStringMap) + sizeof(IntToStringMap::ValueType) * value->capacity() + (sizeof(StringImpl) + 2) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, helper.visitedObjects());
 }
 
@@ -523,11 +570,11 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeysAndValues)
     typedef HashMap<String, String> StringToStringMap;
     OwnPtr<StringToStringMap> value = adoptPtr(new StringToStringMap());
     int count = 10;
-    for (int i = 1; i <= count; ++i)
+    for (int i = 10; i < 10 + count; ++i)
         value->set(String::number(count + i), String::number(i));
     InstrumentedOwner<StringToStringMap* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(StringToStringMap) + sizeof(StringToStringMap::ValueType) * value->capacity() + 2 * sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(StringToStringMap) + sizeof(StringToStringMap::ValueType) * value->capacity() + 2 * (sizeof(StringImpl) + 2) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(2 * count + 1, helper.visitedObjects());
 }
 
@@ -602,7 +649,7 @@ TEST(MemoryInstrumentationTest, hashMapWithEnumKeysAndInstrumentedValues)
         value->set(static_cast<TestEnum>(i), String::number(i));
     InstrumentedOwner<EnumToStringMap* > root(value.get());
     helper.addRootObject(root);
-    EXPECT_EQ(sizeof(EnumToStringMap) + sizeof(EnumToStringMap::ValueType) * value->capacity() + sizeof(StringImpl) * value->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(EnumToStringMap) + sizeof(EnumToStringMap::ValueType) * value->capacity() + (sizeof(StringImpl) + 1) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, helper.visitedObjects());
 }
 

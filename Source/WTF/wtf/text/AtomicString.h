@@ -159,8 +159,6 @@ public:
     void show() const;
 #endif
 
-    WTF_EXPORT_STRING_API void reportMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
     AtomicString(ASCIILiteral);
