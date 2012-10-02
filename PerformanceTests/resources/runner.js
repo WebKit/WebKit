@@ -69,20 +69,18 @@ if (window.testRunner) {
             median: data.length % 2 ? data[middle] : (data[middle - 1] + data[middle]) / 2,
         };
 
-        // Compute the mean and variance using a numerically stable algorithm.
+        // Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
         var squareSum = 0;
         result.values = times;
-        result.mean = data[0];
-        result.sum = data[0];
-        for (var i = 1; i < data.length; ++i) {
+        result.mean = 0;
+        for (var i = 0; i < data.length; ++i) {
             var x = data[i];
             var delta = x - result.mean;
             var sweep = i + 1.0;
             result.mean += delta / sweep;
-            result.sum += x;
-            squareSum += delta * delta * (i / sweep);
+            squareSum += delta * (x - result.mean);
         }
-        result.variance = squareSum / data.length;
+        result.variance = squareSum / (data.length - 1);
         result.stdev = Math.sqrt(result.variance);
         result.unit = unit || "ms";
 

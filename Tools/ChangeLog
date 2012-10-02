@@ -1,3 +1,35 @@
+2012-10-02  Philip Rogers  <pdr@google.com>
+
+        Fix PerfTest standard deviation calculation.
+        https://bugs.webkit.org/show_bug.cgi?id=98115
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously our standard deviation calculation was incorrect. This patch
+        updates perftest.py's algorithm to calculate the sample standard deviation
+        (with Bessel's correction) using Knuth's online algorithm:
+        http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+        An existing test has been modified to prove our new results.
+
+        This patch also updates runner.js to use Bessel's correction in
+        its sample standard deviation calculation, which is more accurate
+        for small sample sizes.
+
+        Additionally, runner.js has been modified to not calculate
+        the 'sum' statistic, which was not very useful.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+
+            The unused variable valueSum has also been removed.
+
+        (PageLoadingPerfTest.run):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+
+            This test calculates the stdev of {2000, 3000, ..., 20000} which
+            was hand-calculated using a spreadsheet.
+
+        (TestPageLoadingPerfTest.test_run):
+
 2012-10-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         webkitpy should accept a different httpd.conf specified by the user

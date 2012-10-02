@@ -32,13 +32,12 @@ var alternateComputeStatistics = {
     },
     variance: function(array) {
         var mean = alternateComputeStatistics.mean(array);
-        var arrayOfSquaredDiffs = [];
+        var sumOfSquaredDiffs = 0;
         for (var index in array) {
             var squaredDiff = array[index] - mean;
-            squaredDiff *= squaredDiff;
-            arrayOfSquaredDiffs.push(squaredDiff);
+            sumOfSquaredDiffs += squaredDiff * squaredDiff;
         };
-        return alternateComputeStatistics.mean(arrayOfSquaredDiffs);
+        return sumOfSquaredDiffs / (array.length - 1);
     },
     stdev: function(array) {
         return Math.sqrt(alternateComputeStatistics.variance(array));
@@ -52,7 +51,7 @@ var alternateComputeStatistics = {
 
 <script type="text/javascript">
 description("This test verifies PerfTestRunner.computeStatistics(), " +
-            "including: min, max, median, mean, sum, variance, and stdev.");
+            "including: min, max, median, mean, variance, and stdev.");
 </script>
 
 <div id="console"></div>
@@ -69,7 +68,6 @@ shouldEvaluateTo("stats.min", 0);
 shouldEvaluateTo("stats.max", 0);
 shouldEvaluateTo("stats.median", 0);
 shouldEvaluateTo("stats.mean", 0);
-shouldEvaluateTo("stats.sum", 0);
 shouldEvaluateTo("stats.variance", 0);
 shouldEvaluateTo("stats.stdev", 0);
 debug("");
@@ -85,13 +83,11 @@ shouldEvaluateTo("stats.min", 1);
 shouldEvaluateTo("stats.max", 20);
 shouldEvaluateTo("stats.median", 5);
 shouldEvaluateTo("stats.mean", (38/5));
-shouldEvaluateTo("stats.sum", (1+2+5+10+20));
 // using alternate implementation
 shouldEvaluateTo("stats.min", alternateComputeStatistics.min(data));
 shouldEvaluateTo("stats.max", alternateComputeStatistics.max(data));
 shouldEvaluateTo("stats.median", alternateComputeStatistics.median(data));
 shouldEvaluateTo("stats.mean", alternateComputeStatistics.mean(data));
-shouldEvaluateTo("stats.sum", alternateComputeStatistics.sum(data));
 shouldBeCloseTo("stats.variance", alternateComputeStatistics.variance(data), 0.0001);
 shouldBeCloseTo("stats.stdev", alternateComputeStatistics.stdev(data), 0.0001);
 debug("");
@@ -107,13 +103,11 @@ shouldEvaluateTo("stats.min", -20);
 shouldEvaluateTo("stats.max", -1);
 shouldEvaluateTo("stats.median", -5);
 shouldEvaluateTo("stats.mean", (-38/5));
-shouldEvaluateTo("stats.sum", (-1-2-5-10-20));
 // using alternate implementation
 shouldEvaluateTo("stats.min", alternateComputeStatistics.min(data));
 shouldEvaluateTo("stats.max", alternateComputeStatistics.max(data));
 shouldEvaluateTo("stats.median", alternateComputeStatistics.median(data));
 shouldEvaluateTo("stats.mean", alternateComputeStatistics.mean(data));
-shouldEvaluateTo("stats.sum", alternateComputeStatistics.sum(data));
 shouldBeCloseTo("stats.variance", alternateComputeStatistics.variance(data), 0.0001);
 shouldBeCloseTo("stats.stdev", alternateComputeStatistics.stdev(data), 0.0001);
 debug("");

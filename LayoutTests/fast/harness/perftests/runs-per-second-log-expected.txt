@@ -12,7 +12,7 @@ Time:
 values 2, 4, 5, 8, 10 runs/s
 avg 5.8 runs/s
 median 5 runs/s
-stdev 2.86 runs/s
+stdev 3.19 runs/s
 min 2 runs/s
 max 10 runs/s
 

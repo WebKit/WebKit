@@ -1,4 +1,4 @@
-This test verifies PerfTestRunner.computeStatistics(), including: min, max, median, mean, sum, variance, and stdev.
+This test verifies PerfTestRunner.computeStatistics(), including: min, max, median, mean, variance, and stdev.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -8,7 +8,6 @@ PASS stats.min is 0
 PASS stats.max is 0
 PASS stats.median is 0
 PASS stats.mean is 0
-PASS stats.sum is 0
 PASS stats.variance is 0
 PASS stats.stdev is 0
 
@@ -20,14 +19,12 @@ PASS stats.min is 1
 PASS stats.max is 20
 PASS stats.median is 5
 PASS stats.mean is 7.6
-PASS stats.sum is 38
 PASS stats.min is 1
 PASS stats.max is 20
 PASS stats.median is 5
 PASS stats.mean is 7.6
-PASS stats.sum is 38
-PASS stats.variance is within 0.0001 of 48.239999999999995
-PASS stats.stdev is within 0.0001 of 6.945502141674135
+PASS stats.variance is within 0.0001 of 60.3
+PASS stats.stdev is within 0.0001 of 7.76530746332687
 
 This test will catch if any order dependencies in the data, such as
 needing to be numerically sorted, are not resolved by the algorithm.
@@ -37,14 +34,12 @@ PASS stats.min is -20
 PASS stats.max is -1
 PASS stats.median is -5
 PASS stats.mean is -7.6
-PASS stats.sum is -38
 PASS stats.min is -20
 PASS stats.max is -1
 PASS stats.median is -5
 PASS stats.mean is -7.6
-PASS stats.sum is -38
-PASS stats.variance is within 0.0001 of 48.239999999999995
-PASS stats.stdev is within 0.0001 of 6.945502141674135
+PASS stats.variance is within 0.0001 of 60.3
+PASS stats.stdev is within 0.0001 of 7.76530746332687
 
 Ensure no latent divide by 0's for an even number of elements.
 data = [0,0,0,0]
