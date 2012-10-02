@@ -1237,7 +1237,7 @@ sub isCygwin()
 
 sub isAnyWindows()
 {
-    return isWindows() || isCygwin() || isMsys();
+    return isWindows() || isCygwin();
 }
 
 sub determineWinVersion()
@@ -1288,11 +1288,6 @@ sub isDarwin()
 sub isWindows()
 {
     return ($^O eq "MSWin32") || 0;
-}
-
-sub isMsys()
-{
-    return ($^O eq "msys") || 0;
 }
 
 sub isLinux()

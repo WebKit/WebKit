@@ -189,7 +189,7 @@ my $testResultsServer = '';
 
 my @leaksFilenames;
 
-if (isWindows() || isMsys()) {
+if (isWindows()) {
     print "This script has to be run under Cygwin to function correctly.\n";
     exit 1;
 }
