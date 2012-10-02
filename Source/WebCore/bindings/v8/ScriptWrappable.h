@@ -38,29 +38,36 @@ namespace WebCore {
 
 class ScriptWrappable {
 public:
-    ScriptWrappable() : m_wrapper(0) { }
+    ScriptWrappable()
+    {
+    }
 
-    v8::Persistent<v8::Object>* wrapper() const
+    v8::Persistent<v8::Object> wrapper() const
     {
         return m_wrapper;
     }
 
-    void setWrapper(v8::Persistent<v8::Object>* wrapper)
+    void setWrapper(v8::Persistent<v8::Object> wrapper)
     {
-        ASSERT(wrapper);
+        ASSERT(!wrapper.IsEmpty());
         m_wrapper = wrapper;
     }
 
-    void clearWrapper() { m_wrapper = 0; }
+    void disposeWrapper()
+    {
+        ASSERT(!m_wrapper.IsEmpty());
+        m_wrapper.Dispose();
+        m_wrapper.Clear();
+    }
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addWeakPointer(m_wrapper);
+        info.addWeakPointer(const_cast<v8::Persistent<v8::Object>*>(&m_wrapper));
     }
 
 private:
-    v8::Persistent<v8::Object>* m_wrapper;
+    v8::Persistent<v8::Object> m_wrapper;
 };
 
 } // namespace WebCore
