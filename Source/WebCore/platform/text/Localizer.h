@@ -57,9 +57,14 @@ public:
     // Returns localized decimal separator, e.g. "." for English, "," for French.
     String localizedDecimalSeparator();
 
+    // Returns date format in Unicode TR35 LDML[1] containing day of month,
+    // month, and year, e.g. "dd/mm/yyyy"
+    // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
+    virtual String dateFormat() = 0;
+
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
     // second with optional period(AM/PM), e.g. "h:mm:ss a"
-    // [1] LDML http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
+    // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
     virtual String timeFormat();
 
     // Returns time format in Unicode TR35 LDML containing hour, and minute

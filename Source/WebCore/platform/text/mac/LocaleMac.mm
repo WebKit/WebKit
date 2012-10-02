@@ -252,6 +252,12 @@ NSDateFormatter* LocaleMac::createShortTimeFormatter()
     return createDateTimeFormatter(m_locale.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
 }
 
+String LocaleMac::dateFormat()
+{
+    // FIXME: We should have real implementation of LocaleMac::dateFormat().
+    return emptyString();
+}
+
 String LocaleMac::timeFormat()
 {
     if (!m_localizedTimeFormatText.isEmpty())

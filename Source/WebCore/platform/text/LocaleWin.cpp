@@ -729,6 +729,12 @@ static String convertWindowsTimeFormatToLDML(const String& windowsTimeFormat)
     return builder.toString();
 }
 
+String LocaleWin::dateFormat()
+{
+    // FIXME: We should have real implementation of LocaleWin::dateFormat().
+    return emptyString();
+}
+
 String LocaleWin::timeFormat()
 {
     if (m_localizedTimeFormatText.isEmpty())

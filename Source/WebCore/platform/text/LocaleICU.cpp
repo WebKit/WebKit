@@ -411,6 +411,12 @@ void LocaleICU::initializeDateTimeFormat()
     m_didCreateTimeFormat = true;
 }
 
+String LocaleICU::dateFormat()
+{
+    // FIXME: We should have real implementation of LocaleICU::dateFormat().
+    return emptyString();
+}
+
 String LocaleICU::timeFormat()
 {
     initializeDateTimeFormat();

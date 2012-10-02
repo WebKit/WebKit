@@ -40,6 +40,9 @@ private:
 #if ENABLE(CALENDAR_PICKER)
     virtual String dateFormatText() OVERRIDE;
 #endif
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    virtual String dateFormat() OVERRIDE;
+#endif
 };
 
 PassOwnPtr<Localizer> Localizer::create(const AtomicString&)
@@ -69,6 +72,13 @@ String LocaleNone::formatDateTime(const DateComponents&)
 String LocaleNone::dateFormatText()
 {
     return ASCIILiteral("Year-Month-Day");
+}
+#endif
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+String LocaleNone::dateFormat()
+{
+    return ASCIILiteral("dd/mm/yyyyy");
 }
 #endif
 
