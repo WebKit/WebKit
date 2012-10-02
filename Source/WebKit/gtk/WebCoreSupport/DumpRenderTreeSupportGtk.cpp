@@ -673,6 +673,8 @@ int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKi
 #if ENABLE(GEOLOCATION)
     GeolocationClientMock* mock = static_cast<GeolocationClientMock*>(GeolocationController::from(core(webView))->client());
     return mock->numberOfPendingPermissionRequests();
+#else
+    return 0;
 #endif
 }
 
