@@ -61,10 +61,9 @@ WebInspector.BreakpointManager.breakpointStorageId = function(uiSourceCode)
     return uiSourceCode.formatted() ? "deobfuscated:" + uiSourceCode.url : uiSourceCode.url;
 }
 
-WebInspector.BreakpointManager.isDivergedFromVM = function(uiSourceCode)
+WebInspector.BreakpointManager.hasDivergedFromVM = function(uiSourceCode)
 {
-    // FIXME: We should also return true if uiSourceCode edit resulted in LiveEdit failure.
-    return uiSourceCode.isDirty() || !uiSourceCode.uiLocationToRawLocation(0, 0);
+    return uiSourceCode.isDirty() || uiSourceCode.hasDivergedFromVM;
 }
 
 WebInspector.BreakpointManager.prototype = {
@@ -402,7 +401,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
         this._condition = condition;
         this._breakpointManager._storage._updateBreakpoint(this);
 
-        if (this._enabled && !WebInspector.BreakpointManager.isDivergedFromVM(this._primaryUILocation.uiSourceCode)) {
+        if (this._enabled && !WebInspector.BreakpointManager.hasDivergedFromVM(this._primaryUILocation.uiSourceCode)) {
             this._setInDebugger();
             return;
         }

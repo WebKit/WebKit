@@ -83,6 +83,7 @@ WebInspector.ScriptSnippetModel.prototype = {
     _addScriptSnippet: function(snippet)
     {
         var snippetJavaScriptSource = new WebInspector.SnippetJavaScriptSource(snippet.name, new WebInspector.SnippetContentProvider(snippet), this);
+        snippetJavaScriptSource.hasDivergedFromVM = true;
         this._snippetIdForJavaScriptSource.put(snippetJavaScriptSource, snippet.id);
         snippetJavaScriptSource.setSourceMapping(this._snippetScriptMapping); 
         this._snippetJavaScriptSourceForSnippetId[snippet.id] = snippetJavaScriptSource;
@@ -306,6 +307,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         console.assert(!this._scriptForUISourceCode.get(snippetJavaScriptSource));
         this._uiSourceCodeForScriptId[script.scriptId] = snippetJavaScriptSource;
         this._scriptForUISourceCode.put(snippetJavaScriptSource, script);
+        delete snippetJavaScriptSource.hasDivergedFromVM;
         script.setSourceMapping(this._snippetScriptMapping);
     },
 
@@ -356,6 +358,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         if (!script)
             return;
 
+        snippetJavaScriptSource.hasDivergedFromVM = true;
         delete this._uiSourceCodeForScriptId[script.scriptId];
         this._scriptForUISourceCode.remove(snippetJavaScriptSource);
         delete snippetJavaScriptSource._evaluationIndex;
