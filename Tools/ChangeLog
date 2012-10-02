@@ -1,3 +1,15 @@
+2012-10-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] REGRESSION(r128623): It made layout tests extremely slow
+        https://bugs.webkit.org/show_bug.cgi?id=96862
+
+        Reviewed by Simon Hausmann.
+
+        Disable calling the extremely slow WKBundleSetDatabaseQuota() between tests until proper fix.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2012-10-02  Philip Rogers  <pdr@google.com>
 
         Fix PerfTest standard deviation calculation.
