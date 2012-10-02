@@ -83,7 +83,6 @@ wtf_sources += \
     Source/WTF/wtf/MemoryInstrumentationArrayBufferView.h \
     Source/WTF/wtf/MemoryInstrumentationHashMap.h \
     Source/WTF/wtf/MemoryInstrumentationHashSet.h \
-    Source/WTF/wtf/MemoryInstrumentationString.h \
     Source/WTF/wtf/MemoryInstrumentationVector.h \
     Source/WTF/wtf/MessageQueue.h \
     Source/WTF/wtf/MetaAllocator.cpp \

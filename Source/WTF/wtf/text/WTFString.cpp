@@ -835,6 +835,12 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
     return utf8;
 }
 
+void String::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addMember(m_impl);
+}
+
 // String Operations
 
 static bool isCharacterAllowedInBase(UChar c, int base)

@@ -453,9 +453,6 @@ public:
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    bool hasInternalBuffer() const { return bufferOwnership() == BufferInternal && !hasTerminatingNullCharacter(); }
-    bool hasOwnedBuffer() const { return bufferOwnership() == BufferOwned; }
-    StringImpl* baseString() const { return bufferOwnership() == BufferSubstring ? m_substringBuffer : 0; }
 
     // FIXME: Remove all unnecessary usages of characters()
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
@@ -718,6 +715,8 @@ public:
 #ifdef STRING_STATS
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
+
+    WTF_EXPORT_STRING_API void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.

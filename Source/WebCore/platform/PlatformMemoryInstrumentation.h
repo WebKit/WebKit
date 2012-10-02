@@ -32,7 +32,6 @@
 #define PlatformMemoryInstrumentation_h
 
 #include <wtf/MemoryInstrumentation.h>
-#include <wtf/MemoryInstrumentationString.h>
 
 namespace WebCore {
 

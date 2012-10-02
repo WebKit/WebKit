@@ -35,7 +35,6 @@
 #if !USE(WTFURL)
 #include <wtf/HexNumber.h>
 #endif
-#include <wtf/MemoryInstrumentationString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

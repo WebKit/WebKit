@@ -307,27 +307,12 @@ void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentatio
     memoryInstrumentation->countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
 }
 
-// Link time guard for classes with external memory instrumentation.
+// Link time guard for vector memory instrumentation.
 template<typename T, size_t inlineCapacity> class Vector;
 template<typename T, size_t inlineCapacity> void reportMemoryUsage(const Vector<T, inlineCapacity>* const&, MemoryObjectInfo*);
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> class HashMap;
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> void reportMemoryUsage(const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>* const&, MemoryObjectInfo*);
-
-class String;
-void reportMemoryUsage(const String* const&, MemoryObjectInfo*);
-
-class StringImpl;
-void reportMemoryUsage(const StringImpl* const&, MemoryObjectInfo*);
-
-class AtomicString;
-void reportMemoryUsage(const AtomicString* const&, MemoryObjectInfo*);
-
-class CString;
-void reportMemoryUsage(const CString* const&, MemoryObjectInfo*);
-
-class CStringBuffer;
-void reportMemoryUsage(const CStringBuffer* const&, MemoryObjectInfo*);
 
 } // namespace WTF
 

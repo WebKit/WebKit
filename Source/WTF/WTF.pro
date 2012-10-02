@@ -90,7 +90,6 @@ HEADERS += \
     MemoryInstrumentationArrayBufferView.h \
     MemoryInstrumentationHashMap.h \
     MemoryInstrumentationHashSet.h \
-    MemoryInstrumentationString.h \
     MemoryInstrumentationVector.h \
     MessageQueue.h \
     MetaAllocator.h \
