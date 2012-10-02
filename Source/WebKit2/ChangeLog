@@ -1,3 +1,21 @@
+2012-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unix plugin process: xErrorString does not need to be defined in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=98174
+
+        Reviewed by Alexey Proskuryakov.
+
+        The static xErrorString variable is used only for logging purposes,
+        so it causes a warning when doing relese builds (or, in general,
+        when logging is enabled). This disables building in the string
+        when LOG_DISABLED is defined.
+
+        Also, made the more constant by changing the "const char*" type
+        to "const char[]".
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit):
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Fix crash in WebGeolocationManager constructor.

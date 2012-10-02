@@ -45,10 +45,14 @@ using namespace WebCore;
 namespace WebKit {
 
 #ifdef XP_UNIX
-static const char* xErrorString = "The program '%s' received an X Window System error.\n"
+
+#ifndef LOG_DISABLED
+static const char xErrorString[] = "The program '%s' received an X Window System error.\n"
     "This probably reflects a bug in a browser plugin.\n"
     "The error was '%s'.\n"
     "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n";
+#endif /* !LOG_DISABLED */
+
 static char* programName = 0;
 
 static int webkitXError(Display* xdisplay, XErrorEvent* error)
