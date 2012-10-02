@@ -65,7 +65,9 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     _parsedScriptSource: function(event)
     {
         var script = /** @type {WebInspector.Script} */ event.data;
-        if (!script.hasSourceURL)
+        if (!script.hasSourceURL && !script.isContentScript)
+            return;
+        if (!script.sourceURL)
             return;
         if (this._uiSourceCodeForResource[script.sourceURL])
             return;
