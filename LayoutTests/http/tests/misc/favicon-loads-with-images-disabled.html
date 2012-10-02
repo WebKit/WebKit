@@ -7,7 +7,7 @@ function runTest()
         testRunner.dumpAsText();
         testRunner.dumpResourceLoadCallbacks();
         testRunner.setIconDatabaseEnabled(true);
-        testRunner.disableImageLoading();
+        testRunner.overridePreference("WebKitDisplayImagesKey", 0);
         testRunner.queueReload();
     }
 }
