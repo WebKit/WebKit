@@ -28,7 +28,6 @@
 #include "AtomicString.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
-#include <wtf/MemoryInstrumentation.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/unicode/CharacterNames.h>

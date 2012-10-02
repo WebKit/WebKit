@@ -28,7 +28,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
-#include <wtf/MemoryInstrumentation.h>
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>

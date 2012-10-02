@@ -30,7 +30,6 @@
 #if USE(WTFURL)
 
 #include <wtf/DataLog.h>
-#include <wtf/MemoryInstrumentation.h>
 #include <wtf/RawURLBuffer.h>
 #include <wtf/URLComponent.h>
 #include <wtf/URLUtil.h>
@@ -211,12 +210,6 @@ String ParsedURL::segment(const URLComponent& component) const
     // FIXME: GoogleURL create empty segments. This happen for the fragment for the test fast/url/segments.html
     // ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
     return segment;
-}
-
-void ParsedURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this);
-    info.addMember(m_spec);
 }
 
 #ifndef NDEBUG

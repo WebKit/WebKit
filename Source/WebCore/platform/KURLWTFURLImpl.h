@@ -29,6 +29,7 @@
 #if USE(WTFURL)
 
 #include "PlatformMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationParsedURL.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +45,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
+        MemoryClassInfo info(memoryObjectInfo, this);
         info.addMember(m_parsedURL);
         info.addMember(m_invalidUrlString);
     }

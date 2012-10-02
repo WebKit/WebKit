@@ -329,6 +329,12 @@ void reportMemoryUsage(const CString* const&, MemoryObjectInfo*);
 class CStringBuffer;
 void reportMemoryUsage(const CStringBuffer* const&, MemoryObjectInfo*);
 
+class ParsedURL;
+void reportMemoryUsage(const ParsedURL* const&, MemoryObjectInfo*);
+
+class URLString;
+void reportMemoryUsage(const URLString* const&, MemoryObjectInfo*);
+
 } // namespace WTF
 
 #endif // !defined(MemoryInstrumentation_h)

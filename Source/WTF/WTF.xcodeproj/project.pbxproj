@@ -44,6 +44,7 @@
 		4F1D115415FF11BE0026E908 /* MemoryInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1D115315FF11BE0026E908 /* MemoryInstrumentation.h */; };
 		4FCB710A160A1A07008425EC /* MemoryInstrumentationVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FCB7109160A1A07008425EC /* MemoryInstrumentationVector.h */; };
 		4FCF27E116172E8600CBF037 /* MemoryInstrumentationString.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FCF27E016172E8600CBF037 /* MemoryInstrumentationString.h */; };
+		4FD2A359161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD2A358161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h */; };
 		4FD8554716133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD8554616133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h */; };
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
@@ -317,6 +318,7 @@
 		4F1D115315FF11BE0026E908 /* MemoryInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentation.h; sourceTree = "<group>"; };
 		4FCB7109160A1A07008425EC /* MemoryInstrumentationVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationVector.h; sourceTree = "<group>"; };
 		4FCF27E016172E8600CBF037 /* MemoryInstrumentationString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationString.h; sourceTree = "<group>"; };
+		4FD2A358161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationParsedURL.h; sourceTree = "<group>"; };
 		4FD8554616133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationArrayBufferView.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -703,6 +705,7 @@
 				4FD8554616133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h */,
 				F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */,
 				4F1B2DB5160B44AA00586559 /* MemoryInstrumentationHashSet.h */,
+				4FD2A358161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h */,
 				4FCF27E016172E8600CBF037 /* MemoryInstrumentationString.h */,
 				4FCB7109160A1A07008425EC /* MemoryInstrumentationVector.h */,
 				A8A472CC151A825B004123FF /* MessageQueue.h */,
@@ -1161,6 +1164,7 @@
 				4FD8554716133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h in Headers */,
 				F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */,
 				4FCF27E116172E8600CBF037 /* MemoryInstrumentationString.h in Headers */,
+				4FD2A359161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
