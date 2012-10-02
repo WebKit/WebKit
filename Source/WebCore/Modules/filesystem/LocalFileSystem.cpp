@@ -82,7 +82,7 @@ static void openFileSystem(ScriptExecutionContext*, const String& basePath, cons
     AsyncFileSystem::openFileSystem(basePath, identifier, type, create, callbacks);
 }
 
-static void deleteFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+static void performDeleteFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     AsyncFileSystem::deleteFileSystem(basePath, identifier, type, callbacks);
 }
@@ -95,7 +95,6 @@ void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystem
 
 void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSystemType type, long long, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
 {
-    // FIXME: Pass FileSystemType parameter.
     // AsyncFileSystem::openFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
     context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, true, callbacks));
 }
@@ -103,7 +102,7 @@ void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSys
 void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     // AsyncFileSystem::deleteFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
-    context->postTask(createCallbackTask(&deleteFileSystem, filesystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
+    context->postTask(createCallbackTask(&performDeleteFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks));
 }
 
 } // namespace
