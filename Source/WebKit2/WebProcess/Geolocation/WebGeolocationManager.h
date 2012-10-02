@@ -73,6 +73,7 @@ private:
     void didFailToDeterminePosition(const WTF::String& errorMessage);
 
     WebProcess* m_process;
+    bool m_didAddMessageReceiver;
     HashSet<WebPage*> m_pageSet;
 };
 

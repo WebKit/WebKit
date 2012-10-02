@@ -1,5 +1,17 @@
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
+        Fix crash in WebGeolocationManager constructor.
+
+        Defer adding the location manager until there actually is a connection.
+
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::WebGeolocationManager):
+        (WebKit::WebGeolocationManager::registerWebPage):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+
+2012-10-02  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebProcess/Geolocation/WebGeolocationManager.cpp:
