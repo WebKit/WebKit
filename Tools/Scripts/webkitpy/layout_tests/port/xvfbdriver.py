@@ -73,6 +73,9 @@ class XvfbDriver(Driver):
         environment['DISPLAY'] = ":%d" % display_id
         # Drivers should use separate application cache locations
         environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(self._port.results_directory(), '%s-appcache-%d' % (server_name, self._worker_number))
+        self._driver_tempdir = self._port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
+        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+        environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
 
         self._crashed_process_name = None
         self._crashed_pid = None
