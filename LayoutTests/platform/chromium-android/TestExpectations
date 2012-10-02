@@ -49,6 +49,7 @@ crbug.com/145338 platform/chromium/accessibility
 
 crbug.com/145338 fast/forms/month-multiple-fields
 crbug.com/145338 fast/forms/time-multiple-fields
+crbug.com/145338 fast/forms/week-multiple-fields
 crbug.com/145338 fast/forms/color
 crbug.com/145338 fast/forms/datalist
 crbug.com/145338 fast/forms/date
