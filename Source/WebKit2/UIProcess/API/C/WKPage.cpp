@@ -738,3 +738,7 @@ void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNam
     toImpl(pageRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
 }
 
+WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->relatedPages().leakRef());
+}

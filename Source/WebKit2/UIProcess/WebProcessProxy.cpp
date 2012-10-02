@@ -186,6 +186,13 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     m_pageMap.remove(pageID);
 }
 
+Vector<WebPageProxy*> WebProcessProxy::pages() const
+{
+    Vector<WebPageProxy*> result;
+    copyValuesToVector(m_pageMap, result);
+    return result;
+}
+
 #if ENABLE(WEB_INTENTS)
 void WebProcessProxy::removeMessagePortChannel(uint64_t channelID)
 {

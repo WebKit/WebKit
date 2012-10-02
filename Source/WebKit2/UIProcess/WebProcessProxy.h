@@ -84,6 +84,7 @@ public:
     PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
+    Vector<WebPageProxy*> pages() const;
 
 #if ENABLE(WEB_INTENTS)
     void removeMessagePortChannel(uint64_t channelID);

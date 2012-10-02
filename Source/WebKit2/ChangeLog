@@ -1,3 +1,21 @@
+2012-10-02  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12407139> WebKit2 should provide API that returns all pages in the same process as a given page
+        https://bugs.webkit.org/show_bug.cgi?id=98193
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyRelatedPages):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::relatedPages):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::pages):
+        * UIProcess/WebProcessProxy.h:
+        Added. This should work once a process has crashed, too.
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Allow LayerTreeHost subclasses to return a custom GraphicsLayerFactory

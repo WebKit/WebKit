@@ -277,6 +277,21 @@ bool WebPageProxy::isValid()
     return m_isValid;
 }
 
+PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
+{
+    Vector<WebPageProxy*> pages = m_process->pages();
+    ASSERT(pages.contains(this));
+
+    Vector<RefPtr<APIObject> > result;
+    result.reserveCapacity(pages.size() - 1);
+    for (size_t i = 0; i < pages.size(); ++i) {
+        if (pages[i] != this)
+            result.append(pages[i]);
+    }
+
+    return ImmutableArray::adopt(result);
+}
+
 void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
 {
     m_loaderClient.initialize(loadClient);
