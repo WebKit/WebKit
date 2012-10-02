@@ -3185,6 +3185,13 @@ bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
     return platformCanHandleRequest(request);
 }
 
+#if USE(TILED_BACKING_STORE)
+void WebPage::commitPageTransitionViewport()
+{
+    m_drawingArea->setLayerTreeStateIsFrozen(false);
+}
+#endif
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 void WebPage::handleAlternativeTextUIResult(const String& result)
 {

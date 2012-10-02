@@ -243,8 +243,11 @@ messages -> WebPage {
     SetThemePath(WTF::String themePath)
 #endif
 
-#if PLATFORM(QT)
+#if USE(TILED_BACKING_STORE)
     CommitPageTransitionViewport()
+#endif
+
+#if PLATFORM(QT)
     SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
     CancelComposition()

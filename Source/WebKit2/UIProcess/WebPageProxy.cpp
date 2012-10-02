@@ -945,6 +945,14 @@ void WebPageProxy::setViewportSize(const IntSize& size)
 
     m_process->send(Messages::WebPage::SetViewportSize(size), m_pageID);
 }
+
+void WebPageProxy::commitPageTransitionViewport()
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
+}
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
