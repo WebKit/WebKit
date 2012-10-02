@@ -28,10 +28,19 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerClutter.h"
+#include "GraphicsLayerFactory.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
+
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+{
+    if (!factory)
+        return adoptPtr(new GraphicsLayerClutter(client));
+
+    return factory->createGraphicsLayer(client);
+}
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {

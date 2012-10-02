@@ -20,9 +20,18 @@
 #include "config.h"
 #include "GraphicsLayerTextureMapper.h"
 
+#include "GraphicsLayerFactory.h"
 #include "TextureMapperLayer.h"
 
 namespace WebCore {
+
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+{
+    if (!factory)
+        return adoptPtr(new GraphicsLayerTextureMapper(client));
+
+    return factory->createGraphicsLayer(client);
+}
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
