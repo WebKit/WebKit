@@ -885,7 +885,7 @@ TreeElement.prototype.expandRecursively = function(maxDepth)
     // The Inspector uses TreeOutlines to represents object properties, so recursive expansion
     // in some case can be infinite, since JavaScript objects can hold circular references.
     // So default to a recursion cap of 3 levels, since that gives fairly good results.
-    if (typeof maxDepth === "undefined" || typeof maxDepth === "null")
+    if (isNaN(maxDepth))
         maxDepth = 3;
 
     while (item) {
@@ -1002,7 +1002,7 @@ TreeElement.prototype.onexpand = function() { }
 TreeElement.prototype.oncollapse = function() { }
 TreeElement.prototype.ondblclick = function() { }
 TreeElement.prototype.onreveal = function() { }
-/** @param {boolean} selectedByUser */
+/** @param {boolean=} selectedByUser */
 TreeElement.prototype.onselect = function(selectedByUser) { }
 
 /**

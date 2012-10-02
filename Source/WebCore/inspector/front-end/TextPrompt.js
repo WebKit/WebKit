@@ -30,7 +30,7 @@
 /**
  * @constructor
  * @extends WebInspector.Object
- * @param {function(Element, Range, boolean, function(Array.<string>=))} completions
+ * @param {function(Element, Range, boolean, function(Array.<string>, number=))} completions
  * @param {string=} stopCharacters
  */
 WebInspector.TextPrompt = function(completions, stopCharacters)
@@ -761,7 +761,7 @@ WebInspector.TextPrompt.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.TextPrompt}
- * @param {function(Element, Range, boolean, function(Array.<string>=))} completions
+ * @param {function(Element, Range, boolean, function(Array.<string>,number=))} completions
  * @param {string=} stopCharacters
  */
 WebInspector.TextPromptWithHistory = function(completions, stopCharacters)
@@ -1103,6 +1103,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     /**
      * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
+     * @param {number=} selectedIndex
      * @param {boolean=} canShowForSingleItem
      */
     updateSuggestions: function(anchorBox, completions, selectedIndex, canShowForSingleItem)
@@ -1140,7 +1141,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
     /**
      * @param {Array.<string>=} items
-     * @param {number} selectedIndex
+     * @param {number=} selectedIndex
      */
     _updateItems: function(items, selectedIndex)
     {
@@ -1155,7 +1156,8 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         }
 
         this._selectedElement = null;
-        this._selectItem(selectedIndex);
+        if (typeof selectedIndex === "number")
+            this._selectItem(selectedIndex);
     },
 
     /**
@@ -1200,6 +1202,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     /**
      * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
+     * @param {number=} selectedIndex
      * @param {boolean=} canShowForSingleItem
      */
     _completionsReady: function(anchorBox, completions, selectedIndex, canShowForSingleItem)

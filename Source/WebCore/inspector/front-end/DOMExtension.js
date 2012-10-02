@@ -177,7 +177,7 @@ Element.prototype.pruneEmptyTextNodes = function()
     var sibling = this.firstChild;
     while (sibling) {
         var nextSibling = sibling.nextSibling;
-        if (sibling.nodeType === this.TEXT_NODE && sibling.nodeValue === "")
+        if (sibling.nodeType === Node.TEXT_NODE && sibling.nodeValue === "")
             this.removeChild(sibling);
         sibling = nextSibling;
     }

@@ -619,7 +619,7 @@ Resource.prototype = {
      */
     toReplayable: function(cache)
     {
-        var result = cache.get(this._id);
+        var result = /** @type {ReplayableResource} */ cache.get(this._id);
         if (result)
             return result;
         var data = {
@@ -650,7 +650,7 @@ Resource.prototype = {
      */
     replay: function(data, cache)
     {
-        var resource = cache.get(data.id);
+        var resource = /** @type {ReplayableResource} */ cache.get(data.id);
         if (resource)
             return resource;
         this._id = data.id;
@@ -683,11 +683,11 @@ Resource.prototype = {
     },
 
     /**
-     * @param {!Object} object
+     * @param {Object} object
      */
     _bindObjectToResource: function(object)
     {
-        Object.defineProperty(object, "__resourceObject", {
+        Object.defineProperty(/** @type {!Object} */ (object), "__resourceObject", {
             value: this,
             writable: false,
             enumerable: false,

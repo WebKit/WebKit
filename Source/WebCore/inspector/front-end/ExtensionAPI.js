@@ -750,6 +750,9 @@ function ExtensionServerClient()
 }
 
 ExtensionServerClient.prototype = {
+    /**
+     * @param {function()=} callback
+     */
     sendRequest: function(message, callback)
     {
         if (typeof callback === "function")
