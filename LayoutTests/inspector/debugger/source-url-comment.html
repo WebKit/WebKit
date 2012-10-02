@@ -2,17 +2,57 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
-
 <script>
+function keepAliveInInlineScript() { }
 
+//@ sourceURL=inlineScriptURL.js
+</script>
+<script>
 function doEval()
 {
     eval("function keepAlive() {}\n//@ sourceURL=evalURL.js");
 }
 
-function test()
+function doDynamicScript()
 {
+    var scriptElement = document.createElement("script");
+    scriptElement.textContent = "function keepAliveInDynamicScript() {}\n//@ sourceURL=dynamicScriptURL.js";
+    document.body.appendChild(scriptElement);
+}
+
+function test()
+
+{
+    function forEachScriptMatchingURL(url, handler)
+    {
+        var scripts = WebInspector.debuggerModel.scripts;
+        for (var i = 0; i < scripts.length; ++i) {
+            if (scripts[i].sourceURL.indexOf(url) !== -1)
+                handler(scripts[i]);
+        }
+    }
+
     InspectorTest.runDebuggerTestSuite([
+        function testSourceURLCommentInInlineScript(next)
+        {
+            InspectorTest.showScriptSource("source-url-comment.html", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                function checkScriptDoesNotHaveSourceURL(script)
+                {
+                    InspectorTest.assertTrue(!script.hasSourceURL, "hasSourceURL flag is set for inline script");
+                }
+
+                var panel = WebInspector.panel("scripts");
+                var uiSourceCodes = panel._workspace.uiSourceCodes();
+                for (var i = 0; i < uiSourceCodes.length; ++i)
+                    InspectorTest.assertTrue(uiSourceCodes[i].url.indexOf("inlineScriptURL.js") === -1, "sourceURL comment in inline script was used as a script name");
+                forEachScriptMatchingURL("source-url-comment.html", checkScriptDoesNotHaveSourceURL)
+                next();
+            }
+        },
+
         function testSourceURLComment(next)
         {
             InspectorTest.showScriptSource("evalURL.js", didShowScriptSource);
@@ -20,7 +60,31 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
+                function checkScriptHasSourceURL(script)
+                {
+                    InspectorTest.assertTrue(script.hasSourceURL, "hasSourceURL flag is not set for eval with sourceURL comment");
+                }
+
                 InspectorTest.addResult(sourceFrame.textEditor.text());
+                forEachScriptMatchingURL("evalURL.js", checkScriptHasSourceURL);
+                next();
+            }
+        },
+
+        function testSourceURLCommentInDynamicScript(next)
+        {
+            InspectorTest.showScriptSource("dynamicScriptURL.js", didShowScriptSource);
+            InspectorTest.evaluateInPage("setTimeout(doDynamicScript, 0)");
+
+            function didShowScriptSource(sourceFrame)
+            {
+                function checkScriptHasSourceURL(script)
+                {
+                    InspectorTest.assertTrue(script.hasSourceURL, "hasSourceURL flag is not set for dynamic script with sourceURL comment");
+                }
+
+                InspectorTest.addResult(sourceFrame.textEditor.text());
+                forEachScriptMatchingURL("dynamicScriptURL.js", checkScriptHasSourceURL);
                 next();
             }
         }

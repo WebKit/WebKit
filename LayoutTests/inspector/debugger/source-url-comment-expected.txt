@@ -2,8 +2,14 @@ Tests that evals with sourceURL comment are shown in scripts panel.
 
 Debugger was enabled.
 
+Running: testSourceURLCommentInInlineScript
+
 Running: testSourceURLComment
 function keepAlive() {}
 //@ sourceURL=evalURL.js
+
+Running: testSourceURLCommentInDynamicScript
+function keepAliveInDynamicScript() {}
+//@ sourceURL=dynamicScriptURL.js
 Debugger was disabled.
 

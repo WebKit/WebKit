@@ -34,8 +34,9 @@
  * @param {number} endColumn
  * @param {boolean} isContentScript
  * @param {string=} sourceMapURL
+ * @param {boolean=} hasSourceURL
  */
-WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL)
+WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL, hasSourceURL)
 {
     this.scriptId = scriptId;
     this.sourceURL = sourceURL;
@@ -45,6 +46,7 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this.endColumn = endColumn;
     this.isContentScript = isContentScript;
     this.sourceMapURL = sourceMapURL;
+    this.hasSourceURL = hasSourceURL;
     this._locations = [];
 }
 
