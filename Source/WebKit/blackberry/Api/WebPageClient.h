@@ -203,7 +203,6 @@ public:
     virtual void needMoreData() = 0;
     virtual void handleWebInspectorMessageToFrontend(int id, const char* message, int length) = 0;
 
-    virtual bool hasPendingScrollOrZoomEvent() const = 0;
     virtual Platform::IntRect userInterfaceBlittedDestinationRect() const = 0;
     virtual Platform::IntRect userInterfaceBlittedVisibleContentsRect() const = 0;
 
