@@ -126,6 +126,13 @@ bool waitForLoadFailed(QQuickWebView* webView, int timeout)
     return timeoutSpy.isEmpty();
 }
 
+bool waitForViewportReady(QQuickWebView* webView, int timeout)
+{
+    // The viewport is locked until the first frame of a page load is rendered.
+    // The QQuickView needs to be shown for this to succeed.
+    return waitForSignal(webView->experimental(), SIGNAL(loadVisuallyCommitted()), timeout);
+}
+
 LoadStartedCatcher::LoadStartedCatcher(QQuickWebView* webView)
     : m_webView(webView)
 {

@@ -440,10 +440,11 @@ void tst_QQuickWebView::inputMethodHints()
 
 void tst_QQuickWebView::scrollRequest()
 {
-    webView()->setSize(QSizeF(300, 400));
+    m_window->setGeometry(0, 0, 300, 400);
+    m_window->show();
 
     webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
-    QVERIFY(waitForLoadSucceeded(webView()));
+    QVERIFY(waitForViewportReady(webView()));
 
     // COMPARE with the position requested in the html
     // Use qRound as that is also used when calculating the position

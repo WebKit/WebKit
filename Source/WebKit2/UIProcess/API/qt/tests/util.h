@@ -36,6 +36,7 @@ void suppressDebugOutput();
 #if defined(HAVE_QTQUICK) && HAVE_QTQUICK
 bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
 bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
+bool waitForViewportReady(QQuickWebView* webView, int timeout = 10000);
 
 class LoadStartedCatcher : public QObject {
     Q_OBJECT
