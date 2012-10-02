@@ -1,3 +1,14 @@
+2012-10-02  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Add file EWKTestEnvironment.cpp to build system.
+        https://bugs.webkit.org/show_bug.cgi?id=94925
+
+        Reviewed by Gyuyoung Kim.
+
+        Change is related to modifications in wk1 unit tests.
+
+        * PlatformEfl.cmake:
+
 2012-09-27  Anders Carlsson  <andersca@apple.com>
 
         Get rid of more unused WK1 plug-in code

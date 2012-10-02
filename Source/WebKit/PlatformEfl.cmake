@@ -344,6 +344,7 @@ ADD_DEFINITIONS(-DDEFAULT_TEST_PAGE_DIR=\"${DEFAULT_TEST_PAGE_DIR}\"
 
 ADD_LIBRARY(ewkTestUtils
     ${WEBKIT_DIR}/efl/tests/UnitTestUtils/EWKTestBase.cpp
+    ${WEBKIT_DIR}/efl/tests/UnitTestUtils/EWKTestEnvironment.cpp
     ${WEBKIT_DIR}/efl/tests/UnitTestUtils/EWKTestView.cpp
 )
 TARGET_LINK_LIBRARIES(ewkTestUtils ${EWKUnitTests_LIBRARIES})

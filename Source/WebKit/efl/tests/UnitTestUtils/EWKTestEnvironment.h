@@ -16,28 +16,22 @@
     Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef EWKTestBase_h
-#define EWKTestBase_h
+#ifndef EWKTestEnvironment_h
+#define EWKTestEnvironment_h
 
-#include "EWKTestConfig.h"
-#include "EWKTestView.h"
 #include <gtest/gtest.h>
 
 namespace EWKUnitTests {
 
-class EWKTestBase: public ::testing::Test {
+class EWKTestEnvironment : public ::testing::Environment {
 public:
-    static void onLoadFinished(void* data, Evas_Object* webView, void* eventInfo);
+    explicit EWKTestEnvironment(bool useX11Window);
 
-    Evas_Object* webView();
+    bool useX11Window() const { return m_useX11Window; }
     virtual void SetUp();
-protected:
-    EWKTestBase();
-
-    void loadUrl(const char* url = Config::defaultTestPage);
-    void waitUntilLoadFinished();
-
-    EWKTestView m_ewkTestView;
+    virtual void TearDown();
+private:
+    bool m_useX11Window;
 };
 
 }

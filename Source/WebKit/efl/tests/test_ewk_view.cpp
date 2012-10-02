@@ -19,66 +19,54 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWKTestBase.h"
+#include "UnitTestUtils/EWKTestConfig.h"
 #include <EWebKit.h>
-#include <gtest/gtest.h>
+#include <Ecore.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 using namespace EWKUnitTests;
 
 /**
 * @brief Checking whether function properly returns correct value.
 */
-static void ewkViewEditableGetCb(void* eventInfo, Evas_Object* o, void* data)
+TEST_F(EWKTestBase, ewk_view_editable_get)
 {
-    ewk_view_editable_set(o, EINA_FALSE);
-    EXPECT_EQ(EINA_FALSE, ewk_view_editable_get(o));
-    END_TEST();
-}
-
-TEST(test_ewk_view, ewk_view_editable_get)
-{
-    RUN_TEST(ewkViewEditableGetCb);
+    loadUrl();
+    ewk_view_editable_set(webView(), true);
+    ASSERT_TRUE(ewk_view_editable_get(webView()));
 }
 
 /**
 * @brief Checking whether function returns correct uri string.
 */
-static void ewkViewUriGetCb(void* eventInfo, Evas_Object* o, void* data)
+TEST_F(EWKTestBase, ewk_view_uri_get)
 {
-    EXPECT_STREQ("http://www.webkit.org/", ewk_view_uri_get(o));
-    END_TEST();
-}
-
-TEST(test_ewk_view, ewk_view_uri_get)
-{
-    RUN_TEST("http://www.webkit.org", ewkViewUriGetCb);
+    loadUrl();
+    ASSERT_STREQ(ewk_view_uri_get(webView()), Config::defaultTestPage);
 }
 
 /**
 * @brief Checking whether function properly get/set fullscreen setting value.
 */
-static void ewkViewEnableFullscreenCb(void* eventInfo, Evas_Object* webView, void* data)
+TEST_F(EWKTestBase, ewk_view_setting_enable_fullscreen)
 {
+    loadUrl();
 #if ENABLE(FULLSCREEN_API)
-    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_get(webView()));
 
-    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_set(webView, true));
-    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_set(webView(), true));
+    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_get(webView()));
 
-    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_set(webView, false));
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_TRUE(ewk_view_setting_enable_fullscreen_set(webView(), false));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView()));
 #else
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView()));
 
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_set(webView, true));
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_set(webView(), true));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView()));
 
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_set(webView, false));
-    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_set(webView(), false));
+    ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView()));
 #endif
-    END_TEST();
-}
-
-TEST(test_ewk_view, ewk_view_setting_enable_fullscreen)
-{
-    RUN_TEST(ewkViewEnableFullscreenCb);
 }

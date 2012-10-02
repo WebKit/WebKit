@@ -16,30 +16,32 @@
     Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#ifndef EWKTestBase_h
-#define EWKTestBase_h
+#include "config.h"
+#include "EWKTestEnvironment.h"
 
-#include "EWKTestConfig.h"
-#include "EWKTestView.h"
-#include <gtest/gtest.h>
+#include <EWebKit.h>
+#include <Ecore.h>
+#include <Edje.h>
 
 namespace EWKUnitTests {
 
-class EWKTestBase: public ::testing::Test {
-public:
-    static void onLoadFinished(void* data, Evas_Object* webView, void* eventInfo);
-
-    Evas_Object* webView();
-    virtual void SetUp();
-protected:
-    EWKTestBase();
-
-    void loadUrl(const char* url = Config::defaultTestPage);
-    void waitUntilLoadFinished();
-
-    EWKTestView m_ewkTestView;
-};
-
+EWKTestEnvironment::EWKTestEnvironment(bool useX11Window)
+    : m_useX11Window(useX11Window)
+{
 }
 
-#endif
+void EWKTestEnvironment::SetUp()
+{
+    ASSERT_GT(ewk_init(), 0);
+
+    const char* proxyUrl = getenv("http_proxy");
+    if (proxyUrl)
+        ewk_network_proxy_uri_set(proxyUrl);
+}
+
+void EWKTestEnvironment::TearDown()
+{
+    ewk_shutdown();
+}
+
+}

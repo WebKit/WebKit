@@ -1,3 +1,48 @@
+2012-10-02  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL][UT] Refactoring an implementation of testing framework for wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=94925
+
+        Reviewed by Gyuyoung Kim.
+
+        The reason of changing, was to adjust current implementation to use gtest features
+        related to cleaning (SetUp, TearDown), cleaning code in terms of useless methods
+        and lastly to make framework easier to use.
+
+        * tests/UnitTestUtils/EWKTestBase.cpp:
+        (EWKUnitTests::EWKTestBase::EWKTestBase):
+        (EWKUnitTests::EWKTestBase::webView): Returns current webview.
+        (EWKUnitTests::EWKTestBase::SetUp):
+        Before test is started, SetUp is called.
+        Used this to initialize test view.
+        (EWKUnitTests::EWKTestBase::onLoadFinished):
+        (EWKUnitTests::EWKTestBase::waitUntilLoadFinished): It waits till test page will be properly loaded.
+        (EWKUnitTests::EWKTestBase::loadUrl): Starts loading test page.
+        * tests/UnitTestUtils/EWKTestBase.h:
+        * tests/UnitTestUtils/EWKTestEnvironment.cpp:
+        Used to have global SetUp and TearDown.
+        Global SetUp starts initialization of webkit wherease
+        global TearDown shuts it down. Generally we would like to have
+        only one initialization of webkit while tests are executed.
+        (EWKUnitTests):
+        (EWKUnitTests::EWKTestEnvironment::EWKTestEnvironment):
+        (EWKUnitTests::EWKTestEnvironment::SetUp): Starts initialization of webkit.
+        (EWKUnitTests::EWKTestEnvironment::TearDown): Shuts down of webkit.
+        * tests/UnitTestUtils/EWKTestEnvironment.h:
+        (EWKUnitTests):
+        (EWKTestEnvironment):
+        (EWKUnitTests::EWKTestEnvironment::useX11Window):
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestView::EWKTestView):
+        (EWKUnitTests::EWKTestView::init): Starts initialization of test view.
+        * tests/UnitTestUtils/EWKTestView.h:
+        (EWKTestView):
+        * tests/test_ewk_view.cpp: adjusted current unit tests to new implementation.
+        (TEST_F):
+        * tests/test_runner.cpp: entry point of all tests.
+        (parseCustomArguments):
+        (main):
+
 2012-10-01  Brady Eidson  <beidson@apple.com>
 
         Remove the Safari 2 -> Safari 3 icon database import code.

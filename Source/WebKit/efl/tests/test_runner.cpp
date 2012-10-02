@@ -16,25 +16,37 @@
     Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#include "config.h"
+
 #include "UnitTestUtils/EWKTestBase.h"
+#include "UnitTestUtils/EWKTestEnvironment.h"
 #include <getopt.h>
 #include <gtest/gtest.h>
 
-static void parseCustomArguments(int argc, char** argv)
+using namespace EWKUnitTests;
+
+EWKTestEnvironment* environment = 0;
+
+static int parseCustomArguments(int argc, char** argv)
 {
+    int useX11Window = 0;
     static const option options[] = {
-        {"useX11Window", no_argument, &EWKUnitTests::EWKTestBase::useX11Window, true},
+        {"useX11Window", no_argument, &useX11Window, true},
         {0, 0, 0, 0}
     };
 
     int option;
     while ((option = getopt_long(argc, argv, "", options, 0)) != -1) { }
+
+    return useX11Window;
 }
 
 int main(int argc, char** argv)
 {
-    atexit(EWKUnitTests::EWKTestBase::shutdownAll);
-    parseCustomArguments(argc, argv);
+    int useX11Window = parseCustomArguments(argc, argv);
+    environment = new EWKTestEnvironment(useX11Window);
+    testing::AddGlobalTestEnvironment(environment);
     ::testing::InitGoogleTest(&argc, argv);
+
     return RUN_ALL_TESTS();
 }
