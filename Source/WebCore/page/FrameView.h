@@ -176,7 +176,7 @@ public:
     virtual IntRect windowResizerRect() const;
 
     virtual void setFixedVisibleContentRect(const IntRect&) OVERRIDE;
-    void setScrollPosition(const IntPoint&);
+    virtual void setScrollPosition(const IntPoint&) OVERRIDE;
     void scrollPositionChangedViaPlatformWidget();
     virtual void repaintFixedElementsAfterScrolling();
     virtual void updateFixedElementsAfterScrolling();
