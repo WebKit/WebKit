@@ -363,14 +363,14 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTest)
     EXPECT_NEAR(wideDiv.x * scale, scroll.x, 20);
     int vScroll = (wideDiv.y + wideDiv.height / 2) * scale - (viewportHeight / 2);
     EXPECT_NEAR(vScroll, scroll.y, 1);
-    EXPECT_EQ(false, isAnchor);
+    EXPECT_FALSE(isAnchor);
 
     setScaleAndScrollAndLayout(webViewImpl, scroll, scale);
 
     // Test zoom out back to minimum scale.
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPointWide, WebViewImpl::DoubleTap, scale, scroll, isAnchor);
     EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
-    EXPECT_EQ(true, isAnchor);
+    EXPECT_TRUE(isAnchor);
 
     setScaleAndScrollAndLayout(webViewImpl, WebPoint(0, 0), scale);
 
@@ -380,7 +380,7 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTest)
     EXPECT_NEAR(viewportWidth / (float) tallDiv.width, scale, 0.1);
     EXPECT_NEAR(tallDiv.x * scale, scroll.x, 20);
     EXPECT_NEAR(tallDiv.y * scale, scroll.y, 20);
-    EXPECT_EQ(false, isAnchor);
+    EXPECT_FALSE(isAnchor);
 
     // Test for Non-doubletap scaling
     // Test zooming into div.

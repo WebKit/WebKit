@@ -1,3 +1,14 @@
+2012-10-02  Jochen Eisinger  <jochen@chromium.org>
+
+        Use correct gtest macros for tests for true/false
+
+        Unreviewed build-fix.
+
+        Using EXPECT_EQ(true, ...) makes clang trip when it tries to convert
+        true to a pointer. Tests should use EXPECT_TRUE instead.
+
+        * tests/WebFrameTest.cpp:
+
 2012-10-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130129.
