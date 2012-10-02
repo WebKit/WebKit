@@ -73,7 +73,7 @@ writingModes.forEach(function(writingMode) {
             document.body.appendChild(title);
 
             var isColumn = flexFlow.indexOf('column') != -1;
-            var isHorizontal = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
+            var isHorizontalFlow = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
 
             var container = document.createElement('div');
             container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: baseline;">' +
@@ -81,7 +81,10 @@ writingModes.forEach(function(writingMode) {
                 '<div style="margin-top:20px;"><div style="display:inline-block;"></div></div>' +
             '</div>';
 
-            container.firstChild.isHorizontal = isHorizontal;
+            container.firstChild.isHorizontal = writingMode.indexOf('horizontal') != -1;
+            container.firstChild.isHorizontalFlow = isHorizontalFlow;
+            container.firstChild.isColumn = isColumn;
+            container.firstChild.isLTR = direction == 'ltr';
             document.body.appendChild(container);
         })
     })
@@ -93,7 +96,10 @@ for (var i = 0, len = flexboxen.length; i < len; i++) {
     var flexbox = flexboxen[i];
     firstChild = flexbox.firstChild;
     lastChild = flexbox.lastChild;
-    if (flexbox.isHorizontal)
+    if (!flexbox.isHorizontal && flexbox.isColumn && flexbox.isLTR) {
+        shouldBe('firstChild.offsetTop', "0");
+        shouldBe('lastChild.offsetTop', "20");
+    } else if (flexbox.isHorizontalFlow)
         shouldBe('firstChild.offsetTop', 'lastChild.offsetTop');
     else
         shouldBe('firstChild.offsetLeft', 'lastChild.offsetLeft');

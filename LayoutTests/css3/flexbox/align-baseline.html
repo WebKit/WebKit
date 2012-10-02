@@ -1,0 +1,27 @@
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    -webkit-align-items: baseline;
+}
+.wrap-reverse {
+    -webkit-flex-wrap: wrap-reverse;
+}
+</style>
+
+<body>
+<div class='flexbox'>
+    <h1>This text</h1>
+    <p>should be left aligned.</p>
+</div>
+
+<div class='flexbox wrap-reverse'>
+    <h1>This text</h1>
+    <p>should be right aligned.</p>
+</div>
+</body>
+
+</html>
