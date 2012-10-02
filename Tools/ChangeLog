@@ -1,3 +1,17 @@
+2012-10-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Several tests launch g_object_ref/unref assertion messages
+        https://bugs.webkit.org/show_bug.cgi?id=95062
+
+        Reviewed by Martin Robinson.
+
+        Only increase and decrease reference count of the accessibility
+        UI element if it actually exists.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+
 2012-10-02  Douglas Stockwell  <dstockwell@chromium.org>
 
         [chromium] running layout tests on mountainlion should use chromium TestExpectations
