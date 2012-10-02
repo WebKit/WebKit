@@ -40,10 +40,8 @@ namespace WebCore {
 static String platformLanguage()
 {
     DEFINE_STATIC_LOCAL(String, computedDefaultLanguage, ());
-    if (computedDefaultLanguage.isEmpty()) {
+    if (computedDefaultLanguage.isEmpty())
         computedDefaultLanguage.append(WebKit::Platform::current()->defaultLocale());
-        ASSERT(!computedDefaultLanguage.isEmpty());
-    }
     return computedDefaultLanguage;
 }
 
