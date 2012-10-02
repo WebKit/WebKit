@@ -1,3 +1,14 @@
+2012-10-02  Michael Saboff  <msaboff@apple.com>
+
+        Comment additions after r130109 
+
+        Rubber stamped by Geoffrey Garen.
+
+        Updated comments to how array storage works.
+
+        * runtime/ArrayStorage.h:
+        * runtime/JSArray.cpp:
+
 2012-10-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Block freeing thread should sleep indefinitely when there's no work to do

@@ -41,6 +41,8 @@ namespace JSC {
 // setStorage() methods. It is important to note that there may be space before the ArrayStorage that 
 // is used to quick unshift / shift operation. The actual allocated pointer is available by using:
 //     getStorage() - m_indexBias * sizeof(JSValue)
+// All slots in ArrayStorage (slots from 0 to vectorLength) are expected to be initialized to a JSValue or,
+// for hole slots, JSValue().
 struct ArrayStorage {
     WTF_MAKE_NONCOPYABLE(ArrayStorage);
 private:

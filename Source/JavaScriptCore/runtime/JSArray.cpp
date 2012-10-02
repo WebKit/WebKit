@@ -245,7 +245,7 @@ void JSArray::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pro
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-// This method makes room in the vector, but leaves the new space uncleared.
+// This method makes room in the vector, but leaves the new space for count slots uncleared.
 bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, bool addToFront, unsigned count)
 {
     ArrayStorage* storage = ensureArrayStorage(globalData);
