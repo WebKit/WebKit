@@ -1,3 +1,18 @@
+2012-10-02  Michael Saboff  <msaboff@apple.com>
+
+        HTMLConstructionSite::insertTextNode isn't optimized for 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=97740
+
+        Reviewed by Darin Adler.
+
+        Added an append method that takes an LChar source.  Made both the UChar and LChar versions optimally handle
+        the appendee and appendend string bitness.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append):
+        * wtf/text/WTFString.h:
+        (String):
+
 2012-10-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: switch to non intrusive instrumentation of ParsedURL.

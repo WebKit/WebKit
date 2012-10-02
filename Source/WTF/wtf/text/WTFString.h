@@ -302,6 +302,7 @@ public:
     WTF_EXPORT_STRING_API void append(LChar);
     void append(char c) { append(static_cast<LChar>(c)); };
     WTF_EXPORT_STRING_API void append(UChar);
+    WTF_EXPORT_STRING_API void append(const LChar*, unsigned length);
     WTF_EXPORT_STRING_API void append(const UChar*, unsigned length);
     WTF_EXPORT_STRING_API void insert(const String&, unsigned pos);
     void insert(const UChar*, unsigned length, unsigned pos);

@@ -63,26 +63,32 @@ String CharacterData::substringData(unsigned offset, unsigned count, ExceptionCo
     return m_data.substring(offset, count);
 }
 
-unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength, unsigned lengthLimit)
+unsigned CharacterData::parserAppendData(const String& string, unsigned offset, unsigned lengthLimit)
 {
     unsigned oldLength = m_data.length();
 
-    unsigned end = min(dataLength, lengthLimit - oldLength);
+    ASSERT(lengthLimit >= oldLength);
+
+    unsigned characterLength = string.length() - offset;
+    unsigned characterLengthLimit = min(characterLength, lengthLimit - oldLength);
 
     // Check that we are not on an unbreakable boundary.
-    // Some text break iterator implementations work best if the passed buffer is as small as possible, 
-    // see <https://bugs.webkit.org/show_bug.cgi?id=29092>. 
+    // Some text break iterator implementations work best if the passed buffer is as small as possible,
+    // see <https://bugs.webkit.org/show_bug.cgi?id=29092>.
     // We need at least two characters look-ahead to account for UTF-16 surrogates.
-    if (end < dataLength) {
-        NonSharedCharacterBreakIterator it(data, (end + 2 > dataLength) ? dataLength : end + 2);
-        if (!isTextBreak(it, end))
-            end = textBreakPreceding(it, end);
+    if (characterLengthLimit < characterLength) {
+        NonSharedCharacterBreakIterator it(string.characters() + offset, (characterLengthLimit + 2 > characterLength) ? characterLength : characterLengthLimit + 2);
+        if (!isTextBreak(it, characterLengthLimit))
+            characterLengthLimit = textBreakPreceding(it, characterLengthLimit);
     }
-    
-    if (!end)
+
+    if (!characterLengthLimit)
         return 0;
 
-    m_data.append(data, end);
+    if (string.is8Bit())
+        m_data.append(string.characters8() + offset, characterLengthLimit);
+    else
+        m_data.append(string.characters16() + offset, characterLengthLimit);
 
     updateRenderer(oldLength, 0);
     document()->incDOMTreeVersion();
@@ -90,8 +96,8 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
     // parser to dispatch DOM mutation events.
     if (parentNode())
         parentNode()->childrenChanged();
-    
-    return end;
+
+    return characterLengthLimit;
 }
 
 void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

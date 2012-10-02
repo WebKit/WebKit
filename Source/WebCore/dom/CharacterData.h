@@ -45,7 +45,7 @@ public:
 
     // Like appendData, but optimized for the parser (e.g., no mutation events).
     // Returns how much could be added before length limit was met.
-    unsigned parserAppendData(const UChar*, unsigned dataLength, unsigned lengthLimit);
+    unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 

@@ -167,7 +167,7 @@ void String::insert(const String& str, unsigned pos)
     insert(str.characters(), str.length(), pos);
 }
 
-void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
+void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
 {
     if (!m_impl) {
         if (!charactersToAppend)
@@ -180,14 +180,56 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
         return;
 
     ASSERT(charactersToAppend);
-    UChar* data;
-    if (lengthToAppend > numeric_limits<unsigned>::max() - length())
+
+    unsigned strLength = m_impl->length();
+
+    if (m_impl->is8Bit()) {
+        if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
+            CRASH();
+        LChar* data;
+        RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
+        StringImpl::copyChars(data, m_impl->characters8(), strLength);
+        StringImpl::copyChars(data + strLength, charactersToAppend, lengthToAppend);
+        m_impl = newImpl.release();
+        return;
+    }
+
+    if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
         CRASH();
+    UChar* data;
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() + lengthToAppend, data);
-    memcpy(data, characters(), length() * sizeof(UChar));
-    memcpy(data + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
+    StringImpl::copyChars(data, m_impl->characters16(), strLength);
+    StringImpl::copyChars(data + strLength, charactersToAppend, lengthToAppend);
     m_impl = newImpl.release();
 }
+
+void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
+{
+    if (!m_impl) {
+        if (!charactersToAppend)
+            return;
+        m_impl = StringImpl::create(charactersToAppend, lengthToAppend);
+        return;
+    }
+
+    if (!lengthToAppend)
+        return;
+
+    unsigned strLength = m_impl->length();
+    
+    ASSERT(charactersToAppend);
+    if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
+        CRASH();
+    UChar* data;
+    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
+    if (m_impl->is8Bit())
+        StringImpl::copyChars(data, characters8(), strLength);
+    else
+        StringImpl::copyChars(data, characters16(), strLength);
+    StringImpl::copyChars(data + strLength, charactersToAppend, lengthToAppend);
+    m_impl = newImpl.release();
+}
+
 
 void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, unsigned position)
 {

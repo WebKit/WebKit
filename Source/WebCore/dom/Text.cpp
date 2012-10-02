@@ -288,7 +288,7 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& d
         return create(document, data);
 
     RefPtr<Text> result = Text::create(document, String());
-    result->parserAppendData(data.characters() + start, dataLength - start, maxChars);
+    result->parserAppendData(data, start, maxChars);
 
     return result;
 }
