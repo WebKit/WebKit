@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+
+This test injects an inline script from JavaScript. The resulting console error should contain a stack trace.
+
+Message[0]: [native code]:0 Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+
+Stack Trace:
+
+    0) [native code] / appendChild / 0 / 0
+    1) http://127.0.0.1:8000/inspector/resources/csp-inline-test.js / thisTest / 4 / 0
+    2) (internal script) / eval code / (line number) / (column number)
+    3) [native code] / eval / 0 / 0
+    4) [native code] / evaluate / 0 / 0
+    5) (internal script) / _evaluateOn / (line number) / (column number)
+    6) (internal script) / _evaluateAndWrap / (line number) / (column number)
+    7) (internal script) / evaluate / (line number) / (column number)
+    8) [native code] /  / 0 / 0
+

@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
-
-Tests that a CSP-blocked `setTimeout` call generates a console message with a stack trace (https://bugs.webkit.org/show_bug.cgi?id=86943). This should be followed by a rejection notice tied to line 18.
-
-PASS: Return value for blocked setTimeout is 0
-Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
- contentSecurityPolicy-blocks-setTimeout.html:18
-

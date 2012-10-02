@@ -116,6 +116,11 @@ PassRefPtr<ScriptCallStack> createScriptCallStackForConsole()
     return createScriptCallStack(maxStackSize);
 }
 
+PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(ScriptState* /* state */)
+{
+    return createScriptCallStackForConsole();
+}
+
 PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount)
 {
     v8::HandleScope scope;

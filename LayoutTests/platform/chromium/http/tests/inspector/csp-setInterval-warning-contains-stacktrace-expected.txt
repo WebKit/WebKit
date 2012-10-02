@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+
+This test attempts to evaluate script via setInterval. The resulting console error should contain a stack trace tied to line 11.
+
+Message[0]: csp-setInterval-warning-contains-stacktrace.html:11 Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+
+Stack Trace:
+
+    0) http://127.0.0.1:8000/inspector/csp-setInterval-warning-contains-stacktrace.html / thisTest / 11 / 26
+    1) (internal script) /  / (line number) / (column number)
+    2) (internal script) / InjectedScript._evaluateOn / (line number) / (column number)
+    3) (internal script) / InjectedScript._evaluateAndWrap / (line number) / (column number)
+    4) (internal script) / InjectedScript.evaluate / (line number) / (column number)
+

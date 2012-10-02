@@ -39,6 +39,8 @@
 #include "PingLoader.h"
 #include "SchemeRegistry.h"
 #include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
+#include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
 #include <wtf/HashSet.h>
@@ -736,7 +738,7 @@ public:
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowEval(PassRefPtr<ScriptCallStack>, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowEval(ScriptState*, ContentSecurityPolicy::ReportingStatus) const;
     bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL&) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const KURL&, ContentSecurityPolicy::ReportingStatus) const;
 
@@ -769,7 +771,7 @@ private:
     void setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirectiveType>&);
 
     SourceListDirective* operativeDirective(SourceListDirective*) const;
-    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
+    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), ScriptState* = 0) const;
 
     bool checkEval(SourceListDirective*) const;
     bool checkInline(SourceListDirective*) const;
@@ -779,7 +781,7 @@ private:
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
 
-    bool checkEvalAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
+    bool checkEvalAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), ScriptState* = 0) const;
     bool checkInlineAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, bool isScript) const;
     bool checkNonceAndReportViolation(NonceDirective*, const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
 
@@ -843,10 +845,10 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* pol
     return directives.release();
 }
 
-void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const String& contextURL, const WTF::OrdinalNumber& contextLine, PassRefPtr<ScriptCallStack> callStack) const
+void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
-    m_policy->reportViolation(directiveText, message, blockedURL, m_reportURIs, m_header, contextURL, contextLine, callStack);
+    m_policy->reportViolation(directiveText, message, blockedURL, m_reportURIs, m_header, contextURL, contextLine, state);
 }
 
 bool CSPDirectiveList::checkEval(SourceListDirective* directive) const
@@ -883,7 +885,7 @@ SourceListDirective* CSPDirectiveList::operativeDirective(SourceListDirective* d
     return directive ? directive : m_defaultSrc.get();
 }
 
-bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directive, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, PassRefPtr<ScriptCallStack> callStack) const
+bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directive, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
     if (checkEval(directive))
         return true;
@@ -892,7 +894,7 @@ bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directiv
     if (directive == m_defaultSrc)
         suffix = " Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback.";
 
-    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", KURL(), contextURL, contextLine, callStack);
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\"." + suffix + "\n", KURL(), contextURL, contextLine, state);
     if (!m_reportOnly) {
         m_policy->reportBlockedScriptExecutionToInspector(directive->text());
         return false;
@@ -999,11 +1001,11 @@ bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::Ord
         checkInline(operativeDirective(m_styleSrc.get()));
 }
 
-bool CSPDirectiveList::allowEval(PassRefPtr<ScriptCallStack> callStack, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool CSPDirectiveList::allowEval(ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), callStack) :
+        checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), state) :
         checkEval(operativeDirective(m_scriptSrc.get()));
 }
 
@@ -1345,11 +1347,21 @@ ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() 
     return m_policies.isEmpty() ? EnforcePolicy : m_policies[0]->headerType();
 }
 
-template<bool (CSPDirectiveList::*allowed)(PassRefPtr<ScriptCallStack>, ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAllWithCallStack(const CSPDirectiveListVector& policies, PassRefPtr<ScriptCallStack> callStack, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (CSPDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>
+bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
     for (size_t i = 0; i < policies.size(); ++i) {
-        if (!(policies[i].get()->*allowed)(callStack, reportingStatus))
+        if (!(policies[i].get()->*allowed)(reportingStatus))
+            return false;
+    }
+    return true;
+}
+
+template<bool (CSPDirectiveList::*allowed)(ScriptState* state, ContentSecurityPolicy::ReportingStatus) const>
+bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus)
+{
+    for (size_t i = 0; i < policies.size(); ++i) {
+        if (!(policies[i].get()->*allowed)(state, reportingStatus))
             return false;
     }
     return true;
@@ -1410,9 +1422,9 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
     return isAllowedByAllWithContext<&CSPDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, reportingStatus);
 }
 
-bool ContentSecurityPolicy::allowEval(PassRefPtr<ScriptCallStack> callStack, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowEval(ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    return isAllowedByAllWithCallStack<&CSPDirectiveList::allowEval>(m_policies, callStack, reportingStatus);
+    return isAllowedByAllWithState<&CSPDirectiveList::allowEval>(m_policies, state, reportingStatus);
 }
 
 String ContentSecurityPolicy::evalDisabledErrorMessage() const
@@ -1514,9 +1526,9 @@ void ContentSecurityPolicy::enforceSandboxFlags(SandboxFlags mask) const
     m_scriptExecutionContext->enforceSandboxFlags(mask);
 }
 
-void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, PassRefPtr<ScriptCallStack> callStack) const
+void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
-    logToConsole(consoleMessage, contextURL, contextLine, callStack);
+    logToConsole(consoleMessage, contextURL, contextLine, state);
 
     if (reportURIs.isEmpty())
         return;
@@ -1612,8 +1624,17 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
     logToConsole(message);
 }
 
-void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, PassRefPtr<ScriptCallStack> callStack) const
+void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
+    RefPtr<ScriptCallStack> callStack;
+    if (InspectorInstrumentation::consoleAgentEnabled(m_scriptExecutionContext)) {
+        if (state)
+            callStack = createScriptCallStackForConsole(state);
+        else
+            callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+        if (callStack && !callStack->size())
+            callStack = 0;
+    }
     m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), callStack);
 }
 
