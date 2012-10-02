@@ -197,11 +197,11 @@ Bug(GTK) fast/forms/color [ Skip ]
 webkit.org/b/29359 fast/forms/date [ Failure ]
 webkit.org/b/29359 fast/forms/date/date-interactive-validation-required.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-pre-100.html [ Skip ]
-webkit.org/b/29359 fast/forms/date/calendar-picker-appearance-with-step.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-appearance.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-key-operations.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-mouse-operations.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/calendar-picker-type-change-onclick.html [ Pass ]
+webkit.org/b/29359 fast/forms/date/calendar-picker-with-step.html [ Skip ]
 webkit.org/b/29359 fast/forms/date/date-stepup-stepdown-from-renderer.html [ Pass ]
 webkit.org/b/29359 fast/forms/date/no-page-popup-controller.html [ Pass ]
 webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
@@ -568,6 +568,8 @@ webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnl
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout Pass ]
 
 webkit.org/b/98036 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
+
+webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
