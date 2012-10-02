@@ -1,3 +1,16 @@
+2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Programs/WebKit2APITests/TestCookieManager fails
+        https://bugs.webkit.org/show_bug.cgi?id=98176
+
+        Reviewed by Martin Robinson.
+
+        The problem is that the soup server has a g_assert_not_reached()
+        for unknown paths, but know /favicon.icon might be requested.
+
+        * UIProcess/API/gtk/tests/TestCookieManager.cpp:
+        (serverCallback): Ignore unknown paths.
+
 2012-10-02  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [WK2] PageViewportControllerClient.h uses WebCore class without declaring them
