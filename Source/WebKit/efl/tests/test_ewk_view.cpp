@@ -43,7 +43,7 @@ TEST_F(EWKTestBase, ewk_view_editable_get)
 TEST_F(EWKTestBase, ewk_view_uri_get)
 {
     loadUrl();
-    ASSERT_STREQ(ewk_view_uri_get(webView()), Config::defaultTestPage);
+    ASSERT_STREQ(Config::defaultTestPage, ewk_view_uri_get(webView()));
 }
 
 /**
