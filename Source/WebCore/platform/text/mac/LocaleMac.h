@@ -82,6 +82,7 @@ private:
     NSDateFormatter *createTimeFormatter();
     NSDateFormatter *createShortTimeFormatter();
 
+    String m_dateFormat;
     String m_localizedTimeFormatText;
     String m_localizedShortTimeFormatText;
     Vector<String> m_timeAMPMLabels;
