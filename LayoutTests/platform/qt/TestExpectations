@@ -2913,6 +2913,3 @@ webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnly
 webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 
-# [Qt] REGRESSION(r130160): It made 2 tests crash
-webkit.org/b/98158 svg/text/text-fonts-02-t.svg [ Crash Pass ]
-webkit.org/b/98158 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Crash Pass ]
