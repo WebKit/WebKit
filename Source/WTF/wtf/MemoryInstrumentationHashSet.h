@@ -32,7 +32,7 @@
 #define MemoryInstrumentationHashSet_h
 
 #include <wtf/HashSet.h>
-#include <wtf/MemoryInstrumentation.h>
+#include <wtf/MemoryInstrumentationSequence.h>
 
 namespace WTF {
 
@@ -41,7 +41,7 @@ void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* const& hashS
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
     info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
-    info.addCollectionElements(hashSet->begin(), hashSet->end());
+    reportSequenceMemoryUsage<ValueArg, typename HashSet<ValueArg, HashArg, TraitsArg>::const_iterator>(hashSet->begin(), hashSet->end(), info);
 }
 
 }

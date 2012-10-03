@@ -40,7 +40,10 @@ template<typename ValueType>
 struct SequenceMemoryInstrumentationTraits {
     template <typename I> static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
     {
-        info.addCollectionElements(iterator, end);
+        while (iterator != end) {
+            info.addMember(*iterator);
+            ++iterator;
+        }
     }
 };
 
@@ -49,6 +52,10 @@ template<> struct SequenceMemoryInstrumentationTraits<int> {
 };
 
 template<> struct SequenceMemoryInstrumentationTraits<void*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<char*> {
     template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
 };
 

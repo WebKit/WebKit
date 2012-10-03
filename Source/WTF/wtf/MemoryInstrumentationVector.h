@@ -31,7 +31,7 @@
 #ifndef MemoryInstrumentationVector_h
 #define MemoryInstrumentationVector_h
 
-#include <wtf/MemoryInstrumentation.h>
+#include <wtf/MemoryInstrumentationSequence.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -42,7 +42,7 @@ void reportMemoryUsage(const Vector<T, inlineCapacity>* const& vector, MemoryObj
     MemoryClassInfo info(memoryObjectInfo, vector);
     if (inlineCapacity < vector->capacity())
         info.addRawBuffer(vector->data(), vector->capacity() * sizeof(T));
-    info.addCollectionElements(vector->begin(), vector->end());
+    reportSequenceMemoryUsage<T, typename Vector<T, inlineCapacity>::const_iterator>(vector->begin(), vector->end(), info);
 }
 
 }

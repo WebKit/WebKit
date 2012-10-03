@@ -156,8 +156,6 @@ private:
     };
 
     template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addObject(this, t, ownerObjectType); }
-    template<typename HashCountedSetType> void addHashCountedSet(const HashCountedSetType&, MemoryObjectType, bool contentOnly = false);
-    template<typename CollectionType> void addInstrumentedCollection(const CollectionType&, MemoryObjectType, bool contentOnly = false);
     template<typename ListHashSetType> void addListHashSet(const ListHashSetType&, MemoryObjectType, bool contentOnly = false);
     void addRawBuffer(const void* const& buffer, MemoryObjectType ownerObjectType, size_t size)
     {
@@ -201,18 +199,6 @@ public:
     }
 
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
-    template<typename I> void addCollectionElements(I iterator, I end)
-    {
-        while (iterator != end) {
-            addMember(*iterator);
-            ++iterator;
-        }
-    }
-    void addCollectionElements(char* const*, char* const*) { }
-    void addCollectionElements(const char*, const char*) { }
-    void addCollectionElements(const int*, const int*) { }
-
-    template<typename HashSetType> void addHashCountedSet(const HashSetType& set) { m_memoryInstrumentation->addHashCountedSet(set, m_objectType, true); }
     template<typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
     void addPrivateBuffer(size_t size) { m_memoryInstrumentation->countObjectSize(m_objectType, size); }
@@ -263,25 +249,6 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Memory
         checkCountedObject(object);
     }
     addObjectImpl(object->get(), ownerObjectType, byPointer);
-}
-
-template<typename HashCountedSetType>
-void MemoryInstrumentation::addHashCountedSet(const HashCountedSetType& hashCountedSet, MemoryObjectType ownerObjectType, bool contentOnly)
-{
-    if (visited(&hashCountedSet))
-        return;
-    countObjectSize(ownerObjectType, calculateContainerSize(hashCountedSet, contentOnly));
-}
-
-template<typename CollectionType>
-void MemoryInstrumentation::addInstrumentedCollection(const CollectionType& collection, MemoryObjectType ownerObjectType, bool contentOnly)
-{
-    if (visited(&collection))
-        return;
-    countObjectSize(ownerObjectType, calculateContainerSize(collection, contentOnly));
-    typename CollectionType::const_iterator end = collection.end();
-    for (typename CollectionType::const_iterator i = collection.begin(); i != end; ++i)
-        addObject(*i, ownerObjectType);
 }
 
 template<typename ListHashSetType>
