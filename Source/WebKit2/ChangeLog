@@ -1,3 +1,12 @@
+2012-10-02  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed, GTK+,Efl debug build fix after r130225.
+
+        This patch allows to include the static xErrorString variable when LOG_DISABLED is 0.
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit):
+
 2012-10-02  Sam Weinig  <sam@webkit.org>
 
         Fix a typo and add some \n's to make Mark happy.

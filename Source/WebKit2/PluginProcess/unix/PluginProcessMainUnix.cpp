@@ -46,7 +46,7 @@ namespace WebKit {
 
 #ifdef XP_UNIX
 
-#ifndef LOG_DISABLED
+#if !LOG_DISABLED
 static const char xErrorString[] = "The program '%s' received an X Window System error.\n"
     "This probably reflects a bug in a browser plugin.\n"
     "The error was '%s'.\n"
