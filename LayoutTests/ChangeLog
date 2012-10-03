@@ -1,3 +1,25 @@
+2012-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, add expected files for new passing tests.
+
+        * platform/qt/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/qt/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-render-layer-expected.png: Added.
+        * platform/qt/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/qt/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/qt/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/qt/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/qt/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/qt/fast/overflow/paged-y-on-root-expected.png: Added.
+
 2012-10-03  Keishi Hattori  <keishi@webkit.org>
 
         Implement DataList UI for input type time on chromium
