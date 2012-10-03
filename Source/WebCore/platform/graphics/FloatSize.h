@@ -121,7 +121,7 @@ public:
     }
 
 #if PLATFORM(QT)
-    FloatSize(const QSizeF&);
+    explicit FloatSize(const QSizeF&);
     operator QSizeF() const;
 #endif
 

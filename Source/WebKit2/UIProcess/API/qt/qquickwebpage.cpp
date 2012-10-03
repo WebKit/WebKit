@@ -158,7 +158,7 @@ void QQuickWebPagePrivate::updateSize()
 
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (drawingArea && drawingArea->layerTreeCoordinatorProxy())
-        drawingArea->layerTreeCoordinatorProxy()->setContentsSize(contentsSize);
+        drawingArea->layerTreeCoordinatorProxy()->setContentsSize(WebCore::FloatSize(contentsSize));
 
     q->setSize(scaledSize);
 

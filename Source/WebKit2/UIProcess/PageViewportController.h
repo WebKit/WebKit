@@ -109,6 +109,7 @@ private:
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
     void updateMinimumScaleToFit();
+    WebCore::FloatSize viewportSizeInContentsCoordinates() const;
 
     WebPageProxy* const m_webPageProxy;
     PageViewportControllerClient* m_client;

@@ -145,7 +145,7 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
     if (m_viewportPosIsLocked) {
         FloatPoint clampedPos = clampViewportToContents(m_viewportPos, m_effectiveScale);
         // There might be rendered frames not covering our requested position yet, wait for it.
-        if (FloatRect(clampedPos, m_viewportSize / m_effectiveScale).intersects(coveredRect)) {
+        if (FloatRect(clampedPos, viewportSizeInContentsCoordinates()).intersects(coveredRect)) {
             m_client->setViewportPosition(clampedPos);
             m_viewportPosIsLocked = false;
         }
@@ -172,7 +172,7 @@ void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
     if (m_activeDeferrerCount)
         return;
 
-    FloatRect endVisibleContentRect(clampViewportToContents(cssPosition, m_effectiveScale), m_viewportSize / m_effectiveScale);
+    FloatRect endVisibleContentRect(clampViewportToContents(cssPosition, m_effectiveScale), viewportSizeInContentsCoordinates());
     if (m_lastFrameCoveredRect.intersects(endVisibleContentRect))
         m_client->setViewportPosition(endVisibleContentRect.location());
     else
@@ -210,7 +210,7 @@ void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVec
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return;
 
-    FloatRect visibleContentsRect(clampViewportToContents(m_viewportPos, m_effectiveScale), m_viewportSize / m_effectiveScale);
+    FloatRect visibleContentsRect(clampViewportToContents(m_viewportPos, m_effectiveScale), viewportSizeInContentsCoordinates());
     visibleContentsRect.intersect(FloatRect(FloatPoint::zero(), m_contentsSize));
     drawingArea->setVisibleContentsRect(visibleContentsRect, m_effectiveScale, trajectoryVector);
 
@@ -229,6 +229,11 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
     updateMinimumScaleToFit();
 
     m_client->didChangeViewportAttributes();
+}
+
+WebCore::FloatSize PageViewportController::viewportSizeInContentsCoordinates() const
+{
+    return WebCore::FloatSize(m_viewportSize.width() / m_effectiveScale, m_viewportSize.height() / m_effectiveScale);
 }
 
 void PageViewportController::suspendContent()

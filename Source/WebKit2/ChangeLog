@@ -1,3 +1,26 @@
+2012-10-03  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [WK2] PageViewportController.cpp is supposed to be a generic WebKit2 file but only works with Qt port.
+        https://bugs.webkit.org/show_bug.cgi?id=98186
+
+        Reviewed by Noam Rosenthal.
+
+        Remove the dependece of WebCore::FloatSize to QSize implicit conversion.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::viewportSizeInContentsCoordinates):
+        (WebKit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+
 2012-10-03  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Qt WebKit2 failures.
