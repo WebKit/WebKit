@@ -1,3 +1,22 @@
+2012-10-03  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] Expose settings value to conditionally enable pinch-zoom scaling in the Chromium compositor.  The
+        flag defaults to disabled, so this change should be a no-op for scaling/scrolling behaviour.
+        https://bugs.webkit.org/show_bug.cgi?id=93292
+
+        Reviewed by James Robinson.
+
+        Tests:  Existing page-scale layout tests.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::frameScaleFactor):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setApplyPageScaleFactorInCompositor):
+        (WebCore::Settings::applyPageScaleFactorInCompositor):
+        (Settings):
+
 2012-10-03  Stephen Chenney  <schenney@chromium.org>
 
         Font data is purged while fonts are still using it

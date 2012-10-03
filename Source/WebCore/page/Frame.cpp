@@ -956,8 +956,9 @@ float Frame::frameScaleFactor() const
     Page* page = this->page();
 
     // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
-    if (!page || page->mainFrame() != this)
+    if (!page || page->mainFrame() != this || page->settings()->applyPageScaleFactorInCompositor())
         return 1;
+
     return page->pageScaleFactor();
 }
 

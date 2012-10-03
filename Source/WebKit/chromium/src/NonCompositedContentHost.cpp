@@ -32,6 +32,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerChromium.h"
 #include "PlatformContextSkia.h"
+#include "Settings.h"
 #include "WebViewImpl.h"
 #include <public/WebContentLayer.h>
 #include <public/WebFloatPoint.h>
@@ -48,7 +49,7 @@ NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
     m_graphicsLayer->setName("non-composited content");
 #endif
     m_graphicsLayer->setDrawsContent(true);
-    m_graphicsLayer->setAppliesPageScale(true);
+    m_graphicsLayer->setAppliesPageScale(!m_webView->page()->settings()->applyPageScaleFactorInCompositor());
     WebContentLayer* layer = static_cast<WebCore::GraphicsLayerChromium*>(m_graphicsLayer.get())->contentLayer();
     layer->setUseLCDText(true);
     layer->layer()->setOpaque(true);

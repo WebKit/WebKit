@@ -293,6 +293,7 @@ Settings::Settings(Page* page)
     , m_windowFocusRestricted(true)
     , m_diagnosticLoggingEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
+    , m_applyPageScaleFactorInCompositor(false)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

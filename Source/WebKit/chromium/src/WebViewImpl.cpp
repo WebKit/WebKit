@@ -2749,8 +2749,20 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     }
 
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
-    WebPoint clampedOrigin = clampOffsetAtScale(origin, scaleFactor);
-    page()->setPageScaleFactor(scaleFactor, clampedOrigin);
+    WebPoint scrollOffset;
+    if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
+        // If page scale is not applied in the compositor, then the scroll offsets should
+        // be modified by the scale factor.
+        scrollOffset = clampOffsetAtScale(origin, scaleFactor);
+    } else {
+        IntPoint offset = origin;
+        WebSize contentSize = mainFrame()->contentsSize();
+        offset.shrunkTo(IntPoint(contentSize.width - m_size.width, contentSize.height - m_size.height));
+        offset.clampNegativeToZero();
+        scrollOffset = offset;
+    }
+
+    page()->setPageScaleFactor(scaleFactor, scrollOffset);
     m_pageScaleFactorIsSet = true;
 }
 
@@ -3919,15 +3931,21 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
         mainFrameImpl()->frameView()->scrollBy(scrollDelta);
     } else {
         // The page scale changed, so apply a scale and scroll in a single
-        // operation. The old scroll offset (and passed-in delta) are
-        // in the old coordinate space, so we first need to multiply them
-        // by the page scale delta.
+        // operation.
         WebSize scrollOffset = mainFrame()->scrollOffset();
         scrollOffset.width += scrollDelta.width;
         scrollOffset.height += scrollDelta.height;
-        WebPoint scaledScrollOffset(scrollOffset.width * pageScaleDelta,
-                                    scrollOffset.height * pageScaleDelta);
-        setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
+
+        WebPoint scrollPoint(scrollOffset.width, scrollOffset.height);
+        if (!m_page->settings()->applyPageScaleFactorInCompositor()) {
+            // The old scroll offset (and passed-in delta) are in the old
+            // coordinate space, so we first need to multiply them by the page
+            // scale delta.
+            scrollPoint.x = scrollPoint.x * pageScaleDelta;
+            scrollPoint.y = scrollPoint.y * pageScaleDelta;
+        }
+
+        setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scrollPoint);
         m_doubleTapZoomInEffect = false;
     }
 }

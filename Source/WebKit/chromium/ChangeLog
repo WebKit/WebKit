@@ -1,3 +1,24 @@
+2012-10-03  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] Expose settings value to conditionally enable pinch-zoom scaling in the Chromium compositor.  The
+        flag defaults to disabled, so this change should be a no-op for scaling/scrolling behaviour.
+        https://bugs.webkit.org/show_bug.cgi?id=93292
+
+        Reviewed by James Robinson.
+
+        * public/WebSettings.h:
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setApplyPageScaleFactorInCompositor):
+        (WebKit):
+        (WebKit::WebSettingsImpl::applyPageScaleFactorInCompositor):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+
 2012-10-03  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Add SpeechRecognition.interimResults attribute

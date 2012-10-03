@@ -140,6 +140,11 @@ void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDef
     m_applyDefaultDeviceScaleFactorInCompositor = applyDefaultDeviceScaleFactorInCompositor;
 }
 
+void WebSettingsImpl::setApplyPageScaleFactorInCompositor(bool applyPageScaleFactorInCompositor)
+{
+    m_settings->setApplyPageScaleFactorInCompositor(applyPageScaleFactorInCompositor);
+}
+
 void WebSettingsImpl::setTextAutosizingEnabled(bool enabled)
 {
 #if ENABLE(TEXT_AUTOSIZING)
@@ -651,6 +656,11 @@ void WebSettingsImpl::setCookieEnabled(bool enabled)
 void WebSettingsImpl::setGestureTapHighlightEnabled(bool enableHighlight)
 {
     m_gestureTapHighlightEnabled = enableHighlight;
+}
+
+bool WebSettingsImpl::applyPageScaleFactorInCompositor() const
+{
+    return m_settings->applyPageScaleFactorInCompositor();
 }
 
 } // namespace WebKit

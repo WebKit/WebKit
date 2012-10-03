@@ -633,6 +633,9 @@ namespace WebCore {
         void setDiagnosticLoggingEnabled(bool enabled) { m_diagnosticLoggingEnabled = enabled; }
         bool diagnosticLoggingEnabled() const { return m_diagnosticLoggingEnabled; }
 
+        void setApplyPageScaleFactorInCompositor(bool enabled) { m_applyPageScaleFactorInCompositor = enabled; }
+        bool applyPageScaleFactorInCompositor() const { return m_applyPageScaleFactorInCompositor; }
+
     private:
         explicit Settings(Page*);
 
@@ -818,9 +821,11 @@ namespace WebCore {
 
         bool m_scrollingPerformanceLoggingEnabled : 1;
 
+        bool m_applyPageScaleFactorInCompositor : 1;
+
         Timer<Settings> m_setImageLoadingSettingsTimer;
         void imageLoadingSettingsTimerFired(Timer<Settings>*);
-        
+
         double m_incrementalRenderingSuppressionTimeoutInSeconds;
 
 #if USE(AVFOUNDATION)
