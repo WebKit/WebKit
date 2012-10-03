@@ -1,3 +1,29 @@
+2012-10-03  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: RTCPeerConnection should send down its handler via the FrameLoaderClient directly after creation.
+        https://bugs.webkit.org/show_bug.cgi?id=98149
+
+        Reviewed by Adam Barth.
+
+        The chromium implementation needs to know which Frame created a PeerConnection so
+        that the right housekeeping can take place correctly.
+
+        Not testable in DRT, but have verified the change manually and with our pyautotests.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        * loader/FrameLoaderClient.h:
+        (WebCore):
+        (FrameLoaderClient):
+        (WebCore::FrameLoaderClient::dispatchWillStartUsingPeerConnectionHandler):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::toWebRTCPeerConnectionHandler):
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium):
+        (WebCore::RTCPeerConnectionHandlerChromium::initialize):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (RTCPeerConnectionHandlerChromium):
+
 2012-10-03  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Profiles: taking heap snapshot causes error message in console.

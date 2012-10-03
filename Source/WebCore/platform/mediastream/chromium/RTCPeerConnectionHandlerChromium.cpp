@@ -55,6 +55,11 @@
 
 namespace WebCore {
 
+WebKit::WebRTCPeerConnectionHandler* RTCPeerConnectionHandlerChromium::toWebRTCPeerConnectionHandler(RTCPeerConnectionHandler* handler)
+{
+    return static_cast<RTCPeerConnectionHandlerChromium*>(handler)->m_webHandler.get();
+}
+
 PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerConnectionHandlerClient* client)
 {
     return adoptPtr(new RTCPeerConnectionHandlerChromium(client));
@@ -64,6 +69,7 @@ RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium(RTCPeerConnec
     : m_client(client)
 {
     ASSERT(m_client);
+    m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
 }
 
 RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium()
@@ -72,8 +78,10 @@ RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium()
 
 bool RTCPeerConnectionHandlerChromium::initialize(PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints)
 {
-    m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
-    return m_webHandler ? m_webHandler->initialize(configuration, constraints) : false;
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->initialize(configuration, constraints);
 }
 
 void RTCPeerConnectionHandlerChromium::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<MediaConstraints> constraints)

@@ -62,6 +62,7 @@ class WebMediaPlayer;
 class WebMediaPlayerClient;
 class WebNode;
 class WebPlugin;
+class WebRTCPeerConnectionHandler;
 class WebSharedWorker;
 class WebSharedWorkerClient;
 class WebSocketStreamHandle;
@@ -397,6 +398,11 @@ public:
 
     // A WebSocket object is going to open new stream connection.
     virtual void willOpenSocketStream(WebSocketStreamHandle*) { }
+
+    // MediaStream -----------------------------------------------------
+
+    // A new WebRTCPeerConnectionHandler is created.
+    virtual void willStartUsingPeerConnectionHandler(WebFrame*, WebRTCPeerConnectionHandler*) { }
 
     // Messages ------------------------------------------------------
 

@@ -35,8 +35,11 @@
 #include "RTCPeerConnection.h"
 
 #include "ArrayValue.h"
+#include "Document.h"
 #include "Event.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "MediaConstraintsImpl.h"
 #include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
@@ -130,9 +133,26 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
 {
-    m_peerHandler = RTCPeerConnectionHandler::create(this);
-    if (!m_peerHandler || !m_peerHandler->initialize(configuration, constraints))
+    ASSERT(m_scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+
+    if (!document->frame()) {
         ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    m_peerHandler = RTCPeerConnectionHandler::create(this);
+    if (!m_peerHandler) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    document->frame()->loader()->client()->dispatchWillStartUsingPeerConnectionHandler(m_peerHandler.get());
+
+    if (!m_peerHandler->initialize(configuration, constraints)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
 }
 
 RTCPeerConnection::~RTCPeerConnection()
