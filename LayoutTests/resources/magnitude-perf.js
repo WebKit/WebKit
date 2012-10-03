@@ -25,9 +25,9 @@ Magnitude.description = function(description)
     Magnitude._log(description);
 }
 
-Magnitude._numPoints = 10;
-Magnitude._minIterations = 5;
-Magnitude._maxIterations = 1000;
+Magnitude.numPoints = 8;
+Magnitude.millisecondsPerIteration = 25;
+Magnitude.initialMagnitude = 1;
 
 Magnitude.CONSTANT = "O(1)";
 Magnitude.LINEAR = "O(n)";
@@ -52,48 +52,25 @@ Magnitude.run = function(setup, test, expected)
     Magnitude._debugLog = "\nDEBUG LOG:\n";
 
     Magnitude._magnitudes = [];
-    for (var i = 0; i < Magnitude._numPoints; i++)
+    for (var i = Magnitude.initialMagnitude; i < Magnitude.numPoints + Magnitude.initialMagnitude; i++)
         Magnitude._magnitudes.push(Math.pow(2, i));
 
-    var milliseconds = 50;
-    var runsPerIteration = 1;
     var numTries = 3;
-    Magnitude._run(setup, test, expected, milliseconds, runsPerIteration, numTries);
+    Magnitude._run(setup, test, expected, numTries);
 }
 
-Magnitude._run = function(setup, test, expected, milliseconds, runsPerIteration, numTriesLeft)
+Magnitude._run = function(setup, test, expected, numTriesLeft)
 {
     Magnitude._iterations = {};
-    var maxMagnitude = Magnitude._magnitudes[Magnitude._magnitudes.length - 1];
-
-    // We want the largest magnitude to do between Magnitude._minIterations and Magnitude._maxIterations iterations.
-    // If it's too fast, we increase the runsPerIteration to do more runs per iteration.
-    // If it's too slow, we increase milliseconds to give each iteration more time.
-    while (true) {
-        var iterations = Magnitude._runIteration(setup, test, maxMagnitude, milliseconds, runsPerIteration);
-        Magnitude._debug("iterations " + iterations);
-
-        // If we get too few or too many on the largest magnitude iterations, then we can't trust this run.
-        // Too many runs means the the test loop itself may be taking more time than running the test.
-        if (iterations <= Magnitude._minIterations)
-            milliseconds = Math.max(2, Math.floor(Magnitude._minIterations / iterations)) * milliseconds;
-        else if (iterations > Magnitude._maxIterations)
-            runsPerIteration = Math.max(2, Math.floor(iterations / Magnitude._maxIterations)) * runsPerIteration;
-        else {
-            Magnitude._iterations[maxMagnitude] = iterations;
-            break;
-        }
-    }
-
-    for (var i = 0; i < Magnitude._magnitudes.length - 1; i++) {
+    for (var i = 0; i < Magnitude._magnitudes.length; i++) {
         var magnitude = Magnitude._magnitudes[i];
-        Magnitude._iterations[magnitude] = Magnitude._runIteration(setup, test, magnitude, milliseconds, runsPerIteration);
+        Magnitude._iterations[magnitude] = Magnitude._runIteration(setup, test, magnitude);
     }
 
-    Magnitude._logIterationInfo(milliseconds, runsPerIteration);
+    Magnitude._logIterationInfo();
 
     numTriesLeft--;
-    var bigO = Magnitude._bigOGuess(milliseconds);
+    var bigO = Magnitude._bigOGuess();
     if (bigO == expected || numTriesLeft < 1) {
         Magnitude._log(bigO == expected ? "PASS" : "FAIL: got " + bigO + " expected " + expected);
 
@@ -103,11 +80,11 @@ Magnitude._run = function(setup, test, expected, milliseconds, runsPerIteration,
             Magnitude._log(Magnitude._debugLog);
     } else {
         Magnitude._debug("numTriesLeft: " + numTriesLeft);
-        arguments.callee(setup, test, expected, milliseconds, runsPerIteration, numTriesLeft);
+        arguments.callee(setup, test, expected, numTriesLeft);
     }
 }
 
-Magnitude._rSquared = function(milliseconds, opt_xTransform, opt_yTransform)
+Magnitude._rSquared = function(opt_xTransform, opt_yTransform)
 {
     // Implement http://www.easycalculation.com/statistics/learn-correlation.php.
     // x = magnitude
@@ -125,7 +102,7 @@ Magnitude._rSquared = function(milliseconds, opt_xTransform, opt_yTransform)
         if (opt_xTransform)
             x = opt_xTransform(x);
 
-        var y = milliseconds / Magnitude._iterations[Magnitude._magnitudes[i]];
+        var y = Magnitude.millisecondsPerIteration / Magnitude._iterations[Magnitude._magnitudes[i]];
         if (opt_yTransform)
             y = opt_yTransform(y);
 
@@ -153,28 +130,25 @@ Magnitude._rSquared = function(milliseconds, opt_xTransform, opt_yTransform)
     return rSquared;
 }
 
-Magnitude._logIterationInfo = function(milliseconds, runsPerIteration)
+Magnitude._logIterationInfo = function()
 {
     var iterationsArray = [];
     for (var i = 0; i < Magnitude._magnitudes.length; i++) {
         var magnitude = Magnitude._magnitudes[i];
         var iterations = Magnitude._iterations[magnitude];
         iterationsArray.push(iterations);
-        Magnitude._debug("magnitude: " + magnitude + " iterations: " + iterations + " runsPerIteration " + runsPerIteration +
-            " loop-time " + milliseconds + " time/iteration(ms): " + milliseconds / iterations);
     }
 
     // Print out the magnitudes/arrays in CSV to afford easy copy-paste to a charting application.
     Magnitude._debug("magnitudes: " + Magnitude._magnitudes.join(','));
     Magnitude._debug("iterations: " + iterationsArray.join(','));
-    Magnitude._debug("milliseconds/iteration: " + iterationsArray.map(function(iterations) {return milliseconds / iterations}).join(','));
 }
 
-Magnitude._bigOGuess = function(milliseconds)
+Magnitude._bigOGuess = function()
 {
-    var rSquared = Magnitude._rSquared(milliseconds);
-    var rSquaredXLog = Magnitude._rSquared(milliseconds, Math.log);
-    var rSquaredXYLog = Magnitude._rSquared(milliseconds, Math.log, Math.log);
+    var rSquared = Magnitude._rSquared();
+    var rSquaredXLog = Magnitude._rSquared(Math.log);
+    var rSquaredXYLog = Magnitude._rSquared(Math.log, Math.log);
     Magnitude._debug("rSquared " + rSquared + " rSquaredXLog " + rSquaredXLog + " rSquaredXYLog " + rSquaredXYLog);
 
     var rSquaredMax = Math.max(rSquared, rSquaredXLog, rSquaredXYLog);
@@ -197,11 +171,11 @@ Magnitude._bigOGuess = function(milliseconds)
     return bigO;
 }
 
-Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPerIteration)
+Magnitude._runIteration = function(setup, test, magnitude)
 {
     setup(magnitude);
 
-    var debugStr = 'run iteration. magnitude ' + magnitude + " milliseconds " + milliseconds + " runsPerIteration " + runsPerIteration;
+    var debugStr = 'run iteration. magnitude ' + magnitude;
     if (window.GCController) {
         if (GCController.getJSObjectCount)
             debugStr += " jsObjectCountBefore " + GCController.getJSObjectCount();
@@ -219,27 +193,11 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
     Magnitude._debug(debugStr);
 
     var iterations = 0;
-    if (window.chromium) {
-        // FIXME: If using microseconds turns out to be less flaky, expose microseconds
-        // from JSC or testRunner and use them. Otherwise, get rid of this block.
-        var microseconds = milliseconds * 1000;
-        var interval = new chromium.Interval();
-        interval.start();
-        while (interval.microseconds() < microseconds) {
-            // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
-            for (var i = 0; i < runsPerIteration; i++)
-                test(magnitude);
-            iterations++;
-        }
-        interval.stop();
-    } else {
-        var start = Date.now();
-        while (Date.now() - start < milliseconds) {
-            // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
-            for (var i = 0; i < runsPerIteration; i++)
-                test(magnitude);
-            iterations++;
-        }
+    var nowFunction = window.performance.now || Date.now;
+    var start = nowFunction();
+    while (nowFunction() - start < Magnitude.millisecondsPerIteration) {
+        test(magnitude);
+        iterations++;
     }
     return iterations;
 }

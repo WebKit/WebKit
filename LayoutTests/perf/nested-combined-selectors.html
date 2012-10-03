@@ -58,7 +58,6 @@ function testStackStyling(magnitude)
 Magnitude.description('Tests styling multiple combinators have linear performance');
 Magnitude.run(setupStack, testStackStyling, Magnitude.LINEAR);
 sandbox.removeChild(sandbox.firstChild);
-Magnitude._numPoints=9; // Limit the max test magnitude since it triggers a test timeout
 Magnitude.run(setupList, testListStyling, Magnitude.LINEAR);
 sandbox.removeChild(sandbox.firstChild);
 </script>

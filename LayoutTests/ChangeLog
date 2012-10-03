@@ -1,3 +1,41 @@
+2012-10-03  Ojan Vafai  <ojan@chromium.org>
+
+        Simplify the magnitude-perf test harness
+        https://bugs.webkit.org/show_bug.cgi?id=98305
+
+        Reviewed by Ryosuke Niwa.
+
+        -Remove the chromium.Interval stuff. This API no longer exists.
+        -Reduce the number of iterations to 8.
+        -Start magnitude at 1 instead of 0.
+        -Remove all the iterationsPerRun junk. This complexity was not achieving the goal of
+        reducing flakiness.
+
+        With these changes, the perf tests are not flaky for me locally.
+        I ran all the perf tests with --iterations=100 and had no failures,
+        All the complexity was increasing flakiness.
+
+        This also reduces the runtime of the tests by >2x.
+
+        * perf/adding-radio-buttons.html:
+        This test is clearly linear. It should never have been marked constant.
+        The patch that landed it was fixing an n^2 behavior.
+
+        * perf/array-binary-search.html:
+        Search for the first item in the array so that the search is always actually log n.
+
+        * perf/nested-combined-selectors.html:
+        Now that we run fewer iterations, we don't need to artificially limit this test.
+
+        * resources/magnitude-perf.js:
+        (Magnitude.run):
+        (Magnitude._run):
+        (Magnitude._rSquared):
+        (Magnitude._logIterationInfo):
+        (Magnitude._bigOGuess):
+        (Magnitude._runIteration):
+        (Magnitude):
+
 2012-10-03  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] storage/indexeddb tests sometimes timeout

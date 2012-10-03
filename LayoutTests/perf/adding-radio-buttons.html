@@ -30,8 +30,8 @@ function test(magnitude) {
     parentForm.removeChild(radio);
 }
 
-Magnitude.description("Tests that adding a radio button to a radio button group is constant in the number of radio buttons.");
-Magnitude.run(setup, test, Magnitude.CONSTANT);
+Magnitude.description("Tests that adding a radio button to a radio button group is linear in the number of radio buttons.");
+Magnitude.run(setup, test, Magnitude.LINEAR);
 </script>
 </body>
 </html>
