@@ -35,7 +35,18 @@
 #include "NativeImageSkia.h"
 #include "GraphicsContext3D.h"
 #include "PlatformInstrumentation.h"
+#include "PlatformMemoryInstrumentation.h"
+#include "SkPixelRef.h"
 #include "SkiaUtils.h"
+
+void reportMemoryUsage(const SkBitmap* const& image, WTF::MemoryObjectInfo* memoryObjectInfo)
+{
+    WTF::MemoryClassInfo info(memoryObjectInfo, image);
+    SkPixelRef* pixelRef = image->pixelRef();
+    info.addMember(pixelRef);
+    if (pixelRef)
+        info.addRawBuffer(pixelRef->pixels(), image->getSize());
+}
 
 namespace WebCore {
 
@@ -162,4 +173,17 @@ void NativeImageSkia::CachedImageInfo::set(const SkIRect& otherSrcSubset, int wi
     requestSize.setHeight(height);
 }
 
+void NativeImageSkia::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addMember(m_image);
+    info.addMember(m_resizedImage);
+}
+
+void reportMemoryUsage(const NativeImageSkia* const& image, MemoryObjectInfo* memoryObjectInfo)
+{
+    image->reportMemoryUsage(memoryObjectInfo);
+}
+
 } // namespace WebCore
+

@@ -34,6 +34,7 @@
 #include "SkBitmap.h"
 #include "SkRect.h"
 #include "IntSize.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -91,6 +92,8 @@ public:
     // - resize imageSubset to destWidth x destHeight -> destImage.
     // - return destImage cropped by destVisibleSubset.
     SkBitmap resizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight, const SkIRect& destVisibleSubset) const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // CachedImageInfo is used to uniquely identify cached or requested image

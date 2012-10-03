@@ -1,3 +1,14 @@
+2012-10-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: instrument NativeImageSkia.
+        https://bugs.webkit.org/show_bug.cgi?id=96277
+
+        Reviewed by Yury Semikhatsky.
+
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::reportMemoryUsage):
+        (WebCore::reportMemoryUsage):
+
 2012-10-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remember the last dock option so that user could toggle between dock to bottom and right

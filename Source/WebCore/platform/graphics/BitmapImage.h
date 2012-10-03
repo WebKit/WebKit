@@ -88,6 +88,8 @@ public:
     // Returns whether there was cached image data to clear.
     bool clear(bool clearMetadata);
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
     NativeImagePtr m_frame;
     ImageOrientation m_orientation;
     float m_duration;

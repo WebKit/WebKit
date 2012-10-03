@@ -48,6 +48,10 @@ class NativeImageSkia;
 #include "SharedBitmap.h"
 #endif
 
+namespace WTF {
+class MemoryObjectInfo;
+}
+
 namespace WebCore {
 
 #if USE(CG)
@@ -67,6 +71,7 @@ typedef wxBitmap* NativeImagePtr;
 typedef WebCore::NativeImageCairo* NativeImagePtr;
 #elif USE(SKIA)
 typedef WebCore::NativeImageSkia* NativeImagePtr;
+void reportMemoryUsage(const NativeImageSkia* const&, WTF::MemoryObjectInfo*);
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #elif PLATFORM(BLACKBERRY)
