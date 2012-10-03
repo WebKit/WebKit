@@ -80,10 +80,6 @@ struct WebProcessCreationParameters {
 
     bool iconDatabaseEnabled;
 
-#if ENABLE(PLUGIN_PROCESS)
-    bool disablePluginProcessMessageTimeout;
-#endif
-
     double terminationTimeout;
 
     Vector<String> languages;

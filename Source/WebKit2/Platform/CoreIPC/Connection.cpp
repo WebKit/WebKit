@@ -203,7 +203,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
-    , m_defaultSyncMessageTimeout(NoTimeout)
     , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
     , m_shouldWaitForSyncReplies(true)
 {
@@ -282,13 +281,6 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     ASSERT(m_inDispatchMessageCount > 0);
 
     m_didReceiveInvalidMessage = true;
-}
-
-void Connection::setDefaultSyncMessageTimeout(double defaultSyncMessageTimeout)
-{
-    ASSERT(defaultSyncMessageTimeout != DefaultTimeout);
-
-    m_defaultSyncMessageTimeout = defaultSyncMessageTimeout;
 }
 
 PassOwnPtr<ArgumentEncoder> Connection::createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID)
@@ -427,9 +419,6 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
 
 PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags)
 {
-    if (timeout == DefaultTimeout)
-        timeout = m_defaultSyncMessageTimeout;
-
     // Use a really long timeout.
     if (timeout == NoTimeout)
         timeout = 1e10;
@@ -481,10 +470,6 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
 #endif
         
     }
-
-    // We timed out.
-    if (m_client)
-        m_client->syncMessageSendTimedOut(this);
 
     return nullptr;
 }

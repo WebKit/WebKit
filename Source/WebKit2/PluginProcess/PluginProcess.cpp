@@ -150,10 +150,6 @@ void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Mess
 {
 }
 
-void PluginProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
-{
-}
-
 void PluginProcess::initializePluginProcess(const PluginProcessCreationParameters& parameters)
 {
     ASSERT(!m_pluginModule);

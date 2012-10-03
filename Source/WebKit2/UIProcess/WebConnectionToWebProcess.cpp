@@ -124,11 +124,6 @@ void WebConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection* co
     m_client.didClose(this);
 }
 
-void WebConnectionToWebProcess::syncMessageSendTimedOut(CoreIPC::Connection* connection)
-{
-    m_process->syncMessageSendTimedOut(connection);
-}
-
 #if PLATFORM(WIN)
 Vector<HWND> WebConnectionToWebProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
 {

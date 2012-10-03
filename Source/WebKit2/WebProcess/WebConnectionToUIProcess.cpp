@@ -102,11 +102,6 @@ void WebConnectionToUIProcess::didReceiveInvalidMessage(CoreIPC::Connection* con
     m_process->didReceiveInvalidMessage(connection, messageID);
 }
 
-void WebConnectionToUIProcess::syncMessageSendTimedOut(CoreIPC::Connection* connection)
-{
-    m_process->syncMessageSendTimedOut(connection);
-}
-
 #if PLATFORM(WIN)
 Vector<HWND> WebConnectionToUIProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
 {

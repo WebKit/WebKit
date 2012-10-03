@@ -359,11 +359,6 @@ void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassR
     PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, reply);
 }
 
-void WebProcessProxy::pluginSyncMessageSendTimedOut(const String& pluginPath)
-{
-    PluginProcessManager::shared().pluginSyncMessageSendTimedOut(pluginPath);
-}
-
 #else
 
 void WebProcessProxy::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
@@ -478,10 +473,6 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Me
 
     // Terminate the WebProcesses.
     terminate();
-}
-
-void WebProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
-{
 }
 
 void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)

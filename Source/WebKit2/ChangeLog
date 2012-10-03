@@ -1,3 +1,64 @@
+2012-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Plugins are killed after 45 seconds if showing keychain "Allow/Deny" dialog
+        https://bugs.webkit.org/show_bug.cgi?id=85138
+        <rdar://problem/11406430>
+
+        Reviewed by Andreas Kling.
+
+        Remove the watchdog that would kill a plug-in if we've been waiting for a sync reply from it for more than 45 seconds.
+        It's unlikely that someone is going to wait 45 seconds for Safari to recover from a plug-in hang, and the timeout is
+        causing problems with plug-ins (see the bugzilla bug for more information).
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        (CoreIPC::Connection::waitForSyncReply):
+        * Platform/CoreIPC/Connection.h:
+        (Client):
+        (Connection):
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+        * PluginProcess/WebProcessConnection.cpp:
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        (PluginProcessManager):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (PluginProcessProxy):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        * UIProcess/WebConnectionToWebProcess.h:
+        (WebConnectionToWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (PluginProcessConnection):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        * WebProcess/WebConnectionToUIProcess.h:
+        (WebConnectionToUIProcess):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-10-03  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [WK2] PageViewportController.cpp is supposed to be a generic WebKit2 file but only works with Qt port.

@@ -159,9 +159,6 @@ WebProcess::WebProcess()
     , m_notificationManager(this)
 #endif
     , m_iconDatabaseProxy(this)
-#if ENABLE(PLUGIN_PROCESS)
-    , m_disablePluginProcessMessageTimeout(false)
-#endif
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
@@ -261,10 +258,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 #if USE(CFURLSTORAGESESSIONS)
     WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
-#endif
-
-#if ENABLE(PLUGIN_PROCESS)
-    m_disablePluginProcessMessageTimeout = parameters.disablePluginProcessMessageTimeout;
 #endif
 
     setTerminationTimeout(parameters.terminationTimeout);
@@ -759,10 +752,6 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Message
 {
     // We received an invalid message, but since this is from the UI process (which we trust),
     // we'll let it slide.
-}
-
-void WebProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
-{
 }
 
 void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
