@@ -22,6 +22,8 @@
 
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebView.h"
+#include "WebPageProxy.h"
 #include <WebCore/GOwnPtrSoup.h>
 #include <libsoup/soup.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -36,6 +38,7 @@ G_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
 struct _WebKitURISchemeRequestPrivate {
     WebKitWebContext* webContext;
     WKRetainPtr<WKSoupRequestManagerRef> wkRequestManager;
+    WKRetainPtr<WKPageRef> wkInitiatingPage;
     uint64_t requestID;
     CString uri;
     GOwnPtr<SoupURI> soupURI;
@@ -68,12 +71,13 @@ static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass* re
     g_type_class_add_private(requestClass, sizeof(WebKitURISchemeRequestPrivate));
 }
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WKSoupRequestManagerRef wkRequestManager, WKURLRef wkURL, uint64_t requestID)
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WKSoupRequestManagerRef wkRequestManager, WKURLRef wkURL, WKPageRef wkInitiatingPage, uint64_t requestID)
 {
     WebKitURISchemeRequest* request = WEBKIT_URI_SCHEME_REQUEST(g_object_new(WEBKIT_TYPE_URI_SCHEME_REQUEST, NULL));
     request->priv->webContext = webContext;
     request->priv->wkRequestManager = wkRequestManager;
     request->priv->uri = toImpl(wkURL)->string().utf8();
+    request->priv->wkInitiatingPage = wkInitiatingPage;
     request->priv->requestID = requestID;
     return request;
 }
@@ -136,6 +140,21 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
     if (!request->priv->soupURI)
         request->priv->soupURI.set(soup_uri_new(request->priv->uri.data()));
     return request->priv->soupURI->path;
+}
+
+/**
+ * webkit_uri_scheme_request_get_web_view:
+ * @request: a #WebKitURISchemeRequest
+ *
+ * Get the #WebKitWebView that initiated the request.
+ *
+ * Returns: (transfer none): the #WebKitWebView that initiated @request.
+ */
+WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), 0);
+
+    return WEBKIT_WEB_VIEW(toImpl(request->priv->wkInitiatingPage.get())->viewWidget());
 }
 
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)

@@ -21,6 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebSoupRequestManagerProxy {
-    DidReceiveURIRequest(WTF::String uriString, uint64_t requestID);
     DidFailToLoadURIRequest(uint64_t requestID);
 }

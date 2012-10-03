@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FrameNetworkingContextGtk.h"
 
+#include "NotImplemented.h"
 #include "ResourceHandle.h"
 
 using namespace WebCore;
@@ -30,6 +31,12 @@ namespace WebKit {
 SoupSession* FrameNetworkingContextGtk::soupSession() const
 {
     return ResourceHandle::defaultSession();
+}
+
+uint64_t FrameNetworkingContextGtk::initiatingPageID() const
+{
+    notImplemented();
+    return 0;
 }
 
 }

@@ -76,9 +76,9 @@ void WebSoupRequestManagerProxy::didReceiveURIRequestData(const WebData* request
     m_webContext->sendToAllProcesses(Messages::WebSoupRequestManager::DidReceiveURIRequestData(requestData->dataReference(), requestID));
 }
 
-void WebSoupRequestManagerProxy::didReceiveURIRequest(const String& uriString, uint64_t requestID)
+void WebSoupRequestManagerProxy::didReceiveURIRequest(const String& uriString, WebPageProxy* initiaingPage, uint64_t requestID)
 {
-    if (!m_client.didReceiveURIRequest(this, WebURL::create(uriString).get(), requestID))
+    if (!m_client.didReceiveURIRequest(this, WebURL::create(uriString).get(), initiaingPage, requestID))
         didHandleURIRequest(WebData::create(0, 0).get(), 0, String(), requestID);
 }
 

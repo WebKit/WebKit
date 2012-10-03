@@ -25,6 +25,7 @@
 #include "WebErrors.h"
 #include "WebKitSoupRequestGeneric.h"
 #include "WebKitSoupRequestInputStream.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebSoupRequestManagerProxyMessages.h"
 #include <WebCore/ResourceHandle.h>
@@ -169,12 +170,14 @@ void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReferenc
 void WebSoupRequestManager::send(GSimpleAsyncResult* result, GCancellable* cancellable)
 {
     GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result))));
-    SoupURI* uri = soup_request_get_uri(SOUP_REQUEST(request.get()));
-    GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
+    SoupRequest* soupRequest = SOUP_REQUEST(request.get());
+    GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(soupRequest), FALSE));
 
     uint64_t requestID = generateSoupRequestID();
     m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(result, request.get(), cancellable)));
-    m_process->connection()->send(Messages::WebSoupRequestManagerProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), 0);
+
+    uint64_t initiaingPageID = WebCore::ResourceHandle::getSoupRequestInitiaingPageID(soupRequest);
+    m_process->connection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiaingPageID);
 }
 
 GInputStream* WebSoupRequestManager::finish(GSimpleAsyncResult* result)

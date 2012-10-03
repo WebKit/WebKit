@@ -108,6 +108,10 @@
 #include "ArgumentCodersGtk.h"
 #endif
 
+#if USE(SOUP)
+#include "WebSoupRequestManagerProxy.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -4084,5 +4088,12 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 #endif
 
 #endif // PLATFORM(MAC)
+
+#if USE(SOUP)
+void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
+{
+    m_process->context()->soupRequestManagerProxy()->didReceiveURIRequest(uriString, this, requestID);
+}
+#endif
 
 } // namespace WebKit

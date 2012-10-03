@@ -51,22 +51,25 @@ struct _WebKitURISchemeRequestClass {
 };
 
 WEBKIT_API GType
-webkit_uri_scheme_request_get_type   (void);
+webkit_uri_scheme_request_get_type     (void);
 
 WEBKIT_API const gchar *
-webkit_uri_scheme_request_get_scheme (WebKitURISchemeRequest *request);
+webkit_uri_scheme_request_get_scheme   (WebKitURISchemeRequest *request);
 
 WEBKIT_API const gchar *
-webkit_uri_scheme_request_get_uri    (WebKitURISchemeRequest *request);
+webkit_uri_scheme_request_get_uri      (WebKitURISchemeRequest *request);
 
 WEBKIT_API const gchar *
-webkit_uri_scheme_request_get_path   (WebKitURISchemeRequest *request);
+webkit_uri_scheme_request_get_path     (WebKitURISchemeRequest *request);
+
+WEBKIT_API WebKitWebView *
+webkit_uri_scheme_request_get_web_view (WebKitURISchemeRequest *request);
 
 WEBKIT_API void
-webkit_uri_scheme_request_finish     (WebKitURISchemeRequest *request,
-                                      GInputStream           *stream,
-                                      gint64                  stream_length,
-                                      const gchar            *mime_type);
+webkit_uri_scheme_request_finish       (WebKitURISchemeRequest *request,
+                                        GInputStream           *stream,
+                                        gint64                  stream_length,
+                                        const gchar            *mime_type);
 
 G_END_DECLS
 

@@ -1,3 +1,60 @@
+2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get the web view that initiated a custom URI request to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=97895
+
+        Reviewed by Martin Robinson.
+
+        The message DidReceiveURIRequest is now sent to the page that
+        initiated the request that forwards the mesassage to the
+        WebSoupRequestManagerProxy.
+
+        * UIProcess/API/C/soup/WKSoupRequestManager.h: Update
+        didReceiveURIRequest callback to receive the initiating page ID.
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp:
+        (didReceiveURIRequest): Update the callback API change.
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp:
+        (didReceiveURIRequest): Pass the initiating page to the
+        WebKitURISchemeRequest constructor.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (_WebKitURISchemeRequestPrivate): Keep a reference to the
+        WebPageProxy that initiatesd the request.
+        (webkitURISchemeRequestCreate): Save the initiating page.
+        (webkit_uri_scheme_request_get_web_view): Return the view widget
+        of the initiating WebPageProxy.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h:
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveURIRequest): Forward the request
+        to the soup request manager proxy.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add didReceiveURIRequest().
+        * UIProcess/WebPageProxy.messages.in: Add DidReceiveURIRequest
+        message.
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp:
+        (WebKit::WebSoupRequestManagerClient::didReceiveURIRequest):
+        Pass the inititing page to the client callback.
+        * UIProcess/soup/WebSoupRequestManagerClient.h:
+        (WebSoupRequestManagerClient):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequest): Pass
+        the inititing page to the client.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+        * UIProcess/soup/WebSoupRequestManagerProxy.messages.in: Remove
+        DidReceiveURIRequest message.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        Save the pageID of the WebFrame.
+        (WebKit::WebFrameNetworkingContext::initiatingPageID): Return the
+        inititing page ID.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::send): Send DidReceiveURIRequest
+        message to the WebPage that initiated the request.
+
 2012-10-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed build fix for the GTK port after r130207.

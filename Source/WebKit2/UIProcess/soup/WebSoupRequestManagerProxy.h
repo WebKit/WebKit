@@ -54,14 +54,13 @@ public:
     void didReceiveURIRequestData(const WebData*, uint64_t requestID);
     void didFailToLoadURIRequest(uint64_t requestID);
 
+    void didReceiveURIRequest(const String& uriString, WebPageProxy*, uint64_t requestID);
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
     WebSoupRequestManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
-
-    void didReceiveURIRequest(const String& uriString, uint64_t requestID);
 
     void didReceiveWebSoupRequestManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 

@@ -240,6 +240,11 @@ SoupSession* ResourceHandleInternal::soupSession()
     return sessionFromContext(m_context.get());
 }
 
+uint64_t ResourceHandleInternal::initiatingPageID()
+{
+    return (m_context && m_context->isValid()) ? m_context->initiatingPageID() : 0;
+}
+
 ResourceHandle::~ResourceHandle()
 {
     cleanupSoupRequestOperation(this, true);
@@ -680,6 +685,18 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
 }
 #endif
 
+static const char* gSoupRequestInitiaingPageIDKey = "wk-soup-request-initiaing-page-id";
+
+static void setSoupRequestInitiaingPageID(SoupRequest* request, uint64_t initiatingPageID)
+{
+    if (!initiatingPageID)
+        return;
+
+    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
+    *initiatingPageIDPtr = initiatingPageID;
+    g_object_set_data_full(G_OBJECT(request), g_intern_static_string(gSoupRequestInitiaingPageIDKey), initiatingPageIDPtr, fastFree);
+}
+
 static bool startHTTPRequest(ResourceHandle* handle)
 {
     ASSERT(handle);
@@ -701,6 +718,8 @@ static bool startHTTPRequest(ResourceHandle* handle)
         d->m_soupRequest = 0;
         return false;
     }
+
+    setSoupRequestInitiaingPageID(d->m_soupRequest.get(), d->initiatingPageID());
 
     d->m_soupMessage = adoptGRef(soup_request_http_get_message(SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
     if (!d->m_soupMessage)
@@ -1033,6 +1052,8 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run
     handle->ref();
 
+    setSoupRequestInitiaingPageID(d->m_soupRequest.get(), d->initiatingPageID());
+
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading) {
         d->m_cancellable = adoptGRef(g_cancellable_new());
@@ -1072,6 +1093,12 @@ SoupSession* ResourceHandle::defaultSession()
     }
 
     return session;
+}
+
+uint64_t ResourceHandle::getSoupRequestInitiaingPageID(SoupRequest* request)
+{
+    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(g_object_get_data(G_OBJECT(request), gSoupRequestInitiaingPageIDKey));
+    return initiatingPageIDPtr ? *initiatingPageIDPtr : 0;
 }
 
 }

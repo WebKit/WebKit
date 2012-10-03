@@ -28,11 +28,11 @@
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
-#include "WebFrame.h"
-
 #include <WebCore/FrameNetworkingContext.h>
 
 namespace WebKit {
+
+class WebFrame;
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
@@ -42,12 +42,12 @@ public:
     }
 
 private:
-    WebFrameNetworkingContext(WebFrame* frame)
-        : WebCore::FrameNetworkingContext(frame->coreFrame())
-    {
-    }
+    WebFrameNetworkingContext(WebFrame*);
 
     virtual SoupSession* soupSession() const;
+    virtual uint64_t initiatingPageID() const;
+
+    uint64_t m_initiatingPageID;
 };
 
 }

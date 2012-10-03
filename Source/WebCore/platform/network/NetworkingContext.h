@@ -72,6 +72,7 @@ public:
 
 #if USE(SOUP)
     virtual SoupSession* soupSession() const = 0;
+    virtual uint64_t initiatingPageID() const = 0;
 #endif
 
 protected:

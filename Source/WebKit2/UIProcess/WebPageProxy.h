@@ -999,6 +999,10 @@ private:
 #endif
 #endif // PLATFORM(MAC)
 
+#if USE(SOUP)
+    void didReceiveURIRequest(String uriString, uint64_t requestID);
+#endif
+
     void clearLoadDependentCallbacks();
 
     void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String& dragStorageName, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);

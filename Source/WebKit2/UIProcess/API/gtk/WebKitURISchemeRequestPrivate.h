@@ -25,7 +25,7 @@
 #include "WebKitWebContext.h"
 #include <WebKit2/WKSoupRequestManager.h>
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WKSoupRequestManagerRef, WKURLRef, uint64_t requestID);
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WKSoupRequestManagerRef, WKURLRef, WKPageRef, uint64_t requestID);
 uint64_t webkitURISchemeRequestGetID(WebKitURISchemeRequest*);
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
 

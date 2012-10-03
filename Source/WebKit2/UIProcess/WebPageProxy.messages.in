@@ -325,4 +325,9 @@ messages -> WebPageProxy {
     # Search popup menus
     SaveRecentSearches(WTF::String name, Vector<String> searchItems)
     LoadRecentSearches(WTF::String name) -> (Vector<String> result)
+
+#if USE(SOUP)
+    # Soup custom URI request messages
+    DidReceiveURIRequest(WTF::String uriString, uint64_t requestID);
+#endif
 }

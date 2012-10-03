@@ -1,3 +1,28 @@
+2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get the web view that initiated a custom URI request to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=97895
+
+        Reviewed by Martin Robinson.
+
+        * platform/network/NetworkingContext.h:
+        (NetworkingContext): Add initiatingPageID().
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): Add static method
+        getSoupRequestInitiaingPageID().
+        * platform/network/ResourceHandleInternal.h:
+        (ResourceHandleInternal): Add initiatingPageID().
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::initiatingPageID): Get the
+        initiating page ID of the resource handle networking context.
+        (WebCore::setSoupRequestInitiaingPageID): Helper function to
+        attach a page ID to a SoupRequest.
+        (WebCore::startHTTPRequest): Call setSoupRequestInitiaingPageID()
+        to attch the initiating page ID to the SoupRequest.
+        (WebCore::startNonHTTPRequest): Ditto.
+        (WebCore::ResourceHandle::getSoupRequestInitiaingPageID): Static
+        method to get the page ID attached to a SoupRequest.
+
 2012-10-03  Kent Tamura  <tkent@chromium.org>
 
         Introduce DateComponents::minimumYear and maximumYear

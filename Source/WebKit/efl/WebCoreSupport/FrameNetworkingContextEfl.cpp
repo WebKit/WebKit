@@ -30,6 +30,7 @@
 #include "config.h"
 #include "FrameNetworkingContextEfl.h"
 
+#include "NotImplemented.h"
 #include "ResourceHandle.h"
 #include "ewk_frame.h"
 #include "ewk_view.h"
@@ -52,6 +53,12 @@ FrameNetworkingContextEfl::FrameNetworkingContextEfl(Frame* frame, Evas_Object* 
 SoupSession* FrameNetworkingContextEfl::soupSession() const
 {
     return ewk_view_soup_session_get(ewk_frame_view_get(m_ewkFrame));
+}
+
+uint64_t FrameNetworkingContextEfl::initiatingPageID() const
+{
+    notImplemented();
+    return 0;
 }
 
 }

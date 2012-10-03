@@ -34,6 +34,7 @@
 
 #if USE(SOUP)
 typedef struct _SoupSession SoupSession;
+typedef struct _SoupRequest SoupRequest;
 #endif
 
 #if USE(CF)
@@ -168,6 +169,7 @@ public:
 
 #if USE(SOUP)
     static SoupSession* defaultSession();
+    static uint64_t getSoupRequestInitiaingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);
     static void setIgnoreSSLErrors(bool);

@@ -30,7 +30,7 @@ class WebURL;
 
 class WebSoupRequestManagerClient : public APIClient<WKSoupRequestManagerClient, kWKSoupRequestManagerClientCurrentVersion> {
 public:
-    bool didReceiveURIRequest(WebSoupRequestManagerProxy*, WebURL*, uint64_t requestID);
+    bool didReceiveURIRequest(WebSoupRequestManagerProxy*, WebURL*, WebPageProxy*, uint64_t requestID);
     void didFailToLoadURIRequest(WebSoupRequestManagerProxy*, uint64_t requestID);
 };
 

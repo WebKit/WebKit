@@ -26,10 +26,10 @@
 
 using namespace WebKit;
 
-static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, uint64_t requestID, const void* clientInfo)
+static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef initiatingPageRef, uint64_t requestID, const void* clientInfo)
 {
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(clientInfo);
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(webContext, soupRequestManagerRef, urlRef, requestID));
+    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(webContext, soupRequestManagerRef, urlRef, initiatingPageRef, requestID));
     webkitWebContextReceivedURIRequest(webContext, request.get());
 }
 
