@@ -160,7 +160,7 @@ input[type="range"]::-webkit-media-slider-container {
     display: -webkit-box;
     -webkit-box-align: center;
     -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     height: 100%;
     width: 100%;
     border: 1px solid rgba(230, 230, 230, 0.35);
@@ -171,7 +171,7 @@ input[type="range"]::-webkit-media-slider-container {
 input[type="range"]::-webkit-media-slider-thumb {
     display: block;
     -webkit-appearance: sliderthumb-horizontal;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     position: relative;
     bottom: 1px;
     margin-left: -7px;

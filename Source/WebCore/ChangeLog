@@ -1,3 +1,15 @@
+2012-10-03  Ojan Vafai  <ojan@chromium.org>
+
+        Replace uses of -webkit-box-sizing with box-sizing
+        https://bugs.webkit.org/show_bug.cgi?id=98312
+
+        Reviewed by Tony Chang.
+
+        No need to use the prefixed version when the unprefixed works the same.
+        No new tests since there's no change in behavior..
+
+        * css/html.css:
+
 2012-10-03  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Don't do full commit for empty transactions

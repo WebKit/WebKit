@@ -429,7 +429,7 @@ input, input[type="password"], input[type="search"], isindex {
 
 input[type="search"] {
     -webkit-appearance: searchfield;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 input::-webkit-textfield-decoration-container {
@@ -711,7 +711,7 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
-    -webkit-box-sizing: border-box
+    box-sizing: border-box
 }
 
 input[type="range"] {
@@ -725,7 +725,7 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
     -webkit-box-align: center;
     -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: -webkit-box;
     height: 100%;
@@ -734,14 +734,14 @@ input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-medi
 
 input[type="range"]::-webkit-slider-runnable-track {
     -webkit-box-flex: 1;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
     position: relative;
@@ -768,12 +768,12 @@ area, param {
 
 input[type="checkbox"] {
     -webkit-appearance: checkbox;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 input[type="radio"] {
     -webkit-appearance: radio;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
@@ -787,7 +787,7 @@ input[type="color"] {
 input[type="color"]::-webkit-color-swatch-wrapper {
     display:-webkit-box;
     padding: 4px 2px;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     width: 100%;
     height: 100%
@@ -836,7 +836,7 @@ input::-webkit-calendar-picker-indicator:hover {
 
 select {
     -webkit-appearance: menulist;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
     white-space: pre;
@@ -951,7 +951,7 @@ output {
 
 meter {
     -webkit-appearance: meter;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     display: inline-block;
     height: 1em;
     width: 5em;
@@ -960,7 +960,7 @@ meter {
 
 meter::-webkit-meter-inner-element {
     -webkit-appearance: inherit;
-    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
     -webkit-user-modify: read-only !important;
     height: 100%;
     width: 100%;
@@ -971,28 +971,28 @@ meter::-webkit-meter-bar {
     height: 100%;
     width: 100%;
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 meter::-webkit-meter-optimum-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
     height: 100%;
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 meter::-webkit-meter-suboptimum-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
     height: 100%;
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 meter::-webkit-meter-even-less-good-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
     height: 100%;
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 #endif
 
@@ -1001,7 +1001,7 @@ meter::-webkit-meter-even-less-good-value {
 
 progress {
     -webkit-appearance: progress-bar;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     display: inline-block;
     height: 1em;
     width: 10em;
@@ -1010,7 +1010,7 @@ progress {
 
 progress::-webkit-progress-inner-element {
     -webkit-appearance: inherit;
-    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
     -webkit-user-modify: read-only;
     height: 100%;
     width: 100%;
@@ -1021,7 +1021,7 @@ progress::-webkit-progress-bar {
     height: 100%;
     width: 100%;
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 progress::-webkit-progress-value {
@@ -1029,7 +1029,7 @@ progress::-webkit-progress-value {
     height: 100%;
     width: 50%; /* should be removed later */
     -webkit-user-modify: read-only !important;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 #endif
 
