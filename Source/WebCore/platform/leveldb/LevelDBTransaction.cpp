@@ -125,6 +125,12 @@ bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)
 bool LevelDBTransaction::commit()
 {
     ASSERT(!m_finished);
+
+    if (m_tree.is_empty()) {
+        m_finished = true;
+        return true;
+    }
+
     OwnPtr<LevelDBWriteBatch> writeBatch = LevelDBWriteBatch::create();
 
     TreeType::Iterator iterator;

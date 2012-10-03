@@ -1,3 +1,22 @@
+2012-10-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Don't do full commit for empty transactions
+        https://bugs.webkit.org/show_bug.cgi?id=89239
+
+        Reviewed by Tony Chang.
+
+        Don't bother creating a leveldb write batch if there's nothing in the transaction
+        to commit. Note that a read-only transaction may still have index cleanup so may
+        not be an empty transaction.
+
+        This cuts the Lookup2 benchmark in http://reyesr.github.com/html5-storage-benchmark/
+        from 70s to 2s.
+
+        Covered by existing tests, e.g. storage/indexeddb/transaction-basics.html
+
+        * platform/leveldb/LevelDBTransaction.cpp:
+        (WebCore::LevelDBTransaction::commit):
+
 2012-10-03  Adam Klein  <adamk@chromium.org>
 
         Remove bogus FIXME from Document.idl
