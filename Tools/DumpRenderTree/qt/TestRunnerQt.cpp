@@ -677,6 +677,8 @@ void TestRunner::overridePreference(const QString& name, const QVariant& value)
         settings->setAttribute(QWebSettings::HyperlinkAuditingEnabled, value.toBool());
     else if (name == "WebKitAcceleratedCompositingEnabled")
         settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, value.toBool());
+    else if (name == "WebKitDisplayImagesKey")
+        settings->setAttribute(QWebSettings::AutoLoadImages, value.toBool());
     else
         printf("ERROR: TestRunner::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());
