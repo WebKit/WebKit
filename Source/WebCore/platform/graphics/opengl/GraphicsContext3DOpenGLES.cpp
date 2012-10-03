@@ -238,11 +238,6 @@ Extensions3D* GraphicsContext3D::getExtensions()
     return m_extensions.get();
 }
 
-bool GraphicsContext3D::systemAllowsMultisamplingOnATICards() const
-{
-    return false; // not applicable
-}
-
 }
 
 #endif // USE(3D_GRAPHICS)

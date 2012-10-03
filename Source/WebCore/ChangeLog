@@ -1,3 +1,14 @@
+2012-10-02  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        Buildfix after r130235.
+
+        Reviewed by Csaba Osztrogonác.
+
+        systemAllowsMultisamplingOnATICards was deleted from GraphicsContext3D,
+        but function body remained in GraphicsContext3DOpenGLES. Delete method body.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+
 2012-10-02  Kent Tamura  <tkent@chromium.org>
 
         Fix assertion failures on Chromium Debug bots for datetime/datetime-local input types.
