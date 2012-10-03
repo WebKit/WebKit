@@ -1756,7 +1756,7 @@ AtomicString Element::computeInheritedLanguage() const
     const Node* n = this;
     AtomicString value;
     // The language property is inherited, so we iterate over the parents to find the first language.
-    while (n && value.isNull()) {
+    do {
         if (n->isElementNode()) {
             // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
             value = static_cast<const Element*>(n)->fastGetAttribute(XMLNames::langAttr);
@@ -1768,7 +1768,7 @@ AtomicString Element::computeInheritedLanguage() const
         }
 
         n = n->parentNode();
-    }
+    } while (n && value.isNull());
 
     return value;
 }
