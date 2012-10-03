@@ -186,6 +186,7 @@ void IDBTransaction::objectStoreDeleted(const String& name)
         m_objectStoreMap.remove(name);
         objectStore->markDeleted();
         m_objectStoreCleanupMap.set(objectStore, objectStore->metadata());
+        m_deletedObjectStores.add(objectStore);
     }
 }
 
@@ -386,6 +387,9 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
     for (IDBObjectStoreMap::iterator it = m_objectStoreMap.begin(); it != m_objectStoreMap.end(); ++it)
         it->second->transactionFinished();
     m_objectStoreMap.clear();
+    for (IDBObjectStoreSet::iterator it = m_deletedObjectStores.begin(); it != m_deletedObjectStores.end(); ++it)
+        (*it)->transactionFinished();
+    m_deletedObjectStores.clear();
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);

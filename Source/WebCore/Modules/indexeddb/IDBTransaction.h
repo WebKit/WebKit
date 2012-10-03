@@ -158,6 +158,9 @@ private:
     typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
     IDBObjectStoreMap m_objectStoreMap;
 
+    typedef HashSet<RefPtr<IDBObjectStore> > IDBObjectStoreSet;
+    IDBObjectStoreSet m_deletedObjectStores;
+
     typedef HashMap<RefPtr<IDBObjectStore>, IDBObjectStoreMetadata> IDBObjectStoreMetadataMap;
     IDBObjectStoreMetadataMap m_objectStoreCleanupMap;
 

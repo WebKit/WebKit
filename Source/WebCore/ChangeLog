@@ -1,3 +1,21 @@
+2012-10-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Memory leak when deleting object stores with indexes
+        https://bugs.webkit.org/show_bug.cgi?id=98292
+
+        Reviewed by Tony Chang.
+
+        Reference cycles between IDBObjectStore and IDBIndex instances are explicitly
+        broken when the transaction completes (and the spec allows traversal to fail).
+        Deleted stores need to have the reference cycle broken too.
+
+        Caught by running valgrind over: storage/indexeddb/keypath-basics.html
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStoreDeleted): Add store to set.
+        (WebCore::IDBTransaction::dispatchEvent): Notify stores in set.
+        * Modules/indexeddb/IDBTransaction.h: Add set of deleted stores.
+
 2012-10-03  Adam Barth  <abarth@webkit.org>
 
         CSSNamespace.h is empty and should be deleted
