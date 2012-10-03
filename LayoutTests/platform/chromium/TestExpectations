@@ -3717,3 +3717,5 @@ webkit.org/b/98198 tables/mozilla_expected_failures/marvin/backgr_border-table-c
 
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
 webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
+
+webkit.org/b/98275 media/event-queue-crash.html [ Skip ]

@@ -1,3 +1,9 @@
+2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Skip media/event-queue-crash.html so that its console message does not cause next test to flake.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, add expected files for new passing tests.
