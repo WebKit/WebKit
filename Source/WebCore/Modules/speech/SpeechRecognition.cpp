@@ -54,7 +54,7 @@ void SpeechRecognition::start(ExceptionCode& ec)
     }
 
     setPendingActivity(this);
-    m_controller->start(this, m_grammars.get(), m_lang, m_continuous, m_maxAlternatives);
+    m_controller->start(this, m_grammars.get(), m_lang, m_continuous, m_interimResults, m_maxAlternatives);
     m_started = true;
 }
 
@@ -150,6 +150,7 @@ SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_grammars(SpeechGrammarList::create()) // FIXME: The spec is not clear on the default value for the grammars attribute.
     , m_continuous(false)
+    , m_interimResults(false)
     , m_maxAlternatives(1)
     , m_controller(0)
     , m_stoppedByActiveDOMObject(false)

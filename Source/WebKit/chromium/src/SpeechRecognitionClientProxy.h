@@ -46,7 +46,7 @@ public:
     static PassOwnPtr<SpeechRecognitionClientProxy> create(WebSpeechRecognizer*);
 
     // WebCore::SpeechRecognitionClient:
-    virtual void start(WebCore::SpeechRecognition*, const WebCore::SpeechGrammarList*, const String& lang, bool continuous, unsigned long maxAlternatives) OVERRIDE;
+    virtual void start(WebCore::SpeechRecognition*, const WebCore::SpeechGrammarList*, const String& lang, bool continuous, bool interimResults, unsigned long maxAlternatives) OVERRIDE;
     virtual void stop(WebCore::SpeechRecognition*) OVERRIDE;
     virtual void abort(WebCore::SpeechRecognition*) OVERRIDE;
 

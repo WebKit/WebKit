@@ -34,6 +34,7 @@ module core {
         attribute SpeechGrammarList grammars;
         attribute DOMString lang;
         attribute boolean continuous;
+        attribute boolean interimResults;
         attribute unsigned long maxAlternatives;
 
         void start() raises (DOMException);

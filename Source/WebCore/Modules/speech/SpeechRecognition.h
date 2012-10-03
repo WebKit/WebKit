@@ -56,6 +56,8 @@ public:
     void setLang(const String& lang) { m_lang = lang; }
     bool continuous() { return m_continuous; }
     void setContinuous(bool continuous) { m_continuous = continuous; }
+    bool interimResults() { return m_interimResults; }
+    void setInterimResults(bool interimResults) { m_interimResults = interimResults; }
     unsigned long maxAlternatives() { return m_maxAlternatives; }
     void setMaxAlternatives(unsigned long maxAlternatives) { m_maxAlternatives = maxAlternatives; }
 
@@ -114,6 +116,7 @@ private:
     RefPtr<SpeechGrammarList> m_grammars;
     String m_lang;
     bool m_continuous;
+    bool m_interimResults;
     unsigned long m_maxAlternatives;
 
     EventTargetData m_eventTargetData;

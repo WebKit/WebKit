@@ -55,13 +55,13 @@ PassOwnPtr<SpeechRecognitionClientProxy> SpeechRecognitionClientProxy::create(We
     return adoptPtr(new SpeechRecognitionClientProxy(recognizer));
 }
 
-void SpeechRecognitionClientProxy::start(SpeechRecognition* recognition, const SpeechGrammarList* grammarList, const String& lang, bool continuous, unsigned long maxAlternatives)
+void SpeechRecognitionClientProxy::start(SpeechRecognition* recognition, const SpeechGrammarList* grammarList, const String& lang, bool continuous, bool interimResults, unsigned long maxAlternatives)
 {
     WebVector<WebSpeechGrammar> webSpeechGrammars(static_cast<size_t>(grammarList->length()));
     for (unsigned long i = 0; i < grammarList->length(); ++i)
         webSpeechGrammars[i] = grammarList->item(i);
 
-    WebSpeechRecognitionParams params(webSpeechGrammars, lang, continuous, maxAlternatives, WebSecurityOrigin(recognition->scriptExecutionContext()->securityOrigin()));
+    WebSpeechRecognitionParams params(webSpeechGrammars, lang, continuous, interimResults, maxAlternatives, WebSecurityOrigin(recognition->scriptExecutionContext()->securityOrigin()));
     m_recognizer->start(WebSpeechRecognitionHandle(recognition), params, this);
 }
 

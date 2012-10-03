@@ -11,6 +11,7 @@ PASS speechReco.grammars == null is false
 PASS speechReco.grammars.length === 0 is true
 PASS 'lang' in speechReco is true
 PASS 'continuous' in speechReco is true
+PASS 'interimResults' in speechReco is true
 PASS 'maxAlternatives' in speechReco is true
 PASS 'start' in speechReco is true
 PASS 'stop' in speechReco is true
