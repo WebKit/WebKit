@@ -1,3 +1,19 @@
+2012-10-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: "Load profile..." context menu item has to be shown only for left column with the list of profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=98163
+
+        Reviewed by Yury Semikhatsky.
+
+        The text was changed to "Load Heap Snapshot..."
+        Also I changed "Save profile..." to "Save Heap Snapshot..." because other profiles don't support Save/Load operations yet.
+        The Load context menu item will appear only when the user clicked in sidebar the tree empty space or a profile.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._handleContextMenuEvent):
+        (WebInspector.ProfileSidebarTreeElement.prototype.handleContextMenuEvent):
+
 2012-10-03  Harald Alvestrand  <hta@google.com>
 
         Add data passing to the GetStats interface of RTCPeerConnection
