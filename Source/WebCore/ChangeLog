@@ -1,3 +1,10 @@
+2012-10-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r130160.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataAndPageForCharacter):
+
 2012-10-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: RTCPeerConnection should send down its handler via the FrameLoaderClient directly after creation.

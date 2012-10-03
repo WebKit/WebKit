@@ -216,7 +216,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
             // Also, sometimes we cannot map a font for the character on WINCE, but GDI can still
             // display the character, probably because the font package is not installed correctly.
             // So we just always set the glyph to be same as the character, and let GDI solve it.
-            page->setGlyphDataForCharacter(c, c, characterFontData);
+            page->setGlyphDataForCharacter(c, c, characterFontData.get());
             characterFontData->setMaxGlyphPageTreeLevel(max(characterFontData->maxGlyphPageTreeLevel(), node->level()));
             return make_pair(page->glyphDataForCharacter(c), page);
 #else
