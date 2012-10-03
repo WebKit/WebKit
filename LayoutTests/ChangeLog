@@ -1,3 +1,75 @@
+2012-10-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Enable mock scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=98011
+
+        Unreviewed gardening, update expected files after enabling mock scrollbars. (r130283)
+
+        * platform/qt-5.0-wk2/compositing/columns/composited-in-paginated-expected.txt:
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png:
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/fixed-in-composited-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/become-overlapped-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/enter-compositing-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-copy-on-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-copy-on-scroll-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-in-composited-layer-expected.png:
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-in-composited-layer-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-resize-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/resizer-expected.txt:
+        * platform/qt-5.0-wk2/compositing/iframes/scrolling-iframe-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-and-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-and-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-out-of-view-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-under-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * platform/qt-5.0-wk2/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/masks/masked-ancestor-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/content-gains-scrollbars-expected.txt:
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scrollbar-layers-expected.txt:
+        * platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/scrollbar-painting-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/scrollbar-painting-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-expected.txt:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt:
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.png:
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/tiled-layers-hidpi-expected.txt:
+
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations for scrollbars/ and tables/mozilla_expected_failures/.

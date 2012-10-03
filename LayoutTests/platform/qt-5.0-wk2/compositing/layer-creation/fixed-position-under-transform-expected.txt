@@ -1,8 +1,8 @@
 (GraphicsLayer
-  (bounds 784.00 5021.00)
+  (bounds 785.00 5021.00)
   (children 1
     (GraphicsLayer
-      (bounds 784.00 5021.00)
+      (bounds 785.00 5021.00)
       (children 2
         (GraphicsLayer
           (position 108.00 113.00)

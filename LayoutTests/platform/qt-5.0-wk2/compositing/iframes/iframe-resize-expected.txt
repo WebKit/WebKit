@@ -14,15 +14,15 @@
               (position 35.00 35.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 384.00 120.00)
+                  (bounds 385.00 120.00)
                   (children 1
                     (GraphicsLayer
                       (children 1
                         (GraphicsLayer
-                          (bounds 384.00 230.00)
+                          (bounds 385.00 230.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 384.00 230.00)
+                              (bounds 385.00 230.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer

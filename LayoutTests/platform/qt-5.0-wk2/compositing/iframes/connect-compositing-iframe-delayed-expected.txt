@@ -16,15 +16,15 @@ When the parent document becomes composited, the layer trees should get connecte
               (position 35.00 35.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 284.00 150.00)
+                  (bounds 285.00 150.00)
                   (children 1
                     (GraphicsLayer
                       (children 1
                         (GraphicsLayer
-                          (bounds 284.00 230.00)
+                          (bounds 285.00 230.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 284.00 230.00)
+                              (bounds 285.00 230.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer

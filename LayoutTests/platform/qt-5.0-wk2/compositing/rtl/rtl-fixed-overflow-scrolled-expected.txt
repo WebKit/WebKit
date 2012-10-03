@@ -1,5 +1,5 @@
 (GraphicsLayer
-  (position -216.00 0.00)
+  (position -215.00 0.00)
   (bounds 1000.00 1000.00)
   (children 1
     (GraphicsLayer

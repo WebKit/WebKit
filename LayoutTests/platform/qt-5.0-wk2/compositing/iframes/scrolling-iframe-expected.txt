@@ -14,7 +14,7 @@
               (position 35.00 35.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 284.00 134.00)
+                  (bounds 285.00 135.00)
                   (children 1
                     (GraphicsLayer
                       (position -80.00 -80.00)
