@@ -79,6 +79,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
         return obj;
     END_AX_OBJC_EXCEPTIONS
 
+    BEGIN_AX_OBJC_EXCEPTIONS
     NSArray *children = [obj accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     NSUInteger childrenCount = [children count];
     for (NSUInteger i = 0; i < childrenCount; ++i) {
@@ -86,6 +87,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
         if (result)
             return result;
     }
+    END_AX_OBJC_EXCEPTIONS
 
     return 0;
 }

@@ -1,3 +1,18 @@
+2012-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Exception thrown when running accessibility/container-node-delete-causes-crash.html test
+        https://bugs.webkit.org/show_bug.cgi?id=98291
+
+        Reviewed by Andreas Kling.
+
+        The accessibility/container-node-delete-causes-crash.html test will cause a full accessibility tree
+        to be created by trying to look up an element with a non-existent ID. This caused an exception to be thrown
+        when trying to access the children of an element that didn't have any children. Fix this by adding
+        BEGIN_AX_OBJC_EXCEPTIONS/END_AX_OBJC_EXCEPTIONS around the call to get the children.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (findAccessibleObjectById):
+
 2012-10-03  Ojan Vafai  <ojan@chromium.org>
 
         Make partytime work when loading garden-o-matic from trac.webkit.org
