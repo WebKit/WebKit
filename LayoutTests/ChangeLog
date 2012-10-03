@@ -1,3 +1,11 @@
+2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test rebaseline.
+
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+
 2012-10-03  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Gardening after r130186 and r130231
