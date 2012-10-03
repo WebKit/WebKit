@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 3: Uncaught SyntaxError: Unexpected token ,
 Tests live edit feature.
 
 Debugger was enabled.
@@ -7,6 +8,15 @@ Running: testLiveEdit
 function f()
 {
     return "live-edited string";
+}
+
+==Source frame contents end==
+
+Running: testLiveEditSyntaxError
+==Source frame contents start==
+function syntaxError()
+{
+    return "I'm good";
 }
 
 ==Source frame contents end==

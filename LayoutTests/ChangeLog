@@ -1,3 +1,21 @@
+2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: UISourceCode commitWorkingCopy should not fail when original script had syntax error.
+        https://bugs.webkit.org/show_bug.cgi?id=97272
+
+        Reviewed by Pavel Feldman.
+
+        This patch is based on patch by John J. Barton.
+
+        * http/tests/inspector/live-edit-test.js:
+        (initialize_LiveEditTest.InspectorTest.replaceInSource):
+        (initialize_LiveEditTest):
+        * inspector/debugger/live-edit-expected.txt:
+        * inspector/debugger/live-edit.html:
+        * inspector/debugger/resources/edit-me-syntax-error.js: Added.
+        (syntaxError):
+        * platform/chromium/TestExpectations: re-enabled the test.
+
 2012-10-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable mock scrollbars

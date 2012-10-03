@@ -1,3 +1,15 @@
+2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: UISourceCode commitWorkingCopy should not fail when original script had syntax error.
+        https://bugs.webkit.org/show_bug.cgi?id=97272
+
+        Reviewed by Pavel Feldman.
+
+        This patch is based on patch by John J. Barton.
+
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource.prototype.workingCopyCommitted): added rawLocation null check.
+
 2012-10-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: After "Edit as HTML", any click outside box should stop editing

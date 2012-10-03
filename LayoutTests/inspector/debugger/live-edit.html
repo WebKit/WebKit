@@ -4,13 +4,14 @@
 <script src="../../http/tests/inspector/debugger-test.js"></script>
 <script src="../../http/tests/inspector/live-edit-test.js"></script>
 <script src="resources/edit-me.js"></script>
+<script src="resources/edit-me-syntax-error.js"></script>
 <script src="resources/edit-me-when-paused.js"></script>
 
 <script>
 
 function test()
 {
-    var panel = WebInspector.panels.scripts;
+    var panel = WebInspector.showPanel("scripts");  
 
     InspectorTest.runDebuggerTestSuite([
         function testLiveEdit(next)
@@ -30,6 +31,23 @@ function test()
             function didEvaluateInPage(result)
             {
                 InspectorTest.assertEquals("live-edited string", result.description, "edited function returns wrong result");
+                InspectorTest.dumpSourceFrameContents(panel.visibleView);
+                next();
+            }
+        },
+
+        function testLiveEditSyntaxError(next)
+        {
+            InspectorTest.showScriptSource("edit-me-syntax-error.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addSniffer(WebInspector.JavaScriptSourceFrame.prototype, "_didEditContent", didEditScriptSource);
+                InspectorTest.replaceInSource(sourceFrame, ",\"I'm good\"", "\"I'm good\"");
+            }
+
+            function didEditScriptSource()
+            {
                 InspectorTest.dumpSourceFrameContents(panel.visibleView);
                 next();
             }

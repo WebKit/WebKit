@@ -1,6 +1,6 @@
 var initialize_LiveEditTest = function() {
 
-InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callback)
+InspectorTest.replaceInSource = function(sourceFrame, string, replacement)
 {
     sourceFrame._textEditor._mainPanel.setReadOnly(false);
     var oldRange, newRange;

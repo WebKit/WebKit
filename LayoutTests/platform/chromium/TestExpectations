@@ -985,11 +985,6 @@ http/tests/inspector/network/network-content-replacement-embed.html [ WontFix ]
 webkit.org/b/91435 [ Linux Win ] http/tests/inspector/extensions-ignore-cache.html [ Pass Timeout ]
 webkit.org/b/91435 [ Linux ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
 webkit.org/b/91435 [ Win Release ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
-webkit.org/b/91435 [ Linux Win Release ] inspector/debugger/live-edit.html [ Failure Pass ]
-webkit.org/b/91435 [ Linux Win Debug ] inspector/debugger/live-edit.html [ Failure Pass Slow ]
-crbug.com/89357 [ Mac ] http/tests/inspector/extensions-ignore-cache.html [ Skip ]
-crbug.com/89357 [ Mac ] inspector/timeline/timeline-network-received-data.html [ Skip ]
-crbug.com/89357 [ Mac ] inspector/debugger/live-edit.html [ Skip ]
 
 # Add support for inspector layout tests on Mac.
 crbug.com/89357 [ Mac ] inspector
