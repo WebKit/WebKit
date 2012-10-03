@@ -1,3 +1,10 @@
+2012-10-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Touch FrameView.cpp file for fixing mac bot compilation.
+
+        * page/FrameView.cpp:
+        (WebCore):
+
 2012-10-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: "Load profile..." context menu item has to be shown only for left column with the list of profiles.

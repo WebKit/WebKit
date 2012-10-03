@@ -97,6 +97,7 @@ using namespace HTMLNames;
 
 double FrameView::sCurrentPaintTimeStamp = 0.0;
 
+
 // REPAINT_THROTTLING now chooses default values for throttling parameters.
 // Should be removed when applications start using runtime configuration.
 #if ENABLE(REPAINT_THROTTLING)
