@@ -1,5 +1,70 @@
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 3.
+
+        * platform/efl/fast/media/mq-js-media-except-03-expected.png:
+        * platform/efl/fast/media/mq-js-stylesheet-media-01-expected.png:
+        * platform/efl/fast/media/mq-js-stylesheet-media-02-expected.png:
+        * platform/efl/fast/media/mq-js-stylesheet-media-03-expected.png:
+        * platform/efl/fast/media/mq-js-stylesheet-media-04-expected.png:
+        * platform/efl/fast/media/mq-orientation-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-02-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-03-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-04-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-05-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-06-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-07-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-08-expected.png:
+        * platform/efl/fast/media/mq-relative-constraints-09-expected.png:
+        * platform/efl/fast/media/mq-transition-expected.png:
+        * platform/efl/fast/media/mq-width-absolute-01-expected.png:
+        * platform/efl/fast/media/mq-width-absolute-02-expected.png:
+        * platform/efl/fast/media/mq-width-absolute-03-expected.png:
+        * platform/efl/fast/media/mq-width-absolute-04-expected.png:
+        * platform/efl/fast/media/viewport-media-query-expected.png:
+        * platform/efl/fast/overflow/001-expected.png:
+        * platform/efl/fast/overflow/002-expected.png:
+        * platform/efl/fast/overflow/003-expected.png:
+        * platform/efl/fast/overflow/004-expected.png:
+        * platform/efl/fast/overflow/006-expected.png:
+        * platform/efl/fast/overflow/007-expected.png:
+        * platform/efl/fast/overflow/border-radius-clipping-expected.png:
+        * platform/efl/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/efl/fast/overflow/dynamic-hidden-expected.png:
+        * platform/efl/fast/overflow/float-in-relpositioned-expected.png:
+        * platform/efl/fast/overflow/hit-test-overflow-controls-expected.png:
+        * platform/efl/fast/overflow/image-selection-highlight-expected.png:
+        * platform/efl/fast/overflow/line-clamp-expected.png:
+        * platform/efl/fast/overflow/overflow-auto-table-expected.png:
+        * platform/efl/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/efl/fast/overflow/overflow-rtl-expected.png:
+        * platform/efl/fast/overflow/overflow-rtl-inline-scrollbar-expected.png:
+        * platform/efl/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/efl/fast/overflow/overflow-text-hit-testing-expected.png:
+        * platform/efl/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/efl/fast/overflow/scrollbar-position-update-expected.png:
+        * platform/efl/fast/overflow/table-overflow-float-expected.png:
+        * platform/efl/fast/overflow/unreachable-overflow-rtl-bug-expected.png:
+        * platform/efl/fast/reflections/inline-crash-expected.png:
+        * platform/efl/fast/reflections/opacity-reflection-transform-expected.png:
+        * platform/efl/fast/reflections/reflection-nesting-expected.png:
+        * platform/efl/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/efl/fast/repaint/add-table-overpaint-expected.png: Added.
+        * platform/efl/fast/repaint/background-scaling-expected.png: Added.
+        * platform/efl/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/efl/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/efl/fast/repaint/border-radius-repaint-expected.png:
+        * platform/efl/fast/repaint/border-repaint-glitch-expected.png:
+        * platform/efl/fast/repaint/box-shadow-h-expected.png:
+        * platform/efl/fast/repaint/box-shadow-v-expected.png:
+        * platform/efl/fast/repaint/bugzilla-3509-expected.png:
+        * platform/efl/fast/repaint/bugzilla-5699-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6278-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6388-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6473-expected.png:
+
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 2.
 
         * platform/efl/fast/css3-text-decoration: Added.
