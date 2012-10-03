@@ -2544,7 +2544,6 @@
             'css/CSSLineBoxContainValue.cpp',
             'css/CSSMediaRule.cpp',
             'css/CSSMediaRule.h',
-            'css/CSSNamespace.h',
             'css/CSSOMUtils.cpp',
             'css/CSSOMUtils.h',
             'css/CSSPageRule.cpp',

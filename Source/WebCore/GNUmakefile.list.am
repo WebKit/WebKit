@@ -2536,7 +2536,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSLineBoxContainValue.h \
 	Source/WebCore/css/CSSMediaRule.cpp \
 	Source/WebCore/css/CSSMediaRule.h \
-	Source/WebCore/css/CSSNamespace.h \
 	Source/WebCore/css/CSSOMUtils.cpp \
 	Source/WebCore/css/CSSOMUtils.h \
 	Source/WebCore/css/CSSPageRule.cpp \

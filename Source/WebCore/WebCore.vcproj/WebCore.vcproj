@@ -36315,10 +36315,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSNamespace.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSOMUtils.cpp"
 				>
 				<FileConfiguration
