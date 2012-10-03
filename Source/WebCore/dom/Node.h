@@ -429,8 +429,8 @@ public:
         ASSERT(this);
         // FIXME: below ASSERT is useful, but prevents the use of document() in the constructor or destructor
         // due to the virtual function call to nodeType().
-        ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
-        return m_document;
+        ASSERT(documentInternal() || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
+        return documentInternal();
     }
 
     TreeScope* treeScope() const;
@@ -754,6 +754,8 @@ protected:
     void clearEventTargetData();
 
     void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
+
+    Document* documentInternal() const { return m_document; }
 
 private:
     friend class TreeShared<Node, ContainerNode>;

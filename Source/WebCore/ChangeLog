@@ -1,3 +1,24 @@
+2012-10-03  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Heap-use-after-free when deleting a ContainerNode with an AX object
+        https://bugs.webkit.org/show_bug.cgi?id=98073
+
+        Reviewed by Hajime Morita.
+
+        Calls axObjectCache()->remove(this) in ~ContainerNode so that the AX tree
+        doesn't try to access the container node while walking up the parent chain
+        from one of the container node's children.
+
+        Test: accessibility/container-node-delete-causes-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::~ContainerNode):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * dom/Node.h:
+        (WebCore::Node::document):
+        (WebCore::Node::documentInternal):
+
 2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: SourceURL should be taken from debugger agent when possible.

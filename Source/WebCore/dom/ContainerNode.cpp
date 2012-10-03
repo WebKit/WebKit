@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ContainerNode.h"
 
+#include "AXObjectCache.h"
 #include "ChildListMutationScope.h"
 #include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
@@ -119,6 +120,9 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
+    if (AXObjectCache::accessibilityEnabled() && documentInternal() && documentInternal()->axObjectCacheExists())
+        documentInternal()->axObjectCache()->remove(this);
+
     removeAllChildren();
 }
 
