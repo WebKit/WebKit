@@ -1,1 +1,11 @@
+2012-10-02  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-Win] Implement LocaleWin::dateFormat
+        https://bugs.webkit.org/show_bug.cgi?id=98117
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleWinTest.cpp:
+        (TEST_F): Add tests for LocaleWin::dateFormat.
+
 == Rolled over to ChangeLog-2012-10-02 ==

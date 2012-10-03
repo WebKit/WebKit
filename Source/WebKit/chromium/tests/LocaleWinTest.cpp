@@ -325,6 +325,14 @@ TEST_F(LocaleWinTest, weekDayShortLabels)
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+TEST_F(LocaleWinTest, dateFormat)
+{
+    EXPECT_STREQ("y'-'M'-'d", LocaleWin::dateFormat("y-M-d").utf8().data());
+    EXPECT_STREQ("''yy'-'''MM'''-'dd", LocaleWin::dateFormat("''yy-''MM''-dd").utf8().data());
+    EXPECT_STREQ("yyyy'-''''-'MMM'''''-'dd", LocaleWin::dateFormat("yyyy-''''-MMM''''-dd").utf8().data());
+    EXPECT_STREQ("yyyy'-'''''MMMM'-'dd", LocaleWin::dateFormat("yyyy-''''MMMM-dd").utf8().data());
+}
+
 TEST_F(LocaleWinTest, timeFormat)
 {
     EXPECT_STREQ("h:mm:ss a", timeFormat(EnglishUS).utf8().data());

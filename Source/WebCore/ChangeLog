@@ -1,3 +1,32 @@
+2012-10-02  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-Win] Implement LocaleWin::dateFormat
+        https://bugs.webkit.org/show_bug.cgi?id=98117
+
+        Reviewed by Kentaro Hara.
+
+        http://trac.webkit.org/changeset/130127 introduced
+        Localizer::dateFormat, and this is its implementation for LocaleICU
+        classs. The code is going to be used when
+        ENABLE_INPUT_MULTIPLE_FIELDS_UI is enabled.
+
+        Tests: Added a new test to WebKit/chromium/tests/LocaleWinTest.cpp.
+
+        * platform/text/LocaleWin.cpp:
+        (WebCore::parseDateFormat):
+        Fix a continuous apostrophes parsing bug; "abc''''def" produced "abc'''def"
+        (WebCore::appendAsLDMLLiteral):
+        A helper function to make a literal string for LDML.
+        (WebCore::convertWindowsDateFormatToLDML):
+        Creates an LDML format from a parsed date format tokens.
+        (WebCore::LocaleWin::dateFormat):
+        Implemented. This uses convertWindowsDateFormatToLDML.
+        (WebCore::LocaleWin::dateFormat):
+        Added for testing. The source windows format is specified as a function
+        argument.
+        * platform/text/LocaleWin.h:
+        (LocaleWin): Declare m_dateFormat and dateFormat().
+
 2012-10-02  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Fix spelling of isNVIDIA override in Extensions3DChromium
