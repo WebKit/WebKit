@@ -84,12 +84,12 @@ GLContext* LayerTreeHostGtk::glContext()
 
 void LayerTreeHostGtk::initialize()
 {
-    m_rootLayer = GraphicsLayer::create(this);
+    m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_webPage->size());
 
     // The non-composited contents are a child of the root layer.
-    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
@@ -350,7 +350,7 @@ void LayerTreeHostGtk::createPageOverlayLayer()
 {
     ASSERT(!m_pageOverlayLayer);
 
-    m_pageOverlayLayer = GraphicsLayer::create(this);
+    m_pageOverlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     m_pageOverlayLayer->setName("LayerTreeHost page overlay content");
 #endif

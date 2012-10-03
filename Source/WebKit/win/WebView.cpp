@@ -6488,7 +6488,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             // FIXME: We could perhaps get better performance by never allowing this layer to
             // become tiled (or choosing a higher-than-normal tiling threshold).
             // <http://webkit.org/b/52603>
-            m_backingLayer = GraphicsLayer::create(this);
+            m_backingLayer = GraphicsLayer::create(0, this);
             m_backingLayer->setDrawsContent(true);
             m_backingLayer->setContentsOpaque(true);
             RECT clientRect;

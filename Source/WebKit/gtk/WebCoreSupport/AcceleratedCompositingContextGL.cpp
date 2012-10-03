@@ -83,12 +83,12 @@ void AcceleratedCompositingContext::initialize()
     if (!m_redirectedWindow)
         return;
 
-    m_rootLayer = GraphicsLayer::create(this);
+    m_rootLayer = GraphicsLayer::create(0, this);
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(pageSize);
 
     // The non-composited contents are a child of the root layer.
-    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    m_nonCompositedContentLayer = GraphicsLayer::create(0, this);
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(!m_webView->priv->transparent);
     m_nonCompositedContentLayer->setSize(pageSize);

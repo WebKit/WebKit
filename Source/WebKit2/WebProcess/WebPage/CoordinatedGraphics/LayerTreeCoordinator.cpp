@@ -83,7 +83,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_forceRepaintAsyncCallbackID(0)
 {
     // Create a root layer.
-    m_rootLayer = GraphicsLayer::create(this);
+    m_rootLayer = GraphicsLayer::create(this, this);
     CoordinatedGraphicsLayer* webRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());
     webRootLayer->setRootLayer(true);
 #ifndef NDEBUG
@@ -93,7 +93,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     m_rootLayer->setSize(m_webPage->size());
     m_layerTreeContext.webLayerID = toCoordinatedGraphicsLayer(webRootLayer)->id();
 
-    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    m_nonCompositedContentLayer = GraphicsLayer::create(this, this);
     toCoordinatedGraphicsLayer(m_rootLayer.get())->setCoordinatedGraphicsLayerClient(this);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeCoordinator non-composited content");
@@ -425,7 +425,7 @@ void LayerTreeCoordinator::createPageOverlayLayer()
 {
     ASSERT(!m_pageOverlayLayer);
 
-    m_pageOverlayLayer = GraphicsLayer::create(this);
+    m_pageOverlayLayer = GraphicsLayer::create(this, this);
 #ifndef NDEBUG
     m_pageOverlayLayer->setName("LayerTreeCoordinator page overlay content");
 #endif

@@ -442,7 +442,7 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer()
 {
     ASSERT(!m_pageOverlayLayer);
 
-    m_pageOverlayLayer = GraphicsLayer::create(this);
+    m_pageOverlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     m_pageOverlayLayer->setName("page overlay content");
 #endif

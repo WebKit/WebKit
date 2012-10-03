@@ -51,7 +51,7 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
 void LayerTreeHostCA::initialize()
 {
     // Create a root layer.
-    m_rootLayer = GraphicsLayer::create(this);
+    m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     m_rootLayer->setName("LayerTreeHost root layer");
 #endif
@@ -59,7 +59,7 @@ void LayerTreeHostCA::initialize()
     m_rootLayer->setSize(m_webPage->size());
     static_cast<GraphicsLayerCA*>(m_rootLayer.get())->platformCALayer()->setGeometryFlipped(true);
 
-    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
     static_cast<GraphicsLayerCA*>(m_nonCompositedContentLayer.get())->setAllowTiledLayer(false);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
@@ -257,7 +257,7 @@ void LayerTreeHostCA::createPageOverlayLayer()
 {
     ASSERT(!m_pageOverlayLayer);
 
-    m_pageOverlayLayer = GraphicsLayer::create(this);
+    m_pageOverlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     m_pageOverlayLayer->setName("LayerTreeHost page overlay content");
 #endif
