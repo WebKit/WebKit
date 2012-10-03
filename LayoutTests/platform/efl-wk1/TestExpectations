@@ -64,6 +64,18 @@ Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html [ 
 Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html [ ImageOnlyFailure ]
 Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
 
+# EFL's DRT explicitly disables X11 use
+webkit.org/b/98231 fast/dom/Window/Plug-ins.html [ Failure ]
+webkit.org/b/98231 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
+webkit.org/b/98231 fast/frames/sandboxed-iframe-navigation-allowed.html [ Failure ]
+webkit.org/b/98231 fast/replaced/invalid-object-with-fallback.html [ Failure ]
+webkit.org/b/98231 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
+webkit.org/b/98231 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
+webkit.org/b/98231 http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
+webkit.org/b/98231 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
+webkit.org/b/98231 http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
+webkit.org/b/98231 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
+
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 webkit.org/b/84835 editing/execCommand/indent-paragraphs.html [ Failure ]
 

@@ -1,3 +1,20 @@
+2012-10-03  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Gardening after r130186 and r130231
+
+        Unreviewed, EFL gardening.
+
+        r130186 introduces usage of Xvfb which allows us to unskip a few X11 dependent cases.
+        r130231 introduces caching for the Harfbuzz font path, which caused regressions on Harfbuzz NG + Freetype,
+        see bug 98247. Temporarily going to skip those failures until I check Kenichi's patch.
+
+        * platform/efl-wk1/TestExpectations: DRT disables X11 usage, skip a few tests here only for Wk1.
+        * platform/efl-wk2/TestExpectations: Unskip a couple of X11 dependent cases. (r130186)
+        * platform/efl/TestExpectations: Temporarily mark a few complex font text as failed (r130231)
+        * platform/efl/fast/text/atsui-multiple-renderers-expected.png: Rebaseline incorrect result.
+        * platform/efl/fast/text/atsui-spacing-features-expected.png: Rebaseline incorrect result.
+        * platform/efl/fast/text/wide-zero-width-space-expected.png: Rebaseline incorrect result.
+
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [Qt][DRT] Add support for overriding the "WebKitDisplayImagesKey" preference.
