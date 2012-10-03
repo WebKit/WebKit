@@ -35,21 +35,14 @@ using namespace JSC;
 PassRefPtr<OpaqueJSString> OpaqueJSString::create(const String& string)
 {
     if (!string.isNull())
-        return adoptRef(new OpaqueJSString(string.characters(), string.length()));
-    return 0;
-}
-
-String OpaqueJSString::string() const
-{
-    if (this && m_characters)
-        return String(m_characters, m_length);
-    return String();
+        return adoptRef(new OpaqueJSString(string));
+    return adoptRef(new OpaqueJSString());
 }
 
 Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
 {
-    if (!this || !m_characters)
+    if (!this || !m_string.length())
         return Identifier(globalData, static_cast<const char*>(0));
 
-    return Identifier(globalData, m_characters, m_length);
+    return Identifier(globalData, m_string);
 }
