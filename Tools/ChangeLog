@@ -1,3 +1,20 @@
+2012-10-03  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WRT] Fix build error with MSVC on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=97697
+
+        Reviewed by Simon Hausmann.
+
+        WTR build is failing when WebKit directory is located on a longer path.
+        This seems to caused by source files that has the same name in
+        WTR and DRT directories. The solution is removing referencies 
+        from Target.pri to DRT directory and adding an alternate version of
+        the required files to WTR. Those files simply include the real ones from DRT.
+
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/InjectedBundle/qt/QtInitializeTestFonts.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/qt/QtInitializeTestFonts.h: Added.
+
 2012-10-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] TestRunner.setAlwaysAcceptCookies() causes flakiness
