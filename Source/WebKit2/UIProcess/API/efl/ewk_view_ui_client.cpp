@@ -80,6 +80,22 @@ static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurit
 }
 #endif
 
+static void focus(WKPageRef, const void* clientInfo)
+{
+    evas_object_focus_set(toEwkView(clientInfo), true);
+}
+
+static void unfocus(WKPageRef, const void* clientInfo)
+{
+    evas_object_focus_set(toEwkView(clientInfo), false);
+}
+
+static void takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
+{
+    // FIXME: this is only a partial implementation.
+    evas_object_focus_set(toEwkView(clientInfo), false);
+}
+
 void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageUIClient uiClient;
@@ -91,6 +107,9 @@ void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+    uiClient.takeFocus = takeFocus;
+    uiClient.focus = focus;
+    uiClient.unfocus = unfocus;
 #if ENABLE(SQL_DATABASE)
     uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
 #endif
