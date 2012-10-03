@@ -1,3 +1,14 @@
+2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening -- added expectations for 3 time-suggestion-picker-appearance tests.
+
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 3.
