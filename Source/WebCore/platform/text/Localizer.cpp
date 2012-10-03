@@ -207,6 +207,26 @@ String Localizer::shortTimeFormat()
     return m_localizedShortTimeFormatText;
 }
 
+String Localizer::dateTimeFormatWithSecond()
+{
+    // FIXME: We should retreive the separator and the order from the system.
+    StringBuilder builder;
+    builder.append(dateFormat());
+    builder.append(' ');
+    builder.append(timeFormat());
+    return builder.toString();
+}
+
+String Localizer::dateTimeFormatWithoutSecond()
+{
+    // FIXME: We should retreive the separator and the order from the system.
+    StringBuilder builder;
+    builder.append(dateFormat());
+    builder.append(' ');
+    builder.append(shortTimeFormat());
+    return builder.toString();
+}
+
 const Vector<String>& Localizer::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())

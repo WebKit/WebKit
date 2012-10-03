@@ -1,3 +1,30 @@
+2012-10-02  Kent Tamura  <tkent@chromium.org>
+
+        Introduce Localizer::dateTimeFormatWithSecond and dateTimeFormatWithoutSecond
+        https://bugs.webkit.org/show_bug.cgi?id=98229
+
+        Reviewed by Kentaro Hara.
+
+        Unify identical code in DateTimeInputType and DateTimeLocalInputType as
+        Localizer member functions.
+        They still have some common code. We'll address it later.
+
+        No new tests. This doesn't change any behavior.
+
+        * platform/text/Localizer.h:
+        (Localizer): Add dateTimeFormatWithSecond and dateTimeFormatWithoutSecond.
+        * platform/text/Localizer.cpp:
+        (WebCore::Localizer::dateTimeFormatWithSecond):
+        Implemented. Just concatenating dateFormat, a space, and timeFormat.
+        (WebCore::Localizer::dateTimeFormatWithoutSecond):
+        Implemented. Just concatenating dateFormat, a space, and shortTimeFormat.
+
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::setupLayoutParameters):
+        Use dateTimeFormatWithSecond and dateTimeFormatWithoutSecond.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters): ditto.
+
 2012-10-03  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: DateTimeEditBuilder had better hold LayoutParameters
