@@ -1,3 +1,10 @@
+2012-10-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed build fix for the GTK port after r130207.
+        Use proper file separators for new entries.
+
+        * GNUmakefile.list.am:
+
 2012-10-02  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed, GTK+,Efl debug build fix after r130225.
