@@ -1,3 +1,18 @@
+2012-10-03  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] storage/indexeddb tests sometimes timeout
+        https://bugs.webkit.org/show_bug.cgi?id=65862
+
+        Reviewed by Ojan Vafai.
+
+        storage/indexeddb/index-cursor.html was taking up to 26 seconds on some debug configurations
+        due to the large amount of output. Tweak the test to reduce the spam. On my test box this
+        drops the runtime of this single test from 7s to 2s.
+
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/resources/index-cursor.js:
+        (cursorIteration):
+
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 5.

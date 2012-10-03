@@ -205,8 +205,9 @@ function cursorIteration()
         return;
     }
 
-    shouldBe("event.target.result.primaryKey", "expectedIndex");
-    shouldBe("event.target.result.key", "testData[" + expectedIndex + "]");
+    var quiet = true;
+    shouldBe("event.target.result.primaryKey", "expectedIndex", quiet);
+    shouldBe("event.target.result.key", "testData[" + expectedIndex + "]", quiet);
     self.expectedIndex = ascending ? expectedIndex + 1 : expectedIndex - 1;
     testWithinBounds();
 
