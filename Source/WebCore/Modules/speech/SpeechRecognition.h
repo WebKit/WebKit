@@ -73,7 +73,6 @@ public:
     void didEndAudio();
     void didReceiveResult(PassRefPtr<SpeechRecognitionResult>, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     void didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult>);
-    void didDeleteResult(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     void didReceiveError(PassRefPtr<SpeechRecognitionError>);
     void didStart();
     void didEnd();
@@ -96,7 +95,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(audioend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(result);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(nomatch);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(resultdeleted);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(start);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(end);

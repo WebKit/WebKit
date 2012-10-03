@@ -23,7 +23,6 @@ PASS 'onsoundend' in speechReco is true
 PASS 'onaudioend' in speechReco is true
 PASS 'onresult' in speechReco is true
 PASS 'onnomatch' in speechReco is true
-PASS 'onresultdeleted' in speechReco is true
 PASS 'onerror' in speechReco is true
 PASS 'onstart' in speechReco is true
 PASS 'onend' in speechReco is true

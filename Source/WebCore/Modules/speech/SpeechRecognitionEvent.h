@@ -55,7 +55,6 @@ public:
 
     static PassRefPtr<SpeechRecognitionEvent> createResult(PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     static PassRefPtr<SpeechRecognitionEvent> createNoMatch(PassRefPtr<SpeechRecognitionResult>);
-    static PassRefPtr<SpeechRecognitionEvent> createResultDeleted(short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
 
     SpeechRecognitionResult* result() const { return m_result.get(); }
     short resultIndex() const { return m_resultIndex; } // FIXME: Spec says this should be short, but other indices are unsigned ints.

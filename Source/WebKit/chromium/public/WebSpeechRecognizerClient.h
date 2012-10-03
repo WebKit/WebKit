@@ -74,10 +74,6 @@ public:
     // recognizion hypothesis.
     virtual void didReceiveNoMatch(const WebSpeechRecognitionHandle&, const WebSpeechRecognitionResult&) = 0;
 
-    // To be called when the recognizer needs to delete one of the previously
-    // returned interim results.
-    virtual void didDeleteResult(const WebSpeechRecognitionHandle&, unsigned resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) = 0;
-
     // To be called when a speech recognition error occurs.
     virtual void didReceiveError(const WebSpeechRecognitionHandle&, const WebString& message, ErrorCode) = 0;
 

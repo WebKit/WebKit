@@ -48,7 +48,6 @@ module core {
         attribute EventListener onaudioend;
         attribute EventListener onresult;
         attribute EventListener onnomatch;
-        attribute EventListener onresultdeleted;
         attribute EventListener onerror;
         attribute EventListener onstart;
         attribute EventListener onend;

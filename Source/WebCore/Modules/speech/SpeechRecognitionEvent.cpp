@@ -56,11 +56,6 @@ PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createNoMatch(PassRef
     return adoptRef(new SpeechRecognitionEvent(eventNames().nomatchEvent, result, 0, 0));
 }
 
-PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createResultDeleted(short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
-{
-    return adoptRef(new SpeechRecognitionEvent(eventNames().resultdeletedEvent, 0, resultIndex, resultHistory));
-}
-
 const AtomicString& SpeechRecognitionEvent::interfaceName() const
 {
     return eventNames().interfaceForSpeechRecognitionEvent;

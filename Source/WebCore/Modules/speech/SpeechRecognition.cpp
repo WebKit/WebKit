@@ -110,11 +110,6 @@ void SpeechRecognition::didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult> re
     dispatchEvent(SpeechRecognitionEvent::createNoMatch(result));
 }
 
-void SpeechRecognition::didDeleteResult(unsigned resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
-{
-    dispatchEvent(SpeechRecognitionEvent::createResultDeleted(resultIndex, resultHistory));
-}
-
 void SpeechRecognition::didReceiveError(PassRefPtr<SpeechRecognitionError> error)
 {
     dispatchEvent(error);

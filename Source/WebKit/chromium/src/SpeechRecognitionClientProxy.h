@@ -57,7 +57,6 @@ public:
     virtual void didEndAudio(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didReceiveResult(const WebSpeechRecognitionHandle&, const WebSpeechRecognitionResult&, unsigned long resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) OVERRIDE;
     virtual void didReceiveNoMatch(const WebSpeechRecognitionHandle&, const WebSpeechRecognitionResult&) OVERRIDE;
-    virtual void didDeleteResult(const WebSpeechRecognitionHandle&, unsigned resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) OVERRIDE;
     virtual void didReceiveError(const WebSpeechRecognitionHandle&, const WebString& message, WebSpeechRecognizerClient::ErrorCode) OVERRIDE;
     virtual void didStart(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didEnd(const WebSpeechRecognitionHandle&) OVERRIDE;

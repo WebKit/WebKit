@@ -119,17 +119,6 @@ void SpeechRecognitionClientProxy::didReceiveNoMatch(const WebSpeechRecognitionH
     recognition->didReceiveNoMatch(result);
 }
 
-void SpeechRecognitionClientProxy::didDeleteResult(const WebSpeechRecognitionHandle& handle, unsigned resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory)
-{
-    RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
-
-    Vector<RefPtr<SpeechRecognitionResult> > resultHistoryVector(resultHistory.size());
-    for (size_t i = 0; i < resultHistory.size(); ++i)
-        resultHistoryVector[i] = static_cast<PassRefPtr<SpeechRecognitionResult> >(resultHistory[i]);
-
-    recognition->didDeleteResult(resultIndex, SpeechRecognitionResultList::create(resultHistoryVector));
-}
-
 void SpeechRecognitionClientProxy::didReceiveError(const WebSpeechRecognitionHandle& handle, const WebString& message, WebSpeechRecognizerClient::ErrorCode code)
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
