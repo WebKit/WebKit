@@ -52,9 +52,8 @@ Magnitude.run = function(setup, test, expected)
     Magnitude._debugLog = "\nDEBUG LOG:\n";
 
     Magnitude._magnitudes = [];
-    for (var i = 0; i < Magnitude._numPoints; i++) {
+    for (var i = 0; i < Magnitude._numPoints; i++)
         Magnitude._magnitudes.push(Math.pow(2, i));
-    }
 
     var milliseconds = 50;
     var runsPerIteration = 1;
@@ -162,7 +161,7 @@ Magnitude._logIterationInfo = function(milliseconds, runsPerIteration)
         var iterations = Magnitude._iterations[magnitude];
         iterationsArray.push(iterations);
         Magnitude._debug("magnitude: " + magnitude + " iterations: " + iterations + " runsPerIteration " + runsPerIteration +
-                " loop-time " + milliseconds + " time/iteration(ms): " + milliseconds / iterations);
+            " loop-time " + milliseconds + " time/iteration(ms): " + milliseconds / iterations);
     }
 
     // Print out the magnitudes/arrays in CSV to afford easy copy-paste to a charting application.
@@ -221,28 +220,26 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
 
     var iterations = 0;
     if (window.chromium) {
-      // FIXME: If using microseconds turns out to be less flaky, expose microseconds
-      // from JSC or testRunner and use them. Otherwise, get rid of this block.
-      var microseconds = milliseconds * 1000;
-      var interval = new chromium.Interval();
-      interval.start();
-      while (interval.microseconds() < microseconds) {
-          // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
-          for (var i = 0; i < runsPerIteration; i++) {
-              test(magnitude);
-          }
-          iterations++;
-      }
-      interval.stop();
+        // FIXME: If using microseconds turns out to be less flaky, expose microseconds
+        // from JSC or testRunner and use them. Otherwise, get rid of this block.
+        var microseconds = milliseconds * 1000;
+        var interval = new chromium.Interval();
+        interval.start();
+        while (interval.microseconds() < microseconds) {
+            // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
+            for (var i = 0; i < runsPerIteration; i++)
+                test(magnitude);
+            iterations++;
+        }
+        interval.stop();
     } else {
-      var start = Date.now();
-      while (Date.now() - start < milliseconds) {
-          // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
-          for (var i = 0; i < runsPerIteration; i++) {
-              test(magnitude);
-          }
-          iterations++;
-      }
+        var start = Date.now();
+        while (Date.now() - start < milliseconds) {
+            // Loop runsPerIteration times to reduce errors due to the overhead and granularity of the Date object.
+            for (var i = 0; i < runsPerIteration; i++)
+                test(magnitude);
+            iterations++;
+        }
     }
     return iterations;
 }

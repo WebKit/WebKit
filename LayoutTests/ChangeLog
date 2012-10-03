@@ -1,3 +1,11 @@
+2012-10-03  Ojan Vafai  <ojan@chromium.org>
+
+        Fix some style violations in perparation for changing this code.
+        * resources/magnitude-perf.js:
+        (Magnitude.run):
+        (Magnitude._logIterationInfo):
+        (Magnitude._runIteration):
+
 2012-10-03  Dirk Pranke  <dpranke@chromium.org>
 
         Mark platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html as slow on Mac Lion Release
