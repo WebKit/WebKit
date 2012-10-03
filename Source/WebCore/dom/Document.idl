@@ -167,8 +167,6 @@ module core {
                      setter raises (DOMException),
                      getter raises (DOMException);
 
-        // FIXME: the DOM spec does NOT have this attribute
-        // raising an exception.
                  attribute HTMLElement body
                      setter raises (DOMException);
 

@@ -1,3 +1,16 @@
+2012-10-03  Adam Klein  <adamk@chromium.org>
+
+        Remove bogus FIXME from Document.idl
+        https://bugs.webkit.org/show_bug.cgi?id=98302
+
+        Reviewed by Adam Barth.
+
+        The FIXME claimed that document.body throwing an exception was not
+        specced, but in fact it is:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-document-body
+
+        * dom/Document.idl:
+
 2012-10-03  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Memory leak when deleting object stores with indexes
