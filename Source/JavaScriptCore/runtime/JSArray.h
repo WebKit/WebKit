@@ -71,8 +71,8 @@ namespace JSC {
         void push(ExecState*, JSValue);
         JSValue pop(ExecState*);
 
-        bool shiftCount(ExecState*, unsigned count);
-        bool unshiftCount(ExecState*, unsigned, unsigned);
+        bool shiftCount(ExecState*, unsigned startIndex, unsigned count);
+        bool unshiftCount(ExecState*, unsigned startIndex, unsigned count);
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
         void copyToArguments(ExecState*, CallFrame*, uint32_t length);

@@ -202,9 +202,9 @@ static inline void shift(ExecState* exec, JSObject* thisObj, unsigned header, un
     ASSERT(header <= length);
     ASSERT(currentCount <= (length - header));
 
-    if (!header && isJSArray(thisObj)) {
+    if (isJSArray(thisObj)) {
         JSArray* array = asArray(thisObj);
-        if (array->length() == length && asArray(thisObj)->shiftCount(exec, count))
+        if (array->length() == length && asArray(thisObj)->shiftCount(exec, header, count))
             return;
     }
 

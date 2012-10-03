@@ -1,3 +1,21 @@
+2012-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Array.splice should be fast when it is used to remove elements other than the very first
+        https://bugs.webkit.org/show_bug.cgi?id=98236
+
+        Reviewed by Michael Saboff.
+
+        Applied the same technique that was used to optimize the unshift case of splice in
+        http://trac.webkit.org/changeset/129676.  This is a >20x speed-up on programs that
+        use splice for element removal.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCount):
+        * runtime/JSArray.h:
+        (JSArray):
+
 2012-09-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Delayed structure sweep can leak structures without bound
