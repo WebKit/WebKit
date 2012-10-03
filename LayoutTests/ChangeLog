@@ -1,3 +1,35 @@
+2012-10-03  Emil A Eklund  <eae@chromium.org>
+
+        Round image sizes when zooming
+        https://bugs.webkit.org/show_bug.cgi?id=98205
+
+        Reviewed by Eric Seidel.
+
+        Add test for zoomed large image tiles.
+
+        * fast/images/zoomed-img-size.html:
+        * fast/sub-pixel/zoomed-image-tiles-expected.html: Added.
+        * fast/sub-pixel/zoomed-image-tiles.html: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium/fast/images/zoomed-img-size-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac-lion/TestExpectations:
+        * platform/mac-snowleopard/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win-wk2/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 5.
