@@ -79,7 +79,7 @@ DateTimeDayFieldElement::DateTimeDayFieldElement(Document* document, FieldOwner&
 PassRefPtr<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
 {
     DEFINE_STATIC_LOCAL(AtomicString, dayPsuedoId, ("-webkit-datetime-edit-day-field"));
-    RefPtr<DateTimeDayFieldElement> field = adoptRef(new DateTimeDayFieldElement(document, fieldOwner, placeholder));
+    RefPtr<DateTimeDayFieldElement> field = adoptRef(new DateTimeDayFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder));
     field->initialize(dayPsuedoId, AXDayOfMonthFieldText());
     return field.release();
 }
@@ -307,7 +307,7 @@ DateTimeMonthFieldElement::DateTimeMonthFieldElement(Document* document, FieldOw
 PassRefPtr<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
 {
     DEFINE_STATIC_LOCAL(AtomicString, monthPsuedoId, ("-webkit-datetime-edit-month-field"));
-    RefPtr<DateTimeMonthFieldElement> field = adoptRef(new DateTimeMonthFieldElement(document, fieldOwner, placeholder));
+    RefPtr<DateTimeMonthFieldElement> field = adoptRef(new DateTimeMonthFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("--") : placeholder));
     field->initialize(monthPsuedoId, AXMonthFieldText());
     return field.release();
 }
@@ -437,7 +437,7 @@ DateTimeYearFieldElement::DateTimeYearFieldElement(Document* document, FieldOwne
 PassRefPtr<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
 {
     DEFINE_STATIC_LOCAL(AtomicString, yearPsuedoId, ("-webkit-datetime-edit-year-field"));
-    RefPtr<DateTimeYearFieldElement> field = adoptRef(new DateTimeYearFieldElement(document, fieldOwner, placeholder));
+    RefPtr<DateTimeYearFieldElement> field = adoptRef(new DateTimeYearFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("----") : placeholder));
     field->initialize(yearPsuedoId, AXYearFieldText());
     return field.release();
 }
