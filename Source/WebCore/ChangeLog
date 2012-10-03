@@ -1,3 +1,36 @@
+2012-10-03  Jochen Eisinger  <jochen@chromium.org>
+
+        Make sure that user gestures can't be consumed twice
+        https://bugs.webkit.org/show_bug.cgi?id=97483
+
+        Reviewed by Adam Barth.
+
+        Instead of a simple counter, use a ref counted token to track how many
+        user gestures happened and where consumed. When creating a timer that
+        is supposed to forward the user gesture, take a reference to this token
+        and reinstantiate the UserGestureIndicator with that token when the
+        timer is triggered.
+
+        Tests: platform/chromium/fast/events/popup-forwarded-gesture-blocked.html
+               platform/chromium/fast/events/popup-forwarded-gesture.html
+
+        * dom/UserGestureIndicator.cpp:
+        (WebCore):
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        (WebCore::UserGestureIndicator::~UserGestureIndicator):
+        (WebCore::UserGestureIndicator::processingUserGesture):
+        (WebCore::UserGestureIndicator::consumeUserGesture):
+        (WebCore::UserGestureIndicator::currentToken):
+        * dom/UserGestureIndicator.h:
+        (Token):
+        (WebCore::UserGestureIndicator::Token::~Token):
+        (UserGestureIndicator):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        * page/DOMTimer.h:
+        (DOMTimer):
+
 2012-10-03  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Heap-use-after-free when deleting a ContainerNode with an AX object

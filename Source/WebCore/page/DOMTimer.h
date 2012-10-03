@@ -28,6 +28,7 @@
 #define DOMTimer_h
 
 #include "SuspendableTimer.h"
+#include "UserGestureIndicator.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -69,7 +70,7 @@ namespace WebCore {
         int m_nestingLevel;
         OwnPtr<ScheduledAction> m_action;
         int m_originalInterval;
-        bool m_shouldForwardUserGesture;
+        RefPtr<UserGestureIndicator::Token> m_userGestureToken;
         static double s_minDefaultTimerInterval;
     };
 

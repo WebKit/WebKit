@@ -1,3 +1,15 @@
+2012-10-03  Jochen Eisinger  <jochen@chromium.org>
+
+        Make sure that user gestures can't be consumed twice
+        https://bugs.webkit.org/show_bug.cgi?id=97483
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/fast/events/popup-forwarded-gesture-blocked-expected.txt: Added.
+        * platform/chromium/fast/events/popup-forwarded-gesture-blocked.html: Added.
+        * platform/chromium/fast/events/popup-forwarded-gesture-expected.txt: Added.
+        * platform/chromium/fast/events/popup-forwarded-gesture.html: Added.
+
 2012-10-03  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Heap-use-after-free when deleting a ContainerNode with an AX object
