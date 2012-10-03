@@ -3178,6 +3178,8 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         calculateRects(rootLayer, region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect,
             IgnoreOverlayScrollbarSize, localPaintFlags & PaintLayerPaintingOverflowContents ? IgnoreOverflowClip : RespectOverflowClip);
         paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + subPixelAccumulation);
+        if (this == rootLayer)
+            paintOffset = roundedIntPoint(paintOffset);
     }
 
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;

@@ -1,3 +1,23 @@
+2012-10-03  Levi Weintraub  <leviw@chromium.org>
+
+        [Sub-pixel layout] incorrect rendering when painting sub-layers as their own root
+        https://bugs.webkit.org/show_bug.cgi?id=97484
+
+        Reviewed by Eric Seidel.
+
+        When in compositing mode, layer painting can be triggered through the backing store. When this
+        happens, a non-top-level RenderLayer is called to paint as its own root. Normally, we attempt to preserve
+        the proper sub-pixel accumulation through layers to their children, but since we're not
+        starting with the top-level layer, we haven't properly accumulated one, and convertToLayerCoords,
+        another source of correctly getting the sub-pixel offset for a layer, also avoids crawling
+        past the listed root layer.
+
+        When painting a root layer, we're aligned to the surface we're painting to, so we round our
+        offset to avoid moving objects around.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
 2012-10-03  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Expose settings value to conditionally enable pinch-zoom scaling in the Chromium compositor.  The
