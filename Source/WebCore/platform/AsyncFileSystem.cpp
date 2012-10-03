@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK) && !PLATFORM(BLACKBERRY)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK) && !PLATFORM(BLACKBERRY) && !PLATFORM(EFL)
 bool AsyncFileSystem::isAvailable()
 {
     notImplemented();

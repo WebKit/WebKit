@@ -1,3 +1,22 @@
+2012-10-03  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [EFL] Skeleton code of File system API.
+        https://bugs.webkit.org/show_bug.cgi?id=91187
+
+        Reviewed by Gyuyoung Kim.
+
+        Add skeleton code of File System API on EFL port.
+        Implementation patches will be created later.
+
+        No new tests because this is just skeleton code.
+
+        * CMakeLists.txt: Add new files which created by other patches in Modules/filesystem/ directory.
+        * PlatformEfl.cmake: Add AsyncFileSystemEfl.cpp.
+        * platform/AsyncFileSystem.cpp:
+        (WebCore):
+        * platform/efl/AsyncFileSystemEfl.cpp: Added.
+        * platform/efl/AsyncFileSystemEfl.h: Added.
+
 2012-10-03  Andreas Kling  <kling@webkit.org>
 
         Shrink ElementRareData by moving bool flags to NodeRareData.
