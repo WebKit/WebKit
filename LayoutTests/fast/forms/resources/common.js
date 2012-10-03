@@ -151,3 +151,36 @@ function clickElement(element) {
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
+
+function traverseNextNode(node, stayWithin) {
+    var nextNode = node.firstChild;
+    if (nextNode)
+        return nextNode;
+
+    if (stayWithin && node === stayWithin)
+        return null;
+
+    nextNode = node.nextSibling;
+    if (nextNode)
+        return nextNode;
+
+    nextNode = node;
+    while (nextNode && !nextNode.nextSibling && (!stayWithin || !nextNode.parentNode || nextNode.parentNode !== stayWithin))
+        nextNode = nextNode.parentNode;
+    if (!nextNode)
+        return null;
+
+    return nextNode.nextSibling;
+}
+
+function getElementByPseudoId(root, pseudoId) {
+    if (!window.internals)
+        return null;
+    var node = root;
+    while (node) {
+        if (node.nodeType === Node.ELEMENT_NODE && internals.shadowPseudoId(node) === pseudoId)
+            return node;
+        node = traverseNextNode(node, root);
+    }
+    return null;
+}

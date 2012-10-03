@@ -80,6 +80,8 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     const String& keyIdentifier = keyboardEvent->keyIdentifier();
 
     if (keyIdentifier == "Down") {
+        if (keyboardEvent->getModifierState("Alt"))
+            return;
         keyboardEvent->setDefaultHandled();
         stepDown();
         return;

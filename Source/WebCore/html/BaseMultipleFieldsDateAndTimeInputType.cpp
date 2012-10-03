@@ -32,13 +32,17 @@
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
 
+#include "CSSValueKeywords.h"
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "ElementShadow.h"
 #include "FormController.h"
+#include "HTMLDataListElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLOptionElement.h"
 #include "KeyboardEvent.h"
 #include "Localizer.h"
+#include "PickerIndicatorElement.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -89,6 +93,8 @@ bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerReadOnly() const
 BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement* element)
     : BaseDateAndTimeInputType(element)
     , m_dateTimeEditElement(0)
+    , m_pickerIndicatorElement(0)
+    , m_pickerIndicatorIsVisible(false)
 {
 }
 
@@ -111,12 +117,28 @@ RenderObject* BaseMultipleFieldsDateAndTimeInputType::createRenderer(RenderArena
 
 void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
 {
+    DEFINE_STATIC_LOCAL(AtomicString, dateAndTimeInputContainerPseudoId, ("-webkit-date-and-time-container", AtomicString::ConstructFromLiteral));
+
     ASSERT(element()->shadow());
+
+    RefPtr<HTMLDivElement> container = HTMLDivElement::create(element()->document());
+    element()->userAgentShadowRoot()->appendChild(container);
+    container->setShadowPseudoId(dateAndTimeInputContainerPseudoId);
 
     RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), *this));
     m_dateTimeEditElement = dateTimeEditElement.get();
-    element()->userAgentShadowRoot()->appendChild(m_dateTimeEditElement);
+    container->appendChild(m_dateTimeEditElement);
     updateInnerTextValue();
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (InputType::themeSupportsDataListUI(this)) {
+        RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(element()->document());
+        m_pickerIndicatorElement = pickerElement.get();
+        container->appendChild(m_pickerIndicatorElement);
+        m_pickerIndicatorIsVisible = true;
+        updatePickerIndicatorVisibility();
+    }
+#endif
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
@@ -148,7 +170,11 @@ void BaseMultipleFieldsDateAndTimeInputType::disabledAttributeChanged()
 
 void BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    forwardEvent(event);
+    if (m_pickerIndicatorIsVisible && event->keyIdentifier() == "Down" && event->getModifierState("Alt")) {
+        m_pickerIndicatorElement->openPopup();
+        event->setDefaultHandled();
+    } else
+        forwardEvent(event);
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
@@ -237,6 +263,45 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     else
         m_dateTimeEditElement->setEmptyValue(layoutParameters, date);
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+void BaseMultipleFieldsDateAndTimeInputType::listAttributeTargetChanged()
+{
+    updatePickerIndicatorVisibility();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility()
+{
+    if (HTMLDataListElement* dataList = element()->dataList()) {
+        RefPtr<HTMLCollection> options = dataList->options();
+        for (unsigned i = 0; HTMLOptionElement* option = toHTMLOptionElement(options->item(i)); ++i) {
+            if (element()->isValidValue(option->value())) {
+                showPickerIndicator();
+                return;
+            }
+        }
+    }
+    hidePickerIndicator();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::hidePickerIndicator()
+{
+    if (!m_pickerIndicatorIsVisible)
+        return;
+    m_pickerIndicatorIsVisible = false;
+    ASSERT(m_pickerIndicatorElement);
+    m_pickerIndicatorElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::showPickerIndicator()
+{
+    if (m_pickerIndicatorIsVisible)
+        return;
+    m_pickerIndicatorIsVisible = true;
+    ASSERT(m_pickerIndicatorElement);
+    m_pickerIndicatorElement->removeInlineStyleProperty(CSSPropertyDisplay);
+}
+#endif
 
 } // namespace WebCore
 

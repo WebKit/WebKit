@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
 </head>
 <body>
 Please run this test within DumpRenderTree.
@@ -28,7 +29,7 @@ var highlight = sampleStyle.backgroundColor;
 
 testInput.focus();
 var shadowRoot = internals.oldestShadowRoot(testInput);
-var fields = shadowRoot.firstChild.childNodes;
+var fields = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit").childNodes;
 for (var index = 0; index < fields.length; ++index) {
     var field = fields[index];
     if (field.nodeType != 1)

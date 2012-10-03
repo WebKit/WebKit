@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/forms/resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #eeffff; padding: 0 50px;" dir="rtl">
+<input type=time id=time value="12:31" list="suggestions" style="width: 100px;">
+<datalist id=suggestions>
+    <option label="Now">01:01</option>
+    <option label="Recommended">01:02</option>
+    <option>01:03</option>
+    <option>01:04</option>
+    <option>01:05</option>
+    <option>01:06</option>
+    <option>01:07</option>
+    <option>01:08</option>
+    <option>01:09</option>
+    <option>01:10</option>
+    <option>01:11</option>
+    <option>01:12</option>
+    <option>01:13</option>
+    <option>01:14</option>
+    <option>01:15</option>
+    <option>01:16</option>
+    <option>01:17</option>
+    <option>01:18</option>
+    <option>01:19</option>
+    <option>01:20</option>
+</datalist>
+<script>
+function finishTest() {
+    popupWindow.removeEventListener('resize', finishTest);
+    popupWindow.focus();
+    eventSender.keyDown('downArrow');
+    setTimeout(function() {testRunner.notifyDone();}, 0);
+}
+
+testRunner.dumpAsText(true);
+testRunner.waitUntilDone();
+
+window.onload = function() {
+    var dateInput = document.getElementById('time');
+    dateInput.offsetTop;
+    openPicker(dateInput);
+    popupWindow.addEventListener('resize', finishTest, false);
+};
+</script>
+</body>
+</html>

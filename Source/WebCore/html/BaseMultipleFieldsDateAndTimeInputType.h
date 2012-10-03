@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class PickerIndicatorElement;
+
 class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, protected DateTimeEditElement::EditControlOwner {
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
@@ -74,8 +76,15 @@ private:
     virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
     virtual void stepAttributeChanged() OVERRIDE FINAL;
     virtual void updateInnerTextValue() OVERRIDE FINAL;
+    virtual void listAttributeTargetChanged() OVERRIDE FINAL;
+
+    void showPickerIndicator();
+    void hidePickerIndicator();
+    void updatePickerIndicatorVisibility();
 
     DateTimeEditElement* m_dateTimeEditElement;
+    PickerIndicatorElement* m_pickerIndicatorElement;
+    bool m_pickerIndicatorIsVisible;
 };
 
 } // namespace WebCore

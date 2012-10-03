@@ -568,6 +568,11 @@ input::-webkit-datetime-edit-year-field {
     padding: 0.15em;
 }
 
+input::-webkit-date-and-time-container {
+    display: -webkit-flex;
+    -webkit-align-items: center;
+}
+
 /* Remove focus ring from fields and use highlight color */
 input::-webkit-datetime-edit-ampm-field:focus,
 input::-webkit-datetime-edit-day-field:focus,

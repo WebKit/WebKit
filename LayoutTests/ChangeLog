@@ -1,3 +1,41 @@
+2012-10-03  Keishi Hattori  <keishi@webkit.org>
+
+        Implement DataList UI for input type time on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=98240
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/number/number-spinbutton-click-in-iframe.html:
+        * fast/forms/resources/common-spinbutton-click-in-iframe.js:
+        (getSpinButton): This broke because of the change to shadow DOM structure.
+        * fast/forms/resources/common.js:
+        (traverseNextNode):
+        (getElementByPseudoId): This finds a descendant node with a matching pseudo id.
+        * fast/forms/resources/suggestion-picker-common.js: Added.
+        (highlightedEntry):
+        (openPicker):
+        (sendKey):
+        * fast/forms/time-multiple-fields/time-multiple-fields-focus-style.html:
+        * fast/forms/time-multiple-fields/time-multiple-fields-spinbutton-click-in-iframe.html:
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt:
+        * platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations-expected.txt:
+        * platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.txt: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.txt: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-key-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations.html: Added.
+
 2012-10-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable mock scrollbars

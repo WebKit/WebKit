@@ -1,3 +1,41 @@
+2012-10-03  Keishi Hattori  <keishi@webkit.org>
+
+        Implement DataList UI for input type time on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=98240
+
+        Reviewed by Kent Tamura.
+
+        This adds datalist UI for input type time. We add the picker indicator to
+        BaseMultipleFieldsDateAndTimeInputType. We enclose the dateTimeEdit element
+        and picker indicator inside a new div element so we can position the picker
+        indicator in the same place as input type=date.
+
+        Tests: platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html
+               platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html
+               platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html
+               platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html
+               platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations.html
+
+        * css/html.css:
+        (input::-webkit-date-and-time-container):
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree): Creates a picker indicator.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent): Open the picker on Alt+Down.
+        (WebCore):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::listAttributeTargetChanged): Updates picker visibility.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility): In the future, DateInputType can override
+        this so the picker indicator is always visible.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::hidePickerIndicator):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::showPickerIndicator):
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (WebCore):
+        (BaseMultipleFieldsDateAndTimeInputType):
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler): Ignore Alt+down because it should trigger the picker to open.
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsDataListUI): Add time to the list.
+
 2012-10-03  Andreas Kling  <kling@webkit.org>
 
         Give CSSValueList backing vector an inline capacity.

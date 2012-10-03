@@ -16,7 +16,7 @@ FAIL document.getElementById("datetime").list should be [object HTMLDataListElem
 PASS document.getElementById("date").list is document.getElementById("dl1")
 FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("week").list should be [object HTMLDataListElement]. Was null.
-FAIL document.getElementById("time").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("time").list is document.getElementById("dl1")
 FAIL document.getElementById("datetime-local").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("number").list is document.getElementById("dl1")
 PASS document.getElementById("range").list is document.getElementById("dl1")

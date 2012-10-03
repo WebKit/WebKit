@@ -3,6 +3,7 @@
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -81,23 +82,17 @@
     <option>foo</option> <!--invalid-->
 </datalist>
 <script>
-description("Tests that key bindings work as expected.");
-window.jsTestIsAsync = true;
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-var calendarPickerElement = window.internals.oldestShadowRoot(document.getElementById('date')).firstChild.lastChild;
-sendMousedown(calendarPickerElement);
+openPicker($('date'));
 
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener("resize", function() {
+popupWindow.addEventListener("resize", function() {
     debug('Check that page popup exists.');
-    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+    shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
     debug('Check that hovering over an entry highlights it.');
-    hoverOverElement(pickerWindow.document.querySelector(".suggestion-list-entry:nth-child(2)"));
+    hoverOverElement(popupWindow.document.querySelector(".suggestion-list-entry:nth-child(2)"));
     shouldBe('highlightedEntry()', '"2012-01-02"');
 
     debug('Check that moving the mouse outside the popup de-highlights entries.');
@@ -105,32 +100,12 @@ pickerWindow.addEventListener("resize", function() {
     shouldBeNull('highlightedEntry()');
 
     debug('Check that mouse click closes the popup and sets the value.');
-    clickElement(pickerWindow.document.querySelector(".suggestion-list-entry:nth-child(3)"));
+    clickElement(popupWindow.document.querySelector(".suggestion-list-entry:nth-child(3)"));
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"2012-01-03"');
 
     finishJSTest();
 }, false);
-
-function highlightedEntry() {
-    var activeElement = pickerWindow.document.activeElement;
-    if (!activeElement)
-        return null;
-    var value = activeElement.dataset.value;
-    if (typeof value === "string")
-        return value;
-    var action = activeElement.dataset.action;
-    if (typeof action === "string")
-        return "@" + action;
-    return null;
-}
-
-function sendMousedown(element) {
-    var event = document.createEvent('MouseEvent');
-    event.initEvent('click', true, true);
-    element.dispatchEvent(event);
-}
-
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
