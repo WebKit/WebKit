@@ -3644,6 +3644,8 @@ webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-ar
 
 webkit.org/b/97558 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/98094 [ Linux Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
+
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]
