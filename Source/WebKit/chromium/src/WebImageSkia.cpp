@@ -125,7 +125,7 @@ WebVector<WebImage> WebImage::framesFromData(const WebData& data)
             continue;
 
         OwnPtr<NativeImageSkia> image = adoptPtr(frame->asNewNativeImage());
-        if (image.get())
+        if (image.get() && image->isDataComplete())
             frames.append(WebImage(image->bitmap()));
     }
 

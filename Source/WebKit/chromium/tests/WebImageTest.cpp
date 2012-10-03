@@ -88,6 +88,15 @@ TEST(WebImageTest, ICOImage)
     EXPECT_EQ(SkColorSetARGB(255, 0, 0, 0), images[1].getSkBitmap().getColor(0, 0));
 }
 
+TEST(WebImageTest, ICOValidHeaderMissingBitmap)
+{
+    RefPtr<SharedBuffer> data = readFile("valid_header_missing_bitmap.ico");
+    ASSERT_TRUE(data.get());
+
+    WebVector<WebImage> images = WebImage::framesFromData(WebData(data));
+    ASSERT_TRUE(images.isEmpty());
+}
+
 TEST(WebImageTest, BadImage)
 {
     const char badImage[] = "hello world";
