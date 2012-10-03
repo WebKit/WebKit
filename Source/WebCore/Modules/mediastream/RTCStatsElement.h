@@ -37,6 +37,7 @@ public:
     static PassRefPtr<RTCStatsElement> create(long timestamp);
     long timestamp() const { return m_timestamp; }
     String stat(const String& name) const;
+    void addStatistic(const String& name, const String& value);
 
 private:
     explicit RTCStatsElement(long timestamp);

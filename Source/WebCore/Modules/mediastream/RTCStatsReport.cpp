@@ -39,6 +39,27 @@ RTCStatsReport::RTCStatsReport()
 {
 }
 
+size_t RTCStatsReport::addElement(bool isLocal, long timestamp)
+{
+    if (isLocal) {
+        m_local.append(RTCStatsElement::create(timestamp));
+        return m_local.size() - 1;
+    }
+    m_remote.append(RTCStatsElement::create(timestamp));
+    return m_remote.size() - 1;
+}
+
+void RTCStatsReport::addStatistic(bool isLocal, size_t element, String name, String value)
+{
+    if (isLocal) {
+        ASSERT(element >= 0 && element < m_local.size());
+        m_local[element]->addStatistic(name, value);
+    } else {
+        ASSERT(element >= 0 && element < m_remote.size());
+        m_remote[element]->addStatistic(name, value);
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

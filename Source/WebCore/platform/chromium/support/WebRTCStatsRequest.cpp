@@ -33,8 +33,10 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <public/WebRTCStatsRequest.h>
+#include <public/WebRTCStatsResponse.h>
 
 #include "RTCStatsRequest.h"
+#include "RTCStatsResponse.h"
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
@@ -56,9 +58,14 @@ void WebRTCStatsRequest::reset()
     m_private.reset();
 }
 
-void WebRTCStatsRequest::requestSucceeded() const
+WebRTCStatsResponse WebRTCStatsRequest::createResponse() const
 {
-    m_private->requestSucceeded();
+    return WebRTCStatsResponse(m_private->createResponse());
+}
+
+void WebRTCStatsRequest::requestSucceeded(const WebRTCStatsResponse& response) const
+{
+    m_private->requestSucceeded(response);
 }
 
 } // namespace WebKit

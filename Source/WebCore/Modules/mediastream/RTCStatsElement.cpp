@@ -47,6 +47,11 @@ String RTCStatsElement::stat(const String& name) const
     return m_stats.get(name);
 }
 
+void RTCStatsElement::addStatistic(const String& name, const String& value)
+{
+    m_stats.add(name, value);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

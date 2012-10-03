@@ -33,11 +33,28 @@ namespace WebCore {
 PassRefPtr<RTCStatsResponse> RTCStatsResponse::create()
 {
     return adoptRef(new RTCStatsResponse());
-    // FIXME: Pass an RTCStatsRequest argument and populate from it.
 }
 
 RTCStatsResponse::RTCStatsResponse()
 {
+}
+
+size_t RTCStatsResponse::addReport()
+{
+    m_result.append(RTCStatsReport::create());
+    return m_result.size() - 1;
+}
+
+size_t RTCStatsResponse::addElement(size_t report, bool isLocal, long timestamp)
+{
+    ASSERT(report >= 0 && report < m_result.size());
+    return m_result[report]->addElement(isLocal, timestamp);
+}
+
+void RTCStatsResponse::addStatistic(size_t report, bool isLocal, size_t element, String name, String value)
+{
+    ASSERT(report >= 0 && report < m_result.size());
+    return m_result[report]->addStatistic(isLocal, element, name, value);
 }
 
 } // namespace WebCore

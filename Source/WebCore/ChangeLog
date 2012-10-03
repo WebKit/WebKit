@@ -1,3 +1,63 @@
+2012-10-03  Harald Alvestrand  <hta@google.com>
+
+        Add data passing to the GetStats interface of RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=98003
+
+        Reviewed by Adam Barth.
+
+        Added an RTCStatsResponseBase interface to platform, and let the
+        RTCStatsRequestImpl class produce an implementation of it that's returned
+        to WebCore.
+
+        Tested by extension of the RTCPeerConnection-stats.html test.
+
+        * Modules/mediastream/RTCStatsElement.cpp:
+        (WebCore::RTCStatsElement::addStatistic):
+        (WebCore):
+        * Modules/mediastream/RTCStatsElement.h:
+        (RTCStatsElement):
+        * Modules/mediastream/RTCStatsReport.cpp:
+        (WebCore):
+        (WebCore::RTCStatsReport::addElement):
+        (WebCore::RTCStatsReport::addStatistic):
+        * Modules/mediastream/RTCStatsReport.h:
+        (RTCStatsReport):
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::createResponse):
+        (WebCore):
+        (WebCore::RTCStatsRequestImpl::requestSucceeded):
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        (RTCStatsRequestImpl):
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        (WebCore::RTCStatsResponse::create):
+        (WebCore::RTCStatsResponse::addReport):
+        (WebCore):
+        (WebCore::RTCStatsResponse::addElement):
+        (WebCore::RTCStatsResponse::addStatistic):
+        * Modules/mediastream/RTCStatsResponse.h:
+        (RTCStatsResponse):
+        * WebCore.gypi:
+        * platform/chromium/support/WebRTCStatsRequest.cpp:
+        (WebKit::WebRTCStatsRequest::response):
+        (WebKit):
+        (WebKit::WebRTCStatsRequest::requestSucceeded):
+        * platform/chromium/support/WebRTCStatsResponse.cpp: Added.
+        (WebKit):
+        (WebKit::WebRTCStatsResponse::WebRTCStatsResponse):
+        (WebKit::WebRTCStatsResponse::assign):
+        (WebKit::WebRTCStatsResponse::reset):
+        (WebKit::WebRTCStatsResponse::operator WTF::PassRefPtr<WebCore::RTCStatsResponseBase>):
+        (WebKit::WebRTCStatsResponse::addReport):
+        (WebKit::WebRTCStatsResponse::addElement):
+        (WebKit::WebRTCStatsResponse::addStatistic):
+        * platform/mediastream/RTCStatsRequest.h:
+        (WebCore):
+        (RTCStatsRequest):
+        * platform/mediastream/RTCStatsResponseBase.h: Added.
+        (WebCore):
+        (RTCStatsResponseBase):
+        (WebCore::RTCStatsResponseBase::~RTCStatsResponseBase):
+
 2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the web view that initiated a custom URI request to WebKit2 GTK+

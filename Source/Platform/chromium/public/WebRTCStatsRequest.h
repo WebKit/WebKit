@@ -41,6 +41,29 @@ class RTCStatsRequest;
 
 namespace WebKit {
 
+class WebRTCStatsResponse;
+
+// The WebRTCStatsRequest class represents a JavaScript call on
+// RTCPeerConnection.getStats(). The user of this API will use
+// the calls on this class and WebRTCStatsResponse to fill in the
+// data that will be returned via a callback to the user in an
+// RTCStatsResponse structure.
+//
+// The typical usage pattern is:
+// WebRTCStatsRequest request = <from somewhere>
+// WebRTCStatsResponse response = request.createResponse();
+//
+// For each item on which statistics are going to be reported:
+//   size_t reportIndex = response.addReport();
+//   Add local information:
+//   size_t elementIndex = response.addElement(reportIndex, true, dateNow());
+//   For each statistic being reported on:
+//     response.addStatistic(reportIndex, true, elementIndex,
+//                           "name of statistic", "statistic value"); 
+//   Remote information (typically RTCP-derived) is added in the same way.
+// When finished adding information:
+// request.requestSucceeded(response);
+
 class WebRTCStatsRequest {
 public:
     WebRTCStatsRequest() { }
@@ -57,7 +80,9 @@ public:
 
     WEBKIT_EXPORT void reset();
 
-    WEBKIT_EXPORT void requestSucceeded() const;
+    WEBKIT_EXPORT void requestSucceeded(const WebRTCStatsResponse&) const;
+
+    WEBKIT_EXPORT WebRTCStatsResponse createResponse() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebRTCStatsRequest(const WTF::PassRefPtr<WebCore::RTCStatsRequest>&);

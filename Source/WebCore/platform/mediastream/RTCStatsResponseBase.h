@@ -22,59 +22,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef RTCStatsResponseBase_h
+#define RTCStatsResponseBase_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RTCStatsRequestImpl.h"
-
-#include "RTCStatsCallback.h"
-#include "RTCStatsRequest.h"
-#include "RTCStatsResponse.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-{
-    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback));
-    request->suspendIfNeeded();
-    return request.release();
-}
+class RTCStatsResponseBase : public RefCounted<RTCStatsResponseBase> {
+public:
+    virtual ~RTCStatsResponseBase() { }
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-    : ActiveDOMObject(context, this)
-    , m_successCallback(callback)
-{
-}
-
-RTCStatsRequestImpl::~RTCStatsRequestImpl()
-{
-}
-
-PassRefPtr<RTCStatsResponseBase> RTCStatsRequestImpl::createResponse()
-{
-    return RTCStatsResponse::create();
-}
-
-void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> response)
-{
-    if (!m_successCallback)
-        return;
-    m_successCallback->handleEvent(static_cast<RTCStatsResponse*>(response.get()));
-    clear();
-}
-
-void RTCStatsRequestImpl::stop()
-{
-    clear();
-}
-
-void RTCStatsRequestImpl::clear()
-{
-    m_successCallback.clear();
-}
-
+    virtual size_t addReport() = 0;
+    virtual size_t addElement(size_t report, bool isLocal, long timestamp) = 0;
+    virtual void addStatistic(size_t report, bool isLocal, size_t element, String name, String value) = 0;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // RTCStatsResponseBase_h

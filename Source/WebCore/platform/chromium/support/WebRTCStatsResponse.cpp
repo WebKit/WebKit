@@ -26,55 +26,51 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RTCStatsRequestImpl.h"
+#include <public/WebRTCStatsResponse.h>
 
-#include "RTCStatsCallback.h"
-#include "RTCStatsRequest.h"
-#include "RTCStatsResponse.h"
+#include "RTCStatsResponseBase.h"
+#include <wtf/PassOwnPtr.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-{
-    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback));
-    request->suspendIfNeeded();
-    return request.release();
-}
+namespace WebKit {
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-    : ActiveDOMObject(context, this)
-    , m_successCallback(callback)
+WebRTCStatsResponse::WebRTCStatsResponse(const PassRefPtr<RTCStatsResponseBase>& request)
+    : m_private(request)
 {
 }
 
-RTCStatsRequestImpl::~RTCStatsRequestImpl()
+void WebRTCStatsResponse::assign(const WebRTCStatsResponse& other)
 {
+    m_private = other.m_private;
 }
 
-PassRefPtr<RTCStatsResponseBase> RTCStatsRequestImpl::createResponse()
+void WebRTCStatsResponse::reset()
 {
-    return RTCStatsResponse::create();
+    m_private.reset();
 }
 
-void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> response)
+WebRTCStatsResponse::operator WTF::PassRefPtr<WebCore::RTCStatsResponseBase>() const
 {
-    if (!m_successCallback)
-        return;
-    m_successCallback->handleEvent(static_cast<RTCStatsResponse*>(response.get()));
-    clear();
+    return m_private.get();
 }
 
-void RTCStatsRequestImpl::stop()
+size_t WebRTCStatsResponse::addReport()
 {
-    clear();
+    return m_private->addReport();
 }
 
-void RTCStatsRequestImpl::clear()
+size_t WebRTCStatsResponse::addElement(size_t report, bool isLocal, long timestamp)
 {
-    m_successCallback.clear();
+    return m_private->addElement(report, isLocal, timestamp);
 }
 
+void WebRTCStatsResponse::addStatistic(size_t report, bool isLocal, size_t element, WebString name, WebString value)
+{
+    m_private->addStatistic(report, isLocal, element, name, value);
+}
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)
+

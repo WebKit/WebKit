@@ -34,14 +34,19 @@
 #include "EventTarget.h"
 #include "MediaStreamTrack.h"
 #include "RTCStatsReport.h"
+#include "RTCStatsResponseBase.h"
 
 namespace WebCore {
 
-class RTCStatsResponse : public RefCounted<RTCStatsResponse> {
+class RTCStatsResponse : public RTCStatsResponseBase {
 public:
     static PassRefPtr<RTCStatsResponse> create();
 
     const Vector<RefPtr<RTCStatsReport> >& result() const { return m_result; };
+
+    virtual size_t addReport() OVERRIDE;
+    virtual size_t addElement(size_t report, bool isLocal, long timestamp) OVERRIDE;
+    virtual void addStatistic(size_t report, bool isLocal, size_t element, String name, String value) OVERRIDE;
 
 private:
     RTCStatsResponse();

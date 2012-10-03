@@ -39,11 +39,14 @@
 
 namespace WebCore {
 
+class RTCStatsResponseBase;
+
 class RTCStatsRequest : public RefCounted<RTCStatsRequest> {
 public:
     virtual ~RTCStatsRequest() { }
 
-    virtual void requestSucceeded() = 0;
+    virtual PassRefPtr<RTCStatsResponseBase> createResponse() = 0;
+    virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) = 0;
 
 protected:
     RTCStatsRequest() { }

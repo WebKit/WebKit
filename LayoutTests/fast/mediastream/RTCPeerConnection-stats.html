@@ -8,18 +8,53 @@
 description("Tests the RTCPeerConnection stats interface.");
 
 var pc = null;
+var result;
+var local;
 
-function statsHandler(status)
+function getUserMedia(dictionary, callback) {
+    try {
+        navigator.webkitGetUserMedia(dictionary, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function statsHandler1(status)
 {
-    testPassed("statsHandler was called");
+    testPassed("statsHandler1 was called");
     shouldBeNonNull('status');
     result = status.result();
     shouldBe('result.length', '0');
+    shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
+}
+
+function gotStream(s) {
+    testPassed('Got a stream.');
+    stream = s;
+
+    pc.addStream(stream);
+    shouldNotThrow('pc.getStats(statsHandler2)');
+}
+
+function statsHandler2(status)
+{
+    testPassed("statsHandler2 was called");
+    result = status.result();
+    shouldBeGreaterThanOrEqual('result.length', '2');
+    local = result[0].local();
+    shouldBe('local.length', '1');
+    shouldBe('local[0].stat("type")', '"audio"');
     finishJSTest();
 }
 
 shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
-shouldNotThrow('pc.getStats(statsHandler)');
+shouldNotThrow('pc.getStats(statsHandler1)');
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;

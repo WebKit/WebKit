@@ -22,59 +22,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebRTCStatsResponse_h
+#define WebRTCStatsResponse_h
 
-#if ENABLE(MEDIA_STREAM)
-
-#include "RTCStatsRequestImpl.h"
-
-#include "RTCStatsCallback.h"
-#include "RTCStatsRequest.h"
-#include "RTCStatsResponse.h"
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
+#include "WebString.h"
 
 namespace WebCore {
-
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-{
-    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback));
-    request->suspendIfNeeded();
-    return request.release();
+class RTCStatsResponseBase;
 }
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
-    : ActiveDOMObject(context, this)
-    , m_successCallback(callback)
-{
-}
+namespace WebKit {
 
-RTCStatsRequestImpl::~RTCStatsRequestImpl()
-{
-}
+class WebRTCStatsResponse {
+public:
+    WebRTCStatsResponse() { }
+    WebRTCStatsResponse(const WebRTCStatsResponse& other) { assign(other); }
+    ~WebRTCStatsResponse() { reset(); }
 
-PassRefPtr<RTCStatsResponseBase> RTCStatsRequestImpl::createResponse()
-{
-    return RTCStatsResponse::create();
-}
+    WebRTCStatsResponse& operator=(const WebRTCStatsResponse& other)
+    {
+        assign(other);
+        return *this;
+    }
 
-void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> response)
-{
-    if (!m_successCallback)
-        return;
-    m_successCallback->handleEvent(static_cast<RTCStatsResponse*>(response.get()));
-    clear();
-}
+    WEBKIT_EXPORT void assign(const WebRTCStatsResponse&);
 
-void RTCStatsRequestImpl::stop()
-{
-    clear();
-}
+    WEBKIT_EXPORT void reset();
 
-void RTCStatsRequestImpl::clear()
-{
-    m_successCallback.clear();
-}
+    WEBKIT_EXPORT size_t addReport();
+    WEBKIT_EXPORT size_t addElement(size_t report, bool isLocal, long timestamp);
+    WEBKIT_EXPORT void addStatistic(size_t report, bool isLocal, size_t element, WebString name, WebString value);
 
+#if WEBKIT_IMPLEMENTATION
+    WebRTCStatsResponse(const WTF::PassRefPtr<WebCore::RTCStatsResponseBase>&);
 
-} // namespace WebCore
+    operator WTF::PassRefPtr<WebCore::RTCStatsResponseBase>() const;
+#endif
 
-#endif // ENABLE(MEDIA_STREAM)
+private:
+    WebPrivatePtr<WebCore::RTCStatsResponseBase> m_private;
+};
+
+} // namespace WebKit
+
+#endif // WebRTCStatsResponse_h

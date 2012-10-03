@@ -72,6 +72,7 @@ private:
     TaskList m_taskList;
     WebKit::WebRTCSessionDescription m_localDescription;
     WebKit::WebRTCSessionDescription m_remoteDescription;
+    int m_streamCount;
 };
 
 #endif // ENABLE(MEDIA_STREAM)

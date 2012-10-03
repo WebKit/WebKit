@@ -39,6 +39,7 @@
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
 #include <public/WebRTCStatsRequest.h>
+#include <public/WebRTCStatsResponse.h>
 #include <public/WebRTCVoidRequest.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
@@ -83,19 +84,21 @@ private:
 
 class RTCStatsRequestSucceededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
 public:
-    RTCStatsRequestSucceededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCStatsRequest& request)
+    RTCStatsRequestSucceededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCStatsRequest& request, const WebKit::WebRTCStatsResponse& response)
         : MethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
+        , m_response(response)
     {
     }
 
     virtual void runIfValid() OVERRIDE
     {
-        m_request.requestSucceeded();
+        m_request.requestSucceeded(m_response);
     }
 
 private:
     WebKit::WebRTCStatsRequest m_request;
+    WebKit::WebRTCStatsResponse m_response;
 };
 
 class RTCVoidRequestTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
@@ -124,6 +127,7 @@ private:
 
 MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
     : m_client(client)
+    , m_streamCount(0)
 {
 }
 
@@ -195,6 +199,7 @@ bool MockWebRTCPeerConnectionHandler::addICECandidate(const WebRTCICECandidate& 
 
 bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& stream, const WebMediaConstraints&)
 {
+    m_streamCount += 1;
     m_client->didAddRemoteStream(stream);
     m_client->negotiationNeeded();
     return true;
@@ -202,15 +207,24 @@ bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& 
 
 void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescriptor& stream)
 {
+    m_streamCount -= 1;
     m_client->didRemoveRemoteStream(stream);
     m_client->negotiationNeeded();
 }
 
 void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request)
 {
-    postTask(new RTCStatsRequestSucceededTask(this, request));
+    WebRTCStatsResponse response = request.createResponse();
+    for (int i = 0; i < m_streamCount; ++i) {
+        size_t reportIndex = response.addReport();
+        size_t elementIndex = response.addElement(reportIndex, true, 12345);
+        response.addStatistic(reportIndex, true, elementIndex, "type", "audio");
+        reportIndex = response.addReport();
+        elementIndex = response.addElement(reportIndex, true, 12345);
+        response.addStatistic(reportIndex, true, elementIndex, "type", "video");
+    }
+    postTask(new RTCStatsRequestSucceededTask(this, request, response));
 }
-
 
 void MockWebRTCPeerConnectionHandler::stop()
 {

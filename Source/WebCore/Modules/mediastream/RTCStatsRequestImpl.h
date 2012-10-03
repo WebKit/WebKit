@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "RTCStatsRequest.h"
+#include "RTCStatsResponse.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -42,7 +43,8 @@ public:
     static PassRefPtr<RTCStatsRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>);
     virtual ~RTCStatsRequestImpl();
 
-    virtual void requestSucceeded();
+    virtual PassRefPtr<RTCStatsResponseBase> createResponse();
+    virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>);
 
     // ActiveDOMObject
     virtual void stop() OVERRIDE;
