@@ -1,5 +1,103 @@
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 2.
+
+        * platform/efl/fast/css3-text-decoration: Added.
+        * platform/efl/fast/css3-text-decoration/repaint: Added.
+        * platform/efl/fast/css3-text-decoration/repaint/repaint-text-decoration-line-expected.png: Added.
+        * platform/efl/fast/doctypes/001-expected.png:
+        * platform/efl/fast/doctypes/002-expected.png:
+        * platform/efl/fast/doctypes/003-expected.png:
+        * platform/efl/fast/doctypes/004-expected.png:
+        * platform/efl/fast/dynamic/create-renderer-for-whitespace-only-text-expected.png:
+        * platform/efl/fast/fast-mobile-scrolling/fixed-position-element-expected.png:
+        * platform/efl/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.png:
+        * platform/efl/fast/flexbox/002-expected.png:
+        * platform/efl/fast/flexbox/003-expected.png:
+        * platform/efl/fast/flexbox/004-expected.png:
+        * platform/efl/fast/flexbox/005-expected.png:
+        * platform/efl/fast/flexbox/006-expected.png:
+        * platform/efl/fast/flexbox/007-expected.png:
+        * platform/efl/fast/flexbox/008-expected.png:
+        * platform/efl/fast/flexbox/009-expected.png:
+        * platform/efl/fast/flexbox/010-expected.png:
+        * platform/efl/fast/flexbox/011-expected.png:
+        * platform/efl/fast/flexbox/012-expected.png:
+        * platform/efl/fast/flexbox/016-expected.png:
+        * platform/efl/fast/flexbox/017-expected.png:
+        * platform/efl/fast/flexbox/018-expected.png:
+        * platform/efl/fast/flexbox/019-expected.png:
+        * platform/efl/fast/flexbox/020-expected.png:
+        * platform/efl/fast/flexbox/021-expected.png:
+        * platform/efl/fast/flexbox/022-expected.png:
+        * platform/efl/fast/flexbox/023-expected.png:
+        * platform/efl/fast/flexbox/024-expected.png:
+        * platform/efl/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/efl/fast/forms/input-align-expected.png:
+        * platform/efl/fast/forms/input-text-double-click-expected.png:
+        * platform/efl/fast/gradients/css3-color-stop-units-expected.png:
+        * platform/efl/fast/gradients/css3-color-stops-expected.png:
+        * platform/efl/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/efl/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/efl/fast/gradients/css3-radial-gradients-expected.png:
+        * platform/efl/fast/gradients/css3-radial-gradients2-expected.png:
+        * platform/efl/fast/gradients/css3-repeating-linear-gradients-expected.png:
+        * platform/efl/fast/gradients/css3-repeating-radial-gradients-expected.png:
+        * platform/efl/fast/gradients/gradient-after-transparent-border-expected.png:
+        * platform/efl/fast/html/font-weight-bold-for-b-and-strong-expected.png: Added.
+        * platform/efl/fast/images/image-map-anchor-children-expected.png:
+        * platform/efl/fast/images/imagemap-case-expected.png:
+        * platform/efl/fast/images/imagemap-circle-focus-ring-expected.png:
+        * platform/efl/fast/images/imagemap-focus-ring-expected.png:
+        * platform/efl/fast/images/imagemap-focus-ring-outline-color-expected.png:
+        * platform/efl/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png:
+        * platform/efl/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png:
+        * platform/efl/fast/images/imagemap-focus-ring-zero-outline-width-expected.png:
+        * platform/efl/fast/images/imagemap-polygon-focus-ring-expected.png:
+        * platform/efl/fast/inline-block/002-expected.png:
+        * platform/efl/fast/inline-block/003-expected.png:
+        * platform/efl/fast/inline-block/006-expected.png:
+        * platform/efl/fast/inline-block/14498-positionForCoordinates-expected.png:
+        * platform/efl/fast/inline-block/overflow-clip-expected.png:
+        * platform/efl/fast/inline-block/tricky-baseline-expected.png:
+        * platform/efl/fast/inline/001-expected.png:
+        * platform/efl/fast/inline/25277-2-expected.png:
+        * platform/efl/fast/inline/25277-expected.png:
+        * platform/efl/fast/inline/br-text-decoration-expected.png:
+        * platform/efl/fast/inline/continuation-outlines-expected.png:
+        * platform/efl/fast/inline/drawStyledEmptyInlines-expected.png:
+        * platform/efl/fast/inline/drawStyledEmptyInlinesWithWS-expected.png:
+        * platform/efl/fast/inline/emptyInlinesWithinLists-expected.png:
+        * platform/efl/fast/inline/inline-borders-with-bidi-override-expected.png:
+        * platform/efl/fast/inline/inline-continuation-borders-expected.png:
+        * platform/efl/fast/inline/inline-focus-ring-expected.png:
+        * platform/efl/fast/inline/inline-padding-disables-text-quirk-expected.png:
+        * platform/efl/fast/inline/inline-text-quirk-bpm-expected.png:
+        * platform/efl/fast/inline/inline-wrap-with-parent-padding-expected.png:
+        * platform/efl/fast/inline/vertical-align-text-bottom-expected.png:
+        * platform/efl/fast/innerHTML/002-expected.png:
+        * platform/efl/fast/innerHTML/003-expected.png:
+        * platform/efl/fast/innerHTML/006-expected.png:
+        * platform/efl/fast/invalid/002-expected.png:
+        * platform/efl/fast/invalid/014-expected.png:
+        * platform/efl/fast/invalid/016-expected.png:
+        * platform/efl/fast/invalid/021-expected.png:
+        * platform/efl/fast/invalid/table-inside-stray-table-content-expected.png:
+        * platform/efl/fast/layers/inline-dirty-z-order-lists-expected.png:
+        * platform/efl/fast/layers/layer-visibility-expected.png:
+        * platform/efl/fast/layers/layer-visibility-sublayer-expected.png:
+        * platform/efl/fast/layers/normal-flow-hit-test-expected.png:
+        * platform/efl/fast/layers/opacity-outline-expected.png:
+        * platform/efl/fast/layers/opacity-transforms-expected.png:
+        * platform/efl/fast/layers/remove-only-this-layer-update-expected.png:
+        * platform/efl/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/efl/fast/media/mq-animation-expected.png:
+        * platform/efl/fast/media/mq-aspect-ratio-expected.png:
+        * platform/efl/fast/media/mq-js-media-except-01-expected.png:
+        * platform/efl/fast/media/mq-js-media-except-02-expected.png:
+
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Update more pixel expectations in preparation for running pixel tests on the bots.
 
         * platform/efl/css3/flexbox/repaint-rtl-column-expected.png:
