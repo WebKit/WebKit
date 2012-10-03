@@ -1,3 +1,16 @@
+2012-10-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] TestRunner.setAlwaysAcceptCookies() causes flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=98238
+
+        Reviewed by Csaba Osztrogonác.
+
+        Reset AlwaysAcceptCookies setting between tests to avoid
+        flakiness due to TestRunner.setAlwaysAcceptCookies().
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2012-10-03  Harald Alvestrand  <hta@google.com>
 
         Add data passing to the GetStats interface of RTCPeerConnection
