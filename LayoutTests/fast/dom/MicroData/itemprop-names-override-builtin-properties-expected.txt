@@ -1,0 +1,13 @@
+Test to verify that itemprop names must not override builtin properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS element.properties['namedItem'] is namedItem
+PASS element.properties['item'] is item
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

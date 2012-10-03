@@ -1,3 +1,29 @@
+2012-10-02  Arko Saha  <arko@motorola.com>
+
+        Microdata: itemprop names must not override builtin properties.
+        https://bugs.webkit.org/show_bug.cgi?id=98025
+
+        Reviewed by Kentaro Hara.
+
+        We should look in the prototype for functions before assuming it as
+        an item's name. Return false if the prototype of the object has a
+        property (function) with propertyName.
+        Named properties Spec: http://dev.w3.org/2006/webapi/WebIDL/#idl-named-properties
+        Named property visibility algorithm:
+        http://dev.w3.org/2006/webapi/WebIDL/#indexed-and-named-properties
+        ...
+        7. If the result of calling the [[HasProperty]] internal method on
+        prototype with property name P is true, then return false.
+        ...
+        Also [OverrideBuiltins] is not declared for any of the properties,
+        hence no overriding is allowed in this case.
+
+        Test: fast/dom/MicroData/itemprop-names-override-builtin-properties.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+
 2012-10-02  Keishi Hattori  <keishi@webkit.org>
 
         REGRESSION (r129738): Suggestion picker label is placed in the wrong location

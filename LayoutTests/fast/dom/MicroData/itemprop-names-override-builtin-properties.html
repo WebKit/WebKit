@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to verify that itemprop names must not override builtin properties.");
+
+var element = createElement('div', {itemscope: 'itemscope'});
+
+var namedItem = element.properties.namedItem;
+var item = element.properties.item;
+element.innerHTML = '<div itemprop="namedItem item"></div>';
+
+shouldBe("element.properties['namedItem']", "namedItem");
+shouldBe("element.properties['item']", "item");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
