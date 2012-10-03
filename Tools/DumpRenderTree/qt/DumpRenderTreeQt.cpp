@@ -471,6 +471,8 @@ DumpRenderTree::DumpRenderTree()
 
     DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(true);
     DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled(webPage(), true);
+    DumpRenderTreeSupportQt::enableMockScrollbars();
+
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
     QApplication::sendEvent(m_mainView, &event);
 }

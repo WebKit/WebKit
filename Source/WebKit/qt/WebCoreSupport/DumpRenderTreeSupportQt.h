@@ -209,6 +209,8 @@ public:
 
     static bool thirdPartyCookiePolicyAllows(QWebPage*, const QUrl&, const QUrl& firstPartyUrl);
 
+    static void enableMockScrollbars();
+
     static QImage paintPagesWithBoundaries(QWebFrame*);
 };
 

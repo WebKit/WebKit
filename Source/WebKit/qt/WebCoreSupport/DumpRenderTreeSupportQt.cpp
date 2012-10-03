@@ -939,6 +939,11 @@ bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPage *page, const
     return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader()->networkingContext(), url, firstPartyUrl);
 }
 
+void DumpRenderTreeSupportQt::enableMockScrollbars()
+{
+    Settings::setMockScrollbarsEnabled(true);
+}
+
 QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const QString& elementId)
 {
     QUrl res;
