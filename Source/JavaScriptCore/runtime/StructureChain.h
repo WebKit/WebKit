@@ -59,6 +59,10 @@ namespace JSC {
         
         static ClassInfo s_info;
 
+        static const bool needsDestruction = true;
+        static const bool hasImmortalStructure = true;
+        static void destroy(JSCell*);
+
     protected:
         void finishCreation(JSGlobalData& globalData, Structure* head)
         {
@@ -78,7 +82,6 @@ namespace JSC {
         friend class LLIntOffsetsExtractor;
         
         StructureChain(JSGlobalData&, Structure*);
-        static void destroy(JSCell*);
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
     };
 

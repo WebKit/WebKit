@@ -77,7 +77,6 @@ namespace JSC {
 
     class JSGlobalObject : public JSSegmentedVariableObject {
     private:
-        typedef JSSegmentedVariableObject Base;
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
         struct JSGlobalObjectRareData {
@@ -170,14 +169,16 @@ namespace JSC {
             if (m_rareData)
                 return;
             m_rareData = adoptPtr(new JSGlobalObjectRareData);
-            Heap::heap(this)->addFinalizer(this, clearRareData);
         }
         
     public:
+        typedef JSSegmentedVariableObject Base;
+
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
             JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
             globalObject->finishCreation(globalData);
+            globalData.heap.addFinalizer(globalObject, destroy);
             return globalObject;
         }
 
@@ -205,6 +206,8 @@ namespace JSC {
     public:
         JS_EXPORT_PRIVATE ~JSGlobalObject();
         JS_EXPORT_PRIVATE static void destroy(JSCell*);
+        // We don't need a destructor because we use a finalizer instead.
+        static const bool needsDestruction = false;
 
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 

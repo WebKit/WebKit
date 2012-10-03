@@ -48,6 +48,8 @@ namespace JSC {
 
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
 
+        static const bool needsDestruction = true;
+        static const bool hasImmortalStructure = true;
         static void destroy(JSCell*);
        
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)

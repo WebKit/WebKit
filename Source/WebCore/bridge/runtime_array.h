@@ -43,12 +43,14 @@ public:
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
         RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure);
         runtimeArray->finishCreation(exec->globalData(), array);
+        exec->globalData().heap.addFinalizer(runtimeArray, destroy);
         return runtimeArray;
     }
 
     typedef Bindings::Array BindingsArray;
     ~RuntimeArray();
     static void destroy(JSCell*);
+    static const bool needsDestruction = false;
 
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
@@ -88,7 +90,7 @@ private:
 
     BindingsArray* m_array;
 };
-    
+
 } // namespace JSC
 
 #endif // RUNTIME_ARRAY_H_

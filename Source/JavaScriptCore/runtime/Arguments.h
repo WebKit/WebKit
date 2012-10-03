@@ -26,6 +26,7 @@
 
 #include "CodeOrigin.h"
 #include "JSActivation.h"
+#include "JSDestructibleObject.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
@@ -33,11 +34,11 @@
 
 namespace JSC {
 
-    class Arguments : public JSNonFinalObject {
+    class Arguments : public JSDestructibleObject {
         friend class JIT;
         friend class DFG::SpeculativeJIT;
     public:
-        typedef JSNonFinalObject Base;
+        typedef JSDestructibleObject Base;
 
         static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
         {
@@ -147,12 +148,12 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame)
-        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
     {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
-        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSDestructibleObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
     {
     }
 

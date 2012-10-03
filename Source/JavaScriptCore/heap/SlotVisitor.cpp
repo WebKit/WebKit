@@ -5,6 +5,7 @@
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlineMethods.h"
 #include "JSArray.h"
+#include "JSDestructibleObject.h"
 #include "JSGlobalData.h"
 #include "JSObject.h"
 #include "JSString.h"

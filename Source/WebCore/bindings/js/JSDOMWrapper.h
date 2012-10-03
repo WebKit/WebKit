@@ -23,20 +23,22 @@
 #define JSDOMWrapper_h
 
 #include "JSDOMGlobalObject.h"
-#include <runtime/JSObject.h>
+#include <runtime/JSDestructibleObject.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 
-class JSDOMWrapper : public JSC::JSNonFinalObject {
+class JSDOMWrapper : public JSC::JSDestructibleObject {
 public:
+    typedef JSC::JSDestructibleObject Base;
+
     JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
-        : JSNonFinalObject(globalObject->globalData(), structure)
+        : JSDestructibleObject(globalObject->globalData(), structure)
     {
         ASSERT(scriptExecutionContext());
     }

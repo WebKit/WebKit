@@ -71,6 +71,8 @@ namespace JSC {
 
         typedef JSCell Base;
 
+        static const bool needsDestruction = true;
+        static const bool hasImmortalStructure = true;
         static void destroy(JSCell*);
 
     private:

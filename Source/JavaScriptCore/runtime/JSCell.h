@@ -37,6 +37,7 @@
 
 namespace JSC {
 
+    class JSDestructibleObject;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
     class PropertyDescriptor;
@@ -69,6 +70,9 @@ namespace JSC {
 
     public:
         static const unsigned StructureFlags = 0;
+
+        static const bool needsDestruction = false;
+        static const bool hasImmortalStructure = false;
 
         enum CreatingEarlyCellTag { CreatingEarlyCell };
         JSCell(CreatingEarlyCellTag);
@@ -309,29 +313,6 @@ namespace JSC {
         return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
     }
 
-    template<class T>
-    struct NeedsDestructor {
-        static const bool value = !WTF::HasTrivialDestructor<T>::value;
-    };
-
-    template<typename T>
-    void* allocateCell(Heap& heap)
-    {
-#if ENABLE(GC_VALIDATION)
-        ASSERT(!heap.globalData()->isInitializingObject());
-        heap.globalData()->setInitializingObjectClass(&T::s_info);
-#endif
-        JSCell* result = 0;
-        if (NeedsDestructor<T>::value)
-            result = static_cast<JSCell*>(heap.allocateWithDestructor(sizeof(T)));
-        else {
-            ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
-            result = static_cast<JSCell*>(heap.allocateWithoutDestructor(sizeof(T)));
-        }
-        result->clearStructure();
-        return result;
-    }
-    
     template<typename T>
     void* allocateCell(Heap& heap, size_t size)
     {
@@ -341,14 +322,20 @@ namespace JSC {
         heap.globalData()->setInitializingObjectClass(&T::s_info);
 #endif
         JSCell* result = 0;
-        if (NeedsDestructor<T>::value)
-            result = static_cast<JSCell*>(heap.allocateWithDestructor(size));
-        else {
-            ASSERT(T::s_info.methodTable.destroy == JSCell::destroy);
+        if (T::needsDestruction && T::hasImmortalStructure)
+            result = static_cast<JSCell*>(heap.allocateWithImmortalStructureDestructor(size));
+        else if (T::needsDestruction && !T::hasImmortalStructure)
+            result = static_cast<JSCell*>(heap.allocateWithNormalDestructor(size));
+        else 
             result = static_cast<JSCell*>(heap.allocateWithoutDestructor(size));
-        }
         result->clearStructure();
         return result;
+    }
+    
+    template<typename T>
+    void* allocateCell(Heap& heap)
+    {
+        return allocateCell<T>(heap, sizeof(T));
     }
     
     inline bool isZapped(const JSCell* cell)
@@ -362,7 +349,7 @@ namespace JSC {
         ASSERT(!from || from->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
         return static_cast<To>(from);
     }
-
+    
     template<typename To>
     inline To jsCast(JSValue from)
     {

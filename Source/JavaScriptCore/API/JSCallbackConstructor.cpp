@@ -36,10 +36,10 @@
 
 namespace JSC {
 
-const ClassInfo JSCallbackConstructor::s_info = { "CallbackConstructor", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackConstructor) };
+const ClassInfo JSCallbackConstructor::s_info = { "CallbackConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackConstructor) };
 
 JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, Structure* structure, JSClassRef jsClass, JSObjectCallAsConstructorCallback callback)
-    : JSNonFinalObject(globalObject->globalData(), structure)
+    : JSDestructibleObject(globalObject->globalData(), structure)
     , m_class(jsClass)
     , m_callback(callback)
 {

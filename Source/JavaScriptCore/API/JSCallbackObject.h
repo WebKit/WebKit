@@ -133,12 +133,10 @@ public:
         callbackObject->finishCreation(exec);
         return callbackObject;
     }
-    static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
-    {
-        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
-        callbackObject->finishCreation(globalData);
-        return callbackObject;
-    }
+    static JSCallbackObject<Parent>* create(JSGlobalData&, JSClassRef, Structure*);
+
+    static const bool needsDestruction;
+    static void destroy(JSCell*);
 
     void setPrivate(void* data);
     void* getPrivate();
@@ -172,8 +170,6 @@ protected:
 
 private:
     static String className(const JSObject*);
-
-    static void destroy(JSCell*);
 
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 

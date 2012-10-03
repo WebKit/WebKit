@@ -1,1 +1,173 @@
+2012-09-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Delayed structure sweep can leak structures without bound
+        https://bugs.webkit.org/show_bug.cgi?id=96546
+
+        Reviewed by Geoffrey Garen.
+
+        This patch gets rid of the separate Structure allocator in the MarkedSpace and adds two new destructor-only
+        allocators. We now have separate allocators for our three types of objects: those objects with no destructors,
+        those objects with destructors and with immortal structures, and those objects with destructors that don't have 
+        immortal structures. All of the objects of the third type (destructors without immortal structures) now 
+        inherit from a new class named JSDestructibleObject (which in turn is a subclass of JSNonFinalObject), which stores 
+        the ClassInfo for these classes at a fixed offset for safe retrieval during sweeping/destruction.
+
+        * API/JSCallbackConstructor.cpp: Use JSDestructibleObject for JSCallbackConstructor.
+        (JSC):
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        * API/JSCallbackConstructor.h:
+        (JSCallbackConstructor):
+        * API/JSCallbackObject.cpp: Inherit from JSDestructibleObject for normal JSCallbackObjects and use a finalizer for 
+        JSCallbackObject<JSGlobalObject>, since JSGlobalObject also uses a finalizer.
+        (JSC):
+        (JSC::::create): We need to move the create function for JSCallbackObject<JSGlobalObject> out of line so we can add 
+        the finalizer for it. We don't want to add the finalizer is something like finishCreation in case somebody decides 
+        to subclass this. We use this same technique for many other subclasses of JSGlobalObject.
+        (JSC::::createStructure):
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+        (JSC):
+        * API/JSClassRef.cpp: Change all the JSCallbackObject<JSNonFinalObject> to use JSDestructibleObject instead.
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp: Ditto.
+        (JSObjectMake):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValueRef.cpp: Ditto.
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp: Ditto.
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT.h: Use the proper allocator type when doing inline allocation in the DFG.
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        * heap/Heap.cpp:
+        (JSC):
+        * heap/Heap.h: Add accessors for the various types of allocators now. Also remove the isSafeToSweepStructures function 
+        since it's always safe to sweep Structures now.
+        (JSC::Heap::allocatorForObjectWithNormalDestructor): 
+        (JSC::Heap::allocatorForObjectWithImmortalStructureDestructor):
+        (Heap):
+        (JSC::Heap::allocateWithNormalDestructor):
+        (JSC):
+        (JSC::Heap::allocateWithImmortalStructureDestructor):
+        * heap/IncrementalSweeper.cpp: Remove all the logic to detect when it's safe to sweep Structures from the 
+        IncrementalSweeper since it's always safe to sweep Structures now.
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::willFinishSweeping):
+        (JSC):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp: Remove the logic that was preventing us from sweeping Structures if it wasn't safe. Add 
+        tracking of the specific destructor type of allocator. 
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::destructorType):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        * heap/MarkedBlock.cpp: Add all the destructor type stuff to MarkedBlocks so that we do the right thing when sweeping. 
+        We also use the stored destructor type to determine the right thing to do in all JSCell::classInfo() calls.
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedBlock.h:
+        (JSC):
+        (JSC::MarkedBlock::allocator):
+        (JSC::MarkedBlock::destructorType):
+        * heap/MarkedSpace.cpp: Add the new destructor allocators to MarkedSpace.
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::immortalStructureDestructorAllocatorFor):
+        (JSC::MarkedSpace::normalDestructorAllocatorFor):
+        (JSC::MarkedSpace::allocateWithImmortalStructureDestructor):
+        (JSC::MarkedSpace::allocateWithNormalDestructor):
+        (JSC::MarkedSpace::forEachBlock):
+        * heap/SlotVisitor.cpp: Add include because the symbol was needed in an inlined function.
+        * jit/JIT.h: Make sure we use the correct allocator when doing inline allocations in the baseline JIT.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC::JIT::emitAllocateJSArray):
+        * jsc.cpp: 
+        (GlobalObject::create): Add finalizer here since JSGlobalObject needs to use a finalizer instead of inheriting from 
+        JSDestructibleObject.
+        * runtime/Arguments.cpp: Inherit from JSDestructibleObject.
+        (JSC):
+        * runtime/Arguments.h:
+        (Arguments):
+        (JSC::Arguments::Arguments):
+        * runtime/ErrorPrototype.cpp: Added an assert to make sure we have a trivial destructor.
+        (JSC):
+        * runtime/Executable.h: Indicate that all of the Executable* classes have immortal Structures.
+        (JSC):
+        * runtime/InternalFunction.cpp: Inherit from JSDestructibleObject.
+        (JSC):
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        (InternalFunction):
+        * runtime/JSCell.h: Added two static bools, needsDestruction and hasImmortalStructure, that classes can override 
+        to indicate at compile time which part of the heap they should be allocated in.
+        (JSC::allocateCell): Use the appropriate allocator depending on the destructor type.
+        * runtime/JSDestructibleObject.h: Added. New class that stores the ClassInfo of any subclass so that it can be 
+        accessed safely when the object is being destroyed.
+        (JSC):
+        (JSDestructibleObject):
+        (JSC::JSDestructibleObject::classInfo):
+        (JSC::JSDestructibleObject::JSDestructibleObject):
+        (JSC::JSCell::classInfo): Checks the current MarkedBlock to see where it should get the ClassInfo from so that it's always safe.
+        * runtime/JSGlobalObject.cpp: JSGlobalObject now uses a finalizer instead of a destructor so that it can avoid forcing all 
+        of its relatives in the inheritance hierarchy (e.g. JSScope) to use destructors as well.
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::createRareDataIfNeeded): Since we always create a finalizer now, we don't have to worry about adding one 
+        for the m_rareData field when it's created.
+        (JSC::JSGlobalObject::create):
+        (JSC):
+        * runtime/JSGlobalThis.h: Inherit from JSDestructibleObject.
+        (JSGlobalThis):
+        (JSC::JSGlobalThis::JSGlobalThis):
+        * runtime/JSPropertyNameIterator.h: Has an immortal Structure.
+        (JSC):
+        * runtime/JSScope.cpp:
+        (JSC):
+        * runtime/JSString.h: Has an immortal Structure.
+        (JSC):
+        * runtime/JSWrapperObject.h: Inherit from JSDestructibleObject.
+        (JSWrapperObject):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/MathObject.cpp: Cleaning up some of the inheritance stuff.
+        (JSC):
+        * runtime/NameInstance.h: Inherit from JSDestructibleObject.
+        (NameInstance):
+        * runtime/RegExp.h: Has immortal Structure.
+        (JSC):
+        * runtime/RegExpObject.cpp: Inheritance cleanup.
+        (JSC):
+        * runtime/SparseArrayValueMap.h: Has immortal Structure.
+        (JSC):
+        * runtime/Structure.h: Has immortal Structure.
+        (JSC):
+        * runtime/StructureChain.h: Ditto.
+        (JSC):
+        * runtime/SymbolTable.h: Ditto.
+        (SharedSymbolTable):
+        (JSC):
+
 == Rolled over to ChangeLog-2012-10-02 ==

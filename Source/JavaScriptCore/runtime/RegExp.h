@@ -47,6 +47,8 @@ namespace JSC {
         typedef JSCell Base;
 
         JS_EXPORT_PRIVATE static RegExp* create(JSGlobalData&, const String& pattern, RegExpFlags);
+        static const bool needsDestruction = true;
+        static const bool hasImmortalStructure = true;
         static void destroy(JSCell*);
 
         bool global() const { return m_flags & FlagGlobal; }

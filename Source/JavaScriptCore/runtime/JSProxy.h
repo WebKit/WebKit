@@ -26,13 +26,13 @@
 #ifndef JSProxy_h
 #define JSProxy_h
 
-#include "JSObject.h"
+#include "JSDestructibleObject.h"
 
 namespace JSC {
 
-class JSProxy : public JSNonFinalObject {
+class JSProxy : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
 
     static JSProxy* create(JSGlobalData& globalData, Structure* structure, JSObject* target)
     {
@@ -52,7 +52,7 @@ public:
 
 protected:
     JSProxy(JSGlobalData& globalData, Structure* structure)
-        : JSNonFinalObject(globalData, structure)
+        : JSDestructibleObject(globalData, structure)
     {
     }
 

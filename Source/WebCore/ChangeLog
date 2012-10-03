@@ -1,3 +1,43 @@
+2012-09-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Delayed structure sweep can leak structures without bound
+        https://bugs.webkit.org/show_bug.cgi?id=96546
+
+        Reviewed by Geoffrey Garen.
+
+        This patch gets rid of the separate Structure allocator in the MarkedSpace and adds two new destructor-only
+        allocators. We now have separate allocators for our three types of objects: those objects with no destructors,
+        those objects with destructors and with immortal structures, and those objects with destructors that don't have 
+        immortal structures. All of the objects of the third type (destructors without immortal structures) now 
+        inherit from a new class named JSDestructibleObject (which in turn is a subclass of JSNonFinalObject), which stores 
+        the ClassInfo for these classes at a fixed offset for safe retrieval during sweeping/destruction.
+
+        No new tests.
+
+        * ForwardingHeaders/runtime/JSDestructableObject.h: Added.
+        * bindings/js/JSDOMWrapper.h: Inherits from JSDestructibleObject.
+        (JSDOMWrapper):
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm: Add finalizers to anything that inherits from JSGlobalObject,
+        e.g. JSDOMWindow and JSWorkerContexts. For those classes we also need to define needsDestruction as true.
+        (GenerateHeader):
+        * bridge/objc/objc_runtime.h: Inherit from JSDestructibleObject.
+        (ObjcFallbackObjectImp):
+        * bridge/objc/objc_runtime.mm:
+        (Bindings):
+        (JSC::Bindings::ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        * bridge/runtime_array.cpp: Use a finalizer so that JSArray isn't forced to inherit from JSDestructibleObject.
+        (JSC):
+        (JSC::RuntimeArray::destroy):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create):
+        (JSC):
+        * bridge/runtime_object.cpp: Inherit from JSDestructibleObject.
+        (Bindings):
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        * bridge/runtime_object.h:
+        (RuntimeObject):
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Change most GraphicsLayer::create calls to use the version that takes a GraphicsLayerFactory

@@ -115,10 +115,14 @@ public:
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<String>& arguments)
     {
-        return new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        GlobalObject* globalObject = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        globalData.heap.addFinalizer(globalObject, destroy);
+        return globalObject;
     }
 
     static const ClassInfo s_info;
+
+    static const bool needsDestructor = false;
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
