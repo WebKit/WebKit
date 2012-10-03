@@ -1,3 +1,36 @@
+2012-10-03  Andreas Kling  <kling@webkit.org>
+
+        Shrink ElementRareData by moving bool flags to NodeRareData.
+        <http://webkit.org/b/98225>
+
+        Reviewed by Antti Koivisto.
+
+        Move all bool flags from ElementRareData to the bitfield in its base class NodeRareData.
+        This shrinks ElementRareData by 8 bytes (on 64-bit) and saves a whopping 58kB on Membuster3.
+        Also removed some double raredata hash lookups.
+
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::ensureShadow):
+        (WebCore::Element::setStyleAffectedByEmpty):
+        (WebCore::Element::styleAffectedByEmpty):
+        (WebCore::Element::setIsInCanvasSubtree):
+        (WebCore::Element::isInCanvasSubtree):
+        (WebCore::Element::containsFullScreenElement):
+        (WebCore::Element::setContainsFullScreenElement):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::styleAffectedByEmpty):
+        (WebCore::NodeRareData::setStyleAffectedByEmpty):
+        (WebCore::NodeRareData::isInCanvasSubtree):
+        (WebCore::NodeRareData::setIsInCanvasSubtree):
+        (NodeRareData):
+        (WebCore::NodeRareData::containsFullScreenElement):
+        (WebCore::NodeRareData::setContainsFullScreenElement):
+
 2012-10-03  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         getComputedStyle perspective-origin is based on the wrong bounding box

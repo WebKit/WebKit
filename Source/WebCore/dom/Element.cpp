@@ -1045,8 +1045,9 @@ void Element::detach()
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
-        setIsInCanvasSubtree(false);
-        elementRareData()->resetComputedStyle();
+        ElementRareData* data = elementRareData();
+        data->setIsInCanvasSubtree(false);
+        data->resetComputedStyle();
     }
 
     if (ElementShadow* shadow = this->shadow()) {
@@ -1120,7 +1121,7 @@ void Element::recalcStyle(StyleChange change)
         if (hasRareData()) {
             ElementRareData* data = elementRareData();
             data->resetComputedStyle();
-            data->m_styleAffectedByEmpty = false;
+            data->setStyleAffectedByEmpty(false);
         }
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
@@ -1240,8 +1241,9 @@ ElementShadow* Element::ensureShadow()
     if (ElementShadow* shadow = ensureElementRareData()->m_shadow.get())
         return shadow;
 
-    elementRareData()->m_shadow = adoptPtr(new ElementShadow());
-    return elementRareData()->m_shadow.get();
+    ElementRareData* data = elementRareData();
+    data->m_shadow = adoptPtr(new ElementShadow());
+    return data->m_shadow.get();
 }
 
 ShadowRoot* Element::userAgentShadowRoot() const
@@ -1731,24 +1733,22 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 
 void Element::setStyleAffectedByEmpty()
 {
-    ElementRareData* data = ensureElementRareData();
-    data->m_styleAffectedByEmpty = true;
+    ensureElementRareData()->setStyleAffectedByEmpty(true);
 }
 
 bool Element::styleAffectedByEmpty() const
 {
-    return hasRareData() && elementRareData()->m_styleAffectedByEmpty;
+    return hasRareData() && elementRareData()->styleAffectedByEmpty();
 }
 
 void Element::setIsInCanvasSubtree(bool isInCanvasSubtree)
 {
-    ElementRareData* data = ensureElementRareData();
-    data->m_isInCanvasSubtree = isInCanvasSubtree;
+    ensureElementRareData()->setIsInCanvasSubtree(isInCanvasSubtree);
 }
 
 bool Element::isInCanvasSubtree() const
 {
-    return hasRareData() && elementRareData()->m_isInCanvasSubtree;
+    return hasRareData() && elementRareData()->isInCanvasSubtree();
 }
 
 AtomicString Element::computeInheritedLanguage() const
@@ -1942,12 +1942,12 @@ void Element::webkitRequestFullScreen(unsigned short flags)
 
 bool Element::containsFullScreenElement() const
 {
-    return hasRareData() ? elementRareData()->m_containsFullScreenElement : false;
+    return hasRareData() && elementRareData()->containsFullScreenElement();
 }
 
 void Element::setContainsFullScreenElement(bool flag)
 {
-    ensureElementRareData()->m_containsFullScreenElement = flag;
+    ensureElementRareData()->setContainsFullScreenElement(flag);
     setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
