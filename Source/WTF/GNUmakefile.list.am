@@ -20,6 +20,7 @@ wtf_sources += \
     Source/WTF/wtf/BloomFilter.h \
     Source/WTF/wtf/BoundsCheckedPointer.h \
     Source/WTF/wtf/BumpPointerAllocator.h \
+    Source/WTF/wtf/ByteOrder.h \
     Source/WTF/wtf/CheckedArithmetic.h \
     Source/WTF/wtf/CheckedBoolean.h \
     Source/WTF/wtf/Compiler.h \

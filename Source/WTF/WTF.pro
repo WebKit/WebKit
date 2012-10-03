@@ -34,6 +34,7 @@ HEADERS += \
     BloomFilter.h \
     BoundsCheckedPointer.h \
     BumpPointerAllocator.h \
+    ByteOrder.h \
     CheckedArithmetic.h \
     Compiler.h \
     CryptographicallyRandomNumber.h \

@@ -645,6 +645,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\ByteOrder.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\CheckedArithmetic.h"
 			>
 		</File>

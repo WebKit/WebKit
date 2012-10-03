@@ -1,1 +1,15 @@
+2012-10-02  Joshua Bell  <jsbell@chromium.org>
+
+        Add htons/htonl definitions and implementations
+        https://bugs.webkit.org/show_bug.cgi?id=98054
+
+        Reviewed by Darin Adler.
+
+        Update users of htons and friends to use new wtf/ByteOrder.h header.
+
+        No new tests - just refactoring.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+        * platform/graphics/chromium/VDMXParser.cpp:
+
 == Rolled over to ChangeLog-2012-10-02 ==

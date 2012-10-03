@@ -1,3 +1,30 @@
+2012-10-02  Joshua Bell  <jsbell@chromium.org>
+
+        Add htons/htonl definitions and implementations
+        https://bugs.webkit.org/show_bug.cgi?id=98054
+
+        Reviewed by Darin Adler.
+
+        For parsing or serializing binary data, byte order matters. The canonical htons/htonl/
+        ntohs/ntohl functions are not present everywhere, so implementations are proliferating in
+        parsers. Expose a new WTF header (wtf/ByteOrder.h) that includes the standard
+        implementations on UNIX-like OSs and provides basic inlined implementations on Windows.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ByteOrder.h: Added.
+        (WTF::wswap32): Inline functions so arguments are only evaluated once.
+        (WTF::bswap32):
+        (WTF::bswap16):
+        (ntohs): Inline functions on OS(WINDOWS) to match macros on OS(UNIX)
+        (htons):
+        (ntohl):
+        (htonl):
+        * wtf/CMakeLists.txt:
+
 2012-10-02  Michael Saboff  <msaboff@apple.com>
 
         HTMLConstructionSite::insertTextNode isn't optimized for 8 bit strings

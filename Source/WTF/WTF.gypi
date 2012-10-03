@@ -14,6 +14,7 @@
             'wtf/BlockStack.h',
             'wtf/BloomFilter.h',
             'wtf/BumpPointerAllocator.h',
+            'wtf/ByteOrder.h',
             'wtf/CheckedArithmetic.h',
             'wtf/CheckedBoolean.h',
             'wtf/Compiler.h',

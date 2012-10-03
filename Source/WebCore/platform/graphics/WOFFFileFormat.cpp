@@ -30,30 +30,7 @@
 #if !USE(OPENTYPE_SANITIZER)
 
 #include "SharedBuffer.h"
-
-#if OS(UNIX)
-#include <netinet/in.h>
-#endif
-
-#if OS(WINDOWS)
-#if CPU(BIG_ENDIAN)
-#define ntohs(x) ((uint16_t)(x))
-#define htons(x) ((uint16_t)(x))
-#define ntohl(x) ((uint32_t)(x))
-#define htonl(x) ((uint32_t)(x))
-#elif CPU(MIDDLE_ENDIAN)
-#define ntohs(x) ((unit16_t)(x))
-#define htons(x) ((uint16_t)(x))
-#define ntohl(x) ((uint32_t)((((uint32_t)(x) & 0xffff0000) >> 16) | (((uint32_t)(x) & 0xffff) << 16))
-#define htonl(x) ntohl(x)
-#else
-#define ntohs(x) ((uint16_t)((((uint16_t)(x) & 0xff00) >> 8) | (((uint16_t)(x) & 0x00ff) << 8)))
-#define htons(x) ntohs(x)
-#define ntohl(x) ((uint32_t)((((uint32_t)(x) & 0xff000000) >> 24) | (((uint32_t)(x) & 0x00ff0000) >>  8) | \
-                 (((uint32_t)(x) & 0x0000ff00) <<  8) | (((uint32_t)(x) & 0x000000ff) << 24)))
-#define htonl(x) ntohl(x)
-#endif
-#endif // OS(WINDOWS)
+#include <wtf/ByteOrder.h>
 
 namespace WebCore {
 

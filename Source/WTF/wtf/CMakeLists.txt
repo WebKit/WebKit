@@ -10,6 +10,7 @@ SET(WTF_HEADERS
     Bitmap.h
     BoundsCheckedPointer.h
     BumpPointerAllocator.h
+    ByteOrder.h
     Compiler.h
     Complex.h
     CryptographicallyRandomNumber.h
