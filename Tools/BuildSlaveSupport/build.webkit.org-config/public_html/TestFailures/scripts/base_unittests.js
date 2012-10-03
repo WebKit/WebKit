@@ -460,6 +460,10 @@ test("relativizeTime", 14, function() {
     equals(base.relativizeTime(time), "2 days ago");
     time.setDate(time.getDate() - 998);
     equals(base.relativizeTime(time), "1000 days ago");
-})
+});
+
+test("getURLParameter", 1, function() {
+    ok(!base.getURLParameter('non-existant'));
+});
 
 })();

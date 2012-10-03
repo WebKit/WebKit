@@ -1,3 +1,15 @@
+2012-10-03  Ojan Vafai  <ojan@chromium.org>
+
+        Get rid of warning about non-existant platform name when loading garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=98282
+
+        Reviewed by Adam Barth.
+
+        If you loaded without a platform query parameter we'd return "null" as the platform name
+        instead of null.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+
 2012-10-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Enable mock scrollbars
