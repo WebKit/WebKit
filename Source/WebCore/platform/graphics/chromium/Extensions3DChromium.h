@@ -138,7 +138,7 @@ public:
     virtual void popGroupMarkerEXT(void);
 
     // Some helper methods to detect GPU functionality
-    virtual bool isNVidia() { return false; }
+    virtual bool isNVIDIA() { return false; }
     virtual bool isAMD() { return false; }
     virtual bool isIntel() { return false; }
     virtual String vendor() { return ""; }

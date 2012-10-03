@@ -1,3 +1,17 @@
+2012-10-02  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Fix spelling of isNVIDIA override in Extensions3DChromium
+        https://bugs.webkit.org/show_bug.cgi?id=98219
+
+        Reviewed by Dean Jackson.
+
+        The override in Extensions3dChromium should have been spelled isNVIDIA, not isNVidia.
+
+        No new tests. No change in functionality.
+
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        (WebCore::Extensions3DChromium::isNVIDIA):
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Snow Leopard build.
