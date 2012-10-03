@@ -35,10 +35,11 @@ using namespace std;
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) || USE(CFNETWORK)
+#if !USE(SOUP) && (!PLATFORM(MAC) || USE(CFNETWORK))
 double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
 #else
 // Will use NSURLRequest default timeout unless set to a non-zero value with setDefaultTimeoutInterval().
+// For libsoup the timeout enabled with integer milliseconds. We set 0 as the default value to avoid integer overflow.
 double ResourceRequestBase::s_defaultTimeoutInterval = 0;
 #endif
 

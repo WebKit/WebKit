@@ -381,6 +381,7 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
     if (d->m_soupMessage) {
         g_signal_handlers_disconnect_matched(d->m_soupMessage.get(), G_SIGNAL_MATCH_DATA,
                                              0, 0, 0, 0, handle);
+        g_object_set_data(G_OBJECT(d->m_soupMessage.get()), "handle", 0);
         d->m_soupMessage.clear();
     }
 
@@ -874,8 +875,10 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     // Except when canceling a possible timeout timer, we only need to take action here to UN-defer loading.
     if (defersLoading) {
-        g_source_destroy(d->m_timeoutSource.get());
-        d->m_timeoutSource.clear();
+        if (d->m_timeoutSource) {
+            g_source_destroy(d->m_timeoutSource.get());
+            d->m_timeoutSource.clear();
+        }
         return;
     }
 
@@ -1022,7 +1025,7 @@ static gboolean requestTimeoutCallback(gpointer data)
     ResourceError timeoutError("WebKitNetworkError", gTimeoutError, d->m_firstRequest.url().string(), "Request timed out");
     timeoutError.setIsTimeout(true);
     client->didFail(handle.get(), timeoutError);
-    cleanupSoupRequestOperation(handle.get());
+    handle->cancel();
 
     return FALSE;
 }

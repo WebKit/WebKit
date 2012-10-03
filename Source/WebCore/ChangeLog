@@ -1,3 +1,36 @@
+2012-10-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [soup] WebKit crashes when doing a http request
+        https://bugs.webkit.org/show_bug.cgi?id=98055
+
+        Reviewed by Martin Robinson.
+
+        On i386, (d->m_firstRequest.timeoutInterval() * 1000) results in 0 if
+        timeoutInterval() is INT_MAX. So, set default timeout to 0 to avoid
+        calling soup_add_timeout with a 0 value.
+
+        Also, if resource handle is deleted before "request-started" signal is
+        emitted, soupMessage handle points to a deleted object, and a crash
+        occurs. So, reset soupMessage handle data in
+        cleanupSoupRequestOperation so it won't happen anymore.
+
+        Lastly, if timeout occurs before request is completed, handle is
+        deleted, and crash occurs in sendRequestCallback due to an early
+        destroyed handle. To avoid that, call handle->cancel in
+        requestTimeoutCallback. There is no need to call
+        cleanupSoupRequestOperation anymore since handle->cancel will trigger
+        sendRequestCallback, and as handle is deleted,
+        cleanupSoupRequestOperation will be called automatically.
+
+        No new tests yet, tests will be added with the patch in bug 74802.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::cleanupSoupRequestOperation):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::requestTimeoutCallback):
+
 2012-10-03  Adam Barth  <abarth@webkit.org>
 
         Remove support for ENABLE(LEGACY_WEBKIT_BLOB_BUILDER)
