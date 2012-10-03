@@ -1,3 +1,35 @@
+2012-10-02  Sam Weinig  <sam@webkit.org>
+
+        Add Objective-C API for the InjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=98222
+
+        Reviewed by Anders Carlsson.
+
+        Add skeleton of the Objective-C API for the InjectedBundle.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new API files.
+
+        * WebProcess/InjectedBundle/API/mac: Added.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm: Added.
+        (-[WKWebProcessPlugIn _initWithPrincipalClassInstance:injectedBundle:]):
+        Initialization method for the WKWebProcessPlugIn object. This object will act as the WKBundleRef
+        object does in the C-SPI.
+        (+[WKWebProcessPlugIn _shared]):
+        Access the shared instance.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h: Added.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Store an NSBundle rather than a CFBundleRef as the platform bundle.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp: Removed.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm: Copied from Source/WebKit2/WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp.
+        (WebKit::InjectedBundle::load):
+        If a principal class is provided and no WKBundleInitialize function is present in the bundle, use the principal class
+        as the initialization point. The principal class must conform to the WKWebProcessPlugIn protocol and if a
+        webProcessPlugInInitialize: method is present, it is called. 
+
 2012-10-02  Dan Bernstein  <mitz@apple.com>
 
         Fixed a crash when the localization option is not passed to the web process.

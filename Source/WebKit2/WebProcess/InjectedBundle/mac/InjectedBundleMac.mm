@@ -23,17 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
+#import "config.h"
+#import "InjectedBundle.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include <stdio.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#import "WKBundleAPICast.h"
+#import "WKBundleInitialize.h"
+#import "WKWebProcessPlugInInternal.h"
+
+#import <Foundation/NSBundle.h>
+#import <stdio.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
+
+@interface NSBundle (WKAppDetails)
+- (CFBundleRef)_cfBundle;
+@end
 
 namespace WebKit {
 
@@ -56,28 +63,51 @@ bool InjectedBundle::load(APIObject* initializationUserData)
     
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
     if (!bundleURL) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.");
         return false;
     }
 
-    m_platformBundle = CFBundleCreate(0, bundleURL.get());
+    m_platformBundle = [[NSBundle alloc] initWithURL:(NSURL *)bundleURL.get()];
     if (!m_platformBundle) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.");
         return false;
     }
         
-    if (!CFBundleLoadExecutable(m_platformBundle)) {
-        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
+    if (![m_platformBundle load]) {
+        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.");
         return false;
     }
 
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(m_platformBundle, CFSTR("WKBundleInitialize")));
-    if (!initializeFunction) {
-        WTFLogAlways("InjectedBundle::load failed - Could not find the initialize function in the bundle executable.\n");
+    // First check to see if the bundle has a WKBundleInitialize function.
+    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
+    if (initializeFunction) {
+        initializeFunction(toAPI(this), toAPI(initializationUserData));
+        return true;
+    }
+    
+    // Otherwise, look to see if the bundle has a principal class
+    Class principalClass = [m_platformBundle principalClass];
+    if (!principalClass) {
+        WTFLogAlways("InjectedBundle::load failed - No initialize function or principal class found in the bundle executable.");
         return false;
     }
 
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
+    if (![principalClass conformsToProtocol:@protocol(WKWebProcessPlugIn)]) {
+        WTFLogAlways("InjectedBundle::load failed - Principal class does not conform to the WKWebProcessPlugIn protocol.");
+        return false;
+    }
+
+    id<WKWebProcessPlugIn> instance = (id<WKWebProcessPlugIn>)[[principalClass alloc] init];
+    if (!instance) {
+        WTFLogAlways("InjectedBundle::load failed - Could initialize an instance of the principal class.");
+        return false;
+    }
+
+    // Create the shared WKWebProcessPlugInController.
+    [[WKWebProcessPlugInController alloc] _initWithPrincipalClassInstance:instance injectedBundle:this];
+
+    if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)])
+        [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
     return true;
 }
 
