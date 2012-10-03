@@ -672,9 +672,6 @@ fast/dom/inline-event-attributes-release.html
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
 
-# The Mac port does not support the legacy WebKitBlobBuilder class.
-fast/files/blob-builder-crash.html
-
 # [Mac] inspector/debugger/linkifier.html is flakey
 # https://bugs.webkit.org/show_bug.cgi?id=85319
 inspector/debugger/linkifier.html

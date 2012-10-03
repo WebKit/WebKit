@@ -286,9 +286,6 @@ my @features = (
     { option => "legacy-vendor-prefixes", desc => "Toggle Legacy Vendor Prefix support",
       define => "ENABLE_LEGACY_VENDOR_PREFIXES", default => !isChromium(), value => \$legacyVendorPrefixSupport },
 
-    { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKit Blob Builder support",
-      define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$legacyWebKitBlobBuilderSupport },
-
     { option => "legacy-web-audio", desc => "Toggle Legacy Web Audio support",
       define => "ENABLE_LEGACY_WEB_AUDIO", default => 1, value => \$legacyWebAudioSupport },
 

@@ -1,3 +1,12 @@
+2012-10-03  Adam Barth  <abarth@webkit.org>
+
+        Remove support for ENABLE(LEGACY_WEBKIT_BLOB_BUILDER)
+        https://bugs.webkit.org/show_bug.cgi?id=98301
+
+        Reviewed by Eric Seidel.
+
+        * features.gypi:
+
 2012-10-03  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Expose settings value to conditionally enable pinch-zoom scaling in the Chromium compositor.  The

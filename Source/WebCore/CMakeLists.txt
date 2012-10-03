@@ -414,7 +414,6 @@ SET(WebCore_IDL_FILES
     fileapi/FileList.idl
     fileapi/FileReader.idl
     fileapi/FileReaderSync.idl
-    fileapi/WebKitBlobBuilder.idl
 
     html/DOMFormData.idl
     html/DOMSettableTokenList.idl

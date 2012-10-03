@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: BlobBuilder is deprecated. Use "Blob" constructor instead.
-Test that calling WebKitBlobBuilder.append with null value should not cause crash.
-DONE
-

@@ -782,8 +782,6 @@ module window {
         attribute [Conditional=BLOB|FILE_SYSTEM] FileErrorConstructor FileError;
         attribute [Conditional=BLOB] FileReaderConstructor FileReader;
 
-        attribute [Conditional=BLOB&LEGACY_WEBKIT_BLOB_BUILDER] WebKitBlobBuilderConstructor WebKitBlobBuilder;
-
         attribute [Conditional=BLOB] DOMURLConstructor URL;
         attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
 

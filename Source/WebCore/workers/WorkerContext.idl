@@ -83,7 +83,6 @@ module threads {
 #endif
 
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        attribute [Conditional=LEGACY_WEBKIT_BLOB_BUILDER] WebKitBlobBuilderConstructor WebKitBlobBuilder;
         attribute BlobConstructor Blob;
         attribute FileReaderConstructor FileReader;
         attribute FileReaderSyncConstructor FileReaderSync;

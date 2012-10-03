@@ -1,3 +1,25 @@
+2012-10-03  Adam Barth  <abarth@webkit.org>
+
+        Remove support for ENABLE(LEGACY_WEBKIT_BLOB_BUILDER)
+        https://bugs.webkit.org/show_bug.cgi?id=98301
+
+        Reviewed by Eric Seidel.
+
+        According to anonymous usage statistics, the APIs guarded by
+        ENABLE(LEGACY_WEBKIT_BLOB_BUILDER) are used on approximately 0.006% of
+        web pages. Given that this feature is only enabled in GTK and Chromium,
+        it seems likely that we should remove it.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.features.am:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/WebKitBlobBuilder.idl: Removed.
+        * page/DOMWindow.idl:
+
 2012-10-03  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=98313
