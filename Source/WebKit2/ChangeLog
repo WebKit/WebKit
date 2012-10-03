@@ -1,3 +1,34 @@
+2012-10-02  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Add the ability to send messages to the WebPageGroupProxy
+        https://bugs.webkit.org/show_bug.cgi?id=98233
+
+        Reviewed by Anders Carlsson.
+
+        Add a WebPageGroupProxy.messages.in, implement a stub message receiver
+        in WebPageGroupProxy, and teach WebProcess how to route messages to the
+        appropriate WebPageGroupProxy.
+
+        * CMakeLists.txt: Tell a build system about added files.
+        * DerivedSources.make: Ditto.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+        * Platform/CoreIPC/MessageID.h: Add MessageClassWebPageGroupProxy.
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::didReceiveMessage): Stub out the method
+        that will receive messages.
+        (WebKit::WebPageGroupProxy::didReceiveWebPageGroupProxyMessage): Stub
+        out a method that will exist in WebPageGroupProxyMessageReceiver.cpp
+        once WebPageGroupProxy.messages.in contains messages.
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage): Route messages to the
+        WebPageGroupProxy matching destinationID if the message is of class
+        MessageClassWebPageGroupProxy.
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Change most GraphicsLayer::create calls to use the version that takes a GraphicsLayerFactory

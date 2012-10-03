@@ -100,6 +100,7 @@ MESSAGE_RECEIVERS = \
     LayerTreeCoordinator.messages.in \
     WebInspector.messages.in \
     WebPage.messages.in \
+    WebPageGroupProxy.messages.in \
     WebPageProxy.messages.in \
     WebProcess.messages.in \
     WebProcessConnection.messages.in \

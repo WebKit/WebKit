@@ -44,5 +44,16 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
 WebPageGroupProxy::~WebPageGroupProxy()
 {
 }
+    
+void WebPageGroupProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    didReceiveWebPageGroupProxyMessage(connection, messageID, arguments);
+}
+
+void WebPageGroupProxy::didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+{
+    // FIXME: Remove this once WebPageGroupProxy.messages.in contains messages,
+    // in which case this method will be auto-generated.
+}
 
 } // namespace WebKit

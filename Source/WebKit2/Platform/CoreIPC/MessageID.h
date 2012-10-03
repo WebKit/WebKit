@@ -52,6 +52,7 @@ enum MessageClass {
     MessageClassWebNetworkInfoManagerProxy,
     MessageClassWebNotificationManager,
     MessageClassWebPage,
+    MessageClassWebPageGroupProxy,
     MessageClassWebProcess,
     MessageClassWebResourceCacheManager,
     MessageClassEventDispatcher,

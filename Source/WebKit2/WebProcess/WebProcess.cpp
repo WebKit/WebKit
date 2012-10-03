@@ -708,6 +708,18 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         m_injectedBundle->didReceiveMessage(connection, messageID, arguments);    
         return;
     }
+    
+    if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
+        uint64_t pageGroupID = arguments->destinationID();
+        if (!pageGroupID)
+            return;
+        
+        WebPageGroupProxy* pageGroupProxy = webPageGroup(pageGroupID);
+        if (!pageGroupProxy)
+            return;
+        
+        pageGroupProxy->didReceiveMessage(connection, messageID, arguments);
+    }
 
     uint64_t pageID = arguments->destinationID();
     if (!pageID)

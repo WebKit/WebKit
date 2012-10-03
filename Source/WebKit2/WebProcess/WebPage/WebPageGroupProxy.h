@@ -30,6 +30,12 @@
 #include "WebPageGroupData.h"
 #include <wtf/PassRefPtr.h>
 
+namespace CoreIPC {
+class ArgumentDecoder;
+class Connection;
+class MessageID;
+}
+
 namespace WebKit {
 
 class WebPageGroupProxy : public APIObject {
@@ -43,6 +49,8 @@ public:
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
     bool isVisibleToInjectedBundle() const { return m_data.visibleToInjectedBundle; }
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
+    
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
     WebPageGroupProxy(const WebPageGroupData& data)
@@ -51,6 +59,8 @@ private:
     }
 
     virtual Type type() const { return APIType; }
+    
+    void didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebPageGroupData m_data;
 };

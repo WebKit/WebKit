@@ -79,6 +79,7 @@ MESSAGE_RECEIVERS = \
     WebNotificationManagerProxy \
     WebNotificationManager \
     WebPage \
+    WebPageGroupProxy \
     WebPageProxy \
     WebProcess \
     WebProcessConnection \

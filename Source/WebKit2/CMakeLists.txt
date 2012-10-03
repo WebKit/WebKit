@@ -560,6 +560,7 @@ SET(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/EventDispatcher.messages.in
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebPage.messages.in
+    WebProcess/WebPage/WebPageGroupProxy.messages.in
 
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in
 )
