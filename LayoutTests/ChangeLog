@@ -1,3 +1,10 @@
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Update pixel expectations for some css2.1 tests.
+
+        * platform/efl/css2.1/20110323/c543-txt-decor-000-expected.png: Added.
+        * platform/efl/css2.1/20110323/replaced-elements-001-expected.png:
+
 2012-10-03  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         getComputedStyle perspective-origin is based on the wrong bounding box
