@@ -102,7 +102,36 @@ private
     IMAGE_CHECKSUM_ERROR = "INVALID: Image lacks a checksum. This will fail with a MISSING error in run-webkit-tests. Always generate new png files using run-webkit-tests."
 
     def self.normalize_line_ending(s)
-        s.gsub /\r\n?/, "\n"
+        if RUBY_VERSION >= "1.9"
+            # Transliteration table from http://stackoverflow.com/a/6609998
+            transliteration_table = { '\xc2\x82' => ',',        # High code comma
+                                      '\xc2\x84' => ',,',       # High code double comma
+                                      '\xc2\x85' => '...',      # Tripple dot
+                                      '\xc2\x88' => '^',        # High carat
+                                      '\xc2\x91' => '\x27',     # Forward single quote
+                                      '\xc2\x92' => '\x27',     # Reverse single quote
+                                      '\xc2\x93' => '\x22',     # Forward double quote
+                                      '\xc2\x94' => '\x22',     # Reverse double quote
+                                      '\xc2\x95' => ' ',
+                                      '\xc2\x96' => '-',        # High hyphen
+                                      '\xc2\x97' => '--',       # Double hyphen
+                                      '\xc2\x99' => ' ',
+                                      '\xc2\xa0' => ' ',
+                                      '\xc2\xa6' => '|',        # Split vertical bar
+                                      '\xc2\xab' => '<<',       # Double less than
+                                      '\xc2\xbb' => '>>',       # Double greater than
+                                      '\xc2\xbc' => '1/4',      # one quarter
+                                      '\xc2\xbd' => '1/2',      # one half
+                                      '\xc2\xbe' => '3/4',      # three quarters
+                                      '\xca\xbf' => '\x27',     # c-single quote
+                                      '\xcc\xa8' => '',         # modifier - under curve
+                                      '\xcc\xb1' => ''          # modifier - under line
+                                   }
+            encoded_string = s.force_encoding('UTF-8').encode('UTF-16', :invalid => :replace, :replace => '', :fallback => transliteration_table).encode('UTF-8')
+            encoded_string.gsub /\r\n?/, "\n"
+        else
+            s.gsub /\r\n?/, "\n"
+        end
     end
 
     def self.find_url_and_path(file_path)
