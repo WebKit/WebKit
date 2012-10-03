@@ -1,3 +1,38 @@
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 4.
+
+        * platform/efl/fast/repaint/bugzilla-7235-expected.png:
+        * platform/efl/fast/repaint/change-transform-expected.png:
+        * platform/efl/fast/repaint/clipped-relative-expected.png:
+        * platform/efl/fast/repaint/containing-block-position-change-expected.png:
+        * platform/efl/fast/repaint/control-clip-expected.png:
+        * platform/efl/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/efl/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-table-cell-expected.png:
+        * platform/efl/fast/repaint/flexible-box-overflow-expected.png:
+        * platform/efl/fast/repaint/flexible-box-overflow-horizontal-expected.png:
+        * platform/efl/fast/repaint/float-move-during-layout-expected.png:
+        * platform/efl/fast/repaint/focus-layers-expected.png:
+        * platform/efl/fast/repaint/inline-block-overflow-expected.png:
+        * platform/efl/fast/repaint/layer-child-outline-expected.png:
+        * platform/efl/fast/repaint/layer-outline-expected.png:
+        * platform/efl/fast/repaint/layer-outline-horizontal-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset2-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset3-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/efl/fast/repaint/line-overflow-expected.png:
+
 2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix Geolocation/window-close-crash.html and harden WebKitTestRunner for Geolocation
