@@ -39,6 +39,7 @@ class FontSelector;
 const int cAllFamiliesScanned = -1;
 
 class FontFallbackList : public RefCounted<FontFallbackList> {
+    WTF_MAKE_NONCOPYABLE(FontFallbackList);
 public:
     static PassRefPtr<FontFallbackList> create() { return adoptRef(new FontFallbackList()); }
 
@@ -63,10 +64,6 @@ public:
     const GlyphPages& glyphPages() const { return m_pages; }
 
 private:
-    friend class SVGTextRunRenderingContext;
-    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
-    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
-
     FontFallbackList();
 
     const SimpleFontData* primarySimpleFontData(const Font* f)
@@ -83,7 +80,9 @@ private:
     void setPlatformFont(const FontPlatformData&);
 
     void releaseFontData();
-
+    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
+    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
+    
     mutable Vector<RefPtr<FontData>, 1> m_fontList;
     mutable GlyphPages m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
@@ -96,6 +95,7 @@ private:
     mutable bool m_loadingCustomFonts : 1;
 
     friend class Font;
+    friend class SVGTextRunRenderingContext;
 };
 
 }

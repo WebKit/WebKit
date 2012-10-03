@@ -90,7 +90,6 @@ class Event;
 class EventListener;
 class FloatRect;
 class FloatQuad;
-class FontData;
 class FormController;
 class Frame;
 class FrameView;
@@ -539,8 +538,6 @@ public:
     void updateLayoutIgnorePendingStylesheets();
     PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
-
-    void registerCustomFont(PassRefPtr<FontData>);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     bool isPageBoxVisible(int pageIndex);
@@ -1210,8 +1207,6 @@ private:
 
     void seamlessParentUpdatedStylesheets();
 
-    void deleteCustomFonts();
-
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
     void loadEventDelayTimerFired(Timer<Document>*);
@@ -1255,8 +1250,6 @@ private:
     // to track that this happened so that we can do a full repaint when the stylesheets
     // do eventually load.
     PendingSheetLayout m_pendingSheetLayout;
-
-    Vector<RefPtr<FontData> > m_customFonts;
 
     Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;

@@ -184,11 +184,6 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         fontData = SimpleFontData::create(temporaryFont->platformData(), true, true);
     }
 
-    if (Document* document = fontSelector->document())
-        document->registerCustomFont(fontData);
-    else
-        fontData.clear();
-
     return fontData; // No release, because fontData is a reference to a RefPtr that is held in the m_fontDataTable.
 }
 

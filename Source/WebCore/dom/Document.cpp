@@ -645,8 +645,6 @@ Document::~Document()
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
 
-    deleteCustomFonts();
-
     m_weakReference->clear();
 
     if (m_mediaQueryMatcher)
@@ -1972,20 +1970,6 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
 {
     RefPtr<RenderStyle> style = styleResolver()->styleForPage(pageIndex);
     return style.release();
-}
-
-void Document::registerCustomFont(PassRefPtr<FontData> fontData)
-{
-    m_customFonts.append(fontData);
-}
-
-void Document::deleteCustomFonts()
-{
-    size_t size = m_customFonts.size();
-    for (size_t i = 0; i < size; ++i)
-        GlyphPageTreeNode::pruneTreeCustomFontData(m_customFonts[i].get());
-
-    m_customFonts.clear();
 }
 
 bool Document::isPageBoxVisible(int pageIndex)
@@ -5864,7 +5848,6 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_styleResolver);
-    info.addMember(m_customFonts);
     info.addMember(m_url);
     info.addMember(m_baseURL);
     info.addMember(m_baseURLOverride);

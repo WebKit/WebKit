@@ -34,6 +34,7 @@ namespace WebCore {
 
 SegmentedFontData::~SegmentedFontData()
 {
+    GlyphPageTreeNode::pruneTreeCustomFontData(this);
 }
 
 const SimpleFontData* SegmentedFontData::fontDataForCharacter(UChar32 c) const

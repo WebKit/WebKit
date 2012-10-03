@@ -1,3 +1,19 @@
+2012-10-03  Stephen Chenney  <schenney@chromium.org>
+
+        Font data is purged while fonts are still using it
+        https://bugs.webkit.org/show_bug.cgi?id=93640
+
+        Reviewed by Eric Seidel.
+
+        Tests for font purging. The seamless-custom-font-pruning-crash test
+        was only failing in Chromium Asan, while the seamless-nested-crash
+        case was only failing in Asan DumpRenderTree.
+
+        * fast/frames/seamless/seamless-custom-font-pruning-crash-expected.txt: Added.
+        * fast/frames/seamless/seamless-custom-font-pruning-crash.html: Added.
+        * fast/frames/seamless/seamless-nested-crash-expected.txt: Added.
+        * fast/frames/seamless/seamless-nested-crash.html: Added.
+
 2012-10-03  Ojan Vafai  <ojan@chromium.org>
 
         Fix some style violations in perparation for changing this code.
