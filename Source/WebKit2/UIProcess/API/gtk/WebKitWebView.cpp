@@ -1288,25 +1288,25 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewEmitDelayedLoadEvents(webView);
 
         webkitWebViewCancelFaviconRequest(webView);
-        webView->priv->loadingResourcesMap.clear();
-        webView->priv->mainResource = 0;
-        webView->priv->waitingForMainResource = false;
+        priv->loadingResourcesMap.clear();
+        priv->mainResource = 0;
+        priv->waitingForMainResource = false;
     } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
         webkitWebViewRequestFavicon(webView);
 
-        webView->priv->subresourcesMap.clear();
-        if (!webView->priv->mainResource) {
+        priv->subresourcesMap.clear();
+        if (!priv->mainResource) {
             // When a page is loaded from the history cache, the main resource load callbacks
             // are called when the main frame load is finished. We want to make sure there's a
             // main resource available when load has been committed, so we delay the emission of
             // load-changed signal until main resource object has been created.
-            webView->priv->waitingForMainResource = true;
+            priv->waitingForMainResource = true;
         } else
             setCertificateToMainResource(webView);
     }
 
-    if (webView->priv->waitingForMainResource)
-        webView->priv->lastDelayedEvent = loadEvent;
+    if (priv->waitingForMainResource)
+        priv->lastDelayedEvent = loadEvent;
     else
         webkitWebViewEmitLoadChanged(webView, loadEvent);
 }
