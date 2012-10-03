@@ -1,3 +1,61 @@
+2012-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView doesn't emit notify:favicon when it changes in some cases in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=98153
+
+        Reviewed by Martin Robinson.
+
+        The main problem is that it relies on icon-ready signal to be
+        emitted by the favicon database, but that signal is only emitted
+        when the icon is loaded from the network or imported from the
+        database, but not when the icon is already in memory. The way to
+        detect if a web page doesn't have a favicon or it's unknown it's
+        also incorrectly done and the wrong error is returned for pages
+        not having a favicon.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (GetFaviconSurfaceAsyncData): Add a GError field.
+        (getIconSurfaceSynchronously): Add a GError parameter and fill it
+        accordingly. Use imageForPageURL() instead of
+        nativeImageForPageURL() because the latter always returns NULL for
+        empty images, so it's not possible to know whether it's an empty
+        image or not. If the image is empty is because the web page is
+        known by the database and it doesn't have a favicon.
+        (processPendingIconsForURI): Pass the data error to
+        getIconSurfaceSynchronously(). Don't set the icon if the request
+        has been cancelled.
+        (webkitFaviconDatabaseGetFavicon): Pass NULL as error to
+        getIconSurfaceSynchronously().
+        (setErrorForAsyncResult): Fill also error for
+        WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN.
+        (webkit_favicon_database_get_favicon): If we get NULL as icon in
+        the first place, check the error code returned by
+        getIconSurfaceSynchronously() and return early if the page doesn't
+        have a favicon. Remove the cancelled signal to avoid race
+        conditions.
+        (webkit_favicon_database_get_favicon_finish): Errors are processed
+        before now, so simply propagate the error if any or return the
+        favicon.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate): Keep a reference of the favicon.
+        (webkitWebViewCancelFaviconRequest): Cancel any async operation to
+        get the favicon.
+        (webkitWebViewUpdateFavicon): Check if favicon has changed and
+        save it emitting also notify::favicon signal.
+        (iconReadyCallback): Only update the favicon if we don't have one
+        already.
+        (webkitWebViewFinalize): Call webkitWebViewCancelFaviconRequest().
+        (getFaviconReadyCallback): Update the favicon.
+        (webkitWebViewRequestFavicon): Request a new favicon.
+        (webkitWebViewLoadChanged): Try to get the favicon when the load
+        has been committed and the URI is the final one.
+        (webkit_web_view_get_favicon): Return the cached favicon.
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (serverCallback):
+        (testSetDirectory):
+        (testGetFavicon):
+        (testWebViewFavicon):
+
 2012-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the web view that initiated a custom URI request to WebKit2 GTK+
