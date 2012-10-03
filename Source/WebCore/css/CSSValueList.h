@@ -79,7 +79,7 @@ private:
     explicit CSSValueList(ValueListSeparator);
     explicit CSSValueList(CSSParserValueList*);
 
-    Vector<RefPtr<CSSValue> > m_values;
+    Vector<RefPtr<CSSValue>, 4> m_values;
 };
 
 // Objects of this class are intended to be stack-allocated and scoped to a single function.

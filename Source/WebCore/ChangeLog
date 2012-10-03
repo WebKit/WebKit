@@ -1,3 +1,20 @@
+2012-10-03  Andreas Kling  <kling@webkit.org>
+
+        Give CSSValueList backing vector an inline capacity.
+        <http://webkit.org/b/98266>
+        <rdar://problem/12421425>
+
+        Reviewed by Anders Carlsson.
+
+        Set an inline capacity of 4 on the CSSValue vector backing CSSValueList. This avoids an extra heap allocation
+        in the common case, and reduces total memory use across the board, since the majority of CSSValueLists have
+        at least 1 item, and the Vector will bump from 0 to 16 capacity on the first append.
+
+        394kB progression on Membuster3.
+
+        * css/CSSValueList.h:
+        (CSSValueList):
+
 2012-10-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: instrument NativeImageSkia.
