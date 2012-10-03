@@ -32,6 +32,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "LevelDBSlice.h"
+#include <wtf/ByteOrder.h>
 #include <wtf/text/StringBuilder.h>
 
 // LevelDB stores key/value pairs. Keys and values are strings of bytes, normally of type Vector<char>.
@@ -289,36 +290,33 @@ const char* decodeVarInt(const char* p, const char* limit, int64_t& foundInt)
 
 Vector<char> encodeString(const String& s)
 {
-    Vector<char> ret(s.length() * 2);
+    // Backing store is UTF-16BE, convert from host endianness.
+    size_t length = s.length();
+    Vector<char> ret(length * sizeof(UChar));
 
-    for (unsigned i = 0; i < s.length(); ++i) {
-        UChar u = s[i];
-        unsigned char hi = u >> 8;
-        unsigned char lo = u;
-        ret[2 * i] = hi;
-        ret[2 * i + 1] = lo;
-    }
+    const UChar* src = s.characters();
+    UChar* dst = reinterpret_cast<UChar*>(ret.data());
+    for (unsigned i = 0; i < length; ++i)
+        *dst++ = htons(*src++);
 
     return ret;
 }
 
-String decodeString(const char* p, const char* end)
+String decodeString(const char* start, const char* end)
 {
-    ASSERT(end >= p);
-    ASSERT(!((end - p) % 2));
+    // Backing store is UTF-16BE, convert to host endianness.
+    ASSERT(end >= start);
+    ASSERT(!((end - start) % sizeof(UChar)));
 
-    size_t len = (end - p) / 2;
-    StringBuilder result;
-    result.reserveCapacity(len);
+    size_t length = (end - start) / sizeof(UChar);
+    Vector<UChar> buffer(length);
 
-    for (size_t i = 0; i < len; ++i) {
-        unsigned char hi = *p++;
-        unsigned char lo = *p++;
+    const UChar* src = reinterpret_cast<const UChar*>(start);
+    UChar* dst = buffer.data();
+    for (unsigned i = 0; i < length; ++i)
+        *dst++ = ntohs(*src++);
 
-        result.append(static_cast<UChar>((hi << 8) | lo));
-    }
-
-    return result.toString();
+    return String::adopt(buffer);
 }
 
 Vector<char> encodeStringWithLength(const String& s)

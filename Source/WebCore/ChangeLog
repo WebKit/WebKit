@@ -1,3 +1,25 @@
+2012-10-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Optimize encodeString/decodeString
+        https://bugs.webkit.org/show_bug.cgi?id=97794
+
+        Reviewed by Tony Chang.
+
+        Optimize string encoding/decoding, which showed up as a CPU hot spot during profiling.
+        The backing store uses big-endian ordering of 16-bit code unit strings, so a memcopy
+        isn't sufficient, but the code used StringBuilder::append() character-by-character
+        and custom byte-swapping which was slow.
+
+        Ran a test w/ DumpRenderTree (to avoid multiprocess overhead) taking a 10k character string
+        and putting it 20k times and getting it 20k times. On my test box, mean time before the
+        patch was 8.2s, mean time after the patch was 4.6s.
+
+        Tested by Chromium's webkit_unit_tests --gtest_filter='IDBLevelDBCodingTest.*String*'
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeString):
+        (WebCore::IDBLevelDBCoding::decodeString):
+
 2012-10-03  Keishi Hattori  <keishi@webkit.org>
 
         Implement DataList UI for input type time on chromium
