@@ -1,8 +1,8 @@
 layer at (0,0) size 1108x1108
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x584
-  RenderBlock {HTML} at (0,0) size 784x584
-    RenderBody {BODY} at (8,8) size 768x568
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x585
+  RenderBlock {HTML} at (0,0) size 785x585
+    RenderBody {BODY} at (8,8) size 769x569
       RenderText {#text} at (100,0) size 668x38
         text run at (100,0) width 668: "The image should be 1000px over to the right and bottom, which should cause horizontal and vertical scrollbars"
         text run at (100,19) width 62: "to appear."

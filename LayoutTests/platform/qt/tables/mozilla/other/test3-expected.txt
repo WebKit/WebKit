@@ -1,12 +1,12 @@
-layer at (0,0) size 784x888
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x888
-  RenderBlock {HTML} at (0,0) size 784x888
-    RenderBody {BODY} at (8,8) size 768x864 [bgcolor=#FFFFFF]
-      RenderBlock {H1} at (0,0) size 768x37
+layer at (0,0) size 785x888
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x888
+  RenderBlock {HTML} at (0,0) size 785x888
+    RenderBody {BODY} at (8,8) size 769x864 [bgcolor=#FFFFFF]
+      RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 335x36
           text run at (0,0) width 335: "Example 3: Basic Tables"
-      RenderBlock {H2} at (0,58) size 768x28
+      RenderBlock {H2} at (0,58) size 769x28
         RenderText {#text} at (0,0) size 361x28
           text run at (0,0) width 361: "Simple table, 75% width, border=1"
       RenderTable {TABLE} at (0,105) size 576x106 [border: (1px outset #808080)]
@@ -41,7 +41,7 @@ layer at (0,0) size 784x888
             RenderTableCell {TD} at (374,79) size 198x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 43x19
                 text run at (2,2) width 43: "bottom"
-      RenderBlock {H2} at (0,230) size 768x28
+      RenderBlock {H2} at (0,230) size 769x28
         RenderText {#text} at (0,0) size 390x28
           text run at (0,0) width 390: "Row Span, auto width table, border=5"
       RenderTable {TABLE} at (0,277) size 266x262 [border: (5px outset #808080)]
@@ -125,7 +125,7 @@ layer at (0,0) size 784x888
             RenderTableCell {TD} at (222,227) size 32x23 [border: (1px inset #808080)] [r=9 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "c1r9"
-      RenderBlock {H2} at (0,558) size 768x28
+      RenderBlock {H2} at (0,558) size 769x28
         RenderText {#text} at (0,0) size 265x28
           text run at (0,0) width 265: "Col Span auto width table"
       RenderTable {TABLE} at (0,605) size 698x79 [border: (1px outset #808080)]
@@ -205,7 +205,7 @@ layer at (0,0) size 784x888
             RenderTableCell {TD} at (653,52) size 41x23 [border: (1px inset #808080)] [r=2 c=17 rs=1 cs=1]
               RenderText {#text} at (2,2) size 36x19
                 text run at (2,2) width 36: "r2c18"
-      RenderBlock {H2} at (0,703) size 768x28
+      RenderBlock {H2} at (0,703) size 769x28
         RenderText {#text} at (0,0) size 189x28
           text run at (0,0) width 189: "Row and Col Span"
       RenderTable {TABLE} at (0,750) size 154x79 [border: (1px outset #808080)]
@@ -240,6 +240,6 @@ layer at (0,0) size 784x888
             RenderTableCell {TD} at (118,52) size 32x23 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "r2c3"
-      RenderBlock {P} at (0,845) size 768x19
+      RenderBlock {P} at (0,845) size 769x19
         RenderText {#text} at (0,0) size 4x19
           text run at (0,0) width 4: " "

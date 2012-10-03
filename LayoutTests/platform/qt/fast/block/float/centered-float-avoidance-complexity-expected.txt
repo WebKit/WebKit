@@ -1,9 +1,9 @@
-layer at (0,0) size 784x646
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x646
-  RenderBlock {HTML} at (0,0) size 784x646
-    RenderBody {BODY} at (8,21) size 768x607
-      RenderBlock {H1} at (0,0) size 768x74
+layer at (0,0) size 785x646
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x646
+  RenderBlock {HTML} at (0,0) size 785x646
+    RenderBody {BODY} at (8,21) size 769x607
+      RenderBlock {H1} at (0,0) size 769x74
         RenderText {#text} at (0,0) size 544x36
           text run at (0,0) width 544: "Margins and block formating contexts ("
         RenderInline {A} at (0,0) size 752x73 [color=#0000EE]
@@ -12,7 +12,7 @@ layer at (0,0) size 784x646
             text run at (0,37) width 253: "from Alan Gresley"
         RenderText {#text} at (253,37) size 11x36
           text run at (253,37) width 11: ")"
-      RenderBlock {H3} at (0,95) size 768x66
+      RenderBlock {H3} at (0,95) size 769x66
         RenderText {#text} at (0,0) size 691x22
           text run at (0,0) width 691: "The orange stripe has 'overflow: auto', 'margin-left: 100px' and 'margin-right: 100px'"
         RenderBR {BR} at (691,0) size 0x22
@@ -53,7 +53,7 @@ layer at (0,0) size 784x646
         RenderBlock (floating) {DIV} at (495,5) size 150x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x19
             text run at (0,0) width 79: "floatR 150px"
-      RenderBlock {H3} at (0,541) size 768x66
+      RenderBlock {H3} at (0,541) size 769x66
         RenderText {#text} at (0,0) size 665x22
           text run at (0,0) width 665: "The orange stripe has 'overflow: auto', 'margin-left: auto' and 'margin-right: auto'"
         RenderBR {BR} at (665,0) size 0x22

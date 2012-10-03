@@ -1,23 +1,23 @@
-layer at (0,0) size 784x773
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x773
-  RenderBlock {HTML} at (0,0) size 784x773
-    RenderBody {BODY} at (8,8) size 768x757
-      RenderTable {TABLE} at (0,0) size 768x757 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x755
-          RenderTableRow {TR} at (0,0) size 766x21
+layer at (0,0) size 785x773
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x773
+  RenderBlock {HTML} at (0,0) size 785x773
+    RenderBody {BODY} at (8,8) size 769x757
+      RenderTable {TABLE} at (0,0) size 769x757 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x755
+          RenderTableRow {TR} at (0,0) size 767x21
             RenderTableCell {TD} at (0,0) size 71x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "foo"
-            RenderTableCell {TD} at (71,0) size 695x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (71,0) size 696x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "bar"
-          RenderTableRow {TR} at (0,21) size 766x734
-            RenderTableCell {TD} at (0,21) size 766x734 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 764x732 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 762x730
-                  RenderTableRow {TR} at (0,2) size 762x726
-                    RenderTableCell {TD} at (2,2) size 758x726 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,21) size 767x734
+            RenderTableCell {TD} at (0,21) size 767x734 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 765x732 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 763x730
+                  RenderTableRow {TR} at (0,2) size 763x726
+                    RenderTableCell {TD} at (2,2) size 759x726 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 713x38
                         text run at (2,2) width 713: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff Daphne"
                         text run at (2,21) width 395: "Whiten was the cause of the fire herself and had committed arson."
@@ -34,9 +34,9 @@ layer at (0,0) size 784x773
                         text run at (2,154) width 600: "After the fire the Plaintiff and her husband, Keith Whiten needed welfare assistance to support them."
                       RenderBR {BR} at (602,169) size 0x0
                       RenderBR {BR} at (2,173) size 0x19
-                      RenderText {#text} at (2,192) size 752x57
-                        text run at (2,192) width 727: "The jury, however, in a 4 week trial, disagreed with the position of the insurance company. It awarded not only the policy"
-                        text run at (2,211) width 752: "sum against the insurer, but also was sufficiently annoyed with the conduct of the company to award a further punitive damage"
+                      RenderText {#text} at (2,192) size 755x57
+                        text run at (2,192) width 755: "The jury, however, in a 4 week trial, disagreed with the position of the insurance company. It awarded not only the policy sum"
+                        text run at (2,211) width 724: "against the insurer, but also was sufficiently annoyed with the conduct of the company to award a further punitive damage"
                         text run at (2,230) width 120: "award of $1 million."
                       RenderBR {BR} at (122,245) size 0x0
                       RenderBR {BR} at (2,249) size 0x19

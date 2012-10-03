@@ -1,10 +1,10 @@
 layer at (0,0) size 1164x1680
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x1680
-  RenderBlock {HTML} at (0,0) size 784x1680
-    RenderBody {BODY} at (8,8) size 768x1664
-layer at (8,8) size 768x404
-  RenderBlock {DIV} at (0,0) size 768x404 [border: (2px solid #000000)]
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x1680
+  RenderBlock {HTML} at (0,0) size 785x1680
+    RenderBody {BODY} at (8,8) size 769x1664
+layer at (8,8) size 769x404
+  RenderBlock {DIV} at (0,0) size 769x404 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 374x266
       RenderText {#text} at (0,0) size 104x19
         text run at (0,0) width 104: "This is some text."
@@ -130,8 +130,8 @@ layer at (8,8) size 768x404
       RenderText {#text} at (0,594) size 104x19
         text run at (0,594) width 104: "This is some text."
       RenderBR {BR} at (104,609) size 0x0
-layer at (8,428) size 768x404
-  RenderBlock {DIV} at (0,420) size 768x404 [border: (2px solid #000000)]
+layer at (8,428) size 769x404
+  RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 374x266
       RenderText {#text} at (0,0) size 104x19
         text run at (0,0) width 104: "This is some text."
@@ -256,8 +256,8 @@ layer at (8,428) size 768x404
       RenderText {#text} at (0,594) size 104x19
         text run at (0,594) width 104: "This is some text."
       RenderBR {BR} at (104,609) size 0x0
-layer at (8,848) size 768x404
-  RenderBlock {DIV} at (0,840) size 768x404 [border: (2px solid #000000)]
+layer at (8,848) size 769x404
+  RenderBlock {DIV} at (0,840) size 769x404 [border: (2px solid #000000)]
     RenderImage {IMG} at (2,2) size 300x390 [bgcolor=#008000]
     RenderText {#text} at (302,2) size 369x438
       text run at (302,2) width 69: "Longer text"
@@ -283,8 +283,8 @@ layer at (8,848) size 768x404
       text run at (302,382) width 51: "test float"
       text run at (2,402) width 369: "and wrapping behavior. Longer text designed to test float and"
       text run at (2,421) width 116: "wrapping behavior."
-layer at (8,1268) size 768x404
-  RenderBlock {DIV} at (0,1260) size 768x404 [border: (2px solid #000000)]
+layer at (8,1268) size 769x404
+  RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
     RenderImage {IMG} at (2,2) size 374x380 [bgcolor=#0000FF]
     RenderInline {SPAN} at (0,0) size 367x252
       RenderImage {IMG} at (2,402) size 100x20 [bgcolor=#008000]

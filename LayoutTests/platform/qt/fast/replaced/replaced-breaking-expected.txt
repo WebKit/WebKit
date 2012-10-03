@@ -1,8 +1,8 @@
-layer at (0,0) size 784x674
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x674
-  RenderBlock {HTML} at (0,0) size 784x674
-    RenderBody {BODY} at (8,8) size 768x658
+layer at (0,0) size 785x674
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x674
+  RenderBlock {HTML} at (0,0) size 785x674
+    RenderBody {BODY} at (8,8) size 769x658
       RenderBlock {DIV} at (0,0) size 32x658 [border: (1px solid #FF0000)]
         RenderTextControl {INPUT} at (3,3) size 192x23
         RenderTextControl {INPUT} at (3,30) size 192x23
@@ -37,8 +37,8 @@ layer at (0,0) size 784x674
             RenderText at (0,0) size 34x19
               text run at (0,0) width 34: "select"
         RenderText {#text} at (0,0) size 0x0
-        RenderListBox {SELECT} at (3,307) size 56x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (3,392) size 56x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (3,307) size 55x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (3,392) size 55x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {INPUT} at (4,478) size 13x13
         RenderBlock {INPUT} at (4,497) size 13x13

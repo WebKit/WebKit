@@ -1,9 +1,9 @@
-layer at (0,0) size 784x604
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x604
-  RenderBlock {HTML} at (0,0) size 784x604
-    RenderBody {BODY} at (8,8) size 768x588
-      RenderBlock (anonymous) at (0,0) size 768x38
+layer at (0,0) size 785x604
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x604
+  RenderBlock {HTML} at (0,0) size 785x604
+    RenderBody {BODY} at (8,8) size 769x588
+      RenderBlock (anonymous) at (0,0) size 769x38
         RenderText {#text} at (0,0) size 760x38
           text run at (0,0) width 760: "Make sure that overflow:auto/hidden/scroll blocks interleave their background and foreground with other overlapping blocks in"
           text run at (0,19) width 97: "the normal flow."
@@ -11,7 +11,7 @@ layer at (0,0) size 784x604
         RenderText {#text} at (0,0) size 171x109
           text run at (0,0) width 166: "This text"
           text run at (0,55) width 171: "overlaps."
-layer at (8,46) size 300x300 clip at (8,46) size 284x300 scrollHeight 893
+layer at (8,46) size 300x300 clip at (8,46) size 285x300 scrollHeight 893
   RenderBlock {DIV} at (0,38) size 300x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 71x19
       text run at (0,0) width 71: "Hello world"

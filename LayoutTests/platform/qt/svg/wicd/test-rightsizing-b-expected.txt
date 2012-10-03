@@ -1,16 +1,16 @@
-layer at (0,0) size 784x849
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x849
-  RenderBlock {html} at (0,0) size 784x849
-    RenderBody {body} at (47,30) size 736x811
-      RenderBlock {div} at (0,0) size 736x811
-        RenderBlock {h1} at (0,0) size 677x30
+layer at (0,0) size 785x849
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x849
+  RenderBlock {html} at (0,0) size 785x849
+    RenderBody {body} at (47,30) size 737x811
+      RenderBlock {div} at (0,0) size 737x811
+        RenderBlock {h1} at (0,0) size 678x30
           RenderText {#text} at (0,0) size 386x30
             text run at (0,0) width 386: "rightsizing to percentage width"
-        RenderBlock {h4} at (0,30) size 736x16
+        RenderBlock {h4} at (0,30) size 737x16
           RenderText {#text} at (0,0) size 138x16
             text run at (0,0) width 138: "WICD Core 1.0 #20-2"
-        RenderBlock (anonymous) at (0,65) size 736x298
+        RenderBlock (anonymous) at (0,65) size 737x298
           RenderEmbeddedObject {object} at (0,0) size 294x294 [bgcolor=#FF0000]
             layer at (0,0) size 294x294
               RenderView at (0,0) size 294x294
@@ -66,15 +66,15 @@ layer at (0,0) size 784x849
                     RenderSVGInlineText {#text} at (0,0) size 152x85
                       chunk 1 (middle anchor) text run 1 at (24.39,125.00) startOffset 0 endOffset 3 width 151.22: "SVG"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (0,365) size 677x68
-          RenderText {#text} at (0,0) size 626x34
-            text run at (0,0) width 626: "Above there must be four times the same, square SVG child visible, each referenced by an object element with"
-            text run at (0,17) width 358: "different widths (40%, 20%, 10%, 5%) and no height defined. "
+        RenderBlock {p} at (0,365) size 678x68
+          RenderText {#text} at (0,0) size 678x34
+            text run at (0,0) width 678: "Above there must be four times the same, square SVG child visible, each referenced by an object element with different"
+            text run at (0,17) width 306: "widths (40%, 20%, 10%, 5%) and no height defined. "
           RenderBR {br} at (0,0) size 0x0
           RenderBR {br} at (0,34) size 0x17
           RenderText {#text} at (0,51) size 371x17
             text run at (0,51) width 371: "Beyond there is the same, only with PNG images instead of SVG."
-        RenderBlock (anonymous) at (0,438) size 736x298
+        RenderBlock (anonymous) at (0,438) size 737x298
           RenderImage {object} at (0,0) size 294x294 [bgcolor=#FF0000]
           RenderText {#text} at (294,279) size 4x19
             text run at (294,279) width 4: " "
@@ -86,11 +86,11 @@ layer at (0,0) size 784x849
             text run at (522,279) width 4: " "
           RenderImage {object} at (526,258) size 36x36 [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (0,738) size 677x34
+        RenderBlock {p} at (0,738) size 678x34
           RenderText {#text} at (0,0) size 662x34
             text run at (0,0) width 662: "This test has succeeded, if both rows look exactly the same (SVGs must be square!) and no red background color is"
             text run at (0,17) width 39: "visible."
-        RenderBlock {p} at (0,777) size 677x34
+        RenderBlock {p} at (0,777) size 678x34
           RenderBR {br} at (0,0) size 0x17
           RenderInline {a} at (0,0) size 28x17 [color=#000066]
             RenderText {#text} at (0,17) size 28x17

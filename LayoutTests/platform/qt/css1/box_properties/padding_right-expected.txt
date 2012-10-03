@@ -1,12 +1,12 @@
-layer at (0,0) size 784x1139
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1139
-  RenderBlock {HTML} at (0,0) size 784x1139
-    RenderBody {BODY} at (8,8) size 768x1123 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 768x19
+layer at (0,0) size 785x1139
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1139
+  RenderBlock {HTML} at (0,0) size 785x1139
+    RenderBody {BODY} at (8,8) size 769x1123 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 768x90
+      RenderBlock {PRE} at (0,35) size 769x90
         RenderText {#text} at (0,0) size 576x90
           text run at (0,0) width 408: ".zero {background-color: silver; padding-right: 0;}"
           text run at (408,0) width 0: " "
@@ -20,111 +20,111 @@ layer at (0,0) size 784x1139
           text run at (560,60) width 0: " "
           text run at (0,75) width 576: ".five {padding-right: -20px; text-align: right; background-color: aqua;}"
           text run at (576,75) width 0: " "
-      RenderBlock {HR} at (0,138) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,156) size 768x19 [bgcolor=#C0C0C0]
+      RenderBlock {HR} at (0,138) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,156) size 769x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 193x19
           text run at (0,0) width 193: "This element has a class of zero."
-      RenderBlock {P} at (0,191) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (18,0) size 702x57
-          text run at (18,0) width 603: "This element should have a right padding of half an inch, which will require extra text in order to test. "
-          text run at (621,0) width 99: "Both the content"
-          text run at (38,19) width 342: "background and the padding should be aqua (light blue). "
-          text run at (380,19) width 340: "The text has been right-aligned in order to make the right"
-          text run at (589,38) width 131: "padding easier to see."
-      RenderBlock {P} at (0,264) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (54,0) size 734x57
-          text run at (54,0) width 590: "This element should have a right padding of 25 pixels, which will require extra text in order to test. "
-          text run at (644,0) width 99: "Both the content"
-          text run at (9,19) width 342: "background and the padding should be aqua (light blue). "
-          text run at (351,19) width 392: "The text has been right-aligned in order to make the right padding"
-          text run at (664,38) width 79: "easier to see."
-      RenderBlock {P} at (0,337) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (23,0) size 682x57
-          text run at (23,0) width 566: "This element should have a right padding of 5 em, which will require extra text in order to test. "
-          text run at (589,0) width 99: "Both the content"
-          text run at (6,19) width 342: "background and the padding should be aqua (light blue). "
-          text run at (348,19) width 340: "The text has been right-aligned in order to make the right"
-          text run at (557,38) width 131: "padding easier to see."
-      RenderBlock {P} at (0,410) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (12,0) size 575x57
-          text run at (12,0) width 564: "This element should have a right padding of 25%, which is calculated with respect to the width"
-          text run at (1,19) width 134: "of the parent element. "
-          text run at (135,19) width 441: "Both the content background and the padding should be aqua (light blue)."
-          text run at (101,38) width 475: "The text has been right-aligned in order to make the right padding easier to see."
-      RenderBlock {UL} at (0,483) size 768x38 [bgcolor=#808080]
-        RenderListItem {LI} at (40,0) size 703x19
+      RenderBlock {P} at (0,191) size 769x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (19,0) size 702x57
+          text run at (19,0) width 603: "This element should have a right padding of half an inch, which will require extra text in order to test. "
+          text run at (622,0) width 99: "Both the content"
+          text run at (39,19) width 342: "background and the padding should be aqua (light blue). "
+          text run at (381,19) width 340: "The text has been right-aligned in order to make the right"
+          text run at (590,38) width 131: "padding easier to see."
+      RenderBlock {P} at (0,264) size 769x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (55,0) size 734x57
+          text run at (55,0) width 590: "This element should have a right padding of 25 pixels, which will require extra text in order to test. "
+          text run at (645,0) width 99: "Both the content"
+          text run at (10,19) width 342: "background and the padding should be aqua (light blue). "
+          text run at (352,19) width 392: "The text has been right-aligned in order to make the right padding"
+          text run at (665,38) width 79: "easier to see."
+      RenderBlock {P} at (0,337) size 769x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (24,0) size 682x57
+          text run at (24,0) width 566: "This element should have a right padding of 5 em, which will require extra text in order to test. "
+          text run at (590,0) width 99: "Both the content"
+          text run at (7,19) width 342: "background and the padding should be aqua (light blue). "
+          text run at (349,19) width 340: "The text has been right-aligned in order to make the right"
+          text run at (558,38) width 131: "padding easier to see."
+      RenderBlock {P} at (0,410) size 769x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (13,0) size 575x57
+          text run at (13,0) width 564: "This element should have a right padding of 25%, which is calculated with respect to the width"
+          text run at (2,19) width 134: "of the parent element. "
+          text run at (136,19) width 441: "Both the content background and the padding should be aqua (light blue)."
+          text run at (102,38) width 475: "The text has been right-aligned in order to make the right padding easier to see."
+      RenderBlock {UL} at (0,483) size 769x38 [bgcolor=#808080]
+        RenderListItem {LI} at (40,0) size 704x19
           RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (12,0) size 691x19
-            text run at (12,0) width 691: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text in order to test."
-        RenderListItem {LI} at (40,19) size 703x19 [bgcolor=#FFFFFF]
+          RenderText {#text} at (13,0) size 691x19
+            text run at (13,0) width 691: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text in order to test."
+        RenderListItem {LI} at (40,19) size 704x19 [bgcolor=#FFFFFF]
           RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (4,0) size 674x19
-            text run at (4,0) width 674: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of the UL element."
-      RenderBlock {P} at (0,537) size 768x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (5,0) size 763x57
-          text run at (5,0) width 540: "This element should have no right padding, since negative padding values are not allowed. "
-          text run at (545,0) width 223: "Both the content background and the"
-          text run at (13,19) width 263: "normal padding should be aqua (light blue). "
-          text run at (276,19) width 492: "The text has been right-aligned in order to make the lack of right padding easier to"
-          text run at (744,38) width 24: "see."
-      RenderTable {TABLE} at (0,610) size 768x513 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x511
-          RenderTableRow {TR} at (0,0) size 766x27
-            RenderTableCell {TD} at (0,0) size 766x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+          RenderText {#text} at (5,0) size 674x19
+            text run at (5,0) width 674: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of the UL element."
+      RenderBlock {P} at (0,537) size 769x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (6,0) size 763x57
+          text run at (6,0) width 540: "This element should have no right padding, since negative padding values are not allowed. "
+          text run at (546,0) width 223: "Both the content background and the"
+          text run at (14,19) width 263: "normal padding should be aqua (light blue). "
+          text run at (277,19) width 492: "The text has been right-aligned in order to make the lack of right padding easier to"
+          text run at (745,38) width 24: "see."
+      RenderTable {TABLE} at (0,610) size 769x513 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x511
+          RenderTableRow {TR} at (0,0) size 767x27
+            RenderTableCell {TD} at (0,0) size 767x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 159x19
                 RenderText {#text} at (4,4) size 159x19
                   text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 766x484
+          RenderTableRow {TR} at (0,27) size 767x484
             RenderTableCell {TD} at (0,255) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 754x484 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 746x19 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (12,27) size 755x484 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x19 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 193x19
                   text run at (0,0) width 193: "This element has a class of zero."
-              RenderBlock {P} at (4,39) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (44,0) size 678x57
-                  text run at (44,0) width 603: "This element should have a right padding of half an inch, which will require extra text in order to test. "
-                  text run at (647,0) width 51: "Both the"
-                  text run at (20,19) width 390: "content background and the padding should be aqua (light blue). "
-                  text run at (410,19) width 288: "The text has been right-aligned in order to make"
-                  text run at (515,38) width 183: "the right padding easier to see."
-              RenderBlock {P} at (4,112) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (32,0) size 689x57
-                  text run at (32,0) width 590: "This element should have a right padding of 25 pixels, which will require extra text in order to test. "
-                  text run at (622,0) width 99: "Both the content"
-                  text run at (39,19) width 342: "background and the padding should be aqua (light blue). "
-                  text run at (381,19) width 340: "The text has been right-aligned in order to make the right"
-                  text run at (590,38) width 131: "padding easier to see."
-              RenderBlock {P} at (4,185) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (1,0) size 665x57
-                  text run at (1,0) width 566: "This element should have a right padding of 5 em, which will require extra text in order to test. "
-                  text run at (567,0) width 99: "Both the content"
-                  text run at (14,19) width 342: "background and the padding should be aqua (light blue). "
-                  text run at (356,19) width 310: "The text has been right-aligned in order to make the"
-                  text run at (505,38) width 161: "right padding easier to see."
-              RenderBlock {P} at (4,258) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (33,0) size 546x57
-                  text run at (33,0) width 527: "This element should have a right padding of 25%, which is calculated with respect to the"
-                  text run at (19,19) width 171: "width of the parent element. "
-                  text run at (190,19) width 370: "Both the content background and the padding should be aqua"
-                  text run at (14,38) width 71: "(light blue). "
-                  text run at (85,38) width 475: "The text has been right-aligned in order to make the right padding easier to see."
-              RenderBlock {UL} at (4,331) size 746x76 [bgcolor=#808080]
-                RenderListItem {LI} at (40,0) size 681x38
+              RenderBlock {P} at (4,39) size 747x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (45,0) size 678x57
+                  text run at (45,0) width 603: "This element should have a right padding of half an inch, which will require extra text in order to test. "
+                  text run at (648,0) width 51: "Both the"
+                  text run at (21,19) width 390: "content background and the padding should be aqua (light blue). "
+                  text run at (411,19) width 288: "The text has been right-aligned in order to make"
+                  text run at (516,38) width 183: "the right padding easier to see."
+              RenderBlock {P} at (4,112) size 747x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (33,0) size 689x57
+                  text run at (33,0) width 590: "This element should have a right padding of 25 pixels, which will require extra text in order to test. "
+                  text run at (623,0) width 99: "Both the content"
+                  text run at (40,19) width 342: "background and the padding should be aqua (light blue). "
+                  text run at (382,19) width 340: "The text has been right-aligned in order to make the right"
+                  text run at (591,38) width 131: "padding easier to see."
+              RenderBlock {P} at (4,185) size 747x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (2,0) size 665x57
+                  text run at (2,0) width 566: "This element should have a right padding of 5 em, which will require extra text in order to test. "
+                  text run at (568,0) width 99: "Both the content"
+                  text run at (15,19) width 342: "background and the padding should be aqua (light blue). "
+                  text run at (357,19) width 310: "The text has been right-aligned in order to make the"
+                  text run at (506,38) width 161: "right padding easier to see."
+              RenderBlock {P} at (4,258) size 747x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (34,0) size 546x57
+                  text run at (34,0) width 527: "This element should have a right padding of 25%, which is calculated with respect to the"
+                  text run at (20,19) width 171: "width of the parent element. "
+                  text run at (191,19) width 370: "Both the content background and the padding should be aqua"
+                  text run at (15,38) width 71: "(light blue). "
+                  text run at (86,38) width 475: "The text has been right-aligned in order to make the right padding easier to see."
+              RenderBlock {UL} at (4,331) size 747x76 [bgcolor=#808080]
+                RenderListItem {LI} at (40,0) size 682x38
                   RenderListMarker at (-18,0) size 7x19: bullet
-                  RenderText {#text} at (19,0) size 662x38
-                    text run at (19,0) width 662: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text in order to"
-                    text run at (656,19) width 25: "test."
-                RenderListItem {LI} at (40,38) size 681x38 [bgcolor=#FFFFFF]
+                  RenderText {#text} at (20,0) size 662x38
+                    text run at (20,0) width 662: "The right padding on this unordered list has been set to 25 pixels, which will require some extra text in order to"
+                    text run at (657,19) width 25: "test."
+                RenderListItem {LI} at (40,38) size 682x38 [bgcolor=#FFFFFF]
                   RenderListMarker at (-18,0) size 7x19: bullet
-                  RenderText {#text} at (36,0) size 620x38
-                    text run at (36,0) width 620: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of the UL"
-                    text run at (606,19) width 50: "element."
-              RenderBlock {P} at (4,423) size 746x57 [bgcolor=#00FFFF]
-                RenderText {#text} at (5,0) size 741x57
-                  text run at (5,0) width 540: "This element should have no right padding, since negative padding values are not allowed. "
-                  text run at (545,0) width 201: "Both the content background and"
-                  text run at (24,19) width 285: "the normal padding should be aqua (light blue). "
-                  text run at (309,19) width 437: "The text has been right-aligned in order to make the lack of right padding"
-                  text run at (667,38) width 79: "easier to see."
+                  RenderText {#text} at (37,0) size 620x38
+                    text run at (37,0) width 620: "This list item has a right padding of 25 pixels, which will appear to the left of the gray padding of the UL"
+                    text run at (607,19) width 50: "element."
+              RenderBlock {P} at (4,423) size 747x57 [bgcolor=#00FFFF]
+                RenderText {#text} at (6,0) size 741x57
+                  text run at (6,0) width 540: "This element should have no right padding, since negative padding values are not allowed. "
+                  text run at (546,0) width 201: "Both the content background and"
+                  text run at (25,19) width 285: "the normal padding should be aqua (light blue). "
+                  text run at (310,19) width 437: "The text has been right-aligned in order to make the lack of right padding"
+                  text run at (668,38) width 79: "easier to see."

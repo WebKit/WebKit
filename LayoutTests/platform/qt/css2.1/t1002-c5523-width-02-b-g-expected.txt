@@ -1,9 +1,9 @@
-layer at (0,0) size 784x631
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x631
-  RenderBlock {HTML} at (0,0) size 784x631
-    RenderBody {BODY} at (8,16) size 768x607
-      RenderBlock {P} at (0,0) size 768x19
+layer at (0,0) size 785x631
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x631
+  RenderBlock {HTML} at (0,0) size 785x631
+    RenderBody {BODY} at (8,16) size 769x607
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 399x19
           text run at (0,0) width 358: "The blue text should not go past the 50% mark on the ruler "
           text run at (358,0) width 41: "below."

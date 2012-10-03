@@ -1,12 +1,12 @@
-layer at (0,0) size 784x961
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x961
-  RenderBlock {HTML} at (0,0) size 784x961
-    RenderBody {BODY} at (8,21) size 768x924
-      RenderBlock {H1} at (0,0) size 768x37
+layer at (0,0) size 785x961
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x961
+  RenderBlock {HTML} at (0,0) size 785x961
+    RenderBody {BODY} at (8,21) size 769x924
+      RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 343x36
           text run at (0,0) width 343: "Anonymous table objects"
-      RenderBlock {P} at (0,58) size 768x19
+      RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 49x19
           text run at (0,0) width 49: "See the "
         RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
@@ -20,7 +20,7 @@ layer at (0,0) size 784x961
             text run at (318,0) width 122: "This test does not "
             text run at (440,0) width 151: "test inline-tables at all."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H2} at (0,96) size 768x28
+      RenderBlock {H2} at (0,96) size 769x28
         RenderText {#text} at (0,0) size 66x28
           text run at (0,0) width 66: "Rule 1"
       RenderTable {DIV} at (0,143) size 139x19 [bgcolor=#00FFFF]
@@ -29,10 +29,10 @@ layer at (0,0) size 784x961
             RenderTableCell (anonymous) at (0,0) size 139x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 139x19
                 text run at (0,0) width 139: "Table 1, Cell 1, Row 1"
-      RenderBlock {H2} at (0,181) size 768x28
+      RenderBlock {H2} at (0,181) size 769x28
         RenderText {#text} at (0,0) size 66x28
           text run at (0,0) width 66: "Rule 2"
-      RenderBlock {DIV} at (0,228) size 768x19
+      RenderBlock {DIV} at (0,228) size 769x19
         RenderTable at (0,0) size 556x19
           RenderTableSection (anonymous) at (0,0) size 556x19
             RenderTableRow (anonymous) at (0,0) size 556x19
@@ -48,7 +48,7 @@ layer at (0,0) size 784x961
               RenderTableCell {SPAN} at (417,0) size 139x19 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 139x19
                   text run at (0,0) width 139: "Table 1, Row 1, Cell 4"
-      RenderBlock {DIV} at (0,263) size 768x57
+      RenderBlock {DIV} at (0,263) size 769x57
         RenderTable at (0,0) size 556x57
           RenderTableSection (anonymous) at (0,0) size 556x57
             RenderTableRow (anonymous) at (0,0) size 556x19
@@ -90,14 +90,14 @@ layer at (0,0) size 784x961
               RenderTableCell {SPAN} at (417,38) size 139x19 [bgcolor=#00FFFF] [r=2 c=3 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 139x19
                   text run at (0,0) width 139: "Table 2, Row 3, Cell 4"
-      RenderBlock {H2} at (0,339) size 768x28
+      RenderBlock {H2} at (0,339) size 769x28
         RenderText {#text} at (0,0) size 137x28
           text run at (0,0) width 137: "Rules 3 and 4"
-      RenderBlock {P} at (0,386) size 768x19
+      RenderBlock {P} at (0,386) size 769x19
         RenderText {#text} at (0,0) size 474x19
           text run at (0,0) width 403: "This section does not test the behavior of columns, column groups, "
           text run at (403,0) width 71: "or captions."
-      RenderBlock {DIV} at (0,421) size 768x57
+      RenderBlock {DIV} at (0,421) size 769x57
         RenderTable at (0,0) size 556x57
           RenderTableSection (anonymous) at (0,0) size 556x57
             RenderTableRow {SPAN} at (0,0) size 556x19 [bgcolor=#00FFFF]
@@ -139,10 +139,10 @@ layer at (0,0) size 784x961
               RenderTableCell {SPAN} at (417,38) size 139x19 [r=2 c=3 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 139x19
                   text run at (0,0) width 139: "Table 1, Row 3, Cell 4"
-      RenderBlock {P} at (0,494) size 768x19
+      RenderBlock {P} at (0,494) size 769x19
         RenderText {#text} at (0,0) size 688x19
           text run at (0,0) width 688: "Note: table-header-group and table-footer-group are tested only in their HTML order, and they only appear once."
-      RenderBlock {DIV} at (0,529) size 768x95
+      RenderBlock {DIV} at (0,529) size 769x95
         RenderTable at (0,0) size 556x95
           RenderTableSection {SPAN} at (0,0) size 556x19 [bgcolor=#00FFFF]
             RenderTableRow (anonymous) at (0,0) size 556x19
@@ -214,7 +214,7 @@ layer at (0,0) size 784x961
               RenderTableCell {SPAN} at (417,0) size 139x19 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 139x19
                   text run at (0,0) width 139: "Table 2, Row 4, Cell 4"
-      RenderBlock {H2} at (0,643) size 768x28
+      RenderBlock {H2} at (0,643) size 769x28
         RenderText {#text} at (0,0) size 66x28
           text run at (0,0) width 66: "Rule 5"
       RenderTable {DIV} at (0,690) size 653x95 [bgcolor=#00FFFF]
@@ -271,11 +271,11 @@ layer at (0,0) size 784x961
             RenderTableCell {SPAN} at (514,76) size 139x19 [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (0,0) size 139x19
                 text run at (0,0) width 139: "Table 2, Row 3, Cell 4"
-      RenderBlock {HR} at (0,801) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,819) size 768x35
+      RenderBlock {HR} at (0,801) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,819) size 769x35
         RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,870) size 768x19
+      RenderBlock {P} at (0,870) size 769x19
         RenderText {#text} at (0,0) size 57x19
           text run at (0,0) width 57: "(Back to "
         RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
@@ -288,7 +288,7 @@ layer at (0,0) size 784x961
             text run at (214,0) width 77: "David Baron"
         RenderText {#text} at (291,0) size 5x19
           text run at (291,0) width 5: ")"
-      RenderBlock {P} at (0,905) size 768x19
+      RenderBlock {P} at (0,905) size 769x19
         RenderInline {A} at (0,0) size 30x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 30x19
             text run at (0,0) width 30: "LDB"

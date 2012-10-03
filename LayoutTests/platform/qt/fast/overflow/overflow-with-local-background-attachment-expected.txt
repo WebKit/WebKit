@@ -16,7 +16,7 @@ layer at (0,0) size 800x295
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 281x19
             text run at (0,0) width 281: "The cats should be on a light grey background."
-layer at (8,89) size 390x198 clip at (38,119) size 314x138 scrollHeight 380
+layer at (8,89) size 390x198 clip at (38,119) size 315x138 scrollHeight 380
   RenderBlock {DIV} at (0,73) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
     RenderText {#text} at (30,30) size 32x380
       text run at (30,30) width 20: "   1"

@@ -1,9 +1,9 @@
-layer at (0,0) size 784x838
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x838
-  RenderBlock {HTML} at (0,0) size 784x838
-    RenderBody {BODY} at (8,8) size 768x822
-      RenderBlock (anonymous) at (0,0) size 768x95
+layer at (0,0) size 785x838
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x838
+  RenderBlock {HTML} at (0,0) size 785x838
+    RenderBody {BODY} at (8,8) size 769x822
+      RenderBlock (anonymous) at (0,0) size 769x95
         RenderText {#text} at (0,0) size 296x19
           text run at (0,0) width 296: "The following three examples are 2 nested tables."
         RenderBR {BR} at (296,15) size 0x0
@@ -25,7 +25,7 @@ layer at (0,0) size 784x838
                     RenderTableCell {TD} at (2,82) size 243x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 239x19
                         text run at (2,2) width 239: "outer table has height:200px on <table>"
-      RenderBlock (anonymous) at (0,295) size 768x19
+      RenderBlock (anonymous) at (0,295) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,314) size 239x206 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 237x204
@@ -37,7 +37,7 @@ layer at (0,0) size 784x838
                     RenderTableCell {TD} at (2,2) size 223x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 219x19
                         text run at (2,2) width 219: "outer table has height:200px on <tr>"
-      RenderBlock (anonymous) at (0,520) size 768x19
+      RenderBlock (anonymous) at (0,520) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,539) size 242x206 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 240x204
@@ -49,7 +49,7 @@ layer at (0,0) size 784x838
                     RenderTableCell {TD} at (2,85) size 226x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 222x19
                         text run at (2,2) width 222: "outer table has height:200px on <td>"
-      RenderBlock (anonymous) at (0,745) size 768x19
+      RenderBlock (anonymous) at (0,745) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,764) size 595x58 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 593x56

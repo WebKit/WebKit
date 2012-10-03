@@ -1,6 +1,6 @@
-layer at (0,0) size 784x1200
-  RenderView at (0,0) size 784x600
-layer at (-438,0) size 1222x600 backgroundClip at (0,0) size 784x1200 clip at (0,0) size 784x1200 outlineClip at (0,0) size 784x1200
+layer at (0,0) size 785x1200
+  RenderView at (0,0) size 785x600
+layer at (-437,0) size 1222x600 backgroundClip at (0,0) size 785x1200 clip at (0,0) size 785x1200 outlineClip at (0,0) size 785x1200
   RenderBlock {HTML} at (0,0) size 1222x600
     RenderBody {BODY} at (8,8) size 1206x584
       RenderBlock {DIV} at (0,0) size 1206x584 [border: (3px solid #000000)]
@@ -22,6 +22,6 @@ layer at (-438,0) size 1222x600 backgroundClip at (0,0) size 784x1200 clip at (0
           text run at (703,3) width 250: "Lorem"
         RenderBR {BR} at (743,253) size 0x0
         RenderInline {SPAN} at (0,0) size 50x250 [color=#FF0000]
-          RenderText {#text} at (776,3) size 50x250
-            text run at (776,3) width 250: "ipsum"
-          RenderBR {BR} at (816,253) size 0x0
+          RenderText {#text} at (777,3) size 50x250
+            text run at (777,3) width 250: "ipsum"
+          RenderBR {BR} at (817,253) size 0x0

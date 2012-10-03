@@ -1,10 +1,10 @@
-layer at (0,0) size 784x4341
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x4341
-  RenderBlock {HTML} at (0,0) size 784x4341
-    RenderBody {BODY} at (8,8) size 768x4325
-      RenderBlock {DIV} at (0,0) size 768x4310
-        RenderBlock (anonymous) at (0,0) size 768x19
+layer at (0,0) size 785x4341
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x4341
+  RenderBlock {HTML} at (0,0) size 785x4341
+    RenderBody {BODY} at (8,8) size 769x4325
+      RenderBlock {DIV} at (0,0) size 769x4310
+        RenderBlock (anonymous) at (0,0) size 769x19
           RenderText {#text} at (0,0) size 4x19
             text run at (0,0) width 4: " "
         RenderTable {TABLE} at (67,19) size 473x4246
@@ -3581,16 +3581,16 @@ layer at (0,0) size 784x4341
                     text run at (36,0) width 20: "Yes"
                   RenderInline {SPAN} at (0,0) size 0x15
                     RenderInline {O:P} at (0,0) size 0x15
-        RenderBlock {P} at (0,4265) size 768x15
+        RenderBlock {P} at (0,4265) size 769x15
           RenderInline {SPAN} at (0,0) size 3x15
             RenderText {#text} at (0,0) size 3x15
               text run at (0,0) width 3: " "
-        RenderBlock {P} at (0,4280) size 768x15
+        RenderBlock {P} at (0,4280) size 769x15
           RenderText {#text} at (0,0) size 3x15
             text run at (0,0) width 3: " "
-        RenderBlock {P} at (0,4295) size 768x15
+        RenderBlock {P} at (0,4295) size 769x15
           RenderText {#text} at (0,0) size 3x15
             text run at (0,0) width 3: " "
-      RenderBlock {P} at (0,4310) size 768x15
-        RenderText {#text} at (382,0) size 4x15
-          text run at (382,0) width 4: " "
+      RenderBlock {P} at (0,4310) size 769x15
+        RenderText {#text} at (383,0) size 3x15
+          text run at (383,0) width 3: " "

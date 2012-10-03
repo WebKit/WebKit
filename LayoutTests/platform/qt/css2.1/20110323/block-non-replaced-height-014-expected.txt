@@ -1,12 +1,12 @@
-layer at (0,0) size 784x584
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x83
-  RenderBlock {HTML} at (0,0) size 784x83
-layer at (8,8) size 768x67 clip at (8,8) size 752x51
-  RenderBody {BODY} at (8,8) size 768x67
-    RenderBlock {P} at (0,16) size 752x19
+layer at (0,0) size 785x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x82
+  RenderBlock {HTML} at (0,0) size 785x82
+layer at (8,8) size 769x66 clip at (8,8) size 754x51
+  RenderBody {BODY} at (8,8) size 769x66
+    RenderBlock {P} at (0,16) size 754x19
       RenderText {#text} at (0,0) size 290x19
         text run at (0,0) width 290: "Test passes if there is no red visible on the page."
-    RenderBlock {DIV} at (0,51) size 752x0 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (0,51) size 754x0 [bgcolor=#FF0000]
 layer at (8,59) size 96x96
   RenderBlock (positioned) {DIV} at (8,59) size 96x96

@@ -1,10 +1,10 @@
-layer at (0,0) size 850x584
-  RenderView at (0,0) size 800x584
-layer at (-50,0) size 850x584 backgroundClip at (0,0) size 850x584 clip at (0,0) size 850x584 outlineClip at (0,0) size 850x584
-  RenderBlock {HTML} at (0,0) size 850x584
-    RenderBody {BODY} at (8,8) size 834x568
-layer at (383,8) size 409x568
-  RenderBlock {DIV} at (0,0) size 409x568 [border: (5px solid #0000FF)]
+layer at (0,0) size 850x585
+  RenderView at (0,0) size 800x585
+layer at (-50,0) size 850x585 backgroundClip at (0,0) size 850x585 clip at (0,0) size 850x585 outlineClip at (0,0) size 850x585
+  RenderBlock {HTML} at (0,0) size 850x585
+    RenderBody {BODY} at (8,8) size 834x569
+layer at (383,8) size 409x569
+  RenderBlock {DIV} at (0,0) size 409x569 [border: (5px solid #0000FF)]
     RenderBlock (anonymous) at (5,5) size 399x271
       RenderText {#text} at (0,0) size 19x104
         text run at (0,0) width 104: "This is some text."
@@ -82,8 +82,8 @@ layer at (383,8) size 409x568
       RenderText {#text} at (57,0) size 19x247
         text run at (57,0) width 247: "This text should be in the second column."
       RenderBR {BR} at (72,247) size 0x0
-layer at (-42,8) size 409x568 backgroundClip at (0,0) size 850x584 clip at (0,0) size 850x584 outlineClip at (0,0) size 850x584
-  RenderBlock {DIV} at (425,0) size 409x568 [border: (5px solid #0000FF)]
+layer at (-42,8) size 409x569 backgroundClip at (0,0) size 850x585 clip at (0,0) size 850x585 outlineClip at (0,0) size 850x585
+  RenderBlock {DIV} at (425,0) size 409x569 [border: (5px solid #0000FF)]
     RenderBlock (anonymous) at (5,5) size 76x271
       RenderText {#text} at (0,0) size 19x226
         text run at (0,0) width 226: "This text should be in the first column."

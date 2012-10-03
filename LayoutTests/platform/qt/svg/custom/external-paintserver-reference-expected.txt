@@ -1,7 +1,7 @@
-layer at (0,0) size 784x604
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x604
-  RenderBlock {html} at (0,0) size 784x604
+layer at (0,0) size 785x604
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x604
+  RenderBlock {html} at (0,0) size 785x604
     RenderSVGRoot {svg} at (0,0) size 100x100
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceLinearGradient {linearGradient} [id="orange_red"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]

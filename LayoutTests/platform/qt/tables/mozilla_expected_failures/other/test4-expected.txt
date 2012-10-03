@@ -1,9 +1,9 @@
-layer at (0,0) size 784x2559
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x2559
-  RenderBlock {HTML} at (0,0) size 784x2559
-    RenderBody {BODY} at (8,8) size 768x2535
-      RenderBlock {H1} at (0,0) size 768x37
+layer at (0,0) size 785x2559
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x2559
+  RenderBlock {HTML} at (0,0) size 785x2559
+    RenderBody {BODY} at (8,8) size 769x2535
+      RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 432x36
           text run at (0,0) width 432: "Example 4: Some simple tables."
       RenderTable {TABLE} at (0,58) size 441x104 [border: (1px outset #808080)]
@@ -41,31 +41,31 @@ layer at (0,0) size 784x2559
                   text run at (285,2) width 24: "and"
               RenderText {#text} at (309,2) size 61x19
                 text run at (309,2) width 61: " a colspan"
-      RenderBlock (anonymous) at (0,162) size 768x38
+      RenderBlock (anonymous) at (0,162) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 4x19
           text run at (0,19) width 4: " "
-      RenderTable {TABLE} at (0,200) size 768x136 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 768x19
-          RenderText {#text} at (139,0) size 490x19
-            text run at (139,0) width 490: "Table 1 has this caption at the top.  It is defined to be 100% of it's parent's width."
-        RenderTableSection {TBODY} at (1,20) size 766x115
-          RenderTableRow {TR} at (0,2) size 766x42
+      RenderTable {TABLE} at (0,200) size 769x136 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 769x19
+          RenderText {#text} at (140,0) size 489x19
+            text run at (140,0) width 489: "Table 1 has this caption at the top.  It is defined to be 100% of it's parent's width."
+        RenderTableSection {TBODY} at (1,20) size 767x115
+          RenderTableRow {TR} at (0,2) size 767x42
             RenderTableCell {TD} at (2,11) size 395x23 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "Cell"
-            RenderTableCell {TD} at (399,2) size 365x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (399,2) size 366x42 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 313x38
                 text run at (2,2) width 313: "Stuff to test out table cell layout. This should be long"
                 text run at (2,21) width 47: "enough."
-          RenderTableRow {TR} at (0,46) size 766x23
+          RenderTableRow {TR} at (0,46) size 767x23
             RenderTableCell {TD} at (2,46) size 28x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "Cell"
-            RenderTableCell {TD} at (32,46) size 732x23 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
+            RenderTableCell {TD} at (32,46) size 733x23 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
               RenderText {#text} at (2,2) size 364x19
                 text run at (2,2) width 364: "Stuff to test out table cell layout. This should be long enough."
-          RenderTableRow {TR} at (0,71) size 766x42
+          RenderTableRow {TR} at (0,71) size 767x42
             RenderTableCell {TD} at (2,80) size 28x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "Cell"
@@ -73,10 +73,10 @@ layer at (0,0) size 784x2559
               RenderText {#text} at (2,2) size 313x38
                 text run at (2,2) width 313: "Stuff to test out table cell layout. This should be long"
                 text run at (2,21) width 47: "enough."
-            RenderTableCell {TD} at (399,80) size 365x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (399,80) size 366x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "Cell"
-      RenderBlock (anonymous) at (0,336) size 768x38
+      RenderBlock (anonymous) at (0,336) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 4x19
           text run at (0,19) width 4: " "
@@ -106,7 +106,7 @@ layer at (0,0) size 784x2559
             RenderTableCell {TD} at (402,52) size 61x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "more text"
-      RenderBlock (anonymous) at (0,472) size 768x19
+      RenderBlock (anonymous) at (0,472) size 769x19
         RenderText {#text} at (0,0) size 4x19
           text run at (0,0) width 4: " "
       RenderTable {TABLE} at (0,491) size 467x98 [border: (1px outset #808080)]
@@ -135,7 +135,7 @@ layer at (0,0) size 784x2559
             RenderTableCell {TD} at (402,52) size 61x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "more text"
-      RenderBlock (anonymous) at (0,589) size 768x38
+      RenderBlock (anonymous) at (0,589) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 4x19
           text run at (0,19) width 4: " "
@@ -191,7 +191,7 @@ layer at (0,0) size 784x2559
             RenderTableCell {TD} at (170,52) size 80x25 [border: (1px none #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (21,3) size 38x19
                 text run at (21,3) width 38: "57-15"
-      RenderBlock (anonymous) at (0,790) size 768x19
+      RenderBlock (anonymous) at (0,790) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,809) size 186x446
         RenderBlock {CAPTION} at (0,408) size 186x19
@@ -419,7 +419,7 @@ layer at (0,0) size 784x2559
         RenderBlock {CAPTION} at (0,427) size 186x19
           RenderText {#text} at (4,0) size 178x19
             text run at (4,0) width 178: "Table 5 has a scrolling tbody."
-      RenderBlock (anonymous) at (0,1255) size 768x38
+      RenderBlock (anonymous) at (0,1255) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 581x19
           text run at (0,19) width 581: "This is a table formed from a list with display of table-row and list items with display of table-cell."
@@ -441,7 +441,7 @@ layer at (0,0) size 784x2559
             RenderTableCell {LI} at (159,0) size 34x19 [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (0,0) size 34x19
                 text run at (0,0) width 34: "FIVE"
-      RenderBlock (anonymous) at (0,1312) size 768x38
+      RenderBlock (anonymous) at (0,1312) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 626x19
           text run at (0,19) width 626: "This is a table formed from a list with display of table-row-group and list items with display of table-cell. "
@@ -467,7 +467,7 @@ layer at (0,0) size 784x2559
             RenderTableCell {LI} at (193,0) size 25x19 [bgcolor=#FFA500] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 25x19
                 text run at (0,0) width 25: "SIX"
-      RenderBlock (anonymous) at (0,1369) size 768x38
+      RenderBlock (anonymous) at (0,1369) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 386x19
           text run at (0,19) width 386: "This is like the previous table plus the list's overflow property set"
@@ -492,10 +492,10 @@ layer at (0,0) size 784x2559
             RenderTableCell {LI} at (193,0) size 25x19 [bgcolor=#FFA500] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 25x19
                 text run at (0,0) width 25: "SIX"
-      RenderBlock (anonymous) at (0,1426) size 768x19
+      RenderBlock (anonymous) at (0,1426) size 769x19
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {P} at (0,1461) size 768x234
-        RenderBlock (anonymous) at (0,0) size 768x19
+      RenderBlock {P} at (0,1461) size 769x234
+        RenderBlock (anonymous) at (0,0) size 769x19
           RenderText {#text} at (0,0) size 403x19
             text run at (0,0) width 403: "The following table will have its rows and columns in red collapsed "
           RenderBR {BR} at (0,0) size 0x0
@@ -539,7 +539,7 @@ layer at (0,0) size 784x2559
               RenderTableCell {TD} at (68,52) size 64x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "C33"
-        RenderBlock (anonymous) at (0,117) size 768x19
+        RenderBlock (anonymous) at (0,117) size 769x19
           RenderBR {BR} at (0,0) size 0x19
         RenderTable {TABLE} at (0,136) size 136x98 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 136x19
@@ -581,8 +581,8 @@ layer at (0,0) size 784x2559
               RenderTableCell {TD} at (68,52) size 64x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "C33"
-      RenderBlock {P} at (0,1711) size 768x245
-        RenderBlock (anonymous) at (0,0) size 768x19
+      RenderBlock {P} at (0,1711) size 769x245
+        RenderBlock (anonymous) at (0,0) size 769x19
           RenderText {#text} at (0,0) size 712x19
             text run at (0,0) width 712: "The following table will have its 2nd row and 2nd col collapsed. A window resize may be necessary to see it properly. "
           RenderBR {BR} at (712,15) size 0x0
@@ -694,8 +694,8 @@ layer at (0,0) size 784x2559
               RenderTableCell {TD} at (155,69) size 31x23 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "C44"
-      RenderBlock {P} at (0,1972) size 768x283
-        RenderBlock (anonymous) at (0,0) size 768x19
+      RenderBlock {P} at (0,1972) size 769x283
+        RenderBlock (anonymous) at (0,0) size 769x19
           RenderText {#text} at (0,0) size 435x19
             text run at (0,0) width 435: "The following table will have its 1st row group collapsed (rows 1 and 2) "
           RenderBR {BR} at (435,15) size 0x0
@@ -758,7 +758,7 @@ layer at (0,0) size 784x2559
               RenderTableCell {TD} at (93,23) size 31x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "C44"
-        RenderBlock (anonymous) at (0,132) size 768x19
+        RenderBlock (anonymous) at (0,132) size 769x19
           RenderBR {BR} at (0,0) size 0x19
         RenderTable {TABLE} at (0,151) size 126x113 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 126x19
@@ -819,10 +819,10 @@ layer at (0,0) size 784x2559
               RenderTableCell {TD} at (93,23) size 31x23 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x19
                   text run at (2,2) width 27: "C44"
-        RenderBlock (anonymous) at (0,264) size 768x19
+        RenderBlock (anonymous) at (0,264) size 769x19
           RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {P} at (0,2271) size 768x264
-        RenderBlock (anonymous) at (0,0) size 768x38
+      RenderBlock {P} at (0,2271) size 769x264
+        RenderBlock (anonymous) at (0,0) size 769x38
           RenderText {#text} at (0,0) size 737x38
             text run at (0,0) width 525: "The following table is similar to a previous table except that the direction is right-to-left. "
             text run at (525,0) width 212: "It will have its 2nd row and 2nd col"

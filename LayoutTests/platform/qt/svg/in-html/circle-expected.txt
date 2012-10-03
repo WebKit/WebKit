@@ -1,12 +1,12 @@
-layer at (0,0) size 784x663
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x663
-  RenderBlock {HTML} at (0,0) size 784x663
-    RenderBody {BODY} at (8,16) size 768x639
-      RenderBlock {P} at (0,0) size 768x19
+layer at (0,0) size 785x663
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x663
+  RenderBlock {HTML} at (0,0) size 785x663
+    RenderBody {BODY} at (8,16) size 769x639
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 176x19
           text run at (0,0) width 176: "This circle is drawn via SVG."
-      RenderBlock (anonymous) at (0,35) size 768x604
+      RenderBlock (anonymous) at (0,35) size 769x604
         RenderSVGRoot {svg} at (8,51) size 40x40
           RenderSVGEllipse {circle} at (8,51) size 40x40 [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=20.00] [r=20.00]
         RenderText {#text} at (0,0) size 0x0

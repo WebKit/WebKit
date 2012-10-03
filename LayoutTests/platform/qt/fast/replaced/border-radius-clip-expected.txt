@@ -1,8 +1,8 @@
-layer at (0,0) size 784x953
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x929
-  RenderBlock {HTML} at (0,0) size 784x929
-    RenderBody {BODY} at (8,8) size 768x913
+layer at (0,0) size 785x953
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x929
+  RenderBlock {HTML} at (0,0) size 785x929
+    RenderBody {BODY} at (8,8) size 769x913
       RenderText {#text} at (0,0) size 440x19
         text run at (0,0) width 440: "All of the replaced elements below should be clipped to a border-radius. "
       RenderBR {BR} at (0,0) size 0x0

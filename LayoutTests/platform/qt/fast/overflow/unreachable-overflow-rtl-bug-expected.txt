@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,125) size 784x19
         RenderText {#text} at (0,0) size 31x19
           text run at (0,0) width 31: "RTL:"
-layer at (8,27) size 106x106 clip at (11,30) size 84x84 scrollWidth 220 scrollHeight 269
+layer at (8,27) size 106x106 clip at (11,30) size 85x85 scrollWidth 220 scrollHeight 269
   RenderBlock (relative positioned) {DIV} at (0,19) size 106x106 [border: (3px solid #000000)]
-layer at (8,152) size 106x106 clip at (11,155) size 84x84 scrollX 136 scrollWidth 220 scrollHeight 269
+layer at (8,152) size 106x106 clip at (11,155) size 85x85 scrollX 135 scrollWidth 220 scrollHeight 269
   RenderBlock (relative positioned) {DIV} at (0,144) size 106x106 [border: (3px solid #000000)]

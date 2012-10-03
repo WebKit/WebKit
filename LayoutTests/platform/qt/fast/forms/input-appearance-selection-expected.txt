@@ -1,15 +1,15 @@
-layer at (0,0) size 784x615
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x615
-  RenderBlock {HTML} at (0,0) size 784x615
-    RenderBody {BODY} at (8,8) size 768x591
-      RenderBlock (anonymous) at (0,0) size 768x19
+layer at (0,0) size 785x615
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x615
+  RenderBlock {HTML} at (0,0) size 785x615
+    RenderBody {BODY} at (8,8) size 769x591
+      RenderBlock (anonymous) at (0,0) size 769x19
         RenderText {#text} at (0,0) size 318x19
           text run at (0,0) width 318: "This tests the selection methods on the new text field."
-      RenderBlock {P} at (0,35) size 768x27
+      RenderBlock {P} at (0,35) size 769x27
         RenderTextControl {INPUT} at (2,2) size 192x23
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,78) size 768x513
+      RenderBlock {DIV} at (0,78) size 769x513
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 189x19
           text run at (0,19) width 189: "Test 1: setSelectionRange(0, 0)"
@@ -73,7 +73,7 @@ layer at (0,0) size 784x615
         RenderText {#text} at (0,494) size 47x19
           text run at (0,494) width 47: "Passed."
         RenderBR {BR} at (47,509) size 0x0
-      RenderBlock {P} at (0,607) size 768x0
+      RenderBlock {P} at (0,607) size 769x0
 layer at (12,47) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19
     RenderText {#text} at (0,0) size 170x19

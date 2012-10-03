@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 208x308
           RenderTableRow {TR} at (0,2) size 208x304
             RenderTableCell {TD} at (2,2) size 204x304 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-layer at (14,14) size 200x300 clip at (14,14) size 184x300 scrollHeight 456
+layer at (14,14) size 200x300 clip at (14,14) size 185x300 scrollHeight 456
   RenderBlock {DIV} at (2,2) size 200x300
     RenderText {#text} at (0,0) size 130x19
       text run at (0,0) width 130: "Lots of overflow text."

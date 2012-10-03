@@ -33,7 +33,7 @@ layer at (0,0) size 340x600
           RenderTableRow {TR} at (0,2) size 150x256
             RenderTableCell {TD} at (2,2) size 150x125 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (2,129) size 150x125 [r=0 c=1 rs=1 cs=1]
-layer at (185,15) size 44x115 clip at (185,25) size 28x100 scrollHeight 175
+layer at (185,15) size 44x115 clip at (185,25) size 29x100 scrollHeight 175
   RenderBlock {DIV} at (5,5) size 44x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderText {#text} at (0,10) size 19x175
       text run at (0,10) width 175: "abcdefghijklmnopqrstuvwxyz"
@@ -42,12 +42,12 @@ layer at (233,15) size 44x115 clip at (233,25) size 44x100
     RenderBlock {DIV} at (0,10) size 19x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,-75) size 19x175
         text run at (0,-75) width 175: "abcdefghijklmnopqrstuvwxyz"
-layer at (281,15) size 44x115 clip at (281,25) size 28x100 scrollHeight 175
+layer at (281,15) size 44x115 clip at (281,25) size 29x100 scrollHeight 175
   RenderBlock {DIV} at (101,5) size 44x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderBlock {DIV} at (0,10) size 19x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 19x175
         text run at (0,0) width 175: "abcdefghijklmnopqrstuvwxyz"
-layer at (185,142) size 44x115 clip at (185,147) size 28x100 scrollY 75 scrollHeight 175
+layer at (185,142) size 44x115 clip at (185,147) size 29x100 scrollY 75 scrollHeight 175
   RenderBlock {DIV} at (5,5) size 44x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderText {#text} at (0,-70) size 19x175
       text run at (0,-70) width 175: "zyxwvutsrqponmlkjihgfedcba"
@@ -56,7 +56,7 @@ layer at (233,142) size 44x115 clip at (233,147) size 44x100
     RenderBlock {DIV} at (0,5) size 19x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,0) size 19x175
         text run at (0,0) width 175: "zyxwvutsrqponmlkjihgfedcba"
-layer at (281,142) size 44x115 clip at (281,147) size 28x100 scrollY 75 scrollHeight 175
+layer at (281,142) size 44x115 clip at (281,147) size 29x100 scrollY 75 scrollHeight 175
   RenderBlock {DIV} at (101,5) size 44x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderBlock {DIV} at (0,5) size 19x100 [bgcolor=#D3D3D3]
       RenderText {#text} at (0,-75) size 19x175

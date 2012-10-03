@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             text run at (366,0) width 396: "REGRESSION: Selection painting issue in bug review textbox"
         RenderText {#text} at (762,0) size 4x19
           text run at (762,0) width 4: "."
-layer at (13,43) size 126x126 clip at (16,46) size 104x120 scrollY 38 scrollHeight 158
+layer at (13,43) size 126x126 clip at (16,46) size 105x120 scrollY 38 scrollHeight 158
   RenderBlock {DIV} at (5,35) size 126x126 [border: (3px solid #000000)]
-    RenderBlock {DIV} at (13,13) size 84x100
-    RenderBlock (anonymous) at (13,113) size 84x38
+    RenderBlock {DIV} at (13,13) size 85x100
+    RenderBlock (anonymous) at (13,113) size 85x38
       RenderBlock {DIV} at (0,0) size 94x38
         RenderInline {SPAN} at (0,0) size 40x38
           RenderText {#text} at (0,0) size 40x19

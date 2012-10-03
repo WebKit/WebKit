@@ -9,8 +9,8 @@ layer at (0,0) size 800x237
       RenderBlock (anonymous) at (0,19) size 784x202
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,29) size 110x194 clip at (10,29) size 94x194 scrollY 143 scrollHeight 612
-  RenderTextControl {TEXTAREA} at (2,2) size 110x194
+layer at (10,29) size 109x194 clip at (10,29) size 94x194 scrollY 143 scrollHeight 612
+  RenderTextControl {TEXTAREA} at (2,2) size 109x194
     RenderBlock {DIV} at (2,2) size 90x608
       RenderText {#text} at (0,0) size 25x589
         text run at (0,0) width 16: "00"

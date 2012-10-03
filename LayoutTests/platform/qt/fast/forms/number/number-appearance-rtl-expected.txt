@@ -6,92 +6,92 @@ layer at (0,0) size 800x360
       RenderBlock {P} at (0,0) size 784x27
         RenderTextControl {INPUT} at (590,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,43) size 784x27
         RenderTextControl {INPUT} at (590,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,86) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,129) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,172) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (0,0) size 172x19
+            RenderBlock {DIV} at (0,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,215) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (0,0) size 172x19
+            RenderBlock {DIV} at (0,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,258) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,301) size 784x27
         RenderTextControl {INPUT} at (2,2) size 192x23
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
-            RenderBlock {DIV} at (16,0) size 172x19
+            RenderBlock {DIV} at (15,0) size 173x19
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (616,20) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (164,0) size 8x19
-      text run at (164,0) width 8: "1"
-layer at (616,63) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (164,0) size 8x19
-      text run at (164,0) width 8: "2"
-layer at (28,106) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (164,0) size 8x19
-      text run at (164,0) width 8: "3"
-layer at (28,149) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (140,0) size 32x19
-      text run at (140,0) width 32: "1234"
-layer at (12,192) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
+layer at (615,20) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (165,0) size 8x19
+      text run at (165,0) width 8: "1"
+layer at (615,63) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (165,0) size 8x19
+      text run at (165,0) width 8: "2"
+layer at (27,106) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (165,0) size 8x19
+      text run at (165,0) width 8: "3"
+layer at (27,149) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (141,0) size 32x19
+      text run at (141,0) width 32: "1234"
+layer at (12,192) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
     RenderText {#text} at (0,0) size 8x19
       text run at (0,0) width 8: "5"
-layer at (12,235) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
+layer at (12,235) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
     RenderText {#text} at (0,0) size 8x19
       text run at (0,0) width 8: "6"
-layer at (28,278) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (164,0) size 8x19
-      text run at (164,0) width 8: "7"
-layer at (28,321) size 172x19
-  RenderBlock {DIV} at (0,0) size 172x19
-    RenderText {#text} at (164,0) size 8x19
-      text run at (164,0) width 8: "8"
-layer at (598,18) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
-layer at (598,61) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
-layer at (10,104) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
-layer at (10,147) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
-layer at (186,190) size 16x23
-  RenderBlock (relative positioned) {DIV} at (174,-2) size 16x23
-layer at (186,233) size 16x23
-  RenderBlock (relative positioned) {DIV} at (174,-2) size 16x23
-layer at (10,276) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
-layer at (10,319) size 16x23
-  RenderBlock (relative positioned) {DIV} at (-2,-2) size 16x23
+layer at (27,278) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (165,0) size 8x19
+      text run at (165,0) width 8: "7"
+layer at (27,321) size 173x19
+  RenderBlock {DIV} at (0,0) size 173x19
+    RenderText {#text} at (165,0) size 8x19
+      text run at (165,0) width 8: "8"
+layer at (598,18) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
+layer at (598,61) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
+layer at (10,104) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
+layer at (10,147) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
+layer at (187,190) size 15x23
+  RenderBlock (relative positioned) {DIV} at (175,-2) size 15x23
+layer at (187,233) size 15x23
+  RenderBlock (relative positioned) {DIV} at (175,-2) size 15x23
+layer at (10,276) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
+layer at (10,319) size 15x23
+  RenderBlock (relative positioned) {DIV} at (-2,-2) size 15x23
 caret: position 4 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of child 6 {P} of body

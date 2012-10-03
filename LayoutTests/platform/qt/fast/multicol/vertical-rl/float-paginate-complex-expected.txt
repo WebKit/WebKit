@@ -1,9 +1,9 @@
 layer at (0,0) size 1680x1208
-  RenderView at (0,0) size 784x584
-layer at (-896,0) size 1680x584 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
-  RenderBlock {HTML} at (0,0) size 1680x584
+  RenderView at (0,0) size 785x585
+layer at (-895,0) size 1680x585 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+  RenderBlock {HTML} at (0,0) size 1680x585
     RenderBody {BODY} at (8,8) size 1664x1200
-layer at (372,8) size 404x1200
+layer at (373,8) size 404x1200
   RenderBlock {DIV} at (0,0) size 404x1200 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 266x388
       RenderText {#text} at (0,0) size 19x104
@@ -130,7 +130,7 @@ layer at (372,8) size 404x1200
       RenderText {#text} at (594,0) size 19x104
         text run at (594,0) width 104: "This is some text."
       RenderBR {BR} at (609,104) size 0x0
-layer at (-48,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
+layer at (-47,8) size 404x1200 backgroundClip at (0,0) size 1680x1208 clip at (0,0) size 1680x1208 outlineClip at (0,0) size 1680x1208
   RenderBlock {DIV} at (420,0) size 404x1200 [border: (2px solid #000000)]
     RenderBlock (anonymous) at (2,2) size 266x388
       RenderText {#text} at (0,0) size 19x104

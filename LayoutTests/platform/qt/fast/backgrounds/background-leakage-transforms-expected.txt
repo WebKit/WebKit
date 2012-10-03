@@ -1,9 +1,9 @@
-layer at (0,0) size 784x852
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x852
-  RenderBlock {HTML} at (0,0) size 784x852
-    RenderBody {BODY} at (8,8) size 768x836
-      RenderBlock {DIV} at (0,0) size 768x148
+layer at (0,0) size 785x852
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x852
+  RenderBlock {HTML} at (0,0) size 785x852
+    RenderBody {BODY} at (8,8) size 769x836
+      RenderBlock {DIV} at (0,0) size 769x148
         RenderBlock {DIV} at (10,10) size 268x128
           RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
           RenderText {#text} at (132,107) size 4x19
@@ -19,8 +19,8 @@ layer at (0,0) size 784x852
           RenderBlock {DIV} at (146,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px double #0000FF7F)]
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,156) size 768x148
-  RenderBlock {DIV} at (0,148) size 768x148
+layer at (8,156) size 769x148
+  RenderBlock {DIV} at (0,148) size 769x148
     RenderBlock {DIV} at (10,10) size 268x128
       RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
       RenderText {#text} at (132,107) size 4x19

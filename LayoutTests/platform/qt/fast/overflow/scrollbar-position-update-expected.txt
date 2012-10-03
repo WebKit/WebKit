@@ -19,6 +19,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,54) size 784x19
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "The thumb should be in the middle of the scroll bar."
-layer at (8,97) size 200x200 clip at (8,97) size 184x200 scrollY 200 scrollHeight 600
+layer at (8,97) size 200x200 clip at (8,97) size 185x200 scrollY 200 scrollHeight 600
   RenderBlock {DIV} at (0,89) size 200x200
-    RenderBlock {DIV} at (0,0) size 184x600
+    RenderBlock {DIV} at (0,0) size 185x600

@@ -1,17 +1,17 @@
-layer at (0,0) size 784x660
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x660
-  RenderBlock {HTML} at (0,0) size 784x660
-    RenderBody {BODY} at (8,16) size 768x628
-      RenderBlock {P} at (0,0) size 768x57
-        RenderText {#text} at (0,0) size 747x57
+layer at (0,0) size 785x660
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x660
+  RenderBlock {HTML} at (0,0) size 785x660
+    RenderBody {BODY} at (8,16) size 769x628
+      RenderBlock {P} at (0,0) size 769x57
+        RenderText {#text} at (0,0) size 769x57
           text run at (0,0) width 441: "Following table should have 6px solid blue border around cell 3, red 5px "
           text run at (441,0) width 306: "solid border around the rest of table and green 4px"
           text run at (0,19) width 168: "solid border between cell 1 "
           text run at (168,19) width 461: "and cell 2. The red border should override the green border around the cells "
-          text run at (629,19) width 114: "because it's thicker"
-          text run at (0,38) width 353: "and the blue border should override the red border for the "
-          text run at (353,38) width 79: "same reason."
+          text run at (629,19) width 140: "because it's thicker and"
+          text run at (0,38) width 327: "the blue border should override the red border for the "
+          text run at (327,38) width 79: "same reason."
       RenderTable {TABLE} at (0,73) size 159x33 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (2,3) size 154x27
           RenderTableRow {TR} at (0,0) size 154x27
@@ -24,7 +24,7 @@ layer at (0,0) size 784x660
             RenderTableCell {TD} at (102,0) size 52x27 [border: (3px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 44x19
                 text run at (4,4) width 44: "Cell #3"
-      RenderBlock {P} at (0,122) size 768x19
+      RenderBlock {P} at (0,122) size 769x19
         RenderText {#text} at (0,0) size 27x19
           text run at (0,0) width 27: "See "
         RenderInline {A} at (0,0) size 216x19 [color=#0000EE]
@@ -89,7 +89,7 @@ layer at (0,0) size 784x660
             RenderTableCell {TD} at (102,218) size 51x54 [border: (1px solid #FF0000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (17,17) size 16x19
                 text run at (17,17) width 16: "15"
-      RenderBlock {P} at (0,450) size 768x39
+      RenderBlock {P} at (0,450) size 769x39
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "This is an example rendering for the previous table from "
         RenderInline {A} at (0,0) size 392x19 [color=#0000EE]
@@ -100,7 +100,7 @@ layer at (0,0) size 784x660
         RenderBR {BR} at (0,0) size 0x0
         RenderImage {IMG} at (0,19) size 201x20
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,505) size 768x38
+      RenderBlock {P} at (0,505) size 769x38
         RenderText {#text} at (0,0) size 756x38
           text run at (0,0) width 466: "Following table should have 2px solid black line between rows. There should "
           text run at (466,0) width 290: "be a total of two lines. There will be three lines if"

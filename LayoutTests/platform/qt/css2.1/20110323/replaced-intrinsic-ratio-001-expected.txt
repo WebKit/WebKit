@@ -1,7 +1,7 @@
-layer at (0,0) size 784x869
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x805
-  RenderBlock {HTML} at (0,0) size 784x805
+layer at (0,0) size 785x869
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x805
+  RenderBlock {HTML} at (0,0) size 785x805
     RenderBody {BODY} at (8,8) size 242x782 [border: (1px dashed #C0C0C0)]
       RenderBlock {P} at (1,17) size 240x32
         RenderText {#text} at (0,-1) size 237x35

@@ -1,8 +1,8 @@
-layer at (0,0) size 784x947
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x947
-  RenderBlock {HTML} at (0,0) size 784x947
-    RenderBody {BODY} at (8,8) size 768x931
+layer at (0,0) size 785x947
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x947
+  RenderBlock {HTML} at (0,0) size 785x947
+    RenderBody {BODY} at (8,8) size 769x931
       RenderTable {TABLE} at (0,0) size 600x262 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 598x260
           RenderTableRow {TR} at (0,2) size 598x77
@@ -37,8 +37,8 @@ layer at (0,0) size 784x947
             RenderTableCell {TH} at (118,225) size 478x23 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (208,2) size 62x19
                 text run at (208,2) width 62: "text links"
-      RenderBlock {HR} at (0,270) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,288) size 768x19
+      RenderBlock {HR} at (0,270) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,288) size 769x19
         RenderInline {B} at (0,0) size 461x19
           RenderText {#text} at (0,0) size 461x19
             text run at (0,0) width 461: "Now, nuke the IMG (two of which are colspan=3) -- the table lines up."
@@ -77,8 +77,8 @@ layer at (0,0) size 784x947
             RenderTableCell {TH} at (113,157) size 473x23 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (205,2) size 63x19
                 text run at (205,2) width 63: "text links"
-      RenderBlock {HR} at (0,515) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,533) size 768x19
+      RenderBlock {HR} at (0,515) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,533) size 769x19
         RenderInline {B} at (0,0) size 493x19
           RenderText {#text} at (0,0) size 493x19
             text run at (0,0) width 493: "Simpler comparison -- two rows, first is IMG in colspan=3 -- tables not OK"
@@ -105,8 +105,8 @@ layer at (0,0) size 784x947
               RenderBlock {P} at (2,72) size 455x19
                 RenderText {#text} at (0,0) size 68x19
                   text run at (0,0) width 68: "etc., etc. ..."
-      RenderBlock {HR} at (0,754) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,772) size 768x19
+      RenderBlock {HR} at (0,754) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,772) size 769x19
         RenderInline {B} at (0,0) size 509x19
           RenderText {#text} at (0,0) size 509x19
             text run at (0,0) width 509: "Simpler comparison -- nuke the IMG (replace with text) -- tables line up now."

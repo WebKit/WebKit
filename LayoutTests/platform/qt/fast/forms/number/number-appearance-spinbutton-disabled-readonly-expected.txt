@@ -10,38 +10,38 @@ layer at (0,0) size 800x600
         RenderInline {LABEL} at (0,0) size 320x19
           RenderTextControl {INPUT} at (2,2) size 234x27
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
-              RenderBlock {DIV} at (0,0) size 214x23
+              RenderBlock {DIV} at (0,0) size 215x23
           RenderText {#text} at (238,7) size 82x19
             text run at (238,7) width 82: " Normal state"
       RenderBlock {DIV} at (0,66) size 784x31
         RenderInline {LABEL} at (0,0) size 327x19
           RenderTextControl {INPUT} at (2,2) size 234x27
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
-              RenderBlock {DIV} at (0,0) size 214x23
+              RenderBlock {DIV} at (0,0) size 215x23
           RenderText {#text} at (238,7) size 89x19
             text run at (238,7) width 89: " Disabled state"
       RenderBlock {DIV} at (0,97) size 784x31
         RenderInline {LABEL} at (0,0) size 337x19
           RenderTextControl {INPUT} at (2,2) size 234x27
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
-              RenderBlock {DIV} at (0,0) size 214x23
+              RenderBlock {DIV} at (0,0) size 215x23
           RenderText {#text} at (238,7) size 99x19
             text run at (238,7) width 99: " Read-only state"
-layer at (12,47) size 214x23
-  RenderBlock {DIV} at (0,0) size 214x23
+layer at (12,47) size 215x23
+  RenderBlock {DIV} at (0,0) size 215x23
     RenderText {#text} at (0,0) size 10x23
       text run at (0,0) width 10: "0"
-layer at (12,78) size 214x23
-  RenderBlock {DIV} at (0,0) size 214x23 [color=#545454]
+layer at (12,78) size 215x23
+  RenderBlock {DIV} at (0,0) size 215x23 [color=#545454]
     RenderText {#text} at (0,0) size 10x23
       text run at (0,0) width 10: "0"
-layer at (12,109) size 214x23
-  RenderBlock {DIV} at (0,0) size 214x23
+layer at (12,109) size 215x23
+  RenderBlock {DIV} at (0,0) size 215x23
     RenderText {#text} at (0,0) size 10x23
       text run at (0,0) width 10: "0"
-layer at (228,45) size 16x27
-  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27
-layer at (228,76) size 16x27
-  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27
-layer at (228,107) size 16x27
-  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27
+layer at (229,45) size 15x27
+  RenderBlock (relative positioned) {DIV} at (217,-2) size 15x27
+layer at (229,76) size 15x27
+  RenderBlock (relative positioned) {DIV} at (217,-2) size 15x27
+layer at (229,107) size 15x27
+  RenderBlock (relative positioned) {DIV} at (217,-2) size 15x27

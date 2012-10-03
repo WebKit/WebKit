@@ -86,11 +86,11 @@ layer at (0,0) size 800x600
                 RenderBody {BODY} at (8,8) size 20x231
         RenderFrameSet {FRAMESET} at (336,0) size 36x500
           RenderFrame {FRAME} at (0,0) size 36x0
-            layer at (0,0) size 20x8
-              RenderView at (0,0) size 20x0
-            layer at (0,0) size 20x8
-              RenderBlock {HTML} at (0,0) size 20x8
-                RenderBody {BODY} at (8,8) size 4x0
+            layer at (0,0) size 21x8
+              RenderView at (0,0) size 21x0
+            layer at (0,0) size 21x8
+              RenderBlock {HTML} at (0,0) size 21x8
+                RenderBody {BODY} at (8,8) size 5x0
           RenderFrame {FRAME} at (0,6) size 36x494
             layer at (0,0) size 36x494
               RenderView at (0,0) size 36x494
@@ -99,11 +99,11 @@ layer at (0,0) size 800x600
                 RenderBody {BODY} at (8,8) size 20x478
         RenderFrameSet {FRAMESET} at (378,0) size 36x500
           RenderFrame {FRAME} at (0,0) size 36x0
-            layer at (0,0) size 20x8
-              RenderView at (0,0) size 20x0
-            layer at (0,0) size 20x8
-              RenderBlock {HTML} at (0,0) size 20x8
-                RenderBody {BODY} at (8,8) size 4x0
+            layer at (0,0) size 21x8
+              RenderView at (0,0) size 21x0
+            layer at (0,0) size 21x8
+              RenderBlock {HTML} at (0,0) size 21x8
+                RenderBody {BODY} at (8,8) size 5x0
           RenderFrame {FRAME} at (0,6) size 36x494
             layer at (0,0) size 36x494
               RenderView at (0,0) size 36x494
@@ -112,11 +112,11 @@ layer at (0,0) size 800x600
                 RenderBody {BODY} at (8,8) size 20x478
         RenderFrameSet {FRAMESET} at (420,0) size 36x500
           RenderFrame {FRAME} at (0,0) size 36x0
-            layer at (0,0) size 20x8
-              RenderView at (0,0) size 20x0
-            layer at (0,0) size 20x8
-              RenderBlock {HTML} at (0,0) size 20x8
-                RenderBody {BODY} at (8,8) size 4x0
+            layer at (0,0) size 21x8
+              RenderView at (0,0) size 21x0
+            layer at (0,0) size 21x8
+              RenderBlock {HTML} at (0,0) size 21x8
+                RenderBody {BODY} at (8,8) size 5x0
           RenderFrame {FRAME} at (0,6) size 36x494
             layer at (0,0) size 36x494
               RenderView at (0,0) size 36x494
@@ -144,11 +144,11 @@ layer at (0,0) size 800x600
               RenderBlock {HTML} at (0,0) size 36x494
                 RenderBody {BODY} at (8,8) size 20x478
           RenderFrame {FRAME} at (0,500) size 36x0
-            layer at (0,0) size 20x8
-              RenderView at (0,0) size 20x0
-            layer at (0,0) size 20x8
-              RenderBlock {HTML} at (0,0) size 20x8
-                RenderBody {BODY} at (8,8) size 4x0
+            layer at (0,0) size 21x8
+              RenderView at (0,0) size 21x0
+            layer at (0,0) size 21x8
+              RenderBlock {HTML} at (0,0) size 21x8
+                RenderBody {BODY} at (8,8) size 5x0
         RenderFrameSet {FRAMESET} at (546,0) size 36x500
           RenderFrame {FRAME} at (0,0) size 36x250
             layer at (0,0) size 36x250
@@ -196,11 +196,11 @@ layer at (0,0) size 800x600
               RenderBlock {HTML} at (0,0) size 36x494
                 RenderBody {BODY} at (8,8) size 20x478
           RenderFrame {FRAME} at (0,500) size 36x0
-            layer at (0,0) size 20x8
-              RenderView at (0,0) size 20x0
-            layer at (0,0) size 20x8
-              RenderBlock {HTML} at (0,0) size 20x8
-                RenderBody {BODY} at (8,8) size 4x0
+            layer at (0,0) size 21x8
+              RenderView at (0,0) size 21x0
+            layer at (0,0) size 21x8
+              RenderBlock {HTML} at (0,0) size 21x8
+                RenderBody {BODY} at (8,8) size 5x0
         RenderFrameSet {FRAMESET} at (714,0) size 36x500
           RenderFrame {FRAME} at (0,0) size 36x375
             layer at (0,0) size 36x375

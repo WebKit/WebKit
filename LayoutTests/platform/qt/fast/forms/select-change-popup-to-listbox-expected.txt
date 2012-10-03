@@ -6,5 +6,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 425x19
         text run at (0,0) width 425: "This tests that you can dynamically change a popup menu to a list box. "
       RenderBR {BR} at (425,15) size 0x0
-      RenderListBox {SELECT} at (2,21) size 201x101 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,21) size 200x101 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderText {#text} at (0,0) size 0x0

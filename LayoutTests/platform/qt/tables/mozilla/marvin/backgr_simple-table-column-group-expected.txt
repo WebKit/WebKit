@@ -1,23 +1,23 @@
-layer at (0,0) size 784x1385
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1385
-  RenderBlock {HTML} at (0,0) size 784x1385
-    RenderBody {BODY} at (8,17) size 768x1360 [color=#00FF00] [bgcolor=#333333]
-      RenderBlock {H1} at (0,0) size 768x30
+layer at (0,0) size 785x1385
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1385
+  RenderBlock {HTML} at (0,0) size 785x1385
+    RenderBody {BODY} at (8,17) size 769x1360 [color=#00FF00] [bgcolor=#333333]
+      RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 768x23
+      RenderBlock {H2} at (0,47) size 769x23
         RenderText {#text} at (0,0) size 276x23
           text run at (0,0) width 276: "Part A: Background Area"
-      RenderBlock {H3} at (0,86) size 768x18
+      RenderBlock {H3} at (0,86) size 769x18
         RenderText {#text} at (0,0) size 306x18
           text run at (0,0) width 306: "Background on 'table-column-group'"
-      RenderBlock {P} at (0,119) size 768x30
+      RenderBlock {P} at (0,119) size 769x30
         RenderText {#text} at (0,0) size 760x30
           text run at (0,0) width 360: "The first column group spans the first three "
           text run at (360,0) width 400: "columns. The second column group only contains the"
           text run at (0,15) width 96: "last column."
-      RenderBlock {P} at (0,162) size 768x60
+      RenderBlock {P} at (0,162) size 769x60
         RenderText {#text} at (0,0) size 760x60
           text run at (0,0) width 416: "The table column group background should be visible "
           text run at (416,0) width 280: "within the border edge of each cell"
@@ -28,7 +28,7 @@ layer at (0,0) size 784x1385
           text run at (488,30) width 224: "background. Furthermore, the"
           text run at (0,45) width 296: "horizontal stripes should also align "
           text run at (296,45) width 232: "across the two column groups."
-      RenderBlock {P} at (0,235) size 768x45
+      RenderBlock {P} at (0,235) size 769x45
         RenderText {#text} at (0,0) size 736x45
           text run at (0,0) width 376: "A purple band should align with the top border "
           text run at (376,0) width 344: "edge of the cells in the first row. An aqua"
@@ -36,27 +36,27 @@ layer at (0,0) size 784x1385
           text run at (176,15) width 512: "few pixels to the right of the left border edge of cells in the "
           text run at (688,15) width 48: "column"
           text run at (0,30) width 192: "group's leftmost column."
-      RenderBlock {DL} at (0,293) size 768x90
-        RenderBlock {DT} at (0,0) size 768x15
+      RenderBlock {DL} at (0,293) size 769x90
+        RenderBlock {DT} at (0,0) size 769x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
-        RenderBlock {DD} at (40,15) size 728x15
+        RenderBlock {DD} at (40,15) size 729x15
           RenderInline {A} at (0,0) size 336x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 336x15
               text run at (0,0) width 336: "Background Area: Background on 'table-row'"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DT} at (0,30) size 768x15
+        RenderBlock {DT} at (0,30) size 769x15
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "previous"
-        RenderBlock {DD} at (40,45) size 728x15
+        RenderBlock {DD} at (40,45) size 729x15
           RenderInline {A} at (0,0) size 384x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 384x15
               text run at (0,0) width 384: "Background Area: Background on 'table-row-group'"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DT} at (0,60) size 768x15
+        RenderBlock {DT} at (0,60) size 769x15
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "contents"
-        RenderBlock {DD} at (40,75) size 728x15
+        RenderBlock {DD} at (40,75) size 729x15
           RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 136x15
               text run at (0,0) width 136: "Table of Contents"
@@ -179,10 +179,10 @@ layer at (0,0) size 784x1385
             RenderTableCell {TD} at (465,135) size 112x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x23
                 text run at (2,2) width 44: "TD L"
-      RenderBlock {DIV} at (0,1310) size 768x35
+      RenderBlock {DIV} at (0,1310) size 769x35
         RenderInline {A} at (0,0) size 88x15 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1345) size 768x15
+      RenderBlock {ADDRESS} at (0,1345) size 769x15
         RenderText {#text} at (0,0) size 704x15
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

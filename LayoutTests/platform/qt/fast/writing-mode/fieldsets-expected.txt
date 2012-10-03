@@ -1,8 +1,8 @@
-layer at (0,0) size 784x1240
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1240
-  RenderBlock {HTML} at (0,0) size 784x1240
-    RenderBody {BODY} at (8,8) size 768x1224
+layer at (0,0) size 785x1240
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1240
+  RenderBlock {HTML} at (0,0) size 785x1240
+    RenderBody {BODY} at (8,8) size 769x1224
       RenderText {#text} at (0,0) size 262x19
         text run at (0,0) width 262: "LTR fieldset with left/center/right text-align: "
       RenderBR {BR} at (262,15) size 0x0

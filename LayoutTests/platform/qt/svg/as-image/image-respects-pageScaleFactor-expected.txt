@@ -1,15 +1,15 @@
-layer at (0,0) size 784x584
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x584
-  RenderBlock {HTML} at (0,0) size 784x584
-    RenderBody {BODY} at (8,8) size 768x568
-      RenderBlock {P} at (0,0) size 768x19
+layer at (0,0) size 785x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x585
+  RenderBlock {HTML} at (0,0) size 785x585
+    RenderBody {BODY} at (8,8) size 769x569
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 328x19
           text run at (0,0) width 328: "This test passes if both of the circles have sharp edges."
-      RenderBlock {P} at (0,35) size 768x19
+      RenderBlock {P} at (0,35) size 769x19
         RenderText {#text} at (0,0) size 418x19
           text run at (0,0) width 418: "To run manually, use full-page zoom to increase the page scale factor."
-      RenderBlock (anonymous) at (0,70) size 768x132
+      RenderBlock (anonymous) at (0,70) size 769x132
         RenderImage {IMG} at (0,0) size 128x128
         RenderText {#text} at (128,113) size 4x19
           text run at (128,113) width 4: " "

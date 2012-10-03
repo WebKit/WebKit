@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (209,0) size 291x19
             text run at (209,0) width 291: "https://bugs.webkit.org/show_bug.cgi?id=49790"
       RenderBlock (anonymous) at (0,35) size 800x85
-        RenderListBox {SELECT} at (2,2) size 33x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (2,2) size 32x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0

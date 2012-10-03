@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 382: "There should be one contiguous highlight from \x{201C}elit\x{201D} to \x{201C}Etiam\x{201D}, "
           text run at (382,0) width 354: "including the orange square, and no other highlighted areas."
       RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
-layer at (8,107) size 100x200 clip at (8,107) size 84x200 scrollY 40 scrollHeight 285
+layer at (8,107) size 100x200 clip at (8,107) size 85x200 scrollY 40 scrollHeight 285
   RenderBlock {DIV} at (0,99) size 100x200
     RenderText {#text} at (0,0) size 84x95
       text run at (0,0) width 79: "Lorem ipsum"

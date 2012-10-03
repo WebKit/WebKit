@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (251,76) width 497: ", not the height of the div. This behavior does not occur if the content is not floated."
         RenderBR {BR} at (748,91) size 0x0
         RenderBR {BR} at (0,95) size 0x19
-layer at (11,11) size 100x100 clip at (11,11) size 84x100 scrollHeight 228
+layer at (11,11) size 100x100 clip at (11,11) size 85x100 scrollHeight 228
   RenderBlock {DIV} at (1,1) size 100x100
     RenderBlock (floating) {SPAN} at (0,0) size 25x19
       RenderText {#text} at (0,0) size 25x19

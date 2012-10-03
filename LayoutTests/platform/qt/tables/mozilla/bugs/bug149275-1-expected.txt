@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   text run at (366,0) width 42: "abcdef"
           RenderTableRow {TR} at (0,54) size 782x526
             RenderTableCell {TD} at (2,54) size 778x526 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-layer at (13,65) size 756x522 clip at (16,68) size 750x500 scrollWidth 900
+layer at (13,65) size 756x522 clip at (16,68) size 750x501 scrollWidth 900
   RenderBlock {DIV} at (2,2) size 756x522 [border: (3px solid #000000)]
     RenderBlock {CENTER} at (3,3) size 750x158
       RenderTable {TABLE} at (0,0) size 900x158

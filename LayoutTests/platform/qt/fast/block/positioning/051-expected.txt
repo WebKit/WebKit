@@ -1,6 +1,6 @@
-layer at (0,0) size 784x5272
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x5272 layerType: background only
+layer at (0,0) size 785x5272
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x5272 layerType: background only
 layer at (84,1481) size 200x200
   RenderBlock (positioned) zI: -3000000 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3000000 {#text} at (77,45) size 46x90
@@ -81,20 +81,20 @@ layer at (84,4996) size 200x200
   RenderBlock (positioned) zI: -1 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderText zI: -1 {#text} at (77,45) size 46x90
       text run at (77,45) width 46: "6"
-layer at (0,0) size 784x5272 layerType: foreground only
-  RenderBlock {HTML} at (0,0) size 784x5272
-    RenderBody {BODY} at (8,21) size 768x5235
-      RenderBlock {H1} at (0,0) size 768x37
+layer at (0,0) size 785x5272 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 785x5272
+    RenderBody {BODY} at (8,21) size 769x5235
+      RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 293x36
           text run at (0,0) width 293: "Layered Presentation"
-      RenderBlock {P} at (0,58) size 768x19
+      RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 704x19
           text run at (0,0) width 382: "Robert O'Callahan pointed out to me some mistakes in this test "
           text run at (382,0) width 322: "that I have not yet had the time to examine or correct."
-      RenderBlock {P} at (0,93) size 768x19
+      RenderBlock {P} at (0,93) size 769x19
         RenderText {#text} at (0,0) size 440x19
           text run at (0,0) width 440: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
-      RenderBlock {P} at (0,4580) size 768x19
+      RenderBlock {P} at (0,4580) size 769x19
         RenderText {#text} at (0,0) size 329x19
           text run at (0,0) width 329: "Using assumed default value of z-index (may not pass):"
 layer at (24,149) size 620x620

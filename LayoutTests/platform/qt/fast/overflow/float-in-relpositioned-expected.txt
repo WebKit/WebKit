@@ -19,13 +19,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 605x19
           text run at (0,0) width 449: "Each black box below should have a scroll bar allowing the blue square to "
           text run at (449,0) width 156: "be scrolled fully into view."
-layer at (18,78) size 102x102 clip at (19,79) size 100x84 scrollWidth 125
+layer at (18,78) size 102x102 clip at (19,79) size 100x85 scrollWidth 125
   RenderBlock {DIV} at (10,70) size 102x102 [border: (1px solid #000000)]
-layer at (18,190) size 102x102 clip at (19,191) size 84x100 scrollHeight 125
+layer at (18,190) size 102x102 clip at (19,191) size 85x100 scrollHeight 125
   RenderBlock {DIV} at (10,182) size 102x102 [border: (1px solid #000000)]
-layer at (18,302) size 102x102 clip at (19,303) size 100x84 scrollWidth 125
+layer at (18,302) size 102x102 clip at (19,303) size 100x85 scrollWidth 125
   RenderBlock {DIV} at (10,294) size 102x102 [border: (1px solid #000000)]
-layer at (18,414) size 102x102 clip at (19,415) size 84x100 scrollHeight 125
+layer at (18,414) size 102x102 clip at (19,415) size 85x100 scrollHeight 125
   RenderBlock {DIV} at (10,406) size 102x102 [border: (1px solid #000000)]
 layer at (69,79) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
@@ -35,9 +35,9 @@ layer at (19,241) size 25x25
     RenderBlock (floating) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
 layer at (69,303) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (69,303) size 75x75 backgroundClip at (19,303) size 100x84 clip at (19,303) size 100x84 outlineClip at (19,303) size 100x84
+layer at (69,303) size 75x75 backgroundClip at (19,303) size 100x85 clip at (19,303) size 100x85 outlineClip at (19,303) size 100x85
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]
 layer at (19,465) size 25x25
   RenderBlock (relative positioned) {DIV} at (1,1) size 25x25 [bgcolor=#000000]
-layer at (19,465) size 75x75 backgroundClip at (19,415) size 84x100 clip at (19,415) size 84x100 outlineClip at (19,415) size 84x100
+layer at (19,465) size 75x75 backgroundClip at (19,415) size 85x100 clip at (19,415) size 85x100 outlineClip at (19,415) size 85x100
   RenderBlock (positioned) {DIV} at (0,0) size 75x75 [bgcolor=#0000FF7F]

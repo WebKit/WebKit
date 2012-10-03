@@ -1,9 +1,9 @@
-layer at (0,0) size 784x751
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x751
-  RenderBlock {HTML} at (0,0) size 784x751
-    RenderBody {BODY} at (8,32) size 768x687
-      RenderBlock {P} at (32,0) size 704x111 [color=#000080]
+layer at (0,0) size 785x751
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x751
+  RenderBlock {HTML} at (0,0) size 785x751
+    RenderBody {BODY} at (8,32) size 769x687
+      RenderBlock {P} at (32,0) size 705x111 [color=#000080]
         RenderText {#text} at (0,0) size 631x110
           text run at (0,0) width 631: "\x{21E9} The following blue box should be exactly half the"
           text run at (0,37) width 80: "width "
@@ -45,60 +45,60 @@ layer at (0,0) size 784x751
           text run at (0,323) width 234: "float text ignore this float text "
           text run at (234,323) width 150: "ignore this float text"
           text run at (0,342) width 261: "ignore this float text ignore this float"
-      RenderBlock {DIV} at (0,143) size 768x475 [color=#C0C0C0]
-        RenderText {#text} at (384,0) size 768x475
-          text run at (384,0) width 384: "this is some dummy text this is some dummy text this is some"
+      RenderBlock {DIV} at (0,143) size 769x475 [color=#C0C0C0]
+        RenderText {#text} at (384,0) size 769x475
+          text run at (384,0) width 385: "this is some dummy text this is some dummy text this is some"
           text run at (384,19) width 49: "dummy "
-          text run at (433,19) width 335: "text this is some dummy text this is some dummy text"
+          text run at (433,19) width 336: "text this is some dummy text this is some dummy text"
           text run at (384,38) width 78: "this is some "
-          text run at (462,38) width 306: "dummy text this is some dummy text this is some"
+          text run at (462,38) width 307: "dummy text this is some dummy text this is some"
           text run at (384,57) width 118: "dummy text this is "
-          text run at (502,57) width 266: "some dummy text this is some dummy text"
-          text run at (384,76) width 155: "this is some dummy text "
-          text run at (539,76) width 229: "this is some dummy text this is some"
-          text run at (384,95) width 205: "dummy text this is some dummy "
-          text run at (589,95) width 179: "text this is some dummy text"
+          text run at (502,57) width 267: "some dummy text this is some dummy text"
+          text run at (384,76) width 156: "this is some dummy text "
+          text run at (540,76) width 229: "this is some dummy text this is some"
+          text run at (384,95) width 206: "dummy text this is some dummy "
+          text run at (590,95) width 179: "text this is some dummy text"
           text run at (384,114) width 234: "this is some dummy text this is some "
-          text run at (618,114) width 150: "dummy text this is some"
-          text run at (384,133) width 274: "dummy text this is some dummy text this is "
-          text run at (658,133) width 110: "some dummy text"
-          text run at (384,152) width 311: "this is some dummy text this is some dummy text "
-          text run at (695,152) width 73: "this is some"
-          text run at (384,171) width 362: "dummy text this is some dummy text this is some dummy "
-          text run at (746,171) width 22: "text"
-          text run at (384,190) width 384: "this is some dummy text this is some dummy text this is some"
-          text run at (384,209) width 384: "dummy text this is some dummy text this is some dummy text"
+          text run at (618,114) width 151: "dummy text this is some"
+          text run at (384,133) width 275: "dummy text this is some dummy text this is "
+          text run at (659,133) width 110: "some dummy text"
+          text run at (384,152) width 312: "this is some dummy text this is some dummy text "
+          text run at (696,152) width 73: "this is some"
+          text run at (384,171) width 363: "dummy text this is some dummy text this is some dummy "
+          text run at (747,171) width 22: "text"
+          text run at (384,190) width 385: "this is some dummy text this is some dummy text this is some"
+          text run at (384,209) width 385: "dummy text this is some dummy text this is some dummy text"
           text run at (384,228) width 40: "this is "
-          text run at (424,228) width 344: "some dummy text this is some dummy text this is some"
+          text run at (424,228) width 345: "some dummy text this is some dummy text this is some"
           text run at (384,247) width 77: "dummy text "
-          text run at (461,247) width 307: "this is some dummy text this is some dummy text"
+          text run at (461,247) width 308: "this is some dummy text this is some dummy text"
           text run at (384,266) width 128: "this is some dummy "
-          text run at (512,266) width 256: "text this is some dummy text this is some"
+          text run at (512,266) width 257: "text this is some dummy text this is some"
           text run at (384,285) width 156: "dummy text this is some "
-          text run at (540,285) width 228: "dummy text this is some dummy text"
+          text run at (540,285) width 229: "dummy text this is some dummy text"
           text run at (384,304) width 196: "this is some dummy text this is "
-          text run at (580,304) width 188: "some dummy text this is some"
-          text run at (384,323) width 233: "dummy text this is some dummy text "
-          text run at (617,323) width 151: "this is some dummy text"
-          text run at (384,342) width 283: "this is some dummy text this is some dummy "
-          text run at (667,342) width 101: "text this is some"
+          text run at (580,304) width 189: "some dummy text this is some"
+          text run at (384,323) width 234: "dummy text this is some dummy text "
+          text run at (618,323) width 151: "this is some dummy text"
+          text run at (384,342) width 284: "this is some dummy text this is some dummy "
+          text run at (668,342) width 101: "text this is some"
           text run at (0,361) width 309: "dummy text this is some dummy text this is some "
-          text run at (309,361) width 427: "dummy text this is some dummy text this is some dummy text this is "
-          text run at (736,361) width 32: "some"
-          text run at (0,380) width 386: "dummy text this is some dummy text this is some dummy text "
-          text run at (386,380) width 382: "this is some dummy text this is some dummy text this is some"
+          text run at (309,361) width 428: "dummy text this is some dummy text this is some dummy text this is "
+          text run at (737,361) width 32: "some"
+          text run at (0,380) width 387: "dummy text this is some dummy text this is some dummy text "
+          text run at (387,380) width 382: "this is some dummy text this is some dummy text this is some"
           text run at (0,399) width 49: "dummy "
-          text run at (49,399) width 414: "text this is some dummy text this is some dummy text this is some "
-          text run at (463,399) width 305: "dummy text this is some dummy text this is some"
+          text run at (49,399) width 415: "text this is some dummy text this is some dummy text this is some "
+          text run at (464,399) width 305: "dummy text this is some dummy text this is some"
           text run at (0,418) width 117: "dummy text this is "
           text run at (117,418) width 424: "some dummy text this is some dummy text this is some dummy text "
-          text run at (541,418) width 227: "this is some dummy text this is some"
+          text run at (541,418) width 228: "this is some dummy text this is some"
           text run at (0,437) width 204: "dummy text this is some dummy "
-          text run at (204,437) width 414: "text this is some dummy text this is some dummy text this is some "
-          text run at (618,437) width 150: "dummy text this is some"
+          text run at (204,437) width 415: "text this is some dummy text this is some dummy text this is some "
+          text run at (619,437) width 150: "dummy text this is some"
           text run at (0,456) width 258: "dummy text this is some dummy text this is "
           text run at (258,456) width 253: "some dummy text this is some dummy text"
-      RenderBlock {P} at (32,650) size 704x37 [color=#000080]
-        RenderText {#text} at (25,0) size 679x36
-          text run at (25,0) width 679: "The above gray text should flow around the blue box. "
-          text run at (704,0) width 0: "\x{21E7}"
+      RenderBlock {P} at (32,650) size 705x37 [color=#000080]
+        RenderText {#text} at (26,0) size 679x36
+          text run at (26,0) width 679: "The above gray text should flow around the blue box. "
+          text run at (705,0) width 0: "\x{21E7}"

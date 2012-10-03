@@ -9,6 +9,6 @@ layer at (0,0) size 800x600
           text run at (530,0) width 230: "The scrollable area should all be green"
           text run at (0,19) width 202: "and should be about 1000px tall. "
           text run at (202,19) width 313: "If you do not see a scrollbar, then the test has failed."
-layer at (8,62) size 104x104 clip at (10,64) size 84x100 scrollHeight 1000
+layer at (8,62) size 104x104 clip at (10,64) size 85x100 scrollHeight 1000
   RenderDeprecatedFlexibleBox {DIV} at (0,54) size 104x104 [bgcolor=#008000] [border: (2px solid #808000)]
-    RenderBlock {DIV} at (2,2) size 84x1000
+    RenderBlock {DIV} at (2,2) size 85x1000

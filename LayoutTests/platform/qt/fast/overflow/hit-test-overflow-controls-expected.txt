@@ -27,12 +27,12 @@ layer at (0,0) size 800x600
 layer at (8,97) size 125x125
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (143,97) size 125x125 clip at (143,97) size 109x109
+layer at (143,97) size 125x125 clip at (143,97) size 110x110
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (278,97) size 125x125 clip at (278,97) size 109x125
+layer at (278,97) size 125x125 clip at (278,97) size 110x125
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100
-layer at (413,97) size 125x125 clip at (413,97) size 125x109
+layer at (413,97) size 125x125 clip at (413,97) size 125x110
   RenderBlock {DIV} at (0,0) size 125x125 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100

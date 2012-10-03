@@ -1,8 +1,8 @@
-layer at (0,0) size 784x677
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x677
-  RenderBlock {HTML} at (0,0) size 784x677
-    RenderBody {BODY} at (8,8) size 768x653 [color=#333333] [bgcolor=#FFFFFF]
+layer at (0,0) size 785x677
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x677
+  RenderBlock {HTML} at (0,0) size 785x677
+    RenderBody {BODY} at (8,8) size 769x653 [color=#333333] [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 636x624 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 634x622
           RenderTableRow {TR} at (0,0) size 634x24
@@ -367,7 +367,7 @@ layer at (0,0) size 784x677
                     text run at (4,279) width 283: "For Y2K information on BLOOMBERG, download"
                     text run at (4,294) width 147: "our customer letters now."
               RenderBR {BR} at (151,306) size 0x0
-      RenderBlock {P} at (0,640) size 768x13
+      RenderBlock {P} at (0,640) size 769x13
         RenderInline {FONT} at (0,0) size 435x13
           RenderText {#text} at (0,0) size 200x13
             text run at (0,0) width 200: "\x{A9}1999 Bloomberg L.P. All rights reserved. "

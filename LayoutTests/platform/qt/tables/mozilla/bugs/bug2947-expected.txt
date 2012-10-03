@@ -1,9 +1,9 @@
-layer at (0,0) size 784x1104
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1104
-  RenderBlock {HTML} at (0,0) size 784x1104
-    RenderBody {BODY} at (8,8) size 768x1088
-      RenderBlock {P} at (0,0) size 768x38
+layer at (0,0) size 785x1104
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1104
+  RenderBlock {HTML} at (0,0) size 785x1104
+    RenderBody {BODY} at (8,8) size 769x1088
+      RenderBlock {P} at (0,0) size 769x38
         RenderText {#text} at (0,0) size 746x19
           text run at (0,0) width 364: "The table below should have the same width as the red DIV "
           text run at (364,0) width 347: "below this paragraph. The inner image should just fit. The "
@@ -41,10 +41,10 @@ layer at (0,0) size 784x1104
               RenderImage {IMG} at (2,2) size 593x325
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,473) size 610x2 [border: (1px solid #FF0000)]
-      RenderBlock {P} at (0,491) size 768x19
+      RenderBlock {P} at (0,491) size 769x19
         RenderText {#text} at (0,0) size 374x19
           text run at (0,0) width 374: "Mozilla makes the table way too small for no apparent reason."
-      RenderBlock {P} at (0,526) size 768x19
+      RenderBlock {P} at (0,526) size 769x19
         RenderText {#text} at (0,0) size 236x19
           text run at (0,0) width 236: "Here is the same table, one pixel wider:"
       RenderTable {TABLE} at (0,561) size 609x385 [border: (1px dotted #000080)]
@@ -73,17 +73,17 @@ layer at (0,0) size 784x1104
             RenderTableCell {TD} at (2,52) size 603x329 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=4]
               RenderImage {IMG} at (2,2) size 593x325
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,962) size 768x38
+      RenderBlock {P} at (0,962) size 769x38
         RenderText {#text} at (0,0) size 755x38
           text run at (0,0) width 510: "Observations: Fiddle about with the content of the \"eee\" cell and everything changes. "
           text run at (510,0) width 245: "Remove any of the three rows and things"
           text run at (0,19) width 274: "change. Remove any of the four columns and "
           text run at (274,19) width 313: "things change. Remove the image and things change."
-      RenderBlock {P} at (0,1016) size 768x19
+      RenderBlock {P} at (0,1016) size 769x19
         RenderText {#text} at (0,0) size 569x19
           text run at (0,0) width 474: "(Note: If the image has disappeared from the server, replace it with any 593px "
           text run at (474,0) width 95: "image you like.)"
-      RenderBlock {P} at (0,1051) size 768x19
+      RenderBlock {P} at (0,1051) size 769x19
         RenderText {#text} at (0,0) size 55x19
           text run at (0,0) width 55: "See also "
         RenderInline {A} at (0,0) size 91x19 [color=#0000EE]
@@ -91,4 +91,4 @@ layer at (0,0) size 784x1104
             text run at (55,0) width 91: "tablewidth.html"
         RenderText {#text} at (146,0) size 4x19
           text run at (146,0) width 4: "."
-      RenderBlock {HR} at (0,1086) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1086) size 769x2 [border: (1px inset #000000)]

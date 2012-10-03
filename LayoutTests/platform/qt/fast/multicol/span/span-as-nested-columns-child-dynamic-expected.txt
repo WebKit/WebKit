@@ -1,8 +1,8 @@
-layer at (0,0) size 784x1383
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1383
-  RenderBlock {HTML} at (0,0) size 784x1383
-    RenderBody {BODY} at (8,16) size 768x1351
+layer at (0,0) size 785x1383
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1383
+  RenderBlock {HTML} at (0,0) size 785x1383
+    RenderBody {BODY} at (8,16) size 769x1351
 layer at (8,16) size 760x424
   RenderBlock {DIV} at (0,0) size 760x424 [border: (5px solid #800000)]
     RenderBlock (anonymous multi-column span) at (5,13) size 750x66 [color=#FFFFFF]

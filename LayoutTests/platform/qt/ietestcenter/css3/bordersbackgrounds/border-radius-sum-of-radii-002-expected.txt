@@ -1,9 +1,9 @@
 layer at (0,0) size 1028x685
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x685
-  RenderBlock {HTML} at (0,0) size 784x685
-    RenderBody {BODY} at (8,16) size 768x661
-      RenderBlock {P} at (0,0) size 768x19
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x685
+  RenderBlock {HTML} at (0,0) size 785x685
+    RenderBody {BODY} at (8,16) size 769x661
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 621x19
           text run at (0,0) width 621: "Test passes if there are no more than two rectangles on the page and there is no red visible on the page."
       RenderTable {TABLE} at (0,35) size 314x106

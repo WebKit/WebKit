@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x388
   RenderBlock {HTML} at (0,0) size 800x388
     RenderBody {BODY} at (32,32) size 736x324 [bgcolor=#CCCCCC]
-layer at (143,32) size 514x146 clip at (144,33) size 496x144 scrollHeight 316
+layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 316
   RenderBlock {DIV} at (111,0) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-    RenderBlock {P} at (17,17) size 464x76
+    RenderBlock {P} at (17,17) size 465x76
       RenderText {#text} at (0,0) size 210x19
         text run at (0,0) width 210: "This page is to test the behavior of "
       RenderInline {CODE} at (0,0) size 136x15
@@ -30,8 +30,8 @@ layer at (143,32) size 514x146 clip at (144,33) size 496x144 scrollHeight 316
           text run at (320,42) width 136: "position:relative"
       RenderText {#text} at (0,57) size 88x19
         text run at (0,57) width 88: "(bottom case)."
-    RenderBlock {P} at (17,109) size 464x180 [color=#999999]
-      RenderText {#text} at (0,0) size 462x180
+    RenderBlock {P} at (17,109) size 465x180 [color=#999999]
+      RenderText {#text} at (0,0) size 465x180
         text run at (0,0) width 456: "Following extra content exists to ensure that the parent box overflows properly. Sed"
         text run at (0,15) width 449: "ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque"
         text run at (0,30) width 454: "laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi"
@@ -42,19 +42,19 @@ layer at (143,32) size 514x146 clip at (144,33) size 496x144 scrollHeight 316
         text run at (0,105) width 454: "tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim"
         text run at (0,120) width 455: "ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,"
         text run at (0,135) width 449: "nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit"
-        text run at (0,150) width 417: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui"
-        text run at (0,165) width 267: "dolorem eum fugiat quo voluptas nulla pariatur?"
+        text run at (0,150) width 465: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem"
+        text run at (0,165) width 219: "eum fugiat quo voluptas nulla pariatur?"
 layer at (0,0) size 38x35
   RenderBlock (positioned) {P} at (0,0) size 38x35 [bgcolor=#FF0000]
     RenderText {#text} at (8,8) size 22x19
       text run at (8,8) width 22: "hi 1"
-layer at (143,210) size 514x146 clip at (144,211) size 496x144 scrollHeight 351
+layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 351
   RenderBlock (relative positioned) {DIV} at (111,178) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-    RenderBlock {P} at (17,17) size 464x38
-      RenderText {#text} at (0,0) size 439x38
-        text run at (0,0) width 439: "Safari v1.2.2 incorrectly scrolls the 'hi 1' div when its parent is scrolled. If"
-        text run at (0,19) width 306: "you resize the page even a little, this bug fixes itself."
-    RenderBlock {P} at (17,71) size 464x57
+    RenderBlock {P} at (17,17) size 465x38
+      RenderText {#text} at (0,0) size 465x38
+        text run at (0,0) width 465: "Safari v1.2.2 incorrectly scrolls the 'hi 1' div when its parent is scrolled. If you"
+        text run at (0,19) width 280: "resize the page even a little, this bug fixes itself."
+    RenderBlock {P} at (17,71) size 465x57
       RenderText {#text} at (0,0) size 387x19
         text run at (0,0) width 387: "Safari v1.2.2 also (really odd) causes the entire second div to be"
       RenderInline {CODE} at (0,0) size 88x15
@@ -63,8 +63,8 @@ layer at (143,210) size 514x146 clip at (144,211) size 496x144 scrollHeight 351
       RenderText {#text} at (88,19) size 462x38
         text run at (88,19) width 365: ", despite the fact that this property is only applied to the child"
         text run at (0,38) width 462: "item. This problem fixes itself if you resize the window and then scroll the div."
-    RenderBlock {P} at (17,144) size 464x180 [color=#999999]
-      RenderText {#text} at (0,0) size 462x180
+    RenderBlock {P} at (17,144) size 465x180 [color=#999999]
+      RenderText {#text} at (0,0) size 465x180
         text run at (0,0) width 456: "Following extra content exists to ensure that the parent box overflows properly. Sed"
         text run at (0,15) width 449: "ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque"
         text run at (0,30) width 454: "laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi"
@@ -75,8 +75,8 @@ layer at (143,210) size 514x146 clip at (144,211) size 496x144 scrollHeight 351
         text run at (0,105) width 454: "tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim"
         text run at (0,120) width 455: "ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,"
         text run at (0,135) width 449: "nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit"
-        text run at (0,150) width 417: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui"
-        text run at (0,165) width 267: "dolorem eum fugiat quo voluptas nulla pariatur?"
+        text run at (0,150) width 465: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem"
+        text run at (0,165) width 219: "eum fugiat quo voluptas nulla pariatur?"
 layer at (144,211) size 38x35
   RenderBlock (positioned) {P} at (1,1) size 38x35 [bgcolor=#FF0000]
     RenderText {#text} at (8,8) size 22x19

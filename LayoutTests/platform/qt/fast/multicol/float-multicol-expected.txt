@@ -1,10 +1,10 @@
-layer at (0,0) size 784x819
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x819
-  RenderBlock {HTML} at (0,0) size 784x819
-layer at (8,8) size 768x803
-  RenderBody {BODY} at (8,8) size 768x803
-    RenderBlock {DIV} at (0,19) size 768x28 [bgcolor=#00FFFF]
+layer at (0,0) size 785x819
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x819
+  RenderBlock {HTML} at (0,0) size 785x819
+layer at (8,8) size 769x803
+  RenderBody {BODY} at (8,8) size 769x803
+    RenderBlock {DIV} at (0,19) size 769x28 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 384x477 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70
         RenderText {#text} at (133,0) size 378x95
@@ -52,7 +52,7 @@ layer at (8,8) size 768x803
           text run at (0,95) width 290: "give us really valuable data on which crashes are"
           text run at (0,114) width 259: "the most serious, and how often people are"
           text run at (0,133) width 113: "encountering them."
-      RenderBlock (floating) {DIV} at (690,0) size 78x331 [bgcolor=#FF00FF]
+      RenderBlock (floating) {DIV} at (691,0) size 78x331 [bgcolor=#FF00FF]
         RenderBlock {P} at (0,16) size 78x19
           RenderText {#text} at (0,0) size 78x19
             text run at (0,0) width 78: "Hello Kitty 1"
@@ -80,7 +80,7 @@ layer at (8,8) size 768x803
         RenderBlock {P} at (0,296) size 78x19
           RenderText {#text} at (0,0) size 78x19
             text run at (0,0) width 78: "Hello Kitty 9"
-      RenderBlock {H2} at (0,0) size 768x28
+      RenderBlock {H2} at (0,0) size 769x28
         RenderText {#text} at (392,0) size 260x28
           text run at (392,0) width 260: "What Needs To Be Done?"
     RenderBlock (floating) {DIV} at (392,66) size 78x401 [bgcolor=#808080]
@@ -117,12 +117,12 @@ layer at (8,8) size 768x803
       RenderBlock {P} at (0,366) size 78x19
         RenderText {#text} at (0,0) size 78x19
           text run at (0,0) width 78: "Hola hola 11"
-    RenderBlock {DL} at (0,66) size 768x561
-      RenderBlock {DT} at (0,0) size 768x19
+    RenderBlock {DL} at (0,66) size 769x561
+      RenderBlock {DT} at (0,0) size 769x19
         RenderText {#text} at (470,0) size 76x19
           text run at (470,0) width 76: "Report Bugs"
-      RenderBlock {DD} at (40,35) size 728x285
-        RenderBlock {P} at (0,0) size 728x285
+      RenderBlock {DD} at (40,35) size 729x285
+        RenderBlock {P} at (0,0) size 729x285
           RenderText {#text} at (430,0) size 218x95
             text run at (430,0) width 218: "You've already downloaded a build."
             text run at (430,19) width 163: "All you have to do is use it "
@@ -195,11 +195,11 @@ layer at (8,8) size 768x803
         RenderBlock {P} at (0,366) size 78x19
           RenderText {#text} at (0,0) size 78x19
             text run at (0,0) width 78: "Hola hola 11"
-      RenderBlock {DT} at (0,336) size 768x19
+      RenderBlock {DT} at (0,336) size 769x19
         RenderText {#text} at (548,0) size 110x19
           text run at (548,0) width 110: "Quality Assurance"
-      RenderBlock {DD} at (40,371) size 728x190
-        RenderBlock {P} at (0,0) size 728x190
+      RenderBlock {DD} at (40,371) size 729x190
+        RenderBlock {P} at (0,0) size 729x190
           RenderInline {A} at (0,0) size 71x19 [color=#0000EE]
             RenderText {#text} at (508,0) size 71x19
               text run at (508,0) width 71: "Mozilla QA"

@@ -7,11 +7,11 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #do
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 2008x2092
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x2092
-  RenderBlock {HTML} at (0,0) size 784x2092
-    RenderBody {BODY} at (8,8) size 768x2076
-      RenderBlock (anonymous) at (0,0) size 768x57
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x2092
+  RenderBlock {HTML} at (0,0) size 785x2092
+    RenderBody {BODY} at (8,8) size 769x2076
+      RenderBlock (anonymous) at (0,0) size 769x57
         RenderText {#text} at (0,0) size 555x19
           text run at (0,0) width 555: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
         RenderBR {BR} at (555,15) size 0x0
@@ -23,7 +23,7 @@ layer at (0,0) size 784x2092
             text run at (0,38) width 523: "This demonstrates a bug: normally, focusing an element will select its contents."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,57) size 2000x2000
-      RenderBlock (anonymous) at (0,2057) size 768x19
+      RenderBlock (anonymous) at (0,2057) size 769x19
         RenderText {#text} at (0,0) size 226x19
           text run at (0,0) width 226: "If the document scrolls here, test fails."
 caret: position 1 of child 0 {#text} of body

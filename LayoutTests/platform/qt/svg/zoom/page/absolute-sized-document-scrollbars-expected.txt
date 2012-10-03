@@ -1,5 +1,5 @@
 layer at (0,0) size 829x622
-  RenderView at (0,0) size 784x584
+  RenderView at (0,0) size 785x585
 layer at (0,0) size 829x622
   RenderSVGRoot {svg} at (0,0) size 829x622
     RenderSVGRect {rect} at (0,0) size 829x622 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

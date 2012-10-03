@@ -1,8 +1,8 @@
-layer at (0,0) size 784x620
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x620
-  RenderBlock {HTML} at (0,0) size 784x620
-    RenderBody {BODY} at (8,8) size 768x604
+layer at (0,0) size 785x620
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x620
+  RenderBlock {HTML} at (0,0) size 785x620
+    RenderBody {BODY} at (8,8) size 769x604
       RenderMenuList {SELECT} at (2,2) size 66x24 [color=#808080] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (4,2) size 38x19
           RenderText at (0,0) size 38x19
@@ -23,14 +23,14 @@ layer at (0,0) size 784x620
           RenderText at (0,0) size 38x19
             text run at (0,0) width 38: "PASS"
       RenderBR {BR} at (70,103) size 0x0
-      RenderListBox {SELECT} at (2,114) size 60x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (64,190) size 0x0
-      RenderListBox {SELECT} at (2,199) size 60x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (64,275) size 0x0
-      RenderListBox {SELECT} at (2,284) size 60x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (64,360) size 0x0
-      RenderListBox {SELECT} at (2,369) size 60x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (64,445) size 0x0
+      RenderListBox {SELECT} at (2,114) size 59x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (63,190) size 0x0
+      RenderListBox {SELECT} at (2,199) size 59x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (63,275) size 0x0
+      RenderListBox {SELECT} at (2,284) size 59x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (63,360) size 0x0
+      RenderListBox {SELECT} at (2,369) size 59x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (63,445) size 0x0
       RenderText {#text} at (0,452) size 472x19
         text run at (0,452) width 472: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
       RenderBR {BR} at (472,467) size 0x0

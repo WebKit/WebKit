@@ -1,9 +1,9 @@
-layer at (0,0) size 784x2553
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x2553
-  RenderBlock {HTML} at (0,0) size 784x2553
-    RenderBody {BODY} at (8,8) size 768x2537
-      RenderBlock (anonymous) at (0,0) size 768x38
+layer at (0,0) size 785x2553
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x2553
+  RenderBlock {HTML} at (0,0) size 785x2553
+    RenderBody {BODY} at (8,8) size 769x2537
+      RenderBlock (anonymous) at (0,0) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 74x19
           text run at (0,19) width 74: "table - color"
@@ -16,7 +16,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,75) size 768x38
+      RenderBlock (anonymous) at (0,75) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 78x19
           text run at (0,19) width 78: "table - image"
@@ -29,7 +29,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,150) size 768x38
+      RenderBlock (anonymous) at (0,150) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 117x19
           text run at (0,19) width 117: "table - color, image"
@@ -42,7 +42,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,225) size 768x38
+      RenderBlock (anonymous) at (0,225) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 65x19
           text run at (0,19) width 65: "cell - color"
@@ -55,7 +55,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,300) size 768x38
+      RenderBlock (anonymous) at (0,300) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 69x19
           text run at (0,19) width 69: "cell - image"
@@ -68,7 +68,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,375) size 768x38
+      RenderBlock (anonymous) at (0,375) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 108x19
           text run at (0,19) width 108: "cell - color, image"
@@ -81,7 +81,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,450) size 768x38
+      RenderBlock (anonymous) at (0,450) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 147x19
           text run at (0,19) width 147: "table - color; cell - color"
@@ -94,7 +94,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,525) size 768x38
+      RenderBlock (anonymous) at (0,525) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 151x19
           text run at (0,19) width 151: "table - image; cell - color"
@@ -107,7 +107,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,600) size 768x38
+      RenderBlock (anonymous) at (0,600) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 155x19
           text run at (0,19) width 155: "table - image; cell - image"
@@ -120,7 +120,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,675) size 768x38
+      RenderBlock (anonymous) at (0,675) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 98x19
           text run at (0,19) width 98: "row group color"
@@ -133,7 +133,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,750) size 768x38
+      RenderBlock (anonymous) at (0,750) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 98x19
           text run at (0,19) width 98: "row group color"
@@ -154,7 +154,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,860) size 768x38
+      RenderBlock (anonymous) at (0,860) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 59x19
           text run at (0,19) width 59: "row color"
@@ -167,7 +167,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,935) size 768x38
+      RenderBlock (anonymous) at (0,935) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 59x19
           text run at (0,19) width 59: "row color"
@@ -187,7 +187,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1039) size 768x38
+      RenderBlock (anonymous) at (0,1039) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 63x19
           text run at (0,19) width 63: "row image"
@@ -200,7 +200,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1114) size 768x38
+      RenderBlock (anonymous) at (0,1114) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 141x19
           text run at (0,19) width 141: "table - color, row color"
@@ -220,7 +220,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1218) size 768x38
+      RenderBlock (anonymous) at (0,1218) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 145x19
           text run at (0,19) width 145: "table - image, row color"
@@ -240,7 +240,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1322) size 768x38
+      RenderBlock (anonymous) at (0,1322) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 145x19
           text run at (0,19) width 145: "table - color; row image"
@@ -253,7 +253,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1397) size 768x38
+      RenderBlock (anonymous) at (0,1397) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 149x19
           text run at (0,19) width 149: "table - image, row image"
@@ -266,7 +266,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,6) size 24x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1472) size 768x38
+      RenderBlock (anonymous) at (0,1472) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 204x19
           text run at (0,19) width 204: "table - color; row color; cell color"
@@ -286,7 +286,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1576) size 768x38
+      RenderBlock (anonymous) at (0,1576) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 208x19
           text run at (0,19) width 208: "table - image; row color; cell color"
@@ -306,7 +306,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1680) size 768x38
+      RenderBlock (anonymous) at (0,1680) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 208x19
           text run at (0,19) width 208: "table - color; row image; cell color"
@@ -326,7 +326,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1784) size 768x38
+      RenderBlock (anonymous) at (0,1784) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 208x19
           text run at (0,19) width 208: "table - color; row color; cell image"
@@ -346,7 +346,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,1888) size 768x38
+      RenderBlock (anonymous) at (0,1888) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 92x19
           text run at (0,19) width 92: "col group color"
@@ -358,7 +358,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (6,6) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
-      RenderBlock (anonymous) at (0,1963) size 768x38
+      RenderBlock (anonymous) at (0,1963) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 53x19
           text run at (0,19) width 53: "col color"
@@ -370,7 +370,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (6,6) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
-      RenderBlock (anonymous) at (0,2038) size 768x38
+      RenderBlock (anonymous) at (0,2038) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 216x19
           text run at (0,19) width 216: "table - image; row image; cell image"
@@ -390,7 +390,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (36,35) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,2142) size 768x38
+      RenderBlock (anonymous) at (0,2142) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 228x19
           text run at (0,19) width 228: "table - color, tbodies color, row color"
@@ -409,7 +409,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (4,4) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
-      RenderBlock (anonymous) at (0,2283) size 768x38
+      RenderBlock (anonymous) at (0,2283) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 57x19
           text run at (0,19) width 57: "col image"
@@ -431,7 +431,7 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (32,31) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,2393) size 768x38
+      RenderBlock (anonymous) at (0,2393) size 769x38
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 355x19
           text run at (0,19) width 355: "table color; col group color; col color; row color; cell color"
@@ -482,6 +482,6 @@ layer at (0,0) size 784x2553
             RenderTableCell {TD} at (88,58) size 24x23 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,2518) size 768x19
+      RenderBlock (anonymous) at (0,2518) size 769x19
         RenderText {#text} at (0,0) size 21x19
           text run at (0,0) width 21: "-->"

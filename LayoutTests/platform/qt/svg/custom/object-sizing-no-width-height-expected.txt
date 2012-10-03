@@ -1,13 +1,13 @@
-layer at (0,0) size 784x788
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x788
-  RenderBlock {html} at (0,0) size 784x788
-    RenderBody {body} at (8,8) size 768x772
-      RenderEmbeddedObject {object} at (0,0) size 768x768 [bgcolor=#FF0000]
-        layer at (0,0) size 768x768
-          RenderView at (0,0) size 768x768
-        layer at (0,0) size 768x768
-          RenderSVGRoot {svg} at (0,0) size 768x768
-            RenderSVGRect {rect} at (0,0) size 768x768 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
-            RenderSVGEllipse {circle} at (307,307) size 154x154 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
+layer at (0,0) size 785x789
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x789
+  RenderBlock {html} at (0,0) size 785x789
+    RenderBody {body} at (8,8) size 769x773
+      RenderEmbeddedObject {object} at (0,0) size 769x769 [bgcolor=#FF0000]
+        layer at (0,0) size 769x769
+          RenderView at (0,0) size 769x769
+        layer at (0,0) size 769x769
+          RenderSVGRoot {svg} at (0,0) size 769x769
+            RenderSVGRect {rect} at (0,0) size 769x769 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGEllipse {circle} at (307,307) size 155x155 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (0,0) size 0x0

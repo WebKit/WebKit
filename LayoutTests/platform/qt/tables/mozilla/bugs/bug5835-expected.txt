@@ -1,9 +1,9 @@
-layer at (0,0) size 784x701
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x701
-  RenderBlock {HTML} at (0,0) size 784x701
-    RenderBody {BODY} at (8,8) size 768x677
-      RenderBlock {P} at (0,0) size 768x19
+layer at (0,0) size 785x701
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x701
+  RenderBlock {HTML} at (0,0) size 785x701
+    RenderBody {BODY} at (8,8) size 769x677
+      RenderBlock {P} at (0,0) size 769x19
         RenderText {#text} at (0,0) size 731x19
           text run at (0,0) width 394: "This first table is the simple test case. Colspan confuses the width "
           text run at (394,0) width 337: "allocation when there is an image in the colspanned row."
@@ -20,7 +20,7 @@ layer at (0,0) size 784x701
             RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 468x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,146) size 768x19
+      RenderBlock {P} at (0,146) size 769x19
         RenderText {#text} at (0,0) size 607x19
           text run at (0,0) width 355: "This second table is the same as the first, minus the second "
           text run at (355,0) width 252: "'colspan=2' row. Widths are now correct."
@@ -33,14 +33,14 @@ layer at (0,0) size 784x701
             RenderTableCell {TD} at (416,2) size 200x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock {P} at (0,226) size 768x57
+      RenderBlock {P} at (0,226) size 769x57
         RenderText {#text} at (0,0) size 764x57
           text run at (0,0) width 351: "An observation: Note that as the image-width approaches "
           text run at (351,0) width 369: "the table-width, the two columns approach equal width (error"
           text run at (0,19) width 68: "increases). "
           text run at (68,19) width 696: "Conversely, below some threshold image-width (which is about 390px or 30px less than the TD WIDTH=420), the"
           text run at (0,38) width 154: "error is (apparently) zero."
-      RenderBlock {P} at (0,299) size 768x19
+      RenderBlock {P} at (0,299) size 769x19
         RenderText {#text} at (0,0) size 165x19
           text run at (0,0) width 165: "Here the <img width=600>"
       RenderTable {TABLE} at (0,334) size 620x95 [border: (1px outset #808080)]
@@ -56,7 +56,7 @@ layer at (0,0) size 784x701
             RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 600x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,445) size 768x19
+      RenderBlock {P} at (0,445) size 769x19
         RenderText {#text} at (0,0) size 299x19
           text run at (0,0) width 299: "Here the <img width=400> (error is almost zero)."
       RenderTable {TABLE} at (0,480) size 620x29 [bgcolor=#DDDDDD] [border: (1px outset #808080)]
@@ -81,7 +81,7 @@ layer at (0,0) size 784x701
             RenderTableCell {TD} at (2,27) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 400x60
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,620) size 768x57
+      RenderBlock {P} at (0,620) size 769x57
         RenderText {#text} at (0,0) size 764x57
           text run at (0,0) width 744: "I tested the above with M4 and May01 build for win95. (The above examples assume that images load normally -- N.B. for"
           text run at (0,19) width 764: "May01 the images initially load, and the width error is visually apparent, but then the images get replaced by their ALT text, and"

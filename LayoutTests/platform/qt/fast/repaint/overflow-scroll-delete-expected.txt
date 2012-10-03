@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           text run at (558,19) width 175: "use Quartz Debug to see that"
           text run at (0,38) width 388: "changing the text repaints a rect where the text would have been "
           text run at (388,38) width 146: "if it hadn't been scrolled."
-layer at (8,81) size 80x69 clip at (8,81) size 64x69 scrollY 128 scrollHeight 209
+layer at (8,81) size 80x69 clip at (8,81) size 65x69 scrollY 128 scrollHeight 209
   RenderBlock {DIV} at (0,73) size 80x69
     RenderBR {BR} at (0,0) size 0x19
     RenderBR {BR} at (0,19) size 0x19

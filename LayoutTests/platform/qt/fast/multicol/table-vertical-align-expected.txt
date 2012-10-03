@@ -1,12 +1,12 @@
 layer at (0,0) size 1560x1010
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x1010
-  RenderBlock {HTML} at (0,0) size 784x1010
-    RenderBody {BODY} at (8,8) size 768x994
-      RenderBlock {HR} at (0,358) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,676) size 768x2 [border: (1px inset #000000)]
-layer at (8,8) size 768x350
-  RenderBlock {DIV} at (0,0) size 768x350
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x1010
+  RenderBlock {HTML} at (0,0) size 785x1010
+    RenderBody {BODY} at (8,8) size 769x994
+      RenderBlock {HR} at (0,358) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,676) size 769x2 [border: (1px inset #000000)]
+layer at (8,8) size 769x350
+  RenderBlock {DIV} at (0,0) size 769x350
     RenderTable {TABLE} at (0,0) size 376x1240 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1238
         RenderTableRow {TR} at (0,0) size 374x1238
@@ -136,8 +136,8 @@ layer at (8,8) size 768x350
               RenderText {#text} at (11,12) size 145x146
                 text run at (11,12) width 145: "Other"
                 text run at (11,86) width 106: "cell."
-layer at (8,376) size 768x300
-  RenderBlock {DIV} at (0,368) size 768x300
+layer at (8,376) size 769x300
+  RenderBlock {DIV} at (0,368) size 769x300
     RenderTable {TABLE} at (0,0) size 376x1200 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1198
         RenderTableRow {TR} at (0,0) size 374x1196
@@ -267,8 +267,8 @@ layer at (8,376) size 768x300
               RenderText {#text} at (11,12) size 145x148
                 text run at (11,12) width 145: "Other"
                 text run at (11,88) width 106: "cell."
-layer at (8,702) size 768x300
-  RenderBlock {DIV} at (0,694) size 768x300
+layer at (8,702) size 769x300
+  RenderBlock {DIV} at (0,694) size 769x300
     RenderTable {TABLE} at (0,0) size 376x1198 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1196
         RenderTableRow {TR} at (0,0) size 374x1196

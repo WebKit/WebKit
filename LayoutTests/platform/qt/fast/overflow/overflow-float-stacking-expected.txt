@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           text run at (0,55) width 240: "should be on"
           text run at (0,110) width 179: "top of the"
           text run at (0,165) width 295: "overflow block."
-layer at (8,27) size 300x300 clip at (8,27) size 284x300 scrollHeight 893
+layer at (8,27) size 300x300 clip at (8,27) size 285x300 scrollHeight 893
   RenderBlock (floating) {DIV} at (0,19) size 300x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 71x19
       text run at (0,0) width 71: "Hello world"

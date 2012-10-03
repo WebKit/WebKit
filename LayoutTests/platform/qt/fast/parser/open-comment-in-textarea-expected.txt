@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (204,31) size 236x19
-        text run at (204,31) width 236: " This should not be part of the textarea."
-layer at (10,10) size 200x42 clip at (10,10) size 184x42 scrollHeight 80
-  RenderTextControl {TEXTAREA} at (2,2) size 200x42
+      RenderText {#text} at (203,31) size 236x19
+        text run at (203,31) width 236: " This should not be part of the textarea."
+layer at (10,10) size 199x42 clip at (10,10) size 184x42 scrollHeight 80
+  RenderTextControl {TEXTAREA} at (2,2) size 199x42
     RenderBlock {DIV} at (2,2) size 180x76
       RenderText {#text} at (0,0) size 157x57
         text run at (0,0) width 26: "<!--"

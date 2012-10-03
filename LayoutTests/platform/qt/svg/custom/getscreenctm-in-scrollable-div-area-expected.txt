@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x550
   RenderBlock {html} at (0,0) size 800x550
     RenderBody {body} at (0,0) size 800x550
-layer at (0,0) size 750x550 clip at (0,0) size 734x534 scrollY 1700 scrollHeight 4010
+layer at (0,0) size 750x550 clip at (0,0) size 735x535 scrollY 1700 scrollHeight 4010
   RenderBlock {div} at (0,0) size 750x550
     RenderSVGRoot {svg} at (276,250) size 248x154
       RenderSVGRect {rect} at (350,250) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]

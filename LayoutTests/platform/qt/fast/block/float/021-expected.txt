@@ -1,9 +1,9 @@
 layer at (0,0) size 1518x3169
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x3169
-  RenderBlock {HTML} at (0,0) size 784x3169
-    RenderBody {BODY} at (8,8) size 768x3145
-      RenderBlock (anonymous) at (0,0) size 768x38
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x3169
+  RenderBlock {HTML} at (0,0) size 785x3169
+    RenderBody {BODY} at (8,8) size 769x3145
+      RenderBlock (anonymous) at (0,0) size 769x38
         RenderText {#text} at (0,0) size 741x38
           text run at (0,0) width 711: "In all of the examples, you should be able to see blue and green rectangles that spill way out of their containing blocks. "
           text run at (711,0) width 30: "They"
@@ -48,7 +48,7 @@ layer at (0,0) size 784x3169
         RenderBR {BR} at (281,125) size 0x0
         RenderBlock (floating) {DIV} at (10,129) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1590) size 768x19
+      RenderBlock (anonymous) at (0,1590) size 769x19
         RenderText {#text} at (0,0) size 544x19
           text run at (0,0) width 544: "The next examples should have blue and green rectangles that snugly fit without spilling out."
       RenderBlock {DIV} at (0,1625) size 720x240 [border: (10px solid #000000)]

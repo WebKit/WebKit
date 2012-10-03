@@ -1,16 +1,16 @@
 layer at (0,0) size 1287x674
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x674
-  RenderBlock {HTML} at (0,0) size 784x674
-    RenderBody {BODY} at (8,8) size 768x658
-      RenderBlock (anonymous) at (0,0) size 768x19
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x674
+  RenderBlock {HTML} at (0,0) size 785x674
+    RenderBody {BODY} at (8,8) size 769x658
+      RenderBlock (anonymous) at (0,0) size 769x19
         RenderText {#text} at (0,0) size 82x19
           text run at (0,0) width 82: "LTR Version:"
-      RenderBlock (anonymous) at (0,329) size 768x19
+      RenderBlock (anonymous) at (0,329) size 769x19
         RenderText {#text} at (0,0) size 82x19
           text run at (0,0) width 82: "RTL Version:"
-layer at (8,27) size 768x310
-  RenderBlock {DIV} at (0,19) size 768x310 [border: (5px solid #800000)]
+layer at (8,27) size 769x310
+  RenderBlock {DIV} at (0,19) size 769x310 [border: (5px solid #800000)]
     RenderBlock (anonymous) at (5,5) size 242x247
       RenderText {#text} at (0,0) size 100x19
         text run at (0,0) width 100: "This is some text"
@@ -179,8 +179,8 @@ layer at (8,27) size 768x310
       RenderText {#text} at (0,262) size 100x19
         text run at (0,262) width 100: "This is some text"
       RenderBR {BR} at (100,277) size 0x0
-layer at (8,356) size 768x310
-  RenderBlock {DIV} at (0,348) size 768x310 [border: (5px solid #800000)]
+layer at (8,356) size 769x310
+  RenderBlock {DIV} at (0,348) size 769x310 [border: (5px solid #800000)]
     RenderBlock (anonymous) at (5,5) size 242x247
       RenderText {#text} at (142,0) size 100x19
         text run at (142,0) width 100: "This is some text"

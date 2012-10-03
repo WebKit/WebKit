@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 347: "The word 'PASSED' should be scrolled into view above. "
           text run at (347,0) width 215: "If you don't see it the test has failed."
         RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 200x200 clip at (8,8) size 184x184 scrollX 200 scrollY 200 scrollWidth 400 scrollHeight 400
+layer at (8,8) size 200x200 clip at (8,8) size 185x185 scrollX 200 scrollY 200 scrollWidth 400 scrollHeight 400
   RenderBlock {DIV} at (0,0) size 200x200
     RenderBlock {DIV} at (0,0) size 400x400 [color=#FFFFFF] [bgcolor=#008000]
       RenderText {#text} at (200,200) size 58x19

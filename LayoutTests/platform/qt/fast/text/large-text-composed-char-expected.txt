@@ -1,12 +1,12 @@
 layer at (0,0) size 1064x7958
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x7958
-  RenderBlock {HTML} at (0,0) size 784x7958
-    RenderBody {BODY} at (8,8) size 768x7937
-      RenderBlock (anonymous) at (0,0) size 768x19
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x7958
+  RenderBlock {HTML} at (0,0) size 785x7958
+    RenderBody {BODY} at (8,8) size 769x7937
+      RenderBlock (anonymous) at (0,0) size 769x19
         RenderText {#text} at (0,0) size 634x19
           text run at (0,0) width 634: "The text below consists of composed characters. There shouldn't be any errors (e and ' visible separately)"
-      RenderBlock {PRE} at (0,32) size 768x7905
+      RenderBlock {PRE} at (0,32) size 769x7905
         RenderText {#text} at (0,0) size 1056x3780
           text run at (0,0) width 1056: "e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301} e\x{301} e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301} e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301} e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}e\x{301}"
           text run at (1056,0) width 0: " "

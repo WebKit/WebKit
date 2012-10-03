@@ -1,7 +1,7 @@
-layer at (0,0) size 784x584
-  RenderView at (0,0) size 784x584
-layer at (0,0) size 784x340
-  RenderBlock {HTML} at (0,0) size 784x340
+layer at (0,0) size 785x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x340
+  RenderBlock {HTML} at (0,0) size 785x340
     RenderBody {BODY} at (8,170) size 162x162 [color=#000080] [border: (1px solid #000080)]
       RenderBlock {P} at (1,17) size 160x114
         RenderText {#text} at (0,0) size 159x114
@@ -23,5 +23,5 @@ layer at (0,0) size 784x340
       RenderBlock {P} at (1,252) size 160x19 [color=#808080]
         RenderText {#text} at (0,0) size 97x19
           text run at (0,0) width 97: "This is filler text."
-layer at (0,0) size 162x162 clip at (1,1) size 144x144
+layer at (0,0) size 162x162 clip at (1,1) size 145x145
   RenderBlock {body} at (0,0) size 162x162 [color=#000080] [border: (1px solid #000080)]

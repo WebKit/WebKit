@@ -1,9 +1,9 @@
-layer at (0,0) size 784x884
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x884
-  RenderBlock {HTML} at (0,0) size 784x884
-    RenderBody {BODY} at (8,8) size 768x868
-      RenderBlock (anonymous) at (0,0) size 768x19
+layer at (0,0) size 785x884
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x884
+  RenderBlock {HTML} at (0,0) size 785x884
+    RenderBody {BODY} at (8,8) size 769x868
+      RenderBlock (anonymous) at (0,0) size 769x19
         RenderText {#text} at (0,0) size 87x19
           text run at (0,0) width 87: "ROWSPANS"
       RenderTable {TABLE} at (0,19) size 132x62 [border: (5px outset #808080)]
@@ -48,7 +48,7 @@ layer at (0,0) size 784x884
             RenderTableCell {TD} at (222,52) size 32x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "c1r4"
-      RenderBlock (anonymous) at (0,160) size 768x19
+      RenderBlock (anonymous) at (0,160) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,179) size 258x204 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 256x202
@@ -114,7 +114,7 @@ layer at (0,0) size 784x884
             RenderTableCell {TD} at (222,177) size 32x23 [border: (1px inset #808080)] [r=7 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "c1r9"
-      RenderBlock (anonymous) at (0,383) size 768x19
+      RenderBlock (anonymous) at (0,383) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,402) size 61x54 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 59x52
@@ -139,7 +139,7 @@ layer at (0,0) size 784x884
             RenderTableCell {TD} at (28,3) size 24x23 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,485) size 768x19
+      RenderBlock (anonymous) at (0,485) size 769x19
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,504) size 602x364 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 600x362

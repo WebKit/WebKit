@@ -1,13 +1,13 @@
-layer at (0,0) size 784x700
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x700
-  RenderBlock {HTML} at (0,0) size 784x700
-    RenderBody {BODY} at (8,8) size 768x676 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (10,0) size 758x19
+layer at (0,0) size 785x700
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x700
+  RenderBlock {HTML} at (0,0) size 785x700
+    RenderBody {BODY} at (8,8) size 769x676 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (10,0) size 759x19
         RenderText {#text} at (0,0) size 271x19
           text run at (0,0) width 271: "This paragraph should be indented ten pixels."
-      RenderBlock {DIV} at (10,35) size 758x19
-        RenderBlock {P} at (10,0) size 748x19
+      RenderBlock {DIV} at (10,35) size 759x19
+        RenderBlock {P} at (10,0) size 749x19
           RenderText {#text} at (0,0) size 539x19
             text run at (0,0) width 539: "This paragraph should be indented twenty pixels, since horizontal margins do not collapse."
       RenderBlock {P} at (0,70) size 384x95 [bgcolor=#808080]
@@ -27,7 +27,7 @@ layer at (0,0) size 784x700
           text run at (0,57) width 324: "appear in the middle of the viewport (e.g. the browser"
           text run at (0,76) width 343: "window). The text inside the gray rectangle should not be"
           text run at (0,95) width 56: "centered."
-      RenderBlock {P} at (384,311) size 384x95 [bgcolor=#808080]
+      RenderBlock {P} at (385,311) size 384x95 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 379x95
           text run at (0,0) width 345: "This element has a width of 50%, and due to 'auto' values"
           text run at (0,19) width 366: "applied to the left margin, the element should be right justified"
@@ -35,15 +35,15 @@ layer at (0,0) size 784x700
           text run at (102,38) width 277: "The gray rectangle should therefore appear on"
           text run at (0,57) width 371: "the right edge of the viewport (e.g. the browser window). The"
           text run at (0,76) width 315: "text inside the gray rectangle should not be centered."
-      RenderBlock {P} at (0,422) size 768x38 [bgcolor=#808080]
+      RenderBlock {P} at (0,422) size 769x38 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 745x38
           text run at (0,0) width 745: "Since the width is \"auto,\" the margins that are set to \"auto\" become zero and this paragraph should have width 100% and the"
           text run at (0,19) width 160: "text should be left justified."
-      RenderBlock {P} at (0,476) size 768x38 [bgcolor=#808080]
+      RenderBlock {P} at (0,476) size 769x38 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 745x38
           text run at (0,0) width 745: "Since the width is \"auto,\" the margins that are set to \"auto\" become zero and this paragraph should have width 100% and the"
           text run at (0,19) width 160: "text should be left justified."
-      RenderBlock {P} at (0,530) size 768x38 [bgcolor=#808080]
+      RenderBlock {P} at (0,530) size 769x38 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 745x38
           text run at (0,0) width 745: "Since the width is \"auto,\" the margins that are set to \"auto\" become zero and this paragraph should have width 100% and the"
           text run at (0,19) width 160: "text should be left justified."
@@ -57,6 +57,6 @@ layer at (0,0) size 784x700
         RenderText {#text} at (232,19) size 384x38
           text run at (232,19) width 152: " and thus be expanded to"
           text run at (0,38) width 354: "50% and it should only occupy the left half of the viewport."
-      RenderBlock {P} at (0,657) size 768x19 [bgcolor=#808080]
+      RenderBlock {P} at (0,657) size 769x19 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 608x19
           text run at (0,0) width 608: "Because this paragraph has width 100%, the auto margins become zero, so it should not be centered."

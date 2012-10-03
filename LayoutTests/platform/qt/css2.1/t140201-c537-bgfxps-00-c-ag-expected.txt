@@ -1,18 +1,18 @@
-layer at (0,0) size 784x1991
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1991
-  RenderBlock {HTML} at (0,0) size 784x1991
-    RenderBody {BODY} at (8,16) size 768x1959
-      RenderBlock {P} at (0,0) size 768x19 [color=#C0C0C0]
+layer at (0,0) size 785x1991
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1991
+  RenderBlock {HTML} at (0,0) size 785x1991
+    RenderBody {BODY} at (8,16) size 769x1959
+      RenderBlock {P} at (0,0) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,35) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,35) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,70) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,70) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,105) size 768x38
+      RenderBlock {P} at (0,105) size 769x38
         RenderText {#text} at (0,0) size 749x38
           text run at (0,0) width 374: "Scroll this document. A line of blue should remain stuck at the "
           text run at (374,0) width 375: "top of the viewport the whole time, and there should be no red"
@@ -38,138 +38,138 @@ layer at (0,0) size 784x1991
           text run at (0,30) width 165: "           "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "           "
-      RenderBlock {P} at (0,400) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,400) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,435) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,435) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,470) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,470) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,505) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,505) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,540) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,540) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,575) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,575) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,610) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,610) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,645) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,645) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,680) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,680) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,715) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,715) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,750) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,750) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,785) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,785) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,820) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,820) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,855) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,855) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,890) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,890) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,925) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,925) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,960) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,960) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,995) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,995) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1030) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1030) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1065) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1065) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1100) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1100) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1135) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1135) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1170) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1170) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1205) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1205) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1240) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1240) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1275) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1275) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1310) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1310) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1345) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1345) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1380) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1380) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1415) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1415) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1450) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1450) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1485) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1485) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1520) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1520) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1555) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1555) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1590) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1590) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1625) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1625) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1660) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1660) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1695) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1695) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1730) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1730) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1765) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1765) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1800) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1800) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1835) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1835) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1870) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1870) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1905) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1905) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."
-      RenderBlock {P} at (0,1940) size 768x19 [color=#C0C0C0]
+      RenderBlock {P} at (0,1940) size 769x19 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 77x19
           text run at (0,0) width 77: "Dummy text."

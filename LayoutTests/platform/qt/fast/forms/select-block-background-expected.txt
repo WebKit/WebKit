@@ -7,4 +7,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 515x19
           text run at (0,0) width 515: "This tests that backgrounds for list box items draw correctly when a list box is a block"
         RenderBR {BR} at (515,15) size 0x0
-      RenderListBox {SELECT} at (2,21) size 57x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,21) size 56x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
