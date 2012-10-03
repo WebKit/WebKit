@@ -137,6 +137,15 @@ public:
     virtual void pushGroupMarkerEXT(const String&);
     virtual void popGroupMarkerEXT(void);
 
+    // Some helper methods to detect GPU functionality
+    virtual bool isNVidia() { return false; }
+    virtual bool isAMD() { return false; }
+    virtual bool isIntel() { return false; }
+    virtual String vendor() { return ""; }
+
+    virtual bool maySupportMultisampling() { return true; }
+    virtual bool requiresBuiltInFunctionEmulation() { return false; }
+
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not
     // need to be instantiated by any other code.

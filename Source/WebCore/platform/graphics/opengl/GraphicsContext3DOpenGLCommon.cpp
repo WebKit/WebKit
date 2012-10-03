@@ -88,13 +88,7 @@ void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExten
             m_attrs.stencil = false;
     }
     if (m_attrs.antialias) {
-        bool isValidVendor = true;
-        // Currently in Mac we only turn on antialias if vendor is NVIDIA,
-        // or if ATI and on 10.7.2 and above.
-        const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
-        if (!vendor || (!std::strstr(vendor, "NVIDIA") && !(std::strstr(vendor, "ATI") && systemAllowsMultisamplingOnATICards())))
-            isValidVendor = false;
-        if (!isValidVendor || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
+        if (!extensions->maySupportMultisampling() || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
             m_attrs.antialias = false;
         else
             extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");

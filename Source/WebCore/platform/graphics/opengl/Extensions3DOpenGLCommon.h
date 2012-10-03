@@ -57,6 +57,14 @@ public:
     virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
     virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
 
+    virtual bool isNVIDIA() { return m_isNVIDIA; }
+    virtual bool isAMD() { return m_isAMD; }
+    virtual bool isIntel() { return m_isIntel; }
+    virtual String vendor() { return m_vendor; }
+
+    virtual bool maySupportMultisampling() { return m_maySupportMultisampling; }
+    virtual bool requiresBuiltInFunctionEmulation() { return m_requiresBuiltInFunctionEmulation; }
+
 protected:
     friend class Extensions3DOpenGLES;
     Extensions3DOpenGLCommon(GraphicsContext3D*);
@@ -70,6 +78,14 @@ protected:
 
     // Weak pointer back to GraphicsContext3D
     GraphicsContext3D* m_context;
+
+    bool m_isNVIDIA;
+    bool m_isAMD;
+    bool m_isIntel;
+    bool m_maySupportMultisampling;
+    bool m_requiresBuiltInFunctionEmulation;
+
+    String m_vendor;
 };
 
 } // namespace WebCore
