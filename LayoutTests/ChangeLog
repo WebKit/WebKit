@@ -1,3 +1,86 @@
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations for scrollbars/ and tables/mozilla_expected_failures/.
+
+        * platform/efl/scrollbars/scrollbars-on-positioned-content-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1010-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug101759-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1128-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug11331-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1164-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug11945-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1262-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug14007-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug14489-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug17826-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug18770-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug21518-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug220653-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug24880-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug25707-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug27993-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3105-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-10-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-15-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-18-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-7-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-8-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug32205-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug32205-4-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug33784-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug42043-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug4294-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug45621-expected.png: Added.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug46268-4-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug47163-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug51000-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug56024-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug61042-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug61042-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug65372-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug67915-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug7113-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug7121-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug73629-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug80762-2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug8499-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug9879-1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/backgrounds-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/col_span2-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/cols1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/columns-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/core/conflicts-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/appendCells1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/appendCol1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/appendColGroup1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/insertTbodyExpand1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/dom/insertTbodyRebuild1-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_frame_above-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_frame_below-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_frame_hsides-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/table_frame_void-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/tables_cellspacing_pct-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_colgroup_width_px-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_above-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_below-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_border-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_box-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_hsides-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_lhs-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_rhs-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_frame_vsides-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_rules_all-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_rules_cols-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/marvin/x_table_rules_rows-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+
 2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: UISourceCode commitWorkingCopy should not fail when original script had syntax error.
