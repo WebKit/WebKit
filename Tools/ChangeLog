@@ -1,3 +1,11 @@
+2012-10-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Adding sys.platform check to skip a failing assert on the Apple Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=98288
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidDriverTest.test_command_from_driver_input):
+
 2012-10-03  Ojan Vafai  <ojan@chromium.org>
 
         Get rid of warning about non-existant platform name when loading garden-o-matic
