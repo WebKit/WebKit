@@ -28,22 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryInstrumentationHashSet_h
-#define MemoryInstrumentationHashSet_h
+#ifndef MemoryInstrumentationSequence_h
+#define MemoryInstrumentationSequence_h
 
-#include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentation.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 
-template<typename ValueArg, typename HashArg, typename TraitsArg>
-void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
+template<typename ValueType>
+struct SequenceMemoryInstrumentationTraits {
+    template <typename I> static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
+    {
+        info.addCollectionElements(iterator, end);
+    }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<int> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<void*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<typename ValueType, typename I> void reportSequenceMemoryUsage(I begin, I end, MemoryClassInfo& info)
 {
-    MemoryClassInfo info(memoryObjectInfo, hashSet);
-    info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
-    info.addCollectionElements(hashSet->begin(), hashSet->end());
+    // Check if type is convertible to integer to handle iteration through enum values.
+    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<ValueType>::value, int, ValueType>::Type>::reportMemoryUsage(begin, end, info);
 }
 
 }
 
-#endif // !defined(MemoryInstrumentationHashSet_h)
+#endif // !defined(MemoryInstrumentationSequence_h)

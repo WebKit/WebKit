@@ -913,11 +913,19 @@
 			>
 		</File>
 		<File
+		        RelativePath="..\wtf\MemoryInstrumentationHashCountedSet.h"
+			>
+		</File>
+		<File
 		        RelativePath="..\wtf\MemoryInstrumentationHashMap.h"
 			>
 		</File>
 		<File
 		        RelativePath="..\wtf\MemoryInstrumentationHashSet.h"
+			>
+		</File>
+		<File
+		        RelativePath="..\wtf\MemoryInstrumentationSequence.h"
 			>
 		</File>
 		<File

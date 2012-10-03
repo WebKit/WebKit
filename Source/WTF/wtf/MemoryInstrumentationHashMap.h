@@ -32,40 +32,19 @@
 #define MemoryInstrumentationHashMap_h
 
 #include <wtf/HashMap.h>
-#include <wtf/TypeTraits.h>
+#include <wtf/MemoryInstrumentationSequence.h>
 
 namespace WTF {
-
-template<typename KeyType>
-struct SequenceMemoryInstrumentationTraits {
-    template <typename I> static void reportMemoryUsage(I iterator, I end, MemoryClassInfo& info)
-    {
-        info.addCollectionElements(iterator, end);
-    }
-};
-
-template<> struct SequenceMemoryInstrumentationTraits<int> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
-
-template<> struct SequenceMemoryInstrumentationTraits<void*> {
-    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
-};
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 void reportMemoryUsage(const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>* const& hashMap, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashMap);
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+    info.addPrivateBuffer(sizeof(typename HashMapType::ValueType) * hashMap->capacity());
 
-    typedef HashMapValueTraits<KeyArg, MappedArg> ValueTraits;
-    typedef HashTable<typename HashMapType::KeyType, typename HashMapType::ValueType, KeyValuePairKeyExtractor<typename HashMapType::ValueType>, HashArg, ValueTraits, KeyTraitsArg> HashTableType;
-
-    info.addPrivateBuffer(sizeof(typename HashTableType::ValueType) * hashMap->capacity());
-
-    // Check if type is convertible to integer to handle enum keys and values.
-    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<KeyArg>::value, int, KeyArg>::Type>::reportMemoryUsage(hashMap->begin().keys(), hashMap->end().keys(), info);
-    SequenceMemoryInstrumentationTraits<typename Conditional<IsConvertibleToInteger<MappedArg>::value, int, MappedArg>::Type>::reportMemoryUsage(hashMap->begin().values(), hashMap->end().values(), info);
+    reportSequenceMemoryUsage<KeyArg, typename HashMapType::const_iterator::Keys>(hashMap->begin().keys(), hashMap->end().keys(), info);
+    reportSequenceMemoryUsage<MappedArg, typename HashMapType::const_iterator::Values>(hashMap->begin().values(), hashMap->end().values(), info);
 }
 
 }

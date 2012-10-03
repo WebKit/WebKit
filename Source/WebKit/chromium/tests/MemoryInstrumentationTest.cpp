@@ -37,9 +37,11 @@
 #include <gtest/gtest.h>
 
 #include <wtf/ArrayBuffer.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentationArrayBufferView.h>
+#include <wtf/MemoryInstrumentationHashCountedSet.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationString.h>
@@ -651,6 +653,25 @@ TEST(MemoryInstrumentationTest, hashMapWithEnumKeysAndInstrumentedValues)
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(EnumToStringMap) + sizeof(EnumToStringMap::ValueType) * value->capacity() + (sizeof(StringImpl) + 1) * value->size(), helper.reportedSizeForAllTypes());
     EXPECT_EQ(count + 1, helper.visitedObjects());
+}
+
+TEST(MemoryInstrumentationTest, hashCountedSetWithInstrumentedValues)
+{
+    InstrumentationTestHelper helper;
+
+    typedef HashCountedSet<Instrumented*> TestSet;
+    OwnPtr<TestSet> set = adoptPtr(new TestSet());
+    Vector<OwnPtr<Instrumented> > keysVector;
+    int count = 10;
+    for (int i = 0; i < count; ++i) {
+        keysVector.append(adoptPtr(new Instrumented()));
+        for (int j = 0; j <= i; j++)
+            set->add(keysVector.last().get());
+    }
+    InstrumentedOwner<TestSet* > root(set.get());
+    helper.addRootObject(root);
+    EXPECT_EQ(sizeof(TestSet) + sizeof(HashMap<Instrumented*, unsigned>::ValueType) * set->capacity() + (sizeof(Instrumented) + sizeof(NotInstrumented))  * set->size(), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2 * count + 1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, arrayBuffer)

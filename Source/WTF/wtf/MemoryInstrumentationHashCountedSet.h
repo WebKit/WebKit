@@ -28,22 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MemoryInstrumentationHashSet_h
-#define MemoryInstrumentationHashSet_h
+#ifndef MemoryInstrumentationHashCountedSet_h
+#define MemoryInstrumentationHashCountedSet_h
 
-#include <wtf/HashSet.h>
-#include <wtf/MemoryInstrumentation.h>
+#include <wtf/HashCountedSet.h>
+#include <wtf/MemoryInstrumentationSequence.h>
 
 namespace WTF {
 
 template<typename ValueArg, typename HashArg, typename TraitsArg>
-void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
+void reportMemoryUsage(const HashCountedSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
-    info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
-    info.addCollectionElements(hashSet->begin(), hashSet->end());
+
+    typedef HashMap<ValueArg, unsigned, HashArg, TraitsArg> HashMapType;
+    info.addPrivateBuffer(sizeof(typename HashMapType::ValueType) * hashSet->capacity());
+    reportSequenceMemoryUsage<ValueArg, typename HashMapType::const_iterator::Keys>(hashSet->begin().keys(), hashSet->end().keys(), info);
 }
 
 }
 
-#endif // !defined(MemoryInstrumentationHashSet_h)
+#endif // !defined(MemoryInstrumentationHashCountedSet_h)

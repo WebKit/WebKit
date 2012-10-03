@@ -279,6 +279,8 @@
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
 		CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; };
 		F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */; };
+		F3FBC71E161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */; };
+		F3FBC720161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -563,6 +565,8 @@
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationHashMap.h; sourceTree = "<group>"; };
+		F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationHashCountedSet.h; sourceTree = "<group>"; };
+		F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationSequence.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -706,9 +710,11 @@
 				CD5497AB15857D0300B5BC30 /* MediaTime.h */,
 				4F1D115315FF11BE0026E908 /* MemoryInstrumentation.h */,
 				4FD8554616133E0E00C5B704 /* MemoryInstrumentationArrayBufferView.h */,
+				F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */,
 				F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */,
 				4F1B2DB5160B44AA00586559 /* MemoryInstrumentationHashSet.h */,
 				4FD2A358161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h */,
+				F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */,
 				4FCF27E016172E8600CBF037 /* MemoryInstrumentationString.h */,
 				4FCB7109160A1A07008425EC /* MemoryInstrumentationVector.h */,
 				A8A472CC151A825B004123FF /* MessageQueue.h */,
@@ -1169,6 +1175,8 @@
 				F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */,
 				4FCF27E116172E8600CBF037 /* MemoryInstrumentationString.h in Headers */,
 				4FD2A359161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h in Headers */,
+				F3FBC71E161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h in Headers */,
+				F3FBC720161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

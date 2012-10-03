@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "RenderObject.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashCountedSet.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -113,7 +114,7 @@ void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> ima
 void CSSImageGeneratorValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addHashCountedSet(m_sizes);
+    info.addMember(m_sizes);
     info.addMember(m_clients);
     info.addMember(m_images); // FIXME: instrument Image
 }

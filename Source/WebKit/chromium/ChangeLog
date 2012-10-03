@@ -1,3 +1,14 @@
+2012-10-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Provide memory instrumentation for HashCountedSet
+        https://bugs.webkit.org/show_bug.cgi?id=98138
+
+        Reviewed by Pavel Feldman.
+
+        Added unit test for HashCountedSet memory instrumentation.
+
+        * tests/MemoryInstrumentationTest.cpp:
+
 2012-10-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Win] Implement LocaleWin::dateFormat

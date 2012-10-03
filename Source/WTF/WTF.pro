@@ -89,9 +89,11 @@ HEADERS += \
     MediaTime.h \
     MemoryInstrumentation.h \
     MemoryInstrumentationArrayBufferView.h \
+    MemoryInstrumentationHashCountedSet.h \
     MemoryInstrumentationHashMap.h \
     MemoryInstrumentationHashSet.h \
     MemoryInstrumentationParsedURL.h \
+    MemoryInstrumentationSequence.h \
     MemoryInstrumentationString.h \
     MemoryInstrumentationVector.h \
     MessageQueue.h \
