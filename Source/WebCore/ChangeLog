@@ -1,3 +1,21 @@
+2012-10-02  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=98134
+        [Refactoring] StyleResolver::matchScopedAuthorRules() could be simpler.
+
+        Reviewed by Dimitri Glazkov.
+
+        matchScopedAuthorRules() did have some optimization which only
+        makes sense for heavily nested shadow tree. However, we don't see
+        such type of usage of Shadow DOM and this looks premature
+        optimization. This change unified its triple for loop into one,
+        which makes the code much simpler.
+
+        No new tests. Covered by existing tests.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+
 2012-10-02  Kent Tamura  <tkent@chromium.org>
 
         Introduce Localizer::dateTimeFormatWithSecond and dateTimeFormatWithoutSecond

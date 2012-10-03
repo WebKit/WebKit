@@ -962,41 +962,31 @@ void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmpt
     if (m_scopedAuthorStyles.isEmpty())
         return;
 
-    MatchOptions options(includeEmptyRules);
-
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
     if (!scopeStackIsConsistent(m_element))
         setupScopeStack(m_element);
-
-    unsigned int firstShadowScopeIndex = 0;
-    if (m_element->treeScope()->applyAuthorStyles()) {
-        unsigned i;
-        for (i = 0; i < m_scopeStack.size() && !m_scopeStack[i].m_scope->isInShadowTree(); ++i) {
-            const ScopeStackFrame& frame = m_scopeStack[i];
-            options.scope = frame.m_scope;
-            collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
-            collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
-        }
-        firstShadowScopeIndex = i;
-    }
-
-    if (!m_element->isInShadowTree() || m_scopeStack.isEmpty())
+    if (m_scopeStack.isEmpty())
         return;
 
-    unsigned scopedIndex = m_scopeStack.size();
-    int authorStyleBoundsIndex = m_scopeStackParentBoundsIndex;
-    for ( ; scopedIndex > firstShadowScopeIndex; --scopedIndex) {
-        if (authorStyleBoundsIndex != m_scopeStack[scopedIndex - 1].m_authorStyleBoundsIndex)
-            break;
-    }
-
-    // Ruleset for ancestor nodes should be applied first.
-    for (unsigned i = scopedIndex; i < m_scopeStack.size(); ++i) {
+    bool applyAuthorStyles = m_element->treeScope()->applyAuthorStyles();
+    bool documentScope = true;
+    unsigned scopeSize = m_scopeStack.size();
+    for (unsigned i = 0; i < scopeSize; ++i) {
         const ScopeStackFrame& frame = m_scopeStack[i];
-        options.scope = frame.m_scope;
+        documentScope = documentScope && !frame.m_scope->isInShadowTree();
+        if (documentScope) {
+            if (!applyAuthorStyles)
+                continue;
+        } else {
+            if (frame.m_authorStyleBoundsIndex != m_scopeStackParentBoundsIndex)
+                continue;
+        }
+           
+        MatchOptions options(includeEmptyRules, frame.m_scope);
         collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
         collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     }
+
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(includeEmptyRules);
