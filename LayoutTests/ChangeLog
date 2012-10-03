@@ -1,3 +1,14 @@
+2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: SourceURL should be taken from debugger agent when possible.
+        https://bugs.webkit.org/show_bug.cgi?id=98239
+
+        Reviewed by Yury Semikhatsky.
+
+        Unskipped test.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-03  Harald Alvestrand  <hta@google.com>
 
         Add data passing to the GetStats interface of RTCPeerConnection
