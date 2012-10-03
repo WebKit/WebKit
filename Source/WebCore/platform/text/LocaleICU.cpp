@@ -413,8 +413,12 @@ void LocaleICU::initializeDateTimeFormat()
 
 String LocaleICU::dateFormat()
 {
-    // FIXME: We should have real implementation of LocaleICU::dateFormat().
-    return emptyString();
+    if (!m_dateFormat.isEmpty())
+        return m_dateFormat;
+    if (!initializeShortDateFormat())
+        return ASCIILiteral("dd/MM/yyyy");
+    m_dateFormat = getDateFormatPattern(m_shortDateFormat);
+    return m_dateFormat;
 }
 
 String LocaleICU::timeFormat()

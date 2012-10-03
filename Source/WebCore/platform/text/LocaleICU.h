@@ -108,6 +108,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    String m_dateFormat;
     UDateFormat* m_mediumTimeFormat;
     UDateFormat* m_shortTimeFormat;
     Vector<String> m_timeAMPMLabels;
