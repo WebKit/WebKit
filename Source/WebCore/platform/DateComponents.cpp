@@ -47,12 +47,6 @@ const int DateComponents::minimumWeekNumber = 1;
 // HTML5 specification defines maximum week of year is 53.
 const int DateComponents::maximumWeekNumber = 53;
 
-// HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
-// 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
-static const int minimumYear = 1;
-// Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
-// So, we have the same upper limit in HTML5 dates.
-static const int maximumYear = 275760;
 static const int maximumMonthInMaximumYear = 8; // This is September, since months are 0 based.
 static const int maximumDayInMaximumMonth = 13;
 static const int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
@@ -145,7 +139,7 @@ bool DateComponents::parseYear(const UChar* src, unsigned length, unsigned start
     int year;
     if (!toInt(src, length, start, digitsLength, year))
         return false;
-    if (year < minimumYear || year > maximumYear)
+    if (year < minimumYear() || year > maximumYear())
         return false;
     m_year = year;
     end = start + digitsLength;
@@ -154,18 +148,18 @@ bool DateComponents::parseYear(const UChar* src, unsigned length, unsigned start
 
 static bool withinHTMLDateLimits(int year, int month)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     return month <= maximumMonthInMaximumYear;
 }
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -174,9 +168,9 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay)
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
 {
-    if (year < minimumYear)
+    if (year < DateComponents::minimumYear())
         return false;
-    if (year < maximumYear)
+    if (year < DateComponents::maximumYear())
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -402,7 +396,7 @@ bool DateComponents::parseWeek(const UChar* src, unsigned length, unsigned start
     int week;
     if (!toInt(src, length, index, 2, week) || week < minimumWeekNumber || week > maxWeekNumberInYear())
         return false;
-    if (m_year == maximumYear && week > maximumWeekInMaximumYear)
+    if (m_year == maximumYear() && week > maximumWeekInMaximumYear)
         return false;
     m_week = week;
     end = index + 2;
@@ -598,7 +592,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
     months = round(months);
     double doubleMonth = positiveFmod(months, 12);
     double doubleYear = 1970 + (months - doubleMonth) / 12;
-    if (doubleYear < minimumYear || maximumYear < doubleYear)
+    if (doubleYear < minimumYear() || maximumYear() < doubleYear)
         return false;
     int year = static_cast<int>(doubleYear);
     int month = static_cast<int>(doubleMonth);
@@ -628,7 +622,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     ms = round(ms);
 
     m_year = msToYear(ms);
-    if (m_year < minimumYear || m_year > maximumYear)
+    if (m_year < minimumYear() || m_year > maximumYear())
         return false;
 
     int yearDay = dayInYear(ms, m_year);
@@ -636,7 +630,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     if (yearDay < offset) {
         // The day belongs to the last week of the previous year.
         m_year--;
-        if (m_year <= minimumYear)
+        if (m_year <= minimumYear())
             return false;
         m_week = maxWeekNumberInYear();
     } else {
@@ -645,7 +639,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
             m_year++;
             m_week = 1;
         }
-        if (m_year > maximumYear || (m_year == maximumYear && m_week > maximumWeekInMaximumYear))
+        if (m_year > maximumYear() || (m_year == maximumYear() && m_week > maximumWeekInMaximumYear))
             return false;
     }
     m_type = Week;

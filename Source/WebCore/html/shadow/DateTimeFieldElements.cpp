@@ -422,15 +422,8 @@ void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
 
 // ----------------------------
 
-// HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
-// 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
-static const int minimumYear = 1;
-// Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
-// So, we have the same upper limit in HTML5 dates.
-static const int maximumYear = 275760;
-
 DateTimeYearFieldElement::DateTimeYearFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder)
-    : DateTimeNumericFieldElement(document, fieldOwner, minimumYear, maximumYear, placeholder)
+    : DateTimeNumericFieldElement(document, fieldOwner, DateComponents::minimumYear(), DateComponents::maximumYear(), placeholder)
 {
 }
 
