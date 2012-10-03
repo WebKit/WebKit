@@ -46,6 +46,7 @@
 #include "OpenGLShims.h"
 #endif
 
+#include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

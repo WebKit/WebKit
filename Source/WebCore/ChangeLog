@@ -1,3 +1,9 @@
+2012-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Snow Leopard build.
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+
 2012-10-02  Joshua Bell  <jsbell@chromium.org>
 
         Add htons/htonl definitions and implementations
