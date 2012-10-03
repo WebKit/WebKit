@@ -2727,8 +2727,6 @@ inspector/timeline/timeline-decode-resize.html
 # REGRESSION(r126852): It broke inspector tests
 # https://bugs.webkit.org/show_bug.cgi?id=95176
 http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html
-http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval.html
-http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout.html
 
 # [Qt] New svg/custom/clamped-masking-clipping.svg asserts
 # https://bugs.webkit.org/show_bug.cgi?id=95431
