@@ -63,18 +63,18 @@ bool InjectedBundle::load(APIObject* initializationUserData)
     
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
     if (!bundleURL) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.\n");
         return false;
     }
 
     m_platformBundle = [[NSBundle alloc] initWithURL:(NSURL *)bundleURL.get()];
     if (!m_platformBundle) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.");
+        WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
         return false;
     }
         
     if (![m_platformBundle load]) {
-        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.");
+        WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
         return false;
     }
 
@@ -88,18 +88,18 @@ bool InjectedBundle::load(APIObject* initializationUserData)
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
-        WTFLogAlways("InjectedBundle::load failed - No initialize function or principal class found in the bundle executable.");
+        WTFLogAlways("InjectedBundle::load failed - No initialize function or principal class found in the bundle executable.\n");
         return false;
     }
 
     if (![principalClass conformsToProtocol:@protocol(WKWebProcessPlugIn)]) {
-        WTFLogAlways("InjectedBundle::load failed - Principal class does not conform to the WKWebProcessPlugIn protocol.");
+        WTFLogAlways("InjectedBundle::load failed - Principal class does not conform to the WKWebProcessPlugIn protocol.\n");
         return false;
     }
 
     id<WKWebProcessPlugIn> instance = (id<WKWebProcessPlugIn>)[[principalClass alloc] init];
     if (!instance) {
-        WTFLogAlways("InjectedBundle::load failed - Could initialize an instance of the principal class.");
+        WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
         return false;
     }
 
@@ -108,6 +108,7 @@ bool InjectedBundle::load(APIObject* initializationUserData)
 
     if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)])
         [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
+
     return true;
 }
 
