@@ -1,3 +1,56 @@
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 5.
+
+        Finally finish rebaselining fast/.
+
+        * platform/efl/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/efl/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/efl/fast/replaced/width100percent-image-expected.png:
+        * platform/efl/fast/replaced/width100percent-textfield-expected.png:
+        * platform/efl/fast/ruby/ruby-block-style-not-updated-expected.png: Added.
+        * platform/efl/fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/efl/fast/ruby/ruby-inline-style-not-updated-expected.png: Added.
+        * platform/efl/fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/efl/fast/ruby/ruby-inline-table-expected.png:
+        * platform/efl/fast/runin/001-expected.png:
+        * platform/efl/fast/runin/generated-expected.png:
+        * platform/efl/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.png:
+        * platform/efl/fast/table/floatingTablePaintBackground-expected.png:
+        * platform/efl/fast/table/form-with-table-style-expected.png:
+        * platform/efl/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/efl/fast/text/emphasis-avoid-ruby-expected.png:
+        * platform/efl/fast/text/emphasis-combined-text-expected.png:
+        * platform/efl/fast/text/emphasis-overlap-expected.png:
+        * platform/efl/fast/text/large-text-composed-char-expected.png:
+        * platform/efl/fast/text/whitespace/002-expected.png:
+        * platform/efl/fast/text/whitespace/003-expected.png:
+        * platform/efl/fast/text/whitespace/004-expected.png:
+        * platform/efl/fast/text/whitespace/005-expected.png:
+        * platform/efl/fast/text/whitespace/006-expected.png:
+        * platform/efl/fast/text/whitespace/007-expected.png:
+        * platform/efl/fast/text/whitespace/008-expected.png:
+        * platform/efl/fast/text/whitespace/009-expected.png:
+        * platform/efl/fast/text/whitespace/010-expected.png:
+        * platform/efl/fast/text/whitespace/011-expected.png:
+        * platform/efl/fast/text/whitespace/012-expected.png:
+        * platform/efl/fast/text/whitespace/013-expected.png:
+        * platform/efl/fast/text/whitespace/014-expected.png:
+        * platform/efl/fast/text/whitespace/015-expected.png:
+        * platform/efl/fast/text/whitespace/016-expected.png:
+        * platform/efl/fast/text/whitespace/018-expected.png:
+        * platform/efl/fast/text/whitespace/020-expected.png:
+        * platform/efl/fast/text/whitespace/021-expected.png:
+        * platform/efl/fast/text/whitespace/025-expected.png:
+        * platform/efl/fast/text/whitespace/027-expected.png:
+        * platform/efl/fast/text/whitespace/030-expected.png:
+        * platform/efl/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/efl/fast/text/whitespace/pre-break-word-expected.png:
+        * platform/efl/fast/text/whitespace/pre-wrap-last-char-expected.png:
+        * platform/efl/fast/text/whitespace/pre-wrap-line-test-expected.png:
+        * platform/efl/fast/text/whitespace/pre-wrap-overflow-selection-expected.png:
+        * platform/efl/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png:
+
 2012-10-03  Emil A Eklund  <eae@chromium.org>
 
         Round image sizes when zooming
