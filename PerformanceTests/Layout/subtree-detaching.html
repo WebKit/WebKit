@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+function buildTree()
+{
+    wrapper = document.createElement("div");
+    for (i = 0; i < 1000; ++i) {
+        var child = document.createElement("div");
+        for (j = 0; j < 1000; ++j) {
+            var grandChild = document.createElement("div");
+            child.appendChild(grandChild);
+        }
+        wrapper.appendChild(child);
+    }
+    document.body.appendChild(wrapper);
+}
+
+function setup() {
+    wrapper.style.display = "block";
+    // Force a layout so that everything is up-to-date.
+    wrapper.offsetTop;
+}
+
+function runTest() {
+    setup();
+
+    var now = PerfTestRunner.now();
+
+    wrapper.style.display = "none";
+    wrapper.offsetTop;
+
+    return PerfTestRunner.now() - now;
+}
+
+buildTree();
+
+PerfTestRunner.measureTime({run: runTest, runCount: 20, description: "This benchmark checks the time spend in detaching an tree." });
+</script>
+</body>
+</html>

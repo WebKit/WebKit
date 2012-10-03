@@ -1,3 +1,16 @@
+2012-10-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add a performance test for subtree detaching
+        https://bugs.webkit.org/show_bug.cgi?id=98281
+
+        Reviewed by Eric Seidel.
+
+        The new test tries to stress detaching on a heavy subtree (2 levels deep but with 1,000 nodes per level).
+        We set display: none on the root and measure the time it takes to update the tree. Note that we will also
+        measure the time taken by recalcStyle and relayout but I don't think we can avoid that.
+
+        * Layout/subtree-detaching.html: Added.
+
 2012-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r130135. Dromaeo tests only report single memory value,
