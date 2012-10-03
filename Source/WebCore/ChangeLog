@@ -1,3 +1,36 @@
+2012-10-03  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=98313
+        ScrollingStateNode should keep a Vector of children instead of child 
+        pointers
+
+        Reviewed by Simon Fraser.
+
+        This patch re-names ScrollingStateNode::cloneNode() to 
+        ScrollingStateNode::cloneAndResetNode(). The new function resets the 
+        change properties of the current node after cloning it, and it also 
+        takes care of cloning children, which the old function did not do.
+
+        m_firstChild and m_nextSibling are gone. Use the m_children Vector 
+        instead.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::cloneAndResetChildNodes):
+        (WebCore::ScrollingStateNode::appendChild):
+        * page/scrolling/ScrollingStateNode.h:
+        (ScrollingStateNode):
+        (WebCore::ScrollingStateNode::parent):
+        (WebCore::ScrollingStateNode::setParent):
+
+        Reset the change properties and clone children in cloneAndResetNode()
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::cloneAndResetNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+
+        Yay, this function can be vastly simplified now that we don't have 
+        those messy child and sibling pointers.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::commit):
+
 2012-10-03  Ojan Vafai  <ojan@chromium.org>
 
         Replace uses of -webkit-box-sizing with box-sizing

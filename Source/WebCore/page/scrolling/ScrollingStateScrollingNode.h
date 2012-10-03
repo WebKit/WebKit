@@ -58,7 +58,7 @@ public:
         RequestedScrollPosition = 1 << 12,
     };
 
-    virtual PassOwnPtr<ScrollingStateNode> cloneNode() OVERRIDE;
+    virtual PassOwnPtr<ScrollingStateNode> cloneAndResetNode() OVERRIDE;
 
     virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
     virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }

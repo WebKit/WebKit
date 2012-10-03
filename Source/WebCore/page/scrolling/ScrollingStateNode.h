@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -47,7 +48,8 @@ public:
     ScrollingStateNode(ScrollingStateTree*);
     virtual ~ScrollingStateNode();
 
-    virtual PassOwnPtr<ScrollingStateNode> cloneNode() = 0;
+    virtual PassOwnPtr<ScrollingStateNode> cloneAndResetNode() = 0;
+    void cloneAndResetChildNodes(ScrollingStateNode*);
 
     virtual bool hasChangedProperties() const = 0;
     virtual unsigned changedProperties() const = 0;
@@ -64,15 +66,9 @@ public:
     void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
 
     ScrollingStateNode* parent() const { return m_parent; }
-    ScrollingStateNode* firstChild() const { return m_firstChild.get(); }
-    ScrollingStateNode* nextSibling() const { return m_nextSibling.get(); }
 
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }
-    void setFirstChild(PassOwnPtr<ScrollingStateNode> firstChild) { m_firstChild = firstChild; }
-    void setNextSibling(PassOwnPtr<ScrollingStateNode> nextSibling) { m_nextSibling = nextSibling; }
-
     void appendChild(PassOwnPtr<ScrollingStateNode>);
-    ScrollingStateNode* traverseNext() const;
 
 protected:
     ScrollingStateNode(ScrollingStateNode*);
@@ -81,8 +77,8 @@ protected:
 
 private:
     ScrollingStateNode* m_parent;
-    OwnPtr<ScrollingStateNode> m_firstChild;
-    OwnPtr<ScrollingStateNode> m_nextSibling;
+
+    Vector<OwnPtr<ScrollingStateNode> >* m_children;
 
     bool m_scrollLayerDidChange;
 

@@ -35,6 +35,7 @@ namespace WebCore {
 ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree)
     : m_scrollingStateTree(scrollingStateTree)
     , m_parent(0)
+    , m_children(0)
     , m_scrollLayerDidChange(false)
 {
 }
@@ -45,6 +46,7 @@ ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree)
 ScrollingStateNode::ScrollingStateNode(ScrollingStateNode* stateNode)
     : m_scrollingStateTree(0)
     , m_parent(0)
+    , m_children(0)
     , m_scrollLayerDidChange(stateNode->scrollLayerDidChange())
 {
     setScrollLayer(stateNode->platformScrollLayer());
@@ -52,49 +54,27 @@ ScrollingStateNode::ScrollingStateNode(ScrollingStateNode* stateNode)
 
 ScrollingStateNode::~ScrollingStateNode()
 {
+    delete m_children;
+}
+
+void ScrollingStateNode::cloneAndResetChildNodes(ScrollingStateNode* clone)
+{
+    if (!m_children)
+        return;
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        clone->appendChild(m_children->at(i)->cloneAndResetNode());
 }
 
 void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)
 {
     childNode->setParent(this);
-    
-    if (!m_firstChild) {
-        m_firstChild = childNode;
-        return;
-    }
 
-    for (ScrollingStateNode* existingChild = firstChild(); existingChild; existingChild = existingChild->nextSibling()) {
-        if (!existingChild->nextSibling()) {
-            existingChild->setNextSibling(childNode);
-            return;
-        }
-    }
+    if (!m_children)
+        m_children = new Vector<OwnPtr<ScrollingStateNode> >;
 
-    ASSERT_NOT_REACHED();
-}
-
-ScrollingStateNode* ScrollingStateNode::traverseNext() const
-{
-    ScrollingStateNode* child = firstChild();
-    if (child)
-        return child;
-
-    ScrollingStateNode* sibling = nextSibling();
-    if (sibling)
-        return sibling;
-
-    const ScrollingStateNode* stateNode = this;
-    while (!sibling) {
-        stateNode = stateNode->parent();
-        if (!stateNode)
-            return 0;
-        sibling = stateNode->nextSibling();
-    }
-
-    if (stateNode)
-        return sibling;
-
-    return 0;
+    m_children->append(childNode);
 }
 
 } // namespace WebCore
