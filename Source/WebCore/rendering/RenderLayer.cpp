@@ -4885,10 +4885,6 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     updateScrollCornerStyle();
     updateResizerStyle();
 
-#if ENABLE(CSS_FILTERS)
-    bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
-#endif
-
     updateDescendantDependentFlags();
     updateTransform();
 #if ENABLE(CSS_COMPOSITING)
@@ -4910,11 +4906,14 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 
 #if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterEffect();
+#if USE(ACCELERATED_COMPOSITING)
+    bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
     if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
         // The filters used to be drawn by platform code, but now the platform cannot draw them anymore.
         // Fallback to drawing them in software.
         setBackingNeedsRepaint();
     }
+#endif
 #endif
 }
 

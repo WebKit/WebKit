@@ -1,3 +1,21 @@
+2012-10-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        Build failure with css filters enabled and accelerated compositing disabled
+        https://bugs.webkit.org/show_bug.cgi?id=95908
+
+        Reviewed by Tony Chang.
+
+        Do not try to setBackingNeedsRepaint when building without accelerated
+        compositing.
+
+        Also, allow painting with filter (paintsWithFilters returns true if
+        renderer has filter) when accelerated compositing is not enabled.
+
+        No functional change, so no new tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+
 2012-10-03  Emil A Eklund  <eae@chromium.org>
 
         Round image sizes when zooming
