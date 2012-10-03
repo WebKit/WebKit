@@ -84,9 +84,10 @@ int PluginProcessMain(const CommandLine& commandLine)
     }
 
     String localization = commandLine["localization"];
-    RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
-    if (cfLocalization)
+    if (!localization.isEmpty()) {
+        RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
         WKSetDefaultLocalization(cfLocalization.get());
+    }
 
 #if defined(__i386__)
     {

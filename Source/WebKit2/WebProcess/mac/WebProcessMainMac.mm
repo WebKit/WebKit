@@ -161,9 +161,10 @@ int WebProcessMain(const CommandLine& commandLine)
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
     String localization = commandLine["localization"];
-    RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
-    if (cfLocalization)
+    if (!localization.isEmpty()) {
+        RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
         WKSetDefaultLocalization(cfLocalization.get());
+    }
 
     [pool drain];
 

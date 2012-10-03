@@ -1,1 +1,13 @@
+2012-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a crash when the localization option is not passed to the web process.
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Changed to not call WKSetDefaultLocalization
+        with the empty string.
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Ditto.
+
 == Rolled over to ChangeLog-2012-10-02 ==
