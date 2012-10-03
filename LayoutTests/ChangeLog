@@ -1,5 +1,11 @@
 2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviwed gardening -- adjusted expectations for tiny-layer-rotated.html
+
+        * platform/chromium/TestExpectations:
+
+2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed gardening -- added expectations for 3 time-suggestion-picker-appearance tests.
 
         * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png: Added.

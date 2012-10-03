@@ -2787,7 +2787,7 @@ webkit.org/b/81145 [ Lion ] platform/chromium/virtual/softwarecompositing/iframe
 webkit.org/b/81145 [ Lion ] fast/frames/invalid.html [ Failure ImageOnlyFailure Pass Slow ]
 webkit.org/b/81145 [ Lion ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
-webkit.org/b/81145 [ Lion ] platform/chromium/compositing/tiny-layer-rotated.html [ ImageOnlyFailure ]
+webkit.org/b/81145 [ Debug ] platform/chromium/compositing/tiny-layer-rotated.html [ ImageOnlyFailure Pass ]
 webkit.org/b/81145 [ Lion ] editing/inserting/insert-3907422-fix.html [ Failure ]
 webkit.org/b/81145 [ Lion ] editing/pasteboard/paste-text-002.html [ Failure ]
 webkit.org/b/81145 [ Lion ] editing/pasteboard/paste-text-003.html [ Failure ]
