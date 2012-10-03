@@ -705,6 +705,7 @@ localizedStrings["<Right>"] = "<Right>";
 localizedStrings["<Up>"] = "<Up>";
 localizedStrings["<Down>"] = "<Down>";
 localizedStrings["Events"] = "Events";
+localizedStrings["Loading\u2026 %d\%"] = "Loading\u2026 %d\%";
 localizedStrings["Saving\u2026 %d\%"] = "Saving\u2026 %d\%";
 localizedStrings["Only heap snapshots from files with extension '.whs' can be loaded."] = "Only heap snapshots from files with extension '.whs' can be loaded.";
 localizedStrings["Can't load profile when other profile is recording."] = "Can't load profile when other profile is recording.";

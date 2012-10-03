@@ -1,3 +1,33 @@
+2012-10-03  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Profiles: taking heap snapshot causes error message in console.
+        https://bugs.webkit.org/show_bug.cgi?id=97890
+
+        Reviewed by Yury Semikhatsky.
+
+        Actual problem is that proxy loader is closed twice.
+
+        "_snapshotReceived" should never try to close receiver,
+        because it is a callback fired by close.
+
+        Also minor glitches fixed:
+         - taking snapshot shows "Loading..." status first,
+        and then "Saving xxx%";
+         - after all chunks are sent "Parsing" status is set and
+        then is replaced with "Saving 100%";
+         - removed dead code in proxy;
+         - proxy was ignoring callback parameter;
+         - "Loading %d\%" is not localized.
+
+        * English.lproj/localizedStrings.js: Added missing "Loading %d%" string.
+        * inspector/front-end/HeapSnapshotProxy.js: Removed dead code.
+        (WebInspector.HeapSnapshotLoaderProxy):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.write): Make this method
+        interface-conformant.
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapProfileHeader): Fixed update-status and
+        finish-transfer logic.
+
 2012-10-03  Jochen Eisinger  <jochen@chromium.org>
 
         Make sure that user gestures can't be consumed twice
