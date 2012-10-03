@@ -43,5 +43,5 @@ layer at (0,0) size 800x198
                             RenderSVGRect {rect} at (23,0) size 93x69 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {td} at (245,92) size 243x82 [r=2 c=1 rs=1 cs=1]
-                      RenderImage {img} at (5,5) size 138x69
+                      RenderImage {img} at (5,5) size 139x69
                       RenderText {#text} at (0,0) size 0x0
