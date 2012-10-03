@@ -1,3 +1,149 @@
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Update more pixel expectations in preparation for running pixel tests on the bots.
+
+        * platform/efl/css3/flexbox/repaint-rtl-column-expected.png:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/efl/fast/block/float/float-not-removed-from-next-sibling4-expected.png:
+        * platform/efl/fast/body-propagation/background-color/003-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-color/003-expected.png:
+        * platform/efl/fast/body-propagation/background-color/003-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-color/004-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-color/004-expected.png:
+        * platform/efl/fast/body-propagation/background-color/004-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-color/006-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-color/006-expected.png:
+        * platform/efl/fast/body-propagation/background-color/006-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-color/007-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-color/007-expected.png:
+        * platform/efl/fast/body-propagation/background-color/007-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/003-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-image/003-expected.png:
+        * platform/efl/fast/body-propagation/background-image/003-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/004-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-image/004-expected.png:
+        * platform/efl/fast/body-propagation/background-image/004-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/006-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-image/006-expected.png:
+        * platform/efl/fast/body-propagation/background-image/006-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/007-declarative-expected.png:
+        * platform/efl/fast/body-propagation/background-image/007-expected.png:
+        * platform/efl/fast/body-propagation/background-image/007-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/009-expected.png:
+        * platform/efl/fast/body-propagation/background-image/009-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/background-image/010-expected.png:
+        * platform/efl/fast/body-propagation/background-image/010-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/001-expected.png:
+        * platform/efl/fast/body-propagation/overflow/001-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/002-expected.png:
+        * platform/efl/fast/body-propagation/overflow/002-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/003-declarative-expected.png:
+        * platform/efl/fast/body-propagation/overflow/003-expected.png:
+        * platform/efl/fast/body-propagation/overflow/003-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/004-declarative-expected.png:
+        * platform/efl/fast/body-propagation/overflow/004-expected.png:
+        * platform/efl/fast/body-propagation/overflow/004-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/005-declarative-expected.png:
+        * platform/efl/fast/body-propagation/overflow/005-expected.png:
+        * platform/efl/fast/body-propagation/overflow/005-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/006-declarative-expected.png:
+        * platform/efl/fast/body-propagation/overflow/006-expected.png:
+        * platform/efl/fast/body-propagation/overflow/006-xhtml-expected.png:
+        * platform/efl/fast/body-propagation/overflow/007-declarative-expected.png:
+        * platform/efl/fast/body-propagation/overflow/007-expected.png:
+        * platform/efl/fast/body-propagation/overflow/007-xhtml-expected.png:
+        * platform/efl/fast/borders/bidi-002-expected.png:
+        * platform/efl/fast/borders/bidi-009a-expected.png: Added.
+        * platform/efl/fast/borders/bidi-012-expected.png:
+        * platform/efl/fast/borders/border-color-inherit-expected.png:
+        * platform/efl/fast/borders/border-image-01-expected.png:
+        * platform/efl/fast/borders/border-image-border-radius-expected.png:
+        * platform/efl/fast/borders/border-image-longhand-expected.png:
+        * platform/efl/fast/borders/border-image-massive-scale-expected.png:
+        * platform/efl/fast/borders/border-image-outset-expected.png: Added.
+        * platform/efl/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+        * platform/efl/fast/borders/border-image-repeat-expected.png:
+        * platform/efl/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/efl/fast/borders/border-image-scale-transform-expected.png:
+        * platform/efl/fast/borders/border-image-scaled-expected.png:
+        * platform/efl/fast/borders/border-image-scrambled-expected.png:
+        * platform/efl/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/efl/fast/borders/border-image-slices-expected.png:
+        * platform/efl/fast/borders/border-image-source-expected.png:
+        * platform/efl/fast/borders/border-radius-complex-inner-expected.png:
+        * platform/efl/fast/borders/border-radius-constraints-expected.png:
+        * platform/efl/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/efl/fast/borders/border-radius-inset-outset-expected.png:
+        * platform/efl/fast/borders/border-radius-split-inline-expected.png:
+        * platform/efl/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/efl/fast/borders/different-color-borders-expected.png:
+        * platform/efl/fast/borders/mixed-border-styles-expected.png:
+        * platform/efl/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/efl/fast/borders/mixed-border-styles-radius2-expected.png:
+        * platform/efl/fast/borders/outline-alpha-block-expected.png:
+        * platform/efl/fast/borders/outline-alpha-inline-expected.png:
+        * platform/efl/fast/borders/rtl-border-01-expected.png:
+        * platform/efl/fast/borders/rtl-border-02-expected.png:
+        * platform/efl/fast/borders/rtl-border-03-expected.png:
+        * platform/efl/fast/borders/rtl-border-04-expected.png:
+        * platform/efl/fast/borders/rtl-border-05-expected.png:
+        * platform/efl/fast/canvas/arc360-expected.png:
+        * platform/efl/fast/canvas/canvas-before-css-expected.png:
+        * platform/efl/fast/canvas/canvas-composite-expected.png:
+        * platform/efl/fast/canvas/canvas-composite-transformclip-expected.png:
+        * platform/efl/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/efl/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/efl/fast/canvas/canvas-zoom-expected.png:
+        * platform/efl/fast/canvas/check-stale-putImageData-expected.png: Added.
+        * platform/efl/fast/canvas/drawImage-with-globalAlpha-expected.png:
+        * platform/efl/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/efl/fast/canvas/fillrect_gradient-expected.png:
+        * platform/efl/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/efl/fast/canvas/patternfill-repeat-expected.png:
+        * platform/efl/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/efl/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-1-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-2-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-3-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-4-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-5-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-6-expected.png:
+        * platform/efl/fast/canvas/shadow-offset-7-expected.png:
+        * platform/efl/fast/canvas/zero-size-fill-rect-expected.png:
+        * platform/efl/fast/clip/004-expected.png:
+        * platform/efl/fast/clip/005-expected.png:
+        * platform/efl/fast/clip/006-expected.png:
+        * platform/efl/fast/clip/007-expected.png:
+        * platform/efl/fast/clip/009-expected.png:
+        * platform/efl/fast/clip/010-expected.png:
+        * platform/efl/fast/clip/013-expected.png:
+        * platform/efl/fast/clip/014-expected.png:
+        * platform/efl/fast/clip/nestedTransparencyClip-expected.png:
+        * platform/efl/fast/clip/outline-overflowClip-expected.png:
+        * platform/efl/fast/clip/overflow-border-radius-combinations-expected.png:
+        * platform/efl/fast/clip/overflow-border-radius-composited-expected.png:
+        * platform/efl/fast/clip/overflow-border-radius-fixed-position-expected.png:
+        * platform/efl/fast/clip/overflow-border-radius-transformed-expected.png:
+        * platform/efl/fast/compact/001-expected.png:
+        * platform/efl/fast/compact/002-expected.png:
+        * platform/efl/fast/css-generated-content/007-expected.png:
+        * platform/efl/fast/css-generated-content/012-expected.png:
+        * platform/efl/fast/css-generated-content/016-expected.png:
+        * platform/efl/fast/css-generated-content/after-order-expected.png:
+        * platform/efl/fast/css-generated-content/before-with-first-letter-expected.png:
+        * platform/efl/fast/css-generated-content/beforeAfter-interdocument-expected.png:
+        * platform/efl/fast/css-generated-content/hover-style-change-expected.png:
+        * platform/efl/fast/css-generated-content/table-before-after-child-add-expected.png:
+        * platform/efl/fast/css-generated-content/table-cell-before-after-child-add-expected.png:
+        * platform/efl/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/efl/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+        * platform/efl/fast/css-generated-content/wbr-with-before-content-expected.png:
+        * platform/efl/fast/css/percent-top-value-with-relative-position-expected.png:
+        * platform/efl/media/controls-layout-direction-expected.png:
+        * platform/efl/printing/page-rule-in-media-query-expected.png:
+        * platform/efl/transitions/suspend-transform-transition-expected.png: Added.
+
 2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Skip media/event-queue-crash.html so that its console message does not cause next test to flake.
