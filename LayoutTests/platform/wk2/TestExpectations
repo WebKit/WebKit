@@ -299,9 +299,6 @@ platform/mac/editing/deleting/deletionUI-differing-background.html
 platform/mac/editing/deleting/deletionUI-minimum-size.html
 platform/mac/editing/deleting/deletionUI-successful-deletion.html
 
-# Fail on WebKit2, the test crash.
-fast/dom/Geolocation/window-close-crash.html
-
 # WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
 # <https://bugs.webkit.org/show_bug.cgi?id=42547>
 fast/canvas/canvas-gradient-addStop-error.html

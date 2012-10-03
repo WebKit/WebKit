@@ -154,7 +154,7 @@ private:
     bool m_beforeUnloadReturnValue;
 
     OwnPtr<GeolocationProviderMock> m_geolocationProvider;
-    Vector<WKGeolocationPermissionRequestRef> m_geolocationPermissionRequests;
+    Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
 

@@ -1,3 +1,36 @@
+2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix Geolocation/window-close-crash.html and harden WebKitTestRunner for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=97608
+
+        Reviewed by Sam Weinig.
+
+        The test fast/dom/Geolocation/window-close-crash.html was crashing because
+        handleGeolocationPermissionRequest() was executed on the wrong pointer. Depending on how
+        the page was created, the void* clientInfo can either be a PlatformWebView or
+        a TestController.
+
+        Using the global TestController fixes the issue.
+
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::setPosition):
+        (WTR::GeolocationProviderMock::setPositionUnavailableError):
+        To be reliable, the test fast/dom/Geolocation/maximum-age.html needs the setting the position
+        to clear the error and vice versa.
+        This is the same behavior as GeolocationClientMock and MockGeolocationProvider of WebKit1.
+
+        (WTR::GeolocationProviderMock::sendPositionIfNeeded):
+        (WTR::GeolocationProviderMock::sendErrorIfNeeded):
+        Some tests expect the position/error cant be sent multiple time,
+        just keep the position after sending.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::decidePolicyForGeolocationPermissionRequest):
+        (WTR::TestController::decidePolicyForGeolocationPermissionRequestIfPossible):
+        * WebKitTestRunner/TestController.h:
+        Let's play as if we did not know what is in GeolocationPermissionRequestManagerProxy like a real
+        client would have to do.
+
 2012-10-03  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Implementing the NetworkInfo API for BB port

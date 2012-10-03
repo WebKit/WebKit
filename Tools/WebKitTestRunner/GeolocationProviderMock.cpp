@@ -61,6 +61,10 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
 void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy)
 {
     m_position.adopt(WKGeolocationPositionCreate(currentTime(), latitude, longitude, accuracy));
+
+    m_hasError = false;
+    m_errorMessage.clear();
+
     sendPositionIfNeeded();
 }
 
@@ -68,6 +72,9 @@ void GeolocationProviderMock::setPositionUnavailableError(WKStringRef errorMessa
 {
     m_errorMessage = errorMessage;
     m_hasError = true;
+
+    m_position.clear();
+
     sendErrorIfNeeded();
 }
 
@@ -89,19 +96,14 @@ void GeolocationProviderMock::stopUpdating(WKGeolocationManagerRef geolocationMa
 
 void GeolocationProviderMock::sendPositionIfNeeded()
 {
-    if (m_isActive && m_position) {
+    if (m_isActive && m_position)
         WKGeolocationManagerProviderDidChangePosition(m_geolocationManager, m_position.get());
-        m_position.clear();
-    }
 }
 
 void GeolocationProviderMock::sendErrorIfNeeded()
 {
-    if (m_isActive && m_hasError) {
-        m_hasError = false;
+    if (m_isActive && m_hasError)
         WKGeolocationManagerProviderDidFailToDeterminePositionWithErrorMessage(m_geolocationManager, m_errorMessage.get());
-        m_errorMessage.clear();
-    }
 }
 
 } // namespace WTR

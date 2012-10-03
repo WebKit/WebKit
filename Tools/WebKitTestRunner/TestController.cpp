@@ -174,8 +174,7 @@ static void unfocus(WKPageRef page, const void* clientInfo)
 
 static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
 {
-    TestController* testController = static_cast<TestController*>(const_cast<void*>(clientInfo));
-    testController->handleGeolocationPermissionRequest(permissionRequest);
+    TestController::shared().handleGeolocationPermissionRequest(permissionRequest);
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
@@ -1028,12 +1027,13 @@ void TestController::decidePolicyForGeolocationPermissionRequestIfPossible()
         return;
 
     for (size_t i = 0; i < m_geolocationPermissionRequests.size(); ++i) {
-        WKGeolocationPermissionRequestRef& permissionRequest = m_geolocationPermissionRequests[i];
+        WKGeolocationPermissionRequestRef permissionRequest = m_geolocationPermissionRequests[i].get();
         if (m_isGeolocationPermissionAllowed)
             WKGeolocationPermissionRequestAllow(permissionRequest);
         else
             WKGeolocationPermissionRequestDeny(permissionRequest);
     }
+    m_geolocationPermissionRequests.clear();
 }
 
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void* clientInfo)
