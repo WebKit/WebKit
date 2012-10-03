@@ -1,3 +1,31 @@
+2012-10-03  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: DateTimeEditBuilder had better hold LayoutParameters
+        https://bugs.webkit.org/show_bug.cgi?id=98228
+
+        Reviewed by Kentaro Hara.
+
+        Stop copying multiple members of LayoutParameters in DateTimeEditBuilder
+        constructor. This change improves code size and runtime cost.
+
+        No new tests. This doesn't change user-visible behavior.
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (DateTimeEditBuilder): Add a comment about lifetime of objects.
+        (WebCore::DateTimeEditBuilder::stepRange):
+        Added. A helper to access m_parameters.stepRange.
+        (WebCore::DateTimeEditBuilder::DateTimeEditBuilder):
+        Remove m_stepRange, m_localizer, m_placeholderFor* members.
+        Add m_parameters.
+        (WebCore::DateTimeEditBuilder::needMillisecondField):
+        Use stepRange() instead of m_stepRange.
+        (WebCore::DateTimeEditBuilder::visitField):
+        Use m_parameters.placeholderFor*.
+        (WebCore::DateTimeEditBuilder::shouldMillisecondFieldReadOnly):
+        Use stepRange() instead of m_stepRange.
+        (WebCore::DateTimeEditBuilder::shouldMinuteFieldReadOnly): ditto.
+        (WebCore::DateTimeEditBuilder::shouldSecondFieldReadOnly): ditto.
+
 2012-10-02  Kent Tamura  <tkent@chromium.org>
 
         Implement LocaleICU::dateFormat

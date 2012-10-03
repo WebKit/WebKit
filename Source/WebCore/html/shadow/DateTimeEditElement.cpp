@@ -49,6 +49,7 @@ class DateTimeEditBuilder : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeEditBuilder);
 
 public:
+    // The argument objects must be alive until this object dies.
     DateTimeEditBuilder(DateTimeEditElement&, const DateTimeEditElement::LayoutParameters&, const DateComponents&);
 
     bool build(const String&);
@@ -58,6 +59,7 @@ private:
     bool shouldMillisecondFieldReadOnly() const;
     bool shouldMinuteFieldReadOnly() const;
     bool shouldSecondFieldReadOnly() const;
+    inline const StepRange& stepRange() const { return m_parameters.stepRange; }
 
     // DateTimeFormat::TokenHandler functions.
     virtual void visitField(DateTimeFormat::FieldType, int) OVERRIDE FINAL;
@@ -65,21 +67,13 @@ private:
 
     DateTimeEditElement& m_editElement;
     const DateComponents m_dateValue;
-    const StepRange m_stepRange;
-    Localizer& m_localizer;
-    const String m_placeholderForDay;
-    const String m_placeholderForMonth;
-    const String m_placeholderForYear;
+    const DateTimeEditElement::LayoutParameters& m_parameters;
 };
 
 DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& dateValue)
     : m_editElement(elemnt)
     , m_dateValue(dateValue)
-    , m_stepRange(layoutParameters.stepRange)
-    , m_localizer(layoutParameters.localizer)
-    , m_placeholderForDay(layoutParameters.placeholderForDay)
-    , m_placeholderForMonth(layoutParameters.placeholderForMonth)
-    , m_placeholderForYear(layoutParameters.placeholderForYear)
+    , m_parameters(layoutParameters)
 {
 }
 
@@ -92,8 +86,8 @@ bool DateTimeEditBuilder::build(const String& formatString)
 bool DateTimeEditBuilder::needMillisecondField() const
 {
     return m_dateValue.millisecond()
-        || !m_stepRange.minimum().remainder(static_cast<int>(msPerSecond)).isZero()
-        || !m_stepRange.step().remainder(static_cast<int>(msPerSecond)).isZero();
+        || !stepRange().minimum().remainder(static_cast<int>(msPerSecond)).isZero()
+        || !stepRange().step().remainder(static_cast<int>(msPerSecond)).isZero();
 }
 
 void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
@@ -102,7 +96,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
 
     switch (fieldType) {
     case DateTimeFormat::FieldTypeDayOfMonth:
-        m_editElement.addField(DateTimeDayFieldElement::create(document, m_editElement, m_placeholderForDay));
+        m_editElement.addField(DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay));
         return;
 
     case DateTimeFormat::FieldTypeHour11:
@@ -131,11 +125,11 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
 
     case DateTimeFormat::FieldTypeMonth:
         // We always use "MM", two digits month, even if "M", "MMM", "MMMM", or "MMMMM".
-        m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_placeholderForMonth));
+        m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_parameters.placeholderForMonth));
         return;
 
     case DateTimeFormat::FieldTypePeriod:
-        m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, m_localizer.timeAMPMLabels()));
+        m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, m_parameters.localizer.timeAMPMLabels()));
         return;
 
     case DateTimeFormat::FieldTypeSecond: {
@@ -145,7 +139,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
             field->setReadOnly();
 
         if (needMillisecondField()) {
-            visitLiteral(m_localizer.localizedDecimalSeparator());
+            visitLiteral(m_parameters.localizer.localizedDecimalSeparator());
             visitField(DateTimeFormat::FieldTypeFractionalSecond, 3);
         }
         return;
@@ -164,7 +158,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
         return;
 
     case DateTimeFormat::FieldTypeYear:
-        m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement, m_placeholderForYear));
+        m_editElement.addField(DateTimeYearFieldElement::create(document, m_editElement, m_parameters.placeholderForYear));
         return;
 
     default:
@@ -174,17 +168,17 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
 
 bool DateTimeEditBuilder::shouldMillisecondFieldReadOnly() const
 {
-    return !m_dateValue.millisecond() && m_stepRange.step().remainder(static_cast<int>(msPerSecond)).isZero();
+    return !m_dateValue.millisecond() && stepRange().step().remainder(static_cast<int>(msPerSecond)).isZero();
 }
 
 bool DateTimeEditBuilder::shouldMinuteFieldReadOnly() const
 {
-    return !m_dateValue.minute() && m_stepRange.step().remainder(static_cast<int>(msPerHour)).isZero();
+    return !m_dateValue.minute() && stepRange().step().remainder(static_cast<int>(msPerHour)).isZero();
 }
 
 bool DateTimeEditBuilder::shouldSecondFieldReadOnly() const
 {
-    return !m_dateValue.second() && m_stepRange.step().remainder(static_cast<int>(msPerMinute)).isZero();
+    return !m_dateValue.second() && stepRange().step().remainder(static_cast<int>(msPerMinute)).isZero();
 }
 
 void DateTimeEditBuilder::visitLiteral(const String& text)
