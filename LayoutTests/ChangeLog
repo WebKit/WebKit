@@ -1,5 +1,50 @@
 2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 5.
+
+        * platform/efl/fast/repaint/list-marker-2-expected.png:
+        * platform/efl/fast/repaint/list-marker-expected.png:
+        * platform/efl/fast/repaint/make-children-non-inline-expected.png:
+        * platform/efl/fast/repaint/opacity-change-on-overflow-float-expected.png:
+        * platform/efl/fast/repaint/outline-child-repaint-expected.png:
+        * platform/efl/fast/repaint/outline-inset-expected.png:
+        * platform/efl/fast/repaint/outline-repaint-glitch-expected.png:
+        * platform/efl/fast/repaint/outline-shrinking-expected.png:
+        * platform/efl/fast/repaint/overflow-delete-line-expected.png:
+        * platform/efl/fast/repaint/overflow-hidden-in-overflow-hidden-scrolled-expected.png: Added.
+        * platform/efl/fast/repaint/overflow-outline-repaint-expected.png:
+        * platform/efl/fast/repaint/overflow-scroll-body-appear-expected.png:
+        * platform/efl/fast/repaint/overflow-scroll-delete-expected.png:
+        * platform/efl/fast/repaint/reflection-redraw-expected.png:
+        * platform/efl/fast/repaint/repaint-resized-overflow-expected.png:
+        * platform/efl/fast/repaint/scale-page-shrink-expected.png:
+        * platform/efl/fast/repaint/scroll-inside-table-cell-expected.png:
+        * platform/efl/fast/repaint/selected-replaced-expected.png:
+        * platform/efl/fast/repaint/selection-after-remove-expected.png:
+        * platform/efl/fast/repaint/selection-gap-overflow-scroll-2-expected.png:
+        * platform/efl/fast/repaint/selection-gap-overflow-scroll-expected.png:
+        * platform/efl/fast/repaint/selection-rl-expected.png:
+        * platform/efl/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/efl/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/efl/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/efl/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/efl/fast/repaint/stacked-diacritics-expected.png:
+        * platform/efl/fast/repaint/static-to-positioned-expected.png:
+        * platform/efl/fast/repaint/table-cell-collapsed-border-expected.png:
+        * platform/efl/fast/repaint/table-cell-move-expected.png:
+        * platform/efl/fast/repaint/table-collapsed-border-expected.png:
+        * platform/efl/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/efl/fast/repaint/text-append-dirty-lines-expected.png:
+        * platform/efl/fast/repaint/text-emphasis-v-expected.png: Added.
+        * platform/efl/fast/repaint/text-selection-rect-in-overflow-2-expected.png:
+        * platform/efl/fast/repaint/text-selection-rect-in-overflow-expected.png:
+        * platform/efl/fast/repaint/text-shadow-expected.png:
+        * platform/efl/fast/repaint/text-shadow-horizontal-expected.png:
+        * platform/efl/fast/repaint/textarea-set-disabled-expected.png: Added.
+        * platform/efl/fast/repaint/transform-relative-position-expected.png:
+
+2012-10-03  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 4.
 
         * platform/efl/fast/repaint/bugzilla-7235-expected.png:
