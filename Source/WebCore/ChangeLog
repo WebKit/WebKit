@@ -1,3 +1,15 @@
+2012-10-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: After "Edit as HTML", any click outside box should stop editing
+        https://bugs.webkit.org/show_bug.cgi?id=98258
+
+        Reviewed by Vsevolod Vlasov.
+
+        Make the DOM tree OL span the entire height of its container in the Elements panel to catch mouse events.
+
+        * inspector/front-end/elementsPanel.css:
+        (#elements-content > ol):
+
 2012-10-03  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [EFL] Skeleton code of File system API.
