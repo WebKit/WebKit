@@ -332,7 +332,7 @@ my @features = (
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => 1, value => \$netscapePluginAPISupport },
 
     { option => "network-info", desc => "Toggle Network Info support",
-      define => "ENABLE_NETWORK_INFO", default => isEfl(), value => \$networkInfoSupport },
+      define => "ENABLE_NETWORK_INFO", default => (isEfl() || isBlackBerry()), value => \$networkInfoSupport },
 
     { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },

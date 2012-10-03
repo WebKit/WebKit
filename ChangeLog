@@ -1,3 +1,15 @@
+2012-10-03  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Implementing the NetworkInfo API for BB port 
+        https://bugs.webkit.org/show_bug.cgi?id=98273
+
+        Reviewed by Rob Buis.
+
+        Adding references to new classes added to support BlackBerry's
+        NetworkInfo implementation.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-10-01  Keishi Hattori  <keishi@webkit.org>
 
         Calendar picker should use zero as default step base

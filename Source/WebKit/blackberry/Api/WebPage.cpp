@@ -80,6 +80,9 @@
 #include "JavaScriptDebuggerBlackBerry.h"
 #include "JavaScriptVariant_p.h"
 #include "LayerWebKitThread.h"
+#if ENABLE(NETWORK_INFO)
+#include "NetworkInfoClientBlackBerry.h"
+#endif
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -546,6 +549,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
+#endif
+
+#if ENABLE(NETWORK_INFO)
+    WebCore::provideNetworkInfoTo(m_page, new WebCore::NetworkInfoClientBlackBerry(this));
 #endif
 
     m_page->setCustomHTMLTokenizerChunkSize(256);

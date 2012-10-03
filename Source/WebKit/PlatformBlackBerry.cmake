@@ -17,6 +17,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/notifications"
+    "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBKIT_DIR}/blackberry/Api"
@@ -88,6 +89,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
     blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
+    blackberry/WebCoreSupport/NetworkInfoClientBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
     blackberry/WebCoreSupport/PagePopupBlackBerry.cpp

@@ -1,3 +1,30 @@
+2012-10-03  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Implementing the NetworkInfo API for BB port
+        https://bugs.webkit.org/show_bug.cgi?id=98273
+
+        Reviewed by Rob Buis.
+
+        Adding new class NetworkInfoClientBlackBerry to implement
+        NetworkInfoClient for the BlackBerry port.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/NetworkInfoClientBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::NetworkInfoClientBlackBerry::NetworkInfoClientBlackBerry):
+        (WebCore::NetworkInfoClientBlackBerry::startUpdating):
+        (WebCore::NetworkInfoClientBlackBerry::stopUpdating):
+        (WebCore::NetworkInfoClientBlackBerry::bandwidth):
+        (WebCore::NetworkInfoClientBlackBerry::metered):
+        (WebCore::NetworkInfoClientBlackBerry::onCurrentNetworkChange):
+        (WebCore::NetworkInfoClientBlackBerry::onCurrentCellularTypeChange):
+        * WebCoreSupport/NetworkInfoClientBlackBerry.h: Added.
+        (WebKit):
+        (WebCore):
+        (NetworkInfoClientBlackBerry):
+        (WebCore::NetworkInfoClientBlackBerry::~NetworkInfoClientBlackBerry):
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Change most GraphicsLayer::create calls to use the version that takes a GraphicsLayerFactory
