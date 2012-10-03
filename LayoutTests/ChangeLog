@@ -1,3 +1,15 @@
+2012-10-03  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        getComputedStyle perspective-origin is based on the wrong bounding box
+        https://bugs.webkit.org/show_bug.cgi?id=98027
+
+        Reviewed by Simon Fraser.
+
+        Add test for perspective-origin calculation into existing transform-origin test.
+
+        * transforms/2d/computed-style-origin-expected.txt:
+        * transforms/2d/computed-style-origin.html:
+
 2012-10-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed test rebaseline.

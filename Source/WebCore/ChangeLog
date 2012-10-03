@@ -1,3 +1,21 @@
+2012-10-03  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        getComputedStyle perspective-origin is based on the wrong bounding box
+        https://bugs.webkit.org/show_bug.cgi?id=98027
+
+        Reviewed by Simon Fraser.
+
+        perspective-origin for ComputedStyleDeclaration is currently calculated using the
+        wrong bounding box (sizingBox() which ends up as the contentbox).
+
+        Start using borderbox for ComputedStyleDeclaration perspective-origin, similar to
+        what transform-origin already does.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-origin-percentage.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2012-10-03  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r130160.
