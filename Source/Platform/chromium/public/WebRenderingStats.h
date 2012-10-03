@@ -36,6 +36,8 @@ struct WebRenderingStats {
     double totalRasterizeTimeInSeconds;
     double totalCommitTimeInSeconds;
     size_t totalCommitCount;
+    size_t totalPixelsPainted;
+    size_t totalPixelsRasterized;
     size_t numImplThreadScrolls;
     size_t numMainThreadScrolls;
 
@@ -47,6 +49,8 @@ struct WebRenderingStats {
         , totalRasterizeTimeInSeconds(0)
         , totalCommitTimeInSeconds(0)
         , totalCommitCount(0)
+        , totalPixelsPainted(0)
+        , totalPixelsRasterized(0)
         , numImplThreadScrolls(0)
         , numMainThreadScrolls(0)
     {
@@ -74,6 +78,8 @@ struct WebRenderingStats {
         enumerator->addDouble("totalRasterizeTimeInSeconds", totalRasterizeTimeInSeconds);
         enumerator->addDouble("totalCommitTimeInSeconds", totalCommitTimeInSeconds);
         enumerator->addInt("totalCommitCount", totalCommitCount);
+        enumerator->addInt("totalPixelsPainted", totalPixelsPainted);
+        enumerator->addInt("totalPixelsRasterized", totalPixelsRasterized);
         enumerator->addInt("numImplThreadScrolls", numImplThreadScrolls);
         enumerator->addInt("numMainThreadScrolls", numMainThreadScrolls);
     }
