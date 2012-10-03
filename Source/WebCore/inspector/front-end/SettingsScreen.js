@@ -250,8 +250,6 @@ WebInspector.GenericSettingsTab = function()
     WebInspector.SettingsTab.call(this);
 
     var p = this._appendSection();
-    if (Preferences.showDockToRight)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
     if (Preferences.exposeDisableCache)
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     var disableJSElement = this._createCheckboxSetting(WebInspector.UIString("Disable JavaScript"), WebInspector.settings.javaScriptDisabled);

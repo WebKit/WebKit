@@ -1,3 +1,61 @@
+2012-10-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remember the last dock option so that user could toggle between dock to bottom and right
+        https://bugs.webkit.org/show_bug.cgi?id=98255
+
+        Reviewed by Vsevolod Vlasov.
+
+        - Introduced DockController.js that covers the dock mechanics
+        - Removed dock orientation from the settings
+        - Storing the last dock option to present it as default
+        - Simplified the multi-option status bar button
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/DockController.js: Added.
+        (WebInspector.DockController):
+        (WebInspector.DockController.prototype.get element):
+        (WebInspector.DockController.prototype.setDocked.set if):
+        (WebInspector.DockController.prototype.setDocked):
+        (WebInspector.DockController.prototype.setDockingUnavailable):
+        (WebInspector.DockController.prototype._updateUI.get states):
+        (WebInspector.DockController.prototype._updateUI):
+        (WebInspector.DockController.prototype._decorateButtonForTargetState):
+        (WebInspector.DockController.prototype._createDockOptions):
+        (WebInspector.DockController.prototype._toggleDockState):
+        (WebInspector.DockController.prototype.isCompactMode):
+        (WebInspector.DockController.prototype.setCompactMode):
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setAttachedWindow):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestAttachWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestDetachWindow):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab):
+        * inspector/front-end/StatusBarButton.js:
+        (WebInspector.StatusBarButton):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype.setCompactMode):
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        (WebInspector.Toolbar.prototype._toolbarDrag):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (WebInspector.toggleSearchingForNode):
+        * inspector/front-end/inspector.css:
+        (body.undocked.platform-mac-snowleopard #toolbar):
+        (body.undocked.platform-mac-snowleopard #toolbar-dropdown):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (windowLoaded):
+        (WebInspector.setDockingUnavailable):
+        * inspector/front-end/inspectorCommon.css:
+        (body.dock-to-right:not(.undocked)):
+        (body.dock-to-right.inactive:not(.undocked)):
+
 2012-10-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: UISourceCode commitWorkingCopy should not fail when original script had syntax error.

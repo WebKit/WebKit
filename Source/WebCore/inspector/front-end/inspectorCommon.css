@@ -17,11 +17,11 @@ body {
     -webkit-user-select: none;
 }
 
-body.dock-to-right:not(.detached) {
+body.dock-to-right:not(.undocked) {
     border-left: 1px solid rgb(80, 80, 80);
 }
 
-body.dock-to-right.inactive:not(.detached) {
+body.dock-to-right.inactive:not(.undocked) {
     border-left: 1px solid rgb(64%, 64%, 64%);
 }
 

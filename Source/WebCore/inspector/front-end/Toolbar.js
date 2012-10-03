@@ -35,7 +35,7 @@
 WebInspector.Toolbar = function()
 {
     this.element = document.getElementById("toolbar");
-    WebInspector.installDragHandle(this.element, this._toolbarDragStart.bind(this), this._toolbarDrag.bind(this), this._toolbarDragEnd.bind(this), (WebInspector.isCompactMode() ? "row-resize" : "default"));
+    WebInspector.installDragHandle(this.element, this._toolbarDragStart.bind(this), this._toolbarDrag.bind(this), this._toolbarDragEnd.bind(this), "default");
 
     this._dropdownButton = document.getElementById("toolbar-dropdown-arrow");
     this._dropdownButton.addEventListener("click", this._toggleDropdown.bind(this), false);
@@ -97,11 +97,19 @@ WebInspector.Toolbar.prototype = {
     },
 
     /**
+     * @param {boolean} isCompactMode
+     */
+    setCompactMode: function(isCompactMode)
+    {
+        this._isCompactMode = isCompactMode;
+    },
+
+    /**
      * @return {boolean}
      */
     _toolbarDragStart: function(event)
     {
-        if ((!WebInspector.isCompactMode() && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
+        if ((!this._isCompactMode && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
             return false;
 
         var target = event.target;
@@ -124,7 +132,7 @@ WebInspector.Toolbar.prototype = {
 
     _toolbarDrag: function(event)
     {
-        if (WebInspector.isCompactMode()) {
+        if (this._isCompactMode) {
             var height = window.innerHeight - (event.screenY - this.element.lastScreenY);
 
             InspectorFrontendHost.setAttachedWindowHeight(height);

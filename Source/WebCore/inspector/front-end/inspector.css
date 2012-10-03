@@ -66,8 +66,8 @@ body.inactive #toolbar {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
 }
 
-body.detached.platform-mac-leopard #toolbar,
-body.detached.platform-mac-snowleopard #toolbar {
+body.undocked.platform-mac-leopard #toolbar,
+body.undocked.platform-mac-snowleopard #toolbar {
     background: transparent;
 }
 
@@ -194,8 +194,8 @@ body.compact #toolbar-dropdown-arrow {
     background-image: inherit;
 }
 
-body.detached.platform-mac-leopard #toolbar-dropdown,
-body.detached.platform-mac-snowleopard #toolbar-dropdown {
+body.undocked.platform-mac-leopard #toolbar-dropdown,
+body.undocked.platform-mac-snowleopard #toolbar-dropdown {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(191, 191, 191)), to(rgb(151, 151, 151)));
 }
 

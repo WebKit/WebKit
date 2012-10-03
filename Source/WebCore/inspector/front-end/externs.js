@@ -177,6 +177,8 @@ SourceMapV3.Offset = function()
 // FIXME: remove everything below.
 var WebInspector = {}
 
+WebInspector.queryParamsObject = {}
+WebInspector.toggleSearchingForNode = function() {}
 WebInspector.panels = {};
 
 /**
@@ -262,8 +264,6 @@ WebInspector.showPanel = function(panel)
  * @type {string} 
  */
 WebInspector.inspectedPageDomain;
-
-WebInspector.isCompactMode = function() { return false; }
 
 WebInspector.SourceJavaScriptTokenizer = {}
 WebInspector.SourceJavaScriptTokenizer.Keywords = {}

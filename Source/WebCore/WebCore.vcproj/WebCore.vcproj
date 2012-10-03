@@ -76262,6 +76262,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DockController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Drawer.js"
 					>
 				</File>

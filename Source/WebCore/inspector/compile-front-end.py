@@ -340,7 +340,15 @@ modules = [
         "name": "host_stub",
         "dependencies": ["ui"],
         "sources": [
+            "InspectorFrontendAPI.js",
             "InspectorFrontendHostStub.js",
+        ]
+    },
+    {
+        "name": "inspector",
+        "dependencies": ["components"],
+        "sources": [
+            "DockController.js",
         ]
     },
 ]

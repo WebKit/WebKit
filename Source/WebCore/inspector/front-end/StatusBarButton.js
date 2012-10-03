@@ -57,6 +57,7 @@ WebInspector.StatusBarButton = function(title, className, states)
         this._state = 0;
 
     this.title = title;
+    this.className = className;
     this.disabled = false;
     this._visible = true;
 }
@@ -192,6 +193,10 @@ WebInspector.StatusBarButton.prototype = {
     _showOptions: function(buttonsProvider)
     {
         var buttons = buttonsProvider();
+        var mainButtonClone = new WebInspector.StatusBarButton(this.title, this.className, this.states);
+        mainButtonClone.addEventListener("click", this._clicked, this);
+        mainButtonClone.state = this.state;
+        buttons.push(mainButtonClone);
 
         var mouseUpListener = mouseUp.bind(this);
         document.documentElement.addEventListener("mouseup", mouseUpListener, false);
@@ -205,8 +210,8 @@ WebInspector.StatusBarButton.prototype = {
         var boundMouseOver = mouseOver.bind(this);
         var boundMouseOut = mouseOut.bind(this);
         for (var i = 0; i < buttons.length; ++i) {
-            buttons[i].element.addEventListener("mousemove", boundMouseOver.bind(this), false);
-            buttons[i].element.addEventListener("mouseout", boundMouseOut.bind(this), false);
+            buttons[i].element.addEventListener("mousemove", boundMouseOver, false);
+            buttons[i].element.addEventListener("mouseout", boundMouseOut, false);
             optionsBarElement.appendChild(buttons[i].element);
         }
         buttons[buttons.length - 1].element.addStyleClass("emulate-active");

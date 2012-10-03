@@ -70,10 +70,12 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     requestAttachWindow: function()
     {
+        InspectorFrontendAPI.setAttachedWindow(true);
     },
 
     requestDetachWindow: function()
     {
+        InspectorFrontendAPI.setAttachedWindow(false);
     },
 
     requestSetDockSide: function()

@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-InspectorFrontendAPI = {
+var InspectorFrontendAPI = {
     _pendingCommands: [],
 
     isDebuggingEnabled: function()
@@ -76,7 +76,8 @@ InspectorFrontendAPI = {
 
     setAttachedWindow: function(attached)
     {
-        WebInspector.attached = attached;
+        if (WebInspector.dockController)
+            WebInspector.dockController.setDocked(attached);
     },
 
     showConsole: function()

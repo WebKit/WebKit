@@ -6347,6 +6347,7 @@
             'inspector/front-end/DOMPresentationUtils.js',
             'inspector/front-end/DOMStorage.js',
             'inspector/front-end/DOMSyntaxHighlighter.js',
+            'inspector/front-end/DockController.js',
             'inspector/front-end/Drawer.js',
             'inspector/front-end/ElementsPanelDescriptor.js',
             'inspector/front-end/ElementsTreeOutline.js',
