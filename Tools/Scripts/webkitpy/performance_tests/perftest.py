@@ -202,8 +202,16 @@ class ChromiumStylePerfTest(PerfTest):
 
 
 class PageLoadingPerfTest(PerfTest):
+    _FORCE_GC_FILE = 'resources/force-gc.html'
+
     def __init__(self, port, test_name, path_or_url):
         super(PageLoadingPerfTest, self).__init__(port, test_name, path_or_url)
+        self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
+
+    def run_single(self, driver, path_or_url, time_out_ms, should_run_pixel_test=False):
+        # Force GC to prevent pageload noise. See https://bugs.webkit.org/show_bug.cgi?id=98203
+        super(PageLoadingPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
+        return super(PageLoadingPerfTest, self).run_single(driver, path_or_url, time_out_ms, should_run_pixel_test)
 
     def run(self, driver, time_out_ms):
         test_times = []

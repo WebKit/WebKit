@@ -43,6 +43,10 @@ from webkitpy.performance_tests.perftest import PerfTestFactory
 from webkitpy.performance_tests.perftest import ReplayPerfTest
 
 
+class MockPort(TestPort):
+    def __init__(self, custom_run_test=None):
+        super(MockPort, self).__init__(host=MockHost(), custom_run_test=custom_run_test)
+
 class MainTest(unittest.TestCase):
     def test_parse_output(self):
         output = DriverOutput('\n'.join([
@@ -98,11 +102,14 @@ class MainTest(unittest.TestCase):
 
 class TestPageLoadingPerfTest(unittest.TestCase):
     class MockDriver(object):
-        def __init__(self, values):
+        def __init__(self, values, test):
             self._values = values
             self._index = 0
+            self._test = test
 
         def run_test(self, input, stop_when_done):
+            if input.test_name == self._test.force_gc_test:
+                return
             value = self._values[self._index]
             self._index += 1
             if isinstance(value, str):
@@ -111,8 +118,9 @@ class TestPageLoadingPerfTest(unittest.TestCase):
                 return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=self._values[self._index - 1])
 
     def test_run(self):
-        test = PageLoadingPerfTest(None, 'some-test', '/path/some-dir/some-test')
-        driver = TestPageLoadingPerfTest.MockDriver(range(1, 21))
+        port = MockPort()
+        test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
+        driver = TestPageLoadingPerfTest.MockDriver(range(1, 21), test)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
@@ -129,8 +137,9 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            test = PageLoadingPerfTest(None, 'some-test', '/path/some-dir/some-test')
-            driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+            port = MockPort()
+            test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
+            driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], test)
             self.assertEqual(test.run(driver, None), None)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
@@ -141,7 +150,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
 
 class TestReplayPerfTest(unittest.TestCase):
 
-    class ReplayTestPort(TestPort):
+    class ReplayTestPort(MockPort):
         def __init__(self, custom_run_test=None):
 
             class ReplayTestDriver(TestDriver):
@@ -149,7 +158,7 @@ class TestReplayPerfTest(unittest.TestCase):
                     return custom_run_test(text_input, stop_when_done) if custom_run_test else None
 
             self._custom_driver_class = ReplayTestDriver
-            super(self.__class__, self).__init__(host=MockHost())
+            super(self.__class__, self).__init__()
 
         def _driver_class(self):
             return self._custom_driver_class
@@ -179,6 +188,9 @@ class TestReplayPerfTest(unittest.TestCase):
         loaded_pages = []
 
         def run_test(test_input, stop_when_done):
+            if test_input.test_name == test.force_gc_test:
+                loaded_pages.append(test_input)
+                return
             if test_input.test_name != "about:blank":
                 self.assertEqual(test_input.test_name, 'http://some-test/')
             loaded_pages.append(test_input)
@@ -196,8 +208,9 @@ class TestReplayPerfTest(unittest.TestCase):
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
-        self.assertEqual(len(loaded_pages), 1)
-        self.assertEqual(loaded_pages[0].test_name, 'http://some-test/')
+        self.assertEqual(len(loaded_pages), 2)
+        self.assertEqual(loaded_pages[0].test_name, test.force_gc_test)
+        self.assertEqual(loaded_pages[1].test_name, 'http://some-test/')
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
@@ -262,8 +275,9 @@ class TestReplayPerfTest(unittest.TestCase):
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
-        self.assertEqual(len(loaded_pages), 1)
-        self.assertEqual(loaded_pages[0].test_name, 'http://some-test/')
+        self.assertEqual(len(loaded_pages), 2)
+        self.assertEqual(loaded_pages[0].test_name, test.force_gc_test)
+        self.assertEqual(loaded_pages[1].test_name, 'http://some-test/')
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, 'error: some-test.replay\nsome error\n')
@@ -316,15 +330,15 @@ class TestReplayPerfTest(unittest.TestCase):
 
 class TestPerfTestFactory(unittest.TestCase):
     def test_regular_test(self):
-        test = PerfTestFactory.create_perf_test(None, 'some-dir/some-test', '/path/some-dir/some-test')
+        test = PerfTestFactory.create_perf_test(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
         self.assertEqual(test.__class__, PerfTest)
 
     def test_inspector_test(self):
-        test = PerfTestFactory.create_perf_test(None, 'inspector/some-test', '/path/inspector/some-test')
+        test = PerfTestFactory.create_perf_test(MockPort(), 'inspector/some-test', '/path/inspector/some-test')
         self.assertEqual(test.__class__, ChromiumStylePerfTest)
 
     def test_page_loading_test(self):
-        test = PerfTestFactory.create_perf_test(None, 'PageLoad/some-test', '/path/PageLoad/some-test')
+        test = PerfTestFactory.create_perf_test(MockPort(), 'PageLoad/some-test', '/path/PageLoad/some-test')
         self.assertEqual(test.__class__, PageLoadingPerfTest)
 
 
