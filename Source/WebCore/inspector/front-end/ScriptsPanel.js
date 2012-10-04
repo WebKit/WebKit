@@ -509,6 +509,8 @@ WebInspector.ScriptsPanel.prototype = {
             if (this._currentUISourceCode && this._currentUISourceCode.isDivergingFromVM)
                 return;
             this._editorContainer.addUISourceCode(uiSourceCode);
+            if (uiSourceCode.formatted() !== this._toggleFormatSourceButton.toggled)
+                uiSourceCode.setFormatted(this._toggleFormatSourceButton.toggled, this._uiSourceCodeFormatted.bind(this, uiSourceCode));
         }
         var sourceFrame = this._showFile(uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);

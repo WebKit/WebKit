@@ -86,6 +86,7 @@ WebInspector.BreakpointManager.prototype = {
                 continue;
             this._debuggerModel.removeBreakpoint(debuggerId);
             delete this._breakpointForDebuggerId[debuggerId];
+            delete breakpoint._debuggerId;
         }
         this._storage._restoreBreakpoints(uiSourceCode);
     },
@@ -107,6 +108,8 @@ WebInspector.BreakpointManager.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         if (!(uiSourceCode instanceof WebInspector.JavaScriptSource))
+            return;
+        if (uiSourceCode.divergedVersion)
             return;
         
         var sourceFileId = WebInspector.BreakpointManager.breakpointStorageId(uiSourceCode);

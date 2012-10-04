@@ -40,6 +40,10 @@ WebInspector.JavaScriptSource = function(url, contentProvider, isEditable)
     WebInspector.UISourceCode.call(this, url, contentProvider, isEditable);
 }
 
+WebInspector.JavaScriptSource.Events = {
+    HasDivergedFromVMChanged: "HasDivergedFromVMChanged"
+}
+
 WebInspector.JavaScriptSource.prototype = {
     /**
      * @param {function(?string)} callback
@@ -55,6 +59,7 @@ WebInspector.JavaScriptSource.prototype = {
                 this.hasDivergedFromVM = true;
             else
                 delete this.hasDivergedFromVM;
+            this.fireHasDivergedFromVMChanged();
 
             callback(error);
         }
@@ -64,7 +69,19 @@ WebInspector.JavaScriptSource.prototype = {
             return;
         }
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-        WebInspector.debuggerModel.setScriptSource(script.scriptId, this.workingCopy(), innerCallback);
+        WebInspector.debuggerModel.setScriptSource(script.scriptId, this.workingCopy(), innerCallback.bind(this));
+    },
+
+    workingCopyChanged: function()
+    {
+        this.fireHasDivergedFromVMChanged();
+    },
+
+    fireHasDivergedFromVMChanged: function()
+    {
+        this.isDivergingFromVM = true;
+        this.dispatchEventToListeners(WebInspector.JavaScriptSource.Events.HasDivergedFromVMChanged, this);
+        delete this.isDivergingFromVM;
     },
 
     __proto__: WebInspector.UISourceCode.prototype

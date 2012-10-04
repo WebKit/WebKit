@@ -53,9 +53,28 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
         var script = WebInspector.debuggerModel.scriptForId(debuggerModelLocation.scriptId);
-        var uiSourceCode = this._workspaceUISourceCodeForScript(script) || this._getOrCreateTemporaryUISourceCode(script);
+        var uiSourceCode = this._workspaceUISourceCodeForScript(script);
+        if (!uiSourceCode)
+            uiSourceCode = this._getOrCreateTemporaryUISourceCode(script);
+        else if (uiSourceCode.isDirty() || uiSourceCode.hasDivergedFromVM) {
+            var temporaryUISourceCode = this._getOrCreateTemporaryUISourceCode(script);
+            temporaryUISourceCode.divergedVersion = uiSourceCode;
+            uiSourceCode = temporaryUISourceCode;
+        }
         console.assert(!!uiSourceCode);
         return new WebInspector.UILocation(uiSourceCode, debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber || 0);
+    },
+
+    _hasDivergedFromVMChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        var scripts = this._scriptsForUISourceCode(uiSourceCode);
+        if (!scripts.length)
+            return;
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].setSourceMapping(this);
+        if (!uiSourceCode.isDirty() && !uiSourceCode.hasDivergedFromVM)
+            this._deleteTemporaryUISourceCodeForScripts(scripts);
     },
 
     /**
@@ -129,6 +148,9 @@ WebInspector.ResourceScriptMapping.prototype = {
             scripts[i].setSourceMapping(this);
         uiSourceCode.isContentScript = scripts[0].isContentScript;
         uiSourceCode.setSourceMapping(this);
+        if (!uiSourceCode.isTemporary)
+            uiSourceCode.addEventListener(WebInspector.JavaScriptSource.Events.HasDivergedFromVMChanged, this._hasDivergedFromVMChanged, this);
+
     },
 
     /**
@@ -172,7 +194,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider(scripts) : script;
         var isDynamicScript = this._isDynamicScript(script);
         var url = isDynamicScript ? "" : script.sourceURL;
-        temporaryUISourceCode = new WebInspector.JavaScriptSource(url, contentProvider, !script.isInlineScript());
+        temporaryUISourceCode = new WebInspector.JavaScriptSource(url, contentProvider, false);
         temporaryUISourceCode.isTemporary = true;
         for (var i = 0; i < scripts.length; ++i)
             this._temporaryUISourceCodeForScriptId[scripts[i].scriptId] = temporaryUISourceCode;

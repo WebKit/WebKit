@@ -485,7 +485,7 @@ WebInspector.UISourceCode.prototype = {
      */
     formatted: function()
     {
-        return this._formatted;
+        return !!this._formatted;
     },
 
     /**
