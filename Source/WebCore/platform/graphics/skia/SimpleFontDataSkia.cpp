@@ -161,6 +161,9 @@ void SimpleFontData::platformInit()
             }
         }
     }
+
+    if (int unitsPerEm = paint.getTypeface()->getUnitsPerEm())
+        m_fontMetrics.setUnitsPerEm(unitsPerEm);
 }
 
 void SimpleFontData::platformCharWidthInit()
