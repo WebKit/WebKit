@@ -1,3 +1,14 @@
+2012-10-04  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] New test introduced in r129346 inspector-protocol/css-getSupportedCSSProperties.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=97451
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipping this test that is passing.
+
+        * platform/qt/TestExpectations:
+
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
         Update some picker tests for input[type=date]
