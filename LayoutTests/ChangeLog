@@ -1,3 +1,61 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Pixel test rebaselines to enable pixel testing on the bots, part 6.
+
+        * platform/efl/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/efl/compositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/efl/compositing/visibility/visibility-simple-video-layer-expected.png: Added.
+        * platform/efl/compositing/visibility/visibility-simple-video-layer-expected.txt: Added.
+        * platform/efl/fast/forms/datalist/update-range-with-datalist-expected.png: Added.
+        * platform/efl/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/efl/fast/selectors/unqualified-hover-strict-expected.txt:
+        * platform/efl/fast/xsl/xslt-missing-namespace-in-xslt-expected.png:
+        * platform/efl/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/efl/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/efl/fullscreen/full-screen-zIndex-after-expected.png:
+        * platform/efl/fullscreen/parent-flow-inline-with-block-child-expected.png:
+        * platform/efl/fullscreen/parent-flow-inline-with-block-child-expected.txt:
+        * platform/efl/http/tests/local/file-url-sent-as-referer-expected.png:
+        * platform/efl/http/tests/misc/frame-access-during-load-expected.png:
+        * platform/efl/http/tests/misc/iframe404-expected.png:
+        * platform/efl/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+        * platform/efl/http/tests/uri/css-href-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png:
+        * platform/efl/svg/filters/big-sized-filter-expected.png:
+        * platform/efl/svg/filters/feColorMatrix-saturate-expected.png: Added.
+        * platform/efl/svg/filters/feDropShadow-expected.png: Added.
+        * platform/efl/svg/filters/feGaussianBlur-expected.png:
+        * platform/efl/svg/filters/feImage-reference-svg-primitive-expected.png: Added.
+        * platform/efl/svg/filters/filterRes1-expected.png:
+        * platform/efl/svg/filters/filterRes3-expected.png:
+        * platform/efl/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/efl/svg/repaint/inner-svg-change-viewBox-contract-expected.png: Added.
+
 2012-10-04  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Reviewing old bugs in Qt TestExpectations. Unskip now passing test.
