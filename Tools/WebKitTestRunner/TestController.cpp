@@ -1005,9 +1005,9 @@ void TestController::setGeolocationPermission(bool enabled)
     decidePolicyForGeolocationPermissionRequestIfPossible();
 }
 
-void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
-    m_geolocationProvider->setPosition(latitude, longitude, accuracy);
+    m_geolocationProvider->setPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
 }
 
 void TestController::setMockGeolocationPositionUnavailableError(WKStringRef errorMessage)

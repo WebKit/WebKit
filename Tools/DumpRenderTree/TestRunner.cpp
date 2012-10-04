@@ -1087,10 +1087,40 @@ static JSValueRef setMockGeolocationPositionCallback(JSContextRef context, JSObj
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
 
+    double latitude = JSValueToNumber(context, arguments[0], 0);
+    double longitude = JSValueToNumber(context, arguments[1], 0);
+    double accuracy = JSValueToNumber(context, arguments[2], 0);
+
+    bool canProvideAltitude = false;
+    double altitude = 0.;
+    if (argumentCount > 3 && !JSValueIsUndefined(context, arguments[3])) {
+        canProvideAltitude = true;
+        altitude = JSValueToNumber(context, arguments[3], 0);
+    }
+
+    bool canProvideAltitudeAccuracy = false;
+    double altitudeAccuracy = 0.;
+    if (argumentCount > 4 && !JSValueIsUndefined(context, arguments[4])) {
+        canProvideAltitudeAccuracy = true;
+        altitudeAccuracy = JSValueToNumber(context, arguments[4], 0);
+    }
+
+    bool canProvideHeading = false;
+    double heading = 0.;
+    if (argumentCount > 5 && !JSValueIsUndefined(context, arguments[5])) {
+        canProvideHeading = true;
+        heading = JSValueToNumber(context, arguments[5], 0);
+    }
+
+    bool canProvideSpeed = false;
+    double speed = 0.;
+    if (argumentCount > 6 && !JSValueIsUndefined(context, arguments[6])) {
+        canProvideSpeed = true;
+        speed = JSValueToNumber(context, arguments[6], 0);
+    }
+
     TestRunner* controller = reinterpret_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setMockGeolocationPosition(JSValueToNumber(context, arguments[0], NULL),  // latitude
-                                           JSValueToNumber(context, arguments[1], NULL),  // longitude
-                                           JSValueToNumber(context, arguments[2], NULL));  // accuracy
+    controller->setMockGeolocationPosition(latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed);
 
     return JSValueMakeUndefined(context);
 }

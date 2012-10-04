@@ -1367,6 +1367,9 @@ webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure Missing ]
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
+# Missing support in DRT for Geolocation's Coordinate attributes.
+fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

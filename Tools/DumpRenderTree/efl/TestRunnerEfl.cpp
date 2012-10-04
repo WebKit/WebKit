@@ -372,7 +372,7 @@ void TestRunner::setMockDeviceOrientation(bool, double, bool, double, bool, doub
     notImplemented();
 }
 
-void TestRunner::setMockGeolocationPosition(double, double, double)
+void TestRunner::setMockGeolocationPosition(double, double, double, bool, double, bool, double, bool, double, bool, double)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.

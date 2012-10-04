@@ -369,7 +369,7 @@ void InjectedBundle::setGeolocationPermission(bool enabled)
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
-void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGeolocationPosition"));
 
@@ -386,6 +386,38 @@ void InjectedBundle::setMockGeolocationPosition(double latitude, double longitud
     WKRetainPtr<WKStringRef> accuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("accuracy"));
     WKRetainPtr<WKDoubleRef> accuracyWK(AdoptWK, WKDoubleCreate(accuracy));
     WKDictionaryAddItem(messageBody.get(), accuracyKeyWK.get(), accuracyWK.get());
+
+    WKRetainPtr<WKStringRef> providesAltitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesAltitude"));
+    WKRetainPtr<WKBooleanRef> providesAltitudeWK(AdoptWK, WKBooleanCreate(providesAltitude));
+    WKDictionaryAddItem(messageBody.get(), providesAltitudeKeyWK.get(), providesAltitudeWK.get());
+
+    WKRetainPtr<WKStringRef> altitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("altitude"));
+    WKRetainPtr<WKDoubleRef> altitudeWK(AdoptWK, WKDoubleCreate(altitude));
+    WKDictionaryAddItem(messageBody.get(), altitudeKeyWK.get(), altitudeWK.get());
+
+    WKRetainPtr<WKStringRef> providesAltitudeAccuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesAltitudeAccuracy"));
+    WKRetainPtr<WKBooleanRef> providesAltitudeAccuracyWK(AdoptWK, WKBooleanCreate(providesAltitudeAccuracy));
+    WKDictionaryAddItem(messageBody.get(), providesAltitudeAccuracyKeyWK.get(), providesAltitudeAccuracyWK.get());
+
+    WKRetainPtr<WKStringRef> altitudeAccuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("altitudeAccuracy"));
+    WKRetainPtr<WKDoubleRef> altitudeAccuracyWK(AdoptWK, WKDoubleCreate(altitudeAccuracy));
+    WKDictionaryAddItem(messageBody.get(), altitudeAccuracyKeyWK.get(), altitudeAccuracyWK.get());
+
+    WKRetainPtr<WKStringRef> providesHeadingKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesHeading"));
+    WKRetainPtr<WKBooleanRef> providesHeadingWK(AdoptWK, WKBooleanCreate(providesHeading));
+    WKDictionaryAddItem(messageBody.get(), providesHeadingKeyWK.get(), providesHeadingWK.get());
+
+    WKRetainPtr<WKStringRef> headingKeyWK(AdoptWK, WKStringCreateWithUTF8CString("heading"));
+    WKRetainPtr<WKDoubleRef> headingWK(AdoptWK, WKDoubleCreate(heading));
+    WKDictionaryAddItem(messageBody.get(), headingKeyWK.get(), headingWK.get());
+
+    WKRetainPtr<WKStringRef> providesSpeedKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesSpeed"));
+    WKRetainPtr<WKBooleanRef> providesSpeedWK(AdoptWK, WKBooleanCreate(providesSpeed));
+    WKDictionaryAddItem(messageBody.get(), providesSpeedKeyWK.get(), providesSpeedWK.get());
+
+    WKRetainPtr<WKStringRef> speedKeyWK(AdoptWK, WKStringCreateWithUTF8CString("speed"));
+    WKRetainPtr<WKDoubleRef> speedWK(AdoptWK, WKDoubleCreate(speed));
+    WKDictionaryAddItem(messageBody.get(), speedKeyWK.get(), speedWK.get());
 
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }

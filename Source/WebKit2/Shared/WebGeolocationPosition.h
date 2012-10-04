@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,11 +45,21 @@ public:
         double latitude;
         double longitude;
         double accuracy;
+
+        double altitude;
+        double altitudeAccuracy;
+        double heading;
+        double speed;
+
+        bool canProvideAltitude;
+        bool canProvideAltitudeAccuracy;
+        bool canProvideHeading;
+        bool canProvideSpeed;
     };
 
-    static PassRefPtr<WebGeolocationPosition> create(double timestamp, double latitude, double longitude, double accuracy)
+    static PassRefPtr<WebGeolocationPosition> create(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
     {
-        return adoptRef(new WebGeolocationPosition(timestamp, latitude, longitude, accuracy));
+        return adoptRef(new WebGeolocationPosition(timestamp, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed));
     }
 
     virtual ~WebGeolocationPosition();
@@ -59,10 +69,22 @@ public:
     double longitude() const { return m_data.longitude; }
     double accuracy() const { return m_data.accuracy; }
 
+    bool canProvideAltitude() const { return m_data.canProvideAltitude; }
+    double altitude() const { return m_data.altitude; }
+
+    bool canProvideAltitudeAccuracy() const { return m_data.canProvideAltitudeAccuracy; }
+    double altitudeAccuracy() const { return m_data.altitudeAccuracy; }
+
+    bool canProvideHeading() const { return m_data.canProvideHeading; }
+    double heading() const { return m_data.heading; }
+
+    bool canProvideSpeed() const { return m_data.canProvideSpeed; }
+    double speed() const { return m_data.speed; }
+
     const Data& data() const { return m_data; }
 
 private:
-    WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy);
+    WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
 
     virtual Type type() const { return APIType; }
 

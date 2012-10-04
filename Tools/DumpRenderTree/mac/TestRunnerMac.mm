@@ -42,6 +42,7 @@
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <WebCore/GeolocationPosition.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebApplicationCache.h>
@@ -106,6 +107,10 @@
     return 0;
 }
 
+@end
+
+@interface WebGeolocationPosition (Internal)
+- (id)initWithGeolocationPosition:(PassRefPtr<WebCore::GeolocationPosition>)coreGeolocationPosition;
 @end
 
 TestRunner::~TestRunner()
@@ -472,9 +477,16 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
     [orientation release];
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
-    WebGeolocationPosition *position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
+    WebGeolocationPosition *position = nil;
+    if (!providesAltitude && !providesAltitudeAccuracy && !providesHeading && !providesSpeed) {
+        // Test the exposed API.
+        position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
+    } else {
+        RefPtr<WebCore::GeolocationPosition> coreGeolocationPosition = WebCore::GeolocationPosition::create(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+        position = [[WebGeolocationPosition alloc] initWithGeolocationPosition:(coreGeolocationPosition.release())];
+    }
     [[MockGeolocationProvider shared] setPosition:position];
     [position release];
 }

@@ -780,9 +780,40 @@ void TestRunner::setGeolocationPermission(bool enabled)
     InjectedBundle::shared().setGeolocationPermission(enabled);
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef jsAltitude, JSValueRef jsAltitudeAccuracy, JSValueRef jsHeading, JSValueRef jsSpeed)
 {
-    InjectedBundle::shared().setMockGeolocationPosition(latitude, longitude, accuracy);
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    bool providesAltitude = false;
+    double altitude = 0.;
+    if (!JSValueIsUndefined(context, jsAltitude)) {
+        providesAltitude = true;
+        altitude = JSValueToNumber(context, jsAltitude, 0);
+    }
+
+    bool providesAltitudeAccuracy = false;
+    double altitudeAccuracy = 0.;
+    if (!JSValueIsUndefined(context, jsAltitudeAccuracy)) {
+        providesAltitudeAccuracy = true;
+        altitudeAccuracy = JSValueToNumber(context, jsAltitudeAccuracy, 0);
+    }
+
+    bool providesHeading = false;
+    double heading = 0.;
+    if (!JSValueIsUndefined(context, jsHeading)) {
+        providesHeading = true;
+        heading = JSValueToNumber(context, jsHeading, 0);
+    }
+
+    bool providesSpeed = false;
+    double speed = 0.;
+    if (!JSValueIsUndefined(context, jsSpeed)) {
+        providesSpeed = true;
+        speed = JSValueToNumber(context, jsSpeed, 0);
+    }
+
+    InjectedBundle::shared().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
 }
 
 void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)

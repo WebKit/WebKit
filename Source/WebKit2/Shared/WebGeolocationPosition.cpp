@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,20 @@
 
 namespace WebKit {
 
-WebGeolocationPosition::WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy)
+WebGeolocationPosition::WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
     m_data.timestamp = timestamp;
     m_data.latitude = latitude;
     m_data.longitude = longitude;
     m_data.accuracy = accuracy;
+    m_data.canProvideAltitude = providesAltitude;
+    m_data.altitude = altitude;
+    m_data.canProvideAltitudeAccuracy = providesAltitudeAccuracy;
+    m_data.altitudeAccuracy = altitudeAccuracy;
+    m_data.canProvideHeading = providesHeading;
+    m_data.heading = heading;
+    m_data.canProvideSpeed = providesSpeed;
+    m_data.speed = speed;
 }
 
 WebGeolocationPosition::~WebGeolocationPosition()
@@ -45,12 +53,15 @@ WebGeolocationPosition::~WebGeolocationPosition()
 
 void WebGeolocationPosition::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(timestamp, latitude, longitude, accuracy));
+    encoder->encode(CoreIPC::In(timestamp, latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading));
+    encoder->encode(CoreIPC::In(canProvideSpeed, speed));
 }
 
 bool WebGeolocationPosition::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& data)
 {
-    return decoder->decode(CoreIPC::Out(data.timestamp, data.latitude, data.longitude, data.accuracy));
+    if (!decoder->decode(CoreIPC::Out(data.timestamp, data.latitude, data.longitude, data.accuracy, data.canProvideAltitude, data.altitude, data.canProvideAltitudeAccuracy, data.altitudeAccuracy, data.canProvideHeading, data.heading)))
+        return false;
+    return decoder->decode(CoreIPC::Out(data.canProvideSpeed, data.speed));
 }
 
 } // namespace WebKit

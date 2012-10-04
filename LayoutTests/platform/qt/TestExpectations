@@ -544,6 +544,9 @@ http/tests/security/contentSecurityPolicy/1.1
 fast/dom/Proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
+# Missing support in DRT for Geolocation's Coordinate attributes.
+fast/dom/Geolocation/coordinates-interface-attributes.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

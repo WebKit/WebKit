@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,11 @@ WKTypeID WKGeolocationPositionGetTypeID()
 
 WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy)
 {
-    RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy);
+    return WKGeolocationPositionCreate_b(timestamp, latitude, longitude, accuracy, false, 0., false, 0., false, 0., false, 0.);
+}
+
+WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+{
+    RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
     return toAPI(position.release().leakRef());
 }

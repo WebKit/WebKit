@@ -80,7 +80,7 @@ void WebGeolocationManager::unregisterWebPage(WebPage* page)
 void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data& data)
 {
 #if ENABLE(GEOLOCATION)
-    RefPtr<GeolocationPosition> position = GeolocationPosition::create(data.timestamp, data.latitude, data.longitude, data.accuracy);
+    RefPtr<GeolocationPosition> position = GeolocationPosition::create(data.timestamp, data.latitude, data.longitude, data.accuracy, data.canProvideAltitude, data.altitude, data.canProvideAltitudeAccuracy, data.altitudeAccuracy, data.canProvideHeading, data.heading, data.canProvideSpeed, data.speed);
 
     Vector<RefPtr<WebPage> > webPageCopy;
     copyToVector(m_pageSet, webPageCopy);

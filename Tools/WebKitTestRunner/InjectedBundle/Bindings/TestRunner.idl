@@ -180,7 +180,7 @@ module WTR {
 
         // Geolocation
         void setGeolocationPermission(in boolean value);
-        void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy);
+        void setMockGeolocationPosition(in double latitude, in double longitude, in double accuracy, in [Optional=DefaultIsUndefined] object altitude, in [Optional] object altitudeAccuracy, in [Optional] object heading, in [Optional] object speed);
         void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
 
         boolean callShouldCloseOnWebView();

@@ -437,7 +437,7 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
     // See https://bugs.webkit.org/show_bug.cgi?id=30335.
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool, double, bool, double, bool, double, bool, double)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
     if (!view)

@@ -1,3 +1,19 @@
+2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Support all attributes of GeolocationPosition
+        https://bugs.webkit.org/show_bug.cgi?id=98212
+
+        Reviewed by Sam Weinig.
+
+        Add a new test for the exposed attributes. It is disabled everywhere else than
+        Mac because of the missing DRT features.
+
+        * fast/dom/Geolocation/coordinates-interface-attributes-expected.txt: Added.
+        * fast/dom/Geolocation/coordinates-interface-attributes.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-04  Alpha Lam  <hclam@chromium.org>
 
         [skia] Drawing a subrect of bitmap image is misaligned

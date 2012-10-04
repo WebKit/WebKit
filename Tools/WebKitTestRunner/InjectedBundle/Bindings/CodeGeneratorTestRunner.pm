@@ -465,7 +465,11 @@ sub _platformTypeVariableDeclaration
     );
 
     my $nullValue = "0";
-    $nullValue = "$platformType()" if defined $nonPointerTypes{$platformType} && $platformType ne "double";
+    if ($platformType eq "JSValueRef") {
+        $nullValue = "JSValueMakeUndefined(context)";
+    } elsif (defined $nonPointerTypes{$platformType} && $platformType ne "double") {
+        $nullValue = "$platformType()";
+    }
 
     $platformType .= "*" unless defined $nonPointerTypes{$platformType};
 
