@@ -1,3 +1,45 @@
+2012-10-04  Pravin D  <pravind.2k4@gmail.com>
+
+        Layout broken after cloning and re-inserting a table with a misplaced <form>
+        https://bugs.webkit.org/show_bug.cgi?id=86746
+
+        Reviewed by Julien Chaffraix.
+
+        There is a concept of demotion for a <form> contained in a table. A <form> is demoted if its immediate parent
+        is either a <table>, table sections (tbody, etc) or a table row (tr). A renderer for such a <form> is created only
+        if its display is one of the table display types (TABLE, INLINE_TABLE, TABLE_FOOTER_GROUP, etc).
+        However when a <table> containing a demoted <form> is cloned, the <form> does not retain its demotion state and 
+        results in the table getting improperly rendered.
+
+        Test: fast/table/form-with-non-table-display-inside-table-elements.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::copyNonAttributePropertiesFromElement):
+          Extended the virtual function for HTMLFormElement class specific implementation.
+          The function is used to copy any necessary state information(member variables) associated with
+          the <form> element being cloned to the current node.
+          For HTMLFormElement node the member variable can be classified into five groups based on the 
+          information they hold:
+            1) Variables containing information regarding <form> subtree and elements associated with it.
+               These get updated as and when an element is added to the <form> subtree.
+            2) Variables containing <form> submit state information.
+            3) Flag to hold information if reset() has been called.
+            4) Flag(m_wasDemoted) that indicates whether the form is demoted or not, based on which it needs to
+               be handled differently during creation of its renderer.
+               This information is currently being updated only during the HTML tree construction phase.
+            5) Flag(m_wasMalformed) to hold information if the <form> is malformed or not.
+
+          Variables of group (1) will be updated as and when elements are added to the <form> subtree. Whereas,
+          (2) and (3) hold instance specific information, thus copying them is not required. Also (5) is currently not
+          being used(not set by any code).
+
+          On the other hand, (4) is required to be copied during cloning as this information cannot be accessed
+          during the cloning process.
+
+        (WebCore):
+        * html/HTMLFormElement.h:
+          Added copyNonAttributePropertiesFromElement() declaration.
+
 2012-10-04  Dean Jackson  <dino@apple.com>
 
         Attribute and Uniform variable names need translation in shader

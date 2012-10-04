@@ -133,6 +133,8 @@ private:
 
     virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
 
+    virtual void copyNonAttributePropertiesFromElement(const Element&) OVERRIDE;
+
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
     unsigned formElementIndexWithFormAttribute(Element*, unsigned rangeStart, unsigned rangeEnd);
