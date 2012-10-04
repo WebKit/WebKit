@@ -134,6 +134,29 @@ EAPI Eina_Bool ewk_settings_developer_extras_enabled_set(Ewk_Settings *settings,
  */
 EAPI Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Allow / Disallow file access from file:// URLs.
+ *
+ * By default, file access from file:// URLs is not allowed.
+ *
+ * @param settings settings object to set file access permission
+ *
+ * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Queries if  file access from file:// URLs is allowed.
+ *
+ * By default, file access from file:// URLs is not allowed.
+ *
+ * @param settings settings object to query file access permission
+ *
+ * @return @c EINA_TRUE if file access from file:// URLs is allowed
+           @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

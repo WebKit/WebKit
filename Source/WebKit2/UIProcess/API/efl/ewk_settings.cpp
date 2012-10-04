@@ -28,6 +28,7 @@
 
 #include "ewk_settings_private.h"
 #include <WebKit2/WKPreferences.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 
 using namespace WebKit;
 
@@ -98,4 +99,20 @@ Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings* settings
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
     return WKPreferencesGetDeveloperExtrasEnabled(settings->preferences.get());
+}
+
+Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    WKPreferencesSetFileAccessFromFileURLsAllowed(settings->preferences.get(), enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return WKPreferencesGetFileAccessFromFileURLsAllowed(settings->preferences.get());
 }

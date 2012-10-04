@@ -232,6 +232,9 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
     ewk_view_theme_set(app->browser, THEME_DIR"/default.edj");
     evas_object_name_set(app->browser, "browser");
 
+    Ewk_Settings *settings = ewk_view_settings_get(app->browser);
+    ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
+
     evas_object_smart_callback_add(app->browser, "load,error", on_error, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
