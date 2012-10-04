@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DateInputType.h"
 
+#if ENABLE(INPUT_TYPE_DATE)
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "HTMLInputElement.h"
@@ -41,8 +42,6 @@
 #include "Localizer.h"
 #include "PickerIndicatorElement.h"
 #include <wtf/PassOwnPtr.h>
-
-#if ENABLE(INPUT_TYPE_DATE)
 
 namespace WebCore {
 

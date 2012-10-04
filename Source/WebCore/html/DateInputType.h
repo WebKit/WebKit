@@ -82,5 +82,6 @@ private:
 };
 
 } // namespace WebCore
+
 #endif
 #endif // DateInputType_h

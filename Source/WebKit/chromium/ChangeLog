@@ -1,3 +1,13 @@
+2012-10-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Enable the multiple fields UI for input[type=date]
+        https://bugs.webkit.org/show_bug.cgi?id=98351
+
+        Reviewed by Hajime Morita.
+
+        * features.gypi:
+        Disable ENABLE_INPUT_TYPE_DATE_LEGACY_UI.
+
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
         Add code for input[type=date] with the multiple fields UI
