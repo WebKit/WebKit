@@ -151,7 +151,7 @@ String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsSta
 
 void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
-    if (date.second() || layoutParameters.shouldHaveSecondField()) {
+    if (shouldHaveSecondField(date)) {
         layoutParameters.dateTimeFormat = layoutParameters.localizer.dateTimeFormatWithSecond();
         layoutParameters.fallbackDateTimeFormat = "dd/MM/yyyy HH:mm:ss";
     } else {

@@ -48,7 +48,7 @@ public:
     static LocaleWin* currentLocale();
     ~LocaleWin();
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
-    virtual String formatDateTime(const DateComponents&) OVERRIDE;
+    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual String dateFormatText() OVERRIDE;
     virtual const Vector<String>& monthLabels() OVERRIDE;

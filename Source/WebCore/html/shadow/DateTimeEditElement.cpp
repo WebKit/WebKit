@@ -189,15 +189,6 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
 
 // ----------------------------
 
-
-bool DateTimeEditElement::LayoutParameters::shouldHaveSecondField() const
-{
-    return !stepRange.minimum().remainder(static_cast<int>(msPerMinute)).isZero()
-        || !stepRange.step().remainder(static_cast<int>(msPerMinute)).isZero();
-}
-
-// ----------------------------
-
 DateTimeEditElement::EditControlOwner::~EditControlOwner()
 {
 }

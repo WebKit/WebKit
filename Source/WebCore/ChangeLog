@@ -1,3 +1,64 @@
+2012-10-03  Keishi Hattori  <keishi@webkit.org>
+
+        Implement localizeValue for TimeInputType
+        https://bugs.webkit.org/show_bug.cgi?id=98237
+
+        Reviewed by Kent Tamura.
+
+        We want to localize time values for the suggestion picker.
+        DateTimeStringBuilder parses a format and creates a formatted string.
+
+        Added chromium unit test LocaleMacTest.formatTime
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::shouldHaveSecondField): Moved from LayoutParameters because we want to use it inside localizeValue.
+        (WebCore):
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::setupLayoutParameters):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::localizeValue):
+        (WebCore):
+        (WebCore::TimeInputType::setupLayoutParameters):
+        * html/TimeInputType.h:
+        (TimeInputType):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore):
+        * html/shadow/DateTimeEditElement.h:
+        (WebCore::DateTimeEditElement::LayoutParameters::LayoutParameters):
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::formatDateTime): Calls Localizer::formatDateTime if the date component is not a date.
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+        * platform/text/LocaleWin.cpp:
+        (WebCore::LocaleWin::formatDateTime): Calls Localizer::formatDateTime if the date component is not a date.
+        * platform/text/LocaleWin.h:
+        (LocaleWin):
+        * platform/text/LocaleNone.cpp:
+        (LocaleNone):
+        (WebCore::LocaleNone::formatDateTime):
+        * platform/text/Localizer.cpp:
+        (DateTimeStringBuilder):
+        (WebCore):
+        (WebCore::DateTimeStringBuilder::DateTimeStringBuilder): Takes a
+        Localizer pointer. This is used inside the Localizer so the Localizer
+        will out live the DateTimeStringBuilder.
+        (WebCore::DateTimeStringBuilder::build): Builds a localized string for the given format.
+        (WebCore::DateTimeStringBuilder::zeroPadString):
+        (WebCore::DateTimeStringBuilder::appendNumber): Appends a number with left zero padding to match width.
+        (WebCore::DateTimeStringBuilder::visitField):
+        (WebCore::DateTimeStringBuilder::visitLiteral):
+        (WebCore::DateTimeStringBuilder::toString): Returns the localized string.
+        (WebCore::Localizer::formatDateTime):
+        * platform/text/Localizer.h:
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac):
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::formatDateTime): Calls Localizer::formatDateTime if the date component is not a date.
+
 2012-10-03  Douglas Stockwell  <dstockwell@chromium.org>
 
         Chromium needs support for border radius clipping

@@ -122,6 +122,18 @@ bool TimeInputType::isTimeField() const
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 
+String TimeInputType::localizeValue(const String& proposedValue) const
+{
+    DateComponents date;
+    if (!parseToDateComponents(proposedValue, &date))
+        return proposedValue;
+
+    Localizer::FormatType formatType = shouldHaveSecondField(date) ? Localizer::FormatTypeMedium : Localizer::FormatTypeShort;
+
+    String localized = element()->localizer().formatDateTime(date, formatType);
+    return localized.isEmpty() ? proposedValue : localized;
+}
+
 String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
 {
     if (!dateTimeFieldsState.hasHour() || !dateTimeFieldsState.hasMinute() || !dateTimeFieldsState.hasAMPM())
@@ -142,7 +154,7 @@ String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateT
 
 void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
-    if (date.second() || layoutParameters.shouldHaveSecondField()) {
+    if (shouldHaveSecondField(date)) {
         layoutParameters.dateTimeFormat = layoutParameters.localizer.timeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm:ss";
     } else {

@@ -57,6 +57,13 @@ protected:
         return date;
     }
 
+    DateComponents timeComponents(int hour, int minute, int second, int millisecond)
+    {
+        DateComponents date;
+        date.setMillisecondsSinceMidnight(hour * msPerHour + minute * msPerMinute + second * msPerSecond + millisecond);
+        return date;
+    }
+
     double msForDate(int year, int month, int day)
     {
         return dateToDaysFrom1970(year, month, day) * msPerDay;
@@ -66,6 +73,12 @@ protected:
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
         return locale->formatDateTime(dateComponents(year, month, day));
+    }
+
+    String formatTime(const String& localeString, int hour, int minute, int second, int millisecond, bool useShortFormat)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->formatDateTime(timeComponents(hour, minute, second, millisecond), (useShortFormat ? Localizer::FormatTypeShort : Localizer::FormatTypeMedium));
     }
 
     double parseDate(const String& localeString, const String& dateString)
@@ -132,6 +145,27 @@ TEST_F(LocaleMacTest, formatDate)
     EXPECT_STREQ("4/27/05", formatDate("en_US", 2005, April, 27).utf8().data());
     EXPECT_STREQ("27/04/05", formatDate("fr_FR", 2005, April, 27).utf8().data());
     EXPECT_STREQ("05/04/27", formatDate("ja_JP", 2005, April, 27).utf8().data());
+}
+
+TEST_F(LocaleMacTest, formatTime)
+{
+    EXPECT_STREQ("1:23 PM", formatTime("en_US", 13, 23, 00, 000, true).utf8().data());
+    EXPECT_STREQ("13:23", formatTime("fr_FR", 13, 23, 00, 000, true).utf8().data());
+    EXPECT_STREQ("13:23", formatTime("ja_JP", 13, 23, 00, 000, true).utf8().data());
+    EXPECT_STREQ("\xD9\xA1:\xD9\xA2\xD9\xA3 \xD9\x85", formatTime("ar", 13, 23, 00, 000, true).utf8().data());
+    EXPECT_STREQ("\xDB\xB1\xDB\xB3:\xDB\xB2\xDB\xB3", formatTime("fa", 13, 23, 00, 000, true).utf8().data());
+
+    EXPECT_STREQ("12:00 AM", formatTime("en_US", 00, 00, 00, 000, true).utf8().data());
+    EXPECT_STREQ("00:00", formatTime("fr_FR", 00, 00, 00, 000, true).utf8().data());
+    EXPECT_STREQ("0:00", formatTime("ja_JP", 00, 00, 00, 000, true).utf8().data());
+    EXPECT_STREQ("\xD9\xA1\xD9\xA2:\xD9\xA0\xD9\xA0 \xD8\xB5", formatTime("ar", 00, 00, 00, 000, true).utf8().data());
+    EXPECT_STREQ("\xDB\xB0:\xDB\xB0\xDB\xB0", formatTime("fa", 00, 00, 00, 000, true).utf8().data());
+
+    EXPECT_STREQ("7:07:07.007 AM", formatTime("en_US", 07, 07, 07, 007, false).utf8().data());
+    EXPECT_STREQ("07:07:07,007", formatTime("fr_FR", 07, 07, 07, 007, false).utf8().data());
+    EXPECT_STREQ("7:07:07.007", formatTime("ja_JP", 07, 07, 07, 007, false).utf8().data());
+    EXPECT_STREQ("\xD9\xA7:\xD9\xA0\xD9\xA7:\xD9\xA0\xD9\xA7\xD9\xAB\xD9\xA0\xD9\xA0\xD9\xA7 \xD8\xB5", formatTime("ar", 07, 07, 07, 007, false).utf8().data());
+    EXPECT_STREQ("\xDB\xB7:\xDB\xB0\xDB\xB7:\xDB\xB0\xDB\xB7\xD9\xAB\xDB\xB0\xDB\xB0\xDB\xB7", formatTime("fa", 07, 07, 07, 007, false).utf8().data());
 }
 
 TEST_F(LocaleMacTest, parseDate)

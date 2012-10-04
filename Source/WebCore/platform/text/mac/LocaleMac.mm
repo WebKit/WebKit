@@ -128,10 +128,10 @@ double LocaleMac::parseDateTime(const String& input, DateComponents::Type type)
     return [date timeIntervalSince1970] * msPerSecond;
 }
 
-String LocaleMac::formatDateTime(const DateComponents& dateComponents)
+String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatType formatType)
 {
     if (dateComponents.type() != DateComponents::Date)
-        return String();
+        return Localizer::formatDateTime(dateComponents, formatType);
     RetainPtr<NSDateFormatter> formatter(AdoptNS, createShortDateFormatter());
     NSTimeInterval interval = dateComponents.millisecondsSinceEpoch() / msPerSecond;
     return String([formatter.get() stringFromDate:[NSDate dateWithTimeIntervalSince1970:interval]]);

@@ -36,7 +36,7 @@ public:
 private:
     virtual void initializeLocalizerData() OVERRIDE FINAL;
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
-    virtual String formatDateTime(const DateComponents&) OVERRIDE;
+    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual String dateFormatText() OVERRIDE;
 #endif
@@ -63,7 +63,7 @@ double LocaleNone::parseDateTime(const String&, DateComponents::Type)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
-String LocaleNone::formatDateTime(const DateComponents&)
+String LocaleNone::formatDateTime(const DateComponents&, FormatType)
 {
     return String();
 }

@@ -44,6 +44,7 @@
 #include "Localizer.h"
 #include "PickerIndicatorElement.h"
 #include "ShadowRoot.h"
+#include <wtf/DateMath.h>
 
 namespace WebCore {
 
@@ -302,6 +303,14 @@ void BaseMultipleFieldsDateAndTimeInputType::showPickerIndicator()
     m_pickerIndicatorElement->removeInlineStyleProperty(CSSPropertyDisplay);
 }
 #endif
+
+bool BaseMultipleFieldsDateAndTimeInputType::shouldHaveSecondField(const DateComponents& date) const
+{
+    StepRange stepRange = createStepRange(AnyIsDefaultStep);
+    return date.second()
+        || !stepRange.minimum().remainder(static_cast<int>(msPerMinute)).isZero()
+        || !stepRange.step().remainder(static_cast<int>(msPerMinute)).isZero();
+}
 
 } // namespace WebCore
 

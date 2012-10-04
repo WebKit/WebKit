@@ -45,6 +45,7 @@ protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
+    bool shouldHaveSecondField(const DateComponents&) const;
 
 private:
     // DateTimeEditElement::EditControlOwner functions

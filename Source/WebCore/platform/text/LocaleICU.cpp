@@ -182,10 +182,10 @@ double LocaleICU::parseDateTime(const String& input, DateComponents::Type type)
     return date;
 }
 
-String LocaleICU::formatDateTime(const DateComponents& dateComponents)
+String LocaleICU::formatDateTime(const DateComponents& dateComponents, FormatType formatType)
 {
     if (dateComponents.type() != DateComponents::Date)
-        return String();
+        return Localizer::formatDateTime(dateComponents, formatType);
     if (!initializeShortDateFormat())
         return String();
     double input = dateComponents.millisecondsSinceEpoch();

@@ -55,8 +55,9 @@ private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isTimeField() const OVERRIDE;
-
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    virtual String localizeValue(const String&) const OVERRIDE;
+
     // BaseMultipleFieldsDateAndTimeInputType functions
     virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE FINAL;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE FINAL;

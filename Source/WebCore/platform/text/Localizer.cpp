@@ -31,9 +31,121 @@
 #include "config.h"
 #include "Localizer.h"
 
+#include "DateTimeFormat.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+
+class DateTimeStringBuilder : private DateTimeFormat::TokenHandler {
+    WTF_MAKE_NONCOPYABLE(DateTimeStringBuilder);
+
+public:
+    // The argument objects must be alive until this object dies.
+    DateTimeStringBuilder(Localizer&, const DateComponents&);
+
+    bool build(const String&);
+    String toString();
+
+private:
+    // DateTimeFormat::TokenHandler functions.
+    virtual void visitField(DateTimeFormat::FieldType, int) OVERRIDE FINAL;
+    virtual void visitLiteral(const String&) OVERRIDE FINAL;
+
+    String zeroPadString(const String&, size_t width);
+    void appendNumber(int number, size_t width);
+
+    StringBuilder m_builder;
+    Localizer& m_localizer;
+    const DateComponents& m_date;
+};
+
+DateTimeStringBuilder::DateTimeStringBuilder(Localizer& localizer, const DateComponents& date)
+    : m_localizer(localizer)
+    , m_date(date)
+{
+}
+
+bool DateTimeStringBuilder::build(const String& formatString)
+{
+    m_builder.reserveCapacity(formatString.length());
+    return DateTimeFormat::parse(formatString, *this);
+}
+
+String DateTimeStringBuilder::zeroPadString(const String& string, size_t width)
+{
+    if (string.length() >= width)
+        return string;
+    StringBuilder zeroPaddedStringBuilder;
+    zeroPaddedStringBuilder.reserveCapacity(width);
+    for (size_t i = string.length(); i < width; ++i)
+        zeroPaddedStringBuilder.append("0");
+    zeroPaddedStringBuilder.append(string);
+    return zeroPaddedStringBuilder.toString();
+}
+
+void DateTimeStringBuilder::appendNumber(int number, size_t width)
+{
+    String zeroPaddedNumberString = zeroPadString(String::number(number), width);
+    m_builder.append(m_localizer.convertToLocalizedNumber(zeroPaddedNumberString));
+}
+
+void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int numberOfPatternCharacters)
+{
+    switch (fieldType) {
+    case DateTimeFormat::FieldTypePeriod:
+        m_builder.append(m_localizer.timeAMPMLabels()[(m_date.hour() >= 12 ? 1 : 0)]);
+        return;
+    case DateTimeFormat::FieldTypeHour12: {
+        int hour12 = m_date.hour() % 12;
+        if (!hour12)
+            hour12 = 12;
+        appendNumber(hour12, numberOfPatternCharacters);
+        return;
+    }
+    case DateTimeFormat::FieldTypeHour23:
+        appendNumber(m_date.hour(), numberOfPatternCharacters);
+        return;
+    case DateTimeFormat::FieldTypeHour11:
+        appendNumber(m_date.hour() % 12, numberOfPatternCharacters);
+        return;
+    case DateTimeFormat::FieldTypeHour24: {
+        int hour24 = m_date.hour();
+        if (!hour24)
+            hour24 = 24;
+        appendNumber(hour24, numberOfPatternCharacters);
+        return;
+    }
+    case DateTimeFormat::FieldTypeMinute:
+        appendNumber(m_date.minute(), numberOfPatternCharacters);
+        return;
+    case DateTimeFormat::FieldTypeSecond:
+        if (!m_date.millisecond())
+            appendNumber(m_date.second(), numberOfPatternCharacters);
+        else {
+            double second = m_date.second() + m_date.millisecond() / 1000.0;
+            String zeroPaddedSecondString = zeroPadString(String::format("%.03f", second), numberOfPatternCharacters + 4);
+            m_builder.append(m_localizer.convertToLocalizedNumber(zeroPaddedSecondString));
+        }
+        return;
+    default:
+        return;
+    }
+}
+
+void DateTimeStringBuilder::visitLiteral(const String& text)
+{
+    ASSERT(text.length());
+    m_builder.append(text);
+}
+
+String DateTimeStringBuilder::toString()
+{
+    return m_builder.toString();
+}
+
+#endif
 
 Localizer::~Localizer()
 {
@@ -237,5 +349,20 @@ const Vector<String>& Localizer::timeAMPMLabels()
     return m_timeAMPMLabels;
 }
 #endif
+
+String Localizer::formatDateTime(const DateComponents& date, FormatType formatType)
+{
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    if (date.type() != DateComponents::Time)
+        return String();
+    DateTimeStringBuilder builder(*this, date);
+    builder.build(formatType == FormatTypeShort ? shortTimeFormat() : timeFormat());
+    return builder.toString();
+#else
+    UNUSED_PARAM(date);
+    UNUSED_PARAM(formatType);
+    return String();
+#endif
+}
 
 }

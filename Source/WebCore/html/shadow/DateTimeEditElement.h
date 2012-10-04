@@ -75,8 +75,6 @@ public:
             , stepRange(stepRange)
         {
         }
-
-        bool shouldHaveSecondField() const;
     };
 
     static PassRefPtr<DateTimeEditElement> create(Document*, EditControlOwner&);

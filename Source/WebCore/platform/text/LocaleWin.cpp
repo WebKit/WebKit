@@ -487,10 +487,10 @@ void LocaleWin::appendFourDigitsNumber(int value, StringBuilder& buffer)
     buffer.append(convertToLocalizedNumber(numberBuffer.toString()));
 }
 
-String LocaleWin::formatDateTime(const DateComponents& dateComponents)
+String LocaleWin::formatDateTime(const DateComponents& dateComponents, FormatType formatType)
 {
     if (dateComponents.type() != DateComponents::Date)
-        return String();
+        return Localizer::formatDateTime(dateComponents, formatType);
     ensureShortDateTokens();
     return formatDate(m_shortDateTokens, m_baseYear, dateComponents.fullYear(), dateComponents.month(), dateComponents.monthDay());
 }
