@@ -235,11 +235,12 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
     String str = string->string();
-    if (str.is8Bit()) {
-        LiteralParser<LChar> parser(exec, str.characters8(), str.length(), StrictJSON);
+    unsigned length = str.length();
+    if (length && str.is8Bit()) {
+        LiteralParser<LChar> parser(exec, str.characters8(), length, StrictJSON);
         return toRef(exec, parser.tryLiteralParse());
     }
-    LiteralParser<UChar> parser(exec, str.characters16(), str.length(), StrictJSON);
+    LiteralParser<UChar> parser(exec, str.characters(), length, StrictJSON);
     return toRef(exec, parser.tryLiteralParse());
 }
 
