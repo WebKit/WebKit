@@ -28,11 +28,9 @@ using namespace WebKit;
 
 namespace WTR {
 
-static bool useX11Window = false;
-
 static Ecore_Evas* initEcoreEvas()
 {
-    Ecore_Evas* ecoreEvas = useX11Window ? ecore_evas_new(0, 0, 0, 800, 600, 0) : ecore_evas_buffer_new(800, 600);
+    Ecore_Evas* ecoreEvas = ecore_evas_new(0, 0, 0, 800, 600, 0);
     if (!ecoreEvas)
         return 0;
 

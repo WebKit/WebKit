@@ -49,6 +49,10 @@
 #include <sys/stat.h>
 #include <wtf/Threading.h>
 
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
+
 static int _ewkInitCount = 0;
 
 /**
@@ -93,6 +97,13 @@ int ewk_init(void)
         goto error_edje;
     }
 
+#ifdef HAVE_ECORE_X
+    if (!ecore_x_init(0)) {
+        CRITICAL("could not init ecore_x.");
+        goto error_ecore_x;
+    }
+#endif
+
     if (!_ewk_init_body()) {
         CRITICAL("could not init body");
         goto error_edje;
@@ -100,6 +111,10 @@ int ewk_init(void)
 
     return ++_ewkInitCount;
 
+#ifdef HAVE_ECORE_X
+error_ecore_x:
+    edje_shutdown();
+#endif
 error_edje:
     ecore_evas_shutdown();
 error_ecore_evas:
@@ -121,6 +136,10 @@ int ewk_shutdown(void)
     if (_ewkInitCount)
         return _ewkInitCount;
 
+#ifdef HAVE_ECORE_X
+    ecore_x_shutdown();
+#endif
+    edje_shutdown();
     ecore_evas_shutdown();
     ecore_shutdown();
     evas_shutdown();
