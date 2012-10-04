@@ -1,3 +1,26 @@
+2012-10-04  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Don't allow to disable compositing in forced compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=98048
+
+        Reviewed by Jocelyn Turcotte.
+
+        Make forced compositing mode imply accelerated compositing. This will
+        avoid unexpected situations for platforms that don't want to support
+        the non-accelerated rendering path.
+
+        Covered by existing tests.
+
+        * WebCore.exp.in: Export Settings::setAcceleratedCompositingEnabled
+        because it has been deinlined.
+        * page/Settings.cpp:
+        (WebCore::Settings::setAcceleratedCompositingEnabled):
+        (WebCore::Settings::setForceCompositingMode):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::forceCompositingMode): Make it const as a side fix.
+
 2012-10-04  Harald Alvestrand  <hta@google.com>
 
         Change RTCPeerConnection GetStats to use Date timestamp format

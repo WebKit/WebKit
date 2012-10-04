@@ -1,3 +1,15 @@
+2012-10-04  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Don't allow compositing to be disabled in forced compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=98048
+
+        Reviewed by Jocelyn Turcotte.
+
+        Export Settings::setAcceleratedCompositingEnabled because it has been deinlined.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-10-04  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix the tst_QQuickWebView::scrollRequest auto test
