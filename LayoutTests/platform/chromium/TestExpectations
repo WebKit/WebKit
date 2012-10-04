@@ -3721,7 +3721,7 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/layer-du
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/reflections/reflection-in-composited.html [ ImageOnlyFailure ]
 
-webkit.org/b/98306 [ Win Mac Android ] css3/flexbox/flexbox-baseline.html [ Failure ]
+webkit.org/b/98306 [ Win Mac Android ] css3/flexbox/flexbox-baseline.html [ Failure Missing ]
 
 # Alpha blending ends up with slightly different green in software compositor.
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/repaint/opacity-between-absolute.html [ ImageOnlyFailure ]

@@ -1,3 +1,13 @@
+2012-10-04  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fixing expected results for a test that needs a new baseline.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130396.

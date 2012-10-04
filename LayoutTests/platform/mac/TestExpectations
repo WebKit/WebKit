@@ -1308,7 +1308,7 @@ webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.htm
 
 webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
 
-webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure ]
+webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure Missing ]
 
 # Paints black behind the test image instead of the expected green.
 webkit.org/b/95707 http/tests/images/png-partial-load-no-alpha.html [ ImageOnlyFailure ]
