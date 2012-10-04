@@ -1758,10 +1758,13 @@ AtomicString Element::computeInheritedLanguage() const
     // The language property is inherited, so we iterate over the parents to find the first language.
     do {
         if (n->isElementNode()) {
-            // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
-            value = static_cast<const Element*>(n)->fastGetAttribute(XMLNames::langAttr);
-            if (value.isNull())
-                value = static_cast<const Element*>(n)->fastGetAttribute(HTMLNames::langAttr);
+            if (const ElementAttributeData* attributeData = static_cast<const Element*>(n)->attributeData()) {
+                // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
+                if (const Attribute* attribute = attributeData->getAttributeItem(XMLNames::langAttr))
+                    value = attribute->value();
+                else if (const Attribute* attribute = attributeData->getAttributeItem(HTMLNames::langAttr))
+                    value = attribute->value();
+            }
         } else if (n->isDocumentNode()) {
             // checking the MIME content-language
             value = static_cast<const Document*>(n)->contentLanguage();

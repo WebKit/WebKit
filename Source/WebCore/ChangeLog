@@ -1,3 +1,17 @@
+2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Simplify attribute access in Element::computeInheritedLanguage
+        https://bugs.webkit.org/show_bug.cgi?id=98327
+
+        Reviewed by Andreas Kling.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computeInheritedLanguage):
+        By using Element::fastGetAttribute(), we check for the existence of attributeData twice
+        and do a bunch of useless operation on AtomicString.
+
+        By using ElementAttributeData directly, we can cut it to the two important branch.
+
 2012-10-03  Kangil Han  <kangil.han@samsung.com>
 
         Fix unused parameter compile warnings.
