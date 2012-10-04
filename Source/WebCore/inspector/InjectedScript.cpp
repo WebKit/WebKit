@@ -45,6 +45,7 @@
 using WebCore::TypeBuilder::Array;
 using WebCore::TypeBuilder::Debugger::CallFrame;
 using WebCore::TypeBuilder::Runtime::PropertyDescriptor;
+using WebCore::TypeBuilder::Runtime::InternalPropertyDescriptor;
 using WebCore::TypeBuilder::Debugger::FunctionDetails;
 using WebCore::TypeBuilder::Runtime::RemoteObject;
 
@@ -139,6 +140,22 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
         return;
     }
     *properties = Array<PropertyDescriptor>::runtimeCast(result);
+}
+
+void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<InternalPropertyDescriptor> >* properties)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "getInternalProperties");
+    function.appendArgument(objectId);
+
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+    if (!result || result->type() != InspectorValue::TypeArray) {
+        *errorString = "Internal error";
+        return;
+    }
+    RefPtr<Array<InternalPropertyDescriptor> > array = Array<InternalPropertyDescriptor>::runtimeCast(result);
+    if (array->length() > 0)
+        *properties = array;
 }
 
 Node* InjectedScript::nodeForObjectId(const String& objectId)

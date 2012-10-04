@@ -189,6 +189,12 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     return result;
 }
 
+JSValue JSInjectedScriptHost::getInternalProperties(ExecState*)
+{
+    // FIXME: implement this. https://bugs.webkit.org/show_bug.cgi?id=94533
+    return jsUndefined();
+}
+
 static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, const EventListenerInfo& listenerInfo)
 {
     JSArray* result = constructEmptyArray(exec);

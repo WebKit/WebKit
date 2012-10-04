@@ -1,3 +1,41 @@
+2012-10-04  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: expose object internal properties such as PrimitiveValue or BoundThis
+        https://bugs.webkit.org/show_bug.cgi?id=94397
+
+        Reviewed by Yury Semikhatsky.
+
+        Internal property access is built from Injected Script to V8 debug API. JSC binding
+        has a stub imlpementation. Protocol is updated to explicitly reflect internal properties.
+
+        Test: inspector-protocol/runtime-getProperties.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::getInternalProperties):
+        (WebCore):
+        * bindings/v8/DebuggerScript.js:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::getInternalProperties):
+        (WebCore):
+        * bindings/v8/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::getInternalPropertiesCallback):
+        (WebCore):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getInternalProperties):
+        (WebCore):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        (InspectorRuntimeAgent):
+
 2012-10-04  Sami Kyostila  <skyostil@chromium.org>
 
         Fixed position visibility check does not consider descendants

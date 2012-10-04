@@ -234,7 +234,32 @@ InjectedScript.prototype = {
                 descriptor.configurable = false;
             if (!("enumerable" in descriptor))
                 descriptor.enumerable = false;
-            
+        }
+        return descriptors;
+    },
+
+    /**
+     * @param {string} objectId
+     * @return {Array.<Object>|boolean}
+     */
+    getInternalProperties: function(objectId, ownProperties)
+    {
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
+        var objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
+        if (!this._isDefined(object))
+            return false;
+        var descriptors = [];
+        var internalProperties = InjectedScriptHost.getInternalProperties(object);
+        if (internalProperties) {
+            for (var i = 0; i < internalProperties.length; i++) {
+                var property = internalProperties[i];
+                var descriptor = {
+                    name: property.name,
+                    value: this._wrapObject(property.value, objectGroupName)
+                };
+                descriptors.push(descriptor);
+            } 
         }
         return descriptors;
     },

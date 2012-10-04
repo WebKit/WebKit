@@ -43,6 +43,7 @@ module core {
         [Custom] boolean isHTMLAllCollection(in DOMObject object);
         [Custom] DOMString type(in DOMObject object);
         [Custom] DOMObject functionDetails(in DOMObject object);
+        [Custom] Array getInternalProperties(in DOMObject object);
         [Custom] Array getEventListeners(in Node node);
 
         [Custom] DOMString databaseId(in DOMObject database);

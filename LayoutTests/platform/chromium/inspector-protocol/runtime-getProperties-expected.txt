@@ -1,0 +1,22 @@
+Properties of Object(5)
+  __proto__ object undefined
+  foo string cat
+Internal properties
+  [[PrimitiveValue]] number 5
+Properties of array
+  0 string red
+  1 string green
+  2 string blue
+  __proto__ object undefined
+  length number 3
+Properties of Bound function
+  __proto__ function undefined
+  arguments
+  caller
+  length number 0
+  name string 
+Internal properties
+  [[BoundArgs]] object undefined
+  [[BoundThis]] object undefined
+  [[TargetFunction]] function undefined
+

@@ -97,6 +97,7 @@ public:
     bool isPaused();
 
     v8::Local<v8::Value> functionScopes(v8::Handle<v8::Function>);
+    v8::Local<v8::Value> getInternalProperties(v8::Handle<v8::Object>&);
 
     virtual void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
     virtual void clearCompiledScripts();

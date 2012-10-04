@@ -1,3 +1,16 @@
+2012-10-04  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: expose object internal properties such as PrimitiveValue or BoundThis
+        https://bugs.webkit.org/show_bug.cgi?id=94397
+
+        Reviewed by Yury Semikhatsky.
+
+        A test is added to support new feature. Old test is updated because line number changed.
+
+        * inspector-protocol/runtime-getProperties-expected.txt: Added.
+        * inspector-protocol/runtime-getProperties.html: Added.
+        * inspector/console/command-line-api-expected.txt:
+
 2012-10-04  Sami Kyostila  <skyostil@chromium.org>
 
         Fixed position visibility check does not consider descendants

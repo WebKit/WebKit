@@ -192,6 +192,21 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Ar
     return result;
 }
 
+v8::Handle<v8::Value> V8InjectedScriptHost::getInternalPropertiesCallback(const v8::Arguments& args)
+{
+    INC_STATS("InjectedScriptHost.getInternalProperties()");
+    if (args.Length() < 1)
+        return v8::Undefined();
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(args[0]);
+
+    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
+    ScriptDebugServer& debugServer = host->scriptDebugServer();
+    return debugServer.getInternalProperties(object);
+}
+
 static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const EventListenerInfo& listenerInfo)
 {
     v8::Local<v8::Array> result = v8::Array::New();

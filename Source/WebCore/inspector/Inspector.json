@@ -498,6 +498,15 @@
                 ]
             },
             {
+                "id": "InternalPropertyDescriptor",
+                "type": "object",
+                "description": "Object internal property descriptor. This property isn't normally visible in JavaScript code.",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Conventional property name." },
+                    { "name": "value", "$ref": "RemoteObject", "optional": true, "description": "The value associated with the property." }
+                ]
+            },
+            {
                 "id": "CallArgument",
                 "type": "object",
                 "description": "Represents function call argument. Either remote object id <code>objectId</code> or primitive <code>value</code> or neither of (for undefined) them should be specified.",
@@ -565,7 +574,8 @@
                     { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the element itself, not to its prototype chain." }
                 ],
                 "returns": [
-                    { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." }
+                    { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
+                    { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
                 ],
                 "description": "Returns properties of a given object. Object group of the result is inherited from the target object."
             },
