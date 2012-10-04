@@ -178,7 +178,7 @@ public:
     PropertyOffset getDeletedOffset();
     void addDeletedOffset(PropertyOffset);
     
-    PropertyOffset nextOffset(JSType);
+    PropertyOffset nextOffset(PropertyOffset inlineCapacity);
 
     // Copy this PropertyTable, ensuring the copy has at least the capacity provided.
     PassOwnPtr<PropertyTable> copy(JSGlobalData&, JSCell* owner, unsigned newCapacity);
@@ -486,15 +486,12 @@ inline void PropertyTable::addDeletedOffset(PropertyOffset offset)
     m_deletedOffsets->append(offset);
 }
 
-inline PropertyOffset PropertyTable::nextOffset(JSType type)
+inline PropertyOffset PropertyTable::nextOffset(PropertyOffset inlineCapacity)
 {
     if (hasDeletedOffset())
         return getDeletedOffset();
-    
-    if (type == FinalObjectType)
-        return size();
-    
-    return size() + firstOutOfLineOffset;
+
+    return propertyOffsetFor(size(), inlineCapacity);
 }
 
 inline PassOwnPtr<PropertyTable> PropertyTable::copy(JSGlobalData& globalData, JSCell* owner, unsigned newCapacity)

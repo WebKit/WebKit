@@ -26,7 +26,6 @@
 #ifndef PropertyOffset_h
 #define PropertyOffset_h
 
-#include "JSType.h"
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -42,14 +41,13 @@ namespace JSC {
 typedef int PropertyOffset;
 
 static const PropertyOffset invalidOffset = -1;
-static const PropertyOffset inlineStorageCapacity = INLINE_STORAGE_CAPACITY;
-static const PropertyOffset firstOutOfLineOffset = inlineStorageCapacity;
+static const PropertyOffset firstOutOfLineOffset = 100;
 
 // Declare all of the functions because they tend to do forward calls.
 inline void checkOffset(PropertyOffset);
-inline void checkOffset(PropertyOffset, JSType);
+inline void checkOffset(PropertyOffset, PropertyOffset inlineCapacity);
 inline void validateOffset(PropertyOffset);
-inline void validateOffset(PropertyOffset, JSType);
+inline void validateOffset(PropertyOffset, PropertyOffset inlineCapacity);
 inline bool isValidOffset(PropertyOffset);
 inline bool isInlineOffset(PropertyOffset);
 inline bool isOutOfLineOffset(PropertyOffset);
@@ -57,9 +55,7 @@ inline size_t offsetInInlineStorage(PropertyOffset);
 inline size_t offsetInOutOfLineStorage(PropertyOffset);
 inline size_t offsetInRespectiveStorage(PropertyOffset);
 inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset);
-inline size_t numberOfSlotsForLastOffset(PropertyOffset, JSType);
-inline PropertyOffset nextPropertyOffsetFor(PropertyOffset, JSType);
-inline PropertyOffset firstPropertyOffsetFor(JSType);
+inline size_t numberOfSlotsForLastOffset(PropertyOffset, PropertyOffset inlineCapacity);
 
 inline void checkOffset(PropertyOffset offset)
 {
@@ -67,14 +63,14 @@ inline void checkOffset(PropertyOffset offset)
     ASSERT(offset >= invalidOffset);
 }
 
-inline void checkOffset(PropertyOffset offset, JSType type)
+inline void checkOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
 {
     UNUSED_PARAM(offset);
-    UNUSED_PARAM(type);
+    UNUSED_PARAM(inlineCapacity);
     ASSERT(offset >= invalidOffset);
     ASSERT(offset == invalidOffset
-           || type == FinalObjectType
-           || isOutOfLineOffset(offset));
+        || offset < inlineCapacity
+        || isOutOfLineOffset(offset));
 }
 
 inline void validateOffset(PropertyOffset offset)
@@ -83,9 +79,9 @@ inline void validateOffset(PropertyOffset offset)
     ASSERT(isValidOffset(offset));
 }
 
-inline void validateOffset(PropertyOffset offset, JSType type)
+inline void validateOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
 {
-    checkOffset(offset, type);
+    checkOffset(offset, inlineCapacity);
     ASSERT(isValidOffset(offset));
 }
 
@@ -98,7 +94,7 @@ inline bool isValidOffset(PropertyOffset offset)
 inline bool isInlineOffset(PropertyOffset offset)
 {
     checkOffset(offset);
-    return offset < inlineStorageCapacity;
+    return offset < firstOutOfLineOffset;
 }
 
 inline bool isOutOfLineOffset(PropertyOffset offset)
@@ -136,28 +132,24 @@ inline size_t numberOfOutOfLineSlotsForLastOffset(PropertyOffset offset)
     return offset - firstOutOfLineOffset + 1;
 }
 
-inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, JSType type)
+inline size_t numberOfSlotsForLastOffset(PropertyOffset offset, PropertyOffset inlineCapacity)
 {
-    checkOffset(offset, type);
-    if (type == FinalObjectType)
+    checkOffset(offset, inlineCapacity);
+    if (offset < inlineCapacity)
         return offset + 1;
-    return numberOfOutOfLineSlotsForLastOffset(offset);
+    return inlineCapacity + numberOfOutOfLineSlotsForLastOffset(offset);
 }
 
-inline PropertyOffset nextPropertyOffsetFor(PropertyOffset offset, JSType type)
+inline PropertyOffset propertyOffsetFor(PropertyOffset propertyNumber, PropertyOffset inlineCapacity)
 {
-    checkOffset(offset, type);
-    if (type != FinalObjectType && offset == invalidOffset)
-        return firstOutOfLineOffset;
-    return offset + 1;
-}
-
-inline PropertyOffset firstPropertyOffsetFor(JSType type)
-{
-    return nextPropertyOffsetFor(invalidOffset, type);
+    PropertyOffset offset = propertyNumber;
+    if (offset >= inlineCapacity) {
+        offset += firstOutOfLineOffset;
+        offset -= inlineCapacity;
+    }
+    return offset;
 }
 
 } // namespace JSC
 
 #endif // PropertyOffset_h
-

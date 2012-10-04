@@ -937,24 +937,24 @@ _llint_op_is_string:
     dispatch(3)
 
 
-macro loadPropertyAtVariableOffsetKnownNotFinal(propertyOffset, objectAndStorage, tag, payload)
-    assert(macro (ok) bigteq propertyOffset, InlineStorageCapacity, ok end)
+macro loadPropertyAtVariableOffsetKnownNotInline(propertyOffset, objectAndStorage, tag, payload)
+    assert(macro (ok) bigteq propertyOffset, firstOutOfLineOffset, ok end)
     negi propertyOffset
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
-    loadi TagOffset + (InlineStorageCapacity - 1) * 8 - sizeof IndexingHeader[objectAndStorage, propertyOffset, 8], tag
-    loadi PayloadOffset + (InlineStorageCapacity - 1) * 8 - sizeof IndexingHeader[objectAndStorage, propertyOffset, 8], payload
+    loadi TagOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], tag
+    loadi PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], payload
 end
 
 macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, tag, payload)
-    bilt propertyOffset, InlineStorageCapacity, .isInline
+    bilt propertyOffset, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
     negi propertyOffset
     jmp .ready
 .isInline:
-    addp JSFinalObject::m_inlineStorage - (InlineStorageCapacity - 1) * 8 + sizeof IndexingHeader, objectAndStorage
+    addp JSFinalObject::m_inlineStorage - (firstOutOfLineOffset - 2) * 8, objectAndStorage
 .ready:
-    loadi TagOffset + (InlineStorageCapacity - 1) * 8 - sizeof IndexingHeader[objectAndStorage, propertyOffset, 8], tag
-    loadi PayloadOffset + (InlineStorageCapacity - 1) * 8 - sizeof IndexingHeader[objectAndStorage, propertyOffset, 8], payload
+    loadi TagOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], tag
+    loadi PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], payload
 end
 
 macro resolveGlobal(size, slow)
@@ -968,7 +968,7 @@ macro resolveGlobal(size, slow)
     loadp JSCell::m_structure[t0], t1
     bpneq t1, 12[PC], slow
     loadi 16[PC], t1
-    loadPropertyAtVariableOffsetKnownNotFinal(t1, t0, t2, t3)
+    loadPropertyAtVariableOffsetKnownNotInline(t1, t0, t2, t3)
     loadi 4[PC], t0
     storei t2, TagOffset[cfr, t0, 8]
     storei t3, PayloadOffset[cfr, t0, 8]
@@ -1364,7 +1364,10 @@ _llint_op_get_by_pname:
     loadi [cfr, t0, 8], t0
     subi 1, t0
     biaeq t0, JSPropertyNameIterator::m_numCacheableSlots[t3], .opGetByPnameSlow
-    addi JSPropertyNameIterator::m_offsetBase[t3], t0
+    bilt t0, JSPropertyNameIterator::m_cachedStructureInlineCapacity[t3], .opGetByPnameInlineProperty
+    addi firstOutOfLineOffset, t0
+    subi JSPropertyNameIterator::m_cachedStructureInlineCapacity[t3], t0
+.opGetByPnameInlineProperty:
     loadPropertyAtVariableOffset(t0, t2, t1, t3)
     loadi 4[PC], t0
     storei t1, TagOffset[cfr, t0, 8]

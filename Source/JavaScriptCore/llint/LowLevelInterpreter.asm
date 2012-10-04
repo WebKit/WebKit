@@ -89,12 +89,8 @@ const LLIntReturnPC = ArgumentCount + TagOffset
 # String flags.
 const HashFlags8BitBuffer = 64
 
-# Property storage constants
-if JSVALUE64
-    const InlineStorageCapacity = 6
-else
-    const InlineStorageCapacity = 7
-end
+# Copied from PropertyOffset.h
+const firstOutOfLineOffset = 100
 
 # Allocation constants
 if JSVALUE64

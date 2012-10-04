@@ -3973,14 +3973,14 @@ void SpeculativeJIT::compile(Node& node)
         // Fast case
         m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
 #if DFG_ENABLE(JIT_ASSERT)
-        JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(inlineStorageCapacity));
+        JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(firstOutOfLineOffset));
         m_jit.breakpoint();
         isOutOfLine.link(&m_jit);
 #endif
         m_jit.neg32(resolveInfoGPR);
         m_jit.signExtend32ToPtr(resolveInfoGPR, resolveInfoGPR);
         m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::butterflyOffset()), resultGPR);
-        m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr, (inlineStorageCapacity - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultGPR);
+        m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr, (firstOutOfLineOffset - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultGPR);
         
         addSlowPathGenerator(
             slowPathCall(

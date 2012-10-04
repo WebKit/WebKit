@@ -159,16 +159,16 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
     ASSERT(sizeof(JSValue) == 8);
     
     if (finalObjectMode == MayBeFinal) {
-        Jump isInline = branch32(LessThan, offset, TrustedImm32(inlineStorageCapacity));
+        Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
         loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
         neg32(offset);
         Jump done = jump();
         isInline.link(this);
-        addPtr(TrustedImm32(JSObject::offsetOfInlineStorage() - (inlineStorageCapacity - 2) * sizeof(EncodedJSValue)), base, scratch);
+        addPtr(TrustedImm32(JSObject::offsetOfInlineStorage() - (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), base, scratch);
         done.link(this);
     } else {
 #if !ASSERT_DISABLED
-        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(inlineStorageCapacity));
+        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
         breakpoint();
         isOutOfLine.link(this);
 #endif
@@ -176,7 +176,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
         neg32(offset);
     }
     signExtend32ToPtr(offset, offset);
-    loadPtr(BaseIndex(scratch, offset, ScalePtr, (inlineStorageCapacity - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), result);
+    loadPtr(BaseIndex(scratch, offset, ScalePtr, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
 }
 
 void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
@@ -199,7 +199,10 @@ void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
     load32(addressFor(i), regT3);
     sub32(TrustedImm32(1), regT3);
     addSlowCase(branch32(AboveOrEqual, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_numCacheableSlots))));
-    add32(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_offsetBase)), regT3);
+    Jump inlineProperty = branch32(Below, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)));
+    add32(TrustedImm32(firstOutOfLineOffset), regT3);
+    sub32(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_cachedStructureInlineCapacity)), regT3);
+    inlineProperty.link(this);
     compileGetDirectOffset(regT0, regT0, regT3, regT1);
 
     emitPutVirtualRegister(dst, regT0);

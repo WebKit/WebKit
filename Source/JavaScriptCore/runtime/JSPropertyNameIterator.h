@@ -59,14 +59,6 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        bool getOffset(size_t i, PropertyOffset& offset)
-        {
-            if (i >= m_numCacheableSlots)
-                return false;
-            offset = i + m_offsetBase;
-            return true;
-        }
-
         JSValue get(ExecState*, JSObject*, size_t i);
         size_t size() { return m_jsStringsSize; }
 
@@ -90,7 +82,7 @@ namespace JSC {
             PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
             for (size_t i = 0; i < m_jsStringsSize; ++i)
                 m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].string()));
-            m_offsetBase = object->structure()->firstValidOffset();
+            m_cachedStructureInlineCapacity = object->structure()->inlineCapacity();
         }
 
     private:
@@ -102,7 +94,7 @@ namespace JSC {
         WriteBarrier<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
-        PropertyOffset m_offsetBase;
+        unsigned m_cachedStructureInlineCapacity;
         OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
     };
 

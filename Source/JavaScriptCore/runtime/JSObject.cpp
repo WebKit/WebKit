@@ -182,7 +182,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Butterfly* butterfly = thisObject->butterfly();
     if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, thisObject->structure()->outOfLineSizeForKnownNonFinalObject());
+        thisObject->visitButterfly(visitor, butterfly, thisObject->structure()->outOfLineSize());
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -202,9 +202,9 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Butterfly* butterfly = thisObject->butterfly();
     if (butterfly)
-        thisObject->visitButterfly(visitor, butterfly, thisObject->structure()->outOfLineSizeForKnownFinalObject());
+        thisObject->visitButterfly(visitor, butterfly, thisObject->structure()->outOfLineSize());
 
-    size_t storageSize = thisObject->structure()->inlineSizeForKnownFinalObject();
+    size_t storageSize = thisObject->structure()->inlineSize();
     visitor.appendValues(thisObject->inlineStorage(), storageSize);
 
 #if !ASSERT_DISABLED

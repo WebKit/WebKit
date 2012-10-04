@@ -1,3 +1,100 @@
+2012-10-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the assumption that "final" objects have a fixed number of inline slots
+        https://bugs.webkit.org/show_bug.cgi?id=98332
+
+        Reviewed by Filip Pizlo.
+
+        This is a step toward object size inference.
+
+        I replaced the inline storage capacity constant with a data member per
+        structure, set the the maximum supported value for the constant to 100,
+        then fixed what broke. (Note that even though this patch increases the
+        theoretical maximum inline capacity, it doesn't change any actual inline
+        capacity.)
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset): These functions just get a rename:
+        the constant they need is the first out of line offset along the offset
+        number line, which is not necessarily the same thing (and is, in this
+        patch, never the same thing) as the inline capacity of any given object.
+
+        (JSC::JIT::emit_op_get_by_pname):
+        * jit/JITPropertyAccess32_64.cpp: This function changes functionality,
+        since it needs to convert from the abstract offset number line to an
+        actual offset in memory, and it can't assume that inline and out-of-line
+        offsets are contiguous on the number line.
+
+        (JSC::JIT::compileGetDirectOffset): Updated for rename.
+
+        (JSC::JIT::emit_op_get_by_pname): Same as emit_op_get_by_pname above.
+
+        * llint/LowLevelInterpreter.asm: Updated to mirror changes in PropertyOffset.h,
+        since we duplicate values from there.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Just like the JIT, most things are just
+        renames, and get_by_pname changes to do more math. I also standardized
+        offset calculations to use a hard-coded "-2", to match the JIT. This
+        isn't really better, but it makes global search and replace easier,
+        should we choose to refactor this code not to hard-code constants.
+
+        I also renamed loadPropertyAtVariableOffsetKnownNotFinal to
+        loadPropertyAtVariableOffsetKnownNotInline in order to sever the assumption
+        that inline capacity is tied to object type, and I changed the 64bit LLInt
+        to use this -- not using this previously seems to have been an oversight.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC::JSFinalObject::visitChildren):
+        * runtime/JSObject.h:
+        (JSC::JSObject::offsetForLocation):
+        (JSNonFinalObject):
+        (JSC::JSFinalObject::createStructure):
+        (JSFinalObject):
+        (JSC::JSFinalObject::finishCreation): Updated for above changes.
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::finishCreation): Store the inline capacity
+        of our object, since it's not a constant.
+
+        (JSC::JSPropertyNameIterator::getOffset): Removed. This function was
+        wrong. Luckily, it was also unused, since the C++ interpreter is gone.
+
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable): Use a helper function instead of hard-coding assumptions
+        about object types.
+
+        (JSC::PropertyTable::nextOffset):
+        * runtime/PropertyOffset.h:
+        (JSC):
+        (JSC::checkOffset):
+        (JSC::validateOffset):
+        (JSC::isInlineOffset):
+        (JSC::numberOfSlotsForLastOffset):
+        (JSC::propertyOffsetFor): Refactored these functions to take inline capacity
+        as an argument, since it's not fixed at compile time anymore.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::putSpecificValue):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::outOfLineCapacity):
+        (JSC::Structure::hasInlineStorage):
+        (JSC::Structure::inlineCapacity):
+        (JSC::Structure::inlineSize):
+        (JSC::Structure::firstValidOffset):
+        (JSC::Structure::lastValidOffset):
+        (JSC::Structure::create): Removed some hard-coded assumptions about inline
+        capacity and object type, and replaced with more liberal use of helper functions.
+
 2012-10-03  Michael Saboff  <msaboff@apple.com>
 
         OpaqueJSString doesn't optimally handle 8 bit strings

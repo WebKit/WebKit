@@ -461,10 +461,10 @@ namespace JSC {
         {
             PropertyOffset result;
             size_t offsetInInlineStorage = location - inlineStorageUnsafe();
-            if (offsetInInlineStorage < static_cast<size_t>(inlineStorageCapacity))
+            if (offsetInInlineStorage < static_cast<size_t>(firstOutOfLineOffset))
                 result = offsetInInlineStorage;
             else
-                result = outOfLineStorage() - location + (inlineStorageCapacity - 1);
+                result = outOfLineStorage() - location + (firstOutOfLineOffset - 1);
             validateOffset(result, structure()->typeInfo().type());
             return result;
         }
@@ -685,11 +685,6 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
-        static bool hasInlineStorage()
-        {
-            return false;
-        }
-
     protected:
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure, Butterfly* butterfly = 0)
             : JSObject(globalData, structure, butterfly)
@@ -717,17 +712,13 @@ namespace JSC {
         static JSFinalObject* create(ExecState*, Structure*);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), &s_info, NonArray, INLINE_STORAGE_CAPACITY);
         }
 
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static bool hasInlineStorage()
-        {
-            return true;
-        }
     protected:
         void visitChildrenCommon(SlotVisitor&);
         
@@ -735,8 +726,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             ASSERT(!(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double)));
-            ASSERT(this->structure()->inlineCapacity() == static_cast<unsigned>(inlineStorageCapacity));
-            ASSERT(this->structure()->totalStorageCapacity() == static_cast<unsigned>(inlineStorageCapacity));
+            ASSERT(structure()->totalStorageCapacity() == structure()->inlineCapacity());
             ASSERT(classInfo());
         }
 
