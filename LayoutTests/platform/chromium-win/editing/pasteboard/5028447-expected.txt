@@ -3,12 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 415x29
-        text run at (0,0) width 415: "All the text here should be the same size. "
-      RenderText {#text} at (415,0) size 780x59
-        text run at (415,0) width 359: "All the text here should be the same"
+      RenderText {#text} at (0,0) size 780x59
+        text run at (0,0) width 774: "All the text here should be the same size. All the text here should be the same"
         text run at (774,0) width 6: " "
         text run at (0,30) width 44: "size."
         text run at (44,30) width 6: " "
       RenderText {#text} at (0,0) size 0x0
-caret: position 43 of child 1 {#text} of body
+caret: position 87 of child 0 {#text} of body

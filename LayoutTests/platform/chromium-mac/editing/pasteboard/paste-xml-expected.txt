@@ -11,7 +11,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > span > div > body > html > #document to 7 of #text > span > div > body > html > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > span > div > body > html > #document to 3 of #text > span > div > body > html > #document toDOMRange:range from 3 of #text > span > div > body > html > #document to 3 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > span > div > body > html > #document to 10 of #text > span > div > body > html > #document toDOMRange:range from 10 of #text > span > div > body > html > #document to 10 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 foo barbar baz
