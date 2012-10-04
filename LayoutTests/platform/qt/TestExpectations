@@ -2676,13 +2676,6 @@ inspector/timeline/timeline-frames.html
 inspector/elements/edit-dom-actions.html
 jquery/data.html
 
-# [Qt] css2.1/20110323/text-indent-intrinsic-00* fail
-# https://bugs.webkit.org/show_bug.cgi?id=91772
-css2.1/20110323/text-indent-intrinsic-001.htm
-css2.1/20110323/text-indent-intrinsic-002.htm
-css2.1/20110323/text-indent-intrinsic-003.htm
-css2.1/20110323/text-indent-intrinsic-004.htm
-
 # [Qt] new test introduced in r123205 fails on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=91967
 inspector/styles/protocol-css-regions-commands.html

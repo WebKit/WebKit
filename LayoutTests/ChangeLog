@@ -1,3 +1,14 @@
+2012-10-04  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] css2.1/20110323/text-indent-intrinsic-00* fail
+        https://bugs.webkit.org/show_bug.cgi?id=91772
+
+        Reviewed by Yuta Kitamura.
+
+        Unskip some tests that are passing.
+
+        * platform/qt/TestExpectations:
+
 2012-10-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
