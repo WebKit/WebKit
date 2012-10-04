@@ -33,7 +33,7 @@
 
 #include "SkBitmap.h"
 #include "SkRect.h"
-#include "IntSize.h"
+#include "SkSize.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -71,41 +71,35 @@ public:
     float resolutionScale() const { return m_resolutionScale; }
 
     // We can keep a resized version of the bitmap cached on this object.
-    // This function will return true if there is a cached version of the
-    // given image subset with the given dimensions and subsets.
-    bool hasResizedBitmap(const SkIRect& srcSubset, int width, int height) const;
+    // This function will return true if there is a cached version of the given
+    // scale and subset.
+    bool hasResizedBitmap(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const;
 
     // This will return an existing resized image subset, or generate a new one
-    // of the specified size and subsets and possibly cache it.
-    // srcSubset is the subset of the image to resize in image space.
-    SkBitmap resizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight) const
-    {
-        SkIRect destVisibleSubset = {0, 0, destWidth, destHeight};
-        return resizedBitmap(srcSubset, destWidth, destHeight, destVisibleSubset);
-    }
-
-    // Same as above, but returns a subset of the destination image (ie: the
-    // visible subset). destVisibleSubset is the subset of the resized
-    // (destWidth x destHeight) image.
-    // In other words:
-    // - crop image by srcSubset -> imageSubset.
-    // - resize imageSubset to destWidth x destHeight -> destImage.
-    // - return destImage cropped by destVisibleSubset.
-    SkBitmap resizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight, const SkIRect& destVisibleSubset) const;
+    // of the specified size and subset and possibly cache it.
+    //
+    // scaledImageSize
+    // Dimensions of the scaled full image.
+    //
+    // scaledImageSubset
+    // Rectangle of the subset in the scaled image.
+    SkBitmap resizedBitmap(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // CachedImageInfo is used to uniquely identify cached or requested image
     // resizes.
+    // Image resize is identified by the scaled image size and scaled image subset.
     struct CachedImageInfo {
-        IntSize requestSize;
-        SkIRect srcSubset;
+        SkISize scaledImageSize;
+        SkIRect scaledImageSubset;
 
         CachedImageInfo();
 
-        bool isEqual(const SkIRect& otherSrcSubset, int width, int height) const;
-        void set(const SkIRect& otherSrcSubset, int width, int height);
+        bool isEqual(const SkISize& otherScaledImageSize, const SkIRect& otherScaledImageSubset) const;
+        void set(const SkISize& otherScaledImageSize, const SkIRect& otherScaledImageSubset);
+        SkIRect rectInSubset(const SkIRect& otherScaledImageRect);
     };
 
     // Returns true if the given resize operation should either resize the whole
@@ -121,16 +115,14 @@ private:
     // better if we're going to be using it more than once (like a bitmap
     // scrolling on and off the screen. Since we only cache when doing the
     // entire thing, it's best to just do it up front.
-    bool shouldCacheResampling(const SkIRect& srcSubset,
-                               int destWidth,
-                               int destHeight,
-                               const SkIRect& destSubset) const;
+    bool shouldCacheResampling(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const;
 
     // The original image.
     SkBitmap m_image;
     float m_resolutionScale;
 
-    // The cached bitmap. This will be empty() if there is no cached image.
+    // The cached bitmap fragment. This is a subset of the scaled version of
+    // |m_image|. empty() returns true if there is no cached image.
     mutable SkBitmap m_resizedImage;
 
     // References how many times that the image size has been requested for
@@ -144,12 +136,11 @@ private:
     // resized image, we know that we should probably cache it, even if all of
     // those requests individually are small and would not otherwise be cached.
     //
-    // We also track the source and destination subsets for caching partial
-    // image resizes.
+    // We also track scaling information and destination subset for the scaled
+    // image. See comments for CachedImageInfo.
     mutable CachedImageInfo m_cachedImageInfo;
     mutable int m_resizeRequests;
 };
 
 }
 #endif  // NativeImageSkia_h
-

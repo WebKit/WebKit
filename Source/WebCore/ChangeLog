@@ -1,3 +1,65 @@
+2012-10-04  Alpha Lam  <hclam@chromium.org>
+
+        [skia] Drawing a subrect of bitmap image is misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=95121
+
+        Reviewed by Stephen White.
+
+        When drawing a subrect of BitmapImage and the subrect is not aligned
+        to integer boundaries, skia expands it to the closest enclosing integer
+        rectangle. This creates prominent rendering artifacts when an image
+        is used as background and its sub-regions are invalidated frequently.
+
+        This patch fixes the problem by doing alignment to integer boundaries
+        and clipping for both cases of RESAMPLE_AWESOME and RESAMPLE_LINEAR.
+
+        A clip rect is applied to the canvas using original destination
+        rectangle, while source and destination rectangles are enlarged
+        appropriately to ensure source rectangle is aligned.
+
+        This patch also fixes a closely related problem. In RESAMPLE_AWESOME
+        resampling mode the previous algorithm applies different approximated
+        scale factor for each scaled image fragment. This caused the stitched
+        image to look ugly.
+
+        Scale factor is approximated using entire image size, this gives a
+        more accurate approximation because of greater denominator and a
+        consistent scale factor across all fragments.
+
+        Changes in Skia enable caching of the scaled image and return the
+        scaled fragment because scale factor is now consistent for all
+        fragments.
+
+        Tests: fast/images/paint-subrect-grid.html
+               fast/images/paint-subrect.html
+               fast/images/repaint-subrect-grid.html
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::computeResamplingMode): Use float for width and height.
+        (WebCore):
+        (WebCore::areBoundariesIntegerAligned):
+        (WebCore::computeBitmapDrawRects):
+        (WebCore::extractScaledImageFragment):
+        (WebCore::drawResampledBitmap): New algorithm for drawing scaled image fragment.
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw): Use SkRect instead of SkIRect.
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        Changing the algorithm for extracting a scaled image fragment.
+        A fragment is now identified by (scaledImageSize, scaledImageSubset).
+        (WebCore::NativeImageSkia::hasResizedBitmap):
+        (WebCore::NativeImageSkia::resizedBitmap):
+        (WebCore::NativeImageSkia::shouldCacheResampling):
+        (WebCore::NativeImageSkia::CachedImageInfo::CachedImageInfo):
+        (WebCore):
+        (WebCore::NativeImageSkia::CachedImageInfo::isEqual):
+        (WebCore::NativeImageSkia::CachedImageInfo::set):
+        (WebCore::NativeImageSkia::CachedImageInfo::rectInSubset):
+        * platform/graphics/skia/NativeImageSkia.h:
+        (NativeImageSkia):
+        (CachedImageInfo):
+
 2012-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         ReplaceSelectionCommand should merge text nodes

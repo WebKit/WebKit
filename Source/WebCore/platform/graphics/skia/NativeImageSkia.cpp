@@ -72,56 +72,48 @@ int NativeImageSkia::decodedSize() const
     return m_image.getSize() + m_resizedImage.getSize();
 }
 
-bool NativeImageSkia::hasResizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight) const
+bool NativeImageSkia::hasResizedBitmap(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const
 {
-    return m_cachedImageInfo.isEqual(srcSubset, destWidth, destHeight) && !m_resizedImage.empty();
+    bool imageScaleEqual = m_cachedImageInfo.scaledImageSize == scaledImageSize;
+    bool scaledImageSubsetAvailable = m_cachedImageInfo.scaledImageSubset.contains(scaledImageSubset);
+    return imageScaleEqual && scaledImageSubsetAvailable && !m_resizedImage.empty();
 }
 
-SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
-                                        int destWidth,
-                                        int destHeight,
-                                        const SkIRect& destVisibleSubset) const
+SkBitmap NativeImageSkia::resizedBitmap(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const
 {
-    if (!hasResizedBitmap(srcSubset, destWidth, destHeight)) {
+    if (!hasResizedBitmap(scaledImageSize, scaledImageSubset)) {
         bool shouldCache = isDataComplete()
-            && shouldCacheResampling(srcSubset, destWidth, destHeight, destVisibleSubset);
+            && shouldCacheResampling(scaledImageSize, scaledImageSubset);
 
-        SkBitmap subset;
-        m_image.extractSubset(&subset, srcSubset);
-        if (!shouldCache) {
-            // Just resize the visible subset and return it.
-            PlatformInstrumentation::willResizeImage(shouldCache);
-            SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);
-            PlatformInstrumentation::didResizeImage();
-            resizedImage.setImmutable();
+        PlatformInstrumentation::willResizeImage(shouldCache);
+        SkBitmap resizedImage = skia::ImageOperations::Resize(m_image, skia::ImageOperations::RESIZE_LANCZOS3, scaledImageSize.width(), scaledImageSize.height(), scaledImageSubset);
+        resizedImage.setImmutable();
+        PlatformInstrumentation::didResizeImage();
+
+        if (!shouldCache)
             return resizedImage;
-        } else {
-            PlatformInstrumentation::willResizeImage(shouldCache);
-            m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
-            PlatformInstrumentation::didResizeImage();
-        }
-        m_resizedImage.setImmutable();
+
+        m_resizedImage = resizedImage;
     }
 
-    SkBitmap visibleBitmap;
-    m_resizedImage.extractSubset(&visibleBitmap, destVisibleSubset);
-    return visibleBitmap;
+    SkBitmap resizedSubset;
+    SkIRect resizedSubsetRect = m_cachedImageInfo.rectInSubset(scaledImageSubset);
+    m_resizedImage.extractSubset(&resizedSubset, resizedSubsetRect);
+    return resizedSubset;
 }
 
-bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
-                                            int destWidth,
-                                            int destHeight,
-                                            const SkIRect& destVisibleSubset) const
+bool NativeImageSkia::shouldCacheResampling(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const
 {
     // Check whether the requested dimensions match previous request.
-    bool matchesPreviousRequest = m_cachedImageInfo.isEqual(srcSubset, destWidth, destHeight);
+    bool matchesPreviousRequest = m_cachedImageInfo.isEqual(scaledImageSize, scaledImageSubset);
     if (matchesPreviousRequest)
         ++m_resizeRequests;
     else {
-        m_cachedImageInfo.set(srcSubset, destWidth, destHeight);
+        m_cachedImageInfo.set(scaledImageSize, scaledImageSubset);
         m_resizeRequests = 0;
-        // Reset m_resizedImage now, because we don't distinguish between the
-        // last requested resize info and m_resizedImage's resize info.
+        // Reset m_resizedImage now, because we don't distinguish
+        // between the last requested resize info and m_resizedImage's
+        // resize info.
         m_resizedImage.reset();
     }
 
@@ -134,13 +126,16 @@ bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
 
     // If the destination bitmap is excessively large, we'll never allow caching.
     static const unsigned long long kLargeBitmapSize = 4096ULL * 4096ULL;
-    if ((static_cast<unsigned long long>(destWidth) * static_cast<unsigned long long>(destHeight)) > kLargeBitmapSize)
+    unsigned long long fullSize = static_cast<unsigned long long>(scaledImageSize.width()) * static_cast<unsigned long long>(scaledImageSize.height());
+    unsigned long long fragmentSize = static_cast<unsigned long long>(scaledImageSubset.width()) * static_cast<unsigned long long>(scaledImageSubset.height());
+
+    if (fragmentSize > kLargeBitmapSize)
         return false;
 
     // If the destination bitmap is small, we'll always allow caching, since
     // there is not very much penalty for computing it and it may come in handy.
-    static const int kSmallBitmapSize = 4096;
-    if (destWidth * destHeight <= kSmallBitmapSize)
+    static const unsigned kSmallBitmapSize = 4096;
+    if (fragmentSize <= kSmallBitmapSize)
         return true;
 
     // If "too many" requests have been made for this bitmap, we assume that
@@ -149,28 +144,34 @@ bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
     if (m_resizeRequests >= kManyRequestThreshold)
         return true;
 
-    // If more than 1/4 of the resized image is visible, it's worth caching.
-    int destVisibleSize = destVisibleSubset.width() * destVisibleSubset.height();
-    return (destVisibleSize > (destWidth * destHeight) / 4);
+    // If more than 1/4 of the resized image is requested, it's worth caching.
+    return fragmentSize > fullSize / 4;
 }
 
 NativeImageSkia::CachedImageInfo::CachedImageInfo()
 {
-    srcSubset.setEmpty();
+    scaledImageSize.setEmpty();
+    scaledImageSubset.setEmpty();
 }
 
-bool NativeImageSkia::CachedImageInfo::isEqual(const SkIRect& otherSrcSubset, int width, int height) const
+bool NativeImageSkia::CachedImageInfo::isEqual(const SkISize& otherScaledImageSize, const SkIRect& otherScaledImageSubset) const
 {
-    return srcSubset == otherSrcSubset
-        && requestSize.width() == width
-        && requestSize.height() == height;
+    return scaledImageSize == otherScaledImageSize && scaledImageSubset == otherScaledImageSubset;
 }
 
-void NativeImageSkia::CachedImageInfo::set(const SkIRect& otherSrcSubset, int width, int height)
+void NativeImageSkia::CachedImageInfo::set(const SkISize& otherScaledImageSize, const SkIRect& otherScaledImageSubset)
 {
-    srcSubset = otherSrcSubset;
-    requestSize.setWidth(width);
-    requestSize.setHeight(height);
+    scaledImageSize = otherScaledImageSize;
+    scaledImageSubset = otherScaledImageSubset;
+}
+
+SkIRect NativeImageSkia::CachedImageInfo::rectInSubset(const SkIRect& otherScaledImageSubset)
+{
+    if (!scaledImageSubset.contains(otherScaledImageSubset))
+        return SkIRect::MakeEmpty();
+    SkIRect subsetRect = otherScaledImageSubset;
+    subsetRect.offset(-scaledImageSubset.x(), -scaledImageSubset.y());
+    return subsetRect;
 }
 
 void NativeImageSkia::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -186,4 +187,3 @@ void reportMemoryUsage(const NativeImageSkia* const& image, MemoryObjectInfo* me
 }
 
 } // namespace WebCore
-
