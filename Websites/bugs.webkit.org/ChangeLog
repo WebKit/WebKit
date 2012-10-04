@@ -1,3 +1,15 @@
+2012-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the status bubble iframe big enough to show all the bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=98329
+
+        Reviewed by Eric Seidel.
+
+        Make the status bubble iframe big enough.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+
 2012-10-03  Simon Pena  <spena@igalia.com>
 
         ruby1.9 fails in PrettyPatch.rb with invalid byte sequence in UTF-8
