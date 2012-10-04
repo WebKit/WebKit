@@ -94,8 +94,7 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    notImplemented();
-    return true;
+    return evas_object_visible_get(m_viewWidget);
 }
 
 bool PageClientImpl::isViewInWindow()

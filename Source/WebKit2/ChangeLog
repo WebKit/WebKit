@@ -1,3 +1,16 @@
+2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement PageClientImpl::isViewVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=98249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement PageClientImpl::isViewVisible() for EFL port
+        by calling evas_object_visible_get() on the view.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isViewVisible):
+
 2012-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Improve initial empty process tracking
