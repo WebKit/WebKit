@@ -2531,7 +2531,7 @@ webkit.org/b/69866 [ Android Mac Win ] fast/clip/overflow-border-radius-fixed-po
 webkit.org/b/69866 [ Android Mac Win ] fast/clip/overflow-border-radius-transformed.html [ ImageOnlyFailure ]
 webkit.org/b/69866 [ Android Mac Win ] http/tests/media/video-buffered-range-contains-currentTime.html [ ImageOnlyFailure ]
 webkit.org/b/69866 [ Android Mac Win ] media/audio-controls-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/69866 [ Android Mac Win ] media/audio-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/69866 [ Mac Win ] media/audio-repaint.html [ ImageOnlyFailure ]
 webkit.org/b/69866 [ Android Mac Win ] media/controls-after-reload.html [ ImageOnlyFailure ]
 webkit.org/b/69866 [ Android Mac Win ] media/controls-strict.html [ ImageOnlyFailure ]
 webkit.org/b/69866 [ Android Mac Win ] media/controls-styling-strict.html [ ImageOnlyFailure ]
@@ -3521,7 +3521,8 @@ crbug.com/145590 [ Android ] http/tests/security/video-cross-origin-readback.htm
 crbug.com/145590 [ Android ] media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
 crbug.com/145590 [ Android ] media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 crbug.com/145590 [ Android ] media/audio-data-url.html [ Failure ]
-crbug.com/145590 [ Android ] media/audio-repaint.html [ Failure Timeout ]
+# ImageOnlyFailure was added because of webkit.org/b/69866
+crbug.com/145590 [ Android ] media/audio-repaint.html [ ImageOnlyFailure Failure Timeout ]
 crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-events.html [ Timeout ]
 crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
 crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-syntax.html [ Failure ]
@@ -3645,9 +3646,6 @@ webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
 
 # Failing, again, after r129712
 webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
-
-# Flaky from some time before r128376
-webkit.org/b/97900 [ Win Debug ] media/audio-repaint.html [ ImageOnlyFailure Pass ]
 
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
