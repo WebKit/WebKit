@@ -1,5 +1,76 @@
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
+        Add code for input[type=date] with the multiple fields UI
+        https://bugs.webkit.org/show_bug.cgi?id=98340
+
+        Reviewed by Hajime Morita.
+
+        The new code is available if !ENABLE(INPUT_TYPE_DATE_LEGACY_UI). At this
+        moment, there are no platforms enabling the new code. We're going to
+        enable it soon on desktop Chromium, and add tests. Then we're going to
+        remove the code for ENABLE(INPUT_TYPE_DATE_LEGACY_UI).
+
+        ENABLE(INPUT_TYPE_DATE_LEGACY_UI) means the current UI; input[type=date]
+        is represetnted as a kind of text field, and it has code to invoke a
+        calendar picker.
+        ENABLE(CALENDAR_PICKER) was used wrongly. It meant calendar picker
+        support + text field UI of input[type=date]. Now it means only calendar
+        picker support.
+
+        * html/DateInputType.h:
+        (WebCore): If ENABLE(INPUT_MULTIPLE_FIELDS_UI) &&
+        !ENABLE(INPUT_TYPE_DATE_LEGACY_UI), change the base class to the class
+        for multiple fields UI.
+        (DateInputType): Wrap the code for text fields behavior and calendar
+        picker UI with ENABLE(INPUT_TYPE_DATE_LEGACY_UI). Add functions for
+        ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::DateInputType):
+        Change the flag name; CALENDAR_PICKER -> INPUT_TYPE_DATE_LEGACY_UI
+        (WebCore): ditto.
+        (WebCore::DateInputType::formatDateTimeFieldsState):
+        A callback for multiple fields UI. This constructs a string value from
+        each of values of multiple fields.
+        Note that we don't need to do +1 to month().
+        (WebCore::DateInputType::setupLayoutParameters):
+        A callback for multiple fields UI. Passes information to build UI.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType):
+        Add m_pickerIndicatorIsAlwaysVisible member, wrap some members with flags.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType):
+        Initialize m_pickerIndicatorIsAlwaysVisible.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        If a type supports calendar picker, we should always show the picker
+        indicator. We introduce m_pickerIndicatorIsAlwaysVisible flag, and ask
+        RenderTheme for support status of each of types.
+        Add a local variable 'document' to avoid multiple element()->document().
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility):
+        - If m_pickerIndicatorIsAlwaysVisible, don't hide the picker indicator element.
+        - Wrap the code with appropriate flags.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsCalendarPicker): Added.
+        * rendering/RenderThemeChromiumMac.h: Override supportsCalendarPicker.
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::supportsCalendarPicker):
+        Added. Delegate to RenderThemeChromiumCommon.
+        * rendering/RenderThemeChromiumSkia.h: Override supportsCalendarPicker.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::supportsCalendarPicker):
+        Added. Delegate to RenderThemeChromiumCommon.
+        * rendering/RenderThemeChromiumCommon.h:
+        (RenderThemeChromiumCommon): Declare supportsCalendarPicker.
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsCalendarPicker):
+        Returns true if the type is "date."
+
+        * html/DateTimeFieldsState.h:
+        (DateTimeFieldsState): Add a comment for the m_month field.
+
+2012-10-04  Kent Tamura  <tkent@chromium.org>
+
         DateTimeYearFieldElement should respect min/max values specified by page authors
         https://bugs.webkit.org/show_bug.cgi?id=98227
 

@@ -189,6 +189,13 @@ CString RenderThemeChromiumMac::extraCalendarPickerStyleSheet()
 }
 #endif
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && ENABLE(CALENDAR_PICKER)
+bool RenderThemeChromiumMac::supportsCalendarPicker(const AtomicString& type) const
+{
+    return RenderThemeChromiumCommon::supportsCalendarPicker(type);
+}
+#endif
+
 bool RenderThemeChromiumMac::paintMediaVolumeSliderContainer(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return true;

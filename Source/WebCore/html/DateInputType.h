@@ -31,16 +31,21 @@
 #ifndef DateInputType_h
 #define DateInputType_h
 
-#include "BaseDateAndTimeInputType.h"
-#include <wtf/RefPtr.h>
-
 #if ENABLE(INPUT_TYPE_DATE)
+#include "BaseMultipleFieldsDateAndTimeInputType.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class PickerIndicatorElement;
 
-class DateInputType : public BaseDateAndTimeInputType {
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && !ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
+typedef BaseMultipleFieldsDateAndTimeInputType BaseDateInputType;
+#else
+typedef BaseDateAndTimeInputType BaseDateInputType;
+#endif
+
+class DateInputType : public BaseDateInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
@@ -52,7 +57,8 @@ private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateField() const OVERRIDE;
-#if ENABLE(CALENDAR_PICKER)
+
+#if ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
@@ -66,6 +72,12 @@ private:
     virtual bool shouldHaveSpinButton() const OVERRIDE;
 
     PickerIndicatorElement* m_pickerElement;
+#else
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    // BaseMultipleFieldsDateAndTimeInputType functions
+    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE;
+    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE;
+#endif
 #endif
 };
 

@@ -35,6 +35,9 @@ namespace WebCore {
 class RenderThemeChromiumCommon {
 public:
     static bool supportsDataListUI(const AtomicString& type);
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && ENABLE(CALENDAR_PICKER)
+    static bool supportsCalendarPicker(const AtomicString& type);
+#endif
     static LayoutUnit sliderTickSnappingThreshold();
 };
 

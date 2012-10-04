@@ -87,7 +87,7 @@ public:
 
 private:
     unsigned m_year;
-    unsigned m_month;
+    unsigned m_month; // 1 to 12.
     unsigned m_dayOfMonth;
     unsigned m_hour; // 1 to 12.
     unsigned m_minute;

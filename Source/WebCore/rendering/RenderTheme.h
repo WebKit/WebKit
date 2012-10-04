@@ -137,6 +137,11 @@ public:
     // A method asking if the platform is able to show datalist suggestions for a given input type.
     virtual bool supportsDataListUI(const AtomicString&) const { return false; }
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && ENABLE(CALENDAR_PICKER)
+    // A method asking if the platform is able to show a calendar picker for a given input type.
+    virtual bool supportsCalendarPicker(const AtomicString&) const { return false; }
+#endif
+
     // Text selection colors.
     Color activeSelectionBackgroundColor() const;
     Color inactiveSelectionBackgroundColor() const;
