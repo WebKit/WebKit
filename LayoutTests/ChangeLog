@@ -1,3 +1,16 @@
+2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add libxml 2.8.0 to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=98418
+
+        Reviewed by Laszlo Gombos.
+
+        Unskip fast/xsl/xslt-missing-namespace-in-xslt.xml
+        since it passes with libxml 2.8.0 and we now depend
+        on that version.
+
+        * platform/efl/TestExpectations:
+
 2012-10-04  Tony Chang  <tony@chromium.org>
 
         Unreviewed gardening.  Landing render tree results for css3/flexbox/flexbox-baseline.html.

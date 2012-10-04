@@ -17,6 +17,7 @@
       <dep package="e_dbus"/>
       <dep package="eeze"/>
       <dep package="efreet"/>
+      <dep package="libxml2"/>
     </dependencies>
   </metamodule>
 
@@ -38,6 +39,8 @@
       href="http://www.freedesktop.org"/>
   <repository type="tarball" name="enlightenment.fr"
       href="http://git.enlightenment.fr/cgit.cgi/svn/"/>
+  <repository type="tarball" name="xmlsoft.org"
+      href="ftp://xmlsoft.org"/> 
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
@@ -265,5 +268,12 @@
         <deb package="eet"/>
     </dependencies>
   </autotools>
+
+  <autotools id="libxml2">
+    <branch module="/libxml2/libxml2-2.8.0.tar.gz" version="2.8.0"
+            repo="xmlsoft.org"
+            hash="sha256:f2e2d0e322685193d1affec83b21dc05d599e17a7306d7b90de95bb5b9ac622a"
+            md5sum="c62106f02ee00b6437f0fb9d370c1093"/>
+  </autotools> 
 
 </moduleset>
