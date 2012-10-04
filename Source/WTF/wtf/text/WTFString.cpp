@@ -271,6 +271,18 @@ void String::truncate(unsigned position)
     m_impl = newImpl.release();
 }
 
+template <typename CharacterType>
+inline void String::removeInternal(const CharacterType* characters, unsigned position, int lengthToRemove)
+{
+    CharacterType* data;
+    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() - lengthToRemove, data);
+    memcpy(data, characters, position * sizeof(CharacterType));
+    memcpy(data + position, characters + position + lengthToRemove,
+        (length() - lengthToRemove - position) * sizeof(CharacterType));
+
+    m_impl = newImpl.release();
+}
+
 void String::remove(unsigned position, int lengthToRemove)
 {
     if (lengthToRemove <= 0)
@@ -279,12 +291,14 @@ void String::remove(unsigned position, int lengthToRemove)
         return;
     if (static_cast<unsigned>(lengthToRemove) > length() - position)
         lengthToRemove = length() - position;
-    UChar* data;
-    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() - lengthToRemove, data);
-    memcpy(data, characters(), position * sizeof(UChar));
-    memcpy(data + position, characters() + position + lengthToRemove,
-        (length() - lengthToRemove - position) * sizeof(UChar));
-    m_impl = newImpl.release();
+
+    if (is8Bit()) {
+        removeInternal(characters8(), position, lengthToRemove);
+
+        return;
+    }
+
+    removeInternal(characters16(), position, lengthToRemove);
 }
 
 String String::substring(unsigned pos, unsigned len) const

@@ -459,6 +459,9 @@ public:
     }
 
 private:
+    template <typename CharacterType>
+    void removeInternal(const CharacterType*, unsigned, int);
+
     RefPtr<StringImpl> m_impl;
 };
 
