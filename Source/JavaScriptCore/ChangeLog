@@ -1,5 +1,11 @@
 2012-10-03  Geoffrey Garen  <ggaren@apple.com>
 
+        Next step toward fixing Windows: add new symbol.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-10-03  Geoffrey Garen  <ggaren@apple.com>
+
         First step toward fixing Windows: remove old symbol.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
