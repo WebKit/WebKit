@@ -166,10 +166,26 @@ class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeYearFieldElement);
 
 public:
-    static PassRefPtr<DateTimeYearFieldElement> create(Document*, FieldOwner&, const String& placeholder);
+    struct Parameters {
+        int minimumYear;
+        int maximumYear;
+        bool minIsSpecified;
+        bool maxIsSpecified;
+        String placeholder;
+
+        Parameters()
+            : minimumYear(-1)
+            , maximumYear(-1)
+            , minIsSpecified(false)
+            , maxIsSpecified(false)
+        {
+        }
+    };
+
+    static PassRefPtr<DateTimeYearFieldElement> create(Document*, FieldOwner&, const Parameters&);
 
 private:
-    DateTimeYearFieldElement(Document*, FieldOwner&, const String& placeholder);
+    DateTimeYearFieldElement(Document*, FieldOwner&, const Parameters&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -177,8 +193,12 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
 
     // DateTimeNumericFieldElement functions.
+    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
     virtual int defaultValueForStepDown() const OVERRIDE FINAL;
     virtual int defaultValueForStepUp() const OVERRIDE FINAL;
+
+    bool m_minIsSpecified;
+    bool m_maxIsSpecified;
 };
 
 } // namespace WebCore

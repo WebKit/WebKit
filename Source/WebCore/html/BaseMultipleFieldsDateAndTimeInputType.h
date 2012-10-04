@@ -44,6 +44,8 @@ class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, 
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();
+
+    int fullYear(const String&) const;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
     bool shouldHaveSecondField(const DateComponents&) const;
 

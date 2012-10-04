@@ -156,6 +156,8 @@ void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters
 {
     layoutParameters.dateTimeFormat = monthFormatInLDML();
     layoutParameters.fallbackDateTimeFormat = "MM/yyyy";
+    layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
+    layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));
     layoutParameters.placeholderForMonth = "--";
     layoutParameters.placeholderForYear = "----";
 }

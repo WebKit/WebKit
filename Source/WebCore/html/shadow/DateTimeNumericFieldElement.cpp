@@ -64,6 +64,11 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
 {
 }
 
+int DateTimeNumericFieldElement::clampValueForHardLimits(int value) const
+{
+    return clampValue(value);
+}
+
 int DateTimeNumericFieldElement::defaultValueForStepDown() const
 {
     return m_range.maximum;
@@ -144,7 +149,7 @@ void DateTimeNumericFieldElement::setEmptyValue(const DateComponents& dateForRea
 
 void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    m_value = clampValue(value);
+    m_value = clampValueForHardLimits(value);
     m_hasValue = true;
     updateVisibleValue(eventBehavior);
     m_lastDigitCharTime = 0;

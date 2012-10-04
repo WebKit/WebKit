@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p>
+Please run this with DumpRenderTree.
+</p>
+Test following keys:
+<ul>
+    <li>Digits</li>
+    <li>Left/Right - Move focus field inside element</li>
+    <li>Up/Down - Increment/decrement value of focus field</li>
+    <li>Tab - Move focus field</li>
+    <li>Backspace - Make value empty</li>
+</ul>
+<input id="before">
+<input id="input" type="month">
+<input id="another">
+<div id="console"></div>
+<script>
+description("Multiple fields UI of month input type with keyboard events");
+var input = document.getElementById("input");
+
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+
+function beginTest(title, value, opt_min, opt_max)
+{
+    debug("== " + title + " ==");
+    input.value = value;
+    input.min = opt_min ? opt_min : "";
+    input.max = opt_max ? opt_max : "";
+    input.blur();
+    input.focus();
+}
+
+// We assume the year-month format is MM/yyyy.
+
+beginTest('Digit keys');
+keyDown('9');
+keyDown('2');
+keyDown('0');
+keyDown('1');
+keyDown('2');
+keyDown('A');
+shouldBeEqualToString('input.value', '2012-09');
+
+// FIXME: We should test type ahead time out. When event.leapForward() affects
+// keyboard event time stamp, we can uncomment this fragment.
+/*
+beginTest('Digit keys with type ahead timeout');
+keyDown('1');
+leapForward(1100);
+keyDown('1');
+keyDown('5');
+keyDown('6');
+keyDown('A');
+shouldBeEqualToString('input.value', '0056-01');
+*/
+
+beginTest('Left/Right keys', '2012-09');
+keyDown('rightArrow');
+keyDown('5');
+keyDown('leftArrow');
+keyDown('6');
+shouldBeEqualToString('input.value', '0005-06');
+keyDown('leftArrow');
+keyDown('leftArrow');
+keyDown('leftArrow');
+shouldBeEqualToString('document.activeElement.id', 'input');
+
+beginTest('Up/Down keys', '2012-09');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '2012-10');
+keyDown('downArrow');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '2012-08');
+
+// Note that empty value for the year field without min/max attributes is not
+// testable because its default value depends on the current date.
+beginTest('Up/Down keys on empty value', '', '2012-01');
+keyDown('downArrow');
+keyDown('downArrow');
+keyDown('rightArrow');
+keyDown('upArrow');
+keyDown('upArrow');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '2012-11');
+
+beginTest('Up/Down keys on empty value 2', '', undefined, '2012-01');
+keyDown('upArrow');
+keyDown('upArrow');
+keyDown('rightArrow');
+keyDown('downArrow');
+keyDown('downArrow');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '2012-02');
+
+beginTest('Tab key', '2012-09');
+keyDown('\t');
+keyDown('5');
+shouldBeEqualToString('input.value', '0005-09');
+keyDown('\t', ['shiftKey']);
+keyDown('7');
+shouldBeEqualToString('input.value', '0005-07');
+keyDown('\t');
+shouldBeEqualToString('document.activeElement.id', 'another');
+
+beginTest('Shfit+Tab key', '2012-09');
+another.focus();
+keyDown('\t', ['shiftKey']);
+keyDown('3');
+shouldBeEqualToString('input.value', '0003-09');
+keyDown('\t', ['shiftKey']);
+keyDown('\t', ['shiftKey']);
+shouldBeEqualToString('document.activeElement.id', 'before');
+
+beginTest('Up key on maximum value', '275760-09');
+keyDown('upArrow');
+keyDown('\t');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '0001-10');
+beginTest('Up key with a maximum attribute', '1999-12', undefined, '1999-12');
+keyDown('upArrow');
+keyDown('\t');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '0001-01');
+
+beginTest('Down key on minimum value', '0001-01', 'bad min', 'wrong max');
+keyDown('downArrow');
+keyDown('\t');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '275760-12');
+beginTest('Down key with a minimum attribute', '0001-01', '0001-01');
+keyDown('downArrow');
+keyDown('\t');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '275760-12');
+
+beginTest('Inconsistent min-max attributes', '1999-12', '1999-12', '1000-01');
+keyDown('\t');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '1000-12');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '1999-12');
+
+beginTest('Backspace key', '2012-09');
+keyDown("\b");
+shouldBeEqualToString('input.value', '');
+
+beginTest('Delete key', '2012-09');
+keyDown("delete");
+shouldBeEqualToString('input.value', '');
+
+beginTest('Typeahead', '2012-12');
+keyDown('rightArrow');
+keyDown('1');
+shouldBeEqualToString('input.value', '0001-12');
+keyDown('leftArrow');
+keyDown('rightArrow');
+keyDown('2');
+shouldBeEqualToString('input.value', '0002-12');
+
+beginTest('RTL Left/Right keys', '2012-09');
+input.setAttribute("dir", "rtl");
+keyDown('1');
+shouldBeEqualToString('input.value', '2012-01');
+keyDown('leftArrow');
+keyDown('2');
+shouldBeEqualToString('input.value', '0002-01');
+keyDown('rightArrow');
+keyDown('3');
+shouldBeEqualToString('input.value', '0002-03');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -422,20 +422,29 @@ void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
 
 // ----------------------------
 
-DateTimeYearFieldElement::DateTimeYearFieldElement(Document* document, FieldOwner& fieldOwner, const String& placeholder)
-    : DateTimeNumericFieldElement(document, fieldOwner, DateComponents::minimumYear(), DateComponents::maximumYear(), placeholder)
+DateTimeYearFieldElement::DateTimeYearFieldElement(Document* document, FieldOwner& fieldOwner, const DateTimeYearFieldElement::Parameters& parameters)
+    : DateTimeNumericFieldElement(document, fieldOwner, parameters.minimumYear, parameters.maximumYear, parameters.placeholder.isEmpty() ? ASCIILiteral("----") : parameters.placeholder)
+    , m_minIsSpecified(parameters.minIsSpecified)
+    , m_maxIsSpecified(parameters.maxIsSpecified)
 {
+    ASSERT(parameters.minimumYear >= DateComponents::minimumYear());
+    ASSERT(parameters.maximumYear <= DateComponents::maximumYear());
 }
 
-PassRefPtr<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document* document, FieldOwner& fieldOwner, const String& placeholder)
+PassRefPtr<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document* document, FieldOwner& fieldOwner, const DateTimeYearFieldElement::Parameters& parameters)
 {
     DEFINE_STATIC_LOCAL(AtomicString, yearPsuedoId, ("-webkit-datetime-edit-year-field"));
-    RefPtr<DateTimeYearFieldElement> field = adoptRef(new DateTimeYearFieldElement(document, fieldOwner, placeholder.isEmpty() ? ASCIILiteral("----") : placeholder));
+    RefPtr<DateTimeYearFieldElement> field = adoptRef(new DateTimeYearFieldElement(document, fieldOwner, parameters));
     field->initialize(yearPsuedoId, AXYearFieldText());
     return field.release();
 }
 
-int DateTimeYearFieldElement::defaultValueForStepDown() const
+int DateTimeYearFieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(DateComponents::minimumYear(), DateComponents::maximumYear()).clampValue(value);
+}
+
+static int currentFullYear()
 {
     double current = currentTimeMS();
     double utcOffset = calculateUTCOffset();
@@ -448,9 +457,14 @@ int DateTimeYearFieldElement::defaultValueForStepDown() const
     return date.fullYear();
 }
 
+int DateTimeYearFieldElement::defaultValueForStepDown() const
+{
+    return m_maxIsSpecified ? DateTimeNumericFieldElement::defaultValueForStepDown() : currentFullYear();
+}
+
 int DateTimeYearFieldElement::defaultValueForStepUp() const
 {
-    return defaultValueForStepDown();
+    return m_minIsSpecified ? DateTimeNumericFieldElement::defaultValueForStepUp() : currentFullYear();
 }
 
 void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)

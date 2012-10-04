@@ -1,3 +1,74 @@
+2012-10-04  Kent Tamura  <tkent@chromium.org>
+
+        DateTimeYearFieldElement should respect min/max values specified by page authors
+        https://bugs.webkit.org/show_bug.cgi?id=98227
+
+        Reviewed by Hajime Morita.
+
+        Before this patch, we always set 1 to the minimum limit and 275760 to
+        the maximum limit for a year field, and a user can specify any year
+        regardless of min/max attributes. Such wide range is unnecessary for
+        normal applications and we should provide a way to limit the range.
+
+        Test: fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html
+
+        * html/shadow/DateTimeFieldElements.h:
+        To add four constructor arguments, introduce Parameters struct.
+        Actually, we add the followings;
+         - minimum year in UI
+         - maximum year in UI
+         - min attribute is specified
+         - max attribute is specified
+        (Parameters):
+        (WebCore::DateTimeYearFieldElement::Parameters::Parameters):
+        (DateTimeYearFieldElement):
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeYearFieldElement::DateTimeYearFieldElement): ditto.
+        (WebCore::DateTimeYearFieldElement::create): ditto.
+        (WebCore::DateTimeYearFieldElement::clampValueForHardLimits):
+        Override DateTimeNumericFieldElement::clampValueForHardLimits.
+        By this, we allow to set out-of-range year values.
+        (WebCore::currentFullYear): A helper to get the current year.
+        (WebCore::DateTimeYearFieldElement::defaultValueForStepDown):
+        If the field has no value and step down operation occurs,
+         - the field has the current year if the max attribute is not specified.
+         - the field has the maximum value otherwise.
+        (WebCore::DateTimeYearFieldElement::defaultValueForStepUp): Similar change.
+
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement): Declare clampValueForHardLimits.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::clampValueForHardLimits):
+        (WebCore::DateTimeNumericFieldElement::setValueAsInteger):
+        Call clampValueForHardLimits instead of clampValue in order to
+        distinguish limits for UI and limits for internal value update.
+
+        * html/shadow/DateTimeEditElement.h:
+        (LayoutParameters): Add minimumYear and maximumYear members.
+        (WebCore::DateTimeEditElement::LayoutParameters::LayoutParameters):
+        Initialize minimumYear and maximumYear.
+        (WebCore::DateTimeEditElement::LayoutParameters::undefinedYear):
+        Represents 'undefined' value for minimumYear and maximumYear.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField):
+        Preparas DateTimeYearField::Parameters and pass it to the DateTimeYearField factory.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::fullYear):
+        A helper to get a year value from an attribute value string.
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType): Add fullYear().
+
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::setupLayoutParameters):
+        Set LayoutParameters::minimumYear and maximumYear.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters): ditto.
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::setupLayoutParameters): ditto.
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::setupLayoutParameters): ditto.
+
 2012-10-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Fix parse error in vcproj file.

@@ -54,6 +54,7 @@ protected:
     DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder);
 
     int clampValue(int value) const { return m_range.clampValue(value); }
+    virtual int clampValueForHardLimits(int) const;
     virtual int defaultValueForStepDown() const;
     virtual int defaultValueForStepUp() const;
     const Range& range() const { return m_range; }

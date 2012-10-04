@@ -304,6 +304,14 @@ void BaseMultipleFieldsDateAndTimeInputType::showPickerIndicator()
 }
 #endif
 
+int BaseMultipleFieldsDateAndTimeInputType::fullYear(const String& source) const
+{
+    DateComponents date;
+    if (!parseToDateComponents(source, &date))
+        return DateTimeEditElement::LayoutParameters::undefinedYear();
+    return date.fullYear();
+}
+
 bool BaseMultipleFieldsDateAndTimeInputType::shouldHaveSecondField(const DateComponents& date) const
 {
     StepRange stepRange = createStepRange(AnyIsDefaultStep);
