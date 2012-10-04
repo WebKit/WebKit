@@ -106,11 +106,9 @@ class LayoutTestFinder(object):
             tests_to_skip = all_tests - tests_to_skip
         elif self._options.skipped == 'ignore':
             tests_to_skip = set()
-        elif self._options.skipped == 'default':
-            pass  # listed for completeness
-
-        # make sure we're explicitly running any tests passed on the command line.
-        tests_to_skip -= paths
+        elif self._options.skipped != 'always':
+            # make sure we're explicitly running any tests passed on the command line; equivalent to 'default'.
+            tests_to_skip -= paths
 
         # unless of course we don't want to run the HTTP tests :)
         if not self._options.http:

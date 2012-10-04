@@ -375,7 +375,11 @@ def parse_args(args=None):
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
         optparse.make_option("--skipped", action="store", default="default",
-            help="control how tests marked SKIP are run. 'default' == Skip, 'ignore' == Run them anyway, 'only' == only run the SKIP tests."),
+            help=("control how tests marked SKIP are run. "
+                 "'default' == Skip tests unless explicitly listed on the command line, "
+                 "'ignore' == Run them anyway, "
+                 "'only' == only run the SKIP tests, "
+                 "'always' == always skip, even if listed on the command line.")),
         optparse.make_option("--force", dest="skipped", action="store_const", const='ignore',
             help="Run all tests, even those marked SKIP in the test list (same as --skipped=ignore)"),
         optparse.make_option("--time-out-ms",

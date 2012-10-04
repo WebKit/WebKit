@@ -418,6 +418,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(get_tests_run(['--skipped=only', 'passes'], tests_included=True, flatten_batches=True),
                           ['passes/skipped/skip.html'])
 
+        # Now check that we don't run anything.
+        self.assertEquals(get_tests_run(['--skipped=always', 'passes/skipped/skip.html'], tests_included=True, flatten_batches=True),
+                          [])
+
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
         tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
