@@ -69,5 +69,10 @@ touchadjustment/focusout-on-touch.html
 # https://bugs.webkit.org/show_bug.cgi?id=97389
 xmlviewer/extensions-api.html
 
+# [Qt][WK1] DumpRenderTree converts "file:///" to a path differently (working on WK2)
+# https://bugs.webkit.org/show_bug.cgi?id=76563
+http/tests/misc/drag-over-iframe-invalid-source-crash.html
+http/tests/misc/iframe-invalid-source-crash.html
+
 # [Qt][WK1] ERROR: TestRunner::overridePreference() does not support the 'WebKitStorageBlockingPolicy' preference
 http/tests/security/cross-origin-local-storage-wk1.html

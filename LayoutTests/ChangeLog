@@ -1,3 +1,14 @@
+2012-10-04  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Reviewing old bugs in Qt TestExpectations. Unskip now passing test.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/qt/http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object-expected.txt: Added.
+        * platform/qt/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt: Added.
+
 2012-10-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark perf/show-hide-table-rows.html as flaky.
