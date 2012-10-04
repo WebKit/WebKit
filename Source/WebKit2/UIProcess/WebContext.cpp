@@ -460,6 +460,9 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
 
     m_visitedLinkProvider.processDidClose(process);
 
+    if (m_haveInitialEmptyProcess && process == m_processes.last())
+        m_haveInitialEmptyProcess = false;
+
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> All the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     if (m_processModel != ProcessModelSharedSecondaryProcess) {
