@@ -47,10 +47,6 @@ public:
     {
         return adoptRef(new IDBIndexBackendImpl(database, objectStoreBackend, id, name, keyPath, unique, multiEntry));
     }
-    static PassRefPtr<IDBIndexBackendImpl> create(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
-    {
-        return adoptRef(new IDBIndexBackendImpl(database, objectStoreBackend, name, keyPath, unique, multiEntry));
-    }
     virtual ~IDBIndexBackendImpl();
 
     int64_t id() const
@@ -76,7 +72,6 @@ public:
 
 private:
     IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, int64_t id, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
-    IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
 
     static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
     static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);

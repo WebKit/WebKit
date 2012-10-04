@@ -56,6 +56,11 @@ public:
         AddOnly,
         CursorUpdate
     };
+
+    static const int64_t MinimumIndexId = 30;
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    static const int64_t AutogenerateIndexId = -1;
+
     typedef Vector<RefPtr<IDBKey> > IndexKeys;
 
     virtual void putWithIndexKeys(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<String>&, const Vector<IndexKeys>&, ExceptionCode&) = 0;
@@ -63,6 +68,8 @@ public:
 
     virtual void clear(PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
+    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(int64_t, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
     virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const IDBKeyPath&, bool unique, bool multiEntry, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, const Vector<String>&, const Vector<IndexKeys>&, IDBTransactionBackendInterface*) = 0;
     virtual void setIndexesReady(const Vector<String>&, IDBTransactionBackendInterface*) = 0;

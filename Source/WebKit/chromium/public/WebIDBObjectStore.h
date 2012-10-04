@@ -63,6 +63,11 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
+    virtual WebIDBIndex* createIndex(long long, const WebString&, const WebIDBKeyPath&, bool, bool, const WebIDBTransaction&, WebExceptionCode&)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
     virtual void setIndexKeys(const WebIDBKey&, const WebVector<WebString>&, const WebVector<WebIndexKeys>&, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setIndexesReady(const WebVector<WebString>&, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); };
     // Transfers ownership of the WebIDBIndex to the caller.

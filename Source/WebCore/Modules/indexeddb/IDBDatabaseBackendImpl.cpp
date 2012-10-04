@@ -137,6 +137,7 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_name(name)
     , m_version(NoStringVersion)
     , m_intVersion(IDBDatabaseMetadata::NoIntVersion)
+    , m_maxObjectStoreId(InvalidId)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
     , m_transactionCoordinator(IDBTransactionCoordinator::create())
@@ -147,7 +148,7 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
 
 bool IDBDatabaseBackendImpl::openInternal()
 {
-    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_intVersion, m_id);
+    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_intVersion, m_id, m_maxObjectStoreId);
     ASSERT_WITH_MESSAGE(success == (m_id != InvalidId), "success = %s, m_id = %lld", success ? "true" : "false", static_cast<long long>(m_id));
     if (success) {
         loadObjectStores();
@@ -167,7 +168,7 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
 
 IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 {
-    IDBDatabaseMetadata metadata(m_name, m_version, m_intVersion);
+    IDBDatabaseMetadata metadata(m_name, m_id, m_version, m_intVersion, m_maxObjectStoreId);
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
         metadata.objectStores.set(it->first, it->second->metadata());
     return metadata;
@@ -175,13 +176,23 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
+    return createObjectStore(AutogenerateObjectStoreId, name, keyPath, autoIncrement, transactionPtr, ec);
+}
+
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+{
     ASSERT(!m_objectStores.contains(name));
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
+    COMPILE_ASSERT(AutogenerateObjectStoreId == IDBBackingStore::AutogenerateObjectStoreId, AutogenerateObjectStoreIdMatches);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+
+    // FIXME: Fix edge cases around transaction aborts that prevent this from just being ASSERT(id == m_maxObjectStoreId + 1)
+    ASSERT(id == AutogenerateObjectStoreId || id > m_maxObjectStoreId);
+    m_maxObjectStoreId = id;
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
     if (!transaction->scheduleTask(
@@ -199,11 +210,13 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
 {
     int64_t objectStoreId;
 
-    if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
+    if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
         transaction->abort();
         return;
     }
 
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    ASSERT(objectStore->id() == AutogenerateObjectStoreId || objectStore->id() == objectStoreId);
     objectStore->setId(objectStoreId);
     transaction->didCompleteTaskEvents();
 }
@@ -606,14 +619,16 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     Vector<String> names;
     Vector<IDBKeyPath> keyPaths;
     Vector<bool> autoIncrementFlags;
-    m_backingStore->getObjectStores(m_id, ids, names, keyPaths, autoIncrementFlags);
+    Vector<int64_t> maxIndexIds;
+    m_backingStore->getObjectStores(m_id, ids, names, keyPaths, autoIncrementFlags, maxIndexIds);
 
     ASSERT(names.size() == ids.size());
     ASSERT(keyPaths.size() == ids.size());
     ASSERT(autoIncrementFlags.size() == ids.size());
+    ASSERT(maxIndexIds.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(this, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
+        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(this, ids[i], names[i], keyPaths[i], autoIncrementFlags[i], maxIndexIds[i]));
 }
 
 void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)

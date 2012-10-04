@@ -401,12 +401,15 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
         return 0;
     }
 
+    int64_t indexId = IDBObjectStoreBackendInterface::AutogenerateIndexId;
     RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->createIndex(name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
     ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (ec)
         return 0;
 
-    IDBIndexMetadata metadata(name, keyPath, unique, multiEntry);
+    ++m_metadata.maxIndexId;
+
+    IDBIndexMetadata metadata(name, indexId, keyPath, unique, multiEntry);
     RefPtr<IDBIndex> index = IDBIndex::create(metadata, indexBackend.release(), this, m_transaction.get());
     m_indexMap.set(name, index);
     m_metadata.indexes.set(name, metadata);

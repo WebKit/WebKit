@@ -52,16 +52,20 @@ struct IDBDatabaseMetadata {
         : intVersion(NoIntVersion)
     {
     }
-    IDBDatabaseMetadata(const String& name, const String& version, int64_t intVersion)
+    IDBDatabaseMetadata(const String& name, int64_t id, const String& version, int64_t intVersion, int64_t maxObjectStoreId)
         : name(name)
+        , id(id)
         , version(version)
         , intVersion(intVersion)
+        , maxObjectStoreId(maxObjectStoreId)
     {
     }
 
     String name;
+    int64_t id;
     String version;
     int64_t intVersion;
+    int64_t maxObjectStoreId;
 
     typedef HashMap<String, IDBObjectStoreMetadata> ObjectStoreMap;
     ObjectStoreMap objectStores;
@@ -69,13 +73,18 @@ struct IDBDatabaseMetadata {
 
 struct IDBObjectStoreMetadata {
     IDBObjectStoreMetadata() { }
-    IDBObjectStoreMetadata(const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+    IDBObjectStoreMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool autoIncrement, int64_t maxIndexId)
         : name(name)
         , keyPath(keyPath)
-        , autoIncrement(autoIncrement) { }
+        , autoIncrement(autoIncrement)
+        , maxIndexId(maxIndexId)
+    {
+    }
     String name;
+    int64_t id;
     IDBKeyPath keyPath;
     bool autoIncrement;
+    int64_t maxIndexId;
 
     typedef HashMap<String, IDBIndexMetadata> IndexMap;
     IndexMap indexes;
@@ -83,12 +92,14 @@ struct IDBObjectStoreMetadata {
 
 struct IDBIndexMetadata {
     IDBIndexMetadata() { }
-    IDBIndexMetadata(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+    IDBIndexMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
         : name(name)
+        , id(id)
         , keyPath(keyPath)
         , unique(unique)
         , multiEntry(multiEntry) { }
     String name;
+    int64_t id;
     IDBKeyPath keyPath;
     bool unique;
     bool multiEntry;

@@ -167,9 +167,11 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
         return 0;
     }
 
-    IDBObjectStoreMetadata metadata(name, keyPath, autoIncrement);
+    int64_t objectStoreId = IDBDatabaseBackendInterface::AutogenerateObjectStoreId;
+    IDBObjectStoreMetadata metadata(name, objectStoreId, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata, objectStoreBackend.release(), m_versionChangeTransaction.get());
     m_metadata.objectStores.set(name, metadata);
+    ++m_metadata.maxObjectStoreId;
 
     m_versionChangeTransaction->objectStoreCreated(name, objectStore);
     return objectStore.release();

@@ -66,6 +66,17 @@ IDBDatabaseMetadata IDBDatabaseBackendProxy::metadata() const
     return m_webIDBDatabase->metadata();
 }
 
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObjectStore(int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    OwnPtr<WebIDBObjectStore> objectStore = adoptPtr(m_webIDBDatabase->createObjectStore(id, name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec));
+    if (!objectStore)
+        return 0;
+    return IDBObjectStoreBackendProxy::create(objectStore.release());
+}
+
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

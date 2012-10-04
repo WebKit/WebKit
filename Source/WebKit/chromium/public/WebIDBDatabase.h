@@ -55,6 +55,11 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
+    virtual WebIDBObjectStore* createObjectStore(long long, const WebString&, const WebIDBKeyPath&, bool, const WebIDBTransaction&, WebExceptionCode&)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBTransaction to the caller.

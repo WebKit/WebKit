@@ -1,3 +1,43 @@
+2012-10-04  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: promote objectstore/index backend ids to the frontend
+        https://bugs.webkit.org/show_bug.cgi?id=97834
+
+        Reviewed by Tony Chang.
+
+        Support for marshalling additional IDBMetadata and new calls to
+        createObjectStore/createIndex.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        * public/WebIDBMetadata.h:
+        (ObjectStore):
+        (Index):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::createObjectStore):
+        (WebKit):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        (WebKit):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBMetadata.cpp:
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        (WebKit::WebIDBMetadata::operator IDBDatabaseMetadata):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        (WebKit):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
 2012-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         Standardize on "flush" terminology for compositing layer flushing/syncing

@@ -194,6 +194,24 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
     return true;
 }
 
+template <typename DBOrTransaction>
+static int64_t getMaxObjectStoreId(DBOrTransaction* db, int64_t databaseId)
+{
+    const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::MaxObjectStoreId);
+    return getMaxObjectStoreId(db, maxObjectStoreIdKey);
+}
+
+template <typename DBOrTransaction>
+static int64_t getMaxObjectStoreId(DBOrTransaction* db, const Vector<char>& maxObjectStoreIdKey)
+{
+    int64_t maxObjectStoreId = -1;
+    if (!getInt(db, maxObjectStoreIdKey, maxObjectStoreId))
+        maxObjectStoreId = 0;
+
+    ASSERT(maxObjectStoreId >= 0);
+    return maxObjectStoreId;
+}
+
 IDBLevelDBBackingStore::IDBLevelDBBackingStore(const String& identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
     : m_identifier(identifier)
     , m_factory(factory)
@@ -282,7 +300,7 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
     }
 }
 
-bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId)
+bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId, int64_t& maxObjectStoreId)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
 
@@ -299,6 +317,8 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& 
         return false;
     if (foundIntVersion == IDBDatabaseMetadata::DefaultIntVersion)
         foundIntVersion = IDBDatabaseMetadata::NoIntVersion;
+
+    maxObjectStoreId = getMaxObjectStoreId(m_db.get(), foundId);
 
     return true;
 }
@@ -375,7 +395,8 @@ bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
     int64_t databaseId;
     String version;
     int64_t intVersion;
-    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId))
+    int64_t maxObjectStoreId;
+    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId, maxObjectStoreId))
         return true;
 
     const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::OriginName);
@@ -405,7 +426,7 @@ static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vec
     return true;
 }
 
-void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags)
+void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags, Vector<int64_t>& foundMaxIndexIds)
 {
     IDB_TRACE("IDBLevelDBBackingStore::getObjectStores");
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
@@ -415,6 +436,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
     ASSERT(foundNames.isEmpty());
     ASSERT(foundKeyPaths.isEmpty());
     ASSERT(foundAutoIncrementFlags.isEmpty());
+    ASSERT(foundMaxIndexIds.isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -468,6 +490,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
+        int64_t maxIndexId = decodeInt(it->value().begin(), it->value().end());
 
         it->next(); // [optional] has key path (is not null)
         if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::HasKeyPath)) {
@@ -498,31 +521,31 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         foundNames.append(objectStoreName);
         foundKeyPaths.append(keyPath);
         foundAutoIncrementFlags.append(autoIncrement);
+        foundMaxIndexIds.append(maxIndexId);
     }
 }
 
-static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId)
+static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
-    int64_t maxObjectStoreId = -1;
     const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::MaxObjectStoreId);
-    if (!getInt(transaction, maxObjectStoreIdKey, maxObjectStoreId))
-        maxObjectStoreId = 0;
+    int64_t maxObjectStoreId = getMaxObjectStoreId(transaction, maxObjectStoreIdKey);
 
-    ASSERT(maxObjectStoreId >= 0);
-
-    int64_t objectStoreId = maxObjectStoreId + 1;
-    if (!putInt(transaction, maxObjectStoreIdKey, objectStoreId))
-        return -1;
-
-    return objectStoreId;
+    if (objectStoreId <= maxObjectStoreId) {
+        LOG_ERROR("Possible corruption: new object store id is too small.");
+        return false;
+    }
+    return putInt(transaction, maxObjectStoreIdKey, objectStoreId);
 }
 
-bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
+bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
 {
     IDB_TRACE("IDBLevelDBBackingStore::createObjectStore");
     LevelDBTransaction* levelDBTransaction = Transaction::levelDBTransactionFrom(transaction);
-    int64_t objectStoreId = getNewObjectStoreId(levelDBTransaction, databaseId);
-    if (objectStoreId < 0)
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    if (objectStoreId == AutogenerateObjectStoreId)
+        objectStoreId = getMaxObjectStoreId(levelDBTransaction, databaseId) + 1;
+
+    if (!setMaxObjectStoreId(levelDBTransaction, databaseId, objectStoreId))
         return false;
 
     const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name);
@@ -589,6 +612,7 @@ bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* tra
         return false;
     }
 
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
     assignedObjectStoreId = objectStoreId;
 
     return true;
@@ -918,7 +942,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
     }
 }
 
-static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
+static int64_t getMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
     int64_t maxIndexId = -1;
     const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
@@ -926,20 +950,37 @@ static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId
         maxIndexId = MinimumIndexId;
 
     ASSERT(maxIndexId >= 0);
-
-    int64_t indexId = maxIndexId + 1;
-    if (!putInt(transaction, maxIndexIdKey, indexId))
-        return -1;
-
-    return indexId;
+    return maxIndexId;
 }
 
-bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& indexId)
+static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)
+{
+    int64_t maxIndexId = -1;
+    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
+    if (!getInt(transaction, maxIndexIdKey, maxIndexId))
+        maxIndexId = MinimumIndexId;
+
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    if (indexId == IDBBackingStore::AutogenerateIndexId)
+        indexId = maxIndexId + 1;
+
+    if (indexId <= maxIndexId) {
+        LOG_ERROR("Possible corruption: new index id is too small.");
+        return false;
+    }
+
+    return putInt(transaction, maxIndexIdKey, indexId);
+}
+
+bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& assignedIndexId)
 {
     IDB_TRACE("IDBLevelDBBackingStore::createIndex");
     LevelDBTransaction* levelDBTransaction = Transaction::levelDBTransactionFrom(transaction);
-    indexId = getNewIndexId(levelDBTransaction, databaseId, objectStoreId);
-    if (indexId < 0)
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    if (indexId == AutogenerateIndexId)
+        indexId = getMaxIndexId(levelDBTransaction, databaseId, objectStoreId) + 1;
+
+    if (!setMaxIndexId(levelDBTransaction, databaseId, objectStoreId, indexId))
         return false;
 
     const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::Name);
@@ -970,6 +1011,9 @@ bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transacti
         LOG_ERROR("Internal Indexed DB error.");
         return false;
     }
+
+    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
+    assignedIndexId = indexId;
 
     return true;
 }

@@ -117,6 +117,14 @@ WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const Web
     return new WebIDBIndexImpl(index);
 }
 
+WebIDBIndex* WebIDBObjectStoreImpl::createIndex(long long id, const WebString& name, const WebIDBKeyPath& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+{
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(id, name, keyPath, unique, multiEntry, transaction.getIDBTransactionBackendInterface(), ec);
+    if (!index)
+        return 0;
+    return new WebIDBIndexImpl(index);
+}
+
 WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name, WebExceptionCode& ec)
 {
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name, ec);

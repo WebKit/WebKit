@@ -54,24 +54,13 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database,
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
-    : m_database(database)
-    , m_objectStoreBackend(objectStoreBackend)
-    , m_id(InvalidId)
-    , m_name(name)
-    , m_keyPath(keyPath)
-    , m_unique(unique)
-    , m_multiEntry(multiEntry)
-{
-}
-
 IDBIndexBackendImpl::~IDBIndexBackendImpl()
 {
 }
 
 IDBIndexMetadata IDBIndexBackendImpl::metadata() const
 {
-    return IDBIndexMetadata(m_name, m_keyPath, m_unique, m_multiEntry);
+    return IDBIndexMetadata(m_name, m_id, m_keyPath, m_unique, m_multiEntry);
 }
 
 void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)

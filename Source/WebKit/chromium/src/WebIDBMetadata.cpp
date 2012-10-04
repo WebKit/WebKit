@@ -43,6 +43,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
     version = metadata.version;
     intVersion = metadata.intVersion;
     objectStores = WebVector<ObjectStore>(static_cast<size_t>(metadata.objectStores.size()));
+    maxObjectStoreId = metadata.maxObjectStoreId;
 
     size_t i = 0;
     for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator storeIterator = metadata.objectStores.begin(); storeIterator != metadata.objectStores.end(); ++storeIterator) {
@@ -52,6 +53,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
         webObjectStore.keyPath = objectStore.keyPath;
         webObjectStore.autoIncrement = objectStore.autoIncrement;
         webObjectStore.indexes = WebVector<Index>(static_cast<size_t>(objectStore.indexes.size()));
+        webObjectStore.maxIndexId = objectStore.maxIndexId;
 
         size_t j = 0;
         for (IDBObjectStoreMetadata::IndexMap::const_iterator indexIterator = objectStore.indexes.begin(); indexIterator != objectStore.indexes.end(); ++indexIterator) {
@@ -69,14 +71,14 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
 
 WebIDBMetadata::operator IDBDatabaseMetadata() const
 {
-    IDBDatabaseMetadata db(name, version, intVersion);
+    IDBDatabaseMetadata db(name, id, version, intVersion, maxObjectStoreId);
     for (size_t i = 0; i < objectStores.size(); ++i) {
         const ObjectStore webObjectStore = objectStores[i];
-        IDBObjectStoreMetadata objectStore(webObjectStore.name, webObjectStore.keyPath, webObjectStore.autoIncrement);
+        IDBObjectStoreMetadata objectStore(webObjectStore.name, webObjectStore.id, webObjectStore.keyPath, webObjectStore.autoIncrement, webObjectStore.maxIndexId);
 
         for (size_t j = 0; j < webObjectStore.indexes.size(); ++j) {
             const Index webIndex = webObjectStore.indexes[j];
-            IDBIndexMetadata index(webIndex.name, webIndex.keyPath, webIndex.unique, webIndex.multiEntry);
+            IDBIndexMetadata index(webIndex.name, webIndex.id, webIndex.keyPath, webIndex.unique, webIndex.multiEntry);
             objectStore.indexes.set(index.name, index);
         }
         db.objectStores.set(objectStore.name, objectStore);
