@@ -1,3 +1,18 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        webkitpy: Accept WEBKITOUTPUTDIR in Port._setup_environ_for_server.
+        https://bugs.webkit.org/show_bug.cgi?id=98436
+
+        Reviewed by Dirk Pranke.
+
+        The Xvfb driver (ab)uses Port._setup_environ_for_server() to set
+        the environment for the server process, and the WEBKITOUTPUTDIR
+        environment variable was not being passed through, causing the
+        build directory to be wrongfully set to WebKitBuild/ all the time.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.setup_environ_for_server):
+
 2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add setting to allow file access from file:// URLs
