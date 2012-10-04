@@ -1,3 +1,10 @@
+2012-10-04  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Chromium rebaselines.
+
+        * platform/chromium-mac/fast/images/paint-subrect-grid-expected.png: Copied from LayoutTests/platform/chromium/fast/images/paint-subrect-grid-expected.png.
+        * platform/chromium-win/fast/images/paint-subrect-grid-expected.png: Renamed from LayoutTests/platform/chromium/fast/images/paint-subrect-grid-expected.png.
+
 2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines after r130411.
