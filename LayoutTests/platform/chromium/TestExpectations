@@ -3651,9 +3651,6 @@ webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
-webkit.org/b/97558 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/98094 [ Linux Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]

@@ -1,3 +1,9 @@
+2012-10-04  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix an error in TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-04  Harald Alvestrand  <hta@google.com>
 
         Change RTCPeerConnection GetStats to use Date timestamp format
