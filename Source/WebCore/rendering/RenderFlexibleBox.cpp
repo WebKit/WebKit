@@ -132,6 +132,7 @@ struct RenderFlexibleBox::Violation {
 
 RenderFlexibleBox::RenderFlexibleBox(Node* node)
     : RenderBlock(node)
+    , m_numberOfChildrenOnFirstLine(0)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
@@ -234,6 +235,57 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+{
+    LayoutUnit baseline = firstLineBoxBaseline();
+    if (baseline != -1) {
+        LayoutUnit marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
+        return baseline + marginAscent;
+    }
+
+    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+}
+
+LayoutUnit RenderFlexibleBox::lastLineBoxBaseline() const
+{
+    // Similar to tables, if we're in an inline-block, align with the bottom of our box.
+    return -1;
+}
+
+LayoutUnit RenderFlexibleBox::firstLineBoxBaseline() const
+{
+    ASSERT(m_orderIterator);
+
+    if (isWritingModeRoot() || !m_numberOfChildrenOnFirstLine)
+        return -1;
+    RenderBox* baselineChild = 0;
+    RenderBox* child = m_orderIterator->first();
+    for (size_t childNumber = 0; childNumber < m_numberOfChildrenOnFirstLine; ++childNumber, child = m_orderIterator->next()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+        if (alignmentForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
+            baselineChild = child;
+            break;
+        }
+        if (!baselineChild)
+            baselineChild = child;
+    }
+
+    if (!baselineChild)
+        return -1;
+
+    if (!isColumnFlow() && hasOrthogonalFlow(baselineChild))
+        return crossAxisExtentForChild(baselineChild) + baselineChild->logicalTop();
+    if (isColumnFlow() && !hasOrthogonalFlow(baselineChild))
+        return mainAxisExtentForChild(baselineChild) + baselineChild->logicalTop();
+
+    LayoutUnit baseline = baselineChild->firstLineBoxBaseline();
+    if (baseline == -1)
+        return -1;
+
+    return baseline + baselineChild->logicalTop();
+}
+
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -321,6 +373,8 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator&
         flipForWrapReverse(iterator, lineContexts, crossAxisStartEdge);
     }
 
+    m_numberOfChildrenOnFirstLine = lineContexts.isEmpty() ? 0 : lineContexts[0].numberOfChildren;
+
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
     flipForRightToLeftColumn(iterator);
 }
@@ -371,12 +425,12 @@ void RenderFlexibleBox::setCrossAxisExtent(LayoutUnit extent)
         setWidth(extent);
 }
 
-LayoutUnit RenderFlexibleBox::crossAxisExtentForChild(RenderBox* child)
+LayoutUnit RenderFlexibleBox::crossAxisExtentForChild(RenderBox* child) const
 {
     return isHorizontalFlow() ? child->height() : child->width();
 }
 
-LayoutUnit RenderFlexibleBox::mainAxisExtentForChild(RenderBox* child)
+LayoutUnit RenderFlexibleBox::mainAxisExtentForChild(RenderBox* child) const
 {
     return isHorizontalFlow() ? child->width() : child->height();
 }
@@ -683,7 +737,7 @@ void RenderFlexibleBox::updateAutoMarginsInMainAxis(RenderBox* child, LayoutUnit
     }
 }
 
-bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(RenderBox* child)
+bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(RenderBox* child) const
 {
     if (isHorizontalFlow())
         return child->style()->marginTop().isAuto() || child->style()->marginBottom().isAuto();

@@ -1491,6 +1491,8 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
 
+webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure ]
+
 # Needs rebaseline eventually
 webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]

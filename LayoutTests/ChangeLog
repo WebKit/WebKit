@@ -1,3 +1,22 @@
+2012-10-04  Tony Chang  <tony@chromium.org>
+
+        inline-flex baseline is sometimes wrong
+        https://bugs.webkit.org/show_bug.cgi?id=96188
+
+        Reviewed by Ojan Vafai.
+
+        Add a new pixel test and mark the test as failing so we can get pixel results from the bots.
+
+        * css3/flexbox/flexbox-baseline.html: Added.
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-expected.png: Added.
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Temporarily skip fast/xsl/xslt-missing-namespace-in-xslt.html.
