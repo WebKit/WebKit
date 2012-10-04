@@ -63,7 +63,6 @@ public:
 #endif
         EditingBehaviorType m_originalEditingBehavior;
         bool m_originalUnifiedSpellCheckerEnabled;
-        bool m_originalAcceleratedCompositingForFixedPositionEnabled;
         bool m_originalFixedPositionCreatesStackingContext;
         bool m_originalSyncXHRInDocumentsEnabled;
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)

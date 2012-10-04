@@ -607,7 +607,7 @@ void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer* layer, cons
 
 // The bounds of the GraphicsLayer created for a compositing layer is the union of the bounds of all the descendant
 // RenderLayers that are rendered by the composited RenderLayer.
-IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer) const
+IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer)
 {
     if (!canBeComposited(layer))
         return IntRect();
@@ -1854,11 +1854,9 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return false;
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
-    if (FrameView* frameView = m_renderView->frameView()) {
-        IntRect viewBounds = IntRect(IntPoint(frameView->scrollOffsetForFixedPosition()), frameView->layoutSize());
-        if (!layer->absoluteBoundingBox().intersects(viewBounds) && !calculateCompositedBounds(layer, rootRenderLayer()).intersects(viewBounds))
-            return false;
-    }
+    FrameView* frameView = m_renderView->frameView();
+    if (frameView && !layer->absoluteBoundingBox().intersects(IntRect(IntPoint(frameView->scrollOffsetForFixedPosition()), frameView->layoutSize())))
+        return false;
 
     return true;
 }
