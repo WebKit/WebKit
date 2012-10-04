@@ -23,7 +23,6 @@ EXPORTS
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
-    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@E@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0WTFThreadData@WTF@@QAE@XZ
     ??0YarrPattern@Yarr@JSC@@QAE@ABVString@WTF@@_N1PAPBD@Z
