@@ -532,3 +532,9 @@ fast/events/popup-blocked-from-fake-user-gesture.html
 # [Qt][WK2] inspector/extensions/extensions-network.html times out
 # https://bugs.webkit.org/show_bug.cgi?id=98136
 inspector/extensions/extensions-network.html
+
+# [Qt][WK2] fast/dom/Geolocation/window-close-crash.html times out
+webkit.org/b/98343 fast/dom/Geolocation/window-close-crash.html
+
+# [Qt][WK2] fast/parser/document-open-in-unload.html makes the following test crash
+webkit.org/b/98345 fast/parser/document-open-in-unload.html
