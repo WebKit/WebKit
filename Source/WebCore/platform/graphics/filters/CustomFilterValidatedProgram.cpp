@@ -85,8 +85,9 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
     // Shaders referenced from the CSS mix function use a different validator than regular WebGL shaders. See CustomFilterGlobalContext.h for more details.
     ANGLEWebKitBridge* validator = programInfo.mixSettings().enabled ? m_globalContext->mixShaderValidator() : m_globalContext->webglShaderValidator();
     String vertexShaderLog, fragmentShaderLog;
-    bool vertexShaderValid = validator->validateShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog, SH_ATTRIBUTES_UNIFORMS);
-    bool fragmentShaderValid = validator->validateShaderSource(originalFragmentShader.utf8().data(), SHADER_TYPE_FRAGMENT, m_validatedFragmentShader, fragmentShaderLog, SH_ATTRIBUTES_UNIFORMS);
+    Vector<ANGLEShaderSymbol> symbols;
+    bool vertexShaderValid = validator->compileShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog, symbols);
+    bool fragmentShaderValid = validator->compileShaderSource(originalFragmentShader.utf8().data(), SHADER_TYPE_FRAGMENT, m_validatedFragmentShader, fragmentShaderLog, symbols);
     if (!vertexShaderValid || !fragmentShaderValid) {
         // FIXME: Report the validation errors.
         // https://bugs.webkit.org/show_bug.cgi?id=74416
@@ -94,12 +95,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
     }
 
     // Validate the author's samplers.
-    Vector<ANGLEShaderSymbol> uniforms;
-    if (!validator->getUniforms(SH_VERTEX_SHADER, uniforms))
-        return;
-    if (!validator->getUniforms(SH_FRAGMENT_SHADER, uniforms))
-        return;
-    for (Vector<ANGLEShaderSymbol>::iterator it = uniforms.begin(); it != uniforms.end(); ++it) {
+    for (Vector<ANGLEShaderSymbol>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
         if (it->isSampler()) {
             // FIXME: For now, we restrict shaders with any sampler defined.
             // When we implement texture parameters, we will allow shaders whose samplers are bound to valid textures.

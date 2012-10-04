@@ -13,7 +13,23 @@ There is supposed to be an example drawing here, but it's not important.
 </canvas>
 <div id="description">Verify limits on the lengths of uniform locations.</div>
 <div id="console"></div>
-<script id="goodVertexShader" type="x-shader/x-vertex">
+<script id="goodVertexShader1" type="x-shader/x-vertex">
+// A vertex shader where the uniform name is long, but well below the limit.
+struct Nesting2 {
+    vec4 identifier62CharactersLong_01234567890123456789012345678901234;
+};
+
+struct Nesting1 {
+    Nesting2 identifier64CharactersLong_0123456789012345678901234567890123456;
+};
+
+uniform Nesting1 identifier70CharactersLong_01234567890123456789012345678901234567890;
+
+void main() {
+    gl_Position = identifier70CharactersLong_01234567890123456789012345678901234567890.identifier64CharactersLong_0123456789012345678901234567890123456.identifier62CharactersLong_01234567890123456789012345678901234;
+}
+</script>
+<script id="goodVertexShader2" type="x-shader/x-vertex">
 // A vertex shader where the needed uniform location is exactly 256 characters.
 struct Nesting2 {
     vec4 identifier62CharactersLong_01234567890123456789012345678901234;
@@ -62,7 +78,14 @@ var wtu = WebGLTestUtils;
 var gl = wtu.create3DContext(document.getElementById("example"));
 
 debug("Test uniform location underneath the length limit");
-var program = wtu.loadProgramFromScript(gl, "goodVertexShader", "fragmentShader");
+var program = wtu.loadProgramFromScript(gl, "goodVertexShader1", "fragmentShader");
+shouldBe('gl.getProgramParameter(program, gl.LINK_STATUS)', 'true');
+var uniformLoc = gl.getUniformLocation(program, "identifier70CharactersLong_01234567890123456789012345678901234567890.identifier64CharactersLong_0123456789012345678901234567890123456.identifier62CharactersLong_01234567890123456789012345678901234");
+shouldBeNonNull('uniformLoc');
+wtu.glErrorShouldBe(gl, gl.NONE);
+
+debug("Test uniform location exactly at the length limit");
+var program = wtu.loadProgramFromScript(gl, "goodVertexShader2", "fragmentShader");
 shouldBe('gl.getProgramParameter(program, gl.LINK_STATUS)', 'true');
 var uniformLoc = gl.getUniformLocation(program, "identifier128CharactersLong_0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789.identifier64CharactersLong_0123456789012345678901234567890123456.identifier62CharactersLong_01234567890123456789012345678901234");
 shouldBeNonNull('uniformLoc');

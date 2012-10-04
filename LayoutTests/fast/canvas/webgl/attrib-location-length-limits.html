@@ -13,7 +13,16 @@ There is supposed to be an example drawing here, but it's not important.
 </canvas>
 <div id="description">Verify limits on the lengths of attrib locations.</div>
 <div id="console"></div>
-<script id="goodVertexShader" type="x-shader/x-vertex">
+<script id="goodVertexShader1" type="x-shader/x-vertex">
+// A vertex shader where the needed attrib location is long, but not over the limit.
+attribute vec4 vPosition01234567890123456789012345678901234567890123456789012345678901234567890;
+
+void main()
+{
+    gl_Position = vPosition01234567890123456789012345678901234567890123456789012345678901234567890;
+}
+</script>
+<script id="goodVertexShader2" type="x-shader/x-vertex">
 // A vertex shader where the needed attrib location is exactly 256 characters.
 attribute vec4 vPosition0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456;
 
@@ -47,7 +56,18 @@ var wtu = WebGLTestUtils;
 var gl = wtu.create3DContext(document.getElementById("example"));
 
 debug("Test attrib location underneath the length limit");
-var program = wtu.loadProgramFromScript(gl, "goodVertexShader", "fragmentShader");
+var program = wtu.loadProgramFromScript(gl, "goodVertexShader1", "fragmentShader");
+shouldBe('gl.getProgramParameter(program, gl.LINK_STATUS)', 'true');
+var attribLoc = gl.getAttribLocation(program, "vPosition01234567890123456789012345678901234567890123456789012345678901234567890");
+if (attribLoc == -1) {
+    testFailed("attrib location was -1, should not be");
+} else {
+    testPassed("attrib location should not be -1");
+}
+wtu.glErrorShouldBe(gl, gl.NONE);
+
+debug("Test attrib location exactly at the length limit");
+var program = wtu.loadProgramFromScript(gl, "goodVertexShader2", "fragmentShader");
 shouldBe('gl.getProgramParameter(program, gl.LINK_STATUS)', 'true');
 var attribLoc = gl.getAttribLocation(program, "vPosition0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456");
 if (attribLoc == -1) {

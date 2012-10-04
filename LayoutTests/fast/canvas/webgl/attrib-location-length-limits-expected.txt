@@ -3,6 +3,10 @@ Test attrib location underneath the length limit
 PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
 PASS attrib location should not be -1
 PASS getError was expected value: NO_ERROR : 
+Test attrib location exactly at the length limit
+PASS gl.getProgramParameter(program, gl.LINK_STATUS) is true
+PASS attrib location should not be -1
+PASS getError was expected value: NO_ERROR : 
 Test attrib location over the length limit
 Shader compilation should fail
 PASS wtu.loadShaderFromScript(gl, "badVertexShader", gl.VERTEX_SHADER, function (err) {}) is null

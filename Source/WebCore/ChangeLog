@@ -1,3 +1,67 @@
+2012-10-04  Dean Jackson  <dino@apple.com>
+
+        Attribute and Uniform variable names need translation in shader
+        https://bugs.webkit.org/show_bug.cgi?id=70989
+
+        Reviewed by Tim Horton (and Darin Adler).
+
+        WebGL specifies some maximum lengths for variable names (attributes
+        and uniforms). Also, some GL drivers have issues with long names. For
+        that reason, ANGLE has an option to rewrite the shader, translating
+        long names into short names. Turning this on helps shaders compile,
+        but we need to keep a mapping between the original names and the
+        translated names, so that we bind to the right location from user code
+        (which won't ever see the translated source).
+
+        This provided an opportunity to clean up some other bits of code:
+        CSS Filters examined the uniform names after a compilation; It can
+        now use the variable name map. I also added a typedef for the
+        HashMaps that keep the shader, the source code and the variable name
+        mappings.
+
+        I also opened a followup bug to make sure these tables are deleted
+        when the associated shaders (or linked programs) go away:
+        https://bugs.webkit.org/show_bug.cgi?id=98204
+
+        Covered by existing tests (with some enhancements):
+        - fast/canvas/webgl/attrib-location-length-limits.html:
+        - fast/canvas/webgl/uniform-location-length-limits.html:
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::getSymbolInfo): Extracts all the information on symbols (either attributes
+        or uniforms) from the newly compiled shader.
+        (WebCore):
+        (WebCore::ANGLEWebKitBridge::compileShaderSource): New method name.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::getUniforms): Deleted this method.
+        (WebCore::ANGLEShaderSymbol::isSampler): Make sure the symbol is a uniform.
+        (ANGLEWebKitBridge):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::SymbolInfo::SymbolInfo): A new object that
+        holds the size, type and translated name of a symbol from a WebGL shader.
+        (ShaderSourceEntry):
+        (WebCore::GraphicsContext3D::ShaderSourceEntry::ShaderSourceEntry): Now keeps track
+        of the translated source code and symbol mappings.
+        (WebCore::GraphicsContext3D::ShaderSourceEntry::symbolMap): Helper function to
+        get the member variable corresponding to the type of symbol you're asking fo.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::CustomFilterValidatedProgram): Calls new method
+        name which also produces a set of symbols to examine.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE): We now can pass
+        in some extra compile options to do translation of long symbol names. Also fill the
+        map of translated symbol names.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::mappedSymbolName): Returns the mapped name for
+        a shader symbol if it was translated during compilation.
+        (WebCore):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+
 2012-10-04  Alpha Lam  <hclam@chromium.org>
 
         [skia] Drawing a subrect of bitmap image is misaligned

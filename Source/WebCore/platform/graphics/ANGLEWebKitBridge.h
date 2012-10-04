@@ -50,15 +50,17 @@ enum ANGLEShaderSymbolType {
 struct ANGLEShaderSymbol {
     ANGLEShaderSymbolType symbolType;
     String name;
+    String mappedName;
     ShDataType dataType;
     int size;
 
     bool isSampler()
     {
-        return dataType == SH_SAMPLER_2D
+        return symbolType == SHADER_SYMBOL_TYPE_UNIFORM
+            && (dataType == SH_SAMPLER_2D
             || dataType == SH_SAMPLER_CUBE
             || dataType == SH_SAMPLER_2D_RECT_ARB
-            || dataType == SH_SAMPLER_EXTERNAL_OES;
+            || dataType == SH_SAMPLER_EXTERNAL_OES);
     }
 };
 
@@ -71,12 +73,7 @@ public:
     ShBuiltInResources getResources() { return m_resources; }
     void setResources(ShBuiltInResources);
     
-    bool validateShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, int extraCompileOptions = 0);
-
-    // Get the uniforms for the last validated shader of type ShShaderType.
-    // For this function to work, you must use the SH_ATTRIBUTES_UNIFORMS compile option during validation.
-    // Returns false if an unexpected error occurred in ANGLE.
-    bool getUniforms(ShShaderType, Vector<ANGLEShaderSymbol> &symbols);
+    bool compileShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<ANGLEShaderSymbol>& symbols, int extraCompileOptions = 0);
 
 private:
 

@@ -1,3 +1,22 @@
+2012-10-04  Dean Jackson  <dino@apple.com>
+
+        Attribute and Uniform variable names need translation in shader
+        https://bugs.webkit.org/show_bug.cgi?id=70989
+
+        Reviewed by Tim Horton (and Darin Adler).
+
+        Added subtests to exercise variables that are well under the limits but
+        not long enough to produce an error. This way we now test all three options:
+        under the limit, at the limit, over the limit.
+
+        Also, the tests are unskipped on Mac.
+
+        * fast/canvas/webgl/attrib-location-length-limits-expected.txt:
+        * fast/canvas/webgl/attrib-location-length-limits.html:
+        * fast/canvas/webgl/uniform-location-length-limits-expected.txt:
+        * fast/canvas/webgl/uniform-location-length-limits.html:
+        * platform/mac/TestExpectations:
+
 2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Support all attributes of GeolocationPosition

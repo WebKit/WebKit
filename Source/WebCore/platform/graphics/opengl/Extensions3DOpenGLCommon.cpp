@@ -161,15 +161,23 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
     String translatedShaderSource;
     String shaderInfoLog;
-    int extraCompileOptions = 0;
+    int extraCompileOptions = SH_MAP_LONG_VARIABLE_NAMES;
 
     if (m_requiresBuiltInFunctionEmulation)
         extraCompileOptions |= SH_EMULATE_BUILT_IN_FUNCTIONS;
 
-    bool isValid = compiler.validateShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, extraCompileOptions);
+    Vector<ANGLEShaderSymbol> symbols;
+    bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, extraCompileOptions);
 
     entry.log = shaderInfoLog;
     entry.isValid = isValid;
+
+    size_t numSymbols = symbols.size();
+    for (size_t i = 0; i < numSymbols; ++i) {
+        ANGLEShaderSymbol shaderSymbol = symbols[i];
+        GraphicsContext3D::SymbolInfo symbolInfo(shaderSymbol.dataType, shaderSymbol.size, shaderSymbol.mappedName);
+        entry.symbolMap(shaderSymbol.symbolType).set(shaderSymbol.name, symbolInfo);
+    }
 
     if (!isValid)
         return "";
