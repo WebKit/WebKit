@@ -1,3 +1,19 @@
+2012-10-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Default.edj should be generated although ENABLE_WEBKIT disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=97753
+
+        Reviewed by Laszlo Gombos.
+
+        default.edj is used in both webkit/efl and webkit2/efl.
+        However, it has been generated only when ENABLE_WEBKIT is enabled.
+
+        This patch separates the script which generates default.edj
+        from source/webkit/platformefl.cmake.
+
+        * DefaultTheme/CMakeLists.txt:
+        Extracted from Source/WebKit/PlatformEfl.cmake and sanitized.
+
 2012-10-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable use of X11 in DumpRenderTree / WebKitTestRunner

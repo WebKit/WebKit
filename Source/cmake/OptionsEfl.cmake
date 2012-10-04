@@ -46,6 +46,7 @@ SET(WebKit2_LIBRARY_NAME ewebkit2)
 
 SET(DATA_INSTALL_DIR "share/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
 SET(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebKit/efl/DefaultTheme)
+FILE(MAKE_DIRECTORY ${THEME_BINARY_DIR})
 
 SET(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/eflsymbols.filter")
 

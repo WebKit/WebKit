@@ -21,6 +21,8 @@ IF (ENABLE_WEBKIT2)
     ADD_SUBDIRECTORY(WebKit2)
 ENDIF ()
 
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
 # -----------------------------------------------------------------------------
 # Set compiler flags for all targets
 # -----------------------------------------------------------------------------
