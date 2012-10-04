@@ -21,4 +21,4 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (0,76) size 784x19 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (12,0) size 79x19
             text run at (12,0) width 79: "Hello World."
-caret: position 2 of child 1 {#text} of child 2 {DIV} of body
+caret: position 2 of child 0 {#text} of child 2 {DIV} of body

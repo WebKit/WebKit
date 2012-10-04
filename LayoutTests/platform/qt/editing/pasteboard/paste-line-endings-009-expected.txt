@@ -13,7 +13,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 8 of #text > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -50,8 +50,6 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 76: "line one"
               RenderBR {BR} at (76,22) size 0x0
             RenderBlock {DIV} at (0,28) size 780x28
-              RenderText {#text} at (0,0) size 6x28
-                text run at (0,0) width 6: "l"
-              RenderText {#text} at (6,0) size 71x28
-                text run at (6,0) width 71: "ine two"
+              RenderText {#text} at (0,0) size 77x28
+                text run at (0,0) width 77: "line two"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,3 +1,27 @@
+2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt rebaseline after r130411.
+
+        * platform/qt/editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * platform/qt/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/qt/editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * platform/qt/editing/deleting/merge-no-br-expected.txt:
+        * platform/qt/editing/execCommand/find-after-replace-expected.txt:
+        * platform/qt/editing/execCommand/paste-1-expected.txt:
+        * platform/qt/editing/execCommand/paste-2-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt:
+        * platform/qt/editing/pasteboard/5006779-expected.txt:
+        * platform/qt/editing/pasteboard/5028447-expected.txt:
+        * platform/qt/editing/pasteboard/8145-3-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-borders-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-009-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-010-expected.txt:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/qt/editing/pasteboard/unrendered-br-expected.txt:
+
 2012-10-04  Dean Jackson  <dino@apple.com>
 
         Attribute and Uniform variable names need translation in shader

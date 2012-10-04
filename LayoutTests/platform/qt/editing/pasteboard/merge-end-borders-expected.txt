@@ -7,7 +7,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 47 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -28,13 +28,9 @@ layer at (0,0) size 800x600
             text run at (0,0) width 569: "The second paragraph should be surrounded by a red border before and after the test."
       RenderBlock {DIV} at (0,108) size 784x40
         RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 31x19
-            text run at (0,0) width 31: "First "
-          RenderText {#text} at (31,0) size 61x19
-            text run at (31,0) width 61: "paragraph"
+          RenderText {#text} at (0,0) size 92x19
+            text run at (0,0) width 92: "First paragraph"
         RenderBlock {DIV} at (0,19) size 784x21 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 25x19
-            text run at (1,1) width 25: "This"
-          RenderText {#text} at (26,1) size 263x19
-            text run at (26,1) width 263: " text should be surrounded by a red border."
-caret: position 4 of child 0 {#text} of child 2 {DIV} of child 3 {DIV} of body
+          RenderText {#text} at (1,1) size 288x19
+            text run at (1,1) width 288: "This text should be surrounded by a red border."
+caret: position 4 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
