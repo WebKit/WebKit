@@ -1,3 +1,11 @@
+2012-10-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll chromium to r160008
+
+        Unreviewed, deps roll.
+
+        * DEPS:
+
 2012-10-03  Adam Barth  <abarth@webkit.org>
 
         Remove support for ENABLE(LEGACY_WEBKIT_BLOB_BUILDER)
