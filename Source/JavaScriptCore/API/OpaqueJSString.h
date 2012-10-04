@@ -59,7 +59,6 @@ private:
 
     OpaqueJSString()
     {
-        m_string = emptyString();
     }
 
     OpaqueJSString(const String& string)
