@@ -1363,8 +1363,6 @@ webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ Image
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure Missing ]
-
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
 # Missing support in DRT for Geolocation's Coordinate attributes.

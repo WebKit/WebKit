@@ -2849,8 +2849,6 @@ webkit.org/b/80219 compositing/overflow/clip-descendents.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
-webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure Missing ]
-
 # Needs results
 webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
 
