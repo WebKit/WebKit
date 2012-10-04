@@ -449,10 +449,13 @@ fast/css/widget-region-parser.html
 # http://webkit.org/b/96828
 fast/canvas/webgl/oes-vertex-array-object.html
 
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Needs to be unskipped once libxml 2.8.0 is added to jhbuild.
+# See https://bugs.webkit.org/show_bug.cgi?id=91009
+webkit.org/b/98418 fast/xsl/xslt-missing-namespace-in-xslt.html [ Skip ]
 
 # These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
 Bug(EFL) fast/canvas/canvas-gradient-addStop-error.html

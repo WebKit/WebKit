@@ -1,3 +1,13 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Temporarily skip fast/xsl/xslt-missing-namespace-in-xslt.html.
+
+        As bug 91009 shows, libxml 2.8.0 makes us produce a different test
+        result. Unskip the test for now until we add that version to
+        jhbuild.
+
+        * platform/efl/TestExpectations:
+
 2012-10-04  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Should set unitsPerEm in SimpleFontDataSkia.cpp
