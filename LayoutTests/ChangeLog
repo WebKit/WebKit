@@ -1,3 +1,9 @@
+2012-10-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Mark perf/show-hide-table-rows.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-04  Harald Alvestrand  <hta@google.com>
 
         Change RTCPeerConnection GetStats to use Date timestamp format
