@@ -207,26 +207,9 @@ ENDIF ()
 
 SET(WebKit_INSTALL_DIR "${CMAKE_SYSTEM_PROCESSOR}/usr/lib/torch-webkit")
 
-# Get the JavaScript file names from inspector.html, in order to keep the JavaScript files
-# generated in the correct order, and to keep the file names in-sync with the changes of inspector.html
-FILE (STRINGS ${WEBCORE_DIR}/inspector/front-end/inspector.html SCRIPT_TAGS REGEX "<script.* src=\".*js\".*></script>")
-FOREACH (_line IN LISTS SCRIPT_TAGS)
-    STRING (STRIP ${_line} _stripped_line)
-    STRING (REGEX REPLACE "<script.* src=\"(.*\\.js)\".*></script>" "\\1" _js_file ${_stripped_line})
-    STRING (COMPARE EQUAL ${_js_file} "InspectorBackendCommands.js" _comp_result)
-    IF ( ${_comp_result} )
-        # InspectorBackendCommands.js was generated with the build, should get it from DERIVED_SOURCES_WEBCORE_DIR.
-        SET (_js_file "${DERIVED_SOURCES_WEBCORE_DIR}/${_js_file}")
-    ELSE ()
-        SET (_js_file "${WEBCORE_DIR}/inspector/front-end/${_js_file}")
-    ENDIF ()
-    SET (JS_FILES ${JS_FILES} ${_js_file})
-ENDFOREACH ()
-SET (JS_FILES ${JS_FILES} ${WEBKIT_DIR}/blackberry/WebCoreSupport/inspectorBB.js)
-
 ADD_CUSTOM_TARGET (
     inspector ALL
-    COMMAND cat ${JS_FILES} > ${DERIVED_SOURCES_WEBCORE_DIR}/javascript.js
+    command cp ${WEBCORE_DIR}/inspector/front-end/inspector.html ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html && echo '<script src="inspectorBB.js"></script>'  >> ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
     DEPENDS ${WebCore_LIBRARY_NAME}
     COMMENT "Web Inspector resources building..."
 )

@@ -1,3 +1,15 @@
+2012-10-04  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Update how we compile inspector front-end javascript.
+        https://bugs.webkit.org/show_bug.cgi?id=98413
+
+        Reviewed by Rob Buis.
+
+        No longer cat all JavaScript together, instead use the lazy init and
+        only append our custom changes script to the end of inspectorBB.html.
+
+        * PlatformBlackBerry.cmake:
+
 2012-10-03  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Default.edj should be generated although ENABLE_WEBKIT disabled.
