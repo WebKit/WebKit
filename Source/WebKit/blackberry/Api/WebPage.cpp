@@ -3901,6 +3901,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
                 m_scaleBeforeFullScreen = -1.0;
             }
             m_mainFrame->view()->setScrollPosition(m_scrollOffsetBeforeFullScreen);
+            notifyTransformChanged();
         }
 
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
