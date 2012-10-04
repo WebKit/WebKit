@@ -489,6 +489,7 @@ int main(int argc, char* argv[])
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
 
     webkitSettings = webkit_web_settings_new();
+    g_object_set(webkitSettings, "enable-developer-extras", TRUE, NULL);
     if (!addWebSettingsGroupToContext(context, webkitSettings)) {
         g_object_unref(webkitSettings);
         webkitSettings = 0;

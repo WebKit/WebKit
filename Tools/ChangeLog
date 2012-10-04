@@ -1,3 +1,20 @@
+2012-10-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Enable inspector by default in GtkLauncher/MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=98333
+
+        Reviewed by Xan Lopez.
+
+        Both MiniBrowser and GtkLauncher are tools for testing, so in
+        the end every time we want to test the inspector we have to
+        manually enable enable the “developer extras” setting when using
+        them. It make sense to have this setting enabled by default.
+
+        * GtkLauncher/main.c:
+        (main):
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2012-10-04  Harald Alvestrand  <hta@google.com>
 
         Change RTCPeerConnection GetStats to use Date timestamp format
