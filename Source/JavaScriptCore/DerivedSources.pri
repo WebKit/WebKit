@@ -36,6 +36,10 @@ JIT_STUB_FILES += \
 LLINT_FILES = \
     llint/LowLevelInterpreter.asm
 
+LLINT_DEPENDENCY = \
+    $$PWD/llint/LowLevelInterpreter32_64.asm \
+    $$PWD/llint/LowLevelInterpreter64.asm
+
 # GENERATOR 1-A: LUT creator
 lut.output = ${QMAKE_FILE_BASE}.lut.h
 lut.input = LUT_FILES
@@ -89,6 +93,7 @@ linux-*:!equals(QT_ARCH, "arm") {
     llint.output = LLIntAssembly.h
     llint.script = $$PWD/offlineasm/asm.rb
     llint.input = LLINT_FILES
+    llint.depends = LLIntOffsetsExtractor $$LLINT_DEPENDENCY
     llint.commands = ruby $$llint.script ${QMAKE_FILE_NAME} LLIntOffsetsExtractor ${QMAKE_FILE_OUT}
     GENERATORS += llint
 }

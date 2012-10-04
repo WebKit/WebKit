@@ -21,10 +21,29 @@ defineTest(addIncludePaths) {
 
 addIncludePaths()
 
+LLINT_DEPENDENCY = \
+    $$PWD/llint/LowLevelInterpreter.asm \
+    $$PWD/llint/LowLevelInterpreter32_64.asm \
+    $$PWD/llint/LowLevelInterpreter64.asm \
+    $$PWD/offlineasm/armv7.rb \
+    $$PWD/offlineasm/ast.rb \
+    $$PWD/offlineasm/backends.rb \
+    $$PWD/offlineasm/generate_offset_extractor.rb \
+    $$PWD/offlineasm/instructions.rb \
+    $$PWD/offlineasm/offsets.rb \
+    $$PWD/offlineasm/opt.rb \
+    $$PWD/offlineasm/parser.rb \
+    $$PWD/offlineasm/registers.rb \
+    $$PWD/offlineasm/self_hash.rb \
+    $$PWD/offlineasm/settings.rb \
+    $$PWD/offlineasm/transform.rb \
+    $$PWD/offlineasm/x86.rb
+
 INPUT_FILES = $$PWD/llint/LowLevelInterpreter.asm
 llint.output = LLIntDesiredOffsets.h
 llint.script = $$PWD/offlineasm/generate_offset_extractor.rb
 llint.input = INPUT_FILES
+llint.depends = $$LLINT_DEPENDENCY
 llint.commands = ruby $$llint.script ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
 llint.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += llint
