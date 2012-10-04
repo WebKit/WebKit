@@ -1,3 +1,27 @@
+2012-10-04  Sami Kyostila  <skyostil@chromium.org>
+
+        Fixed position visibility check does not consider descendants
+        https://bugs.webkit.org/show_bug.cgi?id=98144
+
+        Reviewed by Simon Fraser.
+
+        The check against creating composition layers for invisible fixed positioned
+        elements is too aggressive in that it does not consider descendants of the
+        fixed positioned element that may be visible even though the element itself is
+        out of view.
+
+        Fix the problem by calculating the true composited bounds of the fixed
+        element instead of just using the size of the fixed layer. Because calculating
+        the true bounds may be expensive, it is only done if the fixed layer itself is
+        invisible.
+
+        Test: compositing/layer-creation/fixed-position-absolute-descendant.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderLayerCompositor.h:
+
 2012-10-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: When uiSourceCode content has diverged from VM script, call frames should be shown in temporary script based uiSourceCodes.

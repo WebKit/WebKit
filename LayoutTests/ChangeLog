@@ -1,3 +1,15 @@
+2012-10-04  Sami Kyostila  <skyostil@chromium.org>
+
+        Fixed position visibility check does not consider descendants
+        https://bugs.webkit.org/show_bug.cgi?id=98144
+
+        Reviewed by Simon Fraser.
+
+        Added a test for the fixed position layer visibility check.
+
+        * compositing/layer-creation/fixed-position-absolute-descendant-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-absolute-descendant.html: Added.
+
 2012-10-04  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r130385. Skip some failing test.

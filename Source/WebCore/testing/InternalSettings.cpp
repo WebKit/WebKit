@@ -81,6 +81,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
 #endif
     , m_originalEditingBehavior(settings->editingBehaviorType())
     , m_originalUnifiedSpellCheckerEnabled(settings->unifiedTextCheckerEnabled())
+    , m_originalAcceleratedCompositingForFixedPositionEnabled(settings->acceleratedCompositingForFixedPositionEnabled())
     , m_originalFixedPositionCreatesStackingContext(settings->fixedPositionCreatesStackingContext())
     , m_originalSyncXHRInDocumentsEnabled(settings->syncXHRInDocumentsEnabled())
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
@@ -116,6 +117,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #endif
     settings->setEditingBehaviorType(m_originalEditingBehavior);
     settings->setUnifiedTextCheckerEnabled(m_originalUnifiedSpellCheckerEnabled);
+    settings->setAcceleratedCompositingForFixedPositionEnabled(m_originalAcceleratedCompositingForFixedPositionEnabled);
     settings->setFixedPositionCreatesStackingContext(m_originalFixedPositionCreatesStackingContext);
     settings->setSyncXHRInDocumentsEnabled(m_originalSyncXHRInDocumentsEnabled);
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)

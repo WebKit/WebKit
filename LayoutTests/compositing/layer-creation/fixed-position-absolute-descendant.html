@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .fixed {
+      position: fixed;
+    }
+    .absolute {
+      position: absolute;
+    }
+    .in-view {
+      top: 50px;
+      left: 50px;
+    }
+    .out-of-view {
+      top: 50px;
+      left: -150px;
+    }
+    .box {
+      width: 50px;
+      height: 50px;
+      background: green;
+    }
+  </style>
+
+  <script type="text/javascript">
+    if (window.internals) {
+      window.internals.settings.setEnableCompositingForFixedPosition(true);
+      window.internals.settings.setFixedPositionCreatesStackingContext(true);
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+
+      window.addEventListener("load", function() {
+        document.getElementById("layertree").innerText = testRunner.layerTreeAsText();
+      }, false);
+    }
+  </script>
+</head>
+
+<body>
+  <!-- This element gets its own layer even though its layout size is empty
+       because it has a descendant that intersects with the viewport. -->
+  <div class="fixed">
+    <div class="absolute in-view box"></div>
+  </div>
+
+  <!-- This element doesn't get a layer, because neither it or any of its
+       children intersect with the viewport. -->
+  <div class="fixed">
+    <div class="absolute out-of-view box"></div>
+  </div>
+
+  <pre id="layertree"></pre>
+</body>
+</html>
