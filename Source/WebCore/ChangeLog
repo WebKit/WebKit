@@ -1,3 +1,17 @@
+2012-10-03  Adam Barth  <abarth@webkit.org>
+
+        Measure the usage of WebSQLDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=98330
+
+        Reviewed by Ojan Vafai.
+
+        WebKit is the only engine that implements WebSQLDatabase. This patch
+        causes us to measure its usage so we can see how quickly web sites move
+        to IndexedDB.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * page/FeatureObserver.h:
+
 2012-10-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [soup] WebKit crashes when doing a http request
