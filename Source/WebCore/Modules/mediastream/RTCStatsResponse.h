@@ -45,7 +45,7 @@ public:
     const Vector<RefPtr<RTCStatsReport> >& result() const { return m_result; };
 
     virtual size_t addReport() OVERRIDE;
-    virtual size_t addElement(size_t report, bool isLocal, long timestamp) OVERRIDE;
+    virtual size_t addElement(size_t report, bool isLocal, double timestamp) OVERRIDE;
     virtual void addStatistic(size_t report, bool isLocal, size_t element, String name, String value) OVERRIDE;
 
 private:
