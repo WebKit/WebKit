@@ -1,3 +1,19 @@
+2012-10-04  Andreas Kling  <kling@webkit.org>
+
+        Lower minimum table size of WTF::HashTable to reduce memory usage.
+        <http://webkit.org/b/98406>
+        <rdar://problem/12432140>
+
+        Reviewed by Anders Carlsson.
+
+        Lower the default minimumTableSize for WTF hash tables from 64 to 8 entries.
+        This reduces WebProcess memory consumption by ~16MB on Membuster3 (a 6% progression!)
+
+        No significant movement on PLT or JSC benchmarks on my machine. If there's a perf regression somewhere
+        from this, we can tweak individual tables to have a larger minimumTableSize.
+
+        * wtf/HashTraits.h:
+
 2012-10-04  Michael Saboff  <msaboff@apple.com>
 
         String::remove will convert an 8 bit string to a 16 bit string
