@@ -1,3 +1,12 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Revert some wrong baselines added in r130387.
+
+        Thanks to Christophe Dumez and Mikhail Pozdnyakov for the help.
+
+        * platform/efl/compositing/visibility/visibility-simple-video-layer-expected.txt: Removed.
+        * platform/efl/fullscreen/parent-flow-inline-with-block-child-expected.txt:
+
 2012-10-04  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: expose object internal properties such as PrimitiveValue or BoundThis
