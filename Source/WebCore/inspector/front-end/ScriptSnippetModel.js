@@ -317,7 +317,9 @@ WebInspector.ScriptSnippetModel.prototype = {
     _createUISourceCodeForScript: function(script)
     {
         var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, false);
-        uiSourceCode.setSourceMapping(this._snippetScriptMapping); 
+        uiSourceCode.setSourceMapping(this._snippetScriptMapping);
+        // FIXME: Should be added to workspace as temporary.
+        uiSourceCode.isTemporary = true;
         uiSourceCode.isSnippetEvaluation = true;
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);
@@ -358,11 +360,13 @@ WebInspector.ScriptSnippetModel.prototype = {
         if (!script)
             return;
 
+        snippetJavaScriptSource.isDivergingFromVM = true;
         snippetJavaScriptSource.hasDivergedFromVM = true;
         delete this._uiSourceCodeForScriptId[script.scriptId];
         this._scriptForUISourceCode.remove(snippetJavaScriptSource);
         delete snippetJavaScriptSource._evaluationIndex;
         this._createUISourceCodeForScript(script);
+        delete snippetJavaScriptSource.isDivergingFromVM;
     },
 
     /**
