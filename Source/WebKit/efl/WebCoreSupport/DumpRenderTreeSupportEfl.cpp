@@ -577,7 +577,7 @@ void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request
 {
 #if ENABLE(WEB_INTENTS)
     String responseString = response->string();
-    if (responseString.isNull())
+    if (responseString.isEmpty())
         ewk_intent_request_failure_post(request, WebCore::SerializedScriptValue::create(String::fromUTF8("ERROR")));
     else
         ewk_intent_request_result_post(request, WebCore::SerializedScriptValue::create(String(responseString.impl())));
