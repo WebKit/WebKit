@@ -1,3 +1,9 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Unreviewed, remove unused $legacyWebKitBlobBuilderSupport variable after r130343.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-10-03  Philip Rogers  <pdr@google.com>
 
         Force GC between PageLoad tests.
