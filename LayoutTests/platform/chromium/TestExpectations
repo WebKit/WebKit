@@ -2441,7 +2441,7 @@ crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/92710 fast/forms/date/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
+webkit.org/b/92710 fast/forms/date/calendar-picker-appearance.html [ ImageOnlyFailure Pass Timeout ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
@@ -3655,10 +3655,15 @@ webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appe
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
 
-# Need rebaseline
-webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98390 fast/forms/date/calendar-picker-appearance-pre-100.html [ Timeout ] 
+webkit.org/b/98390 fast/forms/date/calendar-picker-key-operations.html [ Timeout ] 
+webkit.org/b/98390 fast/forms/date/calendar-picker-mouse-operations.html [ Timeout ] 
+webkit.org/b/98390 fast/forms/date/calendar-picker-with-step.html [ Timeout ] 
+webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ Timeout ] 
+webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ Timeout ] 
+webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ Timeout ] 
+webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-key-operations.html [ Timeout ] 
+
 
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
