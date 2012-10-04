@@ -1,5 +1,23 @@
 2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        Make the Xvfb driver recognize `X' as a valid X server binary.
+        https://bugs.webkit.org/show_bug.cgi?id=98434
+
+        Reviewed by Dirk Pranke.
+
+        The X server binary can also be called `X', so account for that
+        possibility in the _next_free_display regexp.
+
+        Additionally, make the regular expression require at least one
+        space character after the `ps comm' part.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver._next_free_display):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.test_next_free_display):
+
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         webkitpy: Accept WEBKITOUTPUTDIR in Port._setup_environ_for_server.
         https://bugs.webkit.org/show_bug.cgi?id=98436
 

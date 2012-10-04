@@ -48,7 +48,7 @@ class XvfbDriver(Driver):
         running_pids = self._port.host.executive.run_command(['ps', '-eo', 'comm,command'])
         reserved_screens = set()
         for pid in running_pids.split('\n'):
-            match = re.match('(Xvfb|Xorg).*\s:(?P<screen_number>\d+)', pid)
+            match = re.match('(X|Xvfb|Xorg)\s+.*\s:(?P<screen_number>\d+)', pid)
             if match:
                 reserved_screens.add(int(match.group('screen_number')))
         for i in range(99):
