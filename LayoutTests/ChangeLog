@@ -1,3 +1,9 @@
+2012-10-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Fix r140403 by skipping the right test.
+
+        * platform/efl/TestExpectations:
+
 2012-10-04  Tony Chang  <tony@chromium.org>
 
         inline-flex baseline is sometimes wrong
