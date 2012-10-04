@@ -1,3 +1,11 @@
+2012-10-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding proper bug modifiers for accessibility failures that don't yet have one.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Removed duplicate entries introduced by r130355
