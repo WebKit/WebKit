@@ -40,7 +40,7 @@ public:
     const Vector<RefPtr<RTCStatsElement> >& local() const { return m_local; }
     const Vector<RefPtr<RTCStatsElement> >& remote() const { return m_remote; }
 
-    size_t addElement(bool isLocal, long timestamp);
+    size_t addElement(bool isLocal, double timestamp);
     void addStatistic(bool isLocal, size_t element, String name, String value);
 
 private:

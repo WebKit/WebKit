@@ -43,6 +43,7 @@
 #include <public/WebRTCVoidRequest.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
+#include <wtf/DateMath.h>
 
 using namespace WebKit;
 
@@ -215,12 +216,13 @@ void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescripto
 void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request)
 {
     WebRTCStatsResponse response = request.createResponse();
+    double currentDate = WTF::jsCurrentTime();
     for (int i = 0; i < m_streamCount; ++i) {
         size_t reportIndex = response.addReport();
-        size_t elementIndex = response.addElement(reportIndex, true, 12345);
+        size_t elementIndex = response.addElement(reportIndex, true, currentDate);
         response.addStatistic(reportIndex, true, elementIndex, "type", "audio");
         reportIndex = response.addReport();
-        elementIndex = response.addElement(reportIndex, true, 12345);
+        elementIndex = response.addElement(reportIndex, true, currentDate);
         response.addStatistic(reportIndex, true, elementIndex, "type", "video");
     }
     postTask(new RTCStatsRequestSucceededTask(this, request, response));

@@ -38,7 +38,7 @@ public:
     virtual ~RTCStatsResponseBase() { }
 
     virtual size_t addReport() = 0;
-    virtual size_t addElement(size_t report, bool isLocal, long timestamp) = 0;
+    virtual size_t addElement(size_t report, bool isLocal, double timestamp) = 0;
     virtual void addStatistic(size_t report, bool isLocal, size_t element, String name, String value) = 0;
 };
 
