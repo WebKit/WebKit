@@ -10,8 +10,7 @@ Before cut and paste:
 | " WebKit<#selection-focus>"
 
 After cut and paste:
-| "hello"
-| " "
+| "hello "
 | <span>
 |   class="test"
 |   style="background-color: transparent;"

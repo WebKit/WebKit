@@ -4,7 +4,6 @@ WebKit should not generate a span with background-color property in such cases.
 "
 | <p>
 |   id="destination"
-|   "hello<#selection-caret>"
-|   "world"
+|   "hello<#selection-caret>world"
 | "
 "

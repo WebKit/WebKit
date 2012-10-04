@@ -8,8 +8,7 @@ This tests dropping content onto a list items content when the content is wrappe
 |     <div>
 |       id="contents"
 |       style="border: 1px solid red;"
-|       "DropAboveMe"
-|       "<#selection-anchor> DragMe<#selection-focus>"
+|       "DropAboveMe<#selection-anchor> DragMe<#selection-focus>"
 | "
 "
 | <div>

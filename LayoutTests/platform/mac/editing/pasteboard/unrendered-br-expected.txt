@@ -16,12 +16,10 @@ layer at (0,0) size 800x600
           text run at (0,18) width 114: "result of the paste."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 32x18
-            text run at (0,0) width 32: "First "
-          RenderText {#text} at (32,0) size 67x18
-            text run at (32,0) width 67: "paragraph."
+          RenderText {#text} at (0,0) size 99x18
+            text run at (0,0) width 99: "First paragraph."
         RenderBlock {DIV} at (0,18) size 784x18
           RenderText {#text} at (0,0) size 118x18
             text run at (0,0) width 118: "Second paragraph."
         RenderBlock (anonymous) at (0,36) size 784x0
-caret: position 17 of child 0 {#text} of child 2 {DIV} of child 2 {DIV} of body
+caret: position 17 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

@@ -109,8 +109,7 @@ After paste (this should be identical to before cut):
 "
 |     <p>
 |       <p>
-|         "This is an"
-|         " "
+|         "This is an "
 |         <b>
 |           "interactive"
 |         " "

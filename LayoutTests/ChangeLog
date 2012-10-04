@@ -1,3 +1,68 @@
+2012-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ReplaceSelectionCommand should merge text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=98188
+
+        Reviewed by Levi Weintraub.
+
+        Rebaselined tests.
+
+        * editing/deleting/merge-paragraphs-with-transparent-background-expected.txt:
+        * editing/deleting/paste-with-transparent-background-color-expected.txt:
+        * editing/execCommand/outdent-selection-expected.txt:
+        * editing/execCommand/remove-list-items-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/pasteboard/avoid-copying-body-with-background-expected.txt:
+        * editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * editing/pasteboard/drag-drop-list-expected.txt:
+        * editing/pasteboard/merge-end-5-expected.txt:
+        * editing/pasteboard/paste-before-tab-span-expected.txt:
+        * editing/pasteboard/paste-into-table-cell-expected.txt:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-010-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * editing/pasteboard/paste-unrendered-select-expected.txt:
+        * editing/pasteboard/smart-paste-001-expected.txt:
+        * editing/pasteboard/smart-paste-002-expected.txt:
+        * editing/pasteboard/smart-paste-003-expected.txt:
+        * editing/pasteboard/smart-paste-004-expected.txt:
+        * editing/pasteboard/smart-paste-005-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * fast/events/ondragenter-expected.txt:
+        * fast/lists/drag-into-marker.html:
+        * platform/mac/editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * platform/mac/editing/deleting/merge-no-br-expected.txt:
+        * platform/mac/editing/execCommand/find-after-replace-expected.txt:
+        * platform/mac/editing/execCommand/paste-1-expected.txt:
+        * platform/mac/editing/execCommand/paste-2-expected.txt:
+        * platform/mac/editing/pasteboard/4944770-2-expected.txt:
+        * platform/mac/editing/pasteboard/5006779-expected.txt:
+        * platform/mac/editing/pasteboard/5028447-expected.txt:
+        * platform/mac/editing/pasteboard/8145-3-expected.txt:
+        * platform/mac/editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-borders-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-007-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-009-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-010-expected.txt:
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/mac/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/mac/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/mac/editing/pasteboard/unrendered-br-expected.txt:
+
 2012-10-04  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix flexbox-baseline.html to test the new behavior after r130409.

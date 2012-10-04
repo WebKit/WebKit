@@ -96,11 +96,12 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 38 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 39 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 39 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This test copies and pastes "is a tide in the affairs of men,\nWhich taken at the flood leads on to fortune.\nOmitted" twice.

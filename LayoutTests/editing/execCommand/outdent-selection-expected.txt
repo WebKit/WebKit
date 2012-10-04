@@ -19,8 +19,7 @@ more Lorem!
 |   style="margin: 0 0 0 40px;"
 |   "
 
-"
-|   "Foo"
+Foo"
 |   <br>
 |   "Bar"
 |   <br>
@@ -32,8 +31,7 @@ more Lorem!
 | "Dolor"
 | <br>
 | "
-"
-| "Dinner time?"
+Dinner time?"
 | <br>
 | <ul>
 |   "

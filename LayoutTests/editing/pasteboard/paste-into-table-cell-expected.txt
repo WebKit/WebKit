@@ -8,8 +8,7 @@ The content should be pasted into the first cell, not between two tds.
 |   <tbody>
 |     <tr>
 |       <td>
-|         " "
-|         "Drag me<#selection-caret>"
+|         " Drag me<#selection-caret>"
 |       <td>
 |         " "
 |     <tr>

@@ -31,8 +31,7 @@ Buggy code before fix would insert blockquote after body element in second paste
 |       "foo"
 |       <blockquote>
 |         "bar"
-|       "baz"
-|       "foo"
+|       "bazfoo"
 |     <blockquote>
 |       "bar"
 |     "baz<#selection-caret>"

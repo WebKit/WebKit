@@ -1,3 +1,35 @@
+2012-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ReplaceSelectionCommand should merge text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=98188
+
+        Reviewed by Levi Weintraub.
+
+        Added mergeTextNodesAroundPosition to ReplaceSelectionCommand to merge text nodes after the replace in
+        completeHTMLReplacement. Also fixed a bunch of bugs in other classes and functions to make this work.
+
+        This behavior change is tested by existing tests.
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): When splitting a text node, place the insertionPosition
+        at the end of the first half. Leaving it at the beginning of the second half confuses the rest of the code in
+        the function. However, the logic to handle the "insignificant" white spaces needs the position at the start of
+        the second half. So keep this position.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Update visibleStart after inserting a paragraph separator so that
+        the logic to cleanup the nested div checks the right condition (right beneath it starting with a long comment).
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace): Insert a space for smart paste at the appropriate
+        offset instead of at the end of endNode. Also update the layout before obtaining startDownstream as we may have 
+        modified the DOM by inserting a space for endNode. Finally, a non-breaking space should be treated like a space
+        isCharacterSmartReplaceExempt for the purpose of smart replace. e.g. if we're inserting "world" after
+        "hello&nbsp;", we shouldn't be inserting another space between "hello" and "world".
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition): Added. Merge text nodes around position, and
+        adjust position and positionOnlyToBeUpdated accordingly. We need to call updatePositionForNodeRemoval when
+        positions were before or after the text node.
+        * editing/ReplaceSelectionCommand.h:
+        (ReplaceSelectionCommand):
+
 2012-10-04  Tony Chang  <tony@chromium.org>
 
         Fix <input type="month"> tests

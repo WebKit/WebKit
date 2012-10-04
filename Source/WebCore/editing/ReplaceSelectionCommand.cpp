@@ -837,8 +837,10 @@ void ReplaceSelectionCommand::doApply()
             VisiblePosition next = visibleStart.next(CannotCrossEditingBoundary);
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart) && next.isNotNull())
                 setEndingSelection(next);
-            else 
+            else  {
                 insertParagraphSeparator();
+                visibleStart = endingSelection().visibleStart();
+            }
         }
         // We split the current paragraph in two to avoid nesting the blocks from the fragment inside the current block.
         // For example paste <div>foo</div><div>bar</div><div>baz</div> into <div>x^x</div>, where ^ is the caret.  
@@ -1140,6 +1142,11 @@ bool ReplaceSelectionCommand::shouldPerformSmartReplace() const
     return true;
 }
 
+static bool isCharacterSmartReplaceExemptConsideringNonBreakingSpace(UChar32 character, bool previousCharacter)
+{
+    return isCharacterSmartReplaceExempt(character == noBreakSpace ? ' ' : character, previousCharacter);
+}
+
 void ReplaceSelectionCommand::addSpacesForSmartReplace()
 {
     VisiblePosition startOfInsertedContent = positionAtStartOfInsertedContent();
@@ -1147,17 +1154,18 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
 
     Position endUpstream = endOfInsertedContent.deepEquivalent().upstream();
     Node* endNode = endUpstream.computeNodeBeforePosition();
-    if (endUpstream.anchorType() == Position::PositionIsOffsetInAnchor)
+    int endOffset = endNode && endNode->isTextNode() ? toText(endNode)->length() : 0;
+    if (endUpstream.anchorType() == Position::PositionIsOffsetInAnchor) {
         endNode = endUpstream.containerNode();
+        endOffset = endUpstream.offsetInContainerNode();
+    }
 
-    bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) && !isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);
+    bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(endOfInsertedContent.characterAfter(), false);
     if (needsTrailingSpace && endNode) {
         bool collapseWhiteSpace = !endNode->renderer() || endNode->renderer()->style()->collapseWhiteSpace();
         if (endNode->isTextNode()) {
-            Text* text = toText(endNode);
-            // FIXME: we shouldn't always be inserting the space at the end
-            insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-            if (m_endOfInsertedContent.containerNode() == text)
+            insertTextIntoNode(toText(endNode), endOffset, collapseWhiteSpace ? nonBreakingSpaceString() : " ");
+            if (m_endOfInsertedContent.containerNode() == endNode)
                 m_endOfInsertedContent.moveToOffset(m_endOfInsertedContent.offsetInContainerNode() + 1);
         } else {
             RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
@@ -1165,6 +1173,8 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
             updateNodesInserted(node.get());
         }
     }
+
+    document()->updateLayout();
 
     Position startDownstream = startOfInsertedContent.deepEquivalent().downstream();
     Node* startNode = startDownstream.computeNodeAfterPosition();
@@ -1174,7 +1184,7 @@ void ReplaceSelectionCommand::addSpacesForSmartReplace()
         startOffset = startDownstream.offsetInContainerNode();
     }
 
-    bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) && !isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
+    bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) && !isCharacterSmartReplaceExemptConsideringNonBreakingSpace(startOfInsertedContent.previous().characterAfter(), true);
     if (needsLeadingSpace && startNode) {
         bool collapseWhiteSpace = !startNode->renderer() || startNode->renderer()->style()->collapseWhiteSpace();
         if (startNode->isTextNode()) {
@@ -1205,10 +1215,12 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         if (m_matchStyle) {
             ASSERT(m_insertionStyle);
             applyStyle(m_insertionStyle.get(), start, end);
-        }    
+        }
 
         if (lastPositionToSelect.isNotNull())
             end = lastPositionToSelect;
+
+        mergeTextNodesAroundPosition(start, end);
     } else if (lastPositionToSelect.isNotNull())
         start = end = lastPositionToSelect;
     else
@@ -1218,6 +1230,61 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         setEndingSelection(VisibleSelection(start, end, SEL_DEFAULT_AFFINITY, endingSelection().isDirectional()));
     else
         setEndingSelection(VisibleSelection(end, SEL_DEFAULT_AFFINITY, endingSelection().isDirectional()));
+}
+
+void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, Position& positionOnlyToBeUpdated)
+{
+    bool positionIsOffsetInAnchor = position.anchorType() == Position::PositionIsOffsetInAnchor;
+    bool positionOnlyToBeUpdatedIsOffsetInAnchor = positionOnlyToBeUpdated.anchorType() == Position::PositionIsOffsetInAnchor;
+    RefPtr<Text> text = 0;
+    if (positionIsOffsetInAnchor && position.containerNode() && position.containerNode()->isTextNode())
+        text = toText(position.containerNode());
+    else {
+        Node* before = position.computeNodeBeforePosition();
+        if (before && before->isTextNode())
+            text = toText(before);
+        else {
+            Node* after = position.computeNodeAfterPosition();
+            if (after && after->isTextNode())
+                text = toText(after);
+        }
+    }
+    if (!text)
+        return;
+
+    if (text->previousSibling() && text->previousSibling()->isTextNode()) {
+        Text* previous = toText(text->previousSibling());
+        insertTextIntoNode(text, 0, previous->data());
+
+        if (positionIsOffsetInAnchor)
+            position.moveToOffset(previous->length() + position.offsetInContainerNode());
+        else
+            updatePositionForNodeRemoval(position, previous);
+
+        if (positionOnlyToBeUpdatedIsOffsetInAnchor) {
+            if (positionOnlyToBeUpdated.containerNode() == text)
+                positionOnlyToBeUpdated.moveToOffset(previous->length() + position.offsetInContainerNode());
+            else if (positionOnlyToBeUpdated.containerNode() == previous)
+                positionOnlyToBeUpdated.moveToPosition(text, position.offsetInContainerNode());
+        } else
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous);
+
+        removeNode(previous);
+    }
+    if (text->nextSibling() && text->nextSibling()->isTextNode()) {
+        Text* next = toText(text->nextSibling());
+        insertTextIntoNode(text, text->length(), next->data());
+
+        if (!positionIsOffsetInAnchor)
+            updatePositionForNodeRemoval(position, next);
+
+        if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next)
+            positionOnlyToBeUpdated.moveToPosition(text, text->length() + position.offsetInContainerNode());
+        else
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, next);
+
+        removeNode(next);
+    }
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

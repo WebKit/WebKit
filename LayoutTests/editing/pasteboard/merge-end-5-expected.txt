@@ -14,5 +14,4 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.
 | <div>
 |   style="border: 1px solid red;"
-|   "This text should have a red border around<#selection-caret>"
-|   " it."
+|   "This text should have a red border around<#selection-caret> it."
