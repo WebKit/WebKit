@@ -1,3 +1,19 @@
+2012-10-04  Tony Chang  <tony@chromium.org>
+
+        Fix <input type="month"> tests
+        https://bugs.webkit.org/show_bug.cgi?id=98426
+
+        Reviewed by Ojan Vafai.
+
+        The month picker uses flexbox and assumes that it will be aligned with
+        the last line box. This looks visually correct. I will follow up on
+        www-style to see what the expected behavior is.
+
+        Tests: fast/forms/month-multiple-fields tests cover this.
+
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlexibleBox.h:
+
 2012-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130396.

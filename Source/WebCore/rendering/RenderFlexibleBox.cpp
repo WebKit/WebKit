@@ -246,12 +246,6 @@ LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline baselineType, bool f
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-LayoutUnit RenderFlexibleBox::lastLineBoxBaseline() const
-{
-    // Similar to tables, if we're in an inline-block, align with the bottom of our box.
-    return -1;
-}
-
 LayoutUnit RenderFlexibleBox::firstLineBoxBaseline() const
 {
     ASSERT(m_orderIterator);
