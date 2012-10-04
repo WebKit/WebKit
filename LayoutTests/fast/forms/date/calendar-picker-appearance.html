@@ -1,30 +1,23 @@
 <!DOCTYPE html>
 <body>
+<script src="calendar-picker-common.js"></script>
 <input type=date id=date value="10000-12-31">
 <script>
-function sendKey(input, keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
-}
-
 function finishTest() {
-    console.log(pickerWindow.pagePopupController);
-    pickerWindow.removeEventListener('resize', finishTest);
+    console.log(popupWindow.pagePopupController);
+    popupWindow.removeEventListener('resize', finishTest);
     setTimeout(function() {testRunner.notifyDone();}, 0);
 }
 
 console.log('Check if window.pagePopupController exists for a page-popup window.');
 testRunner.dumpAsText(true);
 testRunner.waitUntilDone();
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
-var dateInput = document.getElementById('date');
-dateInput.offsetTop;
-sendKey(dateInput, 'Down');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener('resize', finishTest, false);
+window.onload = function() {
+    var dateInput = document.getElementById('date');
+    openPicker(dateInput);
+    popupWindow.addEventListener('resize', finishTest, false);
+};
 </script>
 </body>
 

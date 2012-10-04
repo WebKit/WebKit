@@ -31,12 +31,12 @@ function selectedDates() {
 }
 
 function openPicker(input) {
-    sendKey(input, "Down");
+    sendKey(input, "Down", false, true);
     popupWindow = document.getElementById('mock-page-popup').contentWindow;
 }
 
-function sendKey(input, keyName) {
+function sendKey(input, keyName, ctrlKey, altKey) {
     var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName, 0, ctrlKey, altKey);
     input.dispatchEvent(event);
 }

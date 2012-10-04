@@ -2,21 +2,16 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="calendar-picker-common.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <input type=date id=date value="0002-02-02">
 <script>
-function sendKey(element, keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    element.dispatchEvent(event);
-}
-
 function finishTest() {
-    pickerWindow.removeEventListener('resize', finishTest);
-    var daysContainer = pickerWindow.document.getElementsByClassName("days-area")[0];
+    popupWindow.removeEventListener('resize', finishTest);
+    var daysContainer = popupWindow.document.getElementsByClassName("days-area")[0];
     sendKey(daysContainer, 'Right');
     sendKey(daysContainer, 'Enter');
     shouldBe('document.getElementById("date").value', '"0002-02-03"');
@@ -28,16 +23,11 @@ description('Check if year before 100 can be set.');
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-window.jsTestIsAsync = true;
-
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
-
-var dateInput = document.getElementById('date');
-dateInput.offsetTop;
-sendKey(dateInput, 'Down');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener('resize', finishTest, false);
+window.onload = function() {
+    var dateInput = document.getElementById('date');
+    openPicker(dateInput);
+    popupWindow.addEventListener('resize', finishTest, false);
+};
 var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

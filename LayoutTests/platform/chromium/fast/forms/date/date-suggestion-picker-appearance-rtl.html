@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <body dir="rtl" style="padding: 0 50px;">
+<script src="../../../../../fast/forms/resources/suggestion-picker-common.js"></script>
 <input type=date id=date list=suggestions style="width: 100px;">
 <datalist id=suggestions>
     <option label="Today">2012-01-01</option>
@@ -26,15 +27,17 @@
 <script>
 testRunner.dumpAsText(true);
 testRunner.waitUntilDone();
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
-document.getElementById('date').focus();
-if (window.eventSender)
-    eventSender.keyDown('downArrow');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.onresize = function() {
-    testRunner.notifyDone();
+window.onload = function() {
+    var dateInput = document.getElementById('date');
+    dateInput.offsetTop;
+    openPicker(dateInput);
+    popupWindow.addEventListener('resize', finishTest, false);
+};
+
+function finishTest() {
+    popupWindow.removeEventListener('resize', finishTest);
+    setTimeout(function() { testRunner.notifyDone(); }, 0);
 }
 </script>
 </body>

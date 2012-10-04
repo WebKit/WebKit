@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -81,30 +82,28 @@
 </datalist>
 <script>
 description("Tests that key bindings work as expected.");
-window.jsTestIsAsync = true;
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-    console.log(document.getElementById('mock-page-popup'));
-sendKey(document.getElementById('date'), 'Down');
+console.log(document.getElementById('mock-page-popup'));
 
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener("resize", test1, false);
+window.onload = function() {
+    openPicker(document.getElementById('date'), 'Down');
+    popupWindow.addEventListener("resize", test1, false);
+}
 
 var timeoutTimer = setTimeout(function() {
     testFailed("Test timed out.");
     finishJSTest();
-}, 5000);
+}, 10000);
 
 function test1() {
     debug('Check that page popup exists.');
-    shouldBe('pickerWindow.pagePopupController.toString()', '"[object PagePopupController]"');
-    pickerWindow.focus();
+    shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
+    popupWindow.focus();
 
-    pickerWindow.removeEventListener("resize", test1, false);
+    popupWindow.removeEventListener("resize", test1, false);
 
     debug('Check that up/down arrow keys work.');
     shouldBeNull('highlightedEntry()');
@@ -145,15 +144,14 @@ function test1() {
     shouldBe('document.getElementById("date").value', '"2012-03-08"');
 
     debug('Reopen popup.');
-    sendKey(document.getElementById('date'), 'Down');
-    pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-    pickerWindow.addEventListener("resize", test2, false);
+    openPicker(document.getElementById('date'));
+    popupWindow.addEventListener("resize", test2, false);
 }
 
 function test2() {
-    pickerWindow.removeEventListener("resize", test2, false);
+    popupWindow.removeEventListener("resize", test2, false);
 
-    pickerWindow.focus();
+    popupWindow.focus();
 
     debug('Check that escape key closes the popup.');
     eventSender.keyDown('\x1B');
@@ -161,16 +159,15 @@ function test2() {
     shouldBe('document.getElementById("date").value', '"2012-03-08"');
 
     debug('Reopen popup.');
-    sendKey(document.getElementById('date'), 'Down');
-    pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-    pickerWindow.addEventListener("resize", test3, false);
+    openPicker(document.getElementById('date'));
+    popupWindow.addEventListener("resize", test3, false);
 }
 
 function test3() {
-    pickerWindow.removeEventListener("resize", test3, false);
-    pickerWindow.addEventListener("resize", test4, false);
+    popupWindow.removeEventListener("resize", test3, false);
+    popupWindow.addEventListener("resize", test4, false);
 
-    pickerWindow.focus();
+    popupWindow.focus();
 
     eventSender.keyDown('pageDown');
     eventSender.keyDown('pageDown');
@@ -182,17 +179,17 @@ function test3() {
 }
 
 function test4() {
-    pickerWindow.removeEventListener("resize", test4, false);
+    popupWindow.removeEventListener("resize", test4, false);
 
     debug('Confirm calendar picker did open.');
-    shouldBeTrue('pickerWindow.document.getElementById("main").classList.contains("calendar-picker")');
+    shouldBeTrue('popupWindow.document.getElementById("main").classList.contains("calendar-picker")');
 
     clearTimeout(timeoutTimer);
     finishJSTest();
 }
 
 function highlightedEntry() {
-    var activeElement = pickerWindow.document.activeElement;
+    var activeElement = popupWindow.document.activeElement;
     if (!activeElement)
         return null;
     var value = activeElement.dataset.value;
@@ -202,12 +199,6 @@ function highlightedEntry() {
     if (typeof action === "string")
         return "@" + action;
     return null;
-}
-
-function sendKey(input, keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
 }
 
 </script>

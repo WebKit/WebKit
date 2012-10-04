@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="calendar-picker-common.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -12,25 +13,16 @@
 <script>
 description('Test if step limits available dates in calendar picker.');
 
-window.jsTestIsAsync = true;
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
-
 var dateInput = document.getElementById('date');
-sendKey(dateInput, 'Down');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.addEventListener('resize', test1, false);
-
-function sendKey(input, keyName) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
-}
+window.onload = function() {
+    openPicker(dateInput);
+    popupWindow.addEventListener('resize', test1, false);
+};
 
 function test1() {
     debug("Step without min.");
     shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-08", "2011-05-17", "2011-05-26"].join(",")');
-    pickerWindow.removeEventListener('resize', test1);
+    popupWindow.removeEventListener('resize', test1);
 
     // Close popup
     eventSender.keyDown('\x1B');
@@ -38,21 +30,19 @@ function test1() {
     dateInput.min = "2011-05-01";
     
     // Reopen popup
-    sendKey(document.getElementById('date'), 'Down');
-    pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-
-    pickerWindow.addEventListener("resize", test2, false);
+    openPicker(dateInput);
+    popupWindow.addEventListener("resize", test2, false);
 }
 
 function test2() {
     debug("Step when min is set.");
     shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-01", "2011-05-10", "2011-05-19", "2011-05-28"].join(",")');
-    pickerWindow.removeEventListener('resize', test2);
+    popupWindow.removeEventListener('resize', test2);
     testRunner.notifyDone();
 }
 
 function availableDatesInCurrentMonth() {
-    return Array.prototype.map.call(pickerWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
         return element.dataset.submitValue;
     }).sort();
 }
