@@ -454,12 +454,16 @@ void QQuickWebViewPrivate::setNeedsDisplay()
         q->page()->d->paint(&painter);
         return;
     }
+    q->page()->update();
+}
 
+void QQuickWebViewPrivate::didRenderFrame()
+{
+    Q_Q(QQuickWebView);
     if (m_betweenLoadCommitAndFirstFrame) {
         emit q->experimental()->loadVisuallyCommitted();
         m_betweenLoadCommitAndFirstFrame = false;
     }
-    q->page()->update();
 }
 
 void QQuickWebViewPrivate::processDidCrash()

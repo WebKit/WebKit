@@ -88,6 +88,7 @@ public:
 
     int loadProgress() const { return m_loadProgress; }
     void setNeedsDisplay();
+    void didRenderFrame();
 
     WebKit::PageViewportController* viewportController() const { return m_pageViewportController.data(); }
     virtual void updateViewportSize() { }

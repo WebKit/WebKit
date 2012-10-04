@@ -75,7 +75,10 @@ void QtPageClient::setViewNeedsDisplay(const WebCore::IntRect& rect)
 
 void QtPageClient::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
+    // The viewport has to be notified first so that the viewport position
+    // is adjusted before the loadVisuallyCommitted() signal.
     QQuickWebViewPrivate::get(m_webView)->viewportController()->didRenderFrame(contentsSize, coveredRect);
+    QQuickWebViewPrivate::get(m_webView)->didRenderFrame();
 }
 
 void QtPageClient::pageDidRequestScroll(const IntPoint& pos)
