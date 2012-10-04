@@ -8,6 +8,7 @@ Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
 	-I$(top_builddir)/Source/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
+	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
