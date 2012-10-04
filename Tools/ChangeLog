@@ -1,3 +1,14 @@
+2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Run unit tests with Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=98389
+
+        Reviewed by Laszlo Gombos.
+
+        Run EFL unit tests with Xvfb, similarly to GTK port.
+
+        * Scripts/run-efl-tests:
+
 2012-10-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Enable inspector by default in GtkLauncher/MiniBrowser

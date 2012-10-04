@@ -320,7 +320,7 @@ static void checkFullScreenProperty(Evas_Object* webView, bool expectedState)
     ASSERT_TRUE(expectedState == windowState);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
+TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_enter)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreen(){"
@@ -340,7 +340,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
     checkFullScreenProperty(webView(), true);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
+TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_exit)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreenAndExit(){"

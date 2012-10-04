@@ -90,7 +90,7 @@ int ewk_init(void)
 
 #ifdef HAVE_ECORE_X
 error_ecore_x:
-    edje_shutdown();
+    ecore_evas_shutdown();
 #endif
 error_ecore_evas:
     ecore_shutdown();
@@ -113,7 +113,6 @@ int ewk_shutdown(void)
 #ifdef HAVE_ECORE_X
     ecore_x_shutdown();
 #endif
-    edje_shutdown();
     ecore_evas_shutdown();
     ecore_shutdown();
     evas_shutdown();

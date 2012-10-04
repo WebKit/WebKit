@@ -32,9 +32,30 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-setConfiguration();
+my $xvfb_display = ":55";
+
+my $xvfb_pid = fork();
+exit(1) if not defined $xvfb_pid;
 
 # Tell CTest to dump gtest output in case of failure.
 $ENV{CTEST_OUTPUT_ON_FAILURE} = "1";
+$ENV{DISPLAY} = $xvfb_display;
 
-buildCMakeProjectOrExit(0, "Efl", undef, "test", cmakeBasedPortArguments());
+if ($xvfb_pid == 0) {
+    # Start Xvfb
+    my @xvfb_args = ( "Xvfb $xvfb_display -screen 0 800x600x24 -nolisten tcp > /dev/null 2>&1" );
+    exec(@xvfb_args);
+} else {
+    setConfiguration();
+
+    my $returnCode = exitStatus(generateBuildSystemFromCMakeProject("Efl", undef, cmakeBasedPortArguments()));
+    exit($returnCode) if $returnCode;
+
+    $returnCode = exitStatus(buildCMakeGeneratedProject("test"));
+
+    # Kill Xvfb
+    kill(15, $xvfb_pid);
+
+    exit($returnCode);
+}
+

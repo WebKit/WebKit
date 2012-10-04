@@ -1,3 +1,18 @@
+2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Run unit tests with Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=98389
+
+        Reviewed by Laszlo Gombos.
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init): Call ecore_evas_shutdown() instead of
+        edje_shutdown() when ecore_x_init() fails.
+        (ewk_shutdown): Remove extra call to edje_shutdown().
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F): Temporarily disable fullscreen unit tests
+        until we get them working with Xvfb.
+
 2012-10-04  Balazs Kelemen  <kbalazs@webkit.org>
 
         Don't allow compositing to be disabled in forced compositing mode
