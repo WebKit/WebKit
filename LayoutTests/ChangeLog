@@ -1,5 +1,13 @@
 2012-10-04  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, fix flexbox-baseline.html to test the new behavior after r130409.
+
+        * css3/flexbox/flexbox-baseline.html:
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-expected.png:
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-expected.txt:
+
+2012-10-04  Tony Chang  <tony@chromium.org>
+
         Unreviewed, fixing expected results for a test that needs a new baseline.
 
         * platform/chromium/TestExpectations:

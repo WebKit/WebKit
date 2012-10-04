@@ -161,16 +161,16 @@ after
 text
 </div>
 
-<!-- The spec is a little unclear what should happen here. For now, match the
-behavior of tables inside inline-blocks. -->
+<!-- The spec is a little unclear what should happen here. For now, align to
+the last line box. -->
 <div>
-should align with the bottom
+before text
 <div style="display: inline-block">
 <div class="flexbox" style="height: 30px;">
-  above
+  baseline
 </div>
 </div>
-of the grey box
+after text
 </div>
 
 <table style="background-color: lightgrey; margin-top: 5px">
