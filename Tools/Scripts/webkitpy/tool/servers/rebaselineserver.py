@@ -178,7 +178,7 @@ def get_test_baselines(test_file, test_config):
 
     # FIXME: This should get the Host from the test_config to be mockable!
     host = Host()
-    host._initialize_scm()
+    host.initialize_scm()
     host.filesystem = test_config.filesystem
     all_platforms_port = AllPlatformsPort(host)
 

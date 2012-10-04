@@ -125,7 +125,7 @@ class Host(SystemHost):
             except OSError, e:
                 _log.debug('Failed to engage git.bat Windows hack.')
 
-    def _initialize_scm(self, patch_directories=None):
+    def initialize_scm(self, patch_directories=None):
         if sys.platform == "win32":
             self._engage_awesome_windows_hacks()
         detector = SCMDetector(self.filesystem, self.executive)

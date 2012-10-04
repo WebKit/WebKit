@@ -281,7 +281,8 @@ class JSONResultsGeneratorBase(object):
 
         results_for_builder = results_json[builder_name]
 
-        self._insert_generic_metadata(results_for_builder)
+        if builder_name:
+            self._insert_generic_metadata(results_for_builder)
 
         self._insert_failure_summaries(results_for_builder)
 
@@ -377,15 +378,17 @@ class JSONResultsGeneratorBase(object):
 
         return self.__class__.PASS_RESULT
 
-    # FIXME: Callers should use scm.py instead.
-    # FIXME: Identify and fix the run-time errors that were observed on Windows
-    # chromium buildbot when we had updated this code to use scm.py once before.
     def _get_svn_revision(self, in_directory):
         """Returns the svn revision for the given directory.
 
         Args:
           in_directory: The directory where svn is to be run.
         """
+
+        # FIXME: We initialize this here in order to engage the stupid windows hacks :).
+        # We can't reuse an existing scm object because the specific directories may
+        # be part of other checkouts.
+        self._port.host.initialize_scm()
         scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(in_directory)
         if scm:
             return scm.svn_revision(in_directory)

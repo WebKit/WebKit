@@ -50,7 +50,7 @@ class MockHost(MockSystemHost):
         # FIXME: we should never initialize the SCM by default, since the real
         # object doesn't either. This has caused at least one bug (see bug 89498).
         if initialize_scm_by_default:
-            self._initialize_scm()
+            self.initialize_scm()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self._chromium_buildbot = MockBuildBot()
@@ -61,7 +61,7 @@ class MockHost(MockSystemHost):
 
         self._watch_list = MockWatchList()
 
-    def _initialize_scm(self, patch_directories=None):
+    def initialize_scm(self, patch_directories=None):
         self._scm = MockSCM(filesystem=self.filesystem, executive=self.executive)
         # Various pieces of code (wrongly) call filesystem.chdir(checkout_root).
         # Making the checkout_root exist in the mock filesystem makes that chdir not raise.

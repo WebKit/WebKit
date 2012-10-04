@@ -63,7 +63,7 @@ class PerfTestsRunner(object):
         else:
             self._host = Host()
             self._port = self._host.port_factory.get(self._options.platform, self._options)
-        self._host._initialize_scm()
+        self._host.initialize_scm()
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._port.perf_tests_dir()
         self._results = {}

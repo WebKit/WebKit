@@ -91,7 +91,7 @@ class WebKitPatch(MultiCommandTool, Host):
 
     # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
     def handle_global_options(self, options):
-        self._initialize_scm(options.patch_directories)
+        self.initialize_scm(options.patch_directories)
         if options.status_host:
             self.status_server.set_host(options.status_host)
         if options.bot_id:

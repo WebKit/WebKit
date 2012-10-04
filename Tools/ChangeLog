@@ -1,3 +1,43 @@
+2012-10-03  Dirk Pranke  <dpranke@chromium.org>
+
+        run-webkit-tests tests on win32 after r127302
+        https://bugs.webkit.org/show_bug.cgi?id=98323
+
+        Reviewed by Eric Seidel.
+
+        run-webkit-tests tests on win32 after r127302
+        https://bugs.webkit.org/show_bug.cgi?id=98323
+
+        Reviewed by Eric Seidel.
+
+        Looks like when we converted the json-building logic to use scm
+        to try and get the svn revision, we missed a win32-ism and
+        didn't check to make sure had initialized the scm subsystem.
+
+        This change fixes that and renames _initialize_scm to be a public method.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host.initialize_scm):
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+        (MockHost.initialize_scm):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.get_json):
+        (JSONResultsGeneratorBase._get_result_char):
+        (JSONResultsGeneratorBase._get_svn_revision):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.__init__):
+        * Scripts/webkitpy/style/main.py:
+        (CheckWebKitStyle.main):
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch.handle_global_options):
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (get_test_baselines):
+
 2012-10-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Make inspector directly useable in GtkLauncher/MiniBrowser
