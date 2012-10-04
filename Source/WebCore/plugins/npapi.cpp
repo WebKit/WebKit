@@ -53,7 +53,7 @@ void NPN_MemFree(void* ptr)
     free(ptr);
 }
 
-uint32_t NPN_MemFlush(uint32_t size)
+uint32_t NPN_MemFlush(uint32_t)
 {
     // Do nothing
     return 0;
@@ -64,7 +64,7 @@ void NPN_ReloadPlugins(NPBool reloadPages)
     Page::refreshPlugins(reloadPages);
 }
 
-NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
+NPError NPN_RequestRead(NPStream*, NPByteRange*)
 {
     return NPERR_STREAM_NOT_SEEKABLE;
 }
@@ -162,7 +162,7 @@ void* NPN_GetJavaEnv()
     return 0;
 }
 
-void* NPN_GetJavaPeer(NPP instance)
+void* NPN_GetJavaPeer(NPP)
 {
     // Unsupported
     return 0;

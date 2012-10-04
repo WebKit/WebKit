@@ -203,6 +203,8 @@ bool NetscapePlugin::platformPostInitializeWindowed(bool needsXEmbed, uint64_t w
     callbackStruct->visual = GDK_VISUAL_XVISUAL(gdk_window_get_visual(window));
     callbackStruct->depth = gdk_visual_get_depth(gdk_window_get_visual(window));
     callbackStruct->colormap = XCreateColormap(display, GDK_ROOT_WINDOW(), callbackStruct->visual, AllocNone);
+#else
+    UNUSED_PARAM(windowID);
 #endif
 
     XFlush(display);

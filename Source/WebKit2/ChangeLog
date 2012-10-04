@@ -1,3 +1,34 @@
+2012-10-03  Kangil Han  <kangil.han@samsung.com>
+
+        Fix unused parameter compile warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=98243
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed unused parameter compile warnings by removing parameter names, adding UNUSED_PARAM usage and commenting out.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPluginInternal):
+        * PluginProcess/unix/PluginProcessUnix.cpp:
+        (WebKit::PluginProcess::platformInitialize):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_RequestRead):
+        (WebKit::NPN_NewStream):
+        (WebKit::NPN_Write):
+        (WebKit::NPN_MemFlush):
+        (WebKit::NPN_ReloadPlugins):
+        (WebKit::NPN_GetJavaPeer):
+        (WebKit::NPN_InvalidateRegion):
+        (WebKit::NPN_ForceRedraw):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::contentsScaleFactorChanged):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformPostInitializeWindowed):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::contentsScaleFactorChanged):
+
 2012-10-03  Anders Carlsson  <andersca@apple.com>
 
         Plugins are killed after 45 seconds if showing keychain "Allow/Deny" dialog

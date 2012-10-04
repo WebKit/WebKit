@@ -943,6 +943,8 @@ void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
 #if PLUGIN_ARCHITECTURE(MAC)
     double contentsScaleFactor = scaleFactor;
     NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor);
+#else
+    UNUSED_PARAM(scaleFactor);
 #endif
 }
 

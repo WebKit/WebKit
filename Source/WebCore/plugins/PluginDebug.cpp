@@ -158,6 +158,8 @@ CString prettyNameForNPPVariable(NPPVariable variable, void* value)
         return result.latin1();
     }
     case NPPVpluginCoreAnimationLayer: return "NPPVpluginCoreAnimationLayer";
+#else
+    UNUSED_PARAM(value);
 #endif
 
     default: return "Unknown variable";

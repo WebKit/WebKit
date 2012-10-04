@@ -79,7 +79,7 @@ void PlatformStrategiesEfl::refreshPlugins()
 #endif
 }
 
-void PlatformStrategiesEfl::getPluginInfo(const Page* page, Vector<PluginInfo>& outPlugins)
+void PlatformStrategiesEfl::getPluginInfo(const Page*, Vector<PluginInfo>& outPlugins)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginDatabase::installedPlugins()->refresh();
@@ -108,7 +108,6 @@ void PlatformStrategiesEfl::getPluginInfo(const Page* page, Vector<PluginInfo>& 
         outPlugins.append(pluginInfo);
     }
 #else
-    UNUSED_PARAM(page);
     UNUSED_PARAM(outPlugins);
 #endif
 }

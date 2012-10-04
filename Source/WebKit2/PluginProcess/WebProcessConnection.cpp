@@ -256,6 +256,8 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
     wantsWheelEvents = pluginControllerProxyPtr->wantsWheelEvents();
 #if PLATFORM(MAC)
     remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
+#else
+    UNUSED_PARAM(remoteLayerClientID);
 #endif
 }
 

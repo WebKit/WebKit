@@ -404,7 +404,7 @@ bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
     return true;
 }
 
-void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode mode)
+void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode)
 {
     JSNPObject* thisObject = jsCast<JSNPObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);

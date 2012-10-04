@@ -447,7 +447,7 @@ void PluginProxy::sendComplexTextInput(const String& textInput)
 }
 #endif
 
-void PluginProxy::contentsScaleFactorChanged(float scaleFactor)
+void PluginProxy::contentsScaleFactorChanged(float)
 {
     geometryDidChange();
 }

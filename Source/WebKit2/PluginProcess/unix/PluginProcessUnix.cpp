@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
+void PluginProcess::platformInitialize(const PluginProcessCreationParameters&)
 {
     notImplemented();
 }
