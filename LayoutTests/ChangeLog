@@ -1,3 +1,12 @@
+2012-10-04  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Chromium rebaselines.
+
+        Rebaseline pixel results after r130412.
+
+        * platform/chromium-mac-snowleopard/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png:
+
 2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another rebaseline needed after r130411.
