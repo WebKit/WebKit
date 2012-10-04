@@ -819,7 +819,7 @@ void ChromeClientBlackBerry::setNeedsOneShotDrawingSynchronization()
     m_webPagePrivate->setNeedsOneShotDrawingSynchronization();
 }
 
-void ChromeClientBlackBerry::scheduleCompositingLayerSync()
+void ChromeClientBlackBerry::scheduleCompositingLayerFlush()
 {
     m_webPagePrivate->scheduleRootLayerCommit();
 }

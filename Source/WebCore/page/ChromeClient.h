@@ -257,7 +257,7 @@ namespace WebCore {
         virtual void setNeedsOneShotDrawingSynchronization() = 0;
         // Sets a flag to specify that the view needs to be updated, so we need
         // to do an eager layout before the drawing.
-        virtual void scheduleCompositingLayerSync() = 0;
+        virtual void scheduleCompositingLayerFlush() = 0;
         // Returns whether or not the client can render the composited layer,
         // regardless of the settings.
         virtual bool allowsAcceleratedCompositing() const { return true; }

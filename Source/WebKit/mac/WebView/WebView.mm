@@ -6297,11 +6297,11 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     _private->needsOneShotDrawingSynchronization = needsSynchronization;
 }
 
-- (BOOL)_syncCompositingChanges
+- (BOOL)_flushCompositingChanges
 {
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
-        return frame->view()->syncCompositingStateIncludingSubframes();
+        return frame->view()->flushCompositingStateIncludingSubframes();
 
     return YES;
 }
@@ -6358,7 +6358,7 @@ bool LayerFlushController::flushLayers()
     if (viewsNeedDisplay)
         return false;
 
-    if ([m_webView _syncCompositingChanges]) {
+    if ([m_webView _flushCompositingChanges]) {
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
         // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
         // updates here.
@@ -6375,7 +6375,7 @@ bool LayerFlushController::flushLayers()
     return false;
 }
 
-- (void)_scheduleCompositingLayerSync
+- (void)_scheduleCompositingLayerFlush
 {
     if (!_private->layerFlushController)
         _private->layerFlushController = LayerFlushController::create(self);

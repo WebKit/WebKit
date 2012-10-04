@@ -6675,7 +6675,7 @@ void WebView::flushPendingGraphicsLayerChanges()
     if (m_backingLayer)
         m_backingLayer->syncCompositingStateForThisLayerOnly();
 
-    view->syncCompositingStateIncludingSubframes();
+    view->flushCompositingStateIncludingSubframes();
 }
 
 #endif

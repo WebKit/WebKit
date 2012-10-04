@@ -174,7 +174,7 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
     return m_layerTreeStateIsFrozen;
 }
 
-void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
+void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 {
     m_layerFlushScheduler.schedule();
 }
@@ -184,7 +184,7 @@ void TiledCoreAnimationDrawingArea::didInstallPageOverlay()
     m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(true);
 
     createPageOverlayLayer();
-    scheduleCompositingLayerSync();
+    scheduleCompositingLayerFlush();
 }
 
 void TiledCoreAnimationDrawingArea::didUninstallPageOverlay()
@@ -193,14 +193,14 @@ void TiledCoreAnimationDrawingArea::didUninstallPageOverlay()
         page->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(false);
 
     destroyPageOverlayLayer();
-    scheduleCompositingLayerSync();
+    scheduleCompositingLayerFlush();
 }
 
 void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(const IntRect& rect)
 {
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->setNeedsDisplayInRect(rect);
-    scheduleCompositingLayerSync();
+    scheduleCompositingLayerFlush();
 }
 
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
@@ -308,7 +308,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
     }
 
-    bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    bool returnValue = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
     [pool drain];
     return returnValue;

@@ -156,7 +156,7 @@ namespace WebKit {
 #if USE(ACCELERATED_COMPOSITING) 
         virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
         virtual void setNeedsOneShotDrawingSynchronization();
-        virtual void scheduleCompositingLayerSync();
+        virtual void scheduleCompositingLayerFlush();
         virtual CompositingTriggerFlags allowedCompositingTriggers() const;
 #endif 
 

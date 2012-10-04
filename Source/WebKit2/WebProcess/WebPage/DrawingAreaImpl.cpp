@@ -355,7 +355,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
     }
 }
 
-void DrawingAreaImpl::scheduleCompositingLayerSync()
+void DrawingAreaImpl::scheduleCompositingLayerFlush()
 {
     if (!m_layerTreeHost)
         return;

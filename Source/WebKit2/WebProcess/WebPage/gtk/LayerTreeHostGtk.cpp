@@ -292,7 +292,7 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
     if (m_pageOverlayLayer)
         m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
 
-    return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    return m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
 
 void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)

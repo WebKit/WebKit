@@ -605,7 +605,7 @@ void ChromeClientEfl::setNeedsOneShotDrawingSynchronization()
     notImplemented();
 }
 
-void ChromeClientEfl::scheduleCompositingLayerSync()
+void ChromeClientEfl::scheduleCompositingLayerFlush()
 {
     notImplemented();
 }

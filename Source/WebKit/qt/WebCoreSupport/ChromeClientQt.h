@@ -144,7 +144,7 @@ public:
     // This is a hook for WebCore to tell us what we need to do with the GraphicsLayers.
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
     virtual void setNeedsOneShotDrawingSynchronization();
-    virtual void scheduleCompositingLayerSync();
+    virtual void scheduleCompositingLayerFlush();
     virtual CompositingTriggerFlags allowedCompositingTriggers() const;
 #endif
     virtual bool allowsAcceleratedCompositing() const;

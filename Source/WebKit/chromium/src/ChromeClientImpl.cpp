@@ -917,7 +917,7 @@ void ChromeClientImpl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* grap
     m_webView->setRootGraphicsLayer(graphicsLayer);
 }
 
-void ChromeClientImpl::scheduleCompositingLayerSync()
+void ChromeClientImpl::scheduleCompositingLayerFlush()
 {
     m_webView->scheduleCompositingLayerSync();
 }

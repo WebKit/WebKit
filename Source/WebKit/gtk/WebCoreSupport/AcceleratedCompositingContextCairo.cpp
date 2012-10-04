@@ -137,7 +137,7 @@ void AcceleratedCompositingContext::syncLayersNow()
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 
-    core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    core(m_webView)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::syncLayersTimeout()

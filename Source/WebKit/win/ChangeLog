@@ -1,3 +1,20 @@
+2012-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Standardize on "flush" terminology for compositing layer flushing/syncing
+        https://bugs.webkit.org/show_bug.cgi?id=98321
+
+        Reviewed by Simon Fraser.
+
+        Rename compositing-related methods that refer to "syncing" to instead
+        refer to "flushing".
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::scheduleCompositingLayerFlush):
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebView.cpp:
+        (WebView::flushPendingGraphicsLayerChanges):
+
 2012-10-02  Anders Carlsson  <andersca@apple.com>
 
         Change most GraphicsLayer::create calls to use the version that takes a GraphicsLayerFactory

@@ -139,7 +139,7 @@ public:
         virtual void setNeedsOneShotDrawingSynchronization() { }
         // Sets a flag to specify that the view needs to be updated, so we need
         // to do an eager layout before the drawing.
-        virtual void scheduleCompositingLayerSync();
+        virtual void scheduleCompositingLayerFlush();
 #endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)

@@ -191,9 +191,9 @@ public:
     virtual void scrollRectIntoView(const IntRect&) const { }
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) {}
-    virtual void setNeedsOneShotDrawingSynchronization() {}
-    virtual void scheduleCompositingLayerSync() {}
+    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) { }
+    virtual void setNeedsOneShotDrawingSynchronization() { }
+    virtual void scheduleCompositingLayerFlush() { }
 #endif
 
 #if PLATFORM(WIN)

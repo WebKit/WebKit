@@ -121,7 +121,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
-    bool syncCompositingStateForThisFrame(Frame* rootFrameForSync);
+    bool flushCompositingStateForThisFrame(Frame* rootFrameForFlush);
 
     void clearBackingStores();
     void restoreBackingStores();
@@ -140,8 +140,8 @@ public:
     bool isEnclosedInCompositingLayer() const;
 
     // Only used with accelerated compositing, but outside the #ifdef to make linkage easier.
-    // Returns true if the sync was completed.
-    bool syncCompositingStateIncludingSubframes();
+    // Returns true if the flush was completed.
+    bool flushCompositingStateIncludingSubframes();
 
     // Returns true when a paint with the PaintBehaviorFlattenCompositingLayers flag set gives
     // a faithful representation of the content.

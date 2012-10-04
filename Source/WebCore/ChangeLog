@@ -1,3 +1,28 @@
+2012-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Standardize on "flush" terminology for compositing layer flushing/syncing
+        https://bugs.webkit.org/show_bug.cgi?id=98321
+
+        Reviewed by Simon Fraser.
+
+        Rename compositing-related methods that refer to "syncing" to instead
+        refer to "flushing".
+
+        * WebCore.exp.in:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::scheduleCompositingLayerFlush):
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateForThisFrame):
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        (FrameView):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2012-10-04  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: expose object internal properties such as PrimitiveValue or BoundThis

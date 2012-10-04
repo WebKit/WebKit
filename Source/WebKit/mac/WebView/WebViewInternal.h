@@ -102,7 +102,7 @@ OBJC_CLASS NSTextAlternatives;
 #if USE(ACCELERATED_COMPOSITING)
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
-- (void)_scheduleCompositingLayerSync;
+- (void)_scheduleCompositingLayerFlush;
 #endif
 
 #if ENABLE(GLIB_SUPPORT)

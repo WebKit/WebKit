@@ -709,10 +709,10 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     notImplemented();
 }
 
-void WebChromeClient::scheduleCompositingLayerSync()
+void WebChromeClient::scheduleCompositingLayerFlush()
 {
     if (m_page->drawingArea())
-        m_page->drawingArea()->scheduleCompositingLayerSync();
+        m_page->drawingArea()->scheduleCompositingLayerFlush();
 }
 
 #endif

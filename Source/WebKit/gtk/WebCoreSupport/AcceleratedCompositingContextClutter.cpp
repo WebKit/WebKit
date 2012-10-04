@@ -138,7 +138,7 @@ bool AcceleratedCompositingContext::flushPendingLayerChanges()
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 
-    return core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    return core(m_webView)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::flushAndRenderLayers()
