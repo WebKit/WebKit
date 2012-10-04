@@ -351,6 +351,10 @@ http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
 http/tests/plugins/third-party-cookie-accept-policy.html
 
+# [Qt] http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html fails on Qt. (only 32 bit)
+# https://bugs.webkit.org/show_bug.cgi?id=97791
+http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html
+
 # [Qt][WK2] All plugin tests fail on buildbot
 # https://bugs.webkit.org/show_bug.cgi?id=83024
 plugins
@@ -528,6 +532,10 @@ fast/dom/Geolocation/watch.html
 # [Qt][WK2] fast/events/popup-blocked-from-fake-user-gesture.html times out
 # https://bugs.webkit.org/show_bug.cgi?id=97598
 fast/events/popup-blocked-from-fake-user-gesture.html
+
+# [Qt][WK2] fast/events/tabindex-focus-blur-all.html fails. (only 64 bit)
+# https://bugs.webkit.org/show_bug.cgi?id=98412
+fast/events/tabindex-focus-blur-all.html
 
 # This test consistently fails if run with --singly flag
 inspector/timeline/timeline-paint.html
