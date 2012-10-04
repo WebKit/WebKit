@@ -3658,6 +3658,11 @@ webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appe
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
 
+# Need rebaseline
+webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98386 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
+
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]

@@ -1,3 +1,33 @@
+2012-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Update tests for input[type=date] with the multiple fields UI
+        https://bugs.webkit.org/show_bug.cgi?id=98386
+
+        Reviewed by Hajime Morita.
+
+        Remove some tests for input[type=date. They depends on the old UI, which
+        we don't use any more.
+        Mark some tests fail. We need to update their results later.
+
+        * fast/forms/date/date-appearance.html: Removed.
+        * fast/forms/date/date-fixed-placeholder-expected.txt: Removed.
+        * fast/forms/date/date-fixed-placeholder.html: Removed.
+        * fast/forms/date/date-input-visible-strings-expected.txt: Removed.
+        * fast/forms/date/date-input-visible-strings.html: Removed.
+        * fast/forms/date/input-date-commit-valid-only-expected.txt: Removed.
+        * fast/forms/date/input-date-commit-valid-only.html: Removed.
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/date/date-input-visible-strings-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/date/date-input-visible-strings-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/date/date-input-visible-strings-expected.txt: Removed.
+
 2012-10-04  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt] css2.1/20110323/text-indent-intrinsic-00* fail
