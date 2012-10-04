@@ -109,9 +109,7 @@
 #include "SVGNames.h"
 #endif
 
-#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
-// FIXME: border radius clipping triggers too-slow path on Chromium
-// https://bugs.webkit.org/show_bug.cgi?id=69866
+#if PLATFORM(BLACKBERRY)
 #define DISABLE_ROUNDED_CORNER_CLIPPING
 #endif
 

@@ -1,3 +1,17 @@
+2012-10-03  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Chromium needs support for border radius clipping
+        https://bugs.webkit.org/show_bug.cgi?id=69866
+
+        Reviewed by Stephen White.
+
+        Changes to make this suitably efficient have already landed upstream in skia:
+        http://code.google.com/p/skia/source/detail?r=2924
+
+        Covered by existing tests.
+
+        * rendering/RenderLayer.cpp:
+
 2012-10-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Simplify attribute access in Element::computeInheritedLanguage

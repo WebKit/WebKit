@@ -1,3 +1,30 @@
+2012-10-03  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Chromium needs support for border radius clipping
+        https://bugs.webkit.org/show_bug.cgi?id=69866
+
+        Reviewed by Stephen White.
+
+        * platform/chromium-linux/fast/clip/overflow-border-radius-combinations-expected.png:
+        * platform/chromium-linux/fast/clip/overflow-border-radius-fixed-position-expected.png:
+        * platform/chromium-linux/fast/clip/overflow-border-radius-transformed-expected.png:
+        * platform/chromium-linux/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-styling-strict-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-linux/media/video-playing-and-pause-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-03  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove 2 tests that were moved in http://trac.webkit.org/changeset/130150.
