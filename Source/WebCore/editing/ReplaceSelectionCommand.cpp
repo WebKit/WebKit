@@ -1253,35 +1253,35 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
         return;
 
     if (text->previousSibling() && text->previousSibling()->isTextNode()) {
-        Text* previous = toText(text->previousSibling());
+        RefPtr<Text> previous = toText(text->previousSibling());
         insertTextIntoNode(text, 0, previous->data());
 
         if (positionIsOffsetInAnchor)
             position.moveToOffset(previous->length() + position.offsetInContainerNode());
         else
-            updatePositionForNodeRemoval(position, previous);
+            updatePositionForNodeRemoval(position, previous.get());
 
         if (positionOnlyToBeUpdatedIsOffsetInAnchor) {
             if (positionOnlyToBeUpdated.containerNode() == text)
-                positionOnlyToBeUpdated.moveToOffset(previous->length() + position.offsetInContainerNode());
+                positionOnlyToBeUpdated.moveToOffset(previous->length() + positionOnlyToBeUpdated.offsetInContainerNode());
             else if (positionOnlyToBeUpdated.containerNode() == previous)
                 positionOnlyToBeUpdated.moveToPosition(text, position.offsetInContainerNode());
         } else
-            updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous);
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous.get());
 
         removeNode(previous);
     }
     if (text->nextSibling() && text->nextSibling()->isTextNode()) {
-        Text* next = toText(text->nextSibling());
+        RefPtr<Text> next = toText(text->nextSibling());
         insertTextIntoNode(text, text->length(), next->data());
 
         if (!positionIsOffsetInAnchor)
-            updatePositionForNodeRemoval(position, next);
+            updatePositionForNodeRemoval(position, next.get());
 
         if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next)
             positionOnlyToBeUpdated.moveToPosition(text, text->length() + position.offsetInContainerNode());
         else
-            updatePositionForNodeRemoval(positionOnlyToBeUpdated, next);
+            updatePositionForNodeRemoval(positionOnlyToBeUpdated, next.get());
 
         removeNode(next);
     }

@@ -1,3 +1,9 @@
+2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another rebaseline needed after r130411.
+
+        * platform/mac/editing/pasteboard/5006779-expected.txt:
+
 2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add libxml 2.8.0 to jhbuild

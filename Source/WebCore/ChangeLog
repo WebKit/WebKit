@@ -1,3 +1,11 @@
+2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r130411. Add the right offset.
+        Also use RefPtr instead of a raw pointer for next and previous pointers.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+
 2012-10-04  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: promote objectstore/index backend ids to the frontend
