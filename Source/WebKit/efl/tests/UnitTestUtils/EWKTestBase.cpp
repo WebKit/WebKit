@@ -39,7 +39,7 @@ Evas_Object* EWKTestBase::webView()
 
 void EWKTestBase::SetUp()
 {
-    ASSERT_TRUE(m_ewkTestView.init(environment->useX11Window()));
+    ASSERT_TRUE(m_ewkTestView.init());
 }
 
 void EWKTestBase::onLoadFinished(void* data, Evas_Object* webView, void* eventInfo)

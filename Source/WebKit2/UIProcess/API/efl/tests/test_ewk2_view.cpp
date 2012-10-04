@@ -312,14 +312,12 @@ static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData)
 
 static void checkFullScreenProperty(Evas_Object* webView, bool expectedState)
 {
-    if (environment->useX11Window()) {
-        Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(webView));
-        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
-        bool windowState = false;
-        while (((windowState = ecore_evas_fullscreen_get(ecoreEvas)) != expectedState))
-            ecore_main_loop_iterate();
-        ASSERT_TRUE(expectedState == windowState);
-    }
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(webView));
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    bool windowState = false;
+    while (((windowState = ecore_evas_fullscreen_get(ecoreEvas)) != expectedState))
+        ecore_main_loop_iterate();
+    ASSERT_TRUE(expectedState == windowState);
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)

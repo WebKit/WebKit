@@ -30,15 +30,11 @@ EWKTestView::EWKTestView()
 {
 }
 
-bool EWKTestView::init(int useX11Window, EwkViewType testViewType, int width, int height)
+bool EWKTestView::init(EwkViewType testViewType, int width, int height)
 {
     m_webView = nullptr;
 
-    if (useX11Window)
-        m_ecoreEvas = adoptPtr(ecore_evas_new(0, 0, 0, width, height, 0));
-    else
-        m_ecoreEvas = adoptPtr(ecore_evas_buffer_new(width, height));
-
+    m_ecoreEvas = adoptPtr(ecore_evas_new(0, 0, 0, width, height, 0));
     if (!m_ecoreEvas)
         return false;
 

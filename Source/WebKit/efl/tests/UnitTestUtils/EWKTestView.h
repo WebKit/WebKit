@@ -38,7 +38,7 @@ public:
 
     Evas_Object* webView() { return m_webView.get(); }
 
-    bool init(int useX11Window = 0, EwkViewType testViewType = TiledView, int width = Config::defaultViewWidth, int height = Config::defaultViewHeight);
+    bool init(EwkViewType testViewType = TiledView, int width = Config::defaultViewWidth, int height = Config::defaultViewHeight);
 private:
     EWKTestView(const EWKTestView&);
     EWKTestView& operator=(const EWKTestView&);

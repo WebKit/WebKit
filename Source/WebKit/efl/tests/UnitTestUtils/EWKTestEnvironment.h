@@ -27,7 +27,6 @@ class EWKTestEnvironment : public ::testing::Environment {
 public:
     explicit EWKTestEnvironment(bool useX11Window);
 
-    bool useX11Window() const { return m_useX11Window; }
     virtual void SetUp();
     virtual void TearDown();
 private:

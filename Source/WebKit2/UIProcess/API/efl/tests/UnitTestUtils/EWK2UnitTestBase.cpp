@@ -50,10 +50,7 @@ void EWK2UnitTestBase::SetUp()
     unsigned int width = environment->defaultWidth();
     unsigned int height = environment->defaultHeight();
 
-    if (environment->useX11Window())
-        m_ecoreEvas = ecore_evas_new(0, 0, 0, width, height, 0);
-    else
-        m_ecoreEvas = ecore_evas_buffer_new(width, height);
+    m_ecoreEvas = ecore_evas_new(0, 0, 0, width, height, 0);
 
     ecore_evas_show(m_ecoreEvas);
     Evas* evas = ecore_evas_get(m_ecoreEvas);

@@ -26,27 +26,11 @@ using namespace EWK2UnitTest;
 
 EWK2UnitTestEnvironment* environment = 0;
 
-static bool parseArguments(int argc, char** argv)
-{
-    int useX11Window = 0;
-
-    static const option options[] = {
-        {"useX11Window", no_argument, &useX11Window, 1},
-        {0, 0, 0, 0}
-    };
-
-    while (getopt_long(argc, argv, "", options, 0) != -1) { }
-
-    return useX11Window;
-}
-
 int main(int argc, char** argv)
 {
-    bool useX11Window = parseArguments(argc, argv);
-
     ::testing::InitGoogleTest(&argc, argv);
 
-    environment = new EWK2UnitTestEnvironment(useX11Window);
+    environment = new EWK2UnitTestEnvironment();
     testing::AddGlobalTestEnvironment(environment);
 
     return RUN_ALL_TESTS();
