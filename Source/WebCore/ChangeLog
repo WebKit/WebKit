@@ -1,3 +1,9 @@
+2012-10-03  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Fix parse error in vcproj file.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2012-10-03  Keishi Hattori  <keishi@webkit.org>
 
         Implement localizeValue for TimeInputType

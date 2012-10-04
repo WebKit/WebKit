@@ -22955,7 +22955,6 @@
 				>
 			</File>
 			<File
-			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSFilterValue.cpp"
 				>
 				<FileConfiguration
