@@ -34,15 +34,15 @@ namespace WebCore {
 
 class RTCStatsElement : public RefCounted<RTCStatsElement> {
 public:
-    static PassRefPtr<RTCStatsElement> create(double timestamp);
-    double timestamp() const { return m_timestamp; }
+    static PassRefPtr<RTCStatsElement> create(long timestamp);
+    long timestamp() const { return m_timestamp; }
     String stat(const String& name) const;
     void addStatistic(const String& name, const String& value);
 
 private:
-    explicit RTCStatsElement(double timestamp);
+    explicit RTCStatsElement(long timestamp);
 
-    double m_timestamp;
+    long m_timestamp;
     HashMap<String, String> m_stats;
 };
 

@@ -60,7 +60,7 @@ size_t WebRTCStatsResponse::addReport()
     return m_private->addReport();
 }
 
-size_t WebRTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
+size_t WebRTCStatsResponse::addElement(size_t report, bool isLocal, long timestamp)
 {
     return m_private->addElement(report, isLocal, timestamp);
 }

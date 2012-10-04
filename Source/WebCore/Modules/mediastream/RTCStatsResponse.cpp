@@ -45,7 +45,7 @@ size_t RTCStatsResponse::addReport()
     return m_result.size() - 1;
 }
 
-size_t RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
+size_t RTCStatsResponse::addElement(size_t report, bool isLocal, long timestamp)
 {
     ASSERT(report >= 0 && report < m_result.size());
     return m_result[report]->addElement(isLocal, timestamp);

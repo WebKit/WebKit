@@ -9,7 +9,6 @@ description("Tests the RTCPeerConnection stats interface.");
 
 var pc = null;
 var result;
-var timestamp;
 var local;
 
 function getUserMedia(dictionary, callback) {
@@ -50,13 +49,10 @@ function statsHandler2(status)
     shouldBeGreaterThanOrEqual('result.length', '2');
     local = result[0].local();
     shouldBe('local.length', '1');
-    timestamp = local[0].timestamp;
-    shouldBeGreaterThanOrEqual('timestamp', 'startTime');
     shouldBe('local[0].stat("type")', '"audio"');
     finishJSTest();
 }
 
-var startTime = new Date().getTime();
 shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
 shouldNotThrow('pc.getStats(statsHandler1)');
 

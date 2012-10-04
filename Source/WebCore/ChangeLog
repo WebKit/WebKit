@@ -1,3 +1,32 @@
+2012-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130377.
+        http://trac.webkit.org/changeset/130377
+        https://bugs.webkit.org/show_bug.cgi?id=98392
+
+        Chromium Win compilation is broken (Requested by yurys on
+        #webkit).
+
+        * Modules/mediastream/RTCStatsElement.cpp:
+        (WebCore::RTCStatsElement::create):
+        (WebCore::RTCStatsElement::RTCStatsElement):
+        * Modules/mediastream/RTCStatsElement.h:
+        (RTCStatsElement):
+        (WebCore::RTCStatsElement::timestamp):
+        * Modules/mediastream/RTCStatsElement.idl:
+        * Modules/mediastream/RTCStatsReport.cpp:
+        (WebCore::RTCStatsReport::addElement):
+        * Modules/mediastream/RTCStatsReport.h:
+        (RTCStatsReport):
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        (WebCore::RTCStatsResponse::addElement):
+        * Modules/mediastream/RTCStatsResponse.h:
+        (RTCStatsResponse):
+        * platform/chromium/support/WebRTCStatsResponse.cpp:
+        (WebKit::WebRTCStatsResponse::addElement):
+        * platform/mediastream/RTCStatsResponseBase.h:
+        (RTCStatsResponseBase):
+
 2012-10-04  Harald Alvestrand  <hta@google.com>
 
         Change RTCPeerConnection GetStats to use Date timestamp format

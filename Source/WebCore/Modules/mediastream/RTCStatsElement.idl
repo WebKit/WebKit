@@ -27,7 +27,7 @@ module mediastream {
     interface [
         Conditional=MEDIA_STREAM,
     ] RTCStatsElement {
-        readonly attribute Date timestamp;
+        readonly attribute long timestamp;
         DOMString stat(in DOMString name);
     };
 }

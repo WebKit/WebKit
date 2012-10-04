@@ -39,7 +39,7 @@ RTCStatsReport::RTCStatsReport()
 {
 }
 
-size_t RTCStatsReport::addElement(bool isLocal, double timestamp)
+size_t RTCStatsReport::addElement(bool isLocal, long timestamp)
 {
     if (isLocal) {
         m_local.append(RTCStatsElement::create(timestamp));

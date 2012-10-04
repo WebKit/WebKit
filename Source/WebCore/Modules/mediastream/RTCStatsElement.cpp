@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsElement> RTCStatsElement::create(double timestamp)
+PassRefPtr<RTCStatsElement> RTCStatsElement::create(long timestamp)
 {
     return adoptRef(new RTCStatsElement(timestamp));
 }
 
-RTCStatsElement::RTCStatsElement(double timestamp)
+RTCStatsElement::RTCStatsElement(long timestamp)
     : m_timestamp(timestamp)
 {
 }

@@ -43,7 +43,6 @@
 #include <public/WebRTCVoidRequest.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
-#include <sys/time.h>
 
 using namespace WebKit;
 
@@ -216,15 +215,12 @@ void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescripto
 void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request)
 {
     WebRTCStatsResponse response = request.createResponse();
-    struct timeval currentTime;
-    gettimeofday(&currentTime, 0);
-    double currentDate = currentTime.tv_sec * 1000.0 + currentTime.tv_usec / 1000;
     for (int i = 0; i < m_streamCount; ++i) {
         size_t reportIndex = response.addReport();
-        size_t elementIndex = response.addElement(reportIndex, true, currentDate);
+        size_t elementIndex = response.addElement(reportIndex, true, 12345);
         response.addStatistic(reportIndex, true, elementIndex, "type", "audio");
         reportIndex = response.addReport();
-        elementIndex = response.addElement(reportIndex, true, currentDate);
+        elementIndex = response.addElement(reportIndex, true, 12345);
         response.addStatistic(reportIndex, true, elementIndex, "type", "video");
     }
     postTask(new RTCStatsRequestSucceededTask(this, request, response));
