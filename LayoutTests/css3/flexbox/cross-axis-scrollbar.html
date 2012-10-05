@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 body {
     margin: 0;
 }
 
 .flexbox {
-    display: -webkit-flex;
     background-color: red;
 }
 
@@ -19,10 +19,6 @@ body {
     -webkit-writing-mode: vertical-lr;
 }
 
-.column {
-    -webkit-flex-direction: column;
-}
-
 .column > div {
     background-color: green;
     width: 100px;
@@ -32,6 +28,7 @@ body {
 .row > div {
     background-color: green;
     -webkit-flex: 1;
+    -moz-flex: 1;
     height: 50px;
     min-height: 0;
 }
@@ -43,6 +40,7 @@ body {
 
 .vertical-lr > .row > div {
     -webkit-flex: 1;
+    -moz-flex: 1;
     width: 100px;
 }
 
@@ -56,81 +54,81 @@ This test passes if no red is showing.
 
 <div style="position: absolute; top: 0; left: 0;">
 <div class="flexbox column" style="overflow-x: scroll; overflow-y: hidden; border-bottom: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 
 <div style="position: absolute; top: 0; left: 150px;">
 <div class="flexbox column" style="overflow-y: scroll; overflow-x: hidden; border-right: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 
 <div style="position: absolute; top:0; left: 300px" class="vertical-lr">
 <div class="flexbox column" style="overflow-y: scroll; overflow-x: hidden; border-right: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: flex-start"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-flex-start"></div>
 </div>
 </div>
 
 <div style="position: absolute; top:0; left: 450px;" class="vertical-lr">
 <div class="flexbox column" style="overflow-x: scroll; overflow-y: hidden; border-bottom: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: flex-start"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-flex-start"></div>
 </div>
 </div>
 
 <div style="height: 20px; width: 100px; position: absolute; top: 100px; left: 0">
 <div class="flexbox row" style="overflow-x: scroll; overflow-y: hidden; border-bottom: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 
 <div style="height: 20px; width: 100px; position: absolute; top: 100px; left: 150px">
 <div class="flexbox row" style="overflow-y: scroll; overflow-x: hidden; border-right: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 
 <div style="height: 50px; width: 50px; position: absolute; top: 100px; left: 300px" class="vertical-lr">
 <div class="flexbox row" style="overflow-x: scroll; overflow-y: hidden; border-bottom: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 
 <div style="height: 50px; width: 50px; position: absolute; top: 100px; left: 450px" class="vertical-lr">
 <div class="flexbox row" style="overflow-y: scroll; overflow-x: hidden; border-right: 10px solid green;">
-    <div style="-webkit-align-self: flex-start"></div>
-    <div style="-webkit-align-self: center"></div>
-    <div style="-webkit-align-self: flex-end"></div>
-    <div style="-webkit-align-self: baseline"></div>
-    <div style="-webkit-align-self: stretch"></div>
+    <div class="align-self-flex-start"></div>
+    <div class="align-self-center"></div>
+    <div class="align-self-flex-end"></div>
+    <div class="align-self-baseline"></div>
+    <div class="align-self-stretch"></div>
 </div>
 </div>
 

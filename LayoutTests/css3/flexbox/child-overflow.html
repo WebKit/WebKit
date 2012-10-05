@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 .container {
     display: inline-block;
@@ -23,25 +24,8 @@
     -webkit-writing-mode: vertical-lr;
 }
 
-.row {
-    -webkit-flex-direction: row;
-}
-
-.row-reverse {
-    -webkit-flex-direction: row-reverse;
-}
-
-.column {
-    -webkit-flex-direction: column;
-}
-
-.column-reverse {
-    -webkit-flex-direction: column-reverse;
-}
-
 .flexbox {
     border: 5px solid pink;
-    display: -webkit-flex;
     height: 100px;
     width: 100px;
 }
@@ -56,6 +40,7 @@
     width: 120px;
     height: 120px;
     background: -webkit-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
+    background: -moz-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
 }
 
 p {
@@ -77,7 +62,7 @@ writingModes.forEach(function(writingMode) {
         document.body.innerHTML +=
             "<div class='" + containerClass + "'>" +
             "<div class='" + flexboxClass + "'>" +
-            "<div style='-webkit-flex: 0 1 auto'><div></div></div>" +
+            "<div><div></div></div>" +
             "</div>" +
             "</div> ";
     });

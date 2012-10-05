@@ -1,3 +1,33 @@
+2012-10-04  Tony Chang  <tony@chromium.org>
+
+        Convert some flexbox tests to run in mozilla
+        https://bugs.webkit.org/show_bug.cgi?id=98464
+
+        Reviewed by Ojan Vafai.
+
+        Move properties with a small number of values into resources/flexbox.css
+        and start using it in some flexbox tests.
+
+        * css3/flexbox/align-absolute-child.html:
+        * css3/flexbox/align-baseline-expected.html:
+        * css3/flexbox/align-baseline.html:
+        * css3/flexbox/anonymous-block-merge-crash.html:
+        * css3/flexbox/anonymous-block.html:
+        * css3/flexbox/auto-height-dynamic.html:
+        * css3/flexbox/auto-margins.html:
+        * css3/flexbox/box-sizing-min-max-sizes.html:
+        * css3/flexbox/box-sizing.html:
+        * css3/flexbox/child-overflow-expected.html:
+        * css3/flexbox/child-overflow.html:
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/columns-height-set-via-top-bottom.html:
+        * css3/flexbox/content-height-with-scrollbars.html:
+        * css3/flexbox/cross-axis-scrollbar.html:
+        * css3/flexbox/flex-algorithm-min-max.html:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/resources/flexbox.css: Added.
+
 2012-10-04  Dirk Pranke  <dpranke@chromium.org>
 
         Update chromium baselines for 5006779.html and paint-subrect-grid.html.

@@ -1,13 +1,9 @@
-
 <!DOCTYPE html>
 <html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 .flexbox {
-    display: -webkit-flex;
     border: 2px solid orange;
-}
-.column {
-    -webkit-flex-flow: column;
 }
 .h3 {
     height: 300px;
@@ -71,20 +67,20 @@ All blue boxes are 100x100px with box-sizing: border-box and 2px border (4px bor
 </div>
 
 <h3>flex-box has box-sizing: border-box and flex-wrap: wrap;</h3>
-<div class="flexbox column" style="box-sizing: border-box; border: 2px solid lightblue; padding: 3px; height: 200px; width: 100px; -webkit-flex-wrap: wrap; position: relative" data-expected-width=100 data-expected-height=200>
+<div class="flexbox column wrap" style="box-sizing: border-box; border: 2px solid lightblue; padding: 3px; height: 200px; width: 100px; position: relative" data-expected-width=100 data-expected-height=200>
     <div data-offset-x=3></div><div data-offset-x=103></div><div data-offset-x=203></div>
 </div>
 
 <h3>flex-box has box-sizing: default and flex-wrap: wrap;</h3>
-<div class="flexbox column" style="border: 2px solid lightblue; padding: 3px; height: 200px; width: 100px; -webkit-flex-wrap: wrap; position: relative" data-expected-width=110 data-expected-height=210>
+<div class="flexbox column wrap" style="border: 2px solid lightblue; padding: 3px; height: 200px; width: 100px; position: relative" data-expected-width=110 data-expected-height=210>
     <div data-offset-x=3></div><div data-offset-x=3></div><div data-offset-x=103></div>
 </div>
 
 <h3>flex-flow: column, flex-box has box-sizing: border-box, flex items have flex: 1</h3>
 <div class="flexbox column" style="box-sizing: border-box; border: 2px solid lightblue; padding: 3px; height: 343px; width: 100px;" data-expected-width=100 data-expected-height=343>
-    <div style="-webkit-flex: 1" data-expected-height=111></div>
-    <div style="-webkit-flex: 1" data-expected-height=111></div>
-    <div style="-webkit-flex: 1" data-expected-height=111></div>
+    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
+    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
+    <div style="-webkit-flex: 1; -moz-flex: 1" data-expected-height=111></div>
 </div>
 
 <script>

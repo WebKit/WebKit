@@ -1,9 +1,11 @@
+<!DOCTYPE html>
+<html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 body {
     margin: 0;
 }
 .flexbox {
-    display: -webkit-flex;
     background-color: green;
     height: 100px;
     width: 100px;
@@ -11,12 +13,7 @@ body {
 }
 .flexbox > * {
     -webkit-flex: none;
-}
-.align-center {
-    -webkit-align-items: center;
-}
-.stretch {
-    -webkit-align-items: stretch;
+    -moz-flex: none;
 }
 .relative {
     position: relative;
@@ -33,45 +30,11 @@ body {
     left: 20px;
 }
 
-.horizontal-tb {
-    -webkit-writing-mode: horizontal-tb;
-}
-.horizontal-bt {
-    -webkit-writing-mode: horizontal-bt;
-}
-.vertical-rl {
-    -webkit-writing-mode: vertical-rl;
-}
-.vertical-lr {
-    -webkit-writing-mode: vertical-lr;
-}
-
-.row {
-    -webkit-flex-flow: row;
-}
-.row-reverse {
-    -webkit-flex-flow: row-reverse;
-}
-.column {
-    -webkit-flex-flow: column;
-}
-.column-reverse {
-    -webkit-flex-flow: column-reverse;
-}
-
 .rtl {
     direction: rtl;
 }
 .ltr {
     direction: ltr;
-}
-
-.wrap {
-    -webkit-flex-wrap: wrap;
-}
-
-.wrap-reverse {
-    -webkit-flex-wrap: wrap-reverse;
 }
 
 .flexbox :nth-child(1) {
@@ -102,11 +65,11 @@ body {
 
 <body onload="checkLayout('.flexbox')">
 
-<div class='flexbox relative align-center'>
+<div class='flexbox relative align-items-center'>
     <div id='placed-absolute' class='absolute' data-offset-x=20 data-offset-y=20></div>
 </div>
 
-<div class='flexbox relative align-center'>
+<div class='flexbox relative align-items-center'>
     <div data-offset-x=0 data-offset-y=40></div>
     <div class='absolute' data-offset-x=20 data-offset-y=0></div>
     <div data-offset-x=20 data-offset-y=40></div>
@@ -114,7 +77,7 @@ body {
 </div>
 
 <div class="relative">
-<div class='flexbox align-center'>
+<div class='flexbox align-items-center'>
     <div data-offset-x=10 data-offset-y=40></div>
     <div class='absolute' data-offset-x=30 data-offset-y=0></div>
     <div data-offset-x=30 data-offset-y=40></div>
@@ -148,7 +111,7 @@ body {
     <div class="absolute" style="margin: auto; top: 5px; left: 5px" data-offset-x=5 data-offset-y=5></div>
 </div>
 
-<div class='flexbox stretch relative'>
+<div class='flexbox align-items-stretch relative'>
     <div style="height: auto" data-offset-x=0 data-offset-y=0 data-expected-height=100></div>
     <div class="absolute" style="height: auto" data-offset-x=20 data-offset-y=0 data-expected-height=0></div>
     <div class="absolute" style="height: auto; top: 5px; left: 5px" data-offset-x=5 data-offset-y=5 data-expected-height=0></div>
@@ -163,7 +126,7 @@ body {
   <div class="absolute" data-offset-x=100 data-offset-y=50></div>
 </div>
 
-<div class="flexbox wrap relative" style="-webkit-align-items: flex-end">
+<div class="flexbox wrap relative align-items-flex-end">
   <div style="width: 100px;" data-offset-x=0 data-offset-y=30></div>
   <div class="absolute" data-offset-x=100 data-offset-y=0></div>
   <div style="width: 50px;" data-offset-x=0 data-offset-y=80></div>
@@ -184,3 +147,4 @@ for (key in beforePosition)
     shouldBe('beforePosition[key]', 'afterPosition[key]');
 </script>
 </body>
+</html>

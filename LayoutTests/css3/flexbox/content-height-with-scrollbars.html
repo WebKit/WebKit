@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
-.outer {
-    display: -webkit-flex;
-    -webkit-flex-flow: column;
+.flexbox {
     height: 100px;
     overflow: scroll;
 }
-.outer > :nth-child(1) {
+.flexbox > :nth-child(1) {
     background-color: lightgreen;
 }
-.outer > :nth-child(2) {
+.flexbox > :nth-child(2) {
     background-color: lightblue;
 }
 </style>
@@ -21,20 +20,20 @@
 height, we use the content height with scrollbars. The content should not be
 scrollable in any of the test cases below.</p>
 
-<div class="outer">
+<div class="flexbox column">
   <div style="height: 100%"></div>
 </div>
 
-<div class="outer">
+<div class="flexbox column">
   <div style="height: 100%; box-sizing: border-box; border: 5px solid green"></div>
 </div>
 
-<div class="outer" style="-webkit-flex-wrap: wrap">
+<div class="flexbox column wrap">
   <div style="height: 50px; width: 50%;"></div>
   <div style="height: 50px; width: 50%; background-color: lightblue"></div>
 </div>
 
-<div class="outer" style="-webkit-flex-wrap: wrap; -webkit-align-content: flex-start; height: auto; max-height: 100px; padding: 10px;">
+<div class="flexbox column wrap align-content-flex-start" style="height: auto; max-height: 100px; padding: 10px;">
   <div style="height: 50px; width: 300px;"></div>
   <div style="height: 50px; width: 300px; background-color: lightblue"></div>
 </div>

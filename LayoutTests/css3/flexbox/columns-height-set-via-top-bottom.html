@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 .container {
     position: relative;
@@ -8,8 +9,7 @@
     border: 2px solid orange;
 }
 .flexbox {
-    display: -webkit-flex;
-    -webkit-flex-flow: column;
+    -webkit-flex-direction: column;
     position: absolute;
     top: 0;
     right: 0;
@@ -32,16 +32,16 @@ if (window.testRunner)
 <body onload="checkLayout('.flexbox')">
 
 <div class="container">
-    <div data-expected-height=100 class="flexbox">
+    <div data-expected-height=100 class="flexbox column">
         <div data-expected-height=30 data-expected-width=80 style="height: 30px"></div>
-        <div data-expected-height=50 data-expected-width=80 style="-webkit-flex: 1"></div>
+        <div data-expected-height=50 data-expected-width=80 style="-webkit-flex: 1; -moz-flex: 1"></div>
     </div>
 </div>
 
 <div class="container">
-    <div style="-webkit-flex-wrap: wrap" class="flexbox">
+    <div class="flexbox column wrap">
         <div data-expected-height=50 data-expected-width=40 style="height: 50px"></div>
-        <div data-expected-height=80 data-expected-width=40 style="-webkit-flex: 1 50px"></div>
+        <div data-expected-height=80 data-expected-width=40 style="-webkit-flex: 1 50px; -moz-flex: 1 50px"></div>
     </div>
 </div>
 </body>
