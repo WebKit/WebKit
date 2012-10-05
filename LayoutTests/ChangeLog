@@ -1,3 +1,24 @@
+2012-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Add appearance tests for input[type=date] with multiple fields
+        https://bugs.webkit.org/show_bug.cgi?id=98479
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic.html: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes.html: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-style.html: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
         Fix sub-field width to the maximum width of a placeholder and the maximum value

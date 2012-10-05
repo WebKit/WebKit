@@ -3633,6 +3633,12 @@ webkit.org/b/97672 fast/js/string-localeCompare.html [ Failure ]
 webkit.org/b/97672 fast/js/dfg-array-push-bad-time.html [ Failure ]
 webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
 
+# Need rebaseline
+webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic.html [ ImageOnlyFailure Missing Pass ]
+webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Missing Pass ]
+webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Missing Pass ]
+webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-style.html [ ImageOnlyFailure Missing Pass ]
+
 # Failing, again, after r129712
 webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
 

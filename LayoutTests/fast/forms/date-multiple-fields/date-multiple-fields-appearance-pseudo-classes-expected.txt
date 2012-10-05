@@ -1,0 +1,10 @@
+Input Type "date"
+
+Pseudo Classes
+
+:enabled, :valid	
+:disabled	
+:invalid	
+:in-range	
+:out-of-range	
+:read-only	

@@ -1,0 +1,29 @@
+<html>
+<head>
+<style type="text/css">
+:disabled { color: gray; }
+:enabled { color: blue; }
+:invalid { color: pink; }
+:in-range { font-weight: bold; }
+:out-of-range { color: red; }
+:read-only { color: yellow; }
+:valid { color: green; }
+</style>
+</head>
+<body>
+<h1>Input Type "date"</h1>
+<h2>Pseudo Classes</h2>
+<table>
+<tr><th>:enabled, :valid</th><td><input type="date" value="1234-12-11"></td></tr>
+<tr><th>:disabled</th><td><input type="date" value="12340-10-01" disabled></td></tr>
+<tr><th>:invalid</th><td><input type="date" value="123456-12-11" min="123456-12-10" step="2"></td></tr>
+<tr><th>:in-range</th><td><input type="date" value="123456-12-11" min="123456-12-01" max="123456-12-31"></td></tr>
+<tr><th>:out-of-range</th><td><input type="date" value="0710-03-10" min="1000-01-01" max="1999-12-31"></td></tr>
+<tr><th>:read-only</th><td><input type="date" value="1999-12-31" readonly></td></tr>
+</table>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+</script>
+</body>
+</html>
