@@ -49,7 +49,14 @@ class DownloadClient : public ResourceHandleClient {
 public:
     DownloadClient(Download* download)
         : m_download(download)
+        , m_handleResponseLaterID(0)
     {
+    }
+
+    ~DownloadClient()
+    {
+        if (m_handleResponseLaterID)
+            g_source_remove(m_handleResponseLaterID);
     }
 
     void downloadFailed(const ResourceError& error)
@@ -105,6 +112,11 @@ public:
 
     void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
     {
+        if (m_handleResponseLaterID) {
+            g_source_remove(m_handleResponseLaterID);
+            handleResponse();
+        }
+
         gsize bytesWritten;
         GOwnPtr<GError> error;
         g_output_stream_write_all(G_OUTPUT_STREAM(m_outputStream.get()), data, length, &bytesWritten, 0, &error.outPtr());
@@ -136,9 +148,35 @@ public:
         notImplemented();
     }
 
+    void handleResponse()
+    {
+        m_handleResponseLaterID = 0;
+        didReceiveResponse(0, m_delayedResponse);
+    }
+
+    static gboolean handleResponseLaterCallback(DownloadClient* downloadClient)
+    {
+        downloadClient->handleResponse();
+        return FALSE;
+    }
+
+    void handleResponseLater(const ResourceResponse& response)
+    {
+        ASSERT(!m_response);
+        ASSERT(!m_handleResponseLaterID);
+
+        m_delayedResponse = response;
+
+        // Call didReceiveResponse in an idle to make sure the download is added
+        // to the DownloadManager downloads map.
+        m_handleResponseLaterID = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(handleResponseLaterCallback), this, 0);
+    }
+
     Download* m_download;
     GRefPtr<GFileOutputStream> m_outputStream;
     GRefPtr<SoupMessage> m_response;
+    ResourceResponse m_delayedResponse;
+    unsigned m_handleResponseLaterID;
 };
 
 void Download::start(WebPage*)
@@ -150,7 +188,7 @@ void Download::start(WebPage*)
     didStart();
 }
 
-void Download::startWithHandle(WebPage*, ResourceHandle* resourceHandle, const ResourceResponse&)
+void Download::startWithHandle(WebPage*, ResourceHandle* resourceHandle, const ResourceResponse& response)
 {
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
@@ -158,10 +196,7 @@ void Download::startWithHandle(WebPage*, ResourceHandle* resourceHandle, const R
     resourceHandle->setClient(m_downloadClient.get());
     m_resourceHandle = resourceHandle;
     didStart();
-    // If the handle already got a response, make sure the download client is notified.
-    ResourceHandleInternal* handleInternal = m_resourceHandle->getInternal();
-    if (!handleInternal->m_response.isNull())
-        m_downloadClient->didReceiveResponse(m_resourceHandle.get(), handleInternal->m_response);
+    static_cast<DownloadClient*>(m_downloadClient.get())->handleResponseLater(response);
 }
 
 void Download::cancel()
