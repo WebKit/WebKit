@@ -1,3 +1,11 @@
+2012-10-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unreviewed Qt gardening.
+
+        The ICO decoder shouldn't be broken since it is the WebKit decoder.
+
+        * platform/qt/TestExpectations:
+
 2012-10-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update an expected file for newer Qt5.

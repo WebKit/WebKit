@@ -1198,11 +1198,6 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
 http/tests/security/isolatedWorld/world-reuse.html
 
-# ------- broken ICO file decoding
-fast/images/favicon-as-image.html
-fast/images/icon-0colors.html
-fast/images/icon-decoding.html
-
 # ------- missing ruby annotation support for japanese fonts
 fast/ruby/ruby-beforeafter.html
 fast/ruby/ruby-empty-rt.html
