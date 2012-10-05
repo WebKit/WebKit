@@ -1,3 +1,11 @@
+2012-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Chromium DEPS roll r160281:160322
+
+        Unreviewed.
+
+        * DEPS:
+
 2012-10-04  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Scale plugin container by frameScaleFactor
