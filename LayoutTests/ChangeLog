@@ -1,3 +1,42 @@
+2012-10-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Add shape-inside tests for rounded rectangles
+        https://bugs.webkit.org/show_bug.cgi?id=96669
+
+        Reviewed by Levi Weintraub.
+
+        Adding multiple rounded rectangle tests. The more complex tests use float "sandbags"
+        to simulate the shape-inside area in the test expectations.
+        (See http://www.alistapart.com/articles/sandbags/)
+        In general, each line has its own pair of left and right floats (both lineHeight tall),
+        to position the text and appropriately limit its width. In the simple, 0 corner radius
+        cases, these floats can be merged because they all have the same width on the left and
+        right.
+
+        * fast/exclusions/resources/rounded-rectangle.js: Contains functionality for generating
+        a shape-inside, simulating one, and generating content that should roughly fill the
+        shape-inside.
+        (xFromEllipseCenter): The x distance from the center of an ellipse, based on its y
+        distance from center.
+        (xInset): The inset of a rounded rectangle from its bounding box.
+        (generateString): Generate a string that roughly fills a shape-inside's content area.
+        (simulateShape): Create floats to simulate a shape-inside area.
+        (simulateShapeOutline): Create an outline for the rounded rectangle shape-inside.
+        (generateSimulatedShapeElement): Simulate a shape-inside and appropriately fill it
+        with content.
+        (generateShapeElement): Create a shape-inside and fill it with content.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-001-expected.html: 
+        Renamed from LayoutTests/fast/exclusions/shape-inside/shape-inside-rounded-rectangle-expected.html.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-001.html: 
+        Renamed from LayoutTests/fast/exclusions/shape-inside/shape-inside-rounded-rectangle.html.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-002-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-002.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-004-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-004.html: Added.
+
+
 2012-10-04  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports to override text track rendering style
