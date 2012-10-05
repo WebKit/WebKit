@@ -1,5 +1,16 @@
 2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More Qt rebaselines after r130411.
+
+        * platform/qt/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/qt/editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * platform/qt/editing/pasteboard/5006779-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-007-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-004-expected.txt: Removed.
+
+2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK+ rebaselines after r130411.
 
         * platform/gtk/editing/deleting/delete-block-merge-contents-018-expected.txt:
