@@ -37,9 +37,9 @@ module threads {
         OmitConstructor
     ] NotificationCenter {
 #if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
-       [V8Custom, V8EnabledPerContext=htmlNotifications] Notification createHTMLNotification(in DOMString url) raises(DOMException);
+       [V8EnabledPerContext=htmlNotifications] Notification createHTMLNotification(in DOMString url) raises(DOMException);
 #endif
-       [V8Custom] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
+       Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
 
        int checkPermission();
        [Custom] void requestPermission(in VoidCallback callback);

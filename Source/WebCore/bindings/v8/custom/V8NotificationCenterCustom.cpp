@@ -46,37 +46,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.NotificationCenter.CreateHTMLNotification()");
-    NotificationCenter* notificationCenter = V8NotificationCenter::toNative(args.Holder());
-
-    ExceptionCode ec = 0;
-    String url = toWebCoreString(args[0]);
-    RefPtr<Notification> notification = notificationCenter->createHTMLNotification(url, ec);
-
-    if (ec)
-        return setDOMException(ec, args.GetIsolate());
-
-    notification->ref();
-    return toV8(notification.get(), args.Holder(), args.GetIsolate());
-}
-
-v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.NotificationCenter.CreateNotification()");
-    NotificationCenter* notificationCenter = V8NotificationCenter::toNative(args.Holder());
-
-    ExceptionCode ec = 0;
-    RefPtr<Notification> notification = notificationCenter->createNotification(toWebCoreString(args[0]), toWebCoreString(args[1]), toWebCoreString(args[2]), ec);
-
-    if (ec)
-        return setDOMException(ec, args.GetIsolate());
-
-    notification->ref();
-    return toV8(notification.get(), args.Holder(), args.GetIsolate());
-}
-
 v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.NotificationCenter.RequestPermission()");
