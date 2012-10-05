@@ -1,3 +1,13 @@
+2012-10-05  Sam Weinig  <sam@webkit.org>
+
+        Set the current working directory to TMPDIR when entering the sandbox in the plug-in process.
+        Based on a patch by Ivan Krstić.
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        (enterSandbox):
+
 2012-10-05  Tim Horton  <timothy_horton@apple.com>
 
         [cg] GraphicsContextCG should ask CG whether the shadow offset workaround is required

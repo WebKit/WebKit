@@ -109,6 +109,10 @@ NPError enterSandbox(const char* sandboxProfile, const char* readOnlyPaths[], co
         exit(EX_NOPERM);
     }
     setenv("TMPDIR", temporaryDirectory, 1);
+    if (chdir(temporaryDirectory) == -1) {
+        WTFLogAlways("PluginProcess: couldn't change working directory to temporary path: %s, errno %d\n", temporaryDirectory, errno);
+        exit(EX_OSERR);
+    }
 #endif
 
 
