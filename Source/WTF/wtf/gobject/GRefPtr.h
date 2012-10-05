@@ -212,8 +212,6 @@ template <> GPtrArray* refGPtr(GPtrArray*);
 template <> void derefGPtr(GPtrArray*);
 template <> GByteArray* refGPtr(GByteArray*);
 template <> void derefGPtr(GByteArray*);
-template <> GBytes* refGPtr(GBytes*);
-template <> void derefGPtr(GBytes*);
 
 template <typename T> inline T* refGPtr(T* ptr)
 {
