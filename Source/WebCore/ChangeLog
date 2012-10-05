@@ -1,3 +1,75 @@
+2012-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130556 and r130564.
+        http://trac.webkit.org/changeset/130556
+        http://trac.webkit.org/changeset/130564
+        https://bugs.webkit.org/show_bug.cgi?id=98572
+
+        The patch wasn't reviewed by a reviewer and it is breaking
+        Chromium Windows (Requested by jchaffraix on #webkit).
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-container):
+        (video::-webkit-media-text-track-past-nodes):
+        (video::-webkit-media-text-track-future-nodes):
+        (video::-webkit-media-text-track-display):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::attach):
+        (WebCore::HTMLMediaElement::userIsInterestedInThisLanguage):
+        (WebCore::HTMLMediaElement::userIsInterestedInThisTrackKind):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::updateClosedCaptionsControls):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        * html/shadow/MediaControlElements.h:
+        (MediaControlTextTrackContainerElement):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::updateTextTrackDisplay):
+        * html/shadow/MediaControlRootElement.h:
+        (MediaControlRootElement):
+        * html/shadow/MediaControls.h:
+        (MediaControls):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::isValidKindKeyword):
+        (WebCore::TextTrack::setKind):
+        (WebCore::TextTrack::setMode):
+        (WebCore::TextTrack::mode):
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::create):
+        (WebCore::TextTrack::kind):
+        (TextTrack):
+        (WebCore::TextTrack::label):
+        (WebCore::TextTrack::setLabel):
+        (WebCore::TextTrack::language):
+        (WebCore::TextTrack::setLanguage):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        (WebCore::TextTrackCueBox::shadowPseudoId):
+        (WebCore):
+        (WebCore::TextTrackCue::updateDisplayTree):
+        * html/track/TextTrackCue.h:
+        (TextTrackCueBox):
+        (TextTrackCue):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/CaptionPreferencesChangedListener.h: Removed.
+        * rendering/RenderTheme.h:
+        (WebCore):
+        (RenderTheme):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore):
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::~RenderThemeMac):
+
 2012-10-05  Tim Horton  <timothy_horton@apple.com>
 
         [cg] GraphicsContextCG should ask CG whether the shadow offset workaround is required

@@ -30,7 +30,6 @@
 
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
-#include "CaptionPreferencesChangedListener.h"
 #include "GenericEventQueue.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
@@ -79,7 +78,7 @@ typedef Vector<CueIntervalTree::IntervalType> CueList;
 
 class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
 #if ENABLE(VIDEO_TRACK)
-    , private TextTrackClient, private CaptionPreferencesChangedListener
+    , private TextTrackClient
 #endif
 {
 public:
@@ -241,7 +240,6 @@ public:
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&) const;
 
-    bool userPrefersCaptions() const;
     bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
@@ -327,8 +325,7 @@ protected:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual void finishParsingChildren();
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual void attach() OVERRIDE;
-    virtual void detach() OVERRIDE;
+    virtual void attach();
 
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
@@ -477,14 +474,12 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     void updateActiveTextTrackCues(float);
+    bool userIsInterestedInThisLanguage(const String&) const;
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0; }
     void beginIgnoringTrackDisplayUpdateRequests() { ++m_ignoreTrackDisplayUpdate; }
     void endIgnoringTrackDisplayUpdateRequests() { ASSERT(m_ignoreTrackDisplayUpdate); --m_ignoreTrackDisplayUpdate; }
-
-    void markCaptionAndSubtitleTracksAsUnconfigured();
-    virtual void captionPreferencesChanged() OVERRIDE;
 #endif
 
     // These "internal" functions do not check user gesture restrictions.

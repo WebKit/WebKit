@@ -27,7 +27,6 @@
 #import "Document.h"
 #import "Element.h"
 #import "FileList.h"
-#import "FloatConversion.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
@@ -152,11 +151,6 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 }
 #endif
 
-static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
-{
-    static_cast<RenderThemeMac*>(observer)->captionPreferencesChanged();
-}
-
 PassRefPtr<RenderTheme> RenderThemeMac::create()
 {
     return adoptRef(new RenderThemeMac);
@@ -166,9 +160,6 @@ RenderThemeMac::RenderThemeMac()
     : m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
     , m_notificationObserver(AdoptNS, [[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this])
-#if ENABLE(VIDEO_TRACK)
-    , m_listeningForCaptionPreferenceNotifications(false)
-#endif
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_notificationObserver.get()
                                                         selector:@selector(systemColorsDidChange:)
@@ -179,11 +170,6 @@ RenderThemeMac::RenderThemeMac()
 RenderThemeMac::~RenderThemeMac()
 {
     [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
-
-#if ENABLE(VIDEO_TRACK)
-    if (m_listeningForCaptionPreferenceNotifications)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, wkCaptionAppearanceGetSettingsChangedNotification(), NULL);
-#endif
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
@@ -2141,255 +2127,6 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
 {
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }
-
-#if ENABLE(VIDEO_TRACK)
-bool RenderThemeMac::userHasCaptionPreferences() const
-{
-    return wkCaptionAppearanceHasUserPreferences();
-}
-
-bool RenderThemeMac::userPrefersCaptions() const
-{
-    return wkCaptionAppearanceShowCaptionsWhenAvailable();
-}
-
-Color RenderThemeMac::captionsWindowColor() const
-{
-    RetainPtr<CGColorRef> color(AdoptCF, wkCaptionAppearanceCopyWindowColor());
-    Color windowColor(color.get());
-    if (!windowColor.isValid())
-        windowColor = Color::transparent;
-    
-    CGFloat opacity;
-    if (wkCaptionAppearanceGetWindowOpacity(&opacity))
-        return Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255));
-    
-    if (!color)
-        return Color();
-
-    return windowColor;
-}
-
-Color RenderThemeMac::captionsBackgroundColor() const
-{
-    // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
-    // and webkit-media-text-track-future-nodes.
-    DEFINE_STATIC_LOCAL(Color, defaultBackgroundColor, (Color(0, 0, 0, 0.8 * 255)));
-
-    RetainPtr<CGColorRef> color(AdoptCF, wkCaptionAppearanceCopyBackgroundColor());
-    Color backgroundColor(color.get());
-    if (!backgroundColor.isValid()) {
-        backgroundColor = defaultBackgroundColor;
-    }
-
-    CGFloat opacity;
-    if (wkCaptionAppearanceGetBackgroundOpacity(&opacity))
-        return Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), opacity * 255);
-
-    if (!color)
-        return Color();
-    
-    return backgroundColor;
-}
-
-Color RenderThemeMac::captionsTextColor() const
-{
-    RetainPtr<CGColorRef> color(AdoptCF, wkCaptionAppearanceCopyForegroundColor());
-    Color textColor(color.get());
-    if (!textColor.isValid()) {
-        // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
-        textColor = Color::white;
-    }
-    
-    CGFloat opacity;
-    if (wkCaptionAppearanceGetForegroundOpacity(&opacity))
-        return Color(textColor.red(), textColor.green(), textColor.blue(), opacity * 255);
-    
-    if (!color)
-        return Color();
-    
-    return textColor;
-}
-
-Color RenderThemeMac::captionsEdgeColorForTextColor(const Color& textColor) const
-{
-    int distanceFromWhite = differenceSquared(textColor, Color::white);
-    int distanceFromBlack = differenceSquared(textColor, Color::black);
-    
-    if (distanceFromWhite < distanceFromBlack)
-        return textColor.dark();
-    
-    return textColor.light();
-}
-
-String RenderThemeMac::cssPropertyWithTextEdgeColor(CSSPropertyID id, const String& value, const Color& textColor) const
-{
-    StringBuilder builder;
-    
-    builder.append(getPropertyNameString(id));
-    builder.append(':');
-    builder.append(value);
-    builder.append(' ');
-    builder.append(captionsEdgeColorForTextColor(textColor).serialized());
-    builder.append(';');
-
-    return builder.toString();
-}
-    
-String RenderThemeMac::cssColorProperty(CSSPropertyID id, const Color& color) const
-{
-    StringBuilder builder;
-    
-    builder.append(getPropertyNameString(id));
-    builder.append(':');
-    builder.append(color.serialized());
-    builder.append(';');
-    
-    return builder.toString();
-}
-
-String RenderThemeMac::captionsTextEdgeStyle() const
-{
-    DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleDropShadow, (" .075em .075em 0 ", String::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const String, edgeStyleUniform, (" .03em ", String::ConstructFromLiteral));
-
-    Color color = captionsTextColor();
-    if (!color.isValid())
-        color.setNamedColor("black");
-    color = captionsEdgeColorForTextColor(color);
-
-    wkCaptionTextEdgeStyle textEdgeStyle = static_cast<wkCaptionTextEdgeStyle>(wkCaptionAppearanceGetTextEdgeStyle());
-    switch (textEdgeStyle) {
-    case wkCaptionTextEdgeStyleUndefined:
-    case wkCaptionTextEdgeStyleNone:
-        return emptyString();
-
-    case wkCaptionTextEdgeStyleRaised:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleRaised, color);
-    case wkCaptionTextEdgeStyleDepressed:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDepressed, color);
-    case wkCaptionTextEdgeStyleDropShadow:
-        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color);
-    case wkCaptionTextEdgeStyleUniform:
-        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, edgeStyleUniform, color);
-
-    case wkCaptionTextEdgeStyleMax:
-        ASSERT_NOT_REACHED();
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return emptyString();
-}
-
-String RenderThemeMac::captionsDefaultFont() const
-{
-    RetainPtr<CGFontRef> font(AdoptCF, wkCaptionAppearanceCopyFontForStyle(wkCaptionFontStyleDefault));
-    if (!font)
-        return emptyString();
-
-    RetainPtr<CFStringRef> name(AdoptCF, CGFontCopyPostScriptName(font.get()));
-    if (!name)
-        return emptyString();
-
-    StringBuilder builder;
-    
-    builder.append(getPropertyNameString(CSSPropertyFontFamily));
-    builder.append(": \"");
-    builder.append(name.get());
-    builder.append("\";");
-    
-    return builder.toString();
-}
-
-String RenderThemeMac::captionsStyleSheetOverride() const
-{
-    StringBuilder captionsOverrideStyleSheet;
-
-    Color color = captionsBackgroundColor();
-    if (color.isValid()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::pastNodesShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyBackgroundColor, color));
-        captionsOverrideStyleSheet.append('}');
-
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::futureNodesShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyBackgroundColor, color));
-        captionsOverrideStyleSheet.append('}');
-    }
-
-    color = captionsWindowColor();
-    if (color.isValid()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyBackgroundColor, color));
-        captionsOverrideStyleSheet.append('}');
-    }
-
-    color = captionsTextColor();
-    String edgeStyle = captionsTextEdgeStyle();
-    String fontName = captionsDefaultFont();
-    if (color.isValid() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-
-        if (color.isValid())
-            captionsOverrideStyleSheet.append(cssColorProperty(CSSPropertyColor, color));
-        if (!edgeStyle.isEmpty())
-            captionsOverrideStyleSheet.append(edgeStyle);
-        if (!fontName.isEmpty())
-            captionsOverrideStyleSheet.append(fontName);
-
-        captionsOverrideStyleSheet.append('}');
-    }
-
-    return captionsOverrideStyleSheet.toString();
-}
-
-float RenderThemeMac::captionFontSizeScale() const
-{
-    CGFloat characterScale = RenderTheme::captionFontSizeScale();
-    CGFloat scaleAdjustment;
-    
-    if (!wkCaptionAppearanceGetRelativeCharacterSize(&scaleAdjustment))
-        return characterScale;
-    
-    return narrowPrecisionToFloat(scaleAdjustment * characterScale);
-}
-
-void RenderThemeMac::captionPreferencesChanged()
-{
-    for (HashSet<CaptionPreferencesChangedListener*>::iterator i = m_captionPreferenceChangeListeners.begin(); i != m_captionPreferenceChangeListeners.end(); ++i)
-        (*i)->captionPreferencesChanged();
-}
-
-void RenderThemeMac::registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-    if (!wkCaptionAppearanceGetSettingsChangedNotification())
-        return;
-    
-    if (!m_listeningForCaptionPreferenceNotifications) {
-        m_listeningForCaptionPreferenceNotifications = true;
-        CFNotificationCenterAddObserver (CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, wkCaptionAppearanceGetSettingsChangedNotification(), NULL, CFNotificationSuspensionBehaviorCoalesce);
-    }
-    
-    m_captionPreferenceChangeListeners.add(listener);
-}
-    
-void RenderThemeMac::unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-     if (wkCaptionAppearanceGetSettingsChangedNotification())
-        m_captionPreferenceChangeListeners.remove(listener);
-}
-#endif // ENABLE(VIDEO_TRACK)
 
 #endif // ENABLE(VIDEO)
 

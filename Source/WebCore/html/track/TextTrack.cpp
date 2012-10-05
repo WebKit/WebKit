@@ -94,7 +94,7 @@ const AtomicString& TextTrack::showingKeyword()
     return ended;
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType type)
+TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack)
     , m_cues(0)
     , m_mediaElement(0)
@@ -117,7 +117,7 @@ TextTrack::~TextTrack()
     clearClient();
 }
 
-bool TextTrack::isValidKindKeyword(const AtomicString& value)
+bool TextTrack::isValidKindKeyword(const String& value)
 {
     if (equalIgnoringCase(value, subtitlesKeyword()))
         return true;
@@ -133,7 +133,7 @@ bool TextTrack::isValidKindKeyword(const AtomicString& value)
     return false;
 }
 
-void TextTrack::setKind(const AtomicString& kind)
+void TextTrack::setKind(const String& kind)
 {
     String oldKind = m_kind;
 
@@ -146,7 +146,7 @@ void TextTrack::setKind(const AtomicString& kind)
         m_client->textTrackKindChanged(this);
 }
 
-void TextTrack::setMode(const AtomicString& mode)
+void TextTrack::setMode(const String& mode)
 {
     // On setting, if the new value isn't equal to what the attribute would currently
     // return, the new value must be processed as follows ...
@@ -174,7 +174,7 @@ void TextTrack::setMode(const AtomicString& mode)
         m_client->textTrackModeChanged(this);
 }
 
-AtomicString TextTrack::mode() const
+String TextTrack::mode() const
 {
     // The text track "showing" and "showing by default" modes return the string "showing".
     if (m_showingByDefault)

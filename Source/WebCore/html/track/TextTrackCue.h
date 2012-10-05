@@ -60,7 +60,6 @@ public:
     void applyCSSProperties();
 
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
-    static const AtomicString& textTrackCueBoxShadowPseudoId();
 
 private:
     TextTrackCueBox(Document*, TextTrackCue*);
@@ -80,9 +79,6 @@ public:
     }
 
     virtual ~TextTrackCue();
-
-    static const AtomicString& pastNodesShadowPseudoId();
-    static const AtomicString& futureNodesShadowPseudoId();
 
     TextTrack* track() const;
     void setTrack(PassRefPtr<TextTrack>);

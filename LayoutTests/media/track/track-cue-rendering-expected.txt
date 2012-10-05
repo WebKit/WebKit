@@ -49,7 +49,7 @@ RUN(video.height = 1440)
 EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '72px') OK
 
 EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontFamily == 'sans-serif') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video)).color == 'rgba(255, 255, 255, 0)') OK
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor == 'rgba(0, 0, 0, 0.796875)'), OBSERVED 'rgba(0, 0, 0, 0.8)' FAIL
 END OF TEST
 

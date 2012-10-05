@@ -105,10 +105,9 @@ public:
 
 #if ENABLE(VIDEO_TRACK)
     void createTextTrackDisplay();
-    virtual void userCaptionPreferencesChanged() OVERRIDE;
-    virtual void showTextTrackDisplay() OVERRIDE;
-    virtual void hideTextTrackDisplay() OVERRIDE;
-    virtual void updateTextTrackDisplay() OVERRIDE;
+    void showTextTrackDisplay();
+    void hideTextTrackDisplay();
+    void updateTextTrackDisplay();
 #endif
 
     virtual bool shouldHideControls();
