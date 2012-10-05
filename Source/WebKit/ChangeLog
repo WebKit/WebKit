@@ -1,3 +1,14 @@
+2012-10-04  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Sync up CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=98442
+
+        Reviewed by Gyuyoung Kim.
+
+        Amongst others use InspectorOverlayBlackBerry.
+
+        * PlatformBlackBerry.cmake:
+
 2012-10-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed, rolling out r130495.
