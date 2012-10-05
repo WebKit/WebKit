@@ -1,3 +1,25 @@
+2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating platform-specific baselines after r130411.
+        Removing platform-specific baselines for CSS compositing tests
+        and skipping these tests entirely as the feature is not yet enabled
+        on the GTK port.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/compositing: Removed.
+        * platform/gtk/css3/compositing/blend-mode-property-expected.txt: Removed.
+        * platform/gtk/css3/compositing/blend-mode-property-parsing-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/gtk/editing/execCommand/paste-1-expected.txt:
+        * platform/gtk/editing/pasteboard/8145-3-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-007-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/gtk/editing/pasteboard/unrendered-br-expected.txt:
+
 2012-10-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable CSS compositing by default
