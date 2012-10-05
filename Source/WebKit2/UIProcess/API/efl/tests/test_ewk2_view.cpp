@@ -864,3 +864,28 @@ TEST_F(EWK2UnitTestBase, ewk_view_touch_events_enabled)
     ASSERT_TRUE(ewk_view_touch_events_enabled_set(webView(), false));
     ASSERT_FALSE(ewk_view_touch_events_enabled_get(webView()));
 }
+
+Eina_Bool windowMoveResizeTimedOut(void* data)
+{
+    *static_cast<bool*>(data) = true;
+}
+
+TEST_F(EWK2UnitTestBase, window_move_resize)
+{
+    int x, y, width, height;
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(webView()));
+    ecore_evas_geometry_get(ee, 0, 0, &width, &height);
+
+    EXPECT_EQ(800, width);
+    EXPECT_EQ(600, height);
+
+    ewk_view_uri_set(webView(), environment->urlForResource("window_move_resize.html").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo("Moved and resized"));
+
+    // Check that the window has been moved and resized.
+    ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
+    EXPECT_EQ(150, x);
+    EXPECT_EQ(200, y);
+    EXPECT_EQ(200, width);
+    EXPECT_EQ(100, height);
+}

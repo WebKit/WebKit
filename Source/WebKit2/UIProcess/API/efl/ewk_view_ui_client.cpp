@@ -28,6 +28,7 @@
 #include "WKString.h"
 #include "ewk_view_private.h"
 #include "ewk_view_ui_client_private.h"
+#include <Ecore_Evas.h>
 
 static inline Evas_Object* toEwkView(const void* clientInfo)
 {
@@ -96,6 +97,22 @@ static void takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
     evas_object_focus_set(toEwkView(clientInfo), false);
 }
 
+static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
+{
+    int x, y, width, height;
+
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toEwkView(clientInfo)));
+    ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
+
+    return WKRectMake(x, y, width, height);
+}
+
+static void setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
+{
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toEwkView(clientInfo)));
+    ecore_evas_move_resize(ee, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+}
+
 void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageUIClient uiClient;
@@ -110,6 +127,8 @@ void ewk_view_ui_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     uiClient.takeFocus = takeFocus;
     uiClient.focus = focus;
     uiClient.unfocus = unfocus;
+    uiClient.getWindowFrame = getWindowFrame;
+    uiClient.setWindowFrame = setWindowFrame;
 #if ENABLE(SQL_DATABASE)
     uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
 #endif
