@@ -2454,6 +2454,10 @@ crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugi
 
 crbug.com/84032 [ Win ] fast/dom/object-plugin-hides-properties.html [ Pass Timeout ]
 
+#new test added. Still fails on chrome
+webkit.org/b/98315 css3/compositing/blend-mode-property.html [ Failure ]
+webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure ]
+
 # two regions reftests failing on Chromium
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure Pass ]
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions.html [ ImageOnlyFailure Pass ]
