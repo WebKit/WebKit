@@ -1,3 +1,63 @@
+2012-10-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC should have a way to gather and log Heap memory use and pause times
+        https://bugs.webkit.org/show_bug.cgi?id=98431
+
+        Reviewed by Geoffrey Garen.
+
+        In order to improve our infrastructure for benchmark-driven development, we should 
+        have a centralized method of gathering and logging various statistics about the state 
+        of the JS heap. This would allow us to create and to use other tools to analyze the 
+        output of the VM after running various workloads.
+
+        The first two statistics that might be interesting is memory use by JSC and GC pause 
+        times. We can control whether this recording happens through the use of the Options 
+        class, allowing us to either use environment variables or command line flags.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::collect): If we finish a collection and are still over our set GC heap size, 
+        we end the program immediately and report an error. Also added recording of pause times.
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::shouldCollect): When we set a specific GC heap size through Options, we 
+        ignore all other heuristics on when we should collect and instead only ask if we're 
+        greater than the amount specified in the Option value. This allows us to view time/memory 
+        tradeoffs more clearly.
+        * heap/HeapStatistics.cpp: Added.
+        (JSC):
+        (JSC::HeapStatistics::initialize):
+        (JSC::HeapStatistics::recordGCPauseTime):
+        (JSC::HeapStatistics::logStatistics):
+        (JSC::HeapStatistics::exitWithFailure):
+        (JSC::HeapStatistics::reportSuccess):
+        (JSC::HeapStatistics::parseMemoryAmount):
+        (StorageStatistics):
+        (JSC::StorageStatistics::StorageStatistics):
+        (JSC::StorageStatistics::operator()):
+        (JSC::StorageStatistics::objectWithOutOfLineStorageCount):
+        (JSC::StorageStatistics::objectCount):
+        (JSC::StorageStatistics::storageSize):
+        (JSC::StorageStatistics::storageCapacity):
+        (JSC::HeapStatistics::showObjectStatistics): Moved the old showHeapStatistics (renamed to showObjectStatistics) 
+        to try to start collecting our various memory statistics gathering/reporting mechanisms scattered throughout the 
+        codebase into one place.
+        * heap/HeapStatistics.h: Added.
+        (JSC):
+        (HeapStatistics):
+        * jsc.cpp:
+        (main):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce): We need to initialize our data structures for recording 
+        statistics if necessary.
+        * runtime/Options.cpp: Add new Options for the various types of statistics we'll be gathering.
+        (JSC::parse):
+        (JSC):
+        (JSC::Options::initialize): Initialize the various new options using environment variables.
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+        (JSC):
+
 2012-10-04  Rik Cabanier  <cabanier@adobe.com>
 
         Turn Compositing on by default in WebKit build

@@ -710,6 +710,8 @@
 		C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C225494215F7DBAA0065E898 /* SlotVisitor.cpp */; };
 		C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F77008E1402FDD60078EB39 /* SamplingCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C240305314B404C90079EB64 /* CopiedSpace.cpp */; };
+		C24D31E2161CD695002AA4DB /* HeapStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C24D31E0161CD695002AA4DB /* HeapStatistics.cpp */; };
+		C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = C24D31E1161CD695002AA4DB /* HeapStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C25F8BCD157544A900245B71 /* IncrementalSweeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */; };
 		C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */ = {isa = PBXBuildFile; fileRef = C25F8BCC157544A900245B71 /* IncrementalSweeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2A7F687160432D400F76B98 /* JSDestructibleObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1486,6 +1488,8 @@
 		C21122E015DD9AB300790E3A /* MarkStackInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStackInlineMethods.h; sourceTree = "<group>"; };
 		C225494215F7DBAA0065E898 /* SlotVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotVisitor.cpp; sourceTree = "<group>"; };
 		C240305314B404C90079EB64 /* CopiedSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopiedSpace.cpp; sourceTree = "<group>"; };
+		C24D31E0161CD695002AA4DB /* HeapStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapStatistics.cpp; sourceTree = "<group>"; };
+		C24D31E1161CD695002AA4DB /* HeapStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapStatistics.h; sourceTree = "<group>"; };
 		C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IncrementalSweeper.cpp; sourceTree = "<group>"; };
 		C25F8BCC157544A900245B71 /* IncrementalSweeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncrementalSweeper.h; sourceTree = "<group>"; };
 		C2A7F687160432D400F76B98 /* JSDestructibleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObject.h; sourceTree = "<group>"; };
@@ -1815,6 +1819,8 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				C24D31E0161CD695002AA4DB /* HeapStatistics.cpp */,
+				C24D31E1161CD695002AA4DB /* HeapStatistics.h */,
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */,
 				C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */,
@@ -2572,6 +2578,7 @@
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				C2EAD2FC14F0249800A4B159 /* CopiedAllocator.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
+				C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */,
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
 				C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */,
@@ -3566,6 +3573,7 @@
 				C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */,
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
 				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,
+				C24D31E2161CD695002AA4DB /* HeapStatistics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

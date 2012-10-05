@@ -82,6 +82,7 @@ SOURCES += \
     heap/BlockAllocator.cpp \
     heap/GCThreadSharedData.cpp \
     heap/Heap.cpp \
+    heap/HeapStatistics.cpp \
     heap/HeapTimer.cpp \
     heap/IncrementalSweeper.cpp \
     heap/JITStubRoutineSet.cpp \

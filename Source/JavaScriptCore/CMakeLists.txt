@@ -112,6 +112,7 @@ SET(JavaScriptCore_SOURCES
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp
+    heap/HeapStatistics.cpp
     heap/HeapTimer.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp

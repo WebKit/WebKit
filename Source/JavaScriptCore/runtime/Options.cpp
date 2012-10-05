@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Options.h"
 
+#include "HeapStatistics.h"
 #include <algorithm>
 #include <limits>
 #include <stdio.h>
@@ -130,6 +131,10 @@ void Options::initialize()
 #if USE(CF) || OS(UNIX)
     objectsAreImmortal() = !!getenv("JSImmortalZombieEnabled");
     useZombieMode() = !!getenv("JSImmortalZombieEnabled") || !!getenv("JSZombieEnabled");
+
+    gcMaxHeapSize() = getenv("GCMaxHeapSize") ? HeapStatistics::parseMemoryAmount(getenv("GCMaxHeapSize")) : 0;
+    recordGCPauseTimes() = !!getenv("JSRecordGCPauseTimes");
+    logHeapStatisticsAtExit() = gcMaxHeapSize() || recordGCPauseTimes();
 #endif
 
     // Allow environment vars to override options if applicable.

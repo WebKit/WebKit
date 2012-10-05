@@ -310,6 +310,7 @@ EXPORTS
     ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
     ?reportAbandonedObjectGraph@Heap@JSC@@QAEXXZ
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
+    ?reportSuccess@HeapStatistics@JSC@@SAXXZ
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ

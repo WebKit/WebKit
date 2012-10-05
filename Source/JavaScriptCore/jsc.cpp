@@ -27,6 +27,7 @@
 #include "Completion.h"
 #include "CopiedSpaceInlineMethods.h"
 #include "ExceptionHelpers.h"
+#include "HeapStatistics.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JSArray.h"
@@ -528,6 +529,8 @@ int main(int argc, char** argv)
     TRY
         res = jscmain(argc, argv);
     EXCEPT(res = 3)
+    if (Options::logHeapStatisticsAtExit())
+        HeapStatistics::reportSuccess();
     return res;
 }
 

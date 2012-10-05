@@ -32,6 +32,7 @@
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
+#include "Options.h"
 #include "SlotVisitor.h"
 #include "WeakHandleOwner.h"
 #include "WriteBarrierSupport.h"
@@ -182,6 +183,7 @@ namespace JSC {
         friend class MarkedBlock;
         friend class CopiedSpace;
         friend class SlotVisitor;
+        friend class HeapStatistics;
         template<typename T> friend void* allocateCell(Heap&);
         template<typename T> friend void* allocateCell(Heap&, size_t);
 
@@ -258,6 +260,8 @@ namespace JSC {
 
     inline bool Heap::shouldCollect()
     {
+        if (Options::gcMaxHeapSize())
+            return m_bytesAllocated > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
 #if ENABLE(GGC)
         return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect && m_operationInProgress == NoOperation;
 #else

@@ -57,6 +57,8 @@
 #import "WorkQueueItem.h"
 #import <Carbon/Carbon.h>
 #import <CoreFoundation/CoreFoundation.h>
+#import <JavaScriptCore/HeapStatistics.h>
+#import <JavaScriptCore/Options.h>
 #import <WebCore/FoundationExtras.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
@@ -917,7 +919,9 @@ int main(int argc, const char *argv[])
     [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
     dumpRenderTree(argc, argv);
     [WebCoreStatistics garbageCollectJavaScriptObjects];
-    [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts    
+    [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
+    if (JSC::Options::logHeapStatisticsAtExit())
+        JSC::HeapStatistics::reportSuccess();
     [pool release];
     return 0;
 }

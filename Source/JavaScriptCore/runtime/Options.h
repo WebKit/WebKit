@@ -122,8 +122,11 @@ namespace JSC {
     \
     v(bool, useZombieMode, false) \
     v(bool, objectsAreImmortal, false) \
-    v(bool, showHeapStatistics, false)
-
+    v(bool, showObjectStatistics, false) \
+    \
+    v(unsigned, gcMaxHeapSize, 0) \
+    v(bool, recordGCPauseTimes, false) \
+    v(bool, logHeapStatisticsAtExit, false) 
 
 class Options {
 public:
@@ -161,7 +164,7 @@ private:
         boolType,
         unsignedType,
         doubleType,
-        int32Type
+        int32Type,
     };
 
     // For storing for an option value:

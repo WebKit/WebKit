@@ -2457,6 +2457,14 @@
 				RelativePath="..\..\heap\HeapRootVisitor.h"
 				>
 			</File>
+            <File
+                RelativePath="..\..\heap\HeapStatistics.cpp"
+            >
+            </File>
+            <File
+                RelativePath="..\..\heap\HeapStatistics.h"
+            >
+            </File>
 			<File
 				RelativePath="..\..\heap\Local.h"
 				>

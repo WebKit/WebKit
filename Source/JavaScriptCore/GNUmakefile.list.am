@@ -280,6 +280,8 @@ javascriptcore_sources += \
     Source/JavaScriptCore/heap/GCThreadSharedData.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
+    Source/JavaScriptCore/heap/HeapStatistics.cpp \
+    Source/JavaScriptCore/heap/HeapStatistics.h \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.cpp \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.h \
 	Source/JavaScriptCore/heap/ListableHandler.h \
