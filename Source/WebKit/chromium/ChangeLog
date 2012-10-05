@@ -1,3 +1,13 @@
+2012-10-05  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Disable WebFrameTest.DivScrollIntoEditableTest. The test depends on
+        some code that is conditionally compiled and therefore fails in some
+        configurations.
+
+        * tests/WebFrameTest.cpp:
+
 2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Enhance support for transforms in LinkHighlight.

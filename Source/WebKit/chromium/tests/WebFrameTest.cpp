@@ -497,7 +497,10 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
     EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
 }
 
-TEST_F(WebFrameTest, DivScrollIntoEditableTest)
+// This test depends on code that is compiled conditionally. We likely need to
+// add the proper ifdef when re-enabling it. See
+// https://bugs.webkit.org/show_bug.cgi?id=98558
+TEST_F(WebFrameTest, DISABLED_DivScrollIntoEditableTest)
 {
     registerMockedHttpURLLoad("get_scale_for_zoom_into_editable_test.html");
 
