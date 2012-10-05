@@ -1,3 +1,19 @@
+2012-10-05  Richard Larocque  <rlarocque@chromium.org>
+
+        TestResultsServer does not display sync_integration_tests results
+        https://bugs.webkit.org/show_bug.cgi?id=98551
+
+        Reviewed by Ojan Vafai.
+
+        Allow builders whose name contains "Sync" to pass through the
+        isChromiumWebkitDepsTestRunner filter.
+
+        The test expectations in flakiness_dashboard_unittests.js have been
+        updated to match the new behaviour.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumDepsGTestRunner):
+
 2012-10-05  Roger Fong  <roger_fong@apple.com>
 
         Tests in webkitpy involving child processes are flaky. 

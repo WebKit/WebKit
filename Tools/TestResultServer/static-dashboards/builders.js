@@ -189,7 +189,7 @@ function isChromiumWebkitDepsTestRunner(builder)
 
 function isChromiumDepsGTestRunner(builder)
 {
-    return builder.indexOf('Tests') != -1 && builder.indexOf('Chrome Frame') == -1;
+    return (builder.indexOf('Tests') != -1 || builder.indexOf('Sync') != -1) && builder.indexOf('Chrome Frame') == -1;
 }
 
 function isChromiumDepsCrosGTestRunner(builder)
