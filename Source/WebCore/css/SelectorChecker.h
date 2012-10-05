@@ -81,8 +81,25 @@ public:
         bool hasSelectionPseudo;
     };
 
+    template<typename Context>
+    struct DOMTraversalStrategy {
+        static bool isFirstChild(const Context&, Element*);
+        static bool isLastChild(const Context&, Element*);
+        static bool isFirstOfType(const Context&, Element*, const QualifiedName&);
+        static bool isLastOfType(const Context&, Element*, const QualifiedName&);
+
+        static int countElementsBefore(const Context&, Element*);
+        static int countElementsAfter(const Context&, Element*);
+        static int countElementsOfTypeBefore(const Context&, Element*, const QualifiedName&);
+        static int countElementsOfTypeAfter(const Context&, Element*, const QualifiedName&);
+    };
+
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
+    template<typename CheckingContext>
+    SelectorMatch checkSelector(const CheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
+    template<typename CheckingContext>
+    bool checkOneSelector(const CheckingContext&) const;
+
     static bool isFastCheckableSelector(const CSSSelector*);
     bool fastCheckSelector(const CSSSelector*, const Element*) const;
 
@@ -121,7 +138,6 @@ public:
     static bool elementMatchesSelectorScopes(const StyledElement*, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes);
 
 private:
-    bool checkOneSelector(const SelectorCheckingContext&) const;
     bool checkScrollbarPseudoClass(CSSSelector*) const;
     static bool isFrameFocused(const Element*);
 

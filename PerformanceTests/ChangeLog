@@ -1,3 +1,14 @@
+2012-10-04  Hayato Ito  <hayato@chromium.org>
+
+        [Refactoring] Introduce a traversal strategy in SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=97298
+
+        Reviewed by Antti Koivisto.
+
+        Introduces querySelector() performance tests to check SelectorChecker performance.
+
+        * CSS/PseudoClassSelectors.html: Added.
+
 2012-10-03  Philip Rogers  <pdr@google.com>
 
         Force GC between PageLoad tests.

@@ -1,3 +1,51 @@
+2012-10-04  Hayato Ito  <hayato@chromium.org>
+
+        [Refactoring] Introduce a traversal strategy in SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=97298
+
+        Reviewed by Antti Koivisto.
+
+        We extract DOM traversal code from SelectorChecker so that we can use another traversal strategy.
+        Another traversal strategy will be introduced in Bug 96990.
+
+        Since this code path is very hot, we were very careful not to regress performance.
+        We will use template specialization to change the traversal implementation.
+
+        We confirmed that this patch does not regress SelectorCheckerPerformance. I have checked the performance of
+        the added test in my Linux Box using run-perf-tests.
+
+        The performance of the added test before using this patch was:
+
+          RESULT CSS: PseudoClassSelectors= 3399.68308031 runs/s
+          median= 3404.48685564 runs/s, stdev= 37.3480114449 runs/s, min= 3272.64871114 runs/s, max= 3438.72385184 runs/s
+
+        When we used this patch, the performance was:
+
+          RESULT CSS: PseudoClassSelectors= 3367.74473886 runs/s
+          median= 3367.12072755 runs/s, stdev= 14.1464547639 runs/s, min= 3348.55881171 runs/s, max= 3395.98212857 runs/s
+
+        Test: PerformanceTests/CSS/PseudoClass-Selectors.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore):
+        (WebCore::SelectorChecker::checkSelector): Make this a template method to accept another Context type.
+        Another Context type will be introduced in coming patch.
+        (WebCore::SelectorChecker::checkOneSelector):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isFirstChild):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isLastChild):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isFirstOfType):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isLastOfType):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsBefore):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsOfTypeBefore):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsAfter):
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsOfTypeAfter):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        (SelectorCheckingContext):
+        (SelectorChecker):
+        (DOMTraversalStrategy): Extracted the DOM traversal code from SelectorChecker. Another traversal code
+        will be introduced the coming patch.
+
 2012-10-04  Eric Seidel  <eric@webkit.org>
 
         SVGAttributeHashTranslator does not need to copy QualifiedName in the common case
